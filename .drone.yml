@@ -11,14 +11,13 @@ clone:
     pull: true
 
 pipeline:
-  cache-restore:
-    image: plugins/s3-cache:1
-    pull: true
-    secrets: [ cache_s3_endpoint, cache_s3_access_key, cache_s3_secret_key ]
-    restore: true
-    # TODO: enabled these conditions before merging to master!
-    # when:
-    #   local: false
+  # cache-restore:
+  #   image: plugins/s3-cache:1
+  #   pull: true
+  #   secrets: [ cache_s3_endpoint, cache_s3_access_key, cache_s3_secret_key ]
+  #   restore: true
+  #   when:
+  #     local: false
 
   build-docs:
     image: antora/antora:1.0.1
@@ -26,28 +25,26 @@ pipeline:
     commands:
       - antora generate --cache-dir /drone/src/cache --redirect-facility netlify site.yml
 
-  cache-rebuild:
-    image: plugins/s3-cache:1
-    pull: true
-    secrets: [ cache_s3_endpoint, cache_s3_access_key, cache_s3_secret_key ]
-    rebuild: true
-    mount:
-      - cache
-    # TODO: enabled these conditions before merging to master!
-    # when:
-    #   local: false
-    #   event: [ push ]
+  # cache-rebuild:
+  #   image: plugins/s3-cache:1
+  #   pull: true
+  #   secrets: [ cache_s3_endpoint, cache_s3_access_key, cache_s3_secret_key ]
+  #   rebuild: true
+  #   mount:
+  #     - cache
+  #   when:
+  #     local: false
+  #     event: [ push ]
 
-  cache-flush:
-    image: plugins/s3-cache:1
-    pull: true
-    secrets: [ cache_s3_endpoint, cache_s3_access_key, cache_s3_secret_key ]
-    flush: true
-    flush_age: 14
-    # TODO: enabled these conditions before merging to master!
-    # when:
-    #   local: false
-    #   event: [ push ]
+  # cache-flush:
+  #   image: plugins/s3-cache:1
+  #   pull: true
+  #   secrets: [ cache_s3_endpoint, cache_s3_access_key, cache_s3_secret_key ]
+  #   flush: true
+  #   flush_age: 14
+  #   when:
+  #     local: false
+  #     event: [ push ]
 
   publish-netlify:
     image: lucap/drone-netlify:latest
@@ -55,9 +52,8 @@ pipeline:
     secrets: [ netlify_token ]
     site_id: 78b01cd5-9958-4423-af3d-6040d873132f
     path: public/
-    # TODO: enabled these conditions before merging to master!
-    # when:
-    #   event: [ push ]
+    when:
+      event: [ push ]
 
   notify-slack:
     image: plugins/slack
