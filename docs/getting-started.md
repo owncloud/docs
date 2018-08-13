@@ -4,8 +4,8 @@ This guide is here to help you get started with this repository, primarily if yo
 
 To contribute to the documentation, you need four things:
 
-1. Learn Antora's basics.
-2. Learn the AsciiDoc file format's basics.
+1. Learn [Antora's basics](https://antora.org).
+2. Learn [the AsciiDoc file format's basics](https://asciidoctor.org/docs/asciidoc-syntax-quick-reference/).
 3. Update your toolset so that it supports both AsciiDoc and Antora.
 4. Start contributing to the new documentation repository.
 
@@ -64,7 +64,7 @@ So go through the information and get yourself acquainted.
 ## The AsciiDoc Basics
 
 Now that you know what Antora is and have a basic understanding of its directory structure, it's time to learn the AsciiDoc basics.
-To quote [the AsciiDoc Syntax Quick Reference Guide](https://asciidoctor.org/docs/asciidoc-syntax-quick-reference/) (which you should bookmark!):
+To quote [the AsciiDoc Syntax Quick Reference Guide](https://asciidoctor.org/docs/asciidoc-syntax-quick-reference/) (which you should bookmark*!*):
 
 > AsciiDoc is a lightweight markup language for authoring notes, articles, documentation, books, web pages, slide decks and man pages in plain text. This guide is a quick reference for the common AsciiDoc document and text formatting markup.
 
