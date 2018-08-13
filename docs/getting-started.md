@@ -13,17 +13,17 @@ To help you do that, this guide will step you through (or link you to) the requi
 
 ## The Antora Basics
 
-Antora is self-described as:
+[Antora](https://antora.org) is self-described as:
 
 > The multi-repository documentation site generator for tech writers who :heart: writing in AsciiDoc.
 
 While relatively new (*currently at release 1.0.3*), it's already a competent tool; one I expect makes developers' lives much more comfortable than competing platforms.
 This is because Antora is:
 
-- Based around [the AsciiDoc format](https://asciidoctor.org/docs/asciidoc-syntax-quick-reference/), a format far more akin to Markdown. Its syntax is _readable_, _concise_, _comprehensive_, +extensible+, and, above all, _easy to learn_.
+- Based around [the AsciiDoc format](https://asciidoctor.org/docs/asciidoc-syntax-quick-reference/), a format far more akin to Markdown. Its syntax is _readable_, _concise_, _comprehensive_, _extensible_, and, above all, _easy to learn_.
 - Provides a logical and structured way of organizing technical documentation.
 - Enforces a clear and logical separation of text content and supporting assets (such as *images*, *videos*, and *code*).
-- Uses a small set of tools, ones that are commonly available in developer toolsets, such as *Node* and *Git*.
+- Uses a small set of tools, ones that are commonly available in developer tool sets, such as *Node* and *Git*.
 - Provides very flexible project navigation.
 - Natively links to different documentation versions within the UI;
 - _Plus so much more!_
@@ -35,14 +35,14 @@ This is because Antora is:
 In the screenshot above, you can see an example of what Antora documentation looks like (using a slightly modified default theme).
 You can see that:
 
-- The standard main navigation is at the top (1).
-- The secondary navigation is down the left-hand side (2).
-- There is breadcrumb navigation above the main content (3).
-- The main content is in a large pane on the right (4).
+- The standard main navigation is at the top<sup>(1)</sup>.
+- The secondary navigation is down the left-hand side<sup>(2)</sup>.
+- There is breadcrumb navigation above the main content<sup>(3)</sup>.
+- The main content is in a large pane on the right<sup>(4)</sup>.
 
 While not revolutionary, the layout uses well-recognized and understood navigation conventions.
 However, it has a rich navigational feature.
-Notice the link right at the bottom (5).
+Notice the link right at the bottom<sup>(5)</sup>.
 If you click it, it opens up a sub-navigation menu.
 
 ![Antora documentation version navigation](./images/antora-version-navigation.png)
@@ -71,7 +71,7 @@ To quote [the AsciiDoc Syntax Quick Reference Guide](https://asciidoctor.org/doc
 If you look through the guide, you'll see that it's a file format which is quite similar to Markdown, supporting paragraphs, formatted text, headers, sections, section titles, lists, links, images, code, tables, videos, and so much more.
 
 What's more, the format is **consistent** and **predictable**, as it has a definitive standard.
-This is in stark contrast to Markdown, which has a series of (often competing) standards, such as GitHub Flavoured Markdown, and Daring Fireball.
+This is in stark contrast to Markdown, which has a series of (_often competing_) standards, such as [GitHub Flavoured Markdown](https://guides.github.com/features/mastering-markdown/), and [Daring Fireball](https://daringfireball.net/projects/markdown/).
 
 AsciiDoc is a robust, text-based file format, which you can use to create even the most sophisticated technical documentation, able to be exported to a range of modern file formats.
 Have a look through the quick reference guide, and the rest of the official AsciiDoc documentation to learn more.
@@ -166,10 +166,27 @@ If you're not already using one of these text editors of IDEs, don't feel the ne
 It's possible that your existing text editor or IDE already has an AsciiDoc plugin.
 And it makes far more sense to continue using what you already know, instead of learning an entirely new tool.
 
+### Previewing Changes
+
+![Viewing AsciiDoc in Firefox with the Asciidoc Live Preview Plugin](./images/viewing-asciidoc-in-firefox-with-the-asciidoc-live-preview-plugin.png)
+
+Once your text editor or IDE is ready to work with AsciiDoc then, assuming it doesn’t already support live preview, you’ll need a way to preview the changes you’re making to ensure that they render as you expect.
+
+For that, assuming that you’ve installed _Google Chrome_, _Mozilla Firefox_, or _Opera_, you need to install the AsciiDoc Live Preview plugin.
+When installed, you can toggle AsciiDoc preview, and see AsciiDoc files rendered in the browser.
+
+You can install the extension through the browser or find it through the links below.
+
+- [Google Chrome plugin](https://chrome.google.com/webstore/detail/asciidoctorjs-live-previe/iaalpfgpbocpdfblpnhhgllgbdbchmia?hl=en)
+- [Mozilla Firefox add-on](https://addons.mozilla.org/en-US/firefox/addon/asciidoctorjs-live-preview/)
+- [Opera plugin](https://addons.opera.com/en/extensions/details/asciidoctorjs-live-preview/)
+
 ## Installing Antora
 
-Installing Antora on your local development (virtual) machine doesn't take too much time.
-However, before you get started, make sure that your development machine is one of [the supported hardware platforms](https://docs.antora.org/antora/1.0/supported-platforms/#platforms).
+Installing Antora on your local development (virtual) machine doesn't take *too* much time, but there are a number of tools to install.
+If you just want to make text changes, then installing the Asciidoc Live Preview Plugin may be sufficient for your needs.
+
+Before you get started, make sure that your development machine is one of [the supported hardware platforms](https://docs.antora.org/antora/1.0/supported-platforms/#platforms).
 After that, install the system requirements for your platform, whether that's [Linux](https://docs.antora.org/antora/1.0/install/linux-requirements/), [macOS](https://docs.antora.org/antora/1.0/install/macos-requirements/), or [Microsoft Windows](https://docs.antora.org/antora/1.0/install/windows-requirements/).
 
 With that done, you're now ready to install Antora's two command-line tools; these are the Antora CLI and the default Antora site generator.
