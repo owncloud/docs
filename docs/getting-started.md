@@ -166,10 +166,27 @@ If you're not already using one of these text editors of IDEs, don't feel the ne
 It's possible that your existing text editor or IDE already has an AsciiDoc plugin.
 And it makes far more sense to continue using what you already know, instead of learning an entirely new tool.
 
+### Previewing Changes
+
+![Viewing AsciiDoc in Firefox with the Asciidoc Live Preview Plugin](./images/viewing-asciidoc-in-firefox-with-the-asciidoc-live-preview-plugin.png)
+
+Once your text editor or IDE is ready to work with AsciiDoc then, assuming it doesn’t already support live preview, you’ll need a way to preview the changes you’re making to ensure that they render as you expect.
+
+For that, assuming that you’ve installed _Google Chrome_, _Mozilla Firefox_, or _Opera_, you need to install the AsciiDoc Live Preview plugin.
+When installed, you can toggle AsciiDoc preview, and see AsciiDoc files rendered in the browser.
+
+You can install the extension through the browser or find it through the links below.
+
+- [Google Chrome plugin](https://chrome.google.com/webstore/detail/asciidoctorjs-live-previe/iaalpfgpbocpdfblpnhhgllgbdbchmia?hl=en)
+- [Mozilla Firefox add-on](https://addons.mozilla.org/en-US/firefox/addon/asciidoctorjs-live-preview/)
+- [Opera plugin](https://addons.opera.com/en/extensions/details/asciidoctorjs-live-preview/)
+
 ## Installing Antora
 
-Installing Antora on your local development (virtual) machine doesn't take too much time.
-However, before you get started, make sure that your development machine is one of [the supported hardware platforms](https://docs.antora.org/antora/1.0/supported-platforms/#platforms).
+Installing Antora on your local development (virtual) machine doesn't take *too* much time, but there are a number of tools to install.
+If you just want to make text changes, then installing the Asciidoc Live Preview Plugin may be sufficient for your needs.
+
+Before you get started, make sure that your development machine is one of [the supported hardware platforms](https://docs.antora.org/antora/1.0/supported-platforms/#platforms).
 After that, install the system requirements for your platform, whether that's [Linux](https://docs.antora.org/antora/1.0/install/linux-requirements/), [macOS](https://docs.antora.org/antora/1.0/install/macos-requirements/), or [Microsoft Windows](https://docs.antora.org/antora/1.0/install/windows-requirements/).
 
 With that done, you're now ready to install Antora's two command-line tools; these are the Antora CLI and the default Antora site generator.
