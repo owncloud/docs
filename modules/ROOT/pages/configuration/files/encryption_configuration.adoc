@@ -47,11 +47,11 @@ The encryption keys are stored in the following directories:
 
 [cols=",",options="header",]
 |===
-|Directory 
+|Directory
 |Description
-|`data/<user>/files_encryption` 
+|`data/<user>/files_encryption`
 |Users’ private keys and all other keys necessary to decrypt the users’ files.
-|`data/files_encryption` 
+|`data/files_encryption`
 |Private keys and all other keys necessary to decrypt the files stored on a system wide external storage.
 |===
 
@@ -67,7 +67,7 @@ Encryption keys are stored only on the ownCloud server, eliminating
 exposure of your data to third-party storage providers. The encryption
 application does *not* protect your data if your ownCloud server is
 compromised, and it does not prevent ownCloud administrators from
-reading users’ files. 
+reading users’ files.
 
 This would require client-side encryption, which
 this application does not provide. If your ownCloud server is not
@@ -91,13 +91,13 @@ ownCloud provides two encryption types:
 
 [cols="1,2"]
 |===
-|*User-Key:* 
+|*User-Key:*
 |Every user has their own private/public key pairs, and the private key is protected by the user’s password.
-|*Master Key:* 
+|*Master Key:*
 |There is only one key (or key pair) and all files are encrypted using that key pair.
 |===
 
-[IMPORTANT] 
+[IMPORTANT]
 ====
 These encryption types are *not compatible*.
 ====
@@ -124,7 +124,7 @@ In this case, *don’t enable encryption*!
 [[enabling-encryption-from-the-command-line]]
 === Enabling Master Key Based Encryption from the Command-Line
 
-To enable encryption via the command-line, involves several commands. 
+To enable encryption via the command-line, involves several commands.
 Firstly, enable the default encryption module app, using the following command:
 
 [source,console]
@@ -155,10 +155,10 @@ Finally, encrypt all data, using the following command:
 occ encryption:encrypt-all
 ....
 
-[NOTE] 
+[NOTE]
 ====
-This command is not typically required, as the master key is often enabled at install time. 
-As a result, when enabling it, there should be no data to encrypt. 
+This command is not typically required, as the master key is often enabled at install time.
+As a result, when enabling it, there should be no data to encrypt.
 But, in case it’s being enabled after install, and the installation does have files which are unencrypted, encrypt-all can be used to encrypt them.
 ====
 
@@ -184,8 +184,8 @@ Default module: OC_DEFAULT_MODULE
 
 == Recreating an Existing Master Key
 
-If the master key needs replacing, for example, because it has been compromised, an occ command is available. 
-The command is link:configuration/server/occ_command.adoc#recreate-master-key[encryption:recreate-master-key]. 
+If the master key needs replacing, for example, because it has been compromised, an occ command is available.
+The command is link:configuration/server/occ_command.adoc#recreate-master-key[encryption:recreate-master-key].
 It replaces existing master key with new one and encrypts the files with the new key.
 
 == Decrypt Master-Key Encryption
@@ -312,9 +312,9 @@ You may change your recovery key password.
 
 image:/server/_images/configuration/files/encryption12.png[image]
 
-[NOTE] 
+[NOTE]
 ====
-Sharing a recovery key with a user group is *not* supported. 
+Sharing a recovery key with a user group is *not* supported.
 This is only supported with xref:create-a-new-master-key[the master key].
 ====
 
@@ -338,7 +338,7 @@ files and encrypts their files with the new recovery key
 
 NOTE: You can only change the recovery key password if you know the original. This is by design, as only admins who know the recovery key password should be able to change it. If not, admins could hijack the recovery key from each other
 
-[IMPORTANT] 
+[IMPORTANT]
 ====
 Replacing the recovery key will mean that all users will lose the possibility to recover their files until they have applied the new recovery key.
 ====
@@ -393,20 +393,21 @@ occ encryption:show-key-storage-root
 Current key storage root:  default storage location (data/)
 ....
 
-Move keys to a different root folder, either locally or on a different server. 
-The folder must already exist, be owned by root and your HTTP group, and be restricted to root and your HTTP group. 
-This example is for Ubuntu Linux. 
+You can move the keys to another folder inside your data directory. Moving your keys outside of your data folder is not supported.
+The folder must already exist, be owned by root and your HTTP group, and be restricted to root and your HTTP group.
+This example is for Ubuntu Linux.
 Note that the new folder is relative to your occ directory:
 
 [source,console]
 ....
-mkdir /etc/keys
-chown -R root:www-data /etc/keys
-chmod -R 0770 /etc/keys
-occ encryption:change-key-storage-root ../../../etc/keys
+mkdir /var/www/owncloud/data/new_keys
+chown -R root:www-data /var/www/owncloud/data/new_keys
+chmod -R 0770 /var/www/owncloud/data/new_keys
+occ encryption:change-key-storage-root new_keys
+Change key storage root from default storage location to new_keys
 Start to move keys:
    4 [============================]
-Key storage root successfully changed to ../../../etc/keys
+Key storage root successfully changed to new_keys
 ....
 
 [[files-not-encrypted]]
@@ -431,8 +432,8 @@ exposed to third-party storage providers are guaranteed to be encrypted.
 LDAP and Other External User Back-ends
 --------------------------------------
 
-If you use an external user back-end, such as an LDAP or Samba server, and you change a user’s password on that back-end, the user will be prompted to change their ownCloud login to match on their next ownCloud login. 
-The user will need both their old and new passwords to do this. 
+If you use an external user back-end, such as an LDAP or Samba server, and you change a user’s password on that back-end, the user will be prompted to change their ownCloud login to match on their next ownCloud login.
+The user will need both their old and new passwords to do this.
 
 If you have enabled the recovery key, then you can change a user’s password in the ownCloud Users panel to match their back-end password, and then — of course — notify the user and give them their new password.
 
