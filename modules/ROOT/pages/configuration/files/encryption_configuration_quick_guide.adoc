@@ -1,0 +1,126 @@
+= Encryption Configuration Quick Guide
+
+== Encryption Types
+
+ownCloud provides two encryption types:
+
+[cols="1,3",options="header"]
+|===
+| Type | Description
+
+| Master Key | There is only one key (or key pair) and all files are encrypted using that key pair. This is **highly recommended** for **new** instances to avoid **restrictions** in functionality of user key encryption.
+
+| User-specific Key | Every user has their own private/public key pairs; the private key is protected by the user's password. This **will be removed in future a release**.
+|===
+
+=== Master Key
+
+- The **recommended** type of encryption.
+- Best to activate on new instances with no data.
+- If you have existing data, use **encrypt all** command. Depending on the amount of existing data, this operation can take a long time.
+
+==== Activation
+
+[source,console]
+....
+sudo -u www-data php occ maintenance:singleuser --on
+sudo -u www-data php occ app:enable encryption
+sudo -u www-data php occ encryption:enable
+sudo -u www-data php occ encryption:select-encryption-type masterkey -y
+sudo -u www-data php occ encryption:encrypt-all
+sudo -u www-data php occ maintenance:singleuser --off
+....
+
+=== Status
+
+[source,console]
+....
+sudo -u www-data php occ encryption:status
+....
+
+==== Decryption
+
+Depending on the amount of existing data, this operation can take a long time.
+
+[source,php]
+....
+sudo -u www-data php occ maintenance:singleuser --on
+sudo -u www-data php occ encryption:decrypt-all
+sudo -u www-data php occ maintenance:singleuser --off
+....
+
+==== Deactivation
+
+[source,console]
+....
+sudo -u www-data php occ encryption:disable
+# ignore the "already disabled" message
+sudo -u www-data php occ app:disable encryption
+....
+
+If the master key has been compromised or exposed, you can recreate it.
+You will need the current master key for it.
+
+[source,console]
+....
+sudo -u www-data php occ encryption:recreate-master-key
+....
+
+=== User-Specific Key
+
+==== Activation
+
+[source,console]
+....
+sudo -u www-data php occ maintenance:singleuser --on
+sudo -u www-data php occ app:enable encryption
+sudo -u www-data php occ encryption:enable
+sudo -u www-data php occ encryption:select-encryption-type user-keys
+sudo -u www-data php occ encryption:encrypt-all
+sudo -u www-data php occ maintenance:singleuser --off
+....
+
+After User-specific encryption is enabled, users must log out and log back in to trigger the automatic personal encryption key generation process.
+
+==== Recovery Key
+
+- Go to the "_Encryption_" section of your Admin page.
+- Set a recovery key password.
+- Ask the users to opt-in to the recovery key.
+
+If a user decides not to opt-in to the recovery key and forgets or loses their password, **the user's data cannot be decrypted**.
+This leads to **permanent data loss**.
+
+They need to:
+
+- Go to the "**Personal**" page
+- Enable the Recovery Key
+
+==== Status
+
+[source,console]
+....
+sudo -u www-data php occ encryption:status
+....
+
+==== Decrypt
+
+[source,console]
+....
+sudo -u www-data php occ maintenance:singleuser --on
+sudo -u www-data php occ encryption:decrypt-all
+#enter **Recovery Key** for **each user**
+
+# Recovery Key is a password set by the admin
+sudo -u www-data php occ maintenance:singleuser --off
+....
+
+==== Deactivation
+
+[source,console]
+....
+sudo -u www-data php occ encryption:disable
+
+# ignore the "already disabled" message
+sudo -u www-data php occ app:disable encryption
+....
