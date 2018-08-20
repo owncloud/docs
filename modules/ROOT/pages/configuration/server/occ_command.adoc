@@ -882,11 +882,20 @@ files_external:list [--show-password] [--full] [-a|--all] [--] [<user_id>]
 | `user_id` | User ID to list the personal mounts for, if no user is provided admin mounts will be listed. 
 |===
 
+Options:
+
+|===
+| `--show-password` | User to add the mount configurations for, if not set the mount will be added as system mount.
+| `--full`          | Don't save the imported mounts, only list the new mounts.                                    
+| `-a, --all`       | Show both system wide mounts and all personal mounts.                                        
+| `--output`        | The output format to use (plain, json or json_pretty, default is plain).                     
+|===
+
 ==== Example
 
 [source,console]
 ....
-occ files_external:list -- user1
+sudo -u www-data php occ files_external:list -- user1
 ....
 
 === files_external:applicable
@@ -914,6 +923,18 @@ files_external:applicable
 | `mount_id` | Can be obtained using `occ files_external:list`.
 |===
 
+
+Options:
+
+|===
+| `--add-user`    | user to add as applicable (multiple values allowed)                      
+| `--remove-user` | user to remove as applicable (multiple values allowed)                   
+| `--add-group`   | group to add as applicable (multiple values allowed)                     
+| `--remove-group`| group to remove as applicable (multiple values allowed)                  
+| `--remove-all`  | Set the mount to be globally applicable                                  
+| `--output`      | The output format to use (plain, json or json_pretty, default is plain). 
+|===
+
 === files_external:backends    
 
 Show available authentication and storage backends.
@@ -933,6 +954,12 @@ files_external:backends [options]
 |===
 | `type` | Only show backends of a certain type. Possible values are `authentication` or `storage`.
 | `backend` | Only show information of a specific backend.
+|===
+
+Options:
+
+|===
+| `--output` | The output format to use (plain, json or json_pretty, default is plain).
 |===
 
 === files_external:config
@@ -958,6 +985,12 @@ files_external:config [options]
 | `value` | Value to set the config option to, when no value is provided the existing value will be printed.
 |===
 
+Options:
+
+|===
+| `--output` | The output format to use (_plain_, _json_ or _json_pretty_. The default is plain). 
+|===
+
 === files_external:create      
 
 Create a new mount configuration.
@@ -981,13 +1014,80 @@ files_external:create [options]
 | `authentication_backend` | Authentication backend identifier for the new mount, see `occ files_external:backends` for possible values.
 |===
 
-Options:
+==== Options
 
 |===
 | `--user[=USER]` | User to add the mount configurations for, if not set the mount will be added as system mount.
+| ``-c, --config=CONFIG`` | Mount configuration option in ``key=value`` format (multiple values allowed).
 | `--dry` | Don't save the imported mounts, only list the new mounts.
-| `-c, --config=CONFIG` | Mount configuration option in `key=value` format (multiple values allowed).
+| `--output` | The output format to use (_plain_, _json_ or _json_pretty_. The default is plain).
 |===
+
+==== Storage Backend Details
+
+[options="header"] 
+|===
+| Storage Backend | Identifier
+
+| Windows Network Drive    
+| `windows_network_drive`
+
+| WebDav                   
+| `dav`
+
+| Local                    
+| `local`
+
+| ownCloud                 
+| `owncloud`
+
+| SFTP                     
+| `sftp`
+
+| Amazon S3                
+| `amazons3`
+
+| Dropbox                  
+| `dropbox`
+
+| Google Drive             
+| `googledrive`
+
+| OpenStack Object Storage 
+| `swift`
+
+| SMB / CIFS               
+| `smb`
+|===
+
+Authentication Details
+^^^^^^^^^^^^^^^^^^^^^^
+
+[options="header"] 
+|===
+| Authentication method | Identifier, name, configuration
+
+| Log-in credentials, save in session  | `password::sessioncredentials`
+| Log-in credentials, save in database | `password::logincredentials`
+| User entered, store in database      | `password::userprovided` (*)
+| Global Credentials                   | `password::global`
+| None                                 | `null::null`
+| Builtin                              | `builtin::builtin`
+| Username and password                | `password::password`
+| OAuth1                               | `oauth1::oauth1` (*)
+| OAuth2                               | `oauth2::oauth2` (*)
+| RSA public key                       | `publickey::rsa` (*)
+| OpenStack                            | `openstack::openstack` (*)
+| Rackspace                            | `openstack::rackspace` (*)
+| Access key (Amazon S3)               | `amazons3::accesskey` (*)
+|===
+
+(*) - Authentication methods require additional configuration.
+
+[NOTE] 
+====
+Each Storage Backend needs its corresponding authentication methods.
+====
 
 ==== files_external:delete
 
@@ -1010,6 +1110,7 @@ Options:
 
 |===
 | `-y, --yes` | Skip confirmation.
+| `--output`     | The output format to use (plain, json or json_pretty, default is plain). 
 |===
 
 === files_external:export
@@ -1055,6 +1156,7 @@ files_external:import [options] [--] <path>
 |===
 | `--user[=USER]` | User to add the mount configurations for, if not set the mount will be added as system mount.
 | `--dry` | Don't save the imported mounts, only list the new mounts.
+| `--output` | The output format to use (_plain_, _json_ or _json_pretty_, default is _plain_). 
 |===
 
 === files_external:option      
@@ -1097,6 +1199,7 @@ files_external:verify [options] [--] <mount_id>
 
 |===
 | `-c, --config=CONFIG` | Additional config option to set before checking in `key=value` pairs, required for certain auth backends such as login credentials (multiple values allowed).
+| `--output`            | The output format to use (_plain_, _json_ or _json_pretty_, default is plain).
 |===
 
 === files_external:create
