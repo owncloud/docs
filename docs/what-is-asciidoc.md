@@ -1,6 +1,5 @@
-# The AsciiDoc Basics
+# What is AsciiDoc?
 
-Now that you know what Antora is and have a basic understanding of its directory structure, it's time to learn the AsciiDoc basics.
 To quote [the AsciiDoc Syntax Quick Reference Guide](https://asciidoctor.org/docs/asciidoc-syntax-quick-reference/) (which you should bookmark*!*):
 
 > AsciiDoc is a lightweight markup language for authoring notes, articles, documentation, books, web pages, slide decks and man pages in plain text. This guide is a quick reference for the common AsciiDoc document and text formatting markup.
@@ -103,7 +102,7 @@ If you're not already using one of these text editors of IDEs, don't feel the ne
 It's possible that your existing text editor or IDE already has an AsciiDoc plugin.
 And it makes far more sense to continue using what you already know, instead of learning an entirely new tool.
 
-## Previewing Changes
+## Previewing AsciiDoc Changes
 
 ![Viewing AsciiDoc in Firefox with the Asciidoc Live Preview Plugin](./images/viewing-asciidoc-in-firefox-with-the-asciidoc-live-preview-plugin.png)
 

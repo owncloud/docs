@@ -1,4 +1,4 @@
-# Instal Antora
+# Install Antora
 
 Installing Antora on your local development (virtual) machine doesn't take *too* much time, but there are a number of tools to install.
 If you just want to make text changes, then installing the Asciidoc Live Preview Plugin may be sufficient for your needs.
