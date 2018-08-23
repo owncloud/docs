@@ -16,8 +16,8 @@ If you've been contributing to the previous version of ownCloud's documentation,
 
 You need four things to contribute to the documentation:
 
-1. [Install Antora](./docs/install-antora).
-2. Learn [the AsciiDoc file format's basics](./docs/asciidoc).
+1. [Install Antora](./docs/install-antora.md).
+2. Learn [the AsciiDoc file format's basics](./docs/asciidoc.md).
 3. Update your toolset so that it supports both AsciiDoc and Antora.
 4. Learn how to [build the docs](./docs/contributing.md).
 
