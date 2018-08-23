@@ -21,3 +21,7 @@ You need to do a few things to contribute to the documentation:
 3. Update your toolset so that it supports both AsciiDoc and Antora.
 4. Learn how to [build the docs](./docs/build-the-docs.md).
 5. Create meaningful commits and a PR with your changes.
+
+## Styling the Docs
+
+If you want to change the look and feel of the ownCloud documentation, you can find all the information that you need in [the docs-ui repository](https://github.com/owncloud/docs-ui/blob/master/README.adoc).
