@@ -538,8 +538,7 @@ sudo -u www-data php occ db:convert-type mysql oc_dbuser 127.0.0.1 oc_database
 TIP: For a more detailed explanation see xref:configuration/database/db_conversion.adoc[converting database types].
 
 [[encryption]]
-Encryption
-----------
+== Encryption
 
 `occ` includes a complete set of commands for managing encryption.
 
@@ -609,6 +608,24 @@ Users must have enabled recovery keys on their Personal pages. You must
 first put your ownCloud server into
 single-user mode <maintenance_commands> to prevent any user
 activity until decryption is completed.
+
+- `-m` stands for the method. Method accepts the arguments `recovery` or `password`. If the _recovery_ method is chosen then the recovery password will be used to decrypt files. If the _password_ method is chosen then individual user passwords will be used to decrypt files.
+
+- `-c` accepts `yes` or `no`. This lets the command know whether to ask for permission to continue or not.
+
+=== Method Descriptions 
+
+==== Recovery method
+
+This method reads the value from the environment variable `OC_RECOVERY_PASSWORD`. This variable bounds the value of recovery password set in the encryption page. If this variable is not set the recovery process will be halted. This has to be used for decrypting all users. While opting recovery method user should not forget to set `OC_RECOVERY_PASSWORD` in the shell.
+
+==== Password method
+
+This method reads the value from the environment variable `OC_PASSWORD`. This variable bounds the value of user password. The password which user uses to login to oC account. When password method is opted the user needs to set this variable in the shell.
+
+=== Continue Option Description
+
+The continue option can be used to by pass the permissions asked like `yes` or `no` while decrypting the file system. If the user is sure about what he/she is doing with the command and would like to proceed, then `-c yes` when provided to the command would not ask permissions. If `-c no` is passed to the command, then permissions would be asked to the user. It becomes interactive.
 
 Use `encryption:disable` to disable your encryption module.
 You must first put your ownCloud server into xref:maintenance-commands[single-user mode] to prevent any user activity.
@@ -879,16 +896,16 @@ files_external:list [--show-password] [--full] [-a|--all] [--] [<user_id>]
 ==== Arguments
 
 |===
-| `user_id` | User ID to list the personal mounts for, if no user is provided admin mounts will be listed. 
+| `user_id` | User ID to list the personal mounts for, if no user is provided admin mounts will be listed.
 |===
 
 Options:
 
 |===
 | `--show-password` | User to add the mount configurations for, if not set the mount will be added as system mount.
-| `--full`          | Don't save the imported mounts, only list the new mounts.                                    
-| `-a, --all`       | Show both system wide mounts and all personal mounts.                                        
-| `--output`        | The output format to use (plain, json or json_pretty, default is plain).                     
+| `--full`          | Don't save the imported mounts, only list the new mounts.
+| `-a, --all`       | Show both system-wide mounts and all personal mounts.
+| `--output`        | The output format to use (`plain`, `json` or `json_pretty`, default is `plain`).
 |===
 
 ==== Example
@@ -906,13 +923,13 @@ Manage applicable users and groups for a mount.
 
 [source,console]
 ....
-files_external:applicable 
-    [--add-user     ADD-USER] 
-    [--remove-user  REMOVE-USER] 
-    [--add-group    ADD-GROUP] 
-    [--remove-group REMOVE-GROUP] 
-    [--remove-all] 
-    [--output       [OUTPUT]] 
+files_external:applicable
+    [--add-user     ADD-USER]
+    [--remove-user  REMOVE-USER]
+    [--add-group    ADD-GROUP]
+    [--remove-group REMOVE-GROUP]
+    [--remove-all]
+    [--output       [OUTPUT]]
     [--]
     <mount_id>
 ....
@@ -927,15 +944,15 @@ files_external:applicable
 Options:
 
 |===
-| `--add-user`    | user to add as applicable (multiple values allowed)                      
-| `--remove-user` | user to remove as applicable (multiple values allowed)                   
-| `--add-group`   | group to add as applicable (multiple values allowed)                     
-| `--remove-group`| group to remove as applicable (multiple values allowed)                  
-| `--remove-all`  | Set the mount to be globally applicable                                  
-| `--output`      | The output format to use (plain, json or json_pretty, default is plain). 
+| `--add-user`    | user to add as applicable (multiple values allowed)
+| `--remove-user` | user to remove as applicable (multiple values allowed)
+| `--add-group`   | group to add as applicable (multiple values allowed)
+| `--remove-group`| group to remove as applicable (multiple values allowed)
+| `--remove-all`  | Set the mount to be globally applicable
+| `--output`      | The output format to use (plain, json or json_pretty, default is plain).
 |===
 
-=== files_external:backends    
+=== files_external:backends
 
 Show available authentication and storage backends.
 
@@ -943,9 +960,9 @@ Show available authentication and storage backends.
 
 [source,console]
 ....
-files_external:backends [options] 
-    [--] 
-    [<type>] 
+files_external:backends [options]
+    [--]
+    [<type>]
     [<backend>]
 ....
 
@@ -970,10 +987,10 @@ Manage backend configuration for a mount.
 
 [source,console]
 ....
-files_external:config [options] 
-    [--] 
-    <mount_id> 
-    <key> 
+files_external:config [options]
+    [--]
+    <mount_id>
+    <key>
     [<value>]
 ....
 
@@ -988,10 +1005,10 @@ files_external:config [options]
 Options:
 
 |===
-| `--output` | The output format to use (_plain_, _json_ or _json_pretty_. The default is plain). 
+| `--output` | The output format to use (_plain_, _json_ or _json_pretty_. The default is plain).
 |===
 
-=== files_external:create      
+=== files_external:create
 
 Create a new mount configuration.
 
@@ -999,10 +1016,10 @@ Create a new mount configuration.
 
 [source,console]
 ....
-files_external:create [options] 
-    [--] 
-    <mount_point> 
-    <storage_backend> 
+files_external:create [options]
+    [--]
+    <mount_point>
+    <storage_backend>
     <authentication_backend>
 ....
 
@@ -1020,50 +1037,50 @@ files_external:create [options]
 | `--user[=USER]` | User to add the mount configurations for, if not set the mount will be added as system mount.
 | ``-c, --config=CONFIG`` | Mount configuration option in ``key=value`` format (multiple values allowed).
 | `--dry` | Don't save the imported mounts, only list the new mounts.
-| `--output` | The output format to use (_plain_, _json_ or _json_pretty_. The default is plain).
+| `--output` | The output format to use (`plain`, `json` or `json`pretty`. The default is `plain`).
 |===
 
 ==== Storage Backend Details
 
-[options="header"] 
+[options="header"]
 |===
 | Storage Backend | Identifier
 
-| Windows Network Drive    
+| Windows Network Drive
 | `windows_network_drive`
 
-| WebDav                   
+| WebDav
 | `dav`
 
-| Local                    
+| Local
 | `local`
 
-| ownCloud                 
+| ownCloud
 | `owncloud`
 
-| SFTP                     
+| SFTP
 | `sftp`
 
-| Amazon S3                
+| Amazon S3
 | `amazons3`
 
-| Dropbox                  
+| Dropbox
 | `dropbox`
 
-| Google Drive             
+| Google Drive
 | `googledrive`
 
-| OpenStack Object Storage 
+| OpenStack Object Storage
 | `swift`
 
-| SMB / CIFS               
+| SMB / CIFS
 | `smb`
 |===
 
 Authentication Details
 ^^^^^^^^^^^^^^^^^^^^^^
 
-[options="header"] 
+[options="header"]
 |===
 | Authentication method | Identifier, name, configuration
 
@@ -1084,7 +1101,7 @@ Authentication Details
 
 (*) - Authentication methods require additional configuration.
 
-[NOTE] 
+[NOTE]
 ====
 Each Storage Backend needs its corresponding authentication methods.
 ====
@@ -1110,7 +1127,7 @@ Options:
 
 |===
 | `-y, --yes` | Skip confirmation.
-| `--output`     | The output format to use (plain, json or json_pretty, default is plain). 
+| `--output`     | The output format to use (plain, json or json_pretty, default is plain).
 |===
 
 === files_external:export
@@ -1156,10 +1173,10 @@ files_external:import [options] [--] <path>
 |===
 | `--user[=USER]` | User to add the mount configurations for, if not set the mount will be added as system mount.
 | `--dry` | Don't save the imported mounts, only list the new mounts.
-| `--output` | The output format to use (_plain_, _json_ or _json_pretty_, default is _plain_). 
+| `--output` | The output format to use (_plain_, _json_ or _json_pretty_, default is _plain_).
 |===
 
-=== files_external:option      
+=== files_external:option
 
 Manage mount options for a mount.
 
@@ -1178,7 +1195,7 @@ files_external:option <mount_id> <key> [<value>]
 | `value` | Value to set the mount option to, when no value is provided the existing value will be printed.
 |===
 
-=== files_external:verify      
+=== files_external:verify
 
 Verify mount configuration.
 
@@ -1224,7 +1241,7 @@ files_external:create [options] [--] <mount_point> <storage_backend> <authentica
 
 ==== Storage Backend Details
 
-[options="header"] 
+[options="header"]
 |===
 |Storage Backend| Identifier
 |Windows Network Drive| `windows_network_drive`
@@ -1241,7 +1258,7 @@ files_external:create [options] [--] <mount_point> <storage_backend> <authentica
 
 ==== Authentication Details
 
-[options="header"] 
+[options="header"]
 |===
 |Authentication method| Identifier, name, configuration
 |Log-in credentials, save in session| `password::sessioncredentials`
@@ -1261,7 +1278,7 @@ files_external:create [options] [--] <mount_point> <storage_backend> <authentica
 
 (*****) - Authentication methods require additional configuration.
 
-[NOTE] 
+[NOTE]
 ====
 Each Storage Backend needs its corresponding authentication methods.
 ====
@@ -1514,7 +1531,7 @@ from a source PHP translation file.
 In this example, we'll create Austrian German translations for the
 Gallery app.
 
-[NOTE] 
+[NOTE]
 ====
 This example assumes that the ownCloud directory is `/var/www/owncloud`` and that it uses ownCloud's standard apps directory, `app`.
 ====
@@ -2372,7 +2389,7 @@ sudo -u www-data php occ user:delete fred
 
 === Expiring a User's Password
 
-[NOTE] 
+[NOTE]
 ====
 This command is only available when link:https://marketplace.owncloud.com/apps/password_policy[the Password Policy app] is installed.
 ====
@@ -2552,13 +2569,13 @@ a lengthier description of both.
 
 [cols=",",options="header",]
 |====
-|Argument 
+|Argument
 |Description
 
-|`app` 
+|`app`
 |When an value is supplied, `user:setting` limits the settings displayed, to those for that, specific, application — assuming that the application is installed, and that there are settings available for it. Some example applications are "core", "files_trashbin", and "user_ldap". A complete list, unfortunately, cannot be supplied, as it is impossible to know the entire list of applications which a user could, potentially, install.
 
-|`key` 
+|`key`
 |This value specifies the setting key to be manipulated (set, retrieved, or deleted) by the `user:setting` command.
 |====
 
@@ -2682,9 +2699,9 @@ sudo -u www-data php occ user:report
 [[syncing-user-accounts]]
 === Syncing User Accounts
 
-This command syncs users stored in external backend services, such as _LDAP_, _Shibboleth_, and _Samba_, with ownCloud's, internal, user database. 
-However, it's not essential to run it regularly, unless you have a large number of users whose account properties have changed in a backend outside of ownCloud. 
-When run, it will pick up changes from alternative user backends, such as LDAP where properties like `cn` or `display name` have changed, and sync them with ownCloud's user database. 
+This command syncs users stored in external backend services, such as _LDAP_, _Shibboleth_, and _Samba_, with ownCloud's, internal user database.
+However, it's not essential to run it regularly, unless you have a large number of users whose account properties have changed in a backend outside of ownCloud.
+When run, it will pick up changes from alternative user backends, such as LDAP, where properties like `cn` or `display name` have changed, and sync them with ownCloud's user database.
 If accounts are found that no longer exist in the external backend, you are given the choice of either removing or disabling the
 accounts.
 
@@ -2708,14 +2725,14 @@ Options:
   -u, --uid=UID                                        Sync only the user with the given user id
   -s, --seenOnly                                       Sync only seen users
   -c, --showCount                                      Calculate user count before syncing
-  -m, --missing-account-action=MISSING-ACCOUNT-ACTION  Action to take if the account isn't 
-                                                       connected to a backend any longer. 
-                                                       Options are "disable" and "remove". 
-                                                       Note that removing the account will 
-                                                       also remove the stored data and files 
+  -m, --missing-account-action=MISSING-ACCOUNT-ACTION  Action to take if the account isn't
+                                                       connected to a backend any longer.
+                                                       Options are `disable` and `remove`.
+                                                       Note that removing the account will
+                                                       also remove the stored data and files
                                                        for that account.
-  -r, --re-enable                                      When syncing multiple accounts re-enable 
-                                                       accounts that are disabled in ownCloud 
+  -r, --re-enable                                      When syncing multiple accounts re-enable
+                                                       accounts that are disabled in ownCloud
                                                        but available in the synced backend.
   -h, --help                                           Display this help message
   -q, --quiet                                          Do not output any message
@@ -2724,8 +2741,8 @@ Options:
       --no-ansi                                        Disable ANSI output
   -n, --no-interaction                                 Do not ask any interactive question
       --no-warnings                                    Skip global warnings, show command output only
-  -v|vv|vvv, --verbose                                 Increase the verbosity of messages: 1 
-                                                       for normal output, 2 for more verbose 
+  -v|vv|vvv, --verbose                                 Increase the verbosity of messages: 1
+                                                       for normal output, 2 for more verbose
                                                        output and 3 for debug
 
 Help:
