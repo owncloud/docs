@@ -1,28 +1,27 @@
 Enable index.php-less URLs
 ==========================
 
-If you want clear URLs without "index.php", for example instead of *https://example.com/index.php/apps/files/* you want to have *https://example.com/apps/files/*, you can enable it by following these steps:
+If you want URLs without the trailing "index.php", e.g., ``https://example.com/apps/files/`` instead of ``https://example.com/index.php/apps/files/``, you can enable it by following these steps:
 
 Prerequisites:
 --------------
 
-You have to log in to the docker container running ownCloud. Execute the following command on the host system of the Appliance:
+Log in to the Docker container running ownCloud, and execute the following command on the host system of the appliance:
 
 ....
 univention-app shell owncloud
 ....
 
-Your web server needs to have the following modules enabled: *mod_rewrite* and *mod_env*. If you have not yet enabled these modules, or are not sure if you have, execute these commands:
+Your web server needs to have the following modules enabled: ``mod_rewrite`` and ``mod_env``. 
+If you have not yet enabled these modules, or are not sure if you have, execute these commands:
 
 ....
-a2enmod rewrite
-
-a2enmod env
+a2enmod env rewrite
 ....
 
-You need a *owncloud.conf* in your /etc/apache2/sites-available/ directory.
+You need an *owncloud.conf* in your ``/etc/apache2/sites-available/`` directory.
 
-Open /etc/apache2/sites-available/owncloud.conf in nano or vim and paste the following:
+Open ``/etc/apache2/sites-available/owncloud.conf`` in nano, Vim, or your editor of choice, and paste the following:
 
 ....
 Alias /owncloud "/var/www/owncloud/"
@@ -41,29 +40,29 @@ Alias /owncloud "/var/www/owncloud/"
 </Directory>
 ....
 
-Then create a symlink to /etc/apache2/sites-enabled:
+Then create a symlink to ``/etc/apache2/sites-enabled``, as follows:
 
 ....
 ln -s /etc/apache2/sites-available/owncloud.conf /etc/apache2/sites-enabled/owncloud.conf
 ....
 
-Now you can enable the index.php-less URLs:
--------------------------------------------
+Enable index.php-less URLs
+--------------------------
 
-1. Adjust your config.php to look like this:
+Adjust your config.php to look like the following:
 
 ....
 'overwrite.cli.url' => 'https://example.com/owncloud',
 'htaccess.RewriteBase' => '/owncloud',
 ....
 
-2. Execute this command:
+Execute the command command:
 
 ....
 occ maintenance:update:htaccess
 ....
 
-3. Restart or Reload your Apache server.
+Restart or reload your Apache server, by running the following command:
 
 ....
 service apache2 reload
