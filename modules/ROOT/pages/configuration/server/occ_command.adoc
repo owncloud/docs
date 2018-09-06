@@ -613,7 +613,7 @@ activity until decryption is completed.
 
 - `-c` accepts `yes` or `no`. This lets the command know whether to ask for permission to continue or not.
 
-=== Method Descriptions 
+=== Method Descriptions
 
 ==== Recovery method
 
@@ -803,9 +803,15 @@ when files need repairing are:
 the desktop client.
 * If entering a folder doesn't seem to lead into that folder.
 
-The repair command needs to be run in single user mode. The following
-commands show how to enable single user mode, run a repair file scan,
-and then disable single user mode.
+CAUTION: We strongly suggest that you backup the database before running this command.
+
+The ``--repair`` option can be run within two different scenarios:
+
+* Requiring a downtime when used on all affected sorages at once.
+* Without downtime, filtering by a specified User Id.
+
+The following commands show how to enable single user mode, run a repair file scan in bulk on all storages,
+and then disable single user mode. This way is much faster than running the command for every user seperately, but it requires single user mode.
 
 ....
 sudo -u www-data php occ maintenance:singleuser --on
@@ -813,7 +819,13 @@ sudo -u www-data php occ files:scan --all --repair
 sudo -u www-data php occ maintenance:singleuser --off
 ....
 
-CAUTION: We strongly suggest that you backup the database before running this command.
+
+The following command filters by the storage of the specified user.
+....
+sudo -u www-data php occ files:scan USERID --repair
+....
+
+TIP: If many users are affected, it could be conveniant to create a shell script, which iterates over a list of User ID's.
 
 [[the-filestransfer-ownership-command]]
 The files:transfer-ownership command
