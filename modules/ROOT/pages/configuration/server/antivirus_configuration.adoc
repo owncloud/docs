@@ -219,6 +219,8 @@ ownCloud installation. When there is no activity `clamd` places a
 minimal load on your system. However, if your users upload large volumes
 of files, you will see high CPU usage. Please keep this in mind.
 
+You must run freshclam at least once for ClamAV to generate the socket.
+
 ownCloud should detect your `clamd` socket and fill in the `Socket`
 field. This is the `LocalSocket` option in `clamd.conf`. You can run
 `netstat` to verify:
@@ -248,7 +250,23 @@ for ownCloud servers with high volumes of file uploads. For the Daemon
 option, you need the hostname or IP address of the remote server running
 ClamAV and the server’s port number.
 
+To configure the port add the following line in `/etc/clamav/clamd.conf`:
+
+....
+TCPSocket 3310
+....
+
+Then restart the Clamd service:
+
+....
+/etc/init.d/clamav-daemon restart
+....
+
+Back on the ownCloud server, navigate to the Admin page and configure the Antivirus Configuration as follows:
+
 image:/server/_images/antivirus-daemon.png[image]
+
+Where the host is the IP of the server running the ClamAV Daemon and the port is what was configured in the above step.
 
 [[executable]]
 Executable
