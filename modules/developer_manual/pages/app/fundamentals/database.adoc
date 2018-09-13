@@ -42,6 +42,28 @@ class AuthorDAO {
 }
 ----
 
+Database programming guidelines
+-------------------------------
+
+* Always use the Query Builder.
+* Don't update more than 1 million rows within a transaction due to DB limitations.
+* Don't add more than 999 conditions in a `WHERE ... IN ...` statement but chunk it into separate queries when using SQLite.
+* When processing big tables, always do this in chunks, don't store the whole table in memory.
+* Oracle compatibility specifics:
+** For Oracle, `null` and empty strings are the same thing. Special handling is required to catch these cases.
+** When reading values, make sure to convert nulls to empty strings when expected.
+** When using a condition based on empty strings, use `is not null` with Oracle instead.
+** Oracle can only compare the first 4000 bytes of a `CLOB` column.
+** Make sure to properly escape column names when using custom functions with `createFunction`. The escaping is usually done automatically by the query builder. Oracle is the most likely to complain about unquoted columns while other databases will work fine.
+** Always add the table name when calling `lastInsertId($tableName)`, as it is required by Oracle to return correct values.
+* In general, don't specify a value for an `autoincrement` column. If you have to, keep in mind that Oracle's `autoincrement` trigger will get in the way on `INSERT`. As a result, you'll need a subsequent `UPDATE` to properly adjust the value.
+* *Always* make sure there are unit tests for the database operations with queries to verify the result. This will help find out whether the database related code works on all databases and often times might reveal database quirks.
+* Running unit tests with specific databases:  `make test-php TEST_PHP_SUITE=path/to/test/file.php TEST_DATABASE=$databasetype` where "$databasetype" is one of "sqlite", "mysql", "mariadb", "pgsql", "oci" and "mysqlmb4".
+* String concatenation should be done like this:
+** `CONCAT(str1, str2, ... strN)` for MYSQL.
+** `str1 || str1 ... || strN` SQLite/pgSQL/Oracle.
+* Use `IQueryBuilder::createPositionalParameter` instead of `IQueryBuilder::createNamedParameter` when using `like()`.
+
 [[mappers]]
 Mappers
 -------
