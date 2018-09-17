@@ -3,9 +3,8 @@ Translation
 
 ownCloud’s translation system is powered by
 https://www.transifex.com/projects/p/owncloud/[Transifex]. To start
-translating sign up and enter a group. If your community app should be
-added to Transifex contact one of the https://owncloud.org/contact/[core
-developers] to set it up for you.
+translating sign up and enter a group. If translations for your community app should be
+added to Transifex follow the steps decribed at the end of this page.
 
 [[php]]
 PHP
@@ -130,7 +129,7 @@ Transifex web-interface:
     <li id="add-new">
         <?php
             // TRANSLATORS Will be shown inside a popup and asks the user to add a new file
-            p($l->t('Add new file')); 
+            p($l->t('Add new file'));
         ?>
     </li>
 </ul>
@@ -188,3 +187,28 @@ myapp/l10n
 
 You then just need the .php, .json and .js files for a working localized
 app.
+
+
+[[how-to-automatically-sync-translations]]
+== How to automatically sync translations
+
+1) Create a initial Transifex config within the app repository:
+
+[source,console]
+----
+[main]
+host = https://www.transifex.com
+lang_map = ja_JP: ja
+
+[owncloud.APP_NAME]
+file_filter = <lang>/APP_NAME.po
+source_file = templates/APP_NAME.pot
+source_lang = en
+type = PO
+----
+
+2) Give write permissions to the https://github.com/ownclouders[ownclouders] user, within the ownCloud GitHub organization, just add the `@owncloud/ci` team with admin permissions.
+
+3) Create a pull request at https://github.com/owncloud/translation-sync/blob/master/.drone.yml[drone], just add another list item to the matrix at the bottom (the apps are sorted alphabetically).
+
+4) After merging the pull request the translations will already be synced, afterwards it will happen every night.
