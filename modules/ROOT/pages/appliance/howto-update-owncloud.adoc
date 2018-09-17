@@ -7,7 +7,10 @@ ownCloud X Appliance:
 * link:[Use the Univention Management Console]
 * link:[Use the Command Line]
 
-Do not use the ownCloud built in web updater!
+[WARNING]
+====
+Do not use ownCloud's built in Web Updater!
+====
 
 [[use-the-univention-management-console]]
 Use the Univention Management Console
@@ -29,7 +32,7 @@ server, under ``**Administration**'', click the first option labeled
 Management Console. From there, click the ``**Software**'' shortcut (1),
 and then click ``**Software update**'' (2).
 
-image:/owncloud-docs/_images/appliance/ucs/upgrade-owncloud/univention-management-console-software-update-highlighted.png[image]
+image:/server/_images/appliance/ucs/upgrade-owncloud/univention-management-console-software-update-highlighted.png[image]
 
 This will load the Software update management panel, after a short time
 scanning for available updates. If an update is available, under ``**App
@@ -37,24 +40,24 @@ Center updates**'' you will see ``**There are App Center updates
 available**''. If one is, as in the image below, click ``**ownCloud**''
 which takes you to the ownCloud application.
 
-image:/owncloud-docs/_images/appliance/ucs/upgrade-owncloud/univention-software-update-dashboard.png[image]
+image:/server/_images/appliance/ucs/upgrade-owncloud/univention-software-update-dashboard.png[image]
 
 When there, part-way down the page you’ll see the ``**Manage local
 installation**'' section. Under there, click ``**UPGRADE**''.
 
-image:/owncloud-docs/_images/appliance/ucs/upgrade-owncloud/owncloud-app-ready-for-update.png[image]
+image:/server/_images/appliance/ucs/upgrade-owncloud/owncloud-app-ready-for-update.png[image]
 
 Before the upgrade starts, a prompt appears titled ``**App Installation
 notes**''. This is nothing to be concerned about. So check the checkbox
 ``**Do not show this message again**''. Then click ``**CONTINUE**''.
 
-image:/owncloud-docs/_images/appliance/ucs/upgrade-owncloud/owncloud-update-app-installation-notes.png[image]
+image:/server/_images/appliance/ucs/upgrade-owncloud/owncloud-update-app-installation-notes.png[image]
 
 Next an upgrade confirmation page appears. To accept the confirmation,
 click ``**UPGRADE**'' on the far right-hand side of the confirmation
 page.
 
-image:/owncloud-docs/_images/appliance/ucs/upgrade-owncloud/confirm-owncloud-upgrade.png[image]
+image:/server/_images/appliance/ucs/upgrade-owncloud/confirm-owncloud-upgrade.png[image]
 
 This launches the upgrade process, which requires no manual
 intervention. When the upgrade completes, the ownCloud app page will be
@@ -69,25 +72,25 @@ Open your ownCloud X Appliance and go to the ``**System and Domain
 Settings**'' dashboard. Then, after logging in, click ``**Installed
 Applications**'', and then click ownCloud.
 
-image:/owncloud-docs/_images/appliance/ucs/upgrade-owncloud/installed-applications-owncloud.png[image]
+image:/server/_images/appliance/ucs/upgrade-owncloud/installed-applications-owncloud.png[image]
 
 This takes you to the ownCloud app settings page. From there, begin
 uninstalling ownCloud by clicking ``**UNINSTALL**'' under ``**Manage
 local installations**''
 
-image:/owncloud-docs/_images/appliance/ucs/upgrade-owncloud/begin-owncloud-uninstall.png[image]
+image:/server/_images/appliance/ucs/upgrade-owncloud/begin-owncloud-uninstall.png[image]
 
 This takes you to an uninstall confirmation page. On that page, click
 UNINSTALL on the lower left-hand side of the page.
 
-image:/owncloud-docs/_images/appliance/ucs/upgrade-owncloud/confirm-owncloud-uninstall.png[image]
+image:/server/_images/appliance/ucs/upgrade-owncloud/confirm-owncloud-uninstall.png[image]
 
 Follow the process until it’s finished. Then, click on ``**Close**'' in
 the upper right corner.
 
 Your data and users will remain.
 
-image:/owncloud-docs/_images/appliance/ucs/upgrade-owncloud/app-center-search-for-owncloud.png[image]
+image:/server/_images/appliance/ucs/upgrade-owncloud/app-center-search-for-owncloud.png[image]
 
 Following that, go to ``**Software - Appcenter**'', and search for
 ``__ownCloud__''. At the moment, two matching results will be returned.
@@ -97,14 +100,14 @@ To confirm the version number, scroll to the bottom of the page, and in
 the More information section, look for the version string, next to
 Installed version, as in the screenshot below.
 
-image:/owncloud-docs/_images/appliance/ucs/upgrade-owncloud/owncloud-app-version-confirmation.png[image]
+image:/server/_images/appliance/ucs/upgrade-owncloud/owncloud-app-version-confirmation.png[image]
 
 If it is the right version, click ``**INSTALL**''. Then the License
 Agreement is displayed. If you agree to it, click ``**ACCEPT
 LICENSE**''. This will display an installation confirmation screen. To
 confirm the installation, click ``**INSTALL**''.
 
-image:/owncloud-docs/_images/appliance/ucs/upgrade-owncloud/owncloud-confirm-install.png[image]
+image:/server/_images/appliance/ucs/upgrade-owncloud/owncloud-confirm-install.png[image]
 
 The installation will then be carried out. When it is finished, you will
 have the latest version of ownCloud installed.
@@ -176,6 +179,15 @@ ownCloud are installed with a different application to the 10.x version.
 More specifically, the versions of the ownCloud app, prior to 10, have a
 version suffix in the name. For example the ownCloud 8.2 app is named
 `owncloud82`.
+
+For ownCloud 8.2 users: during the ownCloud App upgrade, user files will be moved to the new Docker data directory, ``/var/lib/univention-appcenter/apps/owncloud/data/files``.  Essentially, the following the command will be executed:
+
+[source,console]
+....
+mv /var/lib/owncloud/* /var/lib/univention-appcenter/apps/owncloud/data/files
+....
+
+Please check your filesystems and mountpoints and make sure enough space is available for the operation.
 
 Given that, you first have to uninstall the existing version and then
 install the 10.x version. To do so, run the following commands:

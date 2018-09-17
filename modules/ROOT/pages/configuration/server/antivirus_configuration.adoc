@@ -172,7 +172,7 @@ The Anti-Virus app needs to be installed from the ownCloud Market, under
 _"Security"_. You can access the ownCloud Market via the App Menu (or
 App Switcher).
 
-image:/owncloud-docs/_images/antivirus-app.png[image]
+image:/server/_images/antivirus-app.png[image]
 
 [[configuring-clamav-within-owncloud]]
 Configuring ClamAV within ownCloud
@@ -181,13 +181,13 @@ Configuring ClamAV within ownCloud
 Once it is installed, go to your ownCloud Admin page and set your
 ownCloud logging level to `Everything`.
 
-image:/owncloud-docs/_images/antivirus-logging.png[image]
+image:/server/_images/antivirus-logging.png[image]
 
 Now, navigate to `Settings -> Admin -> Security`, where you’ll find the
 ``**Antivirus Configuration**'' panel. There, as below, you’ll see the
 configuration options which ownCloud will pass to ClamAV.
 
-image:/owncloud-docs/_images/antivirus-config.png[image]
+image:/server/_images/antivirus-config.png[image]
 
 [[configuration-warnings]]
 Configuration Warnings
@@ -197,11 +197,11 @@ The Antivirus App for Files will show one of three warnings if it is
 either misconfigured, or ClamAV is not available. You can see an example
 of all three below.
 
-image:/owncloud-docs/_images/configuration/server/anti-virus-message-host-connection-problem.png[image]
+image:/server/_images/configuration/server/anti-virus-message-host-connection-problem.png[image]
 
-image:/owncloud-docs/_images/configuration/server/anti-virus-message-misconfiguration-problem.png[image]
+image:/server/_images/configuration/server/anti-virus-message-misconfiguration-problem.png[image]
 
-image:/owncloud-docs/_images/configuration/server/anti-virus-message-socket-connection-problem.png[image]
+image:/server/_images/configuration/server/anti-virus-message-socket-connection-problem.png[image]
 
 [[mode-configuration]]
 Mode Configuration
@@ -219,6 +219,8 @@ ownCloud installation. When there is no activity `clamd` places a
 minimal load on your system. However, if your users upload large volumes
 of files, you will see high CPU usage. Please keep this in mind.
 
+You must run freshclam at least once for ClamAV to generate the socket.
+
 ownCloud should detect your `clamd` socket and fill in the `Socket`
 field. This is the `LocalSocket` option in `clamd.conf`. You can run
 `netstat` to verify:
@@ -228,7 +230,7 @@ netstat -a|grep clam
 unix 2 [ ACC ] STREAM LISTENING 15857 /var/run/clamav/clamd.ctl
 ....
 
-image:/owncloud-docs/_images/antivirus-daemon-socket.png[image]
+image:/server/_images/antivirus-daemon-socket.png[image]
 
 The `Stream Length` value sets the number of bytes to read in one pass.
 10485760 bytes, or ten megabytes, is the default. This value should be
@@ -248,7 +250,23 @@ for ownCloud servers with high volumes of file uploads. For the Daemon
 option, you need the hostname or IP address of the remote server running
 ClamAV and the server’s port number.
 
-image:/owncloud-docs/_images/antivirus-daemon-socket.png[image]
+To configure the port add the following line in `/etc/clamav/clamd.conf`:
+
+....
+TCPSocket 3310
+....
+
+Then restart the Clamd service:
+
+....
+/etc/init.d/clamav-daemon restart
+....
+
+Back on the ownCloud server, navigate to the Admin page and configure the Antivirus Configuration as follows:
+
+image:/server/_images/antivirus-daemon.png[image]
+
+Where the host is the IP of the server running the ClamAV Daemon and the port is what was configured in the above step.
 
 [[executable]]
 Executable
@@ -262,7 +280,7 @@ usage; it is better to use one of the daemon modes.
 This option requires the path to `clamscan`, which is the interactive
 ClamAV scanning command. ownCloud should find it automatically.
 
-image:/owncloud-docs/_images/antivirus-executable.png[image]
+image:/server/_images/antivirus-executable.png[image]
 
 When you are satisfied with how ClamAV is operating, you might want to
 go back and change all of your logging to less verbose levels.
@@ -277,7 +295,7 @@ Admin -> Antivirus Configuration -> Advanced, which you can see in the
 screenshot below, you can view and change the existing rules. You can
 also add new ones.
 
-image:/owncloud-docs/_images/configuration/server/anti-virus-configuration-rules.png[image]
+image:/server/_images/configuration/server/anti-virus-configuration-rules.png[image]
 
 Rules can match on either an exit status (e.g., 0, 1, or 40) or a
 pattern in the string returned from ClamAV (e.g., `/.*: (.*) FOUND$/`).
