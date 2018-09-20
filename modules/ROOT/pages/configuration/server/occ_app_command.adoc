@@ -9,22 +9,24 @@ You can perform common server operations with `occ`, including installing and up
 `occ` is in the owncloud/ directory; for example /var/www/owncloud on Ubuntu Linux. `occ` is a PHP script. 
 *You must run it as your HTTP user* to ensure that your ownCloud files and directories retain the correct permissions.
 
-[[occ-command-directory]]
-occ Command Directory
----------------------
+Please ensure that the app you are going to configure is installed and enabled.
 
-* ocapps_http_user_label
-* ocapps_calendar_label
-* ocapps_contacts_label
-* ocapps_files_primary_s3_label
-* ocapps_ldap_commands_label
-* ocapps_market_commands_label
-* ocapps_notifications_commands_label
-* ocapps_password_policy_label
-* ocapps_reports_commands_label
-* ocapps_ransomware_commands_label
-* ocapps_shibboleth_label
-* ocapps_two_factor_auth_label
+[[occ-apps-command-directory]]
+occ Apps Command Directory
+--------------------------
+
+* xref:ocapps_run-occ-as-your-http-user[Run occ As Your HTTP User]
+* xref:ocapps_brute_force_protection[Brute-Force Protection]
+* xref:ocapps_calendar[Calendar]
+* xref:ocapps_contacts[Contacts]
+* xref:ocapps_files_primary_s3[S3 Objectstore]
+* xref:ocapps_ldap[LDAP]
+* xref:ocapps_market_commands[Market]
+* xref:ocapps_notifications[Notifications]
+* xref:ocapps_password_policy[Password Policy]
+* xref:ocapps_ransomware[Ransomware Protection]
+* xref:ocapps_samle-sso-sibboleth-integration[SAML/SSO Shibboleth Integration]
+* xref:ocapps_two_factor_auth[Two Factor Authentication]
 
 [[run-occ-as-your-http-user]]
 Run occ As Your HTTP User
@@ -190,21 +192,83 @@ Parameters for short form options will be written either directly after the opti
 sudo -u www-data ./occ files:scan -p "user_x/files/folder"  
 ....
 
-[[calendar-commands]]
-Calendar Commands
------------------
+[[brute-force-protection]]
+Brute Force Protection
+----------------------
+
+Marketplace URL: https://marketplace.owncloud.com/apps/brute_force_protection[Brute-Force Protection]
+
+Use these commands to configure the Brute Force Protection app.
+Parametrisation must be done with the `occ config` command set.
+The combination of `uid` and `IP address` is used to trigger the ban.
+
+List the current settings
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+....
+sudo -u www-data php occ config:list brute_force_protection
+....
+
+Set the setting
+~~~~~~~~~~~~~~~~
+
+To set a new value, use the command below and replace <Key> and value <Value> accordingly.
+
+....
+sudo -u www-data php occ config:app:set brute_force_protection <Key> --value=<Value> --update-only
+....
+
+Fail Tolerance [attempts]
+~~~~~~~~~~~~~~~~~~~~~~~~~
+Number of wrong attempts to trigger the ban.
+
+[width="80%",cols="30%,70%",]
+|===
+|Default |3
+|Key     |`brute_force_protection_fail_tolerance`
+|===
+
+Time Treshold [seconds]
+~~~~~~~~~~~~~~~~~~~~~~~
+Time in which the number of wrong attempts must occur to trigger the ban.
+
+[width="80%",cols="30%,70%",]
+|===
+|Default |60
+|Key     |`brute_force_protection_time_threshold`
+|===
+
+Ban Period [seconds]
+~~~~~~~~~~~~~~~~~~~~
+Time how long the ban will be active if triggered.
+
+[width="80%",cols="30%,70%",]
+|===
+|Default |300
+|Key     |`brute_force_protection_ban_period`
+|===
+
+[[calendar]]
+Calendar
+--------
+
+Marketplace URL: https://marketplace.owncloud.com/apps/calendar[Calendar]
 
 For commands for managing the calendar, please see the DAV Command section in the occ core command set.
 
-[[contacts-commands]]
-Contacts Commands
------------------
+[[contacts]]
+Contacts
+--------
+
+Marketplace URL: https://marketplace.owncloud.com/apps/contacts[Contacts]
 
 For commands for managing contacts, please see the DAV Command section in the occ core command set.
 
-[[s3-objectstore-commands]]
-S3 Objectstore Commands
------------------------
+[[s3-objectstores]]
+S3 Objectstore
+--------------
+
+Marketplace URL: https://marketplace.owncloud.com/apps/files_primary_s3[S3 Object Storage]
 
 [[list-objects-buckets-or-versions-of-an-object]]
 List objects, buckets or versions of an object
@@ -216,11 +280,11 @@ sudo -u www-data occ s3:list
 
 Arguments:
 
-[width="90%",cols="24%,76%",]
-|=========================================================
-|`bucket` |Name of the bucket; it`s objects will be listed
-|`object` |Key of the object; it`s versions will be listed
-|=========================================================
+[width="80%",cols="30%,70%",]
+|===
+|`bucket` | Name of the bucket; it`s objects will be listed
+|`object` | Key of the object; it`s versions will be listed
+|===
 
 [[create-a-bucket-as-necessary-to-be-used]]
 Create a bucket as necessary to be used
@@ -232,30 +296,24 @@ sudo -u www-data occ s3:create-bucket
 
 Arguments:
 
-[width="70%",cols="30%,70%",]
-|==========================================
-|`bucket` |Name of the bucket to be created
-|==========================================
+[width="80%",cols="30%,70%",]
+|===
+|`bucket` | Name of the bucket to be created
+|===
 
 Options:
 
-[width="100%",cols="30%,70%",]
-|=======================================================================
-|`update-configuration` |If the bucket exists the configuration will be updated
-|`accept-warning` |No warning about the usage of this command will be displayed
-|=======================================================================
+[width="80%",cols="30%,70%",]
+|===
+|`update-configuration` | If the bucket exists the configuration will be updated
+|`accept-warning`       | No warning about the usage of this command will be displayed
+|===
 
-[[ldap-commands]]
-LDAP Commands
--------------
+[[ldap]]
+LDAP Integration
+----------------
 
-________________________________________________________________________________________________________
-These commands are only available when the ``LDAP user and group
-backend'' app (`user_ldap`) is enabled.
-________________________________________________________________________________________________________
-
-These LDAP commands appear only when you have enabled the LDAP app. 
-Then you can run the following LDAP commands with `occ`:
+Marketplace URL: https://marketplace.owncloud.com/apps/user_ldap[LDAP Integration]
 
 [source,sourceCode,console]
 ----
@@ -274,8 +332,7 @@ ldap
 Search for an LDAP user, using this syntax:
 
 ....
-sudo -u www-data php occ ldap:search [--group] [--offset="..."] 
-[--limit="..."] search
+sudo -u www-data php occ ldap:search [--group] [--offset="..."] [--limit="..."] search
 ....
 
 Searches match at the beginning of the attribute value only.
@@ -362,8 +419,8 @@ ldap:set-config <configID> <configKey> <configValue>
 
 All of the available keys, along with default values for configValue, are listed in the table below.
 
-[cols=",",options="header",]
-|===========================================================
+[width="70%",cols=",",options="header",]
+|===
 |Configuration |Setting
 |hasMemberOfFilterSupport |
 |hasPagedResultSupport |
@@ -414,7 +471,7 @@ All of the available keys, along with default values for configValue, are listed
 |ldapUuidUserAttribute |auto
 |turnOffCertCheck |0
 |useMemberOfToDetectMembership |1
-|===========================================================
+|===
 
 `ldap:test-config` tests whether your configuration is correct and can bind to the server.
 
@@ -464,6 +521,8 @@ sudo -u www-data php occ config:app:delete user_ldap updateAttributesInterval
 Market
 ------
 
+Marketplace URL: https://marketplace.owncloud.com/apps/market[Market]
+
 The `market` commands _install_, _uninstall_, _list_, and _upgrade_ applications from the ownCloud Marketplace.
 
 [source,sourceCode,console]
@@ -476,8 +535,10 @@ market
   market:upgrade    Installs new app versions if available on the marketplace
 ----
 
-The user running the update command, which will likely be your webserver user, requires write permission for the `/apps` folder. 
-If they don’t have write permission, the command may report that the update was successful, but it may silently fail.
+NOTE: The user running the update command, which will likely be your webserver user, requires write 
+permission for the `/apps` respectively `apps-external` folder. 
+
+NOTE: If they don’t have write permission, the command may report that the update was successful, but it may silently fail.
 
 These commands are not available in single-user (maintenance) mode. 
 For more details please see the Maintenance Commands section in the occ core command set.
@@ -519,6 +580,8 @@ sudo -u www-data occ market:install -l /mnt/data/richdocuments-2.0.0.tar.gz
 Notifications
 -------------
 
+Marketplace URL: https://marketplace.owncloud.com/apps/announcementcenter[Announcement Center]
+
 If you want to send notifications to users or groups use the following command.
 
 [source,sourceCode,console]
@@ -531,17 +594,25 @@ Options and Arguments:
 
 ....
 notifications:generate [-u|--user USER] [-g|--group GROUP] [-l|--link <linktext>] [--] <subject> [<message>]
+....
 
 Options:
-  -u --user              User id to whom the notification shall be sent
-  -g --group             Group id to whom the notification shall be sent
-  -l --link              A link associated with the notification
+
+[width="100%",cols="18%,70%",]
+|===
+|`-u --user`  |User id to whom the notification shall be sent
+|`-g --group` |Group id to whom the notification shall be sent
+|`-l --link`  |A link associated with the notification
+|===
 
 Arguments:
-  subject                The notification subject - maximum 255 characters
-  message A more extended message - maximum 4000 characters
-  linktext               A link to an HTML page
-....
+
+[width="100%",cols="18%,70%",]
+|===
+|`subject`  |The notification subject - maximum 255 characters
+|`message`  |A more extended message - maximum 4000 characters
+|`linktext` |A link to an HTML page
+|===
 
 At least one user or group must be set.
 A link can be useful for notifications shown in client apps.
@@ -555,7 +626,9 @@ sudo -u www-data php occ notifications:generate -g Office "Emergeny Alert" "Rebo
 Password Policy
 ---------------
 
-*Command to expire a users password*
+Marketplace URL: https://marketplace.owncloud.com/apps/password_policy[Password Policy]
+
+Command to expire a users password.
 
 ....
 sudo -u www-data occ user:expire-password
@@ -564,79 +637,48 @@ sudo -u www-data occ user:expire-password
 Arguments:
 
 [width="100%",cols="18%,82%",]
-|=======================================================================
+|===
 |`expiredate` |The date and time when a password expires, e.g.
 ``2019-01-01 14:00:00 CET'' or -1 days
-|=======================================================================
+|===
 
 Options:
 
 [width="100%",cols="18%,82%",]
-|=======================================================================
-|`-a, --all` | Will add password expiry to all known users. uid and group option are discarded if the option is provided by user
-
-|`-u, --uid` | The user’s uid is used. This option can be used as –uid `Alice` –uid Bob"
-
-|`-g, --group` | Add password expiry to user(s) under group(s). This option can be used as –group ``foo'' –group ``bar'' to add expiry passwords for users in group foo and bar. If uid option (eg: –uid ``user1'') is passed with group, then uid will also be processed
-|=======================================================================
-
-[[reports]]
-Reports
--------
-
-If you’re working with ownCloud support and need to send them a configuration summary, you can generate it using the `configreport:generate` command. 
-This command generates the same JSON-based report as the Admin Config Report, which you can access under `admin -> Settings -> Admin -> Help & Tips -> Download ownCloud config report`.
-
-From the command-line in the root directory of your ownCloud installation, run it as your webserver user as follows, (assuming your webserver user is `www-data`):
-
-....
-sudo -u www-data occ configreport:generate
-....
-
-This generates the report and send it to `STDOUT`. 
-You can optionally pipe the output to a file and then attach it to an email to ownCloud support, by running the following command:
-
-....
-sudo -u www-data occ configreport:generate > generated-config-report.txt
-....
-
-Alternatively, you could generate the report and email it all in one command, by running:
-
-....
-sudo -u www-data occ configreport:generate | mail -s "configuration report" \ 
-    -r <the email address to send from> \
-    support@owncloud.com
-....
-
-[NOTE]
-====
-These commands are not available in
-single-user (maintenance) mode <maintenance_commands_label>.
-====
+|===
+|`-a, --all`   | Will add password expiry to all known users.
+uid and group option are discarded if the option is provided by user
+|`-u, --uid`   | The user’s uid is used.
+This option can be used as `–uid Alice –uid Bob`
+|`-g, --group` | Add password expiry to user(s) under group(s).
+This option can be used as –group `foo` –group `bar` to add expiry passwords for users 
+in group foo and bar. If uid option (eg: –uid `user1`) is passed with group, 
+then uid will also be processed
+|===
 
 [[ransomware-protection]]
-Ransomware Protection
----------------------
+Ransomware Protection (Enterprise Edition onyl)
+-----------------------------------------------
+
+Marketplace URL: https://marketplace.owncloud.com/apps/ransomware_protection[Ransomware Protection]
 
 Use these commands to help users recover from a Ransomware attack. 
 You can find more information about the application in the documentation <../../enterprise/ransomware-protection/index>.
 
-[NOTE]
-====
-Ransomware Protection (which is an Enterprise app) needs to be installed and enabled to be able to use these commands.
-====
+[width="100%",cols="50%,82%",]
+|===
+|occ ransomguard:scan <timestamp> <user>    |Report all changes in a user's account, starting from timestamp.
+|occ ransomguard:restore <timestamp> <user> |Revert all operations in a user account after a point in time.
+|occ ransomguard:lock <user>                |Set a user account as read-only for ownCloud and other WebDAV
+clients when malicious activity is suspected.
+|occ ransomguard:unlock <user>              |Unlock a user account after ransomware issues have been resolved.
+|===
 
-....
-occ ransomguard:scan <timestamp> <user>     Report all changes in a user's account, starting from timestamp.
-occ ransomguard:restore <timestamp> <user>  Revert all operations in a user account after a point in time.
-occ ransomguard:lock <user>                 Set a user account as read-only for ownCloud and other WebDAV 
-                                            clients when malicious activity is suspected.
-occ ransomguard:unlock <user>               Unlock a user account after ransomware issues have been resolved.
-....
+[[samle-sso-sibboleth-integration]]
+SAML/SSO Shibboleth Integration (Enterprise Edition only)
+---------------------------------------------------------
 
-[[shibboleth-modes-enterprise-edition-only]]
-Shibboleth Modes (Enterprise Edition only)
-------------------------------------------
+Marketplace URL: https://marketplace.owncloud.com/apps/user_shibboleth[SAML/SSO Integration]
 
 `shibboleth:mode` sets your Shibboleth mode to `notactive`, `autoprovision`, or `ssoonly`
 
@@ -645,15 +687,12 @@ Shibboleth Modes (Enterprise Edition only)
 shibboleth:mode [mode]
 ----
 
-[NOTE]
-====
-These commands are only available when the ``Shibboleth user backend''
-app (`user_shibboleth`) is enabled.
-====
 
 [[two-factor-authentication]]
 Two-factor Authentication
 -------------------------
+
+Marketplace URL: https://marketplace.owncloud.com/apps/twofactor_totp[2-Factor Authentication]
 
 If a two-factor provider app is enabled, it is enabled for all users by default (though the provider can decide whether or not the user has to pass the challenge). 
 In the case of an user losing access to the second factor (e.g., a lost phone with two-factor SMS verification), the admin can temporarily disable the two-factor check for that user via the occ command:
