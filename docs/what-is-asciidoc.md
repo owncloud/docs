@@ -17,8 +17,8 @@ Have a look through the quick reference guide, and the rest of the official Asci
 To contribute to the documentation, you're only going to need 3 things; these are:
 
 1. A text editor with AsciiDoc syntax support available.
-2. Antora's build tools.
-3. The AsciiDoc Quick Syntax Guide.
+2. An AsciiDoc previewer.
+3. AsciiDoc documentation
 
 Let's step through each one.
 
@@ -102,18 +102,21 @@ If you're not already using one of these text editors of IDEs, don't feel the ne
 It's possible that your existing text editor or IDE already has an AsciiDoc plugin.
 And it makes far more sense to continue using what you already know, instead of learning an entirely new tool.
 
-## Previewing AsciiDoc Changes
+## An AsciiDoc Previewer
 
 ![Viewing AsciiDoc in Firefox with the Asciidoc Live Preview Plugin](./images/viewing-asciidoc-in-firefox-with-the-asciidoc-live-preview-plugin.png)
 
-Once your text editor or IDE is ready to work with AsciiDoc then, assuming it doesn’t already support live preview, you’ll need a way to preview the changes you’re making to ensure that they render as you expect.
+Once your text editor or IDE is ready to work with AsciiDoc then, assuming it doesn't already support previewing AsciiDoc, you’ll need a way to preview the changes you’re making to ensure that they render as you expect.
 
-For that, assuming that you’ve installed _Google Chrome_, _Mozilla Firefox_, or _Opera_, you need to install the AsciiDoc Live Preview plugin.
-When installed, you can toggle AsciiDoc preview, and see AsciiDoc files rendered in the browser.
+For that, assuming that you’re using one of _Google Chrome_, _Mozilla Firefox_, or _Opera_, you need to install the [AsciiDoc Live Preview plugin](https://asciidoctor.org/docs/editing-asciidoc-with-live-preview/).
+When installed, enable the AsciiDoc Live Preview plugin, and you will see AsciiDoc files rendered as HTML in the browser.
 
-You can install the extension through the browser or find it through the links below.
+## AsciiDoc Documentation
 
-- [Google Chrome plugin](https://chrome.google.com/webstore/detail/asciidoctorjs-live-previe/iaalpfgpbocpdfblpnhhgllgbdbchmia?hl=en)
-- [Mozilla Firefox add-on](https://addons.mozilla.org/en-US/firefox/addon/asciidoctorjs-live-preview/)
-- [Opera plugin](https://addons.opera.com/en/extensions/details/asciidoctorjs-live-preview/)
+As with anything of a technical nature, you need documentation, because there’s going to come a time that you will need to refer to it.
+So too with AsciiDoc.
+Here are a set of links to documentation that you can bookmark and use on a regular basis:
 
+- [The AsciiDoc Syntax Quick Reference Guide](https://asciidoctor.org/docs/asciidoc-syntax-quick-reference/)
+- [Powerman's AsciiDoc Cheatsheet](https://powerman.name/doc/asciidoc)
+- [The AsciiDoc Markup Syntax Summary](https://is.muni.cz/el/1433/podzim2015/PB162/um/printable/asciidoc.html)
