@@ -5,7 +5,7 @@ inside appinfo/routes.php by passing a configuration array to the
 `registerRoutes` method. An example route would look like this:
 
 [source,php]
-----
+....
 <?php
 namespace OCA\MyApp\AppInfo;
 
@@ -15,7 +15,7 @@ $application->registerRoutes($this, [
         ['name' => 'page#index', 'url' => '/', 'verb' => 'GET'],
     ]
 ]);
-----
+....
 
 The route array contains the following parts:
 
@@ -27,7 +27,7 @@ The controller and the method to call; `page#index` is being mapped to
 inside appinfo/application.php:
 
 [source,php]
-----
+....
 <?php
 namespace OCA\MyApp\AppInfo;
 
@@ -53,7 +53,7 @@ class Application extends App {
     }
 
 }
-----
+....
 
 - `method` (Optional, defaults to `GET`): The HTTP method that should be
 matched, (e.g., `GET`, `POST`, `PUT`, `DELETE`, `HEAD`, `OPTIONS`,
@@ -77,7 +77,7 @@ It is possible to extract values from the URL to allow for RESTful URL
 design. To extract value, you have to wrap it inside curly braces:
 
 [source,php]
-----
+....
 <?php
 
 // Request: GET /index.php/apps/myapp/authors/3
@@ -93,7 +93,7 @@ class AuthorController {
     }
 
 }
-----
+....
 
 The identifier used inside the route is being passed into the controller
 method by reflecting the method parameters. To summarize, if you want to
@@ -110,7 +110,7 @@ parameter in your route, which is an array containing pairs of
 `'key' => 'regex'`:
 
 [source,php]
-----
+....
 <?php
 
 // Request: OPTIONS /index.php/apps/myapp/api/my/route
@@ -131,7 +131,7 @@ class AuthorApiController {
     }
 
 }
-----
+....
 
 [[default-values-for-sub-url]]
 == Default Values for Sub-URL
@@ -144,7 +144,7 @@ the URL. Use the `defaults` parameter in your route which is an array
 containing pairs of `'urlparameter' => 'defaultvalue'`:
 
 [source,php]
-----
+....
 <?php
 
 // Request: GET /index.php/app/myapp/post
@@ -165,7 +165,7 @@ class PostController
         // $page will be 1
     }
 }
-----
+....
 
 [[registering-resources]]
 == Registering Resources
@@ -183,7 +183,7 @@ To prevent repetition, it’s possible to define resources. The following
 routes:
 
 [source,php]
-----
+....
 <?php
 namespace OCA\MyApp\AppInfo;
 
@@ -198,12 +198,12 @@ $application->registerRoutes($this, [
         // your other routes here
     ]
 ]);
-----
+....
 
 can be abbreviated by using the `resources` key:
 
 [source,php]
-----
+....
 <?php
 namespace OCA\MyApp\AppInfo;
 
@@ -216,7 +216,7 @@ $application->registerRoutes($this, [
         // your other routes here
     ]
 ]);
-----
+....
 
 [[using-the-urlgenerator]]
 == Using the URLGenerator
@@ -227,7 +227,7 @@ independent from the URL design or to 2) generate an URL for an image in
 that can be used in your container:
 
 [source,php]
-----
+....
 <?php
 namespace OCA\MyApp\AppInfo;
 
@@ -256,13 +256,13 @@ class Application extends App {
     }
 
 }
-----
+....
 
 Inside the `PageController` the URL generator can now be used to
 generate an URL for a redirect:
 
 [source,php]
-----
+....
 <?php
 namespace OCA\MyApp\Controller;
 
@@ -302,14 +302,14 @@ class PageController extends Controller {
     }
 
 }
-----
+....
 
 `URLGenerator` is case-sensitive, so `appName` must match `exactly` the
 name you use in configuration <configuration>. If you use a camel-case
 name as _myCamelCaseApp_,
 
 [source,php]
-----
+....
 <?php
 $route = 'myCamelCaseApp.author_api.do_something';
-----
+....
