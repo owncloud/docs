@@ -36,6 +36,7 @@ files and directories.
 * xref:command-line-installation[Command-Line Installation]
 * xref:command-line-upgrade[Command-Line Upgrade]
 * xref:disable-user[Disable Users]
+* xref:notifications[Notifications]
 
 [[run-occ-as-your-http-user]]
 == Run occ As Your HTTP User
@@ -335,12 +336,13 @@ sudo -u www-data php occ config:app:get activity installed_version
 These commands set the value of a single app or system configuration:
 
 ....
-sudo -u www-data php occ config:system:set logtimezone
-   --value="Europe/Berlin"
+sudo -u www-data php occ config:system:set logtimezone --value="Europe/Berlin"
 System config value logtimezone set to Europe/Berlin
 
-sudo -u www-data php occ config:app:set files_sharing
-incoming_server2server_share_enabled --value="yes" --type=boolean
+sudo -u www-data php occ config:app:set files_sharing \
+   incoming_server2server_share_enabled \
+   --value=true \
+   --type=boolean 
 Config value incoming_server2server_share_enabled for app files_sharing set to yes
 ....
 
@@ -348,8 +350,10 @@ The `config:system:set` command creates the value, if it does not
 already exist. To update an existing value, set `--update-only`:
 
 ....
-sudo -u www-data php occ config:system:set doesnotexist --value="true"
-   --type=boolean --update-only
+sudo -u www-data php occ config:system:set doesnotexist \
+   --value=true \
+   --type=boolean \
+   --update-only
 Value not updated, as it has not been set before.
 ....
 
@@ -367,7 +371,8 @@ When you want to e.g., disable the maintenance mode run the following
 command:
 
 ....
-sudo -u www-data php occ config:system:set maintenance --value=false
+sudo -u www-data php occ config:system:set maintenance \
+   --value=false \
    --type=boolean
 ownCloud is in maintenance mode - no app have been loaded
 System config value maintenance set to boolean false
@@ -377,11 +382,15 @@ System config value maintenance set to boolean false
 === Setting an Array of Configuration Values
 
 Some configurations (e.g., the trusted domain setting) are an array of
-data. In order to set (and also get) the value of one key, you can
-specify multiple `config` names separated by spaces:
+data. The array starts counting with 0. In order to set (and also get) 
+the value of one key, you can specify multiple `config` names separated 
+by spaces:
 
 ....
-sudo -u www-data php occ config:system:get trusted_domains localhost owncloud.local sample.tld
+sudo -u www-data php occ config:system:get trusted_domains
+localhost
+owncloud.local
+sample.tld
 ....
 
 To replace `sample.tld` with `example.com` trusted_domains => 2 needs to
@@ -391,7 +400,10 @@ be set:
 sudo -u www-data php occ config:system:set trusted_domains 2 --value=example.com
 System config value trusted_domains => 2 set to string example.com
 
-sudo -u www-data php occ config:system:get trusted_domains localhost owncloud.local example.com
+sudo -u www-data php occ config:system:get trusted_domains
+localhost
+owncloud.local
+example.com
 ....
 
 [[deleting-a-single-configuration-value]]
@@ -600,9 +612,21 @@ first put your ownCloud server into
 single-user mode <maintenance_commands> to prevent any user
 activity until decryption is completed.
 
-- `-m` stands for the method. Method accepts the arguments `recovery` or `password`. If the _recovery_ method is chosen then the recovery password will be used to decrypt files. If the _password_ method is chosen then individual user passwords will be used to decrypt files.
+Arguments
 
-- `-c` accepts `yes` or `no`. This lets the command know whether to ask for permission to continue or not.
+[width="100%",cols="20%,70%",]
+|===
+| `-m=[METHOD]` | Accepts the methods: + 
+`recovery` or `password` +
+
+If the _recovery_ method is chosen, then the recovery password will be used to decrypt files. +
+If the _password_ method is chosen, then individual user passwords will be used to decrypt files.
+| `-c=[COMMAND]` | Accepts  the commands: +
+`yes` or `no` +
+
+This lets the command know whether to ask for permission to 
+continue or not.
+|===
 
 === Method Descriptions
 
@@ -694,7 +718,7 @@ Below is sample output that you can expect to see when using the
 command.
 
 ....
-./occ files:checksums:verify
+sudo -u www-data php occ files:checksums:verify
 This operation might take very long.
 Mismatch for files/welcome.txt:
  Filecache:   SHA1:eeb2c08011374d8ad4e483a4938e1aa1007c089d MD5:368e3a6cb99f88c3543123931d786e21 ADLER32:c5ad3a63
@@ -726,26 +750,29 @@ File scans can be performed per-user, for a space-delimited list of users, for g
 sudo -u www-data php occ files:scan --help
  Usage:
    files:scan [options] [--] [<user_id>]...
-
- Arguments:
-   user_id                Will rescan all files of the given user(s)
-
- Options:
-       --output[=OUTPUT]  Output format (plain, json or json_pretty, default is plain) [default: "plain"]
-   -p, --path=PATH        Limit rescan to this path, eg. --path="/alice/files/Music", the user_id is determined by the path and the user_id parameter and --all are ignored
-   -g, --groups=GROUPS    Scan user(s) under the group(s). This option can be used as --groups=foo,bar to scan groups foo and bar
-   -q, --quiet            Do not output any message
-       --all              Will rescan all files of all known users
-       --repair           Will repair detached filecache entries (slow)
-       --unscanned        Only scan files which are marked as not fully scanned
-   -h, --help             Display this help message
-   -V, --version          Display this application version
-       --ansi             Force ANSI output
-       --no-ansi          Disable ANSI output
-   -n, --no-interaction   Do not ask any interactive question
-       --no-warnings      Skip global warnings, show command output only
-   -v|vv|vvv, --verbose   Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug
 ....
+
+Arguments
+
+[width="100%",cols="20%,70%",]
+|===
+| `user_id` | Will rescan all files of the given user(s).
+|===
+
+Options:
+
+[width="100%",cols="20%,70%",]
+|===
+| `--output=[OUTPUT]`    | The output format to use (`plain`, `json` or `json_pretty`, default is `plain`).
+| `-p --path=[PATH]`     | Limit rescan to this path, eg. --path="/alice/files/Music", 
+the user_id is determined by the path and the user_id parameter and --all are ignored.
+| `-g --groups=[GROUPS]` | Scan user(s) under the group(s). 
+This option can be used as --groups=foo,bar to scan groups foo and bar.
+| `-q --quiet`           | Do not output any message.
+| `--all`                | Show both system-wide mounts and all personal mounts.
+| `--repair`             | Will repair detached filecache entries (slow).
+| `--unscanned`          | Only scan files which are marked as not fully scanned.
+|===
 
 TIP: If not using `--quiet`, statistics will be shown at the end of the scan.
 
@@ -898,19 +925,20 @@ files_external:list [--show-password] [--full] [-a|--all] [--] [<user_id>]
 
 ==== Arguments
 
-[width="100%",cols="18%,70%",]
+[width="100%",cols="20%,70%",]
 |===
 | `user_id` | User ID to list the personal mounts for, if no user is provided admin mounts will be listed.
 |===
 
 Options:
 
-[width="100%",cols="18%,70%",]
+[width="100%",cols="20%,70%",]
 |===
-| `--show-password` | User to add the mount configurations for, if not set the mount will be added as system mount.
-| `--full`          | Don't save the imported mounts, only list the new mounts.
-| `-a, --all`       | Show both system-wide mounts and all personal mounts.
-| `--output`        | The output format to use (`plain`, `json` or `json_pretty`, default is `plain`).
+| `--show-password`   | User to add the mount configurations for, if not set the mount will 
+be added as system mount.
+| `--full`            | Don't save the imported mounts, only list the new mounts.
+| `-a, --all`         | Show both system-wide mounts and all personal mounts.
+| `--output=[OUTPUT]` | The output format to use (`plain`, `json` or `json_pretty`, default is `plain`).
 |===
 
 ==== Example
@@ -941,7 +969,7 @@ files_external:applicable
 
 ==== Arguments
 
-[width="100%",cols="18%,70%",]
+[width="100%",cols="20%,70%",]
 |===
 | `mount_id` | Can be obtained using `occ files_external:list`.
 |===
@@ -949,14 +977,14 @@ files_external:applicable
 
 Options:
 
-[width="100%",cols="18%,70%",]
+[width="100%",cols="20%,70%",]
 |===
-| `--add-user`    | user to add as applicable (multiple values allowed)
-| `--remove-user` | user to remove as applicable (multiple values allowed)
-| `--add-group`   | group to add as applicable (multiple values allowed)
-| `--remove-group`| group to remove as applicable (multiple values allowed)
-| `--remove-all`  | Set the mount to be globally applicable
-| `--output`      | The output format to use (plain, json or json_pretty, default is plain).
+| `--add-user`        | user to add as applicable (multiple values allowed).
+| `--remove-user`     | user to remove as applicable (multiple values allowed).
+| `--add-group`       | group to add as applicable (multiple values allowed).
+| `--remove-group`    | group to remove as applicable (multiple values allowed).
+| `--remove-all`      | Set the mount to be globally applicable.
+| `--output=[OUTPUT]` | The output format to use (plain, json or json_pretty, default is plain).
 |===
 
 === files_external:backends
@@ -975,7 +1003,7 @@ files_external:backends [options]
 
 ==== Arguments
 
-[width="100%",cols="18%,70%",]
+[width="100%",cols="20%,70%",]
 |===
 | `type`    | Only show backends of a certain type. Possible values are `authentication` or `storage`.
 | `backend` | Only show information of a specific backend.
@@ -983,9 +1011,9 @@ files_external:backends [options]
 
 Options:
 
-[width="100%",cols="18%,70%",]
+[width="100%",cols="20%,70%",]
 |===
-| `--output` | The output format to use (plain, json or json_pretty, default is plain.
+| `--output=[OUTPUT]` | The output format to use (plain, json or json_pretty, default is plain.
 |===
 
 === files_external:config
@@ -1005,7 +1033,7 @@ files_external:config [options]
 
 ==== Arguments
 
-[width="100%",cols="18%,70%",]
+[width="100%",cols="20%,70%",]
 |===
 | `mount_id` | The ID of the mount to edit.
 | `key`      | Key of the config option to set/get.
@@ -1015,9 +1043,9 @@ existing value will be printed.
 
 Options:
 
-[width="100%",cols="18%,70%",]
+[width="100%",cols="20%,70%",]
 |===
-| `--output` | The output format to use (_plain_, _json_ or _json_pretty_. The default is plain).
+| `--output=[OUTPUT]` | The output format to use (_plain_, _json_ or _json_pretty_. The default is plain).
 |===
 
 === files_external:create
@@ -1037,7 +1065,7 @@ files_external:create [options]
 
 ==== Arguments
 
-[width="100%",cols="18%,70%",]
+[width="100%",cols="20%,70%",]
 |===
 | `mount_point`            | Mount point for the new mount.
 | `storage_backend`        | Storage backend identifier for the new mount, see 
@@ -1048,13 +1076,13 @@ files_external:create [options]
 
 ==== Options
 
-[width="100%",cols="18%,70%",]
+[width="100%",cols="20%,70%",]
 |===
-| `--user[=USER]`         | User to add the mount configurations for, 
+| `--user=[USER]`         | User to add the mount configurations for, 
 if not set the mount will be added as system mount.
-| ``-c, --config=CONFIG`` | Mount configuration option in ``key=value`` format (multiple values allowed).
+| `-c, --config=[CONFIG]` | Mount configuration option in ``key=value`` format (multiple values allowed).
 | `--dry`                 | Don't save the imported mounts, only list the new mounts.
-| `--output`              | The output format to use (`plain`, `json` or `json`pretty`). 
+| `--output=[OUTPUT]`     | The output format to use (`plain`, `json` or `json`pretty`). 
 The default is `plain`.
 |===
 
@@ -1117,17 +1145,17 @@ files_external:delete [options] [--] <mount_id>
 
 ==== Arguments
 
-[width="100%",cols="18%,70%",]
+[width="100%",cols="20%,70%",]
 |===
 | `mount_id` | The ID of the mount to edit.
 |===
 
 Options:
 
-[width="100%",cols="18%,70%",]
+[width="100%",cols="20%,70%",]
 |===
-| `-y, --yes` | Skip confirmation.
-| `--output`  | The output format to use (plain, json or json_pretty, default is plain).
+| `-y, --yes`         | Skip confirmation.
+| `--output=[OUTPUT]` | The output format to use (plain, json or json_pretty, default is plain).
 |===
 
 === files_external:export
@@ -1141,7 +1169,7 @@ files_external:export [options] [--] [<user_id>]
 
 ==== Arguments
 
-[width="100%",cols="18%,70%",]
+[width="100%",cols="20%,70%",]
 |===
 | `user_id` | User ID to export the personal mounts for, if no user is provided admin 
 mounts will be exported.
@@ -1149,7 +1177,7 @@ mounts will be exported.
 
 ==== Options
 
-[width="100%",cols="18%,70%",]
+[width="100%",cols="20%,70%",]
 |===
 | `-a, --all` | Show both system wide mounts and all personal mounts.
 |===
@@ -1167,19 +1195,19 @@ files_external:import [options] [--] <path>
 
 ==== Arguments
 
-[width="100%",cols="18%,70%",]
+[width="100%",cols="20%,70%",]
 |===
 | `path` | Path to a json file containing the mounts to import, use `-` to read from stdin.
 |===
 
 ==== Options
 
-[width="100%",cols="18%,70%",]
+[width="100%",cols="20%,70%",]
 |===
-| `--user[=USER]` | User to add the mount configurations for, if not set the mount will be 
+| `--user=[USER]`     | User to add the mount configurations for, if not set the mount will be 
 added as system mount.
-| `--dry`         | Don't save the imported mounts, only list the new mounts.
-| `--output`      | The output format to use (_plain_, _json_ or _json_pretty_, default is _plain_).
+| `--dry`             | Don't save the imported mounts, only list the new mounts.
+| `--output=[OUTPUT]` | The output format to use (_plain_, _json_ or _json_pretty_, default is _plain_).
 |===
 
 === files_external:option
@@ -1195,7 +1223,7 @@ files_external:option <mount_id> <key> [<value>]
 
 ==== Arguments
 
-[width="100%",cols="18%,70%",]
+[width="100%",cols="20%,70%",]
 |===
 | `mount_id` | The ID of the mount to edit.
 | `key`      | Key of the mount option to set/get.
@@ -1216,17 +1244,18 @@ files_external:verify [options] [--] <mount_id>
 
 ==== Arguments
 
-[width="100%",cols="18%,70%",]
+[width="100%",cols="20%,70%",]
 |===
 | `mount_id` | The ID of the mount to check.
 |===
 
 ==== Options
 
-[width="100%",cols="18%,70%",]
+[width="100%",cols="20%,70%",]
 |===
-| `-c, --config=CONFIG` | Additional config option to set before checking in `key=value` pairs, required for certain auth backends such as login credentials (multiple values allowed).
-| `--output`            | The output format to use (_plain_, _json_ or _json_pretty_, default is plain).
+| `-c, --config=[CONFIG]` | Additional config option to set before checking in `key=value` pairs, 
+required for certain auth backends such as login credentials (multiple values allowed).
+| `--output=[OUTPUT]`     | The output format to use (_plain_, _json_ or _json_pretty_, default is plain).
 |===
 
 === files_external:create
@@ -1241,12 +1270,11 @@ files_external:create [options] [--] <mount_point> <storage_backend> <authentica
 
 ==== Arguments
 
-[width="100%",cols="18%,70%",]
+[width="100%",cols="20%,70%",]
 |===
-|Argument               | Description
-|mount point            | Path of the mount point within the file system
-|storage_backend        | Storage backend identifier
-|authentication_backend | Authentication backend authentifier
+|mount point            | Path of the mount point within the file system.
+|storage_backend        | Storage backend identifier.
+|authentication_backend | Authentication backend authentifier.
 |===
 
 ==== Storage Backend Details
@@ -1347,9 +1375,9 @@ groups are listed.
 
 Options
 
-[width="100%",cols="18%,50%",]
+[width="100%",cols="20%,50%",]
 |====
-|`--output[=OUTPUT]`  | Output format (plain, json or json_pretty, default is plain) [default: "plain"]
+|`--output=[OUTPUT]` | Output format (plain, json or json_pretty, default is plain) [default: "plain"].
 |====
 
 This example lists groups containing the string "finance".
@@ -1385,9 +1413,9 @@ group:list-members [options] <group>
 
 Options
 
-[width="100%",cols="18%,50%",]
+[width="100%",cols="20%,50%",]
 |====
-|`--output[=OUTPUT]`  | Output format (plain, json or json_pretty, default is plain) [default: "plain"]
+|`--output=[OUTPUT]` | Output format (plain, json or json_pretty, default is plain) [default: "plain"].
 |====
 
 This example lists members of the "Finance" group.
@@ -1498,7 +1526,10 @@ integrity
 After creating your signing key, sign your app like this example:
 
 ....
-sudo -u www-data php occ integrity:sign-app --privateKey=/Users/karlmay/contacts.key --certificate=/Users/karlmay/CA/contacts.crt --path=/Users/karlmay/Programming/contacts
+sudo -u www-data php occ integrity:sign-app \
+   --privateKey=/Users/karlmay/contacts.key \
+   --certificate=/Users/karlmay/CA/contacts.crt \
+   --path=/Users/karlmay/Programming/contacts
 ....
 
 Verify your app:
@@ -1607,11 +1638,11 @@ Rotate at: disabled
 
 Options
 
-[width="100%",cols="18%,50%",]
+[width="100%",cols="20%,50%",]
 |====
-|`--enable`                  | Enable this logging backend
-|`--file=FILE`               | Set the log file path
-|`--rotate-size=ROTATE-SIZE` | Set the file size for log rotation, 0 = disabled
+|`--enable`                    | Enable this logging backend.
+|`--file=[FILE]`               | Set the log file path.
+|`--rotate-size=[ROTATE-SIZE]` | Set the file size for log rotation, 0 = disabled.
 |====
 
 Use the `--enable` option to turn on logging. Use `--file` to set a
@@ -1624,10 +1655,11 @@ The defaults are `owncloud`, `Warning`, and `UTC`.
 
 Options for `log:manage`:
 
-....
---backend=BACKEND    set the logging backend [owncloud, syslog, errorlog]
---level=LEVEL        set the log level [debug, info, warning, error, fatal]
-....
+[width="100%",cols="20%,50%",]
+|====
+|`--backend=[BACKEND]` | Set the logging backend [owncloud, syslog, errorlog].
+|`--level=[LEVEL]`     | Set the log level [debug, info, warning, error, fatal].
+|====
 
 Log level can be adjusted by entering the number or the name:
 
@@ -1737,15 +1769,13 @@ Alternatively, you could generate the report and email it all in one
 command, by running:
 
 ....
-sudo -u www-data occ configreport:generate | mail -s "configuration report" \
+sudo -u www-data occ configreport:generate | mail \
+    -s "configuration report" \
     -r <the email address to send from> \
     support@owncloud.com
 ....
 
-________________________________________________________________________________________________
-These commands are not available in
-single-user (maintenance) mode <maintenance_commands_label>.
-________________________________________________________________________________________________
+NOTE: These commands are not available in single-user (maintenance) mode <maintenance_commands_label>.
 
 [[security]]
 Security
@@ -1763,10 +1793,10 @@ security:routes [options]
 
 Options:
 
-[width="100%",cols="18%,70%",]
+[width="100%",cols="20%,70%",]
 |====
-|`--output`      | Output format (plain, json or json-pretty, default is plain)
-|`--with-details` | Adds more details to the output
+|`--output=[OUTPUT]` | Output format (plain, json or json-pretty, default is plain).
+|`--with-details`    | Adds more details to the output.
 |====
 
 Example 1:
@@ -1964,7 +1994,7 @@ in your ownCloud Web UI
 * *email address*
 * *group*
 * *login name*
-* *password*
+* *password*  (cannot be "0")
 
 The command's syntax is:
 
@@ -1977,8 +2007,10 @@ This example adds new user Layla Smith, and adds her to the *users* and
 *db-admins* groups. Any groups that do not exist are created.
 
 ....
-sudo -u www-data php occ user:add --display-name="Layla Smith" \
-  --group="users" --group="db-admins" --email=layla.smith@example.com layla
+sudo -u www-data php occ user:add \
+  --display-name="Layla Smith" \
+  --group="users" --group="db-admins" \
+  --email=layla.smith@example.com layla
   Enter password:
   Confirm password:
   The user "layla" was created successfully
@@ -2110,10 +2142,10 @@ users are listed.
 
 Options:
 
-[width="100%",cols="18%,40%",]
+[width="100%",cols="20%,40%",]
 |====
-|`--output[=OUTPUT]`             | Output format (plain, json or json-pretty, default is plain)
-|`-a, --attributes[=ATTRIBUTES]` |Adds more details to the output.
+|`--output=[OUTPUT]`             | Output format (plain, json or json-pretty, default is plain).
+|`-a, --attributes=[ATTRIBUTES]` | Adds more details to the output.
 |====
 
 Allowed attributes, multiple values possible
@@ -2213,11 +2245,11 @@ Usage:
 
 Arguments
 
-[width="100%",cols="18%,70%",]
+[width="100%",cols="20%,70%",]
 |====
-|`uid` | User ID used to login
-|`app` | Restrict the settings to a given app [default: ""]
-|`key` | Setting key to set, get or delete [default: ""]
+|`uid` | User ID used to login.
+|`app` | Restrict the settings to a given app [default: ""].
+|`key` | Setting key to set, get or delete [default: ""].
 |====
 
 ....
@@ -2228,12 +2260,15 @@ If you're new to the `user:setting` command, the descriptions for the
 `app` and `key` arguments may not be completely transparent. So, here's
 a lengthier description of both.
 
-[width="100%",cols="18%,70%",options="header",]
+[width="100%",cols="20%,70%",options="header",]
 |====
-|Argument |Description
-|`app` |When an value is supplied, `user:setting` limits the settings displayed, 
-to those for that, specific, application — assuming that the application is installed, and that there are settings available for it. Some example applications are "core", "files_trashbin", and "user_ldap". A complete list, unfortunately, cannot be supplied, as it is impossible to know the entire list of applications which a user could, potentially, install.
-|`key` |This value specifies the setting key to be manipulated (set, retrieved, 
+|Argument | Description
+|`app` | When an value is supplied, `user:setting` limits the settings displayed, 
+to those for that, specific, application - assuming that the application is installed, 
+and that there are settings available for it. Some example applications are "core", 
+"files_trashbin", and "user_ldap". A complete list, unfortunately, cannot be supplied, 
+as it is impossible to know the entire list of applications which a user could, potentially, install.
+|`key` | This value specifies the setting key to be manipulated (set, retrieved, 
 or deleted) by the `user:setting` command.
 |====
 
@@ -2316,12 +2351,16 @@ This command modifies either the users username or email address.
 [source,console]
 ----
 user:modify [options] [--] <uid> <key> <value>
-
-Arguments:
-  uid      User ID used to login
-  key      Key to be changed. Valid keys are: displayname, email
-  value    The new value of the key
 ----
+
+Arguments
+
+[width="100%",cols="20%,70%",]
+|====
+|`uid`   | User ID used to login.
+|`key`   | Key to be changed. Valid keys are: displayname, email.
+|`value` | The new value of the key.
+|====
 
 All three arguments are mandatory and can not be empty.
 
@@ -2371,41 +2410,34 @@ NOTE: This command replaces the old `show-remnants` functionality, and brings th
 
 ....
 user:sync [options] [--] [<backend-class>]
+....
+
+Synchronize users from a given backend to the accounts table.
 
 Arguments:
-  backend-class                                  The quoted PHP class name for the backend, e.g.,
-                                                  - LDAP:        "OCA\User_LDAP\User_Proxy"
-                                                  - Samba:       "OCA\User\SMB"
-                                                  - Shibboleth:  "OCA\User_Shibboleth\UserBackend"
+
+[width="80%",cols="40%,60%",]
+|===
+|`backend-class` | The quoted PHP class name for the backend, e.g., +
+- LDAP:        "OCA\User_LDAP\User_Proxy" +
+- Samba:       "OCA\User\SMB" +
+- Shibboleth:  "OCA\User_Shibboleth\UserBackend" +
+|===
 
 Options:
-  -l, --list                                           List all enabled backend classes
-  -u, --uid=UID                                        Sync only the user with the given user id
-  -s, --seenOnly                                       Sync only seen users
-  -c, --showCount                                      Calculate user count before syncing
-  -m, --missing-account-action=MISSING-ACCOUNT-ACTION  Action to take if the account isn't
-                                                       connected to a backend any longer.
-                                                       Options are `disable` and `remove`.
-                                                       Note that removing the account will
-                                                       also remove the stored data and files
-                                                       for that account.
-  -r, --re-enable                                      When syncing multiple accounts re-enable
-                                                       accounts that are disabled in ownCloud
-                                                       but available in the synced backend.
-  -h, --help                                           Display this help message
-  -q, --quiet                                          Do not output any message
-  -V, --version                                        Display this application version
-      --ansi                                           Force ANSI output
-      --no-ansi                                        Disable ANSI output
-  -n, --no-interaction                                 Do not ask any interactive question
-      --no-warnings                                    Skip global warnings, show command output only
-  -v|vv|vvv, --verbose                                 Increase the verbosity of messages: 1
-                                                       for normal output, 2 for more verbose
-                                                       output and 3 for debug
 
-Help:
-  Synchronize users from a given backend to the accounts table.
-....
+[width="80%",cols="40%,60%",]
+|===
+|`-l, --list`      | List all enabled backend classes.
+|`-u, --uid=[UID]` | Sync only the user with the given user id.
+|`-s, --seenOnly`  | Sync only seen users.
+|`-c, --showCount` | Calculate user count before syncing.
+|`-m, --missing-account-action[=MISSING-ACCOUNT-ACTION]` | Action to take if the account isn't
+connected to a backend any longer. Options are `disable` and `remove`.
+Note that removing the account will also remove the stored data and files for that account
+|`-r, --re-enable` | When syncing multiple accounts re-enable accounts that are disabled in ownCloud
+but available in the synced backend.
+|===
 
 Below are examples of how to use the command with an _LDAP_, _Samba_,
 and _Shibboleth_ backend.
@@ -2621,44 +2653,48 @@ Usage:
 
 [source,console]
 ----
-maintenance:install [--database="..."] [--database-name="..."]
+maintenance:install [--database="..."] [--database-name="..."] \
                     [–database-host=``…''] [–database-user=``…''] 
-                    [–database-pass[=``…'']] [–database-table-prefix[=``…'']] 
+                    [–database-pass[=``…'']] [–database-table-prefix[=``…'']] \
                     [–admin-user=``…''] [–admin-pass=``…''] [–data-dir=``…'']
 ----
 Options 
 
-[width="100%",cols="18%,70%",]
+[width="100%",cols="20%,70%",]
 |===
-|–database               | Supported database type (default: `sqlite`)
-|–database-name          | Name of the database
-|–database-host          | Hostname of the database (default: `localhost`)
-|–database-user          | User name to connect to the database
-|–database-pass          | Password of the database user
-|–database-table-prefix  | Prefix for all tables (default: link:[oc])
-|–admin-user             | Password of the admin account
-|–data-dir               | Path to data directory (default: `/var/www/owncloud/data`)
+|–database               | Supported database type (default: `sqlite`).
+|–database-name          | Name of the database.
+|–database-host          | Hostname of the database (default: `localhost`).
+|–database-user          | User name to connect to the database.
+|–database-pass          | Password of the database user.
+|–database-table-prefix  | Prefix for all tables (default: link:[oc]).
+|–admin-user             | Password of the admin account.
+|–data-dir               | Path to data directory (default: `/var/www/owncloud/data`).
 |===
 
 This example completes the installation:
 
 ....
 cd /var/www/owncloud/
-sudo -u www-data php occ maintenance:install --database
-"mysql" --database-name "owncloud"  --database-user "root" --database-pass
-"password" --admin-user "admin" --admin-pass "password"
+sudo -u www-data php occ maintenance:install --database "mysql" \
+   --database-name "owncloud"  \
+   --database-user "root" \
+   --database-pass "password" \
+   --admin-user "admin" \
+   --admin-pass "password"
 ownCloud is not installed - only a limited number of commands are available
 ownCloud was successfully installed
 ....
 
 Supported databases are:
 
-....
-- sqlite (SQLite3 - ownCloud Community edition only)
-- mysql (MySQL/MariaDB)
-- pgsql (PostgreSQL)
-- oci (Oracle - ownCloud Enterprise edition only)
-....
+[width="100%",cols="20%,70%",]
+|===
+|`sqlite` | SQLite3 - ownCloud Community edition only)
+|`mysql`  | MySQL/MariaDB
+|`pgsql`  | PostgreSQL
+|`oci`    | Oracle - ownCloud Enterprise edition only
+|===
 
 [[command-line-upgrade]]
 Command Line Upgrade
@@ -2680,9 +2716,9 @@ upgrade [options]
 
 Options
 
-[width="100%",cols="18%,70%",]
+[width="100%",cols="20%,70%",]
 |===
-|--no-app-disable  | Skips the disable of third party apps
+|--no-app-disable  | Skips the disable of third party apps.
 |===
 
 When you are performing an update or upgrade on your ownCloud server
@@ -2770,9 +2806,10 @@ sudo -u www-data php occ user:inactive 5
 
 Options
 
-....
---output[=OUTPUT] Output format (plain, json or json_pretty, default is plain) [default: "plain"]
-....
+[width="100%",cols="20%,70%",]
+|===
+|`--output=[OUTPUT]`  | Output format (plain, json or json_pretty, default is plain) [default: "plain"].
+|===
 
 By default, this will generate output in the following format:
 
@@ -2809,3 +2846,48 @@ as follows.
     }
 ]
 ----
+
+[[notifications]]
+Notifications
+-------------
+
+If you want to send notifications to users or groups use the following command.
+
+[source,sourceCode,console]
+----
+notifications
+  notifications:generate   Generates a notification.
+----
+
+Options and Arguments:
+
+....
+notifications:generate [-u|--user USER] [-g|--group GROUP] [-l|--link <linktext>] [--] <subject> [<message>]
+....
+
+Options:
+
+[width="100%",cols="20%,70%",]
+|===
+|`-u --user`  | User id to whom the notification shall be sent.
+|`-g --group` | Group id to whom the notification shall be sent.
+|`-l --link`  | A link associated with the notification.
+|===
+
+Arguments:
+
+[width="100%",cols="20%,70%",]
+|===
+|`subject`  | The notification subject - maximum 255 characters.
+|`message`  | A more extended message - maximum 4000 characters.
+|`linktext` | A link to an HTML page.
+|===
+
+At least one user or group must be set.
+A link can be useful for notifications shown in client apps.
+Example:
+
+....
+sudo -u www-data php occ notifications:generate -g Office "Emergeny Alert" "Rebooting in 5min"
+....
+
