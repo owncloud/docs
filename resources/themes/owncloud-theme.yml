@@ -24,7 +24,7 @@ font:
 page:
   background_color: ffffff
   layout: portrait
-  margin: [0.5in, 0.67in, 0.67in, 0.67in]
+  margin: [0.5in, 0.9in, 0.5in, 0.9in]
   # margin_inner and margin_outer keys are used for recto/verso print margins when media=press
   margin_inner: 0.75in
   margin_outer: 0.59in
@@ -34,8 +34,9 @@ base:
   font_color: 000000
   font_family: Times-Roman
   font_size: 10.5
-  line_height_length: 12
-  line_height: $base_line_height_length / $base_font_size
+  line_height_length: 11
+  #line_height: $base_line_height_length / $base_font_size
+  line_height: 1 
   font_size_large: round($base_font_size * 1.25)
   font_size_small: round($base_font_size * 0.85)
   font_size_min: $base_font_size * 0.75
@@ -64,10 +65,13 @@ heading:
   font_family: Helvetica
   font_style: bold
   # h1 is used for part titles (book doctype only)
-  h1_font_size: floor($base_font_size * 2.6)
+  h1:
+      page_break_after: always
+      page_break_before: auto
+      font_size: floor($base_font_size * 1.7)
   # h2 is used for chapter titles (book doctype only)
-  h2_font_size: floor($base_font_size * 2.15)
-  h3_font_size: round($base_font_size * 1.7)
+  h2_font_size: floor($base_font_size * 1.5)
+  h3_font_size: round($base_font_size * 1.3)
   h4_font_size: $base_font_size_large
   h5_font_size: $base_font_size
   h6_font_size: $base_font_size_small
@@ -82,13 +86,13 @@ title_page:
     top: 10%
   title:
     top: 55%
-    font_size: $heading_h1_font_size
+    font_size: floor($base_font_size * 2.14)
     font_color: 000000
     font_family: $heading_font_family
     font_style: bold
     line_height: 0.9
   subtitle:
-    font_size: $heading_h3_font_size
+    font_size: floor($base_font_size * 1.7)
     font_style: bold_italic
     font_family: $heading_font_family
     line_height: 1
@@ -140,11 +144,11 @@ blockquote:
 code:
   font_color: $base_font_color
   font_family: $literal_font_family
-  font_size: ceil($base_font_size)
+  font_size: $base_font_size
   padding: $code_font_size
   line_height: 1.25
-  background_color: f5f5f5
-  border_color: e4e4e4
+  background_color: f7f7f7
+  border_color: efefef
   border_radius: $base_border_radius
   border_width: 0.75
 conum:
@@ -201,7 +205,7 @@ table:
   border_color: dddddd
   border_width: $base_border_width
   # HACK accounting for line-height
-  cell_padding: [3, 3, 6, 3]
+  cell_padding: [3, 3, 3, 3]
 toc:
   dot_leader_color: dddddd
   indent: $horizontal_rhythm
@@ -216,7 +220,7 @@ footer:
   border_width: 0.25
   height: $base_line_height_length * 2.5
   line_height: 1
-  padding: [$base_line_height_length / 2, 1, 0, 1]
+  padding: [$base_line_height_length / 2, 2, 1, 2]
   vertical_align: top
   #image_vertical_align: <alignment> or <number>
   # additional attributes for content:
@@ -230,16 +234,37 @@ footer:
   recto:
     #columns: "<50%,0%,>50%"
     right:
-      content: '{page-number}'
-      #content: '{section-or-chapter-title} | {page-number}'
+      #content: '{page-number}'
+      content: '{section-or-chapter-title} | {page-number}'
       #content: '{document-title} | {page-number}'
     #center:
     #  content: '{page-number}'
   verso:
     #columns: "<50%,0%,>50%"
     left:
-      content: '{page-number}'
+      #content: '{page-number}'
+      content: '{section-or-chapter-title} | {page-number}'
       #content: '{page-number} | {chapter-title}'
     #center:
     #  content: '{page-number}'
-
+header:
+  font_size: $base_font_size_small
+  font_family: Helvetica
+  font_style: bold
+  border_color: 000000
+  border_width: 0.25
+  height: $base_line_height_length * 2.5
+  line_height: 1
+  padding: [$base_line_height_length / 2, 1, 2, 1]
+  vertical_align: bottom
+  recto:
+    right:
+      content: '{document-title}, {appversion}'
+      #content: '{page-number}'
+      #content: '{section-or-chapter-title} | {page-number}'
+      #content: '{document-title} | {page-number}'
+  verso:
+    left:
+      content: '{document-title}, {appversion}'
+      #content: '{page-number}'
+      #content: '{page-number} | {chapter-title}'
