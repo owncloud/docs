@@ -336,13 +336,12 @@ sudo -u www-data php occ config:app:get activity installed_version
 These commands set the value of a single app or system configuration:
 
 ....
-sudo -u www-data php occ config:system:set logtimezone --value="Europe/Berlin"
+sudo -u www-data php occ config:system:set logtimezone
+   --value="Europe/Berlin"
 System config value logtimezone set to Europe/Berlin
 
-sudo -u www-data php occ config:app:set files_sharing \
-   incoming_server2server_share_enabled \
-   --value=true \
-   --type=boolean 
+sudo -u www-data php occ config:app:set files_sharing
+incoming_server2server_share_enabled --value="yes" --type=boolean
 Config value incoming_server2server_share_enabled for app files_sharing set to yes
 ....
 
@@ -350,10 +349,8 @@ The `config:system:set` command creates the value, if it does not
 already exist. To update an existing value, set `--update-only`:
 
 ....
-sudo -u www-data php occ config:system:set doesnotexist \
-   --value=true \
-   --type=boolean \
-   --update-only
+sudo -u www-data php occ config:system:set doesnotexist --value="true"
+   --type=boolean --update-only
 Value not updated, as it has not been set before.
 ....
 
@@ -371,8 +368,7 @@ When you want to e.g., disable the maintenance mode run the following
 command:
 
 ....
-sudo -u www-data php occ config:system:set maintenance \
-   --value=false \
+sudo -u www-data php occ config:system:set maintenance --value=false
    --type=boolean
 ownCloud is in maintenance mode - no app have been loaded
 System config value maintenance set to boolean false
@@ -382,15 +378,11 @@ System config value maintenance set to boolean false
 === Setting an Array of Configuration Values
 
 Some configurations (e.g., the trusted domain setting) are an array of
-data. The array starts counting with 0. In order to set (and also get) 
-the value of one key, you can specify multiple `config` names separated 
-by spaces:
+data. In order to set (and also get) the value of one key, you can
+specify multiple `config` names separated by spaces:
 
 ....
-sudo -u www-data php occ config:system:get trusted_domains
-localhost
-owncloud.local
-sample.tld
+sudo -u www-data php occ config:system:get trusted_domains localhost owncloud.local sample.tld
 ....
 
 To replace `sample.tld` with `example.com` trusted_domains => 2 needs to
@@ -400,10 +392,7 @@ be set:
 sudo -u www-data php occ config:system:set trusted_domains 2 --value=example.com
 System config value trusted_domains => 2 set to string example.com
 
-sudo -u www-data php occ config:system:get trusted_domains
-localhost
-owncloud.local
-example.com
+sudo -u www-data php occ config:system:get trusted_domains localhost owncloud.local example.com
 ....
 
 [[deleting-a-single-configuration-value]]
@@ -817,7 +806,7 @@ if one or more files are known to be in need of repair. Two examples of
 when files need repairing are:
 
 * If folders have the same entry twice in the web UI (known as a
-``__ghost folder__"), this can also lead to strange error messages in
+``__ghost folder__''), this can also lead to strange error messages in
 the desktop client.
 * If entering a folder doesn't seem to lead into that folder.
 
@@ -925,20 +914,19 @@ files_external:list [--show-password] [--full] [-a|--all] [--] [<user_id>]
 
 ==== Arguments
 
-[width="100%",cols="20%,70%",]
+[width="100%",cols="18%,70%",]
 |===
 | `user_id` | User ID to list the personal mounts for, if no user is provided admin mounts will be listed.
 |===
 
 Options:
 
-[width="100%",cols="20%,70%",]
+[width="100%",cols="18%,70%",]
 |===
-| `--show-password`   | User to add the mount configurations for, if not set the mount will 
-be added as system mount.
-| `--full`            | Don't save the imported mounts, only list the new mounts.
-| `-a, --all`         | Show both system-wide mounts and all personal mounts.
-| `--output=[OUTPUT]` | The output format to use (`plain`, `json` or `json_pretty`, default is `plain`).
+| `--show-password` | User to add the mount configurations for, if not set the mount will be added as system mount.
+| `--full`          | Don't save the imported mounts, only list the new mounts.
+| `-a, --all`       | Show both system-wide mounts and all personal mounts.
+| `--output`        | The output format to use (`plain`, `json` or `json_pretty`, default is `plain`).
 |===
 
 ==== Example
@@ -969,7 +957,7 @@ files_external:applicable
 
 ==== Arguments
 
-[width="100%",cols="20%,70%",]
+[width="100%",cols="18%,70%",]
 |===
 | `mount_id` | Can be obtained using `occ files_external:list`.
 |===
@@ -977,14 +965,14 @@ files_external:applicable
 
 Options:
 
-[width="100%",cols="20%,70%",]
+[width="100%",cols="18%,70%",]
 |===
-| `--add-user`        | user to add as applicable (multiple values allowed).
-| `--remove-user`     | user to remove as applicable (multiple values allowed).
-| `--add-group`       | group to add as applicable (multiple values allowed).
-| `--remove-group`    | group to remove as applicable (multiple values allowed).
-| `--remove-all`      | Set the mount to be globally applicable.
-| `--output=[OUTPUT]` | The output format to use (plain, json or json_pretty, default is plain).
+| `--add-user`    | user to add as applicable (multiple values allowed)
+| `--remove-user` | user to remove as applicable (multiple values allowed)
+| `--add-group`   | group to add as applicable (multiple values allowed)
+| `--remove-group`| group to remove as applicable (multiple values allowed)
+| `--remove-all`  | Set the mount to be globally applicable
+| `--output`      | The output format to use (plain, json or json_pretty, default is plain).
 |===
 
 === files_external:backends
@@ -1003,7 +991,7 @@ files_external:backends [options]
 
 ==== Arguments
 
-[width="100%",cols="20%,70%",]
+[width="100%",cols="18%,70%",]
 |===
 | `type`    | Only show backends of a certain type. Possible values are `authentication` or `storage`.
 | `backend` | Only show information of a specific backend.
@@ -1011,9 +999,9 @@ files_external:backends [options]
 
 Options:
 
-[width="100%",cols="20%,70%",]
+[width="100%",cols="18%,70%",]
 |===
-| `--output=[OUTPUT]` | The output format to use (plain, json or json_pretty, default is plain.
+| `--output` | The output format to use (plain, json or json_pretty, default is plain.
 |===
 
 === files_external:config
@@ -1033,7 +1021,7 @@ files_external:config [options]
 
 ==== Arguments
 
-[width="100%",cols="20%,70%",]
+[width="100%",cols="18%,70%",]
 |===
 | `mount_id` | The ID of the mount to edit.
 | `key`      | Key of the config option to set/get.
@@ -1043,9 +1031,9 @@ existing value will be printed.
 
 Options:
 
-[width="100%",cols="20%,70%",]
+[width="100%",cols="18%,70%",]
 |===
-| `--output=[OUTPUT]` | The output format to use (_plain_, _json_ or _json_pretty_. The default is plain).
+| `--output` | The output format to use (_plain_, _json_ or _json_pretty_. The default is plain).
 |===
 
 === files_external:create
@@ -1065,7 +1053,7 @@ files_external:create [options]
 
 ==== Arguments
 
-[width="100%",cols="20%,70%",]
+[width="100%",cols="18%,70%",]
 |===
 | `mount_point`            | Mount point for the new mount.
 | `storage_backend`        | Storage backend identifier for the new mount, see
@@ -1076,13 +1064,13 @@ files_external:create [options]
 
 ==== Options
 
-[width="100%",cols="20%,70%",]
+[width="100%",cols="18%,70%",]
 |===
-| `--user[=USER]`         | User to add the mount configurations for, 
+| `--user[=USER]`         | User to add the mount configurations for,
 if not set the mount will be added as system mount.
-| `-c, --config=[CONFIG]` | Mount configuration option in ``key=value`` format (multiple values allowed).
+| ``-c, --config=CONFIG`` | Mount configuration option in ``key=value`` format (multiple values allowed).
 | `--dry`                 | Don't save the imported mounts, only list the new mounts.
-| `--output`              | The output format to use (`plain`, `json` or `json`pretty`). 
+| `--output`              | The output format to use (`plain`, `json` or `json`pretty`).
 The default is `plain`.
 |===
 
@@ -1145,17 +1133,17 @@ files_external:delete [options] [--] <mount_id>
 
 ==== Arguments
 
-[width="100%",cols="20%,70%",]
+[width="100%",cols="18%,70%",]
 |===
 | `mount_id` | The ID of the mount to edit.
 |===
 
 Options:
 
-[width="100%",cols="20%,70%",]
+[width="100%",cols="18%,70%",]
 |===
-| `-y, --yes`         | Skip confirmation.
-| `--output=[OUTPUT]` | The output format to use (plain, json or json_pretty, default is plain).
+| `-y, --yes` | Skip confirmation.
+| `--output`  | The output format to use (plain, json or json_pretty, default is plain).
 |===
 
 === files_external:export
@@ -1169,7 +1157,7 @@ files_external:export [options] [--] [<user_id>]
 
 ==== Arguments
 
-[width="100%",cols="20%,70%",]
+[width="100%",cols="18%,70%",]
 |===
 | `user_id` | User ID to export the personal mounts for, if no user is provided admin
 mounts will be exported.
@@ -1177,7 +1165,7 @@ mounts will be exported.
 
 ==== Options
 
-[width="100%",cols="20%,70%",]
+[width="100%",cols="18%,70%",]
 |===
 | `-a, --all` | Show both system wide mounts and all personal mounts.
 |===
@@ -1195,19 +1183,19 @@ files_external:import [options] [--] <path>
 
 ==== Arguments
 
-[width="100%",cols="20%,70%",]
+[width="100%",cols="18%,70%",]
 |===
 | `path` | Path to a json file containing the mounts to import, use `-` to read from stdin.
 |===
 
 ==== Options
 
-[width="100%",cols="20%,70%",]
+[width="100%",cols="18%,70%",]
 |===
-| `--user[=USER]` | User to add the mount configurations for, if not set the mount will be 
+| `--user[=USER]` | User to add the mount configurations for, if not set the mount will be
 added as system mount.
-| `--dry`             | Don't save the imported mounts, only list the new mounts.
-| `--output=[OUTPUT]` | The output format to use (_plain_, _json_ or _json_pretty_, default is _plain_).
+| `--dry`         | Don't save the imported mounts, only list the new mounts.
+| `--output`      | The output format to use (_plain_, _json_ or _json_pretty_, default is _plain_).
 |===
 
 === files_external:option
@@ -1223,7 +1211,7 @@ files_external:option <mount_id> <key> [<value>]
 
 ==== Arguments
 
-[width="100%",cols="20%,70%",]
+[width="100%",cols="18%,70%",]
 |===
 | `mount_id` | The ID of the mount to edit.
 | `key`      | Key of the mount option to set/get.
@@ -1244,18 +1232,17 @@ files_external:verify [options] [--] <mount_id>
 
 ==== Arguments
 
-[width="100%",cols="20%,70%",]
+[width="100%",cols="18%,70%",]
 |===
 | `mount_id` | The ID of the mount to check.
 |===
 
 ==== Options
 
-[width="100%",cols="20%,70%",]
+[width="100%",cols="18%,70%",]
 |===
-| `-c, --config=[CONFIG]` | Additional config option to set before checking in `key=value` pairs, 
-required for certain auth backends such as login credentials (multiple values allowed).
-| `--output=[OUTPUT]`     | The output format to use (_plain_, _json_ or _json_pretty_, default is plain).
+| `-c, --config=CONFIG` | Additional config option to set before checking in `key=value` pairs, required for certain auth backends such as login credentials (multiple values allowed).
+| `--output`            | The output format to use (_plain_, _json_ or _json_pretty_, default is plain).
 |===
 
 === files_external:create
@@ -1270,11 +1257,12 @@ files_external:create [options] [--] <mount_point> <storage_backend> <authentica
 
 ==== Arguments
 
-[width="100%",cols="20%,70%",]
+[width="100%",cols="18%,70%",]
 |===
-|mount point            | Path of the mount point within the file system.
-|storage_backend        | Storage backend identifier.
-|authentication_backend | Authentication backend authentifier.
+|Argument               | Description
+|mount point            | Path of the mount point within the file system
+|storage_backend        | Storage backend identifier
+|authentication_backend | Authentication backend authentifier
 |===
 
 ==== Storage Backend Details
@@ -1375,9 +1363,9 @@ groups are listed.
 
 Options
 
-[width="100%",cols="20%,50%",]
+[width="100%",cols="18%,50%",]
 |====
-|`--output=[OUTPUT]` | Output format (plain, json or json_pretty, default is plain) [default: "plain"].
+|`--output[=OUTPUT]`  | Output format (plain, json or json_pretty, default is plain) [default: "plain"]
 |====
 
 This example lists groups containing the string "finance".
@@ -2348,6 +2336,7 @@ This command modifies either the users username or email address.
 [source,console]
 ----
 user:modify [options] [--] <uid> <key> <value>
+
 ----
 
 Arguments
@@ -2358,7 +2347,6 @@ Arguments
 |`key`   | Key to be changed. Valid keys are: displayname, email.
 |`value` | The new value of the key.
 |====
-
 All three arguments are mandatory and can not be empty.
 
 Example to set the email address:
@@ -2412,7 +2400,6 @@ user:sync [options] [--] [<backend-class>]
 Synchronize users from a given backend to the accounts table.
 
 Arguments:
-
 [width="80%",cols="40%,60%",]
 |===
 |`backend-class` | The quoted PHP class name for the backend, e.g., +
