@@ -322,6 +322,54 @@ NOTE: While it is possible to update/set/delete the versions and installation st
 
 These commands get the value of a single app or system configuration:
 
+config:system:get
+~~~~~~~~~~~~~~~~~
+
+....
+sudo -u www-data php occ config:system:get [options] [--] <name> (<name>)...
+....
+
+==== Arguments
+
+[width="100%",cols="20%,70%",]
+|===
+| `name` | Name of the config to get. Specify multiple for array parameter.
+|===
+
+Options:
+
+[width="100%",cols="33%,70%",]
+|===
+| `--default-value[=DEFAULT-VALUE]` | If no default value is set and the config does not exist, 
+the command will exit with 1.
+| `--output=[OUTPUT]`               | The output format to use (`plain`, `json` or `json_pretty`, default is `plain`).
+|===
+
+config:app:get
+~~~~~~~~~~~~~~
+....
+sudo -u www-data php occ config:app:set [options] [--] <app> <name>
+....
+
+==== Arguments
+
+[width="100%",cols="20%,70%",]
+|===
+| `app`  |  Name of the app.
+| `name` |  Name of the config to get.
+|===
+
+Options:
+
+[width="100%",cols="33%,70%",]
+|===
+| `--default-value[=DEFAULT-VALUE]` | If no default value is set and the config does not exist, 
+the command will exit with 1.
+| `--output=[OUTPUT]` | The output format to use (`plain`, `json` or `json_pretty`, default is `plain`).
+|===
+
+Examples
+
 ....
 sudo -u www-data php occ config:system:get version
 10.0.8.5
@@ -333,13 +381,66 @@ sudo -u www-data php occ config:app:get activity installed_version
 [[setting-a-single-configuration-value]]
 === Setting a Single Configuration Value
 
-These commands set the value of a single app or system configuration:
+These commands set the value of a single app or system configuration.
+
+config:system:set
+~~~~~~~~~~~~~~~~~
 
 ....
-sudo -u www-data php occ config:system:set logtimezone --value="Europe/Berlin"
-System config value logtimezone set to Europe/Berlin
+sudo -u www-data php occ config:system:set [options] [--] <name> (<name>)...
+....
 
-sudo -u www-data php occ config:app:set files_sharing \
+==== Arguments
+
+[width="100%",cols="20%,70%",]
+|===
+| `name` |  Name of the config parameter, specify multiple for array parameter.
+|===
+
+Options:
+
+[width="100%",cols="20%,70%",]
+|===
+| `--type=[TYPE]`     | Value type [string, integer, double, boolean, json]. [default: "string"]. 
+| `--value=[VALUE]`   | The new value of the config.
+| `--update-only`    | Only updates the value, if it is not set before, it is not being added.
+| `--output=[OUTPUT]` | The output format to use (`plain`, `json` or `json_pretty`, default is `plain`).
+|===
+
+config:app:set
+~~~~~~~~~~~~~~
+....
+sudo -u www-data php occ config:app:set [options] [--] <app> <name>
+....
+
+==== Arguments
+
+[width="100%",cols="20%,70%",]
+|===
+| `app`  |  Name of the app.
+| `name` |  Name of the config to set.
+|===
+
+Options:
+
+[width="100%",cols="20%,70%",]
+|===
+| `--value=[VALUE]`   | The new value of the config.
+| `--update-only`    | Only updates the value, if it is not set before, it is not being added.
+| `--output=[OUTPUT]` | The output format to use (`plain`, `json` or `json_pretty`, default is `plain`).
+|===
+
+Examples
+
+....
+sudo -u www-data php occ config:system:set \
+   logtimezone \
+   --value="Europe/Berlin"
+System config value logtimezone set to Europe/Berlin
+....
+....
+sudo -u www-data php occ config:app:set \
+   files_sharing \
    incoming_server2server_share_enabled \
    --value=true \
    --type=boolean 
@@ -350,7 +451,8 @@ The `config:system:set` command creates the value, if it does not
 already exist. To update an existing value, set `--update-only`:
 
 ....
-sudo -u www-data php occ config:system:set doesnotexist \
+sudo -u www-data php occ config:system:set \
+   doesnotexist \
    --value=true \
    --type=boolean \
    --update-only
@@ -359,19 +461,14 @@ Value not updated, as it has not been set before.
 
 Note that in order to write a Boolean, float, or integer value to the
 configuration file, you need to specify the type on your command. This
-applies only to the `config:system:set` command. The following values
-are known:
-
-* `boolean`
-* `integer`
-* `float`
-* `string` (default)
+applies only to the `config:system:set` command.
 
 When you want to e.g., disable the maintenance mode run the following
 command:
 
 ....
-sudo -u www-data php occ config:system:set maintenance \
+sudo -u www-data php occ config:system:set \
+   maintenance \
    --value=false \
    --type=boolean
 ownCloud is in maintenance mode - no app have been loaded
@@ -409,15 +506,60 @@ example.com
 [[deleting-a-single-configuration-value]]
 === Deleting a Single Configuration Value
 
-These commands delete the configuration of an app or system
-configuration:
+These commands delete the configuration of an app or system configuration:
+
+config:system:delete
+~~~~~~~~~~~~~~~~~~~~
+
+....
+sudo -u www-data php occ config:system:delete [options] [--] <name> (<name>)...
+....
+
+==== Arguments
+
+[width="100%",cols="20%,70%",]
+|===
+| `name` |  Name of the config to delete, specify multiple for array parameter.
+|===
+
+Options:
+
+[width="100%",cols="20%,70%",]
+|===
+| `--error-if-not-exists` | Checks whether the config exists before deleting it.
+| `--output=[OUTPUT]`     | The output format to use (`plain`, `json` or `json_pretty`, default is `plain`).
+|===
+
+config:app:delete
+~~~~~~~~~~~~~~~~~
+....
+sudo -u www-data php occ config:app:delete [options] [--] <app> <name>
+....
+
+==== Arguments
+
+[width="100%",cols="20%,70%",]
+|===
+| `app`  |  Name of the app.
+| `name` |  Name of the config to delete.
+|===
+
+Options:
+
+[width="100%",cols="20%,70%",]
+|===
+| `--error-if-not-exists` | Checks whether the config exists before deleting it.
+| `--output=[OUTPUT]`     | The output format to use (`plain`, `json` or `json_pretty`, default is `plain`).
+|===
+
+Examples:
 
 ....
 sudo -u www-data php occ config:system:delete maintenance:mode
 System config value maintenance:mode deleted
 
-sudo -u www-data php occ config:app:delete appname provisioning_api
-Config value provisioning_api of app appname deleted
+sudo -u www-data php occ config:app:delete myappname provisioning_api
+Config value provisioning_api of app myappname deleted
 ....
 
 The delete command will by default not complain if the configuration was
@@ -2653,30 +2795,31 @@ Usage:
 
 [source,console]
 ----
-maintenance:install [--database="..."] [--database-name="..."] \
-                    [–database-host=``…''] [–database-user=``…''] 
-                    [–database-pass[=``…'']] [–database-table-prefix[=``…'']] \
-                    [–admin-user=``…''] [–admin-pass=``…''] [–data-dir=``…'']
+maintenance:install [--database=["..."]] [--database-name=["..."]] \
+                    [--database-host=["..."]] [--database-user=["..."]] \
+                    [--database-pass=["..."]] [--database-table-prefix=["..."]] \
+                    [--admin-user=["..."]] [--admin-pass=["..."]] [--data-dir=["..."]]
 ----
 Options 
 
-[width="100%",cols="20%,70%",]
+[width="100%",cols="22%,70%",]
 |===
-|–database               | Supported database type (default: `sqlite`).
-|–database-name          | Name of the database.
-|–database-host          | Hostname of the database (default: `localhost`).
-|–database-user          | User name to connect to the database.
-|–database-pass          | Password of the database user.
-|–database-table-prefix  | Prefix for all tables (default: link:[oc]).
-|–admin-user             | Password of the admin account.
-|–data-dir               | Path to data directory (default: `/var/www/owncloud/data`).
+|`--database`               | Supported database type (default: `sqlite`).
+|`--database-name`          | Name of the database.
+|`--database-host`          | Hostname of the database (default: `localhost`).
+|`--database-user`          | User name to connect to the database.
+|`--database-pass`          | Password of the database user.
+|`--database-table-prefix`  | Prefix for all tables (default: `oc_` ).
+|`--admin-user`             | Password of the admin account.
+|`--data-dir`               | Path to data directory (default: `/var/www/owncloud/data`).
 |===
 
 This example completes the installation:
 
 ....
 cd /var/www/owncloud/
-sudo -u www-data php occ maintenance:install --database "mysql" \
+sudo -u www-data php occ maintenance:install \
+   --database "mysql" \
    --database-name "owncloud"  \
    --database-user "root" \
    --database-pass "password" \
@@ -2690,10 +2833,10 @@ Supported databases are:
 
 [width="100%",cols="20%,70%",]
 |===
-|`sqlite` | SQLite3 - ownCloud Community edition only)
+|`sqlite` | SQLite3 (ownCloud Community edition only)
 |`mysql`  | MySQL/MariaDB
 |`pgsql`  | PostgreSQL
-|`oci`    | Oracle - ownCloud Enterprise edition only
+|`oci`    | Oracle (ownCloud Enterprise edition only
 |===
 
 [[command-line-upgrade]]
@@ -2705,20 +2848,16 @@ packages or tar archives, and before you complete the upgrade. List all
 options, like this example on CentOS Linux:
 
 ....
-sudo -u www-data php occ upgrade -h
+sudo -u www-data php occ upgrade --help
 Usage:
-....
-
-[source,console]
-----
 upgrade [options]
-----
+....
 
 Options
 
 [width="100%",cols="20%,70%",]
 |===
-|--no-app-disable  | Skips the disable of third party apps.
+|--no-app-disable  | Skip disabling of third party apps.
 |===
 
 When you are performing an update or upgrade on your ownCloud server
@@ -2797,12 +2936,18 @@ NOTE: Once users are disabled, their connected browsers will be disconnected.
 === Finding Inactive Users
 
 To view a list of users who've not logged in for a given number of days,
-use the `user:inactive` command The example below searches for users
-inactive for five days, or more.
+use the `user:inactive` command.
 
 ....
-sudo -u www-data php occ user:inactive 5
+sudo -u www-data php occ user:inactive [options] [--] <days>
 ....
+
+Arguments
+
+[width="100%",cols="20%,70%",]
+|===
+|`<days>`  | The number of days (integer) that the user has not logged in since.
+|===
 
 Options
 
@@ -2810,6 +2955,11 @@ Options
 |===
 |`--output=[OUTPUT]`  | Output format (plain, json or json_pretty, default is plain) [default: "plain"].
 |===
+
+The example below searches for users inactive for five days, or more.
+....
+sudo -u www-data php occ user:inactive 5
+....
 
 By default, this will generate output in the following format:
 
@@ -2820,7 +2970,7 @@ By default, this will generate output in the following format:
   - inactiveSinceDays: 5
 ....
 
-You can see the user's user id, display name, and the number of days
+You can see a counting number starting with `0`, the user's user id, display name, and the number of days
 they've been inactive. If you're passing or piping this information to
 another application for further processing, you can also use the
 `--output` switch to change its format.
@@ -2862,17 +3012,8 @@ notifications
 Options and Arguments:
 
 ....
-notifications:generate [-u|--user USER] [-g|--group GROUP] [-l|--link <linktext>] [--] <subject> [<message>]
+sudo -u www-data php occ notifications:generate [-u|--user USER] [-g|--group GROUP] [-l|--link <linktext>] [--] <subject> [<message>]
 ....
-
-Options:
-
-[width="100%",cols="20%,70%",]
-|===
-|`-u --user`  | User id to whom the notification shall be sent.
-|`-g --group` | Group id to whom the notification shall be sent.
-|`-l --link`  | A link associated with the notification.
-|===
 
 Arguments:
 
@@ -2881,6 +3022,15 @@ Arguments:
 |`subject`  | The notification subject - maximum 255 characters.
 |`message`  | A more extended message - maximum 4000 characters.
 |`linktext` | A link to an HTML page.
+|===
+
+Options:
+
+[width="100%",cols="20%,70%",]
+|===
+|`-u, --user=[USER]`   | User id to whom the notification shall be sent.
+|`-g, --group=[GROUP]` | Group id to whom the notification shall be sent.
+|`-l, --link`=[LINK]   | A link associated with the notification.
 |===
 
 At least one user or group must be set.
