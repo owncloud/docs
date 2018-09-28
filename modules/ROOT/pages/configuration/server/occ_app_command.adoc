@@ -622,17 +622,21 @@ The command takes the following format:
 ldap:update-group <groupID> <groupID <groupID> ...>
 ....
 
-The command allows for running a manual group sync on one or more groups, instead of having to wait for group syncing to occur. 
+The command allows for running a manual group sync on one or more groups, instead of having to wait 
+for group syncing to occur. 
 If users have been added or removed from these groups in LDAP, ownCloud will update its details. 
 If a group was deleted in LDAP, ownCloud will also delete the local mapping info about this group.
 
 New groups in LDAP won’t be synced with this command. 
 The LDAP TTL configuration (by default 10 minutes) still applies. 
-This means that recently deleted groups from LDAP might be considered as ``active'' and might not be deleted in ownCloud immediately.
+This means that recently deleted groups from LDAP might be considered as 
+``active'' and might not be deleted in ownCloud immediately.
 
 *Configuring the LDAP Refresh Attribute Interval*
 
-You can configure the LDAP refresh attribute interval, but not with the `ldap` commands. Instead, you need to use the `config:app:set` command, as in the following example, which takes a number of seconds to the `--value` switch.
+You can configure the LDAP refresh attribute interval, but not with the `ldap` commands. 
+Instead, you need to use the `config:app:set` command, as in the following example, which takes a 
+number of seconds to the `--value` switch.
 
 ....
 sudo -u www-data php occ config:app:set user_ldap updateAttributesInterval --value=7200
@@ -711,7 +715,6 @@ sudo -u www-data occ market:install twofactor_backup_codes
 sudo -u www-data occ market:install -l /mnt/data/richdocuments-2.0.0.tar.gz
 ....
 
-.. _user-expire-password_label:
 [[password-policy]]
 Password Policy
 ---------------
@@ -780,13 +783,19 @@ sudo -u www-data php occ user:expire-password frank '15-Aug-05 15:52:01 UTC'
 
 ==== Caveats
 
-Please be aware of the following implications of enabling or changing the password policy's "*days until user password expires*" option.
+Please be aware of the following implications of enabling or changing the password policy's "*days until 
+user password expires*" option.
 
 - Administrators need to run the `occ user:expire-password` command to initiate expiry for new users.
-- Passwords will never expire for users who have *not* changed their initial password, because they do not have a password history. To force password expiration use the `occ user:expire-password` command.
-- A password expiration date will be set after users change their password for the first time. To force password expiration use the `occ user:expire-password` command.
-- Passwords changed for the first time, will expire based on the *active* password policy. If the policy is later changed, it will not update the password's expiry date to reflect the new setting.
-- Password expiration dates of users where the administrator has run the `occ user:expire-password` command *won't* automatically update to reflect the policy change. In these cases, Administrators need to run the `occ user:expire-password` command again and supply a new expiry date.
+- Passwords will never expire for users who have *not* changed their initial password, because they do 
+not have a password history. To force password expiration use the `occ user:expire-password` command.
+- A password expiration date will be set after users change their password for the first time. To force 
+password expiration use the `occ user:expire-password` command.
+- Passwords changed for the first time, will expire based on the *active* password policy. If the policy 
+is later changed, it will not update the password's expiry date to reflect the new setting.
+- Password expiration dates of users where the administrator has run the `occ user:expire-password` 
+command *won't* automatically update to reflect the policy change. In these cases, Administrators need 
+to run the `occ user:expire-password` command again and supply a new expiry date.
 
 [[ransomware-protection]]
 Ransomware Protection (Enterprise Edition onyl)
@@ -795,15 +804,54 @@ Ransomware Protection (Enterprise Edition onyl)
 Marketplace URL: https://marketplace.owncloud.com/apps/ransomware_protection[Ransomware Protection]
 
 Use these commands to help users recover from a Ransomware attack. 
-You can find more information about the application in the documentation <../../enterprise/ransomware-protection/index>.
+You can find more information about the application in the documentation 
+<../../enterprise/ransomware-protection/index>.
 
-[width="100%",cols="50%,82%",]
+....
+sudo -u www-data occ ransomguard:scan <timestamp> <user>
+....
+
+Arguments
+
+[width="100%",cols="20%,70%",]
 |===
-|occ ransomguard:scan <timestamp> <user>    | Report all changes in a user's account, starting from timestamp
-|occ ransomguard:restore <timestamp> <user> | Revert all operations in a user account after a point in time
-|occ ransomguard:lock <user>                | Set a user account as read-only for ownCloud and other WebDAV
-clients when malicious activity is suspected
-|occ ransomguard:unlock <user>              | Unlock a user account after ransomware issues have been resolved
+| `<timestamp>` +
+`<user>`          | Report all changes in a user's account, starting from timestamp.
+|===
+
+....
+sudo -u www-data occ ransomguard:restore <timestamp> <user>
+....
+
+Arguments
+
+[width="100%",cols="20%,70%",]
+|===
+| `<timestamp>` +
+`<user>`          | Revert all operations in a user account after a point in time.
+|===
+
+....
+sudo -u www-data occ ransomguard:lock <user>
+....
+
+Arguments
+
+[width="100%",cols="20%,70%",]
+|===
+| `<user>` | Set a user account as read-only for ownCloud and other WebDAV clients when 
+malicious activity is suspected.
+|===
+
+....
+sudo -u www-data occ ransomguard:unlock <user>
+....
+
+Arguments
+
+[width="100%",cols="20%,70%",]
+|===
+| `<user>` | Unlock a user account after ransomware issues have been resolved.
 |===
 
 [[samle-sso-sibboleth-integration]]
