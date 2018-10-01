@@ -12,7 +12,7 @@ From the command line, in the root of the docs directory, run the command:
 docker run -ti --rm -v $(pwd):$(pwd) -w $(pwd) antora/antora:latest generate site.yml
 ```
 
-This command starts up the Antora Docker container, removes the existing documentation, and then runs Antora’s generate command, an regenerates the documentation.
+This command starts up the Antora Docker container, removes the existing documentation, and then runs Antora's generate command, an regenerates the documentation.
 If all goes well, you will _not_ see any console output.
 
 ## Running Antora From The Command-Line
@@ -42,9 +42,9 @@ There, you can see:
 ## Viewing Changes
 
 Assuming that there are no errors, the next thing to do is to run the [NPM Serve tool](https://www.npmjs.com/package/serve) so that you can view your changes, before committing and pushing the changes to the remote docs repository.
-We suggest using it, as it’s trivial to install and start.
-You could also use [PHP’s built-in webserver](https://secure.php.net/manual/en/features.commandline.webserver.php) as well.
-By using either of these, you don’t have to install and configure a complete webserver, such as Apache or NGINX.
+We suggest using it, as it's trivial to install and start.
+You could also use [PHP's built-in webserver](https://secure.php.net/manual/en/features.commandline.webserver.php) as well.
+By using either of these, you don't have to install and configure a complete webserver, such as Apache or NGINX.
 
 To start *Serve*, run the following command:
 
