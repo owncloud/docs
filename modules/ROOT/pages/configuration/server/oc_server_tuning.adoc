@@ -1,15 +1,12 @@
-ownCloud Server Tuning
-======================
+= ownCloud Server Tuning
 
 [[using-cron-to-perform-background-jobs]]
-Using Cron to Perform Background Jobs
--------------------------------------
+== Using Cron to Perform Background Jobs
 
 See xref:configuration/server/background_jobs_configuration.adoc[Background Jobs] for a description and the benefits.
 
 [[enable-memory-caching]]
-Enable Memory Caching
----------------------
+== Enable Memory Caching
 
 Caching improves performance by storing data, code, and other objects in
 memory. Memory cache configuration for ownCloud is no longer
@@ -20,8 +17,7 @@ https://memcached.org[Memcached] as memory caching backends. See
 xref:configuration/server/caching_configuration.adoc[Memory Caching], for further details.
 
 [[use-redis-based-transactional-file-locking]]
-Use Redis-based Transactional File Locking
-------------------------------------------
+== Use Redis-based Transactional File Locking
 
 File locking is enabled by default, using the database locking backend.
 However, this places a significant load on your database. See the
@@ -29,8 +25,7 @@ section xref:configuration/files/files_locking_transactional.adoc[Transactional 
 configure ownCloud to use Redis-based Transactional File Locking.
 
 [[redis-tuning]]
-Redis Tuning
-------------
+== Redis Tuning
 
 Redis tuning improves both file locking (if used) and memory caching
 (when using Redis). Here is a brief guide for tuning Redis to improve
@@ -38,8 +33,7 @@ the performance of your ownCloud installation, when working with
 sizeable instances.
 
 [[tcp-backlog]]
-TCP-Backlog
-~~~~~~~~~~~
+=== TCP-Backlog
 
 If you raised the TCP-backlog setting, the following warning appears in
 the Redis logs:
@@ -69,8 +63,8 @@ After the next reboot, 65535 connections will be allowed, instead of the
 default value.
 
 [[transparent-huge-pages-thp]]
-Transparent Huge Pages (THP)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+=== Transparent Huge Pages (THP)
+
 
 If you are experiencing latency problems with Redis, the following
 warning may appear in your Redis logs:
@@ -102,31 +96,27 @@ echo never > /sys/kernel/mm/transparent_hugepage/enabled
 ----
 
 [[redis-latency-problems]]
-Redis Latency Problems
-~~~~~~~~~~~~~~~~~~~~~~
+=== Redis Latency Problems
 
 If you are having issues with Redis latency, please refer to
 https://redis.io/topics/latency[the official Redis guide] on how to
 handle them.
 
 [[database-tuning]]
-Database Tuning
----------------
+== Database Tuning
 
 [[using-mariadbmysql-instead-of-sqlite]]
-Using MariaDB/MySQL Instead of SQLite
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+=== Using MariaDB/MySQL Instead of SQLite
 
 MySQL or MariaDB are preferred because of the
 http://www.sqlite.org/whentouse.html[performance limitations of SQLite
 with highly concurrent applications], like ownCloud.
 
-See the section xref:configuration/database/linux_database_configuration.adoc[Linux Database Configuration] for how to configure ownCloud for MySQL or MariaDB. 
+See the section xref:configuration/database/linux_database_configuration.adoc[Linux Database Configuration] for how to configure ownCloud for MySQL or MariaDB.
 If your installation is already running on SQLite then it is possible to convert to MySQL or MariaDB using the steps provided in xref:configuration/database/db_conversion.adoc[database conversion].
 
 [[tune-mariadbmysql]]
-Tune MariaDB/MySQL
-~~~~~~~~~~~~~~~~~~
+=== Tune MariaDB/MySQL
 
 A comprehensive guide to tuning MySQL and MariaDB is outside the scope
 of the ownCloud documentation. However, here are three links that can
@@ -138,8 +128,7 @@ help you find further information:
 Tuning MariaDB].
 
 [[tune-postgresql]]
-Tune PostgreSQL
-~~~~~~~~~~~~~~~
+=== Tune PostgreSQL
 
 A comprehensive guide to tuning PostgreSQL is outside the scope of the
 ownCloud documentation. However, here are three links that can help you
@@ -152,8 +141,7 @@ the autovacuum proceff for tables with huge update workloads
 (oc_filecache)]
 
 [[ssl-encryption-app]]
-SSL / Encryption App
---------------------
+== SSL / Encryption App
 
 SSL (HTTPS) and file encryption/decryption can be offloaded to a
 processor’s AES-NI extension. This can both speed up these operations
@@ -180,16 +168,13 @@ or coreinfo, it is maybe disabled in the BIOS.
 for support.
 
 [[webserver-tuning]]
-Webserver Tuning
-----------------
+== Webserver Tuning
 
 [[tune-apache]]
-Tune Apache
-~~~~~~~~~~~
+=== Tune Apache
 
 [[enable-http2-support]]
-Enable HTTP/2 Support
-^^^^^^^^^^^^^^^^^^^^^
+==== Enable HTTP/2 Support
 
 If you want to improve the speed of an ownCloud installation, while at
 the same time increasing its security, you can
@@ -198,8 +183,7 @@ for Apache]. Please be aware that https://caniuse.com/#feat=http2[most
 browsers require HTTP/2 to be used with SSL enabled].
 
 [[apache-processes]]
-Apache Processes
-^^^^^^^^^^^^^^^^
+==== Apache Processes
 
 An Apache process uses around 12MB of RAM. Apache should be configured
 so that the maximum number of HTTPD processes times 12MB is lower than
@@ -207,8 +191,7 @@ the amount of RAM. Otherwise the system begins to swap and the
 performance goes down.
 
 [[use-keepalive]]
-Use KeepAlive
-^^^^^^^^^^^^^
+==== Use KeepAlive
 
 The https://en.wikipedia.org/wiki/HTTP_persistent_connection[KeepAlive]
 directive enables persistent HTTP connections, allowing multiple
@@ -223,8 +206,7 @@ MaxKeepAliveRequests 200
 ....
 
 [[hostname-lookups]]
-Hostname Lookups
-^^^^^^^^^^^^^^^^
+==== Hostname Lookups
 
 ....
 # cat /etc/httpd/conf/httpd.conf
@@ -233,8 +215,7 @@ HostnameLookups off
 ....
 
 [[log-files]]
-Log files
-^^^^^^^^^
+==== Log files
 
 Log files should be switched off for maximum performance. To do that,
 comment out the

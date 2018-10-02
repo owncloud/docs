@@ -1,5 +1,4 @@
-NGINX Configuration
-===================
+= NGINX Configuration
 
 This page covers example NGINX configurations to use with running an
 ownCloud server. Note that NGINX is _not officially supported_, and this
@@ -24,8 +23,7 @@ single line to prevent connection problems with sync clients.
 a singe file and then be included.
 
 [[example-configurations]]
-Example Configurations
-----------------------
+== Example Configurations
 
 CAUTION: Be careful about line breaks if you copy the examples, as long lines may be broken for page formatting.
 
@@ -40,8 +38,7 @@ plain HTTP:
 4.  Remove *fastcgi_params HTTPS on;*
 
 [[note-1]]
-Note 1
-~~~~~~
+=== Note 1
 
 ....
 fastcgi_buffers 8 4K;
@@ -54,8 +51,7 @@ system memory over time. This is especially problematic on low-memory
 systems.
 
 [[note-2]]
-Note 2
-~~~~~~
+=== Note 2
 
 ....
 fastcgi_ignore_headers
@@ -76,8 +72,7 @@ explicitly enable following directive in the location block
 NOTE: The directives `fastcgi_ignore_headers X-Accel-Buffering;` and `fastcgi_buffering off;` can be used separately but not together.
 
 [[owncloud-in-the-web-root-of-nginx]]
-ownCloud in the web root of NGINX
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+=== ownCloud in the web root of NGINX
 
 The following config should be used when ownCloud is placed in the web
 root of your NGINX installation.
@@ -90,8 +85,7 @@ include::{examplesdir}/installation/nginx/default-configuration.conf[]
 ----
 
 [[owncloud-in-a-subdirectory-of-nginx]]
-ownCloud in a subdirectory of NGINX
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+=== ownCloud in a subdirectory of NGINX
 
 The following config should be used when ownCloud is placed under a
 different context root of your NGINX installation such as /owncloud or
@@ -104,13 +98,11 @@ The configuration assumes that ownCloud is installed in `/var/www/owncloud` is a
 include::{examplesdir}/installation/nginx/subdirectory-configuration.conf[]
 ----
 
-[[troubleshooting]]
-Troubleshooting
----------------
+[[nginx-configuration-troubleshooting]]
+== Troubleshooting
 
 [[javascript-.js-or-css-.css-files-not-served-properly]]
-JavaScript (.js) or CSS (.css) files not served properly
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+=== JavaScript (.js) or CSS (.css) files not served properly
 
 A standard issue with custom NGINX configurations is, that JavaScript
 (.js) or CSS (.css) files are not served properly, leading to a 404
@@ -135,8 +127,7 @@ Other custom configurations like caching JavaScript (.js) or CSS (.css)
 files via gzip could also cause such issues.
 
 [[not-all-of-my-contacts-are-synchronized]]
-Not all of my contacts are synchronized
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+=== Not all of my contacts are synchronized
 
 Check for server timeouts! It turns out that CardDAV sync often fails
 silently if the request runs into timeouts. With PHP-FPM you might see a
@@ -187,12 +178,10 @@ location = / {
 ----
 
 [[log-optimisation]]
-Log Optimisation
-----------------
+== Log Optimisation
 
 [[suppressing-htaccesstest.txt-and-.ocdata-log-messages]]
-Suppressing `htaccesstest.txt` and `.ocdata` Log Messages
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+=== Suppressing `htaccesstest.txt` and `.ocdata` Log Messages
 
 If you are seeing meaningless messages in your logfile, for example
 https://central.owncloud.org/t/htaccesstest-txt-errors-in-logfiles/831[client
@@ -217,8 +206,7 @@ location = /data/\.ocdata {
 ----
 
 [[prevent-access-log-entries-when-accessing-thumbnails]]
-Prevent access log entries when accessing thumbnails
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+=== Prevent access log entries when accessing thumbnails
 
 When using eg. the Gallery App, any access to a thumbnail of a picture
 will be logged. This can cause a massive log quanity making log reading
@@ -271,8 +259,7 @@ access_log /var/log/nginx/<your-log-file-inverted> combined if=$invertloggable;
 ----
 
 [[performance-tuning]]
-Performance Tuning
-------------------
+== Performance Tuning
 
 *1 HTTP/2*
 
@@ -324,8 +311,7 @@ open_file_cache_errors          on;
 ----
 
 [[configure-nginx-to-use-caching-for-owncloud-internal-images-and-thumbnails]]
-Configure NGINX to use caching for ownCloud internal images and thumbnails
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+=== Configure NGINX to use caching for ownCloud internal images and thumbnails
 
 This mechanism speeds up presentation as it shifts requests to NGINX and
 minimizes PHP invocations, which otherwise would take place for every
@@ -387,7 +373,7 @@ ________________________________________________________________________________
 
 [source,nginx]
 ----
-fastcgi_cache_path /opt/cache levels=1:2 keys_zone=cachezone:100m 
+fastcgi_cache_path /opt/cache levels=1:2 keys_zone=cachezone:100m
                    max_size=500m inactive=60m use_temp_path=off;
 fastcgi_cache_key $http_cookie$request_method$host$request_uri;
 ----

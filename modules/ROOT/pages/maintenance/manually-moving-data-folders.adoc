@@ -1,5 +1,4 @@
-How To Manually Move a Data Directory
-=====================================
+= How To Manually Move a Data Directory
 
 If you need to move your ownCloud data directory from its current
 location to somewhere else, here is a manual process that you can take
@@ -23,34 +22,31 @@ This example assumes that:
 To save time, here’s the commands which you can copy and use:
 
 ....
-apachectl -k stop 
+apachectl -k stop
 rsync -avz /var/www/owncloud/data /mnt/owncloud
 ln -s /mnt/owncloud /var/www/owncloud/data
-apachectl -k graceful 
+apachectl -k graceful
 ....
 
 NOTE: If you’re on CentOS/Fedora, try `systemctl restart httpd`. If you’re on Debian/Ubuntu try `sudo systemctl restart apache2` To learn more about the systemctl command, please refer to https://www.digitalocean.com/community/tutorials/systemd-essentials-working-with-services-units-and-the-journal[the systemd essentials guide].
 
 [[fix-hardcoded-database-path-variables]]
-Fix Hardcoded Database Path Variables
--------------------------------------
+== Fix Hardcoded Database Path Variables
 
 [[update-the-oc_storages-table]]
-Update the oc_storages table
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+=== Update the oc_storages table
 
 If you want to manually change the location of the data folder in the
 database, run the SQL below:
 
 [source,sql]
 ----
-UPDATE oc_storages SET id='local::/mnt/owncloud' 
+UPDATE oc_storages SET id='local::/mnt/owncloud'
   WHERE id='local::/var/www/owncloud/data/';
 ----
 
 [[update-the-oc_accounts-table]]
-Update the oc_accounts table
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+=== Update the oc_accounts table
 
 You next need to update the `home` column in the `oc_accounts` table.
 This column contains the absolute path for user folders, e.g.,
@@ -60,15 +56,14 @@ change it using the following SQL statement:
 
 [source,sql]
 ----
-UPDATE oc_accounts SET home='/mnt/data/files/super-admin' 
+UPDATE oc_accounts SET home='/mnt/data/files/super-admin'
   WHERE id=1;
 ----
 
 CAUTION: Please don’t copy and paste this example verbatim — nor any of the others. It, and the others, are provided only as guides to what you should or could do.
 
 [[update-the-oc_jobs-table]]
-Update the oc_jobs table
-~~~~~~~~~~~~~~~~~~~~~~~~
+=== Update the oc_jobs table
 
 The next area to check is the oc_jobs table. The logrotate process may
 have hard-coded a non-standard (or old) value for the data path. To
@@ -76,7 +71,7 @@ check it, run the SQL below and see if any results are returned:
 
 [source,sql]
 ----
-SELECT * FROM oc_jobs 
+SELECT * FROM oc_jobs
   WHERE class = 'OC\Log\Rotate';
 ----
 
@@ -85,13 +80,12 @@ appropriate.
 
 [source,sql]
 ----
-UPDATE oc_jobs SET argument = '/your/new/data/path' 
+UPDATE oc_jobs SET argument = '/your/new/data/path'
   WHERE id = <id of the incorrect record>;
 ----
 
 [[fix-application-settings]]
-Fix Application Settings
-------------------------
+== Fix Application Settings
 
 One thing worth noting is that individual apps may reference the data
 directory separate from the core system configuration. If so, then you

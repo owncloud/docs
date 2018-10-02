@@ -1,5 +1,4 @@
-Background Jobs
-===============
+= Background Jobs
 
 A system like ownCloud sometimes requires tasks to be done on a regular
 basis without requiring user interaction or hindering ownCloud’s
@@ -23,8 +22,7 @@ You can decide how often jobs get processed, we recommend an interval of
 one minute.
 
 [[cron-jobs]]
-Cron Jobs
----------
+== Cron Jobs
 
 You can schedule Cron jobs in three ways: link:[Cron], link:[Webcron],
 or link:[AJAX]. These can all be configured in the admin settings menu.
@@ -52,8 +50,7 @@ queue, not all of them. Cron, however, will clear the entire queue.
 NOTE: It’s for this reason that we encourage you to use Cron — if at all possible.
 
 [[cron]]
-Cron
-~~~~
+=== Cron
 
 Using the operating system Cron feature is the preferred method for
 executing regular tasks. This method enables the execution of scheduled
@@ -85,8 +82,7 @@ every minute.
 NOTE: There are other methods to invoke programs by the system regularly, e.g., https://wiki.archlinux.org/index.php/Systemd/Timers[systemd timers]
 
 [[webcron]]
-Webcron
-~~~~~~~
+=== Webcron
 
 By registering your ownCloud `cron.php` script address as an external
 webcron service (for example, http://www.easycron.com/[easyCron]), you
@@ -99,8 +95,7 @@ URL to call: http[s]://<domain-of-your-server>/owncloud/cron.php
 ....
 
 [[ajax]]
-AJAX
-~~~~
+=== AJAX
 
 The AJAX scheduling method is the default option. However, it is also
 the _least_ reliable. Each time a user visits the ownCloud page, a
@@ -113,8 +108,7 @@ requires regular visits to the page for it to be triggered.
 NOTE: Especially when using the Activity App or external storages, where new files are added, updated, or deleted one of the other methods should be used.
 
 [[parallel-task-execution]]
-Parallel Task Execution
-~~~~~~~~~~~~~~~~~~~~~~~
+=== Parallel Task Execution
 
 Regardless of the approach which you take, since ownCloud 9.1, Cron jobs
 can be run in parallel. This is done by running `cron.php` multiple
@@ -128,15 +122,14 @@ to do so, is by opening three console tabs and in each one run
 jobs to process without overlapping any other.
 
 [[available-background-jobs]]
-Available Background Jobs
-~~~~~~~~~~~~~~~~~~~~~~~~~
+=== Available Background Jobs
 
 A number of existing background jobs are available to be run just for
 specific tasks.
 
 [NOTE]
 ====
-These jobs are generally only needed on large instances and can be run as background jobs. 
+These jobs are generally only needed on large instances and can be run as background jobs.
 If the number of users in your installation ranges between 1,000 and 3,000, or if you’re using LDAP and it becomes a bottleneck, then admins can delete several entries in the `oc_jobs` table and replace them with the corresponding `occ` command, which you can see here:
 
 * `OCA\\DAV\CardDAV\\SyncJob` -> `occ dav:sync-system-addressbook`
@@ -150,8 +143,7 @@ If used, these should be scheduled to run on a daily basis.
 While not exhaustive, these include:
 
 [[cleanupchunks]]
-CleanupChunks
-^^^^^^^^^^^^^
+==== CleanupChunks
 
 The CleanupChunks command, `occ dav:cleanup-chunks`, will clean up outdated chunks (uploaded files) more than a certain number of days old and needs to be added to your crontab.
 
@@ -161,8 +153,7 @@ There is no matching background job to delete from the `oc_jobs` table.
 ====
 
 [[expiretrash]]
-ExpireTrash
-^^^^^^^^^^^
+==== ExpireTrash
 
 The ExpireTrash job, contained in
 `OCA\Files_Trashbin\BackgroundJob\ExpireTrash`, will remove any file in
@@ -174,8 +165,7 @@ occ trashbin:expire
 ....
 
 [[expireversions]]
-ExpireVersions
-^^^^^^^^^^^^^^
+==== ExpireVersions
 
 The ExpireVersions job, contained in
 `OCA\Files_Versions\BackgroundJob\ExpireVersions`, will expire versions
@@ -189,8 +179,7 @@ occ versions:expire
 CAUTION: Please take care when adding `ExpireTrash` and `ExpireVersions` as link:[Cron] jobs. Make sure that they’re not started in parallel on multiple machines. Running in parallel on a single machine is fine. But, currently, there isn’t sufficient locking in place to prevent them from conflicting with each other if running in parallel across multiple machines.
 
 [[syncjob-carddav]]
-SyncJob (CardDAV)
-^^^^^^^^^^^^^^^^^
+==== SyncJob (CardDAV)
 
 The CardDAV SyncJob, contained in `OCA\DAV\CardDAV\SyncJob`, syncs the
 local system address book, updating any existing contacts, and deleting
@@ -201,8 +190,7 @@ occ dav:sync-system-addressbook
 ....
 
 [[syncjob-federation]]
-SyncJob (Federation)
-^^^^^^^^^^^^^^^^^^^^
+==== SyncJob (Federation)
 
 OCAFederationSyncJob
 

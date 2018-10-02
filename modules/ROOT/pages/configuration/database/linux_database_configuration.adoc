@@ -1,5 +1,4 @@
-Database Configuration
-======================
+= Database Configuration
 
 ownCloud requires a database in which administrative data is stored. The
 following databases are currently supported:
@@ -10,9 +9,8 @@ following databases are currently supported:
 
 The MySQL or MariaDB databases are the recommended database engines.
 
-[[requirements]]
-Requirements
-------------
+[[database-configuration-requirements]]
+== Requirements
 
 Choosing to use MySQL / MariaDB, PostgreSQL, or Oracle (ownCloud
 Enterprise edition only) as your database requires that you install and
@@ -23,8 +21,7 @@ this document. Please refer to the documentation for your specific
 database choice for instructions.
 
 [[mysql-mariadb-with-binary-logging-enabled]]
-MySQL / MariaDB with Binary Logging Enabled
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+=== MySQL / MariaDB with Binary Logging Enabled
 
 ownCloud is currently using a `TRANSACTION_READ_COMMITTED` transaction
 isolation to avoid data loss under high load scenarios (e.g., by using
@@ -57,8 +54,7 @@ https://dev.mysql.com/doc/refman/5.6/en/binary-log.html[The Binary Log]
 for detailed information.
 
 [[mysql-mariadb-read-commited-transaction-isolation-level]]
-MySQL / MariaDB ``READ COMMITED'' transaction isolation level
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+=== MySQL / MariaDB ``READ COMMITED'' transaction isolation level
 
 As discussed above ownCloud is using the `TRANSACTION_READ_COMMITTED`
 transaction isolation level. Some database configurations are enforcing
@@ -70,24 +66,21 @@ https://dev.mysql.com/doc/refman/5.7/en/set-transaction.html[MySQL
 manual] for detailed information.
 
 [[mysql-mariadb-storage-engine]]
-MySQL / MariaDB storage engine
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+=== MySQL / MariaDB storage engine
 
 Since ownCloud 7 only InnoDB is supported as a storage engine. There are
 some shared hosts who do not support InnoDB and only MyISAM. Running
 ownCloud on such an environment is not supported.
 
 [[parameters]]
-Parameters
-----------
+== Parameters
 
-For setting up ownCloud to use any database, use the instructions in xref:installation/installation_wizard.adoc[the Installation Wizard]. 
-You should not have to edit the respective values in the `config/config.php`. 
+For setting up ownCloud to use any database, use the instructions in xref:installation/installation_wizard.adoc[the Installation Wizard].
+You should not have to edit the respective values in the `config/config.php`.
 However, in special cases (for example, if you want to connect your ownCloud instance to a database created by a previous installation of ownCloud), some modification might be required.
 
 [[configuring-a-mysql-or-mariadb-database]]
-Configuring a MySQL or MariaDB Database
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+=== Configuring a MySQL or MariaDB Database
 
 If you decide to use a MySQL or MariaDB database, ensure the following:
 
@@ -145,7 +138,7 @@ You can quit the prompt by entering:
 quit
 ....
 
-An ownCloud instance configured with MySQL would contain the hostname on which the database is running, a valid username and password to access it, and the name of the database. 
+An ownCloud instance configured with MySQL would contain the hostname on which the database is running, a valid username and password to access it, and the name of the database.
 The `config/config.php` as created by the xref:installation/installation_wizard.adoc[installation wizard] would therefore contain entries like this:
 
 ....
@@ -160,8 +153,7 @@ The `config/config.php` as created by the xref:installation/installation_wizard.
 ....
 
 [[configure-mysql-for-4-byte-unicode-support]]
-Configure MySQL for 4-byte Unicode Support
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+==== Configure MySQL for 4-byte Unicode Support
 
 For supporting such features as emoji, you have to enable 4-byte Unicode
 support in MySQL (instead of the default 3) _and_ in ownCloud. If you
@@ -199,7 +191,7 @@ For more information, please either refer to lines 1126 to 1156 in
 `config/config.sample.php`, or have a read through the following links:
 
 * https://dev.mysql.com/doc/refman/5.7/en/innodb-parameters.html#sysvar_innodb_large_prefix
-* https://mariadb.com/kb/en/mariadb/xtradbinnodb-server-system-variables/#innodb_large_prefix
+* https://mariadb.com/kb/en/mariadb/xtradbinnodb-server-system-variables/\#innodb_large_prefix
 * http://www.tocker.ca/2013/10/31/benchmarking-innodb-page-compression-performance.html
 * http://mechanics.flite.com/blog/2014/07/29/using-innodb-large-prefix-to-avoid-error-1071/
 * http://dev.mysql.com/doc/refman/5.7/en/charset-unicode-utf8mb4.html
@@ -208,8 +200,7 @@ This is not required for new installations, only existing ones, as mb4
 support is checked during setup, and used if available.
 
 [[postgresql-database]]
-PostgreSQL Database
-~~~~~~~~~~~~~~~~~~~
+=== PostgreSQL Database
 
 If you decide to use a PostgreSQL database make sure that you have
 installed and enabled the PostgreSQL extension in PHP. The PHP
@@ -239,7 +230,7 @@ use:
 sudo -u postgres psql -d template1
 ....
 
-Then a *template1=#* prompt will appear. Now enter the following lines
+Then a *template1=\#* prompt will appear. Now enter the following lines
 and confirm them with the enter key:
 
 ....
@@ -253,7 +244,7 @@ You can quit the prompt by entering:
 \q
 ....
 
-An ownCloud instance configured with PostgreSQL would contain the path to the socket on which the database is running as the hostname, the system username the php process is using, and an empty password to access it, and the name of the database. 
+An ownCloud instance configured with PostgreSQL would contain the path to the socket on which the database is running as the hostname, the system username the php process is using, and an empty password to access it, and the name of the database.
 The `config/config.php` as created by xref:installation/installation_wizard.adoc[the Installation Wizard] would therefore contain entries like this:
 
 ....
@@ -284,7 +275,7 @@ To start the PostgreSQL command line mode use:
 psql -hlocalhost -Upostgres
 ....
 
-Then a *postgres=#* prompt will appear. Now enter the following lines
+Then a *postgres=\#* prompt will appear. Now enter the following lines
 and confirm them with the enter key:
 
 ....
@@ -317,13 +308,11 @@ contain entries like this:
   "dbtableprefix" => "oc_",
 ....
 
-[[troubleshooting]]
-Troubleshooting
----------------
+[[database-configuration-troubleshooting]]
+== Troubleshooting
 
 [[how-to-workaround-general-error-2006-mysql-server-has-gone-away]]
-How to workaround General error: 2006 MySQL server has gone away
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+=== How to workaround General error: 2006 MySQL server has gone away
 
 The database request takes too long and therefore the MySQL server times
 out. Its also possible that the server is dropping a packet that is too
@@ -336,8 +325,7 @@ option within your config/config.php where you can pass such options to
 the database driver. Please refer to xref:configuration/server/config_sample_php_parameters.adoc[the sample PHP configuration parameters] for an example.
 
 [[how-can-i-find-out-if-my-mysqlpostgresql-server-is-reachable]]
-How can I find out if my MySQL/PostgreSQL server is reachable?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+=== How can I find out if my MySQL/PostgreSQL server is reachable?
 
 To check the server’s network availability, use the ping command on the
 server’s host name (db.server.com in this example):
@@ -357,8 +345,7 @@ For a more detailed check whether the access to the database server
 software itself works correctly, see the next question.
 
 [[how-can-i-find-out-if-a-created-user-can-access-a-database]]
-How can I find out if a created user can access a database?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+=== How can I find out if a created user can access a database?
 
 The easiest way to test if a database can be accessed is by starting the
 command line interface:
@@ -413,9 +400,8 @@ PostgreSQL 8.4.12 on i686-pc-linux-gnu, compiled by GCC gcc (GCC) 4.1.3 20080704
 postgres=# \q
 ....
 
-[[useful-sql-commands]]
-Useful SQL commands
-~~~~~~~~~~~~~~~~~~~
+[[database-configuration-useful-sql-commands]]
+=== Useful SQL commands
 
 *Show Database Users*:
 
