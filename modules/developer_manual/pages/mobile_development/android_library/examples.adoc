@@ -1,8 +1,7 @@
 = Examples
 
 [[init-the-library]]
-Init the library
-----------------
+== Init the library
 
 Start using the library; it is needed to init the object mClient that
 will be in charge of keeping the communication with the server.
@@ -37,8 +36,7 @@ mClient = OwnCloudClientFactory.createOwnCloudClient(
 ----
 
 [[set-credentials]]
-Set credentials
----------------
+== Set credentials
 
 Authentication on the app is possible by 3 different methods:
 
@@ -72,8 +70,7 @@ public class OwnCloudClient extends HttpClient {
 ----
 
 [[create-a-folder]]
-Create a folder
----------------
+== Create a folder
 
 Create a new folder on the cloud server, the info needed to be sent is
 the path of the new folder.
@@ -88,8 +85,8 @@ _
 
 ....
 private void startFolderCreation(String newFolderPath) {
-  CreateRemoteFolderOperation createOperation = new CreateRemoteFolderOperation(newFolderPath, false); 
-  createOperation.execute( mClient , this , mHandler); 
+  CreateRemoteFolderOperation createOperation = new CreateRemoteFolderOperation(newFolderPath, false);
+  createOperation.execute( mClient , this , mHandler);
 }
 
 @Override
@@ -104,8 +101,7 @@ public void onRemoteOperationFinish(RemoteOperation operation, RemoteOperationRe
 ....
 
 [[read-folder]]
-Read folder
------------
+== Read folder
 
 Get the content of an existing folder on the cloud server, the info
 needed to be sent is the path of the folder, in the example shown it has
@@ -126,10 +122,10 @@ private void startReadRootFolder() {
 
 
 @Override
-public void onRemoteOperationFinish(RemoteOperation operation, RemoteOperationResult result) { 
+public void onRemoteOperationFinish(RemoteOperation operation, RemoteOperationResult result) {
   if (operation instanceof ReadRemoteFolderOperation) {
     if (result.isSuccess()) {
-      List< RemoteFile > files = result.getData(); 
+      List< RemoteFile > files = result.getData();
       // do your stuff here
     }
   }
@@ -138,8 +134,7 @@ public void onRemoteOperationFinish(RemoteOperation operation, RemoteOperationRe
 ....
 
 [[read-file]]
-Read file
----------
+== Read file
 
 Get information related to a certain file or folder, information
 obtained is: `filePath`, `filename`, `isDirectory`, `size` and `date`.
@@ -157,7 +152,7 @@ private void startReadFileProperties(String filePath) {
 @Override
 public void onRemoteOperationFinish(RemoteOperation operation, RemoteOperationResult result) {
   if (operation instanceof ReadRemoteFileOperation) {
-    if (result.isSuccess()) { 
+    if (result.isSuccess()) {
       RemoteFile file = result.getData()[0];
       // do your stuff here
     }
@@ -167,8 +162,7 @@ public void onRemoteOperationFinish(RemoteOperation operation, RemoteOperationRe
 ....
 
 [[delete-file-or-folder]]
-Delete file or folder
----------------------
+== Delete file or folder
 
 Delete a file or folder on the cloud server. The info needed is the path
 of folder/file to be deleted.
@@ -178,7 +172,7 @@ Code example
 ~~~~~~~~~~~~
 
 ....
-private void startRemoveFile(String filePath) { 
+private void startRemoveFile(String filePath) {
   RemoveRemoteFileOperation removeOperation = new RemoveRemoteFileOperation(remotePath);
   removeOperation.execute( mClient , this , mHandler);
 }
@@ -186,8 +180,8 @@ private void startRemoveFile(String filePath) {
 @Override
 public void onRemoteOperationFinish(RemoteOperation operation, RemoteOperationResult result) {
   if (operation instanceof RemoveRemoteFileOperation) {
-    if (result.isSuccess()) { 
-      // do your stuff here 
+    if (result.isSuccess()) {
+      // do your stuff here
     }
   }
   …
@@ -195,8 +189,7 @@ public void onRemoteOperationFinish(RemoteOperation operation, RemoteOperationRe
 ....
 
 [[download-a-file]]
-Download a file
----------------
+== Download a file
 
 Download an existing file on the cloud server. The info needed is path
 of the file on the server and targetDirectory, path where the file will
@@ -210,7 +203,7 @@ Code example
 ----
 private void startDownload(String filePath, File targetDirectory) {
   DownloadRemoteFileOperation downloadOperation = new DownloadRemoteFileOperation(filePath, targetDirectory.getAbsolutePath());
-  downloadOperation.addDatatransferProgressListener(this); 
+  downloadOperation.addDatatransferProgressListener(this);
   downloadOperation.execute( mClient, this, mHandler);
 }
 
@@ -227,7 +220,7 @@ public void onRemoteOperationFinish( RemoteOperation operation, RemoteOperationR
 public void onTransferProgress( long progressRate, long totalTransferredSoFar, long totalToTransfer, String fileName) {
 mHandler.post( new Runnable() {
   @Override
-  public void run() { 
+  public void run() {
     // do your UI updates about progress here
   }
 });
@@ -235,8 +228,7 @@ mHandler.post( new Runnable() {
 ----
 
 [[upload-a-file]]
-Upload a file
--------------
+== Upload a file
 
 Upload a new file to the cloud server. The info needed is fileToUpload,
 path where the file is stored on the device, remotePath, path where the
@@ -248,22 +240,22 @@ Code example
 
 [source,java]
 ----
-private void startUpload (File fileToUpload, String remotePath, String mimeType) { 
+private void startUpload (File fileToUpload, String remotePath, String mimeType) {
   UploadRemoteFileOperation uploadOperation = new UploadRemoteFileOperation( fileToUpload.getAbsolutePath(), remotePath, mimeType);
-  uploadOperation.addDatatransferProgressListener(this); 
-  uploadOperation.execute(mClient, this, mHandler); 
+  uploadOperation.addDatatransferProgressListener(this);
+  uploadOperation.execute(mClient, this, mHandler);
 }
 
 @Override
 public void onRemoteOperationFinish(RemoteOperation operation, RemoteOperationResult result) {
   if (operation instanceof UploadRemoteFileOperation) {
     if (result.isSuccess()) {
-      // do your stuff here 
+      // do your stuff here
     }
   }
 }
 
-@Override 
+@Override
 public void onTransferProgress(long progressRate, long totalTransferredSoFar, long totalToTransfer, String fileName) {
   mHandler.post( new Runnable() {
     @Override
@@ -275,8 +267,7 @@ public void onTransferProgress(long progressRate, long totalTransferredSoFar, lo
 ----
 
 [[move-a-file-or-folder]]
-Move a file or folder
----------------------
+== Move a file or folder
 
 Move an exisintg file or folder to a different location in the ownCloud
 server. Parameters needed are the path to the file or folder to move,
@@ -294,8 +285,8 @@ Code example
 [source,java]
 ----
 private void startFileMove(String filePath, String newFilePath, boolean overwrite) {
-  MoveRemoteFileOperation moveOperation = new MoveRemoteFileOperation(filePath, newFilePath, overwrite); 
-  moveOperation.execute( mClient , this , mHandler); 
+  MoveRemoteFileOperation moveOperation = new MoveRemoteFileOperation(filePath, newFilePath, overwrite);
+  moveOperation.execute( mClient , this , mHandler);
 }
 
 @Override
@@ -310,8 +301,7 @@ public void onRemoteOperationFinish(RemoteOperation operation, RemoteOperationRe
 ----
 
 [[read-shared-items-by-link]]
-Read shared items by link
--------------------------
+== Read shared items by link
 
 Get information about what files and folder are shared by link (the
 object mClient contains the information about the server url and
@@ -325,14 +315,14 @@ Code example
 ----
 private void startAllSharesRetrieval() {
   GetRemoteSharesOperation getSharesOp = new GetRemoteSharesOperation();
-  getSharesOp.execute( mClient , this , mHandler); 
+  getSharesOp.execute( mClient , this , mHandler);
 }
 
 @Override
 public void onRemoteOperationFinish( RemoteOperation operation, RemoteOperationResult result) {
   if (operation instanceof GetRemoteSharesOperation) {
-    if (result.isSuccess()) { 
-      ArrayList< OCShare > shares = new ArrayList< OCShare >(); 
+    if (result.isSuccess()) {
+      ArrayList< OCShare > shares = new ArrayList< OCShare >();
       for (Object obj: result.getData()) {
         shares.add(( OCShare) obj);
       }
@@ -343,8 +333,7 @@ public void onRemoteOperationFinish( RemoteOperation operation, RemoteOperationR
 ----
 
 [[get-the-share-resources-for-a-given-file-or-folder]]
-Get the share resources for a given file or folder
---------------------------------------------------
+== Get the share resources for a given file or folder
 
 Get information about what files and folder are shared by link on a
 certain folder. The info needed is filePath, path of the file/folder on
@@ -360,21 +349,21 @@ Code example
 ----
 private void startSharesRetrievalForFileOrFolder(String filePath, boolean getReshares) {
   GeteRemoteSharesForFileOperation operation = new GetRemoteSharesForFileOperation(filePath, getReshares, false);
-  operation.execute( mClient, this, mHandler); 
+  operation.execute( mClient, this, mHandler);
 }
 
 private void startSharesRetrievalForFilesInFolder(String folderPath, boolean getReshares) {
   GetRemoteSharesForFileOperation operation = new GetRemoteSharesForFileOperation(folderPath, getReshares, true);
-  operation.execute( mClient, this, mHandler); 
+  operation.execute( mClient, this, mHandler);
 }
 
 @Override
 public void onRemoteOperationFinish( RemoteOperation operation, RemoteOperationResult result) {
   if (operation instanceof GetRemoteSharesForFileOperation) {
     if (result.isSuccess()) {
-      ArrayList< OCShare > shares = new ArrayList< OCShare >(); 
+      ArrayList< OCShare > shares = new ArrayList< OCShare >();
       for (Object obj: result.getData()) {
-        shares.add(( OCShare) obj); 
+        shares.add(( OCShare) obj);
       }
       // do your stuff here
    }
@@ -383,8 +372,7 @@ public void onRemoteOperationFinish( RemoteOperation operation, RemoteOperationR
 ----
 
 [[share-link-of-file-or-folder]]
-Share link of file or folder
-----------------------------
+== Share link of file or folder
 
 Share a file or a folder from your cloud server by link.
 
@@ -404,8 +392,8 @@ private void startCreationOfPublicShareForFile(String filePath, String password)
 }
 
 private void startCreationOfGroupShareForFile(String filePath, String groupId) {
-  CreateRemoteShareOperation operation = new CreateRemoteShareOperation(filePath, ShareType.GROUP, groupId, false , "", 31); 
-  operation.execute(mClient, this, mHandler); 
+  CreateRemoteShareOperation operation = new CreateRemoteShareOperation(filePath, ShareType.GROUP, groupId, false , "", 31);
+  operation.execute(mClient, this, mHandler);
 }
 
 private void startCreationOfUserShareForFile(String filePath, String userId) {
@@ -416,7 +404,7 @@ private void startCreationOfUserShareForFile(String filePath, String userId) {
 @Override
 public void onRemoteOperationFinish( RemoteOperation operation, RemoteOperationResult result) {
   if (operation instanceof CreateRemoteShareOperation) {
-    if (result.isSuccess()) { 
+    if (result.isSuccess()) {
       OCShare share = (OCShare) result.getData ().get(0);
       // do your stuff here
     }
@@ -425,8 +413,7 @@ public void onRemoteOperationFinish( RemoteOperation operation, RemoteOperationR
 ----
 
 [[delete-a-share-resource]]
-Delete a share resource
------------------------
+== Delete a share resource
 
 Stop sharing by link a file or a folder from your cloud server.
 
@@ -455,8 +442,7 @@ public void onRemoteOperationFinish( RemoteOperation operation, RemoteOperationR
 ----
 
 [[tips]]
-Tips
-----
+== Tips
 
 * Credentials must be set before calling any method
 * Paths must not be on URL Encoding

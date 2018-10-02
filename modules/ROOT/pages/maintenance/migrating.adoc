@@ -1,7 +1,7 @@
 = Migrating to a Different Server
 
-If the need arises, ownCloud can be migrated to a different server. 
-A typical use case would be a hardware change or a migration from xref:appliance/what-is-it.adoc[the Enterprise appliance] to a physical server. 
+If the need arises, ownCloud can be migrated to a different server.
+A typical use case would be a hardware change or a migration from xref:appliance/what-is-it.adoc[the Enterprise appliance] to a physical server.
 All migrations have to be performed with ownCloud in maintenance mode.
 Online migration is supported by ownCloud only when implementing
 industry-standard clustering and high-availability solutions *before*
@@ -19,18 +19,17 @@ For the purpose of this use case, it is assumed that:
 2.  The authentication method (e.g., LDAP) remains the same after the
 migration.
 
-IMPORTANT: During the migration, do not make any changes to the original system, except for putting it into maintenance mode. 
+IMPORTANT: During the migration, do not make any changes to the original system, except for putting it into maintenance mode.
 This ensures, should anything unforeseen happen, that you can go back to your existing installation and resume availability of your installation while debugging the problem.
 
 [[how-to-migrate]]
-How to Migrate
---------------
+== How to Migrate
 
 Firstly, set up the new machine with your desired Linux distribution.
 At this point you can either xref:installation/manual_installation.adoc[install ownCloud manually] via the
 compressed archive, or with your xref:installation/linux_installation.adoc[Linux package manager].
 
-Then, on the original machine turn on maintenance mode and then stop ownCloud. 
+Then, on the original machine turn on maintenance mode and then stop ownCloud.
 After waiting 6 - 7 minutes for all sync clients to register that the server is in maintenance mode, stop the web server that is serving ownCloud.
 
 After that, xref:maintenance/backup.adoc[create a database dump] from the database, copy it to the new machine, and xref:maintenance/restore.adoc[import it] into the new database.
@@ -62,8 +61,7 @@ new location. And with the `CNAME` entry updated, you now need to update
 the trusted domains.
 
 [[managing-trusted-domains]]
-Managing Trusted Domains
-------------------------
+== Managing Trusted Domains
 
 All URLs used to access your ownCloud server must be whitelisted in your
 `config.php` file, under the `trusted_domains` setting. Users are
@@ -77,8 +75,8 @@ A typical configuration looks like this:
 [source,php]
 ----
 'trusted_domains' => [
-   0 => 'localhost', 
-   1 => 'server1.example.com', 
+   0 => 'localhost',
+   1 => 'server1.example.com',
    2 => '192.168.1.50',
 ],
 ----
@@ -89,8 +87,7 @@ the event that a load-balancer is in place, there will be no issues as
 long as it sends the correct `X-Forwarded-Host` header.
 
 [[example-migration]]
-Example Migration
------------------
+== Example Migration
 
 Now, let’s step through an example migration. For this example to work,
 you will need the following on both the servers that you will use for
@@ -169,7 +166,7 @@ Then, export the database to the new server.
 
 [source,console]
 ----
-rsync -Aaxt owncloud-dbbackup.bak root@new_server_address:/var/www/owncloud 
+rsync -Aaxt owncloud-dbbackup.bak root@new_server_address:/var/www/owncloud
 ----
 
 With that completed, import the database on new server.
@@ -184,12 +181,12 @@ NOTE: You can find the values for the mysqldump command in your config.php, in y
 [NOTE]
 .For InnoDB tables only
 ====
-The –single-transaction flag will start a transaction before running. 
+The –single-transaction flag will start a transaction before running.
 Rather than lock the entire database, this will let `mysqldump` read the database in the current state at the time of the transaction, making for a consistent data dump.
 ====
 
 [NOTE]
-.For Mixed MyISAM / InnoDB tables 
+.For Mixed MyISAM / InnoDB tables
 ====
 Either dumping your MyISAM tables separately from InnoDB tables or use `–lock-tables` instead of `–single-transaction` to guarantee the database is in a consistent state when using `mysqldump`.
 ====
@@ -200,7 +197,7 @@ Transfer Data and Configure the New Server
 
 [source,console]
 ----
-rsync -Aavxt config data root@new_server_address:/var/www/owncloud 
+rsync -Aavxt config data root@new_server_address:/var/www/owncloud
 ----
 
 IMPORTANT: If you want to move your data directory to another location on the target server, it is advised to do this as a second step. Please see xref:maintenance/manually-moving-data-folders.adoc[the data directory migration document] for more details.
@@ -256,5 +253,5 @@ service ssh restart
 Update DNS and Trusted Domains
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Finally, update the DNS’ `CNAME` entry to point to your new server. 
+Finally, update the DNS’ `CNAME` entry to point to your new server.
 If you have not only migrated physically from server to server but have also changed your ownCloud server’s domain name, you also need to update the domain in xref:managing-trusted-domains[the Trusted Domain setting] in `config.php`, on the target server.

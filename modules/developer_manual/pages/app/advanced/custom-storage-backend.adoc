@@ -11,8 +11,7 @@ fallbacks to reduce the amount of work it is to create a storage
 backend.
 
 [[required-methods]]
-Required Methods
-----------------
+== Required Methods
 
 All storage backends sub-classing the common storage backend must
 implement the following methods:
@@ -43,8 +42,7 @@ If `$mtime` is omitted the current time should be used.
 |=======================================================================
 
 [[suggested-methods]]
-Suggested Methods
------------------
+== Suggested Methods
 
 The common storage backends provide fallback implementations for a
 number of methods to make them easier to implement. However, some of
@@ -82,8 +80,7 @@ defaults to `isUpdatable($path)`.
 |=======================================================================
 
 [[other-useful-methods]]
-Other Useful Methods
---------------------
+== Other Useful Methods
 
 The default implementation for the following methods are good for most
 storage backends. But, providing an alternate implementation _can_
@@ -116,8 +113,7 @@ for the server platform.
 |=======================================================================
 
 [[copying-and-moving-between-storage-backends]]
-Copying and Moving Between Storage Backends
--------------------------------------------
+== Copying and Moving Between Storage Backends
 
 When copying or moving files between different storages a stream copy is
 used by default. This works well for copying between different types of
@@ -130,8 +126,7 @@ behavior by overriding the following methods:
 * `moveFromStorage(\OCP\Files\Storage $sourceStorage, $sourceInternalPath ,$targetInternalPath);`
 
 [[working-with-streams]]
-Working With Streams
---------------------
+== Working With Streams
 
 Both `fopen()` and `opendir()` require storage backends to return native
 PHP streams for maximum compatibility. ownCloud comes with several
@@ -176,8 +171,7 @@ return CallBackWrapper::wrap($handle, null, null function() use ($path, $tempFil
 ----
 
 [[storage-wrappers]]
-Storage Wrappers
-----------------
+== Storage Wrappers
 
 Besides implementing a complete custom storage backend, ownCloud allows
 for modifying the behavior of an existing storage by applying a wrapper
@@ -240,7 +234,7 @@ read-only ftp backend.
 ----
 $storage = $this->createStorageToWrapSomehow();
 return new PermissionsMask([
-   'storage' => $storage, 
+   'storage' => $storage,
    'mask' => \OCP\Constant::PERMISSION_READ | \OCP\Constant::PERMISSION_SHARE
 ]);
 ----
@@ -256,7 +250,7 @@ interaction to a sub-folder of an existing storage.
 ----
 $storage = $this->createStorageToWrapSomehow();
 return new Jail([
-   'storage' => $storage, 
+   'storage' => $storage,
    'root' => 'some/folder/in/the/storage'
 ]);
 ----
@@ -288,8 +282,7 @@ if ($storage->instanceOfStorage('\OC\Files\Storage\DAV')) {
 applied to a storage.
 
 [[mounting-storages]]
-Mounting Storages
------------------
+== Mounting Storages
 
 For an app to add its storages to the filesystem it should implement a
 mount provider and register it with the filesystem. Implementing mount
@@ -305,9 +298,9 @@ class MyMountProvider implements IMountProvider {
         $config = magicallyGetMountConfigurations();
         return array_map(function($mountOptions) use ($loader) {
             return new Mount(
-                $mountOptions['class'], 
-                $mountOptions['mountPoint'], 
-                $mountOptions['storageOptions'], 
+                $mountOptions['class'],
+                $mountOptions['mountPoint'],
+                $mountOptions['storageOptions'],
                 $loader
             );
         }, $config);

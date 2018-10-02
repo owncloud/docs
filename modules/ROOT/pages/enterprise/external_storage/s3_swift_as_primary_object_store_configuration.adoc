@@ -1,6 +1,6 @@
 = Configuring S3 as Primary Storage
 
-Administrators can configure Amazon S3 objects as the primary ownCloud storage location. 
+Administrators can configure Amazon S3 objects as the primary ownCloud storage location.
 Doing this replaces the default ownCloud `owncloud/data` directory.
 However, if you use S3 objects as the primary storage, you *need* to keep the `owncloud/data` directory for the following reasons:
 
@@ -34,16 +34,15 @@ ownCloud GmbH provides consulting for migrations from `objectstore` to `files_pr
 ====
 
 [[configuration]]
-Configuration
--------------
+== Configuration
 
-Look in `config.sample.php` for example configurations. 
-Copy the relevant part to your `config.php` file. 
+Look in `config.sample.php` for example configurations.
+Copy the relevant part to your `config.php` file.
 Any object store needs to implement `\\OCP\\Files\\ObjectStore\\IObjectStore`, and can be passed parameters in the constructor with the `arguments` key, as in the following example:
 
 [source,php]
 ....
-<?php 
+<?php
 
 $CONFIG = [
     'objectstore' => [
@@ -59,12 +58,12 @@ $CONFIG = [
 Amazon S3
 ~~~~~~~~~
 
-The S3 backend mounts a bucket of the Amazon S3 object store into the virtual filesystem. 
+The S3 backend mounts a bucket of the Amazon S3 object store into the virtual filesystem.
 The class to be used is `OCA\Files_Primary_S3\S3Storage`, as in the following example:
 
 [source,php]
 ....
-<?php 
+<?php
 
 $CONFIG = [
     'objectstore' => [
@@ -94,7 +93,7 @@ $CONFIG = [
 Ceph S3
 ~~~~~~~
 
-The S3 backend can also be used to mount the bucket of a Ceph S3 object store via the Amazon S3 API into the virtual filesystem. 
+The S3 backend can also be used to mount the bucket of a Ceph S3 object store via the Amazon S3 API into the virtual filesystem.
 The class to be used is `OCA\Files_Primary_S3\S3Storage`:
 
 [source,php]
@@ -130,8 +129,7 @@ $CONFIG = [
 ....
 
 [[scality-s3]]
-Scality S3
-----------
+== Scality S3
 
 The S3 backend can also be used to mount the bucket of a Scality S3 object store via the Amazon S3 API into the virtual filesystem.
 The class to be used is `OCA\Files_Primary_S3\S3Storage`:
@@ -166,8 +164,7 @@ $CONFIG = [
 ....
 
 [[s3-multibucket-configuration]]
-S3 Multibucket Configuration
-----------------------------
+== S3 Multibucket Configuration
 
 ownCloud 9.1+ has multibucket support for S3 object stores:
 
@@ -202,14 +199,14 @@ server into the virtual filesystem. The class to be used is
 'objectstore' => [
     'class' => 'OC\\Files\\ObjectStore\\Swift',
     'arguments' => [
-        'username' => 'demo', 
-        'password' => 'password', 
-        'container' => 'owncloud', 
+        'username' => 'demo',
+        'password' => 'password',
+        'container' => 'owncloud',
         'autocreate' => true,
-        'region' => 'RegionOne', 
+        'region' => 'RegionOne',
         'url' => 'http://devstack:5000/v2.0',
-        'tenantName' => 'demo', 
-        'serviceName' => 'swift', 
+        'tenantName' => 'demo',
+        'serviceName' => 'swift',
         // url Type, optional, public, internal or admin
         'urlType' => 'internal'
     ],
