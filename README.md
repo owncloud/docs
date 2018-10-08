@@ -35,8 +35,6 @@ If they’re installed, run the command below in the root directory, to generate
 make pdf
 ```
 
----
-
 **Note:** the custom ownCloud PDF theme references a custom font, *Times New Roman*, in place of the packaged Times Roman font, as Times Roman doesn't support a wide enough character set to render the manuals correctly.
 
 If you have this font available on your system, you need to copy it (all four variants: _normal_, _italic_, _bold_, and _bold-italic_), to the `fonts` directory. If you don't, then you'll have to copy the closest matching font family to _Times New Roman_ that you do have, and then update `resources/themes/owncloud-theme.yml`.
@@ -53,6 +51,11 @@ Alternatively, you can use free fonts, available online from various font direct
 Two of the most well known are [Google Fonts](https://fonts.google.com/) and [Font Squirrel](https://www.fontsquirrel.com/).
 
 ---
+
+The PDF files will be generated in the build directory, and will be named after the configuration file.
+The build directory is called `build` and is located in the root of the repository.
+
+The Make target invokes [asciidoctor-pdf](https://github.com/asciidoctor/asciidoctor-pdf), passing it:
 
 1. **[The configuration file](https://github.com/asciidoctor/asciidoctor-pdf/blob/master/docs/theming-guide.adoc) to use** (*which you can find more details about below*).
   This contains the list of files to use as the PDF's source material, along with front-matter. The front-matter includes details such as whether to render a table of contents, the icon set to use, and the images base directory. See below for details on how to generate the initial configuration file, if it is missing.
