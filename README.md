@@ -29,7 +29,7 @@ If you want to change the look and feel of the ownCloud documentation, you can f
 ## How To Generate PDFs
 
 To generate the PDF copies of the three manuals (administration, developer, and user), you need to have `asciidoctor-pdf`, and GNU make installed installed.
-If they’re installed, run the command below in the root directory, to generate the manuals.
+If they’re installed, run the command below in the root directory of the repository, to generate the manuals.
 
 ```console
 make pdf
