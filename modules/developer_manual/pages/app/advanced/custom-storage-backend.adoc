@@ -18,26 +18,26 @@ implement the following methods:
 
 [width="100%",cols="36%,64%",options="header",]
 |=======================================================================
-|Method |Description
-|`mkdir($path)` |Creates a new folder on the storage.
+| Method | Description
+| `mkdir($path)` | Creates a new folder on the storage.
 
-|`rmdir($path)` |Deletes an existing folder on the storage.
+| `rmdir($path)` | Deletes an existing folder on the storage.
 
-|`opendir($path)` |Opens a directory handle.
+| `opendir($path)` | Opens a directory handle.
 
-|`stat($path)` |Retrieves the metadata for the file or folder. The
+| `stat($path)` | Retrieves the metadata for the file or folder. The
 returned array should, at least, contain `mtime` and `size`.
 
-|`filetype($path)` |Returns the file type; either `file` or `dir`.
+| `filetype($path)` | Returns the file type; either `file` or `dir`.
 
-|`file_exists($path)` |Checks if a file or folder exists.
+| `file_exists($path)` | Checks if a file or folder exists.
 
-|`unlink($path)` |Removes a file or folder. This isn’t only for deleting
+| `unlink($path)` | Removes a file or folder. This isn’t only for deleting
 files, unlike PHP’s unlink method.
 
-|`fopen($path, $mode)` |Opens a file handle for a file
+| `fopen($path, $mode)` | Opens a file handle for a file
 
-|`touch($path, $mtime = null)` |Updates the mtime of a file or folder.
+| `touch($path, $mtime = null)` | Updates the mtime of a file or folder.
 If `$mtime` is omitted the current time should be used.
 |=======================================================================
 
@@ -52,31 +52,31 @@ consider overriding one or more of the following methods:
 
 [width="100%",cols="39%,61%",options="header",]
 |=======================================================================
-|Method |Description
-|`rename($sourcePath, $targetPath)` |Renames a file. The default
+| Method | Description
+| `rename($sourcePath, $targetPath)` | Renames a file. The default
 implementation uses `copy` and `unlink` which is very inefficient.
 
-|`copy($sourcePath, $targetPath)` |Copies a file. The default
+| `copy($sourcePath, $targetPath)` | Copies a file. The default
 implementation copies using streams. This is inefficient for remote
 storages as it downloads and re-uploads the file.
 
-|`isReadable($path)` |Checks if a file is readable. It defaults to
+| `isReadable($path)` | Checks if a file is readable. It defaults to
 `true` if the file exists.
 
-|`isUpdatable($path)` |Checks if a file or folder can be updated. This
+| `isUpdatable($path)` | Checks if a file or folder can be updated. This
 includes being written to or renamed. It defaults to `true` if the file
 exists.
 
-|`isCreatable($path)` |Checks if new files can be created in a folder It
+| `isCreatable($path)` | Checks if new files can be created in a folder It
 defaults to `isUpdatable($path)`.
 
-|`isDeletable($path)` |Checks if a file can be deleted. It defaults to
+| `isDeletable($path)` | Checks if a file can be deleted. It defaults to
 `isUpdatable($path)`.
 
-|`isSharable($path)` |Checks if a file can be shared. It defaults to
+| `isSharable($path)` | Checks if a file can be shared. It defaults to
 `isReadable($path)`.
 
-|`free_space($path)` |Checks the free space on the storage in bits.
+| `free_space($path)` | Checks the free space on the storage in bits.
 |=======================================================================
 
 [[other-useful-methods]]
@@ -88,26 +88,26 @@ improve user experience.
 
 [width="100%",cols="40%,60%",options="header",]
 |=======================================================================
-|Method |Description
-|`file_put_contents($path, $data)` |Stores a file on the storage. It
+| Method | Description
+| `file_put_contents($path, $data)` | Stores a file on the storage. It
 defaults to using `fopen($path, 'w')`.
 
-|`file_get_contents($path)` |Retrieves a file from storage. Defaults to
+| `file_get_contents($path)` | Retrieves a file from storage. Defaults to
 using `fopen($path, 'r')`.
 
-|`getMimeType($path)` |Retrieves the mimetype of a file or folder.
+| `getMimeType($path)` | Retrieves the mimetype of a file or folder.
 Defaults to guessing the mimetype from the extension. The mimetype of a
 folder is _link:[required] to be `'httpd/unix-directory'`.
 
-|`hasUpdated($path, $time)` |Checks if a file or folder has been updated
+| `hasUpdated($path, $time)` | Checks if a file or folder has been updated
 since `$time`. If you’re certain the files on the storage will not be
 updated outside of ownCloud you can always return `false` to increase
 performance.
 
-|`getETag($path)` |Retrieves the
+| `getETag($path)` | Retrieves the
 https://en.wikipedia.org/wiki/HTTP_ETag[Etag] for a file or folder.
 
-|`verifyPath($path, $fileName)` |Checks if a filename is valid for the
+| `verifyPath($path, $fileName)` | Checks if a filename is valid for the
 storage backend. It defaults to checking for invalid characters or names
 for the server platform.
 |=======================================================================
