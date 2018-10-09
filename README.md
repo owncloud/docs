@@ -28,18 +28,12 @@ If you want to change the look and feel of the ownCloud documentation, you can f
 
 ## How To Generate PDFs
 
-To generate a PDF version of one or more of the manuals, you need to have `asciidoctor-pdf` installed.
-With it installed, run the command below, in the root docs directory, to generate a PDF version of a manual.
-The PDF file will be generated in the same directory as where the command is run, and will be named after the configuration file, with a `.pdf` extension.
+To generate the PDF copies of the three manuals (administration, developer, and user), you need to have `asciidoctor-pdf`, and GNU make installed installed.
+If they’re installed, run the command below in the root directory of the repository, to generate the manuals.
 
 ```console
-asciidoctor-pdf \
-    book.adoc \
-    -a pdf-stylesdir=resources/themes \
-    -a pdf-style=owncloud
+make pdf
 ```
-
----
 
 **Note:** the custom ownCloud PDF theme references a custom font, *Times New Roman*, in place of the packaged Times Roman font, as Times Roman doesn't support a wide enough character set to render the manuals correctly.
 
@@ -58,12 +52,17 @@ Two of the most well known are [Google Fonts](https://fonts.google.com/) and [Fo
 
 ---
 
-It invokes [asciidoctor-pdf](https://github.com/asciidoctor/asciidoctor-pdf), passing it:
+The PDF files will be generated in the build directory, and will be named after the configuration file.
+The build directory is called `build` and is located in the root of the repository.
 
-1. [The configuration file](https://github.com/asciidoctor/asciidoctor-pdf/blob/master/docs/theming-guide.adoc) to use. This contains the list of files to use as the PDF's source material, along with front-matter. The front-matter includes details such as whether to render a table of contents, the icon set to use, and the images base directory. See below for details on how to generate the initial configuration file, if it is missing.
-2. The custom theme directory and the custom theme file. This ensures that the defaults are overridden, where relevant, to ensure that the generated PDF is as close to the current ownCloud style as possible.
+The Make target invokes [asciidoctor-pdf](https://github.com/asciidoctor/asciidoctor-pdf), passing it:
 
-Please be aware that, depending on the size of the manual, PDF generation may take some time.
+1. **[The configuration file](https://github.com/asciidoctor/asciidoctor-pdf/blob/master/docs/theming-guide.adoc) to use** (*which you can find more details about below*).
+  This contains the list of files to use as the PDF's source material, along with front-matter. The front-matter includes details such as whether to render a table of contents, the icon set to use, and the images base directory. See below for details on how to generate the initial configuration file, if it is missing.
+2. **The custom theme directory and the custom theme file.**
+  This ensures that the defaults are overridden, where relevant, to ensure that the generated PDF is as close to the current ownCloud style as possible.
+
+**Note:** Depending on the size of the manual, PDF generation may take some time.
 
 ### How To Generate The PDF Configuration File
 
@@ -96,3 +95,5 @@ For example, to set the image base directory of the developer manual, change it 
 ```asciidoc
 :imagesdir: ./public/server/developer_manual/_images/
 ```
+### How To Generate the PDF Manuals
+
