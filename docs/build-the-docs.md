@@ -18,7 +18,7 @@ From the command line, in the root of the docs directory, run the command:
 docker run -ti --rm \
     -v $(pwd):$(pwd) \
     -w $(pwd) \
-    antora/antora:latest \
+    antora/antora:1.0.1 \
     generate site.yml
 ```
 
