@@ -66,7 +66,7 @@ To ssh://git@github.com/{username}/docs.git
    b5583aa..4f51698  HEAD -> master
 ```
 
-## Cleaning Up Your Branches After They're Merged
+## Cleaning Up Your Branches After They're Merged
 
 If you are a frequent contributor, you'll likely create a large number of branches, both locally and remotely.
 To avoid confusing which ones are new and which are old, once your pull requests are merged into the master repository, we suggest removing the underlying branches.
@@ -85,3 +85,36 @@ $ git push {username} :<branchname>
 ```
 
 **Note:** you can delete a remote branch through the GitHub UI.
+
+## What Type Of Changes Are You Contributing?
+
+### Are You Only Making Text Changes?
+
+If you're only making text changes, then we recommend installing the AsciiDoc Live Preview plugin:
+
+1. To your [browser](https://asciidoctor.org/docs/editing-asciidoc-with-live-preview/) (The supported browsers are: *Firefox*, *Google Chrome*, or *Opera*).
+2. To your [text editor or IDE](https://asciidoctor.org/docs/editing-asciidoc-with-live-preview/#using-a-modern-text-editoride), *if it has one*.
+
+Using one, or both, of these, you can quickly check if the changes you make are what you expect, and if there are any render errors.
+If the document renders as expected, then you can commit the changes and push them to the docs repository.
+
+**NOTE:** Any links to internal files, such as code samples, and images will not render correctly, as the paths do not contain the absolute path to the asset. Links to internal files can only be previewed when the documentation is generated with Antora.
+
+The next section discusses this in more detail.
+
+### Are You Working With Inline Code Examples, Images, and Attachments?
+
+If, however, you're linking to local files, such as inline code examples, images, and attachments, then you need to [install Antora's command-line tools](./docs/install-antora.md).
+This is because the Live Preview plugin won’t know the complete path to the local file, so won’t be able to correctly render a link to it.
+All other kinds of links should work properly, however.
+
+In this case, you need to use Antora to regenerate the documentation and manually check if there are any broken links or if something looks amiss.
+Alternatively, you could use a tool, such as [NPM’s broken-link-checker](https://www.npmjs.com/package/broken-link-checker), to check broken links for you, on the pages that you changed.
+
+Next, you need to learn how to [build the docs](./docs/build-the-docs.md) from the command line and how to review the changes in your browser.
+
+## Getting Support
+
+If you need any support when making changes to the documentation, you can always get it in the `#documentation` channel in https://talk.owncloud.com.
+We’re there to help you.
+

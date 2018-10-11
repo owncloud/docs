@@ -10,15 +10,11 @@ However, here's what has changed:
 2. The file format that the documentation is written in, which is [AsciiDoc](./docs/what-is-asciidoc.md).
 3. The <abbr title="User Interface">UI</abbr> & <abbr title="User Experience">UX</abbr> of the documentation
 
-## Quick Start Guide
+## Contributing to the Documentation
 
-If you're looking for the <abbr title="To Long; Didn't Read">tl;dr</abbr> guide to getting started with the docs, this is it.
+To get started contributing to the documentation, please refer to [the Getting Started Guide](./docs/getting-started.md).
 
-1. Either install [the AsciiDoc Live Preview plugin](https://asciidoctor.org/docs/editing-asciidoc-with-live-preview/) for Firefox, Google Chrome, or Opera or [an AsciiDoc Live Preview plugin](https://asciidoctor.org/docs/editing-asciidoc-with-live-preview/#using-a-modern-text-editoride), if your text editor or IDE has one.
-2. In a feature branch, branched from master, change the relevant [AsciiDoc](./docs/what-is-asciidoc.md) files.
-3. Push your feature branch to the repository and create a PR from it.
-4. Make any requested changes.
-5. Your PR will be merged.
+## Generating the Documentation
 
 To generate the documentation, whether in HTML or PDF format, please refer to [the Building the Documentation guide](./docs/build-the-docs.md).
 
