@@ -69,7 +69,7 @@ We hope that you can see that contributing to the documentation using Antora is 
 
 ## Generating in PDF Format
 
-To generate the documentation in PDF format, you need to have `asciidoctor-pdf`, and GNU `make` installed.
+To generate the documentation in PDF format, you need to have `asciidoctor-pdf` and GNU `make` installed, as PDF generation isn't, _yet_, supported by Antora.
 To install asciidoctor-pdf, please refer to [the official installation instructions](https://asciidoctor.org/docs/asciidoctor-pdf/).
 To install GNU Make, please refer to the link below for your operating system:
 
@@ -77,21 +77,26 @@ To install GNU Make, please refer to the link below for your operating system:
 - [macOS](http://brewformulas.org/Make)
 - [Microsoft Windows](http://gnuwin32.sourceforge.net/install.html)
 
-When installed, run the command below in the root directory of the repository, to generate the manuals.
+When installed, run the command below in the root directory of the repository, to generate PDF versions of the _administration_, _developer_ and _user_ manuals.
 
 ```console
 make pdf
 ```
 
-The PDF files will be generated in the build directory, and will be named after the configuration file.
+`make pdf` invokes [asciidoctor-pdf](https://github.com/asciidoctor/asciidoctor-pdf) and passes it:
+
+1. **The configuration file to use**
+
+    This configuration file, based on [the asciidoctor-pdf theming guide](https://github.com/asciidoctor/asciidoctor-pdf/blob/master/docs/theming-guide.adoc), contains all the essential details required to build a PDF version of one of the manuals.
+
+    This includes the list of files to use as the PDF's source material as well as the required YAML front-matter. The front-matter includes details such as whether to render a table of contents, the icon set to use, and the images base directory.
+
+2. **The custom theme directory and the custom theme file**
+
+    This ensures that the defaults are overridden, where relevant, to ensure that the generated PDF is as close to the current ownCloud style as possible.
+
+When generated, the PDF files will be generated in the build directory (`build`), and will be named after the respective manual.
 The build directory is called `build` and is located in the root of the repository.
-
-The Make target invokes [asciidoctor-pdf](https://github.com/asciidoctor/asciidoctor-pdf), passing it:
-
-1. **[The configuration file](https://github.com/asciidoctor/asciidoctor-pdf/blob/master/docs/theming-guide.adoc) to use** (*which you can find more details about below*).
-  This contains the list of files to use as the PDF's source material, along with front-matter. The front-matter includes details such as whether to render a table of contents, the icon set to use, and the images base directory. See below for details on how to generate the initial configuration file, if it is missing.
-2. **The custom theme directory and the custom theme file.**
-  This ensures that the defaults are overridden, where relevant, to ensure that the generated PDF is as close to the current ownCloud style as possible.
 
 ### A Note About Custom Fonts
 
@@ -109,38 +114,6 @@ If you want to use your available system fonts, here’s where you can find them
 
 Alternatively, you can use free fonts, available online from various font directories.
 Two of the most well known are [Google Fonts](https://fonts.google.com/) and [Font Squirrel](https://www.fontsquirrel.com/).
-
-### How To Generate The PDF Configuration File
-
-Book file generation isn't currently supported by Antora.
-As a result, it needs to be done separately.
-To save time and effort, you can use [the Antora Tools Phar file](https://github.com/settermjd/antora-tools/releases/download/0.0.1/antora-tools.phar), written specifically for the ownCloud docs.
-It provides a single command `antora:create-asciidoc-book-file`, which takes four options:
-
-| Setting | Description |
-|---|---|
-| `nav-file`     | This is the name of an Antora navigation file. The links in this file are used as the PDF's source matter. The default is `nav.adoc`. |
-| `book-file`    | This is the name of the PDF book file to generate from the contents of the Antora navigation file. The default is `book.adoc`. |
-| `manual-name`  | This is the name of the manual. At this stage, one of "*Admin Manual*", "*Developer Manual*", or "*User Manual*" are what will be used. |
-| `file-version` | This is the file's version. It should be the same as the version of the software that the manual's supporting. For example: `10.1.0`. |
-
-Here’s an example of running it:
-
-```console
-php antora-tools.phar antora:create-asciidoc-book-file \
-    --nav-file=modules/developer_manual/nav.adoc \
-    --book-file=book.dev.adoc \
-    --manual-name="ownCloud Developer Manual" \
-    --file-version=0.0.1
-```
-
-**Note:** At the moment, [the images directory is hardcoded](https://github.com/settermjd/antora-tools/blob/master/src/AntoraTools/Command/GenerateAsciiDocBookFileCommand.php#L17) to `./public/`.
-After the book file is changed, this setting needs to be updated to the manual’s image directory root.
-For example, to set the image base directory of the developer manual, change it as in the example below.
-
-```asciidoc
-:imagesdir: ./public/server/developer_manual/_images/
-```
 
 ## Viewing Build Errors
 
