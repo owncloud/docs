@@ -47,9 +47,14 @@ clean:		## Remove any build artifacts from previous builds
 pdf: clean	## Build PDF manual
 	@echo "Building the latest copy of the manual from the available source files..."
 	@echo
+	@echo -e "- Generating the user manual."
+	@$(call generate_pdf_manual,book.user.adoc,user_manual.pdf,user_manual)
+	
+	@echo -e "- Generating the developer manual."
+	@$(call generate_pdf_manual,book.dev.adoc,developer_manual.pdf,developer_manual)
 
-	@echo "Building the latest copy of the user manual."
-	$(call generate_pdf_manual,book.user.adoc,user-manual.pdf,user_manual)
+	@echo -e "- Generating the administration manual."
+	@$(call generate_pdf_manual,book.admin.adoc,administration_manual.pdf,administration_manual)
 	
 	@echo
 	@echo "...build finished."
