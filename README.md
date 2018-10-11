@@ -33,8 +33,10 @@ If you're only making text changes, then add the AsciiDoc Live Preview plugin:
 2. To your [text editor or IDE](https://asciidoctor.org/docs/editing-asciidoc-with-live-preview/#using-a-modern-text-editoride), *if it has one*.
 
 Using one, or both, of these, you can quickly check if the changes you make are what you expect, and if there are any render errors.
-If the document renders as you expect, then you can commit the changes and push them to the docs repository.
-**Please note:** any links to internal files will not render correctly.
+If the document renders as expected, then you can commit the changes and push them to the docs repository.
+
+NOTE: Any links to internal files, such as code samples, and images will not render correctly, as the paths do not contain the absolute path to the asset. Links to internal files can only be previewed when the documentation is generated with Antora.
+
 The next section discusses this in more detail.
 
 ### Are You Working With Inline Code Examples, Images, and Attachments?
