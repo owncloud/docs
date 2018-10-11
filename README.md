@@ -58,7 +58,7 @@ Then, you can create meaningful commits and a PR with your changes.
 
 ## Styling the Docs
 
-If you want to change the look and feel of the ownCloud documentation, you can find all the information that you need in [the docs-ui repository](https://github.com/owncloud/docs-ui/blob/master/README.adoc).
+If you find a bug in the look and feel of the ownCloud documentation or want to suggest an improvement, you can find all the information that you need in [the docs-ui repository](https://github.com/owncloud/docs-ui/blob/master/README.adoc).
 
 ## How To Generate PDFs
 
