@@ -98,23 +98,6 @@ make pdf
 When generated, the PDF files will be generated in the build directory (`build`), and will be named after the respective manual.
 The build directory is called `build` and is located in the root of the repository.
 
-### A Note About Custom Fonts
-
-Please be aware that the custom ownCloud PDF theme references a custom font, *Times New Roman*, in place of the packaged Times Roman font, as Times Roman doesn't support a wide enough character set to render the manuals correctly.
-
-If you have this font available on your system, you need to copy it (all four variants: _normal_, _italic_, _bold_, and _bold-italic_), to the `fonts` directory. If you don't, then you'll have to copy the closest matching font family to _Times New Roman_ that you do have, and then update `resources/themes/owncloud-theme.yml`.
-
-If you want to use your available system fonts, here’s where you can find them:
-
-| Operating System | Font Directory |
-|---|---|
-| [macOS](https://support.apple.com/en-bh/HT201749) | `/Library/Fonts` |
-| [Linux](https://medium.com/source-words/how-to-manually-install-update-and-uninstall-fonts-on-linux-a8d09a3853b0) | `/usr/share/fonts/` or `~/.local/share/fonts` |
-| [Windows](https://support.microsoft.com/en-us/help/314960/how-to-install-or-remove-a-font-in-windows) | `%windir%\fonts` |
-
-Alternatively, you can use free fonts, available online from various font directories.
-Two of the most well known are [Google Fonts](https://fonts.google.com/) and [Font Squirrel](https://www.fontsquirrel.com/).
-
 ## Viewing Build Errors
 
 If an aspect of your change contains invalid AsciiDoc, then you'll see output similar to the example below.
