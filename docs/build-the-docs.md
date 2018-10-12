@@ -1,21 +1,31 @@
-# Build the Docs
+# Building the Documentation
 
-You're now ready to build the new ownCloud docs.
-Let's assume you've made a change to some aspect of the documentation, whether large or small, and you want to rebuild the docs and preview the changes.
-There are two ways to doing so, depending on how you installed Antora.
+You're now ready to build (generate) the ownCloud documentation.
+The documentation can be generated in HTML and PDF formats.
 
-## Using the Docker Container
+## Generating in HTML Format
+
+There are two ways to generate the documentation in HTML format:
+
+- Using the Official Docker Container
+- Running Antora from the Command-Line
+
+### Using the Docker Container
 
 From the command line, in the root of the docs directory, run the command:
 
 ```
-docker run -ti --rm -v $(pwd):$(pwd) -w $(pwd) antora/antora:latest generate site.yml
+docker run -ti --rm \
+    -v $(pwd):$(pwd) \
+    -w $(pwd) \
+    antora/antora:1.0.1 \
+    generate site.yml
 ```
 
 This command starts up the Antora Docker container, removes the existing documentation, and then runs Antora's generate command, an regenerates the documentation.
 If all goes well, you will _not_ see any console output.
 
-## Running Antora From The Command-Line
+### Running Antora From The Command-Line
 
 From the command line, in the root of the docs directory, run the command:
 
@@ -25,21 +35,7 @@ antora site.yml
 
 If all goes well, you will _not_ see any console output.
 
-## Viewing Build Errors
-
-If an aspect of your change contains invalid AsciiDoc, then you'll see output similar to the example below.
-
-```console
-asciidoctor: ERROR: index.adoc: line 25: only book doctypes can contain level 0 sections
-```
-
-There, you can see:
-
-- That an error was found
-- The file it was found in
-- The line of that file where it is located
-
-## Viewing Changes
+### Viewing The HTML Documentation
 
 Assuming that there are no errors, the next thing to do is to run the [NPM Serve tool](https://www.npmjs.com/package/serve) so that you can view your changes, before committing and pushing the changes to the remote docs repository.
 We suggest using it, as it's trivial to install and start.
@@ -71,3 +67,64 @@ Your changes will be reflected in the local version of the site that Serve is re
 
 We hope that you can see that contributing to the documentation using Antora is a pretty straight-forward process, and not _that_ demanding.
 
+## Generating in PDF Format
+
+To generate the documentation in PDF format, you need to have `asciidoctor-pdf` and GNU `make` installed, as PDF generation isn't, _yet_, supported by Antora.
+To install asciidoctor-pdf, please refer to [the official installation instructions](https://asciidoctor.org/docs/asciidoctor-pdf/).
+To install GNU Make, please refer to the link below for your operating system:
+
+- [Linux](https://www.cyberciti.biz/faq/howto-installing-gnu-c-compiler-development-environment-on-ubuntu/)
+- [macOS](http://brewformulas.org/Make)
+- [Microsoft Windows](http://gnuwin32.sourceforge.net/install.html)
+
+When installed, run the command below in the root directory of the repository, to generate PDF versions of the _administration_, _developer_ and _user_ manuals.
+
+```console
+make pdf
+```
+
+`make pdf` invokes [asciidoctor-pdf](https://github.com/asciidoctor/asciidoctor-pdf) and passes it:
+
+1. **The configuration file to use**
+
+    This configuration file, based on [the asciidoctor-pdf theming guide](https://github.com/asciidoctor/asciidoctor-pdf/blob/master/docs/theming-guide.adoc), contains all the essential details required to build a PDF version of one of the manuals.
+
+    This includes the list of files to use as the PDF's source material as well as the required YAML front-matter. The front-matter includes details such as whether to render a table of contents, the icon set to use, and the images base directory.
+
+2. **The custom theme directory and the custom theme file**
+
+    This ensures that the defaults are overridden, where relevant, to ensure that the generated PDF is as close to the current ownCloud style as possible.
+
+When generated, the PDF files will be generated in the build directory (`build`), and will be named after the respective manual.
+The build directory is called `build` and is located in the root of the repository.
+
+### A Note About Custom Fonts
+
+Please be aware that the custom ownCloud PDF theme references a custom font, *Times New Roman*, in place of the packaged Times Roman font, as Times Roman doesn't support a wide enough character set to render the manuals correctly.
+
+If you have this font available on your system, you need to copy it (all four variants: _normal_, _italic_, _bold_, and _bold-italic_), to the `fonts` directory. If you don't, then you'll have to copy the closest matching font family to _Times New Roman_ that you do have, and then update `resources/themes/owncloud-theme.yml`.
+
+If you want to use your available system fonts, here’s where you can find them:
+
+| Operating System | Font Directory |
+|---|---|
+| [macOS](https://support.apple.com/en-bh/HT201749) | `/Library/Fonts` |
+| [Linux](https://medium.com/source-words/how-to-manually-install-update-and-uninstall-fonts-on-linux-a8d09a3853b0) | `/usr/share/fonts/` or `~/.local/share/fonts` |
+| [Windows](https://support.microsoft.com/en-us/help/314960/how-to-install-or-remove-a-font-in-windows) | `%windir%\fonts` |
+
+Alternatively, you can use free fonts, available online from various font directories.
+Two of the most well known are [Google Fonts](https://fonts.google.com/) and [Font Squirrel](https://www.fontsquirrel.com/).
+
+## Viewing Build Errors
+
+If an aspect of your change contains invalid AsciiDoc, then you'll see output similar to the example below.
+
+```console
+asciidoctor: ERROR: index.adoc: line 25: only book doctypes can contain level 0 sections
+```
+
+There, you can see:
+
+- That an error was found
+- The file it was found in
+- The line of that file where it is located
