@@ -9,6 +9,17 @@
 # htgroup	the webserver group
 # rootuser	the root user
 
+# Short description for paramters used in find
+#
+# -L       ... Follow symbolic links. Needed in case if links are used or present
+# -path    ... The path to process
+# -prune   ... If the file is a directory, do not descend into it (used to exclude directories)
+# -o       ... OR (to add more parameters)
+# -type    ... File is of type [d ... directory, f ... file]
+# -print0  ... Print the full file name on the standard output, followed by a null character
+# xargs -0 ... Reads items from the standard input, input items are terminated by a null character
+
+
 ocname='owncloud'
 ocroot='/var/www'
 ocpath=$ocroot/$ocname
@@ -123,7 +134,7 @@ if [ "$upgrdcfg" = "y" ]; then
     printf "\nCopy existing config.php file \n"
     cp ${oldocpath}/config/config.php ${ocpath}/config/config.php
   else
-    printf "Skipping copy config.php, not found: ${oldocpath}/config/config.php \n"
+    printf "Skip to copy old config.php, file not found: ${oldocpath}/config/config.php \n"
   fi
 fi
 
@@ -141,7 +152,9 @@ find -L ${ocpath} -path ${ocdata} -prune -o -path ${ocapps_external} -prune -o -
 
 # no error messages on empty directories
 if [ "$chmdir" = "n" ] && [ "$uselinks" = "n" ]; then
+
   printf "chmod data and apps-external directory (mkdir) \n"
+
   if [ -n "$(ls -A $ocdata)" ]; then
     find ${ocdata}/ -type f -print0 | xargs -0 chmod 0640
   fi
@@ -153,7 +166,9 @@ if [ "$chmdir" = "n" ] && [ "$uselinks" = "n" ]; then
 fi
 
 if [ "$chmdir" = "y" ] && [ "$uselinks" = "y" ]; then
+
   printf "chmod data and apps-external directory (linked) \n"
+
   if [ -n "$(ls -A $ocdata)" ]; then
     find -L ${ocdata}/ -type f -print0 | xargs -0 chmod 0640
   fi
@@ -166,10 +181,11 @@ fi
 
 #chown
 printf "\nchown files and directories excluding data and apps-external directory \n"
+
 find  -L $ocpath  -path ${ocdata} -prune -o -path ${ocapps_external} -prune -o -type d -print0 | xargs -0 chown ${rootuser}:${htgroup}
 find  -L $ocpath  -path ${ocdata} -prune -o -path ${ocapps_external} -prune -o -type f -print0 | xargs -0 chown ${rootuser}:${htgroup}
 
-# do only if the directories are present
+# do only if directories are present
 if [ -d ${ocpath}/apps/ ]; then
   printf "chown apps directory \n"
   chown -R ${htuser}:${htgroup} ${ocpath}/apps/
