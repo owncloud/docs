@@ -10,6 +10,7 @@ STYLESDIR     = resources/themes
 STYLE         = owncloud
 BASEDIR       = $(shell pwd)
 APPVERSION    = 10.0.19
+BRANCH        = $(shell git rev-parse --verify HEAD)
 
 .PHONY: help clean pdf
 
@@ -69,3 +70,12 @@ pdf: clean
 	@echo
 	@echo "Finished building the PDF manuals."
 	@echo "The PDF copy of the manuals have been generated in the build directory: $(BUILDDIR)/."
+	
+check_all_files_prose: 
+	@echo "Checking quality of the prose in all files"
+	write-good --parse modules/{administration,developer,user}_manual/**/*.adoc
+
+FILES=$(shell git diff --staged --name-only $(BRANCH) | grep -E \.adoc$)
+check_staged_files_prose: 
+	@echo "Checking quality of the prose in the changed files"
+	$(foreach file,$(FILES),write-good --parse $(file);)
