@@ -2482,9 +2482,13 @@ all users via the process list, and will only be visible in the history
 of the user (root) running the command. This also permits creating
 scripts for adding multiple new users.
 
-To use `password-from-env` you must run as "real" root, rather than
-`sudo`, because `sudo` strips environment variables. This example adds
-new user Fred Jones:
+NOTE: To use `password-from-env` you must run as "real" root, rather than `sudo`, because `sudo` strips environment variables.
+
+NOTE: To use `send-email`, the ownCloud instance must have email access fully configured.
+
+Examples
+
+Add a new user, called Fred Jones:
 
 ....
 export OC_PASS=newpassword
@@ -2501,15 +2505,35 @@ You can reset any user's password, including administrators (see xref:configurat
 sudo -u www-data php occ user:resetpassword layla
   Enter a new password:
   Confirm the new password:
-  Successfully reset password for layla
+Successfully reset password for layla
 ....
 
 You may also use `password-from-env` to reset passwords:
 
 ....
 export OC_PASS=newpassword
-sudo -u www-data php occ user:resetpassword --password-from-env layla
-  Successfully reset password for layla
+su -s /bin/sh www-data -c 'php occ user:resetpassword \
+  --password-from-env \
+  layla'
+Successfully reset password for layla
+....
+
+This example emails a password reset link to the user. 
+Additionally, when the command completes, it outputs the password reset link to the console:
+
+....
+sudo -u www-data php occ user:resetpassword \
+  --send-email \
+  --output-link \
+  layla
+The password reset link is: http://localhost:8080/index.php/lostpassword/reset/form/rQAlCjNeQf3aphA6Hraq2/layla
+....
+
+
+If the specified user does not have a valid email address set, then the following error will be output to the console, and the email will not be sent:
+
+....
+Email address is not set for the user layla
 ....
 
 [[user-application-settings]]
