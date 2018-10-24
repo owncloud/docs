@@ -16,13 +16,13 @@ reading through the source code of the
 https://github.com/owncloud/files_external_ftp[FTP external storage
 app].
 
-[[configure-the-filesystem-type]]
+[[external-storage-backends-configure-the-filesystem-type]]
 == Configure the filesystem type
 
 First, the /appinfo/info.xml must be adjusted to specify the `type` as:
 `filesystem`. For example:
 
-[[implement-the-storage-classes]]
+[[external-storage-backends-implement-the-storage-classes]]
 == Implement the storage class(es)
 
 Next, you need to create a storage class. Usually, you should implement
@@ -59,7 +59,7 @@ not perform as well as it could. In the case of the `rename` method,
 this is because it uses a combination of a stream copy plus a delete for
 renaming a file.
 
-[[statmetadata-cache]]
+[[external-storage-backends-statmetadata-cache]]
 === Stat/metadata cache
 
 To create a mature implementation, we need to consider stat and metadata
@@ -74,7 +74,7 @@ stat/metadata caching. To do this, the metadata of any folder entries
 which are read should be cached in a local array and returned by the
 storage class’ methods.
 
-[[writing-a-flysystem-adapter]]
+[[external-storage-backends-writing-a-flysystem-adapter]]
 === Writing a Flysystem adapter
 
 Instead of writing everything by hand, it is also possible to write an
@@ -84,17 +84,17 @@ adapter], as external storage. You can see how it was done in the
 https://github.com/owncloud/files_external_ftp/blob/master/lib/Storage/FTP.php#L27[FTP
 storage adapter].
 
-[[create-the-backend-adapter]]
+[[external-storage-backends-create-the-backend-adapter]]
 == Create the backend adapter
 
 After implementing the storage class, a backend adapter needs to be
 created. To do that, create a class that extends from
 `\\OCP\\Files\\External\\Backend`:
 
-[[definition-parameters]]
+[[external-storage-backends-definition-parameters]]
 === Definition parameters
 
-[[flags]]
+[[external-storage-backends-flags]]
 ==== Flags:
 
 [cols=",",options="header",]
@@ -104,7 +104,7 @@ created. To do that, create a class that extends from
 | *DefinitionParameter::FLAG_OPTIONAL* | For optional parameters
 |=============================================================
 
-[[types]]
+[[external-storage-backends-types]]
 ==== Types:
 
 [cols=",",options="header",]
@@ -124,7 +124,7 @@ and
 | | scripts
 |=======================================================================
 
-[[authentication-schemes]]
+[[external-storage-backends-authentication-schemes]]
 === Authentication schemes
 
 Several authentication schemes can be specified.
@@ -160,7 +160,7 @@ Several authentication schemes can be specified.
 | | `public_key`, `private_key`
 |=======================================================================
 
-[[custom-user-interface]]
+[[external-storage-backends-custom-user-interface]]
 === Custom user interface
 
 When dealing with complex field values or workflows like
@@ -177,7 +177,7 @@ This will automatically load the script /js/script.js from the app
 folder. The script itself will need to inject events into the external
 storage GUI as there is currently no proper public API to do so.
 
-[[register-the-backend-adapter]]
+[[external-storage-backends-register-the-backend-adapter]]
 == Register the backend adapter
 
 With the backend adapter created, it next needs to be registered. This
@@ -198,7 +198,7 @@ Then in appinfo/app.php instantiate the `Application` class:
   $app = new \OCA\MyStorageApp\AppInfo\Application();
 ----
 
-[[test-the-storage-backend]]
+[[external-storage-backends-test-the-storage-backend]]
 == Test the storage backend
 
 Once the steps above are done, you should be able to mount the storage
