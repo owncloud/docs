@@ -45,7 +45,7 @@ IMPORTANT: You should regularly backup all encryption keys to prevent permanent 
 
 The encryption keys are stored in the following directories:
 
-[cols=",",options="header",]
+[width="90%",cols="20%,80%",options="header",]
 |===
 | Directory
 | Description
@@ -76,7 +76,7 @@ encryption tools, such as file-level or whole-disk encryption.
 
 [CAUTION]
 ====
-SSL terminates at or before Apache on the ownCloud server.
+SSL terminates at or before the webserver on the ownCloud server.
 Consequently, all files are in an unencrypted state between the SSL connection
 termination and the ownCloud code that encrypts and decrypts them.
 This is, potentially, exploitable by anyone with administrator access to your server.
@@ -88,7 +88,7 @@ For more information, read: https://owncloud.org/blog/how-owncloud-uses-encrypti
 
 ownCloud provides two encryption types:
 
-[cols="1,2"]
+[width="90%",cols="20%,80%",]
 |===
 | *User-Key:*
 | Every user has their own private/public key pairs, and the private key is protected by the user’s password.
@@ -128,21 +128,21 @@ Firstly, enable the default encryption module app, using the following command:
 
 [source,console]
 ....
-occ app:enable encryption
+sudo -u www-data php occ app:enable encryption
 ....
 
 Then enable encryption, using the following command:
 
 [source,console]
 ....
-occ encryption:enable
+sudo -u www-data php occ encryption:enable
 ....
 
 After that, enable the master key, using the following command:
 
 [source,console]
 ....
-occ encryption:select-encryption-type masterkey
+sudo -u www-data php occ encryption:select-encryption-type masterkey
 ....
 
 NOTE: The master key mode has to be set up in a newly created instance.
@@ -151,7 +151,7 @@ Finally, encrypt all data, using the following command:
 
 [source,console]
 ....
-occ encryption:encrypt-all
+sudo -u www-data php occ encryption:encrypt-all
 ....
 
 [NOTE]
@@ -167,14 +167,14 @@ Get the current encryption status and the loaded encryption module:
 
 [source,console]
 ....
-occ encryption:status
+sudo -u www-data php occ encryption:status
 ....
 
 This is equivalent to checking Enable server-side encryption on your Admin page:
 
 [source,console]
 ....
-occ encryption:enable
+sudo -u www-data php occ encryption:enable
 Encryption enabled
 
 Default module: OC_DEFAULT_MODULE
@@ -193,7 +193,7 @@ You must first put your ownCloud server into single-user mode to prevent any use
 
 [source,console]
 ....
-occ maintenance:singleuser --on
+sudo -u www-data php occ maintenance:singleuser --on
 Single user mode is currently enabled
 ....
 
@@ -201,7 +201,7 @@ Decrypt all user data files, or optionally a single user:
 
 [source,console]
 ....
-occ encryption:decrypt-all [username]
+sudo -u www-data php occ encryption:decrypt-all [username]
 ....
 
 == Disabling Encryption
@@ -210,20 +210,21 @@ To disable encryption, put your ownCloud server into single-user mode, and then 
 
 [source,console]
 ....
-occ maintenance:singleuser --on
-occ encryption:disable
+sudo -u www-data php occ maintenance:singleuser --on
+sudo -u www-data php occ encryption:disable
 ....
 
 Take it out of single-user mode when you are finished, by using the following command:
 
 [source,console]
 ....
-occ maintenance:singleuser --off
+sudo -u www-data php occ maintenance:singleuser --off
 ....
 
 [IMPORTANT]
 ====
-You may only disable encryption by using the `occ Encryption Commands`_. Make sure you have backups of all encryption keys, including those for all your users.
+You may only disable encryption by using the link:configuration/server/occ_command.adoc#encryption[occ Encryption Commands].
+Make sure you have backups of all encryption keys, including those for all your users.
 ====
 
 == Enabling User-Key Based Encryption From the Command-line
@@ -244,42 +245,42 @@ To be safe, put your server in single user mode, to avoid any issues on a runnin
 
 [source,console]
 ....
-occ maintenance:singleuser --on
+sudo -u www-data php occ maintenance:singleuser --on
 ....
 
 Then, enable the default encryption module app, using the following command:
 
 [source,console]
 ....
-occ app:enable encryption
+sudo -u www-data php occ app:enable encryption
 ....
 
 After that, enable encryption, using the following command:
 
 [source,console]
 ....
-occ encryption:enable
+sudo -u www-data php occ encryption:enable
 ....
 
 Then, enable the user-key, using the following command:
 
 [source,console]
 ....
-occ encryption:select-encryption-type user-keys
+sudo -u www-data php occ encryption:select-encryption-type user-keys
 ....
 
 Finally, encrypt all data, using the following command:
 
 [source,console]
 ....
-occ encryption:encrypt-all
+sudo -u www-data php occ encryption:encrypt-all
 ....
 
 Now you can turn off the single user mode:
 
 [source,console]
 ....
-occ maintenance:singleuser --off
+sudo -u www-data php occ maintenance:singleuser --off
 ....
 
 
@@ -293,9 +294,9 @@ encrypted, to reset a user’s password using the standard reset process.
 
 If so, you’ll see a yellow banner warning:
 
-_________________________________________________________________________________
+""
 Please provide an admin recovery password; otherwise, all user data will be lost.
-_________________________________________________________________________________
+""
 
 To avoid all this, create a Recovery Key. To do so, go to the Encryption
 section of your Admin page and set a recovery key password.
@@ -357,7 +358,7 @@ You must first put your ownCloud server into single-user mode, to prevent any us
 
 [source,console]
 ....
-occ maintenance:singleuser --on
+sudo -u www-data php occ maintenance:singleuser --on
 Single user mode is currently enabled
 ....
 
@@ -371,8 +372,8 @@ put your ownCloud server into single-user mode, and then disable your
 encryption module with this command:
 
 ....
-occ maintenance:singleuser --on
-occ encryption:disable
+sudo -u www-data php occ maintenance:singleuser --on
+sudo -u www-data php occ encryption:disable
 ....
 
 IMPORTANT: Encryption cannot be disabled without the user’s password or xref:how-to-enable-users-file-recovery-keys[file recovery key]. If you don’t have access to at least one of these then there is no way to decrypt all files.
@@ -381,7 +382,7 @@ Then, take it out of single-user mode when you are finished with this
 command:
 
 ....
-occ maintenance:singleuser --off
+sudo -u www-data php occ maintenance:singleuser --off
 ....
 
 It is possible to disable encryption with the file recovery key, _if_ every user uses them.
@@ -395,7 +396,7 @@ View current location of keys:
 
 [source,console]
 ....
-occ encryption:show-key-storage-root
+sudo -u www-data php occ encryption:show-key-storage-root
 Current key storage root:  default storage location (data/)
 ....
 
@@ -409,7 +410,7 @@ Note that the new folder is relative to your occ directory:
 mkdir /var/www/owncloud/data/new_keys
 chown -R root:www-data /var/www/owncloud/data/new_keys
 chmod -R 0770 /var/www/owncloud/data/new_keys
-occ encryption:change-key-storage-root new_keys
+sudo -u www-data php occ encryption:change-key-storage-root new_keys
 Change key storage root from default storage location to new_keys
 Start to move keys:
    4 [============================]
