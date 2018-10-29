@@ -6,7 +6,7 @@ image]. This official image is designed to work with a data volume in
 the host filesystem and with separate _MariaDB_ and _Redis_ containers.
 The configuration:
 
-* exposes ports 80 and 443, allowing for HTTP and HTTPS connections.
+* exposes ports 8080, allowing for HTTP connections.
 * mounts the data and MySQL data directories on the host for persistent
 storage.
 
@@ -44,11 +44,7 @@ settings are required, these are:
 
 | `HTTP_PORT`
 | The HTTP port to bind to
-| `80`
-
-| `HTTPS_PORT`
-| The HTTP port to bind to
-| `443`
+| `8080`
 |===
 
 Then, you can start the container, using your preferred Docker
@@ -74,8 +70,7 @@ OWNCLOUD_VERSION=10.0
 OWNCLOUD_DOMAIN=localhost
 ADMIN_USERNAME=admin
 ADMIN_PASSWORD=admin
-HTTP_PORT=80
-HTTPS_PORT=443
+HTTP_PORT=8080
 EOF
 
 # Build and start the container
@@ -92,13 +87,12 @@ below:
 Name                Command                       State             Ports
 _______________________________________________________________________________________________________________
 server_db_1         /usr/bin/entrypoint/bin/s …   Up                3306/tcp
-server_owncloud_1   /usr/local/bin/entrypoint …   Up                0.0.0.0:443->443/tcp, 0.0.0.0:80->80/tcp
+server_owncloud_1   /usr/local/bin/entrypoint …   Up                0.0.0.0:8080->8080/tcp
 server_redis_1      /bin/s6-svscan /etc/s6        Up                6379/tcp
 ....
 
 In it, you can see that the database, ownCloud, and Redis containers are
-running, and that ownCloud is accessible via ports 443 and 8080 on the
-host machine.
+running, and that ownCloud is accessible via port 8080 on the host machine.
 
 NOTE: Just because all the containers are running, it takes a few minutes for ownCloud to be fully functional. If you run
 `docker-compose logs --follow owncloud` and see a significant amount of information logging to the console, then please wait until it slows down to attempt to access the web UI.
