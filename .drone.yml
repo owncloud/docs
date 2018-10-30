@@ -11,40 +11,46 @@ clone:
     pull: true
 
 pipeline:
-  # cache-restore:
-  #   image: plugins/s3-cache:1
-  #   pull: true
-  #   secrets: [ cache_s3_endpoint, cache_s3_access_key, cache_s3_secret_key ]
-  #   restore: true
-  #   when:
-  #     local: false
+  cache-restore:
+    image: plugins/s3-cache:1
+    pull: true
+    secrets: [ cache_s3_endpoint, cache_s3_access_key, cache_s3_secret_key ]
+    restore: true
+    when:
+      local: false
+
+  build-pdfs:
+    image: toolhippie/asciidoctor:latest
+    pull: true
+    commands:
+      - make pdf
 
   build-docs:
     image: antora/antora:1.0.1
     pull: true
     commands:
-      - antora generate --cache-dir /drone/src/cache --redirect-facility netlify site.yml
+      - antora generate --cache-dir cache/ --redirect-facility netlify site.yml
 
-  # cache-rebuild:
-  #   image: plugins/s3-cache:1
-  #   pull: true
-  #   secrets: [ cache_s3_endpoint, cache_s3_access_key, cache_s3_secret_key ]
-  #   rebuild: true
-  #   mount:
-  #     - cache
-  #   when:
-  #     local: false
-  #     event: [ push ]
+  cache-rebuild:
+    image: plugins/s3-cache:1
+    pull: true
+    secrets: [ cache_s3_endpoint, cache_s3_access_key, cache_s3_secret_key ]
+    rebuild: true
+    mount:
+      - cache
+    when:
+      local: false
+      event: [ push ]
 
-  # cache-flush:
-  #   image: plugins/s3-cache:1
-  #   pull: true
-  #   secrets: [ cache_s3_endpoint, cache_s3_access_key, cache_s3_secret_key ]
-  #   flush: true
-  #   flush_age: 14
-  #   when:
-  #     local: false
-  #     event: [ push ]
+  cache-flush:
+    image: plugins/s3-cache:1
+    pull: true
+    secrets: [ cache_s3_endpoint, cache_s3_access_key, cache_s3_secret_key ]
+    flush: true
+    flush_age: 14
+    when:
+      local: false
+      event: [ push ]
 
   publish-netlify:
     image: lucap/drone-netlify:latest
