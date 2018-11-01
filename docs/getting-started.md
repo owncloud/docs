@@ -104,7 +104,7 @@ The next section discusses this in more detail.
 
 ### Are You Working With Inline Code Examples, Images, and Attachments?
 
-If, however, you're linking to local files, such as inline code examples, images, and attachments, then you need to [install Antora's command-line tools](./docs/install-antora.md).
+If, however, you're linking to local files, such as inline code examples, images, and attachments, then you need to [install Antora's command-line tools](./install-antora.md).
 This is because the Live Preview plugin won’t know the complete path to the local file, so won’t be able to correctly render a link to it.
 All other kinds of links should work properly, however.
 
