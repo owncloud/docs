@@ -1,0 +1,107 @@
+[[enabling-encryption-from-the-command-line]]
+= Master Key Based Encryption
+
+To enable encryption via the command-line, involves several commands.
+Firstly, enable the default encryption module app, using the following command:
+
+[source,console]
+....
+sudo -u www-data php occ app:enable encryption
+....
+
+Then enable encryption, using the following command:
+
+[source,console]
+....
+sudo -u www-data php occ encryption:enable
+....
+
+After that, enable the master key, using the following command:
+
+[source,console]
+....
+sudo -u www-data php occ encryption:select-encryption-type masterkey
+....
+
+NOTE: The master key mode has to be set up in a newly created instance.
+
+Finally, encrypt all data, using the following command:
+
+[source,console]
+....
+sudo -u www-data php occ encryption:encrypt-all
+....
+
+[NOTE]
+====
+This command is not typically required, as the master key is often enabled at install time.
+As a result, when enabling it, there should be no data to encrypt.
+But, in case it’s being enabled after install, and the installation does have files which are unencrypted, encrypt-all can be used to encrypt them.
+====
+
+== View Current Encryption Status
+
+Get the current encryption status and the loaded encryption module:
+
+[source,console]
+....
+sudo -u www-data php occ encryption:status
+....
+
+This is equivalent to checking Enable server-side encryption on your Admin page:
+
+[source,console]
+....
+sudo -u www-data php occ encryption:enable
+Encryption enabled
+
+Default module: OC_DEFAULT_MODULE
+....
+
+== Recreating an Existing Master Key
+
+If the master key needs replacing, for example, because it has been compromised, an occ command is available.
+The command is link:configuration/server/occ_command.adoc#recreate-master-key[encryption:recreate-master-key].
+It replaces existing master key with new one and encrypts the files with the new key.
+
+== Decrypt Master-Key Encryption
+
+You must first put your ownCloud server into single-user mode to prevent any user activity until encryption is completed.
+
+[source,console]
+....
+sudo -u www-data php occ maintenance:singleuser --on
+Single user mode is currently enabled
+....
+
+Decrypt all user data files, or optionally a single user:
+
+[source,console]
+....
+sudo -u www-data php occ encryption:decrypt-all [username]
+....
+
+== Disabling Encryption
+
+To disable encryption, put your ownCloud server into single-user mode, and then disable your encryption module with these commands:
+
+[source,console]
+....
+sudo -u www-data php occ maintenance:singleuser --on
+sudo -u www-data php occ encryption:disable
+....
+
+Take it out of single-user mode when you are finished, by using the following command:
+
+[source,console]
+....
+sudo -u www-data php occ maintenance:singleuser --off
+....
+
+[IMPORTANT]
+====
+You may only disable encryption by using the link:configuration/server/occ_command.adoc#encryption[occ Encryption Commands].
+Make sure you have backups of all encryption keys, including those for all your users.
+====
+
+include::sharing-encrypted-files.adoc[leveloffset=+1]
