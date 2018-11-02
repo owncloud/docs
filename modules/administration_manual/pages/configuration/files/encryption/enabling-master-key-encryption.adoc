@@ -1,34 +1,53 @@
 [[enabling-encryption-from-the-command-line]]
 = Master Key Based Encryption
+Matthew Setter <matthew@matthewsetter.com>
+:experimental:
+:keywords: master key based encryption, encryption
+:description: With Master Key based encryption, there is only one key (or key pair) and all files are encrypted using that key pair. 
 
-To enable encryption via the command-line, involves several commands.
-Firstly, enable the default encryption module app, using the following command:
+With Master Key based encryption, there is only one key (or key pair) and all files are encrypted using that key pair. 
+This is highly recommended for new instances to avoid restrictions in functionality of user key encryption.
 
-[source,console]
+== Enabling Master Key Based Encryption
+
+To enable Master Key based encryption requires two steps:
+
+. xref:enable-the-encryption-app[Enable the encryption app]
+. xref:enable-and-configure-master-key-based-encryption[Enable and configure User-Key based Encryption]
+
+[TIP] 
+====
+We strongly encourage you to put your server in single user mode before setting up encryption.
+
+To do so, run the following command:
+
 ....
-sudo -u www-data php occ app:enable encryption
+sudo -u www-data php occ maintenance:singleuser --on
 ....
+====
 
-Then enable encryption, using the following command:
+[[enable-the-encryption-app]]
+=== Enable the Encryption App
+
+include::enable-encryption.adoc[leveloffset=+1,tag=enable-encryption-app-via-command-line]
+
+[[enable-and-configure-master-key-based-encryption]]
+=== Enable and Configure Master Key Based Encryption
+
+To enable and configure Master Key based encryption via the command-line, involves several commands.
+
+. Enable encryption.
+. Enable the master key.
++
+NOTE: The master key mode has to be setup in a newly created instance.
+. Encrypt all data.
+
+The following example shows how to carry out these steps.
 
 [source,console]
 ....
 sudo -u www-data php occ encryption:enable
-....
-
-After that, enable the master key, using the following command:
-
-[source,console]
-....
 sudo -u www-data php occ encryption:select-encryption-type masterkey
-....
-
-NOTE: The master key mode has to be set up in a newly created instance.
-
-Finally, encrypt all data, using the following command:
-
-[source,console]
-....
 sudo -u www-data php occ encryption:encrypt-all
 ....
 
@@ -58,13 +77,14 @@ Encryption enabled
 Default module: OC_DEFAULT_MODULE
 ....
 
-== Recreating an Existing Master Key
+[[recreating-an-existing-master-key]]
+== Recreate an Existing Master Key
 
 If the master key needs replacing, for example, because it has been compromised, an occ command is available.
 The command is link:configuration/server/occ_command.adoc#recreate-master-key[encryption:recreate-master-key].
 It replaces existing master key with new one and encrypts the files with the new key.
 
-== Decrypt Master-Key Encryption
+== Decrypt Master-Key Based Encryption
 
 You must first put your ownCloud server into single-user mode to prevent any user activity until encryption is completed.
 
@@ -81,7 +101,7 @@ Decrypt all user data files, or optionally a single user:
 sudo -u www-data php occ encryption:decrypt-all [username]
 ....
 
-== Disabling Encryption
+== Disable Encryption
 
 To disable encryption, put your ownCloud server into single-user mode, and then disable your encryption module with these commands:
 

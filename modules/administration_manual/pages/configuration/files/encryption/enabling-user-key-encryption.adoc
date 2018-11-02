@@ -1,6 +1,7 @@
 = User-Key Based Encryption
+:experimental:
 
-== User-Key Based Encryption Limitations
+== Limitations
 
 * Users added to groups cannot decrypt files on existing shares.
 * OnlyOffice will not work.
@@ -10,78 +11,74 @@
 * Users getting access to an external storage which already contains existing encrypted files cannot get access to said files for reasons such as the group case above.
 * When having data shared with a group and group membership changes after the share is established, subsequently added users will not be able to open the shared data unless the owner will share it again.
 
-== Enabling User-Key based Encryption
+== Enable User-Key Based Encryption
 
-To be safe, first put your server in single user mode, to avoid any issues on a running instance, using the following command:
+To enable User-Key based encryption requires two steps:
 
-[source,console]
+. xref:enable-the-encryption-app[Enable the encryption app]
+. xref:enable-and-configure-user-key-based-encryption[Enable and configure User-Key based Encryption]
+
+[TIP] 
+====
+We strongly encourage you to put your server in single user mode before setting up encryption.
+
+To do so, run the following command:
+
 ....
 sudo -u www-data php occ maintenance:singleuser --on
 ....
+====
 
-Then, enable the default encryption module app, using the following command:
+[[enable-the-encryption-app]]
+=== Enable the Encryption App
 
-[source,console]
-....
-sudo -u www-data php occ app:enable encryption
-....
+include::enable-encryption.adoc[leveloffset=+1,tag=enable-encryption-app-via-command-line]
 
-After that, enable encryption, using the following command:
+[[enable-and-configure-user-key-based-encryption]]
+=== Enable and Configure User-Key Based Encryption
+
+To enable and configure User-Key based encryption, you need to:
+
+. Enable the default encryption module app
+. Enable encryption
+. Enable the user-key, using the following command:
+. Encrypt all data
+. Turn off the single user mode
+
+The following example shows how to carry out these steps.
 
 [source,console]
 ....
 sudo -u www-data php occ encryption:enable
-....
-
-Then, enable the user-key, using the following command:
-
-[source,console]
-....
 sudo -u www-data php occ encryption:select-encryption-type user-keys
-....
-
-Finally, encrypt all data, using the following command:
-
-[source,console]
-....
 sudo -u www-data php occ encryption:encrypt-all
-....
-
-Now you can turn off the single user mode:
-
-[source,console]
-....
 sudo -u www-data php occ maintenance:singleuser --off
 ....
 
 [[how-to-enable-users-file-recovery-keys]]
-== How To Enable Users File Recovery Keys
+== How To Enable User File Recovery Keys
 
 Once a user has encrypted their files, if they lose their ownCloud password, then they lose access to their encrypted files, as their files will be unrecoverable. 
 It is not possible, when user files are encrypted, to reset a user’s password using the standard reset process.
-
 If so, you’ll see a yellow banner warning:
 
 ""
 Please provide an admin recovery password; otherwise, all user data will be lost.
 ""
 
-To avoid all this, create a Recovery Key. 
-To do so, go to the Encryption section of your Admin page and set a recovery key password.
+To avoid all this, create a recovery key. 
+To do so, go to menu:Settings[Admin > encryption] and set a recovery key password.
 
 image:configuration/files/encryption10.png[image]
 
-You then need to ask your users to opt-in to the Recovery Key. For the
-users to do this, they need to go to the ``**Personal**'' page and
-enable the recovery key. This signals that they are OK that the admin
-might have a way to decrypt their data for recovery reasons. If they do
-_not_ do this, then the Recovery Key won’t work for them.
+You then need to ask your users to opt-in to the Recovery Key. 
+For the users to do this, they need to go to the ''**Personal**'' page and enable the recovery key. 
+This signals that they accept that the admin might have a way to decrypt their data for recovery reasons. 
+If they do _not_ do this, then the recovery key won’t work for them.
 
 image:configuration/files/encryption7.png[image]
 
-For users who have enabled password recovery, give them a new password
-and recover access to their encrypted files, by supplying the Recovery
-Key on the Users page.
+For users who have enabled password recovery, give them a new password and recover access to their encrypted files, by supplying the Recovery Key on the Users page.
 
 image:configuration/files/encryption8.png[image]
 
@@ -92,7 +89,7 @@ image:configuration/files/encryption12.png[image]
 [NOTE]
 ====
 Sharing a recovery key with a user group is *not* supported.
-This is only supported with xref:create-a-new-master-key[the master key].
+This is only supported with xref:recreating-an-existing-master-key[the master key].
 ====
 
 [[changing-the-recovery-key-password]]
@@ -111,7 +108,9 @@ If you have misplaced your recovery key password and need to replace it, here’
    and enable it again. This deletes the old recovery share keys from their
    files and encrypts their files with the new recovery key
 
-NOTE: You can only change the recovery key password if you know the original. This is by design, as only admins who know the recovery key password should be able to change it. If not, admins could hijack the recovery key from each other
+NOTE: You can only change the recovery key password if you know the original. 
+  This is by design, as only admins who know the recovery key password should be able to change it. 
+  If not, admins could hijack the recovery key from each other
 
 [IMPORTANT]
 ====
