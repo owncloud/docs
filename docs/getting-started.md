@@ -7,10 +7,8 @@ This guide is here to help you get started with this repository, primarily if yo
 To contribute to the documentation, you first need to:
 
 1. Learn [Antora's basics](./what-is-antora.md).
-2. See the ``Asciidoctor´s`` 
-[Writers Guide](https://asciidoctor.org/docs/asciidoc-writers-guide/), 
-[User Manual](https://asciidoctor.org/docs/user-manual/), 
-[Syntax Quick Reference](https://asciidoctor.org/docs/asciidoc-syntax-quick-reference/).
+2. Learn [the AsciiDoc basics](./what-is-asciidoc.md).
+   In addition, check out the Asciidoctor [Writers Guide](https://asciidoctor.org/docs/asciidoc-writers-guide/),  [User Manual](https://asciidoctor.org/docs/user-manual/), and [Syntax Quick Reference](https://asciidoctor.org/docs/asciidoc-syntax-quick-reference/).
 3. Make sure you have [tools](./what-is-asciidoc.md#writing--editing-asciidoc-files) that can edit and preview AsciiDoc files.
 4. Setup a [GitHub account](https://github.com/), if you haven't already.
 
