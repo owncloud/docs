@@ -18,7 +18,8 @@ To get started contributing to the documentation, please refer to [the Getting S
 
 To generate the documentation, whether in HTML or PDF format, please refer to [the Building the Documentation guide](./docs/build-the-docs.md).
 
-## Styling the Documentation
+## Common Content and Styling the Documentation
 
-If you find a bug in the look and feel of the ownCloud documentation or want to suggest an improvement, you can find all the information that you need in [the docs-ui repository](https://github.com/owncloud/docs-ui/blob/master/README.adoc).
+If you want to change eg. a footer, want to suggest an improvement of the layout or find a bug in the look and feel of the ownCloud documentation, you can find all the information that you need in [the docs-ui repository](https://github.com/owncloud/docs-ui/blob/master/README.adoc).
+Changes made in ``docs-ui`` are valid for the whole documentation.
 
