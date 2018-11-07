@@ -20,6 +20,5 @@ To generate the documentation, whether in HTML or PDF format, please refer to [t
 
 ## Common Content and Styling the Documentation
 
-If you want to change eg. a footer, want to suggest an improvement of the layout or find a bug in the look and feel of the ownCloud documentation, you can find all the information that you need in [the docs-ui repository](https://github.com/owncloud/docs-ui/blob/master/README.adoc).
-Changes made in ``docs-ui`` are valid for the whole documentation.
+If you want to suggest an improvement to the ownCloud documentation theme, such as the layout, the header or the footer text, or if you find a bug, all the information that you need is in the ``docs-ui`` repository. Changes made in ``docs-ui`` are valid for the whole documentation.
 
