@@ -1,17 +1,22 @@
 = Migrating User Key Encryption to Master Key Encryption
 
-If you need to migrate from User Key-based to Master Key-based encryption, there are a number of steps that you need to follow to ensure a smooth and complete transition. 
+If you need to migrate from User Key-based to Master Key-based encryption, there are several steps that you need to follow to ensure a smooth and complete transition. 
 These are:
 
 . xref:disable-user-key-based-encryption[Disable User Key-based encryption]
 . xref:remove-the-encryption-records-from-the-owncloud-database[Remove the encryption records from the ownCloud database]
-. xref:remove-the-`files_encryption`-directory[Remove the `files_encryption` folder]
+. xref:remove-the-files_encryption-directory[Remove the `files_encryption` directory]
 . xref:encrypt-the-filesystem-using-master-key-based-encryption[Encrypt the filesystem using Master Key-based encryption]
 
 include::{partialsdir}/configuration/server/enable-single-user-mode.adoc[leveloffset=+1]
 
 [[disable-user-key-based-encryption]]
 == Disable User Key-based Encryption
+
+The first part of the migration process is to take is to decrypt all files and to disable encryption in ownCloud, which requires three commands to be executed. 
+These commands are: xref:configuration/server/occ_command.adoc#encryption[`occ encryption:decrypt-all` and `occ encryption:disable`], and xref::configuration/server/occ_command.adoc#apps-commands[`occ app:disable`].
+
+You can see an example of calling the commands listed below, configured to require no user interaction.
 
 [source,console]
 ----
@@ -23,7 +28,7 @@ sudo -u www-data occ encryption:decrypt-all --continue=yes && \
 [[remove-the-encryption-records-from-the-owncloud-database]]
 == Remove the Encryption Records from the ownCloud Database
 
-Once your ownCloud files are unencrypted and encryption has been disabled, you need to remove the encryption records from the database.
+Once your ownCloud files are unencrypted, and encryption has been disabled, you need to remove the encryption records from the database.
 There is, currently, no `occ` command to handle this, so it has to be done manually. 
 Specifically, you need to remove all records from the `oc_appconfig` table where the `appid` column is set to `encryption`. 
 
@@ -78,7 +83,7 @@ sudo -u www-data occ app:enable encryption && \
 == Verify the Encrypted Files
 
 With the files encrypted using Master Key-based encryption, you should now verify that everything worked properly.
-To do so, run a SELECT query in your database which returns all files from the `oc_appconfig` table where the `appid` column is set to `encryption`.
+To do so, run a `SELECT` query in your database which returns all files from the `oc_appconfig` table where the `appid` column is set to `encryption`.
 You should see a number of records, as in the output of the example below.
 
 [source,console]
