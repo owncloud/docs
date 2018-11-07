@@ -15,6 +15,7 @@ Please ensure that the app you are going to configure is installed and enabled.
 
 * xref:ocapps_run-occ-as-your-http-user[Run occ As Your HTTP User]
 * xref:ocapps_brute_force_protection[Brute-Force Protection]
+* xref:ocapps_data_exporter[Data Exporter]
 * xref:ocapps_calendar[Calendar]
 * xref:ocapps_contacts[Contacts]
 * xref:ocapps_files_antivirus[Anti-Virus]
@@ -44,6 +45,8 @@ For example, in CentOS 6.5 with SCL-PHP54 installed, the command looks like this
 sudo -u apache /opt/rh/php54/root/usr/bin/php /var/www/html/owncloud/occ
 ....
 
+=== Example Commands
+ 
 The following examples are based on Ubuntu.
 
 Running `occ` with no options lists all commands and options
@@ -117,7 +120,7 @@ Usage:
  maintenance:mode [options]
 ....
 
-===== Options
+==== Options
 
      --on              Enable maintenance mode
      --off             Disable maintenance mode
@@ -236,6 +239,65 @@ Time how long the ban will be active if triggered.
 |===
 | Key     | `brute_force_protection_ban_period`
 | Default | 300
+|===
+
+[[data_exporter]]
+== Data Exporter
+
+This app is only available as https://github.com/owncloud/data_exporter.git[git clone]
+
+Import and export users from one ownCloud instance in to another. 
+The export contains all user-settings, files and shares.
+
+=== Export User Data
+
+....
+instance:export:user <userId> <exportDirectory>
+....
+
+==== Arguments:
+
+[width="80%",cols="30%,70%",]
+|===
+| `userId`          | User to export.
+| `exportDirectory` | Path to the directory to export data to.
+|===
+
+=== Import User Data
+
+....
+instance:import:user [options] [--] <importDirectory>
+....
+
+==== Arguments:
+
+[width="80%",cols="30%,70%",]
+|===
+| `userId`          | User to export.
+| `importDirectory` | Path to the directory to import data from.
+|===
+
+==== Options:
+
+[width="80%",cols="30%,70%",]
+|===
+| `-a [UID]` +
+`--as=[UID]` | Import the user under a different user id.
+|===
+
+=== Migrate Shares
+
+....
+instance:export:migrate:share <userId> <remoteServer>
+....
+
+==== Arguments:
+
+[width="80%",cols="30%,70%",]
+|===
+| `userId`       | The exported userId whose shares we want to migrate.
+| `remoteServer` | The remote ownCloud server where the exported user is now, +
+for example "https://myown.server:8080/owncloud".
 |===
 
 [[calendar]]
@@ -697,6 +759,8 @@ Marketplace URL: https://marketplace.owncloud.com/apps/password_policy[Password 
 
 Command to expire a users password.
 
+=== Command Description
+
 ....
 sudo -u www-data occ user:expire-password <uid> [<expiredate>]
 ....
@@ -779,6 +843,8 @@ Marketplace URL: https://marketplace.owncloud.com/apps/ransomware_protection[Ran
 Use these commands to help users recover from a Ransomware attack. 
 You can find more information about the application in xref:enterprise/ransomware-protection/index.adoc[the Ransomware Protection documentation].
 
+=== Command Description
+
 ....
 sudo -u www-data occ ransomguard:scan <timestamp> <user>
 ....
@@ -845,6 +911,8 @@ Marketplace URL: https://marketplace.owncloud.com/apps/twofactor_totp[2-Factor A
 
 If a two-factor provider app is enabled, it is enabled for all users by default (though the provider can decide whether or not the user has to pass the challenge). 
 In the case of an user losing access to the second factor (e.g., a lost phone with two-factor SMS verification), the admin can temporarily disable the two-factor check for that user via the occ command:
+
+=== Command Description
 
 ....
 sudo -u www-data php occ twofactor:disable <username>
