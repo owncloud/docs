@@ -3,13 +3,14 @@
 If you need to migrate from User Key-based to Master Key-based encryption, there are a number of steps that you need to follow to ensure a smooth and complete transition. 
 These are:
 
-. [Disable User Key-based encryption]
-. [Remove the encryption records from the ownCloud database]
-. [Remove the `files_encryption` folder]
-. [Encrypt the filesystem using Master Key-based encryption]
+. xref:disable-user-key-based-encryption[Disable User Key-based encryption]
+. xref:remove-the-encryption-records-from-the-owncloud-database[Remove the encryption records from the ownCloud database]
+. xref:remove-the-`files_encryption`-directory[Remove the `files_encryption` folder]
+. xref:encrypt-the-filesystem-using-master-key-based-encryption[Encrypt the filesystem using Master Key-based encryption]
 
 include::{partialsdir}/configuration/server/enable-single-user-mode.adoc[leveloffset=+1]
 
+[[disable-user-key-based-encryption]]
 == Disable User Key-based Encryption
 
 [source,console]
@@ -19,6 +20,7 @@ sudo -u www-data occ encryption:decrypt-all --continue=yes && \
   sudo -u www-data occ app:disable --no-interaction encryption
 ----
 
+[[remove-the-encryption-records-from-the-owncloud-database]]
 == Remove the Encryption Records from the ownCloud Database
 
 Once your ownCloud files are unencrypted and encryption has been disabled, you need to remove the encryption records from the database.
@@ -40,6 +42,7 @@ sqlite> delete from oc_appconfig where appid='encryption';
 sqlite> select * from oc_appconfig where appid='encryption';
 ----
 
+[[remove-the-files_encryption-directory]]
 == Remove the `files_encryption` Directory
 
 With the database updated, next, the `files_encryption` directory needs to be removed.
@@ -50,6 +53,7 @@ Below is an example of how to do so, to save you time.
 find ./data* -name files_encryption -exec rm -rvf {} \;
 ----
 
+[[encrypt-the-filesystem-using-master-key-based-encryption]]
 == Encrypt the Filesystem Using Master Key-based Encryption
 
 Now, your ownCloud files can be encrypted using Master Key-based encryption.
@@ -70,6 +74,7 @@ sudo -u www-data occ app:enable encryption && \
   sudo -u www-data occ encryption:encrypt-all && \ 
 ----
 
+[[verify-the-encrypted-files]]
 == Verify the Encrypted Files
 
 With the files encrypted using Master Key-based encryption, you should now verify that everything worked properly.
