@@ -49,11 +49,23 @@ For a full description of commands type:
 
 The following are example commands, please adopt according your needs.
 
-### ``NPM’s broken-link-checker``
+### NPM’s broken-link-checker
+
 
 ``blc http://localhost:5000 -ro``
 
-### ``linkchecker``
+#### Example Output
+
+```
+...
+Getting links from: http://localhost:5000/client/automatic_updater.html
+├───OK─── https://github.com/owncloud/client/edit/master-antora/docs/modules/ROOT/pages/automatic_updater.adoc
+├───OK─── https://doc.owncloud.org/branded_clients/
+├─BROKEN─ https://owncloud.org/history/ (HTTP_404)
+Finished! 60 links found. 57 excluded. 1 broken.
+...
+```
+### linkchecker
 
 To run a check without external link check type:
 
@@ -63,5 +75,19 @@ To run a full check including links to external sites type:
 
 ``linkchecker --no-status --complete --check-extern http://localhost:5000``
 
+#### Example Output
+
+```
+...
+URL        `https://www.archlinux.org/packages/community/any/owncloud'
+Name       `stable\nversion'
+Parent URL http://localhost:5000/server/administration_manual/installation/linux_installation.html, line 1232, col 1
+Real URL   https://www.archlinux.org/packages/community/any/owncloud/
+Check time 0.434 seconds
+Info       Redirected to
+           `https://www.archlinux.org/packages/community/any/owncloud/'.
+Result     Error: 404 Not Found
+...
+```
 
 
