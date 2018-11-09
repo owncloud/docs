@@ -35,6 +35,33 @@ antora site.yml
 
 If all goes well, you will _not_ see any console output.
 
+#### Testing For Broken Xref Links
+
+There are a host of ways to check for broken links, including NPM's broken link checker.
+However, this custom generator, provided by the core Antora team, is able to check [the native Antora xref links](https://docs.antora.org/antora/1.0/asciidoc/page-to-page-xref/#xref-and-page-id-anatomy).
+It doesn't check external links, but it's still a good start.
+To use it, you need to pass the custom generator (in `./generator/xref-validator`) to the `generate` command, as in the example below.
+```console
+antora generate \
+    --pull \
+    --ui-bundle-url https://github.com/owncloud/docs-ui/releases/download/1.1.0/ui-bundle.zip \
+    --generator=./generator/xref-validator \
+    site.yml
+```
+
+If invalid xrefs are detected, then it will output them to the console, similar to the example below:
+You can see that it checks all the content source repositories, and lists the file that contains the broken xref and the broken xref.
+
+```console
+Invalid Xrefs Detected:
+
+repo: //github.com/owncloud/client | branch: master-antora | component: client | version: master
+  path: docs/modules/ROOT/pages/building.adoc | xref: https://owncloud.org/download/.adoc
+
+worktree: /ownCloud/docs | component: server | version: master
+  path: modules/administration_manual/pages/maintenance/update.adoc | xref: maintenance/updated.adoc
+```
+
 ### Viewing The HTML Documentation
 
 Assuming that there are no errors, the next thing to do is to run the [NPM Serve tool](https://www.npmjs.com/package/serve) so that you can view your changes, before committing and pushing the changes to the remote docs repository.
