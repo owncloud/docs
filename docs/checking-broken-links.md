@@ -8,15 +8,58 @@ To check broken links you need to prepare with following steps:
    [NPM Serve tool](https://www.npmjs.com/package/serve) or [PHP's built-in webserver](https://secure.php.net/manual/en/features.commandline.webserver.php) or Apache or NGINX 
 2. Install a Broken Link Checker
 
-Use the broken link checker of your choice, the following two are usable examples.
+Use the broken link checker of your choice, the following are usable examples.
 
 The command examples assume that the documentation built is accessible via ``http://localhost:5000``.
  
-### Installing ``NPM’s broken-link-checker``
+### Antora xref-validator
+
+The Antora ``xref-validator`` provided by the Antora core team, is able to check [the native Antora xref links](https://docs.antora.org/antora/1.0/asciidoc/page-to-page-xref/#xref-and-page-id-anatomy).
+It is automatically installed when you run ``npm i`` for the Antora setup in the root of your local clone of the docs repository. It doesn't check external links, but it's still a good start.
+
+To use it, you need to pass the custom generator (in `./generator/xref-validator`) to the `generate` command, as in the example below.
+
+```console
+antora generate \
+    --pull \
+    --ui-bundle-url https://github.com/owncloud/docs-ui/releases/download/1.1.0/ui-bundle.zip \
+    --generator=./generator/xref-validator \
+    site.yml
+```
+
+#### Example Output
+
+If invalid xrefs are detected, then it will output them to the console:
+You can see that it checks all the content source repositories, and lists the file that contains the broken xref and the broken xref.
+
+```console
+worktree: /var/www/owncloud/docs | component: server | version: master
+  path: modules/administration_manual/nav.adoc | xref: configuration/server/security/password-policy.adoc
+  path: modules/administration_manual/pages/configuration/files/external_storage_configuration_gui.adoc | xref: server/import_ssl_cert.adoc
+  path: modules/administration_manual/pages/configuration/files/file_sharing_configuration.adoc | xref: server/configuration/server/security/password_policy.adoc
+```
+
+### NPM’s broken-link-checker
 
 Follow the link to [NPM’s broken-link-checker](https://www.npmjs.com/package/broken-link-checker) for installation details.
 
-### Installing ``linkchecker``
+To use it run following command:
+
+``blc http://localhost:5000 -ro``
+
+#### Example Output
+
+```
+...
+Getting links from: http://localhost:5000/client/automatic_updater.html
+├───OK─── https://github.com/owncloud/client/edit/master-antora/docs/modules/ROOT/pages/automatic_updater.adoc
+├───OK─── https://doc.owncloud.org/branded_clients/
+├─BROKEN─ https://owncloud.org/history/ (HTTP_404)
+Finished! 60 links found. 57 excluded. 1 broken.
+...
+```
+
+### linkchecker
 
 A description of ``linkchecker`` can be found [here](https://linkchecker.github.io/linkchecker/index.html) including a link to [github](https://github.com/linkchecker/linkchecker/)
 
@@ -45,28 +88,6 @@ For a full description of commands type:
 
 ``linkchecker --help``
 
-## Using a link checker
-
-The following are example commands, please adopt according your needs.
-
-### NPM’s broken-link-checker
-
-
-``blc http://localhost:5000 -ro``
-
-#### Example Output
-
-```
-...
-Getting links from: http://localhost:5000/client/automatic_updater.html
-├───OK─── https://github.com/owncloud/client/edit/master-antora/docs/modules/ROOT/pages/automatic_updater.adoc
-├───OK─── https://doc.owncloud.org/branded_clients/
-├─BROKEN─ https://owncloud.org/history/ (HTTP_404)
-Finished! 60 links found. 57 excluded. 1 broken.
-...
-```
-### linkchecker
-
 To run a check without external link check type:
 
 ``linkchecker --no-status --complete http://localhost:5000``
@@ -89,5 +110,3 @@ Info       Redirected to
 Result     Error: 404 Not Found
 ...
 ```
-
-
