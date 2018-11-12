@@ -110,9 +110,10 @@ This is because the Live Preview plugin won’t know the complete path to the lo
 All other kinds of links should work properly, however.
 
 In this case, you need to use Antora to regenerate the documentation and manually check if there are any broken links or if something looks amiss.
-Alternatively, you could use a tool, such as [NPM’s broken-link-checker](https://www.npmjs.com/package/broken-link-checker), to check broken links for you, on the pages that you changed.
 
-Next, you need to learn how to [build the docs](./docs/build-the-docs.md) from the command line and how to review the changes in your browser.
+To check for broken links manually see [install and use a broken-link-checker](./checking-broken-links.md).
+
+Next, you need to learn how to [build the docs](./build-the-docs.md) from the command line and how to review the changes in your browser.
 
 ## Getting Support
 
