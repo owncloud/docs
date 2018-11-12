@@ -111,7 +111,7 @@ All other kinds of links should work properly, however.
 
 In this case, you need to use Antora to regenerate the documentation and manually check if there are any broken links or if something looks amiss.
 
-To check broken links manually see [install and use a broken-link-checker](./checking-broken-links.md).
+To check for broken links manually see [install and use a broken-link-checker](./checking-broken-links.md).
 
 Next, you need to learn how to [build the docs](./build-the-docs.md) from the command line and how to review the changes in your browser.
 

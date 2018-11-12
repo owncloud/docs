@@ -1,6 +1,10 @@
 = Migrating User Key Encryption to Master Key Encryption
 
-If you need to migrate from User Key-based to Master Key-based encryption, there are several steps that you need to follow to ensure a smooth and complete transition. 
+== Why Should I Move Away From User Key-based Encryption
+
+NOTE: User key-based encryption is planned to be removed from ownCloud in the near future. For new installations, Master key-based encryption is the recommended setup. The decryption workflow described here will only work when users have enabled password recovery and if an admin recovery password is available for the ownCloud administrator.
+
+If you need to migrate from User Key-based to Master Key-based encryption, there are several steps that you need to follow to ensure a smooth and complete transition.
 These are:
 
 . xref:disable-user-key-based-encryption[Disable User Key-based encryption]
@@ -13,7 +17,7 @@ include::{partialsdir}/configuration/server/enable-single-user-mode.adoc[levelof
 [[disable-user-key-based-encryption]]
 == Disable User Key-based Encryption
 
-The first part of the migration process is to take is to decrypt all files and to disable encryption in ownCloud, which requires three commands to be executed. 
+The first part of the migration process is to take is to decrypt all files and to disable encryption in ownCloud, which requires three commands to be executed.
 These commands are: xref:configuration/server/occ_command.adoc#encryption[`occ encryption:decrypt-all` and `occ encryption:disable`], and xref::configuration/server/occ_command.adoc#apps-commands[`occ app:disable`].
 
 You can see an example of calling the commands listed below, configured to require no user interaction.
@@ -29,10 +33,10 @@ sudo -u www-data occ encryption:decrypt-all --continue=yes && \
 == Remove the Encryption Records from the ownCloud Database
 
 Once your ownCloud files are unencrypted, and encryption has been disabled, you need to remove the encryption records from the database.
-There is, currently, no `occ` command to handle this, so it has to be done manually. 
-Specifically, you need to remove all records from the `oc_appconfig` table where the `appid` column is set to `encryption`. 
+There is, currently, no `occ` command to handle this, so it has to be done manually.
+Specifically, you need to remove all records from the `oc_appconfig` table where the `appid` column is set to `encryption`.
 
-In the examples below you can see how to do this using the SQLite database. 
+In the examples below you can see how to do this using the SQLite database.
 If you are not using SQLite, please use the commands specific to your database vendor.
 
 [NOTE]
@@ -51,7 +55,7 @@ sqlite> select * from oc_appconfig where appid='encryption';
 == Remove the `files_encryption` Directory
 
 With the database updated, next, the `files_encryption` directory needs to be removed.
-Below is an example of how to do so, to save you time. 
+Below is an example of how to do so, to save you time.
 
 [source,console]
 ----
@@ -62,21 +66,21 @@ find ./data* -name files_encryption -exec rm -rvf {} \;
 == Encrypt the Filesystem Using Master Key-based Encryption
 
 Now, your ownCloud files can be encrypted using Master Key-based encryption.
-This requires the following steps: 
+This requires the following steps:
 
 . The encryption app needs to be enabled
 . Encryption needs to be enabled
-. The encryption type needs to be set to master key 
+. The encryption type needs to be set to master key
 . The ownCloud filesystem can be re-encrypted.
 
 The following example shows how to do this.
 
 [source,console]
 ----
-sudo -u www-data occ app:enable encryption && \ 
-  sudo -u www-data occ encryption:enable && \ 
-  sudo -u www-data occ encryption:select-encryption-type masterkey -y && \ 
-  sudo -u www-data occ encryption:encrypt-all && \ 
+sudo -u www-data occ app:enable encryption && \
+  sudo -u www-data occ encryption:enable && \
+  sudo -u www-data occ encryption:select-encryption-type masterkey -y && \
+  sudo -u www-data occ encryption:encrypt-all && \
 ----
 
 [[verify-the-encrypted-files]]
