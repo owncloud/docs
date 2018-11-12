@@ -19,21 +19,54 @@ docker run -ti --rm \
     -v $(pwd):$(pwd) \
     -w $(pwd) \
     antora/antora:1.0.1 \
-    generate site.yml
+    generate \
+        --clean \
+        --pull \
+        --quiet \
+        --silent \
+        --ui-bundle-url <url-or-path-to-ui-bundle.zip> \
+        --url <site.url> \
+        site.yml
 ```
+This build command configuration:
 
-This command starts up the Antora Docker container, removes the existing documentation, and then runs Antora's generate command, an regenerates the documentation.
-If all goes well, you will _not_ see any console output.
+- Suppresses all output (`--quiet` and `--silent`)
+- Removes the output directory before publishing the site (`--clean`)
+- Downloads updates from remote resources (`--pull`)
+- Specifies a path to the desired [<abbr title="User Interface">UI</abbr> bundle](https://docs.antora.org/antora/1.0/playbook/configure-ui/#ui-bundle) (`--ui-bundle-url`)
+- Specifies [the site URL](https://docs.antora.org/antora/1.0/playbook/configure-site/#configure-url) (`--url`), e.g., `http://localhost:5000`. This setting is used as a prefix for the internal URLs that Antora generates from [the Xrefs](https://docs.antora.org/antora/1.0/asciidoc/page-to-page-xref/#xref-and-page-id-anatomy), e.g., `http://localhost:5000/server/administration_manual/upgrading/marketplace_apps.html` or `file:///home/antora/workspace/owncloud/server/administration_manual/upgrading/marketplace_apps.html`.
+
+`ui-bundle-url` is required, as this isn't specified in the production Playbook file (_which is in the root directory of the project_).
+The other options, however, are optional.
+If you've created a custom Playbook file, feel free to use it when running the command, in place of `site.prod.yml` (_which is in the root directory of the project_).
 
 ### Running Antora From The Command-Line
 
 From the command line, in the root of the docs directory, run the command:
 
 ```
-antora site.yml
+antora \
+    --clean \
+    --pull \
+    --quiet \
+    --silent \
+    --ui-bundle-url <url-or-path-to-ui-bundle.zip> \
+    --url <site.url> \
+    site.prod.yml
 ```
 
-If all goes well, you will _not_ see any console output.
+This build command configuration:
+
+- Suppresses all output (`--quiet` and `--silent`)
+- Removes the output directory before publishing the site (`--clean`)
+- Downloads updates from remote resources (`--pull`)
+- Specifies a path to the desired [<abbr title="User Interface">UI</abbr> bundle](https://docs.antora.org/antora/1.0/playbook/configure-ui/#ui-bundle) (`--ui-bundle-url`)
+- Specifies [the site URL](https://docs.antora.org/antora/1.0/playbook/configure-site/#configure-url) (`--url`), e.g., `http://localhost:5000`. This setting is used as a prefix for the internal URLs that Antora generates from [the Xrefs](https://docs.antora.org/antora/1.0/asciidoc/page-to-page-xref/#xref-and-page-id-anatomy), e.g., `http://localhost:5000/server/administration_manual/upgrading/marketplace_apps.html` or `file:///home/antora/workspace/owncloud/server/administration_manual/upgrading/marketplace_apps.html`.
+
+
+`ui-bundle-url` is required, as this isn't specified in the production Playbook file (_which is in the root directory of the project_).
+The other options, however, are optional.
+If you've created a custom Playbook file, feel free to use it when running the command, in place of `site.prod.yml` (_which is in the root directory of the project_).
 
 ### Viewing The HTML Documentation
 
