@@ -1,0 +1,133 @@
+[[search-files]]
+= Search Files
+// Page attributes
+:page-partial:
+// Attributes for the core details include
+:request_path: remote.php/dav/files/<user> 
+:method: REPORT
+:content_type: text/xml
+
+The search-files report allows for searching the available files in an ownCloud user's filesystem, based on a rudimentary filename pattern match.
+
+include::{partialsdir}/webdav_api/core_request_details.adoc[leveloffset=+1]
+
+== The Request
+
+An authenticated https://tools.ietf.org/html/rfc3253#section-3.6[REPORT request] needs to be made to search for all files stored in a user's ownCloud filesystem
+
+=== Example Request
+
+[source,console]
+....
+curl --silent \
+  -X REPORT \
+  --data "@supported.xml" \
+  -u admin:admin \
+  'http://localhost/remote.php/dav/files/admin' | xmllint --format -
+....
+
+The request must include a request body that includes the search pattern, and can also include a list of properties to return.
+Below, is an example of the most basic XML response body.
+In the `search` element, it specifies the search pattern to filter down the list of files to return in a successful resultset.
+
+[source,xml]
+....
+include::{examplesdir}/core/apis/search/request/minimal_request_body.xml[indent=0]
+....
+
+However, if a specific list of properties is required for each file, then a `prop` element needs to be included in the response body, such as in the example below.
+
+.Available Properties
+[cols="1,3",options="header",]
+|===
+|Property
+|Description
+|Namespace
+
+|id
+|The id of the file
+|`http://owncloud.org/ns`
+
+|permissions
+|The permissions set on the file
+|`http://owncloud.org/ns`
+
+|size
+|The file's size
+|`http://owncloud.org/ns`
+
+|owner-id
+|The id of the file owner
+|`http://owncloud.org/ns`
+
+|owner-display-name
+|The display name of the file owner
+|`http://owncloud.org/ns`
+
+|getlastmodified
+|The last modified date of the file
+|`DAV`
+
+|getetag
+|The file's ETag
+|`DAV`
+
+|getcontenttype
+|The file's content type.
+|`DAV`
+
+|===
+
+
+.supported.xml
+[source,xml]
+....
+include::{examplesdir}/core/apis/search/search_body_with_properties.xml[indent=0]
+....
+
+NOTE: The example uses http://xmlsoft.org/xmllint.html[xmllint] to make the response more readable.
+Xmllint is available in the http://www.xmlsoft.org/[libxml2 package].
+
+== The Response
+
+=== Success
+
+Successful requests return two things:
+
+. An XML payload.
+. A status of `HTTP/1.1 207 Multi-Status`.
+
+You can see an example of the XML payload below.
+The XML payload contains a `response` element for each file.
+And each `response` element contains three items:
+
+. A link to the file (`href`).
+. The requested properties, along with their respective values (`propstat`).
+. The file's status (`status`).
+
+.Search Response
+[source,xml]
+....
+include::{examplesdir}/core/apis/search/responses/success/search_response.xml[indent=0]
+....
+
+=== Failure
+
+==== If The Payload File Cannot Be Read Or Is Invalid XML
+
+If the payload file cannot be read or is invalid XML, then the following XML response is sent, along with an `HTTP/1.1 500 Internal Server Error` status code.
+
+[source,xml]
+....
+include::{examplesdir}/core/apis/search/responses/failure/incorrect_payload_or_parse_failure.xml[indent=0]
+....
+
+==== If a Non-Existent Property Is Requested 
+
+If a non-existent property is requested, then an additional `propstat` element is returned, as in the example below, which contains a list of the properties which were not available.
+
+[source,xml]
+....
+include::{examplesdir}/core/apis/search/responses/failure/request_non_existent_property.xml[indent=0,lines=19..25]
+....
+
