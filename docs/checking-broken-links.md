@@ -11,7 +11,11 @@ To check broken links you need to prepare with following steps:
 Use the broken link checker of your choice, the following are usable examples.
 
 The command examples assume that the documentation built is accessible via ``http://localhost:5000``.
- 
+
+.. note::
+   You may get false - positives because of sample links or addresses pointing to nowhere. 
+   This is normal and no broken link.
+
 ### Antora xref-validator
 
 The Antora ``xref-validator`` provided by the Antora core team, is able to check [the native Antora xref links](https://docs.antora.org/antora/1.0/asciidoc/page-to-page-xref/#xref-and-page-id-anatomy).
