@@ -3,7 +3,7 @@
 You're now ready to build (generate) the ownCloud documentation.
 The documentation can be generated in HTML and PDF formats.
 
-## Generating in HTML Format
+## Generating HTML Documentation
 
 There are two ways to generate the documentation in HTML format:
 
@@ -12,61 +12,69 @@ There are two ways to generate the documentation in HTML format:
 
 ### Using the Docker Container
 
-From the command line, in the root of the docs directory, run the command:
+To build the documentation using the Docker container, from the command line, in the root of the docs directory, run the following command:
 
 ```
 docker run -ti --rm \
-    -v $(pwd):$(pwd) \
-    -w $(pwd) \
-    antora/antora:1.0.1 \
-    generate \
-        --clean \
-        --pull \
-        --quiet \
-        --silent \
-        --ui-bundle-url <url-or-path-to-ui-bundle.zip> \
-        --url <site.url> \
-        site.yml
+    -e DOCSEARCH_ENABLED=true \
+    -e DOCSEARCH_ENGINE=lunr \
+    -v $(pwd):/antora/ \
+    -w /antora/ \
+    antora:custom \
+      --cache-dir /antora/cache/ \
+      --generator=./generate-site.js \
+      --stacktrace \
+        site.prod.yml
 ```
-This build command configuration:
 
-- Suppresses all output (`--quiet` and `--silent`)
-- Removes the output directory before publishing the site (`--clean`)
-- Downloads updates from remote resources (`--pull`)
-- Specifies a path to the desired [<abbr title="User Interface">UI</abbr> bundle](https://docs.antora.org/antora/1.0/playbook/configure-ui/#ui-bundle) (`--ui-bundle-url`)
-- Specifies [the site URL](https://docs.antora.org/antora/1.0/playbook/configure-site/#configure-url) (`--url`), e.g., `http://localhost:5000`. This setting is used as a prefix for the internal URLs that Antora generates from [the Xrefs](https://docs.antora.org/antora/1.0/asciidoc/page-to-page-xref/#xref-and-page-id-anatomy), e.g., `http://localhost:5000/server/administration_manual/upgrading/marketplace_apps.html` or `file:///home/antora/workspace/owncloud/server/administration_manual/upgrading/marketplace_apps.html`.
+This command:
 
-`ui-bundle-url` is required, as this isn't specified in the production Playbook file (_which is in the root directory of the project_).
-The other options, however, are optional.
-If you've created a custom Playbook file, feel free to use it when running the command, in place of `site.prod.yml` (_which is in the root directory of the project_).
+- Starts up [ownCloud's custom Antora Docker container](https://hub.docker.com/r/antora/antora/)
+- Removes any existing documentation
+- Runs Antora's `generate` command, which regenerates the documentation
 
-### Running Antora From The Command-Line
+If all goes well, you will _not_ see any console output.
+If a copy of the container doesn't exist locally, you can pull down a copy, by running `docker pull antora/antora`.
+Otherwise, you should see output similar to the following:
 
-From the command line, in the root of the docs directory, run the command:
+```console
+Unable to find image 'antora/antora:1.0.1' locally
+1.0.1: Pulling from antora/antora
+605ce1bd3f31: Already exists
+0511902e1bcd: Downloading  5.347MB/19.61MB
+343e34c41f87: Download complete
+1e0ba8eb567c: Downloading  4.569MB/37.51MB
+d5a49762c0f9: Download complete
+```
+
+### Using the Antora Tools On The Command-Line
 
 ```
-antora \
-    --clean \
-    --pull \
-    --quiet \
-    --silent \
-    --ui-bundle-url <url-or-path-to-ui-bundle.zip> \
-    --url <site.url> \
+DOCSEARCH_ENABLED=true DOCSEARCH_ENGINE=lunr \
+antora --clean --pull --quiet --silent \
+    --cache-dir ./cache/ \
+    --generator=./generate-site.js \
+    --redirect-facility static \
+    --stacktrace \
+    --ui-bundle-url https://github.com/owncloud/docs-ui/releases/download/1.1.0/ui-bundle.zip \
+    --url http://localhost:5000  \
     site.prod.yml
 ```
 
-This build command configuration:
+### Update The Generated Search Index
 
-- Suppresses all output (`--quiet` and `--silent`)
-- Removes the output directory before publishing the site (`--clean`)
-- Downloads updates from remote resources (`--pull`)
-- Specifies a path to the desired [<abbr title="User Interface">UI</abbr> bundle](https://docs.antora.org/antora/1.0/playbook/configure-ui/#ui-bundle) (`--ui-bundle-url`)
-- Specifies [the site URL](https://docs.antora.org/antora/1.0/playbook/configure-site/#configure-url) (`--url`), e.g., `http://localhost:5000`. This setting is used as a prefix for the internal URLs that Antora generates from [the Xrefs](https://docs.antora.org/antora/1.0/asciidoc/page-to-page-xref/#xref-and-page-id-anatomy), e.g., `http://localhost:5000/server/administration_manual/upgrading/marketplace_apps.html` or `file:///home/antora/workspace/owncloud/server/administration_manual/upgrading/marketplace_apps.html`.
+The playbook file (`site.yml`) sets the `site.url` configuration directive to `http://localhost:5000`.
+It’s likely fair to assume that this isn’t the domain where the documentation will be hosted.
 
+Given that, after the documentation has been generated the search index file (`public/search_index.json`) needs to be updated to change `http://localhost:5000` to the hosting server where the documentation is hosted.
 
-`ui-bundle-url` is required, as this isn't specified in the production Playbook file (_which is in the root directory of the project_).
-The other options, however, are optional.
-If you've created a custom Playbook file, feel free to use it when running the command, in place of `site.prod.yml` (_which is in the root directory of the project_).
+Using `sed`, such as in the following example, from the root directory of the project should suffice.
+
+```bash
+#!/bin/bash
+set -e
+sed -i 's/localhost:5000/<hosted domain and port>/g' public/search_index.json
+```
 
 ### Viewing The HTML Documentation
 
@@ -100,7 +108,7 @@ Your changes will be reflected in the local version of the site that Serve is re
 
 We hope that you can see that contributing to the documentation using Antora is a pretty straight-forward process, and not _that_ demanding.
 
-## Generating in PDF Format
+## Generating PDF Documentation
 
 To generate the documentation in PDF format, you need to have `asciidoctor-pdf` and GNU `make` installed, as PDF generation isn't, _yet_, supported by Antora.
 To install asciidoctor-pdf, please refer to [the official installation instructions](https://asciidoctor.org/docs/asciidoctor-pdf/).
