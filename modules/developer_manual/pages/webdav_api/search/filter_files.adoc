@@ -1,0 +1,118 @@
+[[filter-files]]
+= Filter Files
+// Page attributes
+:page-partial:
+// Attributes for the core details include
+:request_path: remote.php/dav/files/<user> 
+:method: REPORT
+:content_type: text/xml
+
+The `filter-files` report allows for retrieving a list of files in an ownCloud user's filesystem, based on two criteria:
+
+include::{partialsdir}/webdav_api/core_request_details.adoc[leveloffset=+1]
+
+== The Request
+
+An authenticated https://tools.ietf.org/html/rfc3253#section-3.6[REPORT request] needs to be made to retrieve a list of all files stored in a user's ownCloud filesystem.
+
+=== Example Request
+
+[source,console]
+....
+curl --silent \
+  -X REPORT \
+  --data "@filter-files-criteria.xml" \
+  -u admin:admin \
+  'http://localhost/remote.php/dav/files/admin' | xmllint --format -
+....
+
+The request must include a request body that includes the rules to filter by.
+There are two filter rules which can be supplied; these are:
+
+[cols="1,2,1,1,1",options="header",]
+|===
+|Rule
+|Description
+|Type
+|Accepted Values
+|Mandatory
+
+|`favorite`
+|Whether they’ve been marked as a favorite or not (mandatory)
+|integer
+|`0`,`1`
+|Yes
+
+|`systemtag`
+|The tags that have been assigned to them
+|integer
+|Any valid system tag. 
+ These can be retrieved by using xref:webdav_api/tags.adoc#list-tags[the Tags API].
+|No
+|===
+
+=== Example Request Bodies
+
+Below, are several examples of the XML response bodies that can be sent with the request.
+
+==== Minimal Request Body
+
+In the `search` element, it specifies the search pattern to filter down the list of files to return in a successful resultset.
+
+[source,xml]
+....
+include::{examplesdir}/core/webdav_api/search/request/filter_files/minimal_filter_files_report_request_body.xml[indent=0]
+....
+
+==== Limiting Returned File Properties
+
+If only a specific list of properties is required for each file, then a `prop` element needs to be included in the response body, such as in the example below.
+
+include::{partialsdir}/webdav_api/search/file_properties.adoc[]
+
+[source,xml]
+....
+include::{examplesdir}/core/webdav_api/search/request/filter_files/search_body_requesting_all_properties.xml[indent=0]
+....
+
+==== Filtering By Tag
+
+Files can be filtered by those assigned specific tags.
+If this is required, then the `systemtag` element needs to be supplied, which contains a space-separated list of tag _ids_ to filter by.
+
+TIP: Tag ids can be retrieved by using xref:webdav_api/tags.adoc#list-tags[the Tags API].
+
+[source,xml]
+....
+include::{examplesdir}/core/webdav_api/search/request/filter_files/search_body_filtering_by_system_tag_ids.xml[indent=0]
+....
+
+NOTE: The example uses http://xmlsoft.org/xmllint.html[xmllint] to make the response more readable.
+Xmllint is available in the http://www.xmlsoft.org/[libxml2 package].
+
+== The Response
+
+=== Success
+
+Successful requests return two things:
+
+. An XML payload.
+. A status of `HTTP/1.1 207 Multi-Status`.
+
+You can see an example of the XML payload below.
+The XML payload contains a `response` element for each file.
+And each `response` element contains three items:
+
+. A link to the file (`href`).
+. The requested properties, along with their respective values (`propstat`).
+. The file's status (`status`).
+
+.Example of a successful search response
+[source,xml]
+....
+include::{examplesdir}/core/webdav_api/search/response/filter_files/success.xml[indent=0]
+....
+
+=== Failure
+
+include::{partialsdir}/webdav_api/search/common_error_responses.adoc[]
