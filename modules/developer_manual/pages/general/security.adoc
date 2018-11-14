@@ -29,7 +29,7 @@ method executes directly, security checks are not performed!
 
 Before releasing an application and after security-related changes, the
 complete source code *must* be scanned. We currently use
-http://rips-scanner.sourceforge.net/[RIPS] to perform scans. Affected
+link:http://rips-scanner.sourceforge.net/[RIPS] to perform scans. Affected
 Software:
 
 * Core
@@ -55,7 +55,7 @@ use a minifier for JavaScript and CSS files.
 
 * Only use HTTPS for rendering content.
 * Avoid switching between HTTP and HTTPS, which creates
-https://developer.mozilla.org/en-US/docs/Web/Security/Mixed_content[mixed-content
+link:https://developer.mozilla.org/en-US/docs/Web/Security/Mixed_content[mixed-content
 pages].
 
 [[security-related-actions]]
@@ -103,7 +103,7 @@ wrong__`. Instead, show a message such as: `__There was an error with
 your credentials__`. If you print `__Your password is wrong__` then
 an attacker knows the username was a valid one in the ownCloud
 installation.
-* Consider implementing a https://en.wikipedia.org/wiki/CAPTCHA[CAPTCHA]
+* Consider implementing a link:https://en.wikipedia.org/wiki/CAPTCHA[CAPTCHA]
 to prevent brute force attacks, after five failed login attempts.
 
 [[session-id-transport]]
@@ -116,8 +116,7 @@ browser history. Use cookies instead.
 === New Session ID After a Successful Login
 
 * After a successful login, regenerate the session id to prevent
-https://www.owasp.org/index.php/Session_fixation[session fixation
-attacks].
+link:https://www.owasp.org/index.php/Session_fixation[session fixation attacks].
 * If you have to switch between HTTPS and HTTP, you should change the
 session id, because an attacker could have already read the session id.
 
@@ -152,10 +151,9 @@ If you expect to receive an integer id as a GET parameter, then always
 explicitly cast it into an integer using the cast operator `(int)`,
 because all `$_REQUEST` parameters are strings. However, if you expect
 text as a parameter, use
-http://php.net/manual/en/function.htmlspecialchars.php[PHP’s
-htmlspecialchars function] with `ENT_QUOTES` or `strip_tags` to prevent
-https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)[Cross-site
-Scripting (XSS) attacks].
+link:http://php.net/manual/en/function.htmlspecialchars.php[PHP’s htmlspecialchars function] with 
+`ENT_QUOTES` or `strip_tags` to prevent
+link:https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)[Cross-site Scripting (XSS) attacks].
 
 [source,php]
 ----
@@ -195,12 +193,10 @@ UNIX/Linux filesystems (`.` and `..`), and empty strings.
 [[prevent-command-injection]]
 === Prevent Command Injection
 
-* Use http://php.net/manual/en/function.escapeshellarg.php[PHP’s
-escapeshellarg() function], if your input parameters are arguments for
-http://php.net/manual/en/function.exec.php[exec()],
-http://php.net/manual/en/function.popen.php[popen()],
-http://php.net/manual/en/function.system.php[system()], or the backtick
-(``) operator.
+* Use link:http://php.net/manual/en/function.escapeshellarg.php[PHP’s escapeshellarg() function], if your input parameters are arguments for
+link:http://php.net/manual/en/function.exec.php[exec()],
+link:http://php.net/manual/en/function.popen.php[popen()],
+link:http://php.net/manual/en/function.system.php[system()], or the backtick (``) operator.
 +
 [source,php]
 ----
@@ -210,7 +206,7 @@ system('ls '.escapeshellarg($dir));
 ----
 * If you do not know how many arguments your application receives, then
 use the PHP function
-http://php.net/manual/en/function.escapeshellcmd.php[escapeshellcmd()]
+link:http://php.net/manual/en/function.escapeshellcmd.php[escapeshellcmd()]
 to escape the whole command.
 +
 [source,php]
@@ -231,25 +227,24 @@ system($escaped_command);
 instead.
 * Use `$jQuery.text()`, if you have to output text in JavaScript .
 * Use `$jQuery.html()`, if you want to output HTML, . A better option is
-to use a tool like http://htmlpurifier.org[HTMLPurifier].
+to use a tool like link:http://htmlpurifier.org[HTMLPurifier].
 
 [[high-sensitive-information-in-get-request]]
 === High Sensitive Information in GET Request
 
 * You should not use sensitive information, like passwords or usernames,
 in unprotected requests.
-* All requests containing sensitive information should be protected with
-HTTPS.
+* All requests containing sensitive information should be protected with HTTPS.
 
 [[prevent-http-header-injection-http-response-splitting]]
 === Prevent HTTP-Header-Injection (HTTP Response Splitting)
 
 
 * To prevent
-https://www.owasp.org/index.php/HTTP_Response_Splitting[HTTP Response
-Splitting], check all request variables for `%0d` (CR) and `%0a` (LF),
+link:https://www.owasp.org/index.php/HTTP_Response_Splitting[HTTP Response Splitting], 
+check all request variables for `%0d` (CR) and `%0a` (LF),
 if they are parameters provided to
-http://php.net/manual/en/function.header.php[PHP’s header() function].
+link: http://php.net/manual/en/function.header.php[PHP’s header() function].
 This is because an attacker can deface your website, such as redirect
 the request to a phishing site or executing an XSS attack, by performing
 header manipulation.
@@ -266,9 +261,9 @@ You should never trust user input.
 === Prevent SQL-Injection
 
 * Use the escape functions for your database to prevent
-https://www.owasp.org/index.php/SQL_Injection[SQL Injection attacks], if
+link:https://www.owasp.org/index.php/SQL_Injection[SQL Injection attacks], if
 you have to pass parameters to a SQL query. In ownCloud you must use the
-https://github.com/owncloud/core/blob/master/lib/private/DB/QueryBuilder/QueryBuilder.php[QueryBuilder].
+link:https://github.com/owncloud/core/blob/master/lib/private/DB/QueryBuilder/QueryBuilder.php[QueryBuilder].
 
 [[data-storage]]
 == Data Storage
@@ -278,22 +273,17 @@ https://github.com/owncloud/core/blob/master/lib/private/DB/QueryBuilder/QueryBu
 
 * Don’t save highly sensitive data in persistent storage on the client
 side. Persistent data storage includes:
-** http://www.allaboutcookies.org/cookies/cookies-the-same.html[Persistent
-HTTP cookies]
-** http://www.popularmechanics.com/technology/security/how-to/a6134/what-are-flash-cookies-and-how-can-you-stop-them/[Flash
-cookies]
-** https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API[HTML5
-Web-Storage]
-** https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API[HTML5
-Index DB]
+** link:http://www.allaboutcookies.org/cookies/cookies-the-same.html[Persistent HTTP cookies]
+** link:http://www.popularmechanics.com/technology/security/how-to/a6134/what-are-flash-cookies-and-how-can-you-stop-them/[Flash cookies]
+** link:https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API[HTML5 Web-Storage]
+** link:https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API[HTML5 Index DB]
 
 [[release-all-resources-in-case-of-an-error]]
 === Release all Resources in Case of an Error
 
 * All resources, such as database and file locks, must be released when
 errors occur. Doing so prevents the server from being subject to
-https://en.wikipedia.org/wiki/Denial-of-service_attack[denial-of-service
-(DOS) attacks].
+link:https://en.wikipedia.org/wiki/Denial-of-service_attack[denial-of-service (DOS) attacks].
 
 [[cryptography]]
 == Cryptography
@@ -312,8 +302,8 @@ following encryption types:
 CFB mode requires an initialization vector (IV) to the respective cipher
 function. Whereas in CBC mode, supplying one is optional. The IV must be
 unique and must be the same when encrypting and decrypting. Use
-http://php.net/manual/en/function.crypt.php[the PHP crypt library] with
-http://mcrypt.sourceforge.net[libmcrypt] greater 2.4.x.
+link:http://php.net/manual/en/function.crypt.php[the PHP crypt library] with
+link:http://mcrypt.sourceforge.net[libmcrypt] greater 2.4.x.
 
 [[asymmetric-encryption-methods]]
 === Asymmetric Encryption Methods
@@ -325,8 +315,7 @@ key length of 4096.
 === Hash Algorithms
 
 * If you need a hash function in PHP, use the SHA512 hash algorithm.
-* You can use http://php.net/manual/en/function.crypt.php[PHP’s crypt()
-function], but only with a strong salt.
+* You can use link:http://php.net/manual/en/function.crypt.php[PHP’s crypt() function], but only with a strong salt.
 * Don’t use _MD5_, _SHA1_ or _SHA256_. These types of algorithms are
 designed to be very fast and efficient. However, with modern techniques
 and computer equipment, it has become trivial to brute force the output
@@ -339,15 +328,14 @@ of these algorithms to discover the original input.
 === Secure Flag
 
 * If you use HTTPS to protect requests, then use
-https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie[the
+link:https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie[the
 secure flag] for your cookies.
 
 [[http-only]]
 === HTTP Only
 
 * If you do not have to access your cookie content in JavaScript, then
-set https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies[the
-HttpOnly flag] on every cookie.
+set link:https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies[the HttpOnly flag] on every cookie.
 
 [[path]]
 === Path
@@ -393,7 +381,7 @@ displaying an error message.
 === Save Passwords
 
 * Don’t save passwords in clear text. Use a
-https://crackstation.net/hashing-security.htm[salted hash]
+link:https://crackstation.net/hashing-security.htm[salted hash]
 
 [[default-and-initial-passwords]]
 === Default and Initial Passwords
@@ -445,7 +433,7 @@ _explicitly_ turned off by using annotations above your xref:app/fundamentals/co
 [[clickjacking]]
 === Clickjacking
 
-http://en.wikipedia.org/wiki/Clickjacking[Clickjacking] tricks the user
+link:http://en.wikipedia.org/wiki/Clickjacking[Clickjacking] tricks the user
 to click into an invisible iframe to perform an arbitrary action (e.g.,
 deleting a user account).
 
@@ -453,8 +441,8 @@ To prevent such attacks ownCloud sends the X-Frame-Options header to all
 template responses. Don’t remove this header unless you need to!
 
 This functionality is built into ownCloud when
-https://doc.owncloud.org/server/latest/developer_manual/app/templates.html[ownCloud
-templates] or https://twig.symfony.com/[Twig Templates] are used.
+link:https://doc.owncloud.org/server/latest/developer_manual/app/templates.html[ownCloud templates] or
+link:https://twig.symfony.com/[Twig Templates] are used.
 
 [[code-executions-file-inclusions]]
 === Code executions / File inclusions
@@ -490,7 +478,7 @@ to audit your sanitize functions.
 [[cross-site-request-forgery]]
 === Cross Site Request Forgery (CSRF)
 
-Using http://en.wikipedia.org/wiki/Cross-site_request_forgery[CSRF] one
+Using link:http://en.wikipedia.org/wiki/Cross-site_request_forgery[CSRF] one
 can trick a user into executing a request that he did not want to make.
 Thus every POST and GET request needs to be protected against it. The
 only places where no CSRF checks are needed are in the main template,
@@ -513,7 +501,7 @@ If you are using the application Framework, every controller method is automatic
 [[cross-site-scripting]]
 === Cross Site Scripting (XSS)
 
-http://en.wikipedia.org/wiki/Cross-site_scripting[Cross-site scripting]
+link:http://en.wikipedia.org/wiki/Cross-site_scripting[Cross-site scripting]
 happens when user input is passed directly to templates. A potential
 attacker might be able to inject HTML or JavaScript into the page to
 steal the user’s session, log keyboard entries, or perform DDOS attacks
@@ -633,7 +621,7 @@ it too!
 [[shell-injection]]
 === Shell Injection
 
-http://en.wikipedia.org/wiki/Code_injection#Shell_injection[Shell
+link:http://en.wikipedia.org/wiki/Code_injection#Shell_injection[Shell
 Injection] occurs if PHP code executes shell commands (e.g., running a
 latex compiler). Before doing this, check if there is a PHP library that
 already provides the needed functionality. If you really need to execute
@@ -683,7 +671,7 @@ anyone using a web browser.
 [[sql-injection]]
 === SQL Injection
 
-http://en.wikipedia.org/wiki/SQL_injection[SQL Injection] occurs when
+link:http://en.wikipedia.org/wiki/SQL_injection[SQL Injection] occurs when
 SQL query strings are concatenated with variables. To prevent this,
 always use prepared queries:
 
@@ -736,5 +724,5 @@ header('Location: https://example.com'. $_GET['redirectURL']);
 == Getting Help
 
 If you need help to ensure that a function is secure, please ask on our
-https://mailman.owncloud.org/mailman/listinfo/devel[mailing list] or in
+link:https://mailman.owncloud.org/mailman/listinfo/devel[mailing list] or in
 IRC channel *#owncloud-dev* on *irc.freenode.net*.
