@@ -24,7 +24,8 @@ docker run -ti --rm \
       --cache-dir /antora/cache/ \
       --generator=./generate-site.js \
       --stacktrace \
-        site.prod.yml
+      --url <URL or path to your Antora instance> \
+      site.yml
 ```
 
 This command:
@@ -57,8 +58,8 @@ antora --clean --pull --quiet --silent \
     --redirect-facility static \
     --stacktrace \
     --ui-bundle-url https://github.com/owncloud/docs-ui/releases/download/1.1.0/ui-bundle.zip \
-    --url http://localhost:5000  \
-    site.prod.yml
+    --url <URL or path to your Antora instance> \
+    site.yml
 ```
 
 ### Update The Generated Search Index
