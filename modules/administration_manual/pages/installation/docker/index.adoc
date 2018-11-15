@@ -129,7 +129,7 @@ the following command:
 
 [source,console]
 ....
-docker-compose exec server occ maintenance:mode --on
+docker-compose exec owncloud occ maintenance:mode --on
 ....
 
 Third, create a backup in case something goes wrong during the upgrade
@@ -160,14 +160,24 @@ sed -i 's/^OWNCLOUD_VERSION=.*$/OWNCLOUD_VERSION=<newVersion>/' /compose/*/.env
 
 Seventh, view the file to ensure the changes has been implemented.
 
+[source,console]
 ....
 cat .env
 ....
 
 Eighth, start your docker instance again.
 
+[source,console]
 ....
 docker-compose up -d
 ....
 
 Now you should have the current ownCloud running with docker-compose.
+
+Ninth, run the ownCloud upgrade command to perform database schema update.
+
+[source,console]
+....
+docker-compose exec owncloud occ upgrade
+docker-compose exec owncloud occ maintenance:mode --on
+....
