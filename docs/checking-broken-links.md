@@ -26,7 +26,6 @@ To use it, you need to pass the custom generator (in `./generator/xref-validator
 ```console
 antora generate \
     --pull \
-    --ui-bundle-url https://github.com/owncloud/docs-ui/releases/download/1.1.0/ui-bundle.zip \
     --generator=./generator/xref-validator \
     site.yml
 ```
@@ -43,9 +42,9 @@ worktree: /var/www/owncloud/docs | component: server | version: master
   path: modules/administration_manual/pages/configuration/files/file_sharing_configuration.adoc | xref: server/configuration/server/security/password_policy.adoc
 ```
 
-### NPM’s broken-link-checker
+### NPM's broken-link-checker
 
-Follow the link to [NPM’s broken-link-checker](https://www.npmjs.com/package/broken-link-checker) for installation details.
+Follow the link to [NPM's broken-link-checker](https://www.npmjs.com/package/broken-link-checker) for installation details.
 
 To use it run following command:
 
