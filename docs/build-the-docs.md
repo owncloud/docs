@@ -57,7 +57,6 @@ antora --clean --pull --quiet --silent \
     --generator=./generate-site.js \
     --redirect-facility static \
     --stacktrace \
-    --ui-bundle-url https://github.com/owncloud/docs-ui/releases/download/1.1.0/ui-bundle.zip \
     --url <URL or path to your Antora instance> \
     site.yml
 ```
@@ -65,7 +64,7 @@ antora --clean --pull --quiet --silent \
 ### Update The Generated Search Index
 
 The playbook file (`site.yml`) sets the `site.url` configuration directive to `http://localhost:5000`.
-It’s likely fair to assume that this isn’t the domain where the documentation will be hosted.
+It's likely fair to assume that this isn't the domain where the documentation will be hosted.
 
 Given that, after the documentation has been generated the search index file (`public/search_index.json`) needs to be updated to change `http://localhost:5000` to the hosting server where the documentation is hosted.
 
