@@ -40,8 +40,9 @@ endef
 
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
-	@echo "  pdf        to generate the PDF version of the manual."
 	@echo "  clean    	to clean the build directory of any leftover artifacts from the previous build."
+	@echo "  install    to install the Antora command-line tools."
+	@echo "  pdf        to generate the PDF version of the manual."
 
 #
 # Remove any build artifacts from previous builds.
@@ -70,7 +71,15 @@ pdf: clean
 	@echo
 	@echo "Finished building the PDF manuals."
 	@echo "The PDF copy of the manuals have been generated in the build directory: $(BUILDDIR)/."
-	
+
+#
+# Installs the Antora command-line tools locally, so that users only have to do as little as possible
+# to get up and running.
+#
+install: 
+	@echo "Installing Antora's command-line tools (locally)"
+	npm install
+
 check_all_files_prose: 
 	@echo "Checking quality of the prose in all files"
 	write-good --parse modules/{administration,developer,user}_manual/**/*.adoc
