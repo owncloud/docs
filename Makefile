@@ -11,7 +11,7 @@ STYLE         = owncloud
 BASEDIR       = $(shell pwd)
 APPVERSION    = 10.0.19
 BRANCH        = $(shell git rev-parse --verify HEAD)
-UI_BUNDLE	  = https://github.com/owncloud/docs-ui/releases/download/1.1.0/ui-bundle.zip
+UI_BUNDLE	  = https://minio.owncloud.com/documentation/ui-bundle.zip
 
 .PHONY: help clean pdf
 
