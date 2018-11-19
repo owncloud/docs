@@ -39,7 +39,7 @@ To enable and configure Master Key based encryption via the command-line, involv
 . Enable encryption.
 . Enable the master key.
 +
-NOTE: The master key mode has to be setup in a newly created instance.
+NOTE: Master Key Mode has to be setup in a newly created instance.
 . Encrypt all data.
 
 The following example shows how to carry out these steps.
@@ -54,8 +54,10 @@ sudo -u www-data php occ encryption:encrypt-all
 [NOTE]
 ====
 This command is not typically required, as the master key is often enabled at install time.
-As a result, when enabling it, there should be no data to encrypt.
-But, in case it’s being enabled after install, and the installation does have files which are unencrypted, encrypt-all can be used to encrypt them.
+As a result, when enabling it, there _should_ be no data to encrypt.
+However, if you have enabled master key encryption post-installation, existing files will not be automatically encrypted; *only* newly created files. 
+To encrypt existing files use the ``encrypt-all`` command as described above. 
+Before doing so, set the instance into xref:configuration/server/occ_command.adoc#_maintenance_commands[single user mode] for that task.
 ====
 
 == View Current Encryption Status
@@ -67,7 +69,7 @@ Retrieves the current encryption status and the name of the loaded encryption mo
 sudo -u www-data php occ encryption:status
 ....
 
-This is equivalent to checking Enable server-side encryption on your Admin page:
+This is equivalent to checking "Enable server-side encryption" on your Admin page:
 
 [source,console]
 ....
@@ -81,7 +83,7 @@ Default module: OC_DEFAULT_MODULE
 == Recreate an Existing Master Key
 
 If the master key needs replacing, for example, because it has been compromised, an occ command is available.
-The command is link:configuration/server/occ_command.adoc#recreate-master-key[encryption:recreate-master-key].
+The command is xref:configuration/server/occ_command.adoc#recreate-master-key[encryption:recreate-master-key].
 It replaces existing master key with new one and encrypts the files with the new key.
 
 == Decrypt Master-Key Based Encryption
@@ -120,7 +122,7 @@ sudo -u www-data php occ maintenance:singleuser --off
 
 [IMPORTANT]
 ====
-You may only disable encryption by using the link:configuration/server/occ_command.adoc#encryption[occ Encryption Commands].
+You may only disable encryption by using the xref:configuration/server/occ_command.adoc#encryption[occ Encryption Commands].
 Make sure you have backups of all encryption keys, including those for all your users.
 ====
 
