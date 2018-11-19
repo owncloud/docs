@@ -31,6 +31,22 @@ pipeline:
     commands:
       - antora generate --cache-dir cache/ --redirect-facility netlify site.yml
 
+  serve-docs:
+    image: nginx:1.15.6-alpine
+    pull: true
+    volumes:
+    - name: docker
+      path: /var/run/docker.sock
+
+  build-docs-with-search-index:
+    image: antora/antora:1.0.1
+    pull: true
+    environment:
+        DOCSEARCH_ENABLED: true 
+        DOCSEARCH_ENGINE: lunr
+    commands:
+      - antora generate --cache-dir cache/ --redirect-facility netlify site.yml --generator=./generate-site.js
+
   cache-rebuild:
     image: plugins/s3-cache:1
     pull: true
