@@ -1,7 +1,7 @@
 :linkattrs:
 
-User Authentication with LDAP
-=============================
+= User Authentication with LDAP
+
 
 IMPORTANT: Please check both the advanced and expert configurations carefully before using in production.
 
@@ -12,7 +12,8 @@ so you don’t have to create separate ownCloud user accounts for them.
 You will manage their ownCloud group memberships, quotas, and sharing
 permissions just like any other ownCloud user.
 
-NOTE: The PHP LDAP module is required. It is supplied by php7.1-ldap on Debian/Ubuntu and php-ldap on CentOS/Red Hat/Fedora. Please check for the correct version, based on your installation of PHP.
+NOTE: The PHP LDAP module is required. It is supplied by php7.1-ldap on Debian/Ubuntu and php-ldap on 
+CentOS/Red Hat/Fedora. Please check for the correct version, based on your installation of PHP.
 
 The LDAP application supports:
 
@@ -20,13 +21,10 @@ The LDAP application supports:
 * File sharing with ownCloud users and groups
 * Access via WebDAV and ownCloud Desktop Client
 * Versioning, external Storage and all other ownCloud features
-* Seamless connectivity to Active Directory, with no extra configuration
-required
+* Seamless connectivity to Active Directory, with no extra configuration required
 * Support for primary groups in Active Directory
-* Auto-detection of LDAP attributes such as base DN, email, and the LDAP
-server port number
-* Only read access to your LDAP (edit or delete of users on your LDAP is
-not supported)
+* Auto-detection of LDAP attributes such as base DN, email, and the LDAP server port number
+* Only read access to your LDAP (edit or delete of users on your LDAP is not supported)
 
 CAUTION: The LDAP app is not compatible with the `User backend using remote HTTP servers` app. You cannot use both of them at the same time.
 
@@ -55,12 +53,11 @@ you must enter them manually.
 image:ldap-wizard-1-server.png[LDAP wizard, server tab]
 
 Server configuration:::
-  Configure one or more LDAP servers. Click the ``**Delete
-  Configuration**'' button to remove the active configuration.
+  Configure one or more LDAP servers.
+  Click the "**Delete Configuration**" button to remove the active configuration.
 Host:::
-  The host name or IP address of the LDAP server. It can also be an
-  **ldaps://** URI. If you enter the port number, it speeds up server
-  detection.
+  The host name or IP address of the LDAP server. It can also be an `ldaps://` URI.
+  If you enter the port number, it speeds up server detection.
 
 Examples:
 
@@ -544,7 +541,7 @@ Internal Username:::
   user backends (including local ownCloud users). On collisions a random
   number (between 1000 and 9999) will be attached to the retrieved
   value. For example, if "alice" exists, the next username may be
-  ``alice_1337''.
+  ``alice_1337``.
 
   The internal username is the default name for the user home folder in
   ownCloud. It is also a part of remote URLs, for instance for all *DAV
@@ -597,15 +594,14 @@ Username-LDAP User Mapping::
 [[testing-the-configuration]]
 == Testing the configuration
 
-The ``**Test Configuration**'' button checks the values as currently
+The "**Test Configuration**" button checks the values as currently
 given in the input fields. You do not need to save before testing. By
 clicking on the button, ownCloud will try to bind to the ownCloud server
 using the settings currently given in the input fields. If the binding
 fails you’ll see a yellow banner with the error message:
 
 _____________________________________________________________________________________
-``The configuration is invalid. Please have a look at the logs for
-further details.''
+``The configuration is invalid. Please have a look at the logs for further details.``
 _____________________________________________________________________________________
 
 When the configuration test reports success, save your settings and
@@ -673,8 +669,8 @@ usually `/etc/ldap/ldap.conf`.
 
 * Using LDAPS, also make sure that the port is correctly configured (by
 default 636)
-* If you get the error ``Lost connection to LDAP server'' or ``**No
-connection to LDAP server**'' double check the connection parameters and
+* If you get the error "_Lost connection to LDAP server_" or
+"**No connection to LDAP server**" double check the connection parameters and
 try connecting to LDAP with tools like `ldapsearch`. If using ldaps or
 TLS make sure the certificate is readable by the user that is used to
 serve ownCloud.
@@ -701,15 +697,12 @@ In case you have a working configuration and want to create a similar
 one or "snapshot" configurations before modifying them you can do the
 following:
 
-1.  Go to the ``**Server**'' tab
-2.  On ``**Server Configuration**'' choose ``**Add Server
-Configuration**''
-3.  Answer the question ``**Take over settings from recent server
-configuration?**'' with ``**yes**''.
-4.  (optional) Switch to ``**Advanced**'' tab and uncheck
-``**Configuration Active**'' in the ``**Connection Settings**'', so the
-new configuration is not used on Save
-5.  Click on ``**Save**''
+1.  Go to the "**Server**" tab
+2.  On "**Server Configuration**" choose "**Add Server Configuration**"
+3.  Answer the question "**Take over settings from recent server configuration?**" with "**yes**".
+4.  (optional) Switch to "**Advanced**" tab and uncheck "**Configuration Active**"
+in the "**Connection Settings**", so the new configuration is not used on Save
+5.  Click on "**Save**"
 
 Now you can modify and enable the configuration.
 
@@ -720,23 +713,20 @@ Now you can modify and enable the configuration.
 === Caching
 
 Using xref:configuration/server/caching_configuration.adoc[caching] to speed up lookups.
-The ownCloud cache is populated on demand, and remains populated until the ``**Cache
-Time-To-Live**'' for each unique request expires. User logins are not
-cached, so if you need to improve login times set up a slave LDAP server
-to share the load.
+The ownCloud cache is populated on demand, and remains populated until the 
+``**Cache Time-To-Live**`` for each unique request expires. User logins are not
+cached, so if you need to improve login times set up a slave LDAP server to share the load.
 
-You can adjust the ``**Cache Time-To-Live**'' value to balance
+You can adjust the "**Cache Time-To-Live**" value to balance
 performance and freshness of LDAP data. All LDAP requests will be cached
-for 10 minutes by default, and you can alter this with the ``**Cache
-Time-To-Live**'' setting. The cache answers each request that is
-identical to a previous request, within the time-to-live of the original
-request, rather than hitting the LDAP server.
+for 10 minutes by default, and you can alter this with the "**Cache Time-To-Live**" setting.
+The cache answers each request that is identical to a previous request,
+within the time-to-live of the original request, rather than hitting the LDAP server.
 
-The ``**Cache Time-To-Live**'' is related to each single request. After
+The "**Cache Time-To-Live**" is related to each single request. After
 a cache entry expires there is no automatic trigger for re-populating
 the information, as the cache is populated only by new requests, for
-example by opening the User administration page, or searching in a
-sharing dialog.
+example by opening the User administration page, or searching in a sharing dialog.
 
 There is one trigger which is automatically triggered by a certain
 background job which keeps the `user-group-mappings` up-to-date, and
@@ -745,7 +735,7 @@ always in cache.
 Under normal circumstances, all users are never loaded at the same time.
 Typically the loading of users happens while page results are generated,
 in steps of 30 until the limit is reached or no results are left. For
-this to work on an oC-Server and LDAP-Server, ``**Paged Results**'' must
+this to work on an oC-Server and LDAP-Server, "**Paged Results**" must
 be supported, which assumes PHP >= 5.6.
 
 ownCloud remembers which user belongs to which LDAP-configuration. That
@@ -758,7 +748,8 @@ server. In this case the other servers will also receive the request.
 
 Turn on indexing. Deciding which attributes to index depends on your
 configuration and which LDAP server you are using.
-See https://www.openldap.org/doc/admin24/tuning.html#Indexes[The openLDAP tuning guide] for openLDAP, and https://technet.microsoft.com/en-us/library/aa995762(v=exchg.65).aspx[How to Index an Attribute in Active Directory] for Active Directory.
+See https://www.openldap.org/doc/admin24/tuning.html#Indexes[The openLDAP tuning guide] for openLDAP, and 
+link:https://technet.microsoft.com/en-us/library/aa995762(v=exchg.65).aspx[How to Index an Attribute in Active Directory] for Active Directory.
 
 [[use-precise-base-dns]]
 === Use precise base DNs
@@ -808,5 +799,4 @@ When ownCloud is not able to contact the main LDAP server, ownCloud
 assumes it is offline and will not try to connect again for the time
 specified in" **Cache Time-To-Live**``. If you have a backup server
 configured ownCloud will connect to it instead. When you have scheduled
-downtime, check''*Disable Main Server*" to avoid unnecessary connection
-attempts.
+downtime, check "*Disable Main Server*" to avoid unnecessary connection attempts.

@@ -4,23 +4,18 @@ This page covers example NGINX configurations to use with running an
 ownCloud server. Note that NGINX is _not officially supported_, and this
 page is _community-maintained_. Thank you, contributors!
 
-* Depending on your setup, you need to insert the code examples into
-your NGINX configuration file.
-* Adjust *server_name*, *root*, *ssl_certificate*, *ssl_certificate_key*
-ect. to suit your needs.
+* Depending on your setup, you need to insert the code examples into your NGINX configuration file.
+* Adjust *server_name*, *root*, *ssl_certificate*, *ssl_certificate_key* ect. to suit your needs.
 * Make sure your SSL certificates are readable by the server (see
-http://wiki.nginx.org/HttpSslModule[NGINX HTTP SSL Module
-documentation]).
+link:http://wiki.nginx.org/HttpSslModule[NGINX HTTP SSL Module documentation]).
 * `add_header` statements are only valid in the current `location` block
 and are not derived or cascaded from or to a different `location` block.
-All necessary `add_header` statements *must* be defined in each
-`location` block needed.
+All necessary `add_header` statements *must* be defined in each `location` block needed.
 * For better readability it is possible to move _common_ `add_header`
 directives into a separate file and include that file wherever
 necessary. However, each `add_header` directive must be written in a
 single line to prevent connection problems with sync clients.
-* The same is true for `map` directives which also can be collected into
-a singe file and then be included.
+* The same is true for `map` directives which also can be collected into a singe file and then be included.
 
 [[example-configurations]]
 == Example Configurations
@@ -131,15 +126,13 @@ files via gzip could also cause such issues.
 
 Check for server timeouts! It turns out that CardDAV sync often fails
 silently if the request runs into timeouts. With PHP-FPM you might see a
-``CoreDAVHTTPStatusErrorDomain error 504'' which is an ``HTTP 504
-Gateway timeout'' error. To solve this, first check the
-`default_socket_timeout` setting in `/etc/php/7.0/fpm/php.ini` and
+``CoreDAVHTTPStatusErrorDomain error 504`` which is an ``HTTP 504 Gateway timeout`` error. 
+To solve this, first check the `default_socket_timeout` setting in `/etc/php/7.0/fpm/php.ini` and
 increase the above `fastcgi_read_timeout` accordingly. Depending on your
-server’s performance a timeout of 180s should be sufficient to sync an
-address book of ~1000 contacts.
+server’s performance a timeout of 180s should be sufficient to sync an address book of ~1000 contacts.
 
 [[windows-error-0x80070043-the-network-name-cannot-be-found.-while-adding-a-network-drive]]
-=== Windows: Error 0x80070043 ``The network name cannot be found.'' while adding a network drive
+=== Windows: Error 0x80070043 "The network name cannot be found." while adding a network drive
 
 The windows native WebDAV client might fail with the following error
 message:
@@ -153,8 +146,10 @@ configuration.
 
 [verse]
 --
-Because NGINX does not allow nested http://nginx.org/en/docs/http/ngx_http_rewrite_module.html[if] directives, you need to use the http://nginx.org/en/docs/http/ngx_http_map_module.html[map] directive.
-The position of the http://nginx.org/en/docs/http/ngx_http_core_module.html#location[location] directive is important for success.
+Because NGINX does not allow nested link:http://nginx.org/en/docs/http/ngx_http_rewrite_module.html[if] directives, 
+you need to use the link:http://nginx.org/en/docs/http/ngx_http_map_module.html[map] directive.
+The position of the link:http://nginx.org/en/docs/http/ngx_http_core_module.html#location[location] 
+directive is important for success.
 --
 
 *1 Create a map directive outside your server block*
@@ -184,10 +179,8 @@ location = / {
 === Suppressing `htaccesstest.txt` and `.ocdata` Log Messages
 
 If you are seeing meaningless messages in your logfile, for example
-https://central.owncloud.org/t/htaccesstest-txt-errors-in-logfiles/831[client
-denied by server configuration: /var/www/data/htaccesstest.txt], or
-access to `.ocdata`, add this section to your NGINX configuration to
-suppress them:
+link:https://central.owncloud.org/t/htaccesstest-txt-errors-in-logfiles/831[client denied by server configuration: /var/www/data/htaccesstest.txt], or
+access to `.ocdata`, add this section to your NGINX configuration to suppress them:
 
 [source,nginx]
 ----
@@ -268,9 +261,9 @@ using either the SPDY or HTTP_V2 modules, depending on your installed
 NGINX version.
 
 * nginx (<1.9.5)
-http://nginx.org/en/docs/http/ngx_http_spdy_module.html[ngx_http_spdy_module]
+link:http://nginx.org/en/docs/http/ngx_http_spdy_module.html[ngx_http_spdy_module]
 * nginx (+1.9.5)
-http://nginx.org/en/docs/http/ngx_http_v2_module.html[ngx_http_v2_module]
+link:http://nginx.org/en/docs/http/ngx_http_v2_module.html[ngx_http_v2_module]
 
 To use HTTP_V2 for NGINX you have to check two things:
 
@@ -281,11 +274,10 @@ compilation. The dependencies should be checked automatically. You can
 check the presence of `ngx_http_v2_module` by using the command:
 `nginx -V 2>&1 | grep http_v2 -o`. A description of how to compile NGINX
 to include modules can be found in
-https://www.nginx.com/resources/wiki/extending/compiling[Compiling
-Modules].
+link:https://www.nginx.com/resources/wiki/extending/compiling[Compiling Modules].
 2.  When changing from
-https://www.maxcdn.com/one/visual-glossary/spdy/[SPDY] to
-https://tools.ietf.org/html/rfc7540[HTTP v2], the NGINX config has to be
+link:https://www.maxcdn.com/one/visual-glossary/spdy/[SPDY] to
+link:https://tools.ietf.org/html/rfc7540[HTTP v2], the NGINX config has to be
 changed from `listen 443 ssl spdy;` to `listen 443 ssl http2;`
 
 *2 Caching Metadata*
@@ -296,8 +288,7 @@ when using eg NFS as backend. That cache can store:
 
 * Open file descriptors, their sizes and modification times;
 * Information on existence of directories;
-* File lookup errors, such as ``file not found'', ``no read
-permission'', and so on.
+* File lookup errors, such as "file not found", "no read permission", and so on.
 
 To configure metadata caching, add following directives either in your
 http, server or location block:

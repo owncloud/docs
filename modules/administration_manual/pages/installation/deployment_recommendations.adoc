@@ -12,9 +12,10 @@ hardware.
 
 [NOTE]
 ====
-The recommendations presented here are based on a standard ownCloud installation, one without any particular _apps_, _themes_, or _code changes_.
-But, server load is dependent upon the number of _clients_, _files_, and _user activity_, as well as other usage patterns.
-Given that, these recommendations are only a rule of thumb based on our experience, as well as that of one of our customers.
+The recommendations presented here are based on a standard ownCloud installation, one without any particular 
+_apps_, _themes_, or _code changes_. But, server load is dependent upon the number of _clients_, _files_, and 
+_user activity_, as well as other usage patterns. Given that, these recommendations are only a rule of thumb 
+based on our experience, as well as that of one of our customers.
 ====
 
 [[general-recommendations]]
@@ -22,13 +23,11 @@ Given that, these recommendations are only a rule of thumb based on our experien
 
 * Operating system: Linux.
 * Web server: Apache 2.4.
-* Database: MySQL/MariaDB with InnoDB storage engine (MyISAM is not
-supported, see: db-storage-engine-label)
+* Database: MySQL/MariaDB with InnoDB storage engine (MyISAM is not supported, see: db-storage-engine-label)
 * PHP 5.6+.
 * Consider setting up a scale-out deployment, or using
-https://doc.owncloud.org/server/latest/user_manual/files/federated_cloud_sharing.html[Federated
-Cloud Sharing] to keep individual ownCloud instances to a manageable
-size.
+xref:user_manual:files/federated_cloud_sharing.adoc[Federated Cloud Sharing] 
+to keep individual ownCloud instances to a manageable size.
 
 NOTE: Whatever the size of your organization, always keep one thing in mind: _The amount of data stored in ownCloud will only grow. So plan ahead._
 
@@ -92,8 +91,7 @@ Enterprise Server 12.
 
 The SSL termination is done in Apache. A standard SSL certificate is
 required to be installed according to
-https://httpd.apache.org/docs/2.4/ssl/ssl_howto.html[the official Apache
-documentation].
+link:https://httpd.apache.org/docs/2.4/ssl/ssl_howto.html[the official Apache documentation].
 
 [[load-balancer]]
 ==== Load Balancer
@@ -106,21 +104,20 @@ None.
 MySQL, MariaDB, or PostgreSQL. We currently recommend MySQL / MariaDB,
 as our customers have had good experiences when moving to a Galera
 cluster to scale the DB. If using either MySQL or MariaDB, you must use
-the InnoDB storage engine as MyISAM is not supported, see:
-db-storage-engine-label
+the InnoDB storage engine as MyISAM is not supported, see: db-storage-engine-label
 
 [IMPORTANT]
 ====
 If you are using MaxScale/Galera, then you need to use at least version 1.3.0. In earlier versions, there is a bug where the value of `last_insert_id` is not routed to the master node.
 This bug can cause loops within ownCloud and corrupt database rows.
-You can find out more information https://jira.mariadb.org/browse/MXS-220[in the issue documentation].
+You can find out more information link:https://jira.mariadb.org/browse/MXS-220[in the issue documentation].
 ====
 
 [[backup]]
 ==== Backup
 
 Install ownCloud, the ownCloud data directory, and database on
-https://en.wikipedia.org/wiki/Btrfs[a Btrfs filesystem]. Make regular
+link:https://en.wikipedia.org/wiki/Btrfs[a Btrfs filesystem]. Make regular
 snapshots at desired intervals for zero downtime backups. Mount DB
 partitions with the "nodatacow" option to prevent fragmentation.
 
@@ -142,9 +139,8 @@ See xref:maintenance/index.adoc[the Maintenance section] of the Administration m
 
 User authentication via one or several LDAP or Active Directory (AD)
 servers. See
-https://doc.owncloud.org/server/latest/admin_manual/configuration/user/user_auth_ldap.html[User
-Authentication with LDAP] for information on configuring ownCloud to use
-LDAP and AD.
+xref:administration_manual:configuration/user/user_auth_ldap.adoc[User Authentication with LDAP] 
+for information on configuring ownCloud to use LDAP and AD.
 
 [[session-management]]
 ==== Session Management
@@ -165,9 +161,8 @@ echo "tmpfs /var/lib/php5/pool-www tmpfs defaults,noatime,mode=1777 0 0" >> /etc
 
 A memory cache speeds up server performance, and ownCloud supports four
 of them. Refer to
-https://doc.owncloud.org/server/latest/admin_manual/configuration/server/caching_configuration.html[Configuring
-Memory Caching] for information on selecting and configuring a memory
-cache.
+xref:administration_manual:configuration/server/caching_configuration.adoc[Configuring Memory Caching] 
+for information on selecting and configuring a memory cache.
 
 [[storage]]
 ==== Storage
@@ -178,8 +173,8 @@ Local storage.
 ==== ownCloud Edition
 
 Standard Edition. See
-https://owncloud.com/owncloud-server-or-enterprise-edition/[ownCloud
-Server or Enterprise Edition] for comparisons of the ownCloud editions.
+link:https://owncloud.com/owncloud-server-or-enterprise-edition/[ownCloud Server or Enterprise Edition] 
+for comparisons of the ownCloud editions.
 
 [[scenario-2-mid-sized-enterprises]]
 == Scenario 2: Mid-Sized Enterprises
@@ -217,7 +212,7 @@ image:installation/deprecs-2.png[Network diagram for a mid-sized enterprise.]
 * 2 to 4 application servers with four sockets and 32GB RAM.
 * 2 DB servers with four sockets and 64GB RAM.
 * 1
-https://www.digitalocean.com/community/tutorials/an-introduction-to-haproxy-and-load-balancing-concepts[HAproxy
+link:https://www.digitalocean.com/community/tutorials/an-introduction-to-haproxy-and-load-balancing-concepts[HAproxy
 load balancer] with two sockets and 16GB RAM.
 * NFS storage server as needed.
 
@@ -232,7 +227,7 @@ Enterprise Server 12.
 ==== SSL Configuration
 
 The SSL termination is done in the
-https://www.digitalocean.com/community/tutorials/an-introduction-to-haproxy-and-load-balancing-concepts[HAProxy
+link:https://www.digitalocean.com/community/tutorials/an-introduction-to-haproxy-and-load-balancing-concepts[HAProxy
 load balancer]. A standard SSL certificate is needed, installed
 according to the link:http://www.haproxy.org/#docs[HAProxy documentation].
 
@@ -247,9 +242,8 @@ management on the application servers.
 ==== Database
 
 MySQL/MariaDB Galera cluster with
-https://mariadb.com/kb/en/mariadb/replication-cluster-multi-master/[master-master
-replication]. InnoDB storage engine, MyISAM is not supported, see:
-db-storage-engine-label.
+link:https://mariadb.com/kb/en/mariadb/replication-cluster-multi-master/[master-master replication]. 
+InnoDB storage engine, MyISAM is not supported, see: db-storage-engine-label.
 
 [[backup-1]]
 ==== Backup
@@ -270,9 +264,8 @@ should be replicated to a backup MySQL/MariaDB slave instance.
 
 User authentication via one or several LDAP or Active Directory servers.
 See
-https://doc.owncloud.org/server/latest/admin_manual/configuration/user/user_auth_ldap.html[User
-Authentication with LDAP] for information on configuring ownCloud to use
-LDAP and AD.
+xref:administration_manual:configuration/user/user_auth_ldap.adoc[User Authentication with LDAP] 
+for information on configuring ownCloud to use LDAP and AD.
 
 [[session-management-1]]
 ==== Session Management
@@ -293,24 +286,22 @@ echo "tmpfs /var/lib/php5/pool-www tmpfs defaults,noatime,mode=1777 0 0" >> /etc
 
 A memory cache speeds up server performance, and ownCloud supports four
 memory cache types. Refer to
-https://doc.owncloud.org/server/latest/admin_manual/configuration/server/caching_configuration.html[Configuring
-Memory Caching] for information on selecting and configuring a memory
-cache.
+xref:administration_manual:configuration/server/caching_configuration.adoc[Configuring Memory Caching] 
+for information on selecting and configuring a memory cache.
 
 [[storage-1]]
 ==== Storage
 
 Use an off-the-shelf NFS solution, such as
-https://www.ibm.com/us-en/marketplace/ibm-elastic-storage-server[IBM
-Elastic Storage] or
-https://www.redhat.com/en/technologies/storage/ceph[RedHat Ceph].
+link:https://www.ibm.com/us-en/marketplace/ibm-elastic-storage-server[IBM Elastic Storage] or
+link:https://www.redhat.com/en/technologies/storage/ceph[RedHat Ceph].
 
 [[owncloud-edition-1]]
 ==== ownCloud Edition
 
 Enterprise Edition. See
-https://owncloud.com/owncloud-server-or-enterprise-edition/[ownCloud
-Server or Enterprise Edition] for comparisons of the ownCloud editions.
+link:https://owncloud.com/owncloud-server-or-enterprise-edition/[ownCloud Server or Enterprise Edition] 
+for comparisons of the ownCloud editions.
 
 [[scenario-3-large-enterprises-and-service-providers]]
 == Scenario 3: Large Enterprises and Service Providers
@@ -347,8 +338,7 @@ image:installation/deprecs-3.png[image]
 
 * 4 to 20 application servers with four sockets and 64GB RAM.
 * 4 DB servers with four sockets and 128GB RAM.
-* 2 Hardware load balancer, for example,
-https://f5.com/products/big-ip[BIG IP from F5].
+* 2 Hardware load balancer, for example, link:https://f5.com/products/big-ip[BIG IP from F5].
 * NFS storage server as needed.
 
 [[operating-system-2]]
@@ -367,7 +357,7 @@ documentation.
 ==== Load Balancer
 
 A redundant hardware load-balancer with heartbeat, for example,
-https://f5.com/products/big-ip/[F5 Big-IP]. This runs two load balancers
+link:https://f5.com/products/big-ip/[F5 Big-IP]. This runs two load balancers
 in front of the application servers.
 
 [[database-2]]
@@ -396,10 +386,8 @@ this, follow these steps:
 
 User authentication via one or several LDAP or Active Directory servers,
 or SAML/Shibboleth. See
-https://doc.owncloud.org/server/latest/admin_manual/configuration/user/user_auth_ldap.html[User
-Authentication with LDAP] and
-https://doc.owncloud.org/server/latest/admin_manual/enterprise_user_management/user_auth_shibboleth.html[Shibboleth
-Integration].
+xref:administration_manual:configuration/user/user_auth_ldap.adoc[User Authentication with LDAP] and
+xref:administration_manual:enterprise_user_management/user_auth_shibboleth.adoc[Shibboleth Integration].
 
 [[ldap]]
 ==== LDAP
@@ -422,21 +410,23 @@ xref:configuration/server/caching_configuration.adoc#redis[Redis] for distribute
 ==== Storage
 
 An off-the-shelf NFS solution should be used.
-Some examples are https://www.ibm.com/us-en/marketplace/ibm-elastic-storage-server[IBM Elastic Storage] or https://www.redhat.com/en/technologies/storage/ceph[RedHat Ceph].
+Some examples are link:https://www.ibm.com/us-en/marketplace/ibm-elastic-storage-server[IBM Elastic Storage] or 
+link:https://www.redhat.com/en/technologies/storage/ceph[RedHat Ceph].
 Optionally, an S3 compatible object store can also be used.
 
 [[owncloud-edition-2]]
 ==== ownCloud Edition
 
 Enterprise Edition.
-See https://owncloud.com/owncloud-server-or-enterprise-edition/[ownCloud Server or Enterprise Edition] for comparisons of the ownCloud editions.
+See link:https://owncloud.com/owncloud-server-or-enterprise-edition/[ownCloud Server or Enterprise Edition] 
+for comparisons of the ownCloud editions.
 
 [[redis-configuration]]
 ==== Redis Configuration
 
 Redis in a master-slave configuration is
-link:http://searchwindowsserver.techtarget.com/definition/cold-warm-hot-server[a
-hot failover setup], and is usually sufficient. A slave can be omitted
+link:http://searchwindowsserver.techtarget.com/definition/cold-warm-hot-server[a hot failover setup], 
+and is usually sufficient. A slave can be omitted
 if high availability is provided via other means. And when it is, in the
 event of a failure, restarting Redis typically occurs quickly enough.
 Regarding Redis cluster, we don’t, usually, recommend it, as it requires
@@ -461,14 +451,10 @@ SQLSTATE[40001]: Serialization failure: 1213 Deadlock found when trying to get l
 ----
 
 The issue,
-https://github.com/owncloud/core/issues/14757#issuecomment-223492913[identified
-by Michael Roth], is caused when MariaDB Galera cluster sends write
-requests to all servers in the cluster;
+link:https://github.com/owncloud/core/issues/14757#issuecomment-223492913[identified by Michael Roth], 
+is caused when MariaDB Galera cluster sends write requests to all servers in the cluster;
 link:http://severalnines.com/blog/avoiding-deadlocks-galera-set-haproxy-single-node-writes-and-multi-node-reads[here
-is a detailed explanation]. The solution is to send all write requests
-to a single server, instead of all of them.
-
-'''''
+is a detailed explanation]. The solution is to send all write requests to a single server, instead of all of them.
 
 [[set-wsrep_sync_wait-to-1-on-all-galera-cluster-nodes]]
 === Set wsrep_sync_wait to 1 on all Galera Cluster nodes
