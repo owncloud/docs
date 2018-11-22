@@ -1,0 +1,50 @@
+# Handle specific changes to the latest version of the documentation struction between the old and new version
+rewrite ^/server/latest/admin_manual/installation/$ /server/administration_manual/installation/index.html permanent;
+rewrite ^/server/latest/admin_manual/installation/source_installation.html /server/administration_manual/installation/manual_installation.html permanent;
+rewrite ^/server/latest/admin_manual/installation/docker/$ /server/administration_manual/installation/docker/index.html permanent;
+rewrite ^/server/latest/admin_manual/installation/letsencrypt/$ /server/administration_manual/installation/letsencrypt/index.html permanent;
+rewrite ^/server/latest/admin_manual/upgrading/$ /server/administration_manual/upgrading/index.html permanent;
+rewrite ^/server/latest/admin_manual/configuration/$ /server/administration_manual/configuration/index.html permanent;
+rewrite ^/server/latest/admin_manual/configuration/database /server/administration_manual/configuration/database/index.html permanent;
+rewrite ^/server/latest/admin_manual/configuration/files /server/administration_manual/configuration/files/index.html permanent;
+rewrite ^/server/latest/admin_manual/configuration/mimetypes /server/administration_manual/configuration/mimetypes/index.html permanent;
+rewrite ^/server/latest/admin_manual/configuration/server /server/administration_manual/configuration/server/index.html permanent;
+rewrite ^/server/latest/admin_manual/configuration/user /server/administration_manual/configuration/user/index.html permanent;
+rewrite ^/server/latest/admin_manual/maintenance/$ /server/administration_manual/maintenance/index.html permanent;
+rewrite ^/server/latest/admin_manual/issues/$ /server/administration_manual/issues/index.html permanent;
+rewrite ^/server/latest/user_manual/files/$ /server/user_manual/files/index.html permanent;
+rewrite ^/server/latest/user_manual/pim/$ /server/user_manual/pim/index.html permanent;
+rewrite ^/server/latest/user_manual/files/troubleshooting.html /server/user_manual/troubleshooting.html permanent;
+rewrite ^/server/latest/user_manual/pim/troubleshooting.html /server/user_manual/troubleshooting.html permanent;
+rewrite ^/server/latest/developer_manual/commun/$ /server/developer_manual/commun/help_and_communication.html permanent;
+rewrite ^/server/latest/developer_manual/app/$ /server/developer_manual/app/introduction.html permanent;
+rewrite ^/server/developer_manual/app/fundamentals/$ /server/developer_manual/app/fundamentals/index.html permanent;
+rewrite ^/server/developer_manual/app/advanced/$ /server/developer_manual/app/advanced/index.html permanent;
+rewrite ^/server/developer_manual/app/tutorial/$ /server/developer_manual/app/tutorial/index.html permanent;
+rewrite ^/server/developer_manual/core/$ /server/developer_manual/core/index.html permanent;
+rewrite ^/server/developer_manual/app/general/$ /server/developer_manual/general/index.html permanent;
+rewrite ^/server/developer_manual/mobile_development/$ /server/developer_manual/mobile_development/index.html permanent;
+rewrite ^/server/developer_manual/mobile_development/android_library/$ /server/developer_manual/mobile_development/android_library/index.html permanent;
+rewrite ^/server/developer_manual/mobile_development/ios_library/$ /server/developer_manual/mobile_development/ios_library/index.html permanent;
+rewrite ^/server/developer_manual/bugtracker/$ /server/developer_manual/bugtracker/index.html permanent;
+rewrite ^/android_app/$ /android_app/android_app_app.html permanent;
+rewrite ^/ios/$ /ios/ios_app.html permanent;
+rewrite ^/desktop/latest/advanced_usage.html /desktop/advanced_usage/options.html permanent;
+rewrite ^/desktop/latest/autoupdate.html /desktop/automatic_updater.html permanent;
+
+# Redirect any remaining requests to the old admin, developer, user, and desktop manuals to the new versions.
+rewrite ^/server/latest/admin_manual/(.*)$ /server/administration_manual/$1 permanent;
+rewrite ^/server/latest/user_manual/$ /server/user_manual/index.html permanent;
+rewrite ^/server/latest/user_manual/(.*)$ /server/user_manual/$1 permanent;
+rewrite ^/server/latest/developer_manual/$ /server/developer_manual/index.html permanent;
+rewrite ^/server/latest/developer_manual/(.*)$ /server/developer_manual/$1 permanent;
+rewrite ^/desktop/latest/$ /client/introduction.html permanent;
+rewrite ^/desktop/latest/(.*)$ /client/$1 permanent;
+
+# Redirect all requests to .org to .com
+rewrite https://doc.owncloud.org/(.*)$ https://doc.owncloud.com/$1 permanent
+
+# Redirect all versions of the documentation prior to the latest release to the "old docs"
+rewrite https://doc.owncloud.com/server/([0-9]+\.[0-9]+)/(developer|user|admin)_manual/(.*)$ https://doc-old.owncloud.com/server/$1/$2_manual/$3 permanent;
+rewrite https://doc.owncloud.com/desktop/([0-9]+\.[0-9]+)/(.*)$ https://doc-old.owncloud.org/desktop/$1/$2 permanent;
+rewrite https://doc.owncloud.com/branded_clients/ https://doc-old.owncloud.com/branded_clients/ permanent;
