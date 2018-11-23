@@ -1,0 +1,24 @@
+# Testing unmerged docs-ui changes
+
+If you want to test an unmerged change made in the `docs-ui` reprository with content from the ownCloud documentation,
+build as usual the documentation with the antora command but add the option
+`--ui-bundle-url <path-to-your-local-ui-bundle>/ui-bundle.zip` to your command.
+The location for this bundle is in the `docs-ui`reprository in directory `build/`.
+More details for prerequisites and how the create the `ui-bundle.zip` can be found in the [docs-ui](https://github.com/owncloud/docs-ui#owncloud-documentation-ui) reprository.
+
+The following example assumes:
+
+- You are in the root directory of your local `docs` repository
+- The `docs-ui` repository directory is on the same directory level as `docs`
+- You have `ui-bundle.zip` manually created with [gulp pack](https://github.com/owncloud/docs-ui#preview-changes-using-owncloud-documentation)
+- You have a webserver pointing to the `public` directory in your local `docs` repository to access the built documentation
+
+```
+antora --clean \
+       --pull \
+       --ui-bundle-url ../docs/build/ui-bundle.zip \
+       --url http://localhost:5000 \
+       site.yml
+```
+
+If the build returns without an error, open the documentation with your browser to see your changes.
