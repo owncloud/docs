@@ -26,3 +26,6 @@ Changes made in `docs-ui` are valid for the whole documentation.
 Please read how to test un-merged [docs-ui](./docs/test-ui-bundle.md) changes with content from the ownCloud documentation.
 
 
+## Best practices and tips
+
+Please refer to [Best Practices and Tips](./docs/best-practices.md) for more information.
