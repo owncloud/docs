@@ -1069,7 +1069,7 @@ List configured mounts.
 
 [source,console]
 ....
-files_external:list [--show-password] [--full] [-a|--all] [--] [<user_id>]
+files_external:list [--show-password] [--full] [-a|--all] [-s|--short] [--] [<user_id>]
 ....
 
 ==== Arguments
@@ -1087,6 +1087,7 @@ files_external:list [--show-password] [--full] [-a|--all] [--] [<user_id>]
 be added as system mount.
 | `--full`            | Don't save the imported mounts, only list the new mounts.
 | `-a, --all`         | Show both system-wide mounts and all personal mounts.
+| `-s, --short`       | Show only a reduced mount info.
 | `--output=[OUTPUT]` | The output format to use (`plain`, `json` or `json_pretty`, default is `plain`).
 |===
 
@@ -1094,7 +1095,13 @@ be added as system mount.
 
 [source,console]
 ....
-sudo -u www-data php occ files_external:list -- user1
+sudo -uwww-data ./occ files_external:list user_1 --short
++----------+------------------+----------+
+| Mount ID | Mount Point      | Type     |
++----------+------------------+----------+
+| 1        | /mount_1         | Personal |
+| 2        | /mount_2         | Personal |
++----------+------------------+----------+
 ....
 
 === files_external:applicable
