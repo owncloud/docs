@@ -43,7 +43,7 @@ php_value max_input_time 3600
 php_value max_execution_time 3600
 ....
 
-The link:https://httpd.apache.org/docs/current/mod/mod_reqtimeout.html[mod_reqtimeout]
+The https://httpd.apache.org/docs/current/mod/mod_reqtimeout.html[mod_reqtimeout]
 Apache module could also stop large uploads from completing. If you’re
 using this module and getting failed uploads of large files either
 disable it in your Apache config or raise the configured
@@ -56,14 +56,14 @@ manual of your Web server for how to configure those values correctly:
 [[apache]]
 === Apache
 
-* link:https://httpd.apache.org/docs/current/en/mod/core.html#limitrequestbody[LimitRequestBody]
-* link:https://httpd.apache.org/docs/current/mod/mod_ssl.html#sslrenegbuffersize[SSLRenegBufferSize]
+* https://httpd.apache.org/docs/current/en/mod/core.html#limitrequestbody[LimitRequestBody]
+* https://httpd.apache.org/docs/current/mod/mod_ssl.html#sslrenegbuffersize[SSLRenegBufferSize]
 
 [[apache-with-mod_fcgid]]
 === Apache with mod_fcgid
 
-* link:https://httpd.apache.org/mod_fcgid/mod/mod_fcgid.html#fcgidmaxrequestinmem[FcgidMaxRequestInMem]
-* link:https://httpd.apache.org/mod_fcgid/mod/mod_fcgid.html#fcgidmaxrequestlen[FcgidMaxRequestLen]
+* https://httpd.apache.org/mod_fcgid/mod/mod_fcgid.html#fcgidmaxrequestinmem[FcgidMaxRequestInMem]
+* https://httpd.apache.org/mod_fcgid/mod/mod_fcgid.html#fcgidmaxrequestlen[FcgidMaxRequestLen]
 
 WARNING: If you are using Apache/2.4 with mod_fcgid, as of February/March 2016, `FcgidMaxRequestInMem` still needs to be significantly increased from its default value to avoid the occurence of segmentation faults when uploading big files. This is not a regular setting but serves as a workaround for https://bz.apache.org/bugzilla/show_bug.cgi?id=51747[Apache with mod_fcgid bug #51747].
 
@@ -73,19 +73,19 @@ longer be necessary, once bug #51747 is fixed.
 [[nginx]]
 === NGINX
 
-* link:http://nginx.org/en/docs/http/ngx_http_core_module.html#client_max_body_size[client_max_body_size]
-* link:http://nginx.org/en/docs/http/ngx_http_fastcgi_module.html#fastcgi_read_timeout[fastcgi_read_timeout]
-* link:http://nginx.org/en/docs/http/ngx_http_core_module.html#client_body_temp_path[client_body_temp_path]
+* http://nginx.org/en/docs/http/ngx_http_core_module.html#client_max_body_size[client_max_body_size]
+* http://nginx.org/en/docs/http/ngx_http_fastcgi_module.html#fastcgi_read_timeout[fastcgi_read_timeout]
+* http://nginx.org/en/docs/http/ngx_http_core_module.html#client_body_temp_path[client_body_temp_path]
 
 Since NGINX 1.7.11 a new config option
-link:https://nginx.org/en/docs/http/ngx_http_fastcgi_module.html#fastcgi_request_buffering[fastcgi_request_buffering]
+https://nginx.org/en/docs/http/ngx_http_fastcgi_module.html#fastcgi_request_buffering[fastcgi_request_buffering]
 is availabe. Setting this option to `fastcgi_request_buffering off;` in
 your NGINX config might help with timeouts during the upload.
 Furthermore it helps if you’re running out of disc space on the `/tmp`
 partition of your system.
 
 For more info how to configure NGINX to raise the upload limits see also
-link:https://github.com/owncloud/documentation/wiki/Uploading-files-up-to-16GB#configuring-nginx[this] wiki entry.
+https://github.com/owncloud/documentation/wiki/Uploading-files-up-to-16GB#configuring-nginx[this] wiki entry.
 
 TIP: Make sure that `client_body_temp_path` points to a partition with adequate space for your upload file size, and on the same partition as the `upload_tmp_dir` or `tempdirectory` (see below). For optimal performance, place these on a separate hard drive that is dedicated to swap and temp storage.
 
@@ -95,12 +95,12 @@ By default, downloads will be limited to 1GB due to `proxy_buffering`
 and `proxy_max_temp_file_size` on the frontend.
 
 * If you can access the frontend’s configuration, disable
-link:http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_buffering[proxy_buffering]
+http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_buffering[proxy_buffering]
 or increase
-link:http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_max_temp_file_size[proxy_max_temp_file_size]
+http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_max_temp_file_size[proxy_max_temp_file_size]
 from the default 1GB.
 * If you do not have access to the frontend, set the
-link:http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_buffering[X-Accel-Buffering]
+http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_buffering[X-Accel-Buffering]
 header to `add_header X-Accel-Buffering no;` on your backend server.
 
 [[configuring-php]]
