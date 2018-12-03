@@ -330,11 +330,11 @@ EOF
 ==== Configuration File Paths
 
 [cols=",",options="header",]
-|==================================================
+|===
 | PHP Version | Filename
 | 5.6 | `/etc/opt/rh/rh-php56/php.d/25-memcached.ini`
 | 7.0 | `/etc/opt/rh/rh-php70/php.d/25-memcached.ini`
-|==================================================
+|===
 
 After that, assuming that you don’t encounter any errors:
 
@@ -401,10 +401,12 @@ cache:
 ],
 ----
 
-_________________________________________________________________________
-`memcache.locking' => `OCMemcacheRedis', // Add this for best
-performance
-_________________________________________________________________________
+For best performance add the following
+
+[source,php]
+----
+'memcache.locking' => '\OC\Memcache\Redis',
+----
 
 If you want to connect to Redis configured to listen on an Unix socket,
 which is recommended if Redis is running on the same system as ownCloud,
@@ -419,11 +421,11 @@ use this example configuration:
 ],
 ----
 
-Redis is very configurable; consult link:http://redis.io/documentation[the Redis documentation] to learn more.
+ consult link:http://redis.io/documentation[the Redis documentation] to learn more.
 
 [[memcached-configuration]]
 === Memcached Configuration
-
+Redis is very configurable;
 This example uses APCu for the local cache, Memcached as the distributed
 memory cache, and lists all the servers in the shared cache pool with
 their port numbers:
@@ -517,21 +519,16 @@ In the table below, you can see all of the known reasons for reduced or
 broken functionality related to caching.
 
 [width="100%",cols="41%,59%",options="header",]
-|=======================================================================
-| Setup/Configuration | Result
+|===
+| Setup/Configuration                              | Result
 | If file locking is enabled, but the locking cache class is missing,
-then an exception will appear in the web UI | The application will not be
-usable
-
+then an exception will appear in the web UI        | The application will not be usable
 | If file locking is enabled and the locking cache is configured, but the
-PHP module missing. | There will be a white page/exception in web UI. It
+PHP module missing.                                | There will be a white page/exception in web UI. It
 will be a full page issue, and the application will not be usable
-
 | All enabled, but the Redis server is not running | The application will
 be usable. But any file operation will return a "500 Redis went away" exception
-
 | If Memcache is configured for `local` and `distributed`, but the
-class is missing | There will be a white page and an exception written to
-the logs, This is because autoloading needs the missing class. So there
-is no way to show a page
-|=======================================================================
+class is missing                                   | There will be a white page and an exception written to
+the logs, This is because autoloading needs the missing class. So there is no way to show a page
+|===
