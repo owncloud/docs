@@ -1,24 +1,21 @@
 = Installing with Docker
 
 ownCloud can be installed using Docker, using
-https://hub.docker.com/r/owncloud/server/[the official ownCloud Docker
-image]. This official image is designed to work with a data volume in
+https://hub.docker.com/r/owncloud/server/[the official ownCloud Docker image].
+This official image is designed to work with a data volume in
 the host filesystem and with separate _MariaDB_ and _Redis_ containers.
 The configuration:
 
-* exposes ports 80 and 443, allowing for HTTP and HTTPS connections.
-* mounts the data and MySQL data directories on the host for persistent
-storage.
+* exposes ports 8080, allowing for HTTP connections.
+* mounts the data and MySQL data directories on the host for persistent storage.
 
 [[installation-on-a-local-machine]]
 == Installation on a Local Machine
 
-To use it, first create a new project directory and download
-`docker-compose.yml` from
-https://github.com/owncloud-docker/server.git[the ownCloud Docker GitHub
-repository] into that new directory. Next, create a .env configuration
-file, which contains the required configuration settings. Only a few
-settings are required, these are:
+To use it, first create a new project directory and download `docker-compose.yml` from
+https://github.com/owncloud-docker/server.git[the ownCloud Docker GitHub repository]
+into that new directory. Next, create a .env configuration file, which contains the required 
+configuration settings. Only a few settings are required, these are:
 
 [cols=3,options=header]
 |===
@@ -44,19 +41,15 @@ settings are required, these are:
 
 | `HTTP_PORT`
 | The HTTP port to bind to
-| `80`
-
-| `HTTPS_PORT`
-| The HTTP port to bind to
-| `443`
+| `8080`
 |===
 
 Then, you can start the container, using your preferred Docker
 command-line tool. The example below shows how to use
 https://docs.docker.com/compose/[Docker Compose].
 
-NOTE: You can find instructions for using plain docker https://github.com/owncloud-docker/server#launch-with-plain-docker[in
-the GitHub repository].
+NOTE: You can find instructions for using plain docker 
+https://github.com/owncloud-docker/server#launch-with-plain-docker[in the GitHub repository].
 
 [source,console]
 ----
@@ -74,8 +67,7 @@ OWNCLOUD_VERSION=10.0
 OWNCLOUD_DOMAIN=localhost
 ADMIN_USERNAME=admin
 ADMIN_PASSWORD=admin
-HTTP_PORT=80
-HTTPS_PORT=443
+HTTP_PORT=8080
 EOF
 
 # Build and start the container
@@ -90,15 +82,14 @@ below:
 [source,console]
 ....
 Name                Command                       State             Ports
-_______________________________________________________________________________________________________________
+__________________________________________________________________________________________
 server_db_1         /usr/bin/entrypoint/bin/s …   Up                3306/tcp
-server_owncloud_1   /usr/local/bin/entrypoint …   Up                0.0.0.0:443->443/tcp, 0.0.0.0:80->80/tcp
+server_owncloud_1   /usr/local/bin/entrypoint …   Up                0.0.0.0:8080->8080/tcp
 server_redis_1      /bin/s6-svscan /etc/s6        Up                6379/tcp
 ....
 
 In it, you can see that the database, ownCloud, and Redis containers are
-running, and that ownCloud is accessible via ports 443 and 8080 on the
-host machine.
+running, and that ownCloud is accessible via port 8080 on the host machine.
 
 NOTE: Just because all the containers are running, it takes a few minutes for ownCloud to be fully functional. If you run
 `docker-compose logs --follow owncloud` and see a significant amount of information logging to the console, then please wait until it slows down to attempt to access the web UI.
@@ -106,7 +97,7 @@ NOTE: Just because all the containers are running, it takes a few minutes for ow
 [[logging-in]]
 === Logging In
 
-To log in to the ownCloud UI, open `https://localhost` in your browser
+To log in to the ownCloud UI, open `http://localhost:8080` in your browser
 of choice, where you see the standard ownCloud login screen, as in the
 image below.
 
@@ -114,8 +105,6 @@ image:docker/owncloud-ui-login.png[The ownCloud UI via Docker]
 
 The username and password are the admin username and password which you
 stored in `.env` earlier.
-
-NOTE: The first time that you access the login page via HTTPS, a browser warning appears, as the SSL certificate in the Docker setup is self-signed. However, the self-signed certificate can be overwritten with a valid cert, within the host volume.
 
 [[stopping-the-containers]]
 === Stopping the Containers
@@ -137,7 +126,7 @@ the following command:
 
 [source,console]
 ....
-docker-compose exec server occ maintenance:mode --on
+docker-compose exec owncloud occ maintenance:mode --on
 ....
 
 Third, create a backup in case something goes wrong during the upgrade
@@ -148,7 +137,8 @@ process, using the following command:
 docker-compose exec db backup
 ....
 
-NOTE: This assumes that you are using https://hub.docker.com/r/webhippie/mariadb/[the default database container from Webhippie].
+NOTE: This assumes that you are using 
+https://hub.docker.com/r/webhippie/mariadb/[the default database container from Webhippie].
 
 Fifth, shutdown the containers.
 
@@ -168,14 +158,23 @@ sed -i 's/^OWNCLOUD_VERSION=.*$/OWNCLOUD_VERSION=<newVersion>/' /compose/*/.env
 
 Seventh, view the file to ensure the changes has been implemented.
 
+[source,console]
 ....
 cat .env
 ....
 
 Eighth, start your docker instance again.
 
+[source,console]
 ....
 docker-compose up -d
 ....
 
 Now you should have the current ownCloud running with docker-compose.
+Please note that the container will automatically run `occ upgrade` when starting up.
+If you notice the container starting over and over again, you can check the update log with the following command:
+
+[source,console]
+....
+docker-compose logs --timestamp owncloud
+....

@@ -2,12 +2,12 @@
 
 To be able to use and develop with ownCloud follow these steps.
 
-1.  link:install-the-core-software[Install the Core Software]
-2.  link:install-dependencies-on-opensuse-leap-42.3[Setup the web server and database]
-3.  link:setup-the-webserver-and-database[Get the source]
-4.  link:set-user-group-and-permissions[Install software dependencies]
-5.  link:enable-debug-mode[Enable debug mode]
-6.  link:setup-owncloud[Setup ownCloud]
+1.  xref:install-the-core-software[Install the Core Software]
+2.  xref:install-dependencies-on-opensuse-leap-42.3[Setup the web server and database]
+3.  xref:setup-the-webserver-and-database[Get the source]
+4.  xref:set-user-group-and-permissions[Install software dependencies]
+5.  xref:enable-debug-mode[Enable debug mode]
+6.  xref:setup-owncloud[Setup ownCloud]
 
 If you have already completed one or more of these steps, feel free to
 skip them. Otherwise, if you’re just getting started, begin by getting
@@ -16,7 +16,8 @@ the ownCloud source code.
 [[install-the-core-software]]
 == Install the Core Software
 
-The first thing to do is to ensure that your server has the necessary software for installing and running ownCloud. While you can go further,you need to install at least link:https://doc.owncloud.com/server/latest/admin_manual/installation/source_installation.html#install-the-required-packages[the required packages].
+The first thing to do is to ensure that your server has the necessary software for installing and running ownCloud. While you can go further,you need to install at least 
+xref:administration_manual:installation/source_installation.adoc#install-the-required-packages[the required packages].
 Then you will need to install the software required to run the development environment's installation process.
 
 * https://www.gnu.org/software/make/[Make]
@@ -59,10 +60,8 @@ sudo zypper --quiet --non-interactive install \
 Next, you need to setup your web and database servers, so that they work
 properly with ownCloud. The respective guides are available at:
 
-* https://doc.owncloud.org/server/latest/admin_manual/installation/source_installation.html#apache-configuration-label[Apache
-Webserver Configuration]
-* https://doc.owncloud.org/server/latest/admin_manual/configuration/database/linux_database_configuration.html[Database
-Server Configuration]
+* xref:admininstration_manual:installation/source_installation.html#apache-configuration-label[Apache Webserver Configuration]
+* xref:admininstration_manual:configuration/database/linux_database_configuration.html[Database Server Configuration]
 
 [[get-the-source]]
 == Get The Source
@@ -70,11 +69,9 @@ Server Configuration]
 With the web and database servers setup, you next need to get a copy of
 ownCloud. There are two ways to do so:
 
-1.  Use
-https://doc.owncloud.org/server/latest/admin_manual/#installation[the
-stable version]
-2.  Clone the development version from
-https://github.com/owncloud[GitHub]:
+1.  Use a xref:admininstration_manual:installation/manual_installation.adoc#manual-installation-on-linux[manual installation]
+2.  Use a xref:admininstration_manual:installation/linux_installation.adoc[Linux Package Manager Installation]
+3.  Clone the development version from https://github.com/owncloud[GitHub]:
 
 For the sake of a brief example, assuming you chose to clone from
 GitHub, here’s an example of how to do so:
@@ -121,23 +118,21 @@ grep -r 'APACHE_RUN_USER' /etc/apache2/
 ps -aux | grep apache2
 ....
 
-___________________________________________________________________________________________________
-Depending on your distribution, it will likely be one of `http`,
-`www-data`, `apache`, or `wwwrun`.
-___________________________________________________________________________________________________
+Depending on your distribution, it will likely be one of `http`, `www-data`, `apache`, or `wwwrun`.
+
 
 [[install-software-dependencies]]
 == Install Software Dependencies
 
 With the ownCloud source
-https://doc.owncloud.org/server/latest/admin_manual/installation/source_installation.html#configure-the-apache-web-server[available
-to your webserver], next install ownCloud’s dependencies by running
+xref:administration_manual:installation/manual_installation.adoc#configure-apache-web-server[available to your webserver], 
+next install ownCloud’s dependencies by running
 https://www.gnu.org/software/make/[Make], from the directory where
 ownCloud’s located. Here’s an example of how to do so:
 
 [source,console]
 ----
-# Assuming that the ownCloud source is located in ``/var/www/html/core``
+# Assuming that the ownCloud source is located in `/var/www/html/core`
 cd /var/www/html/core && make
 ----
 
@@ -147,38 +142,19 @@ supports, which you can see in the table below, which are useful for a
 variety of tasks.
 
 [cols=",",options="header",]
-|=======================================================================
-| Target | Description
-| make | Pulls in both Composer and Bower dependencies
-
-| make clean | Cleans up dependencies. This is useful for starting over or
-
-| | when switching to older branches
-
-| make dist | Builds a minimal owncloud-core tarball with only core apps
-
-| | in build/dist/core, stripped of unwanted files
-
-| make docs | Builds the JavaScript documentation using
-http://usejsdoc.org[JSDoc]
-
-| make test | Runs all of the test targets
-
-| make test-external | Runs one of the external storage tests, and is
-configurable
-
-| | through make variables
-
-| make test-js | Runs the Javascript unit tests, replacing
-./autotest-js.sh
-
-| make test-php | Runs the PHPUnit tests with SQLite as the data source.
-This
-
-| | replaces ./autotest.sh sqlite and is configurable through
-
-| | make variables
-|=======================================================================
+|===
+| Target     | Description
+| make       | Pulls in both Composer and Bower dependencies
+| make clean | Cleans up dependencies. This is useful for starting over or when switching to older branches
+| make dist  | Builds a minimal owncloud-core tarball with only core apps in build/dist/core, stripped 
+of unwanted files
+| make docs  | Builds the JavaScript documentation using http://usejsdoc.org[JSDoc]
+| make test  | Runs all of the test targets
+| make test-external | Runs one of the external storage tests, and is configurable through make variables
+| make test-js  | Runs the Javascript unit tests, replacing ./autotest-js.sh
+| make test-php | Runs the PHPUnit tests with SQLite as the data source. +
+This replaces ./autotest.sh sqlite and is configurable through make variables
+|===
 
 [[enable-debug-mode]]
 == Enable Debug Mode
@@ -207,7 +183,6 @@ is only meant for debugging and development!
 == Setup ownCloud
 
 With all that done, you’re now ready to use either
-https://doc.owncloud.org/server/latest/admin_manual/installation/installation_wizard.html[the
-installation wizard] or
-https://doc.owncloud.org/server/latest/admin_manual/installation/command_line_installation.html[command
-line installer] to finish setting up ownCloud.
+xref:administration_manual:installation/installation_wizard.adoc[the installation wizard] or
+xref:administration_manual:installation/command_line_installation.adoc[command line installer] 
+to finish setting up ownCloud.

@@ -1,0 +1,129 @@
+[[master-key-based-encryption]]
+= Master Key Based Encryption
+Matthew Setter <matthew@matthewsetter.com>
+:experimental:
+:keywords: master key based encryption, encryption
+:description: This guide will show you how to work with Master Key encryption in ownCloud. 
+
+With Master Key based encryption, there is only one key (or key pair) and all files are encrypted using that key pair. 
+This is highly recommended for new instances to avoid restrictions in functionality of user key encryption.
+
+== Enabling Master Key Based Encryption
+
+To enable Master Key based encryption requires two steps:
+
+. xref:enable-the-encryption-app[Enable the encryption app]
+. xref:enable-and-configure-master-key-based-encryption[Enable and configure User-Key based Encryption]
+
+[TIP] 
+====
+We strongly encourage you to put your server in single user mode before setting up encryption.
+
+To do so, run the following command:
+
+....
+sudo -u www-data php occ maintenance:singleuser --on
+....
+====
+
+[[enable-the-encryption-app]]
+=== Enable the Encryption App
+
+include::enable-encryption.adoc[leveloffset=+1,tag=enable-encryption-app-via-command-line]
+
+[[enable-and-configure-master-key-based-encryption]]
+=== Enable and Configure Master Key Based Encryption
+
+To enable and configure Master Key based encryption via the command-line, involves several commands.
+
+. Enable encryption.
+. Enable the master key.
++
+NOTE: Master Key Mode has to be setup in a newly created instance.
+. Encrypt all data.
+
+The following example shows how to carry out these steps.
+
+[source,console]
+....
+sudo -u www-data php occ encryption:enable
+sudo -u www-data php occ encryption:select-encryption-type masterkey
+sudo -u www-data php occ encryption:encrypt-all
+....
+
+[NOTE]
+====
+This command is not typically required, as the master key is often enabled at install time.
+As a result, when enabling it, there _should_ be no data to encrypt.
+However, if you have enabled master key encryption post-installation, existing files will not be automatically encrypted; *only* newly created files. 
+To encrypt existing files use the ``encrypt-all`` command as described above. 
+Before doing so, set the instance into xref:configuration/server/occ_command.adoc#_maintenance_commands[single user mode] for that task.
+====
+
+== View Current Encryption Status
+
+Retrieves the current encryption status and the name of the loaded encryption module.
+
+[source,console]
+....
+sudo -u www-data php occ encryption:status
+....
+
+This is equivalent to checking "Enable server-side encryption" on your Admin page:
+
+[source,console]
+....
+sudo -u www-data php occ encryption:enable
+Encryption enabled
+
+Default module: OC_DEFAULT_MODULE
+....
+
+[[recreating-an-existing-master-key]]
+== Recreate an Existing Master Key
+
+If the master key needs replacing, for example, because it has been compromised, an occ command is available.
+The command is xref:configuration/server/occ_command.adoc#recreate-master-key[encryption:recreate-master-key].
+It replaces existing master key with new one and encrypts the files with the new key.
+
+== Decrypt Master-Key Based Encryption
+
+You must first put your ownCloud server into single-user mode to prevent any user activity until encryption is completed.
+
+[source,console]
+....
+sudo -u www-data php occ maintenance:singleuser --on
+Single user mode is currently enabled
+....
+
+Decrypt all user data files, or optionally a single user:
+
+[source,console]
+....
+sudo -u www-data php occ encryption:decrypt-all [username]
+....
+
+== Disable Encryption
+
+To disable encryption, put your ownCloud server into single-user mode, and then disable your encryption module with these commands:
+
+[source,console]
+....
+sudo -u www-data php occ maintenance:singleuser --on
+sudo -u www-data php occ encryption:disable
+....
+
+Take it out of single-user mode when you are finished, by using the following command:
+
+[source,console]
+....
+sudo -u www-data php occ maintenance:singleuser --off
+....
+
+[IMPORTANT]
+====
+You may only disable encryption by using the xref:configuration/server/occ_command.adoc#encryption[occ Encryption Commands].
+Make sure you have backups of all encryption keys, including those for all your users.
+====
+
+include::sharing-encrypted-files.adoc[leveloffset=+1]

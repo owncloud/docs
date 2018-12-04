@@ -288,26 +288,23 @@ to delete.
 
 [source,objective-c]
 ----
-----
 
-____________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________
- ::
   [[ AppDelegate sharedOCCommunication ] deleteFileOrFolder :path
   onCommunication :[ AppDelegate
-  +
+  
   sharedOCCommunication ] successRequest :^( NSHTTPURLResponse
   __response, NSString__redirectedServer) \{;;
     //File or Folder deleted
-  +
+  
   } failureRequest :^( NSHTTPURLResponse __response, NSError__error) \{
-  +
+  
   switch (response.statusCode) \{ case kOCErrorServerPathNotFound:
   //Path not found break; case kOCErrorServerUnauthorized: //Bad
   credentials break; case kOCErrorServerForbidden: //Forbidden break;
   case kOCErrorServerTimeout: //Timeout break; default: break; }
-  +
+  
   }];
-____________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________
+----
 
 [[download-a-file]]
 == Download a file
@@ -824,14 +821,9 @@ to unshared an element.
 * Paths must not be on URL Encoding
 * Correct path: `https://example.com/owncloud/remote.php/dav/Pop_Music/`
 * Wrong path: `https://example.com/owncloud/remote.php/dav/Pop%20Music/`
-* There are some forbidden characters to be used in folder and files
-names on the server, same on the ownCloud iOS library
-`",`/`,`<`,`>`,`:`,``",``,`?`,`*"
-* To move a folder the origin path and the destination path must end
-with `/`
-* To move a file the origin path and the destination path must not end
-with `/`
-* Upload and download actions may be cancelled thanks to the object
-`NSOperation`
-* Unit tests, before launching unit tests you have to enter your account
-information (server url, user and password) on OCCommunicationLibTests.m
+* There are some forbidden characters to be used in folder and files names on the server, same on the ownCloud iOS library
+`/`,`<`,`>`,`:`,`"`,`\``,`?`,`*`
+* To move a folder the origin path and the destination path must end with `/`
+* To move a file the origin path and the destination path must not end with `/`
+* Upload and download actions may be cancelled thanks to the object `NSOperation`
+* Unit tests, before launching unit tests you have to enter your account information (server url, user and password) on `OCCommunicationLibTests.m`

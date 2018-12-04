@@ -1,0 +1,134 @@
+= Encryption Configuration
+
+== Background Information
+
+The primary purpose of the ownCloud server-side encryption is to protect
+users' files when they're located on remote storages, such as Dropbox
+and Google Drive, and to do it smoothly and seamlessly from within
+ownCloud.
+
+From ownCloud 9.0, server-side encryption for local and remote storages
+can operate independently of each other. By doing so, you can encrypt a
+remote storage _without_ also having to encrypt your home storage on
+your ownCloud server.
+
+NOTE: Starting with ownCloud 9.0 we support Authenticated Encryption for all newly encrypted files. See https://hackerone.com/reports/108082[HackerOne report 108082] for more technical information about the impact.
+
+For maximum security make sure to configure external storage with
+"_Check for changes: Never_". This will let ownCloud ignore new
+files not added via ownCloud. By doing so, a malicious external storage
+administrator cannot add new files to the storage without your
+knowledge. However, this is not wise _if_ your external storage is
+subject to legitimate external changes.
+
+ownCloud's server-side encryption encrypts files stored on the ownCloud
+server and files on remote storages that are connected to your ownCloud
+server. Encryption and decryption are performed on the ownCloud server.
+All files sent to remote storage will be encrypted by the ownCloud
+server and decrypted before serving them to you or anyone whom you have
+shared them with.
+
+NOTE: *Encrypting files increases their size by roughly 35%.* Remember to take this into account when you are both provisioning storage and setting storage quotas. Secondly, user quotas are based on the _unencrypted_ file size — *not* the encrypted size.
+
+When files on an external storage are encrypted in ownCloud, you cannot
+share them directly from the external storage services, only through
+ownCloud sharing. This is because the key to decrypt the data *never*
+leaves the ownCloud server.
+
+ownCloud's server-side encryption generates a strong encryption key,
+which is unlocked by users' passwords. As a result, your users don't
+need to track an extra password. All they need to do is log in as they
+normally would. ownCloud, transparently, encrypts only the contents of
+files, and not filenames and directory structures.
+
+IMPORTANT: You should regularly backup all encryption keys to prevent permanent data loss.
+
+== Encryption Key Locations
+
+The encryption keys are stored in the following directories:
+
+[cols="20%,80%",options="header",]
+|===
+| Directory
+| Description
+
+| `data/<user>/files_encryption`
+| Users' private keys and all other keys necessary to decrypt the users' files.
+
+| `data/files_encryption`
+| Private keys and all other keys necessary to decrypt the files stored on a system wide external storage.
+|===
+
+NOTE: You can move the keys to a different location. To do so, refer to the xref:configuration/files/encryption/moving-key-locations.adoc[Move Key Location] section of the documentation.
+
+== Encryption Keys and Encrypted Data
+
+When encryption is enabled, all files are encrypted and decrypted by the ownCloud application, and stored encrypted on your remote storage. 
+This protects your data on externally hosted storage. 
+The ownCloud admin and the storage admin will see only encrypted files when browsing backend storage.
+
+Encryption keys are stored only on the ownCloud server, eliminating exposure of your data to third-party storage providers. 
+The encryption application does *not* protect your data if your ownCloud server is compromised, and it does not prevent ownCloud administrators from reading users' files.
+
+This would require client-side encryption, which this application does not provide. 
+If your ownCloud server is not connected to any external storage services, it is better to use other encryption tools, such as file-level or whole-disk encryption.
+
+[CAUTION]
+====
+SSL terminates at or before the webserver on the ownCloud server.
+Consequently, all files are in an unencrypted state between the SSL connection
+termination and the ownCloud code that encrypts and decrypts them.
+This is, potentially, exploitable by anyone with administrator access to your server.
+For more information, read: https://owncloud.org/blog/how-owncloud-uses-encryption-to-protect-your-data/[How ownCloud uses encryption to protect your data].
+====
+
+include::encryption-types.adoc[leveloffset=+1]
+
+[[before-enabling-encryption]]
+== Before Enabling Encryption
+
+Plan very carefully before enabling encryption, because it is not
+reversible via the ownCloud Web interface. If you lose your encryption
+keys, your files are *not* recoverable. Always have backups of your
+encryption keys stored in a safe location, and consider enabling all
+recovery options.
+
+You have more options via xref:configuration/server/occ_command.adoc#encryption[the `occ` command's encryption options].
+
+[IMPORTANT]
+====
+You can't manage encryption without access to the command line.
+If your ownCloud installation is on a hosted environment and you don't have access to the command line, you won't be able to run xref:configuration/server/occ_command.adoc[occ commands].
+In this case, *don't enable encryption*!
+====
+
+include::enable-encryption.adoc[leveloffset=+1]
+
+[[files-not-encrypted]]
+== Which Files Are Encrypted
+
+Only the data in the files in `data/<user>/files`,  and external storages (_if enabled_), is encrypted, _not_ the filenames or folder structures. 
+The following files are *never* encrypted:
+
+* Existing files in the trash bin & Versions. 
+  Only new and changed files after encryption is enabled are encrypted.
++
+NOTE: You can post encrypt existing files via an xref:configuration/server/occ_command.adoc/#encryption[occ encryption command].
+* Existing files in Version
+* Image thumbnails from the Gallery app
+* Previews from the Files app
+* The search index from the full-text search app
+* Third-party app data
+
+There may be other files that are not encrypted. 
+
+NOTE: Only files that are exposed to third-party storage providers are guaranteed to be encrypted.
+
+== Encrypting External Mountpoints
+
+You and your users can encrypt individual external mount points. 
+You must have external storage enabled on your Admin page, and enabled for your users. 
+Encryption settings can be configured in the mount options for an external storage mount; see xref:configuration/files/external_storage_configuration_gui.adoc#mount-options[Mount Options].
+
+image:configuration/files/encryption9.png[image]
+

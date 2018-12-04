@@ -7,7 +7,8 @@ This guide is here to help you get started with this repository, primarily if yo
 To contribute to the documentation, you first need to:
 
 1. Learn [Antora's basics](./what-is-antora.md).
-2. Learn [the AsciiDoc file format](./what-is-antora.md) basics.
+2. Learn [the AsciiDoc basics](./what-is-asciidoc.md).
+   In addition, check out the Asciidoctor [Writers Guide](https://asciidoctor.org/docs/asciidoc-writers-guide/),  [User Manual](https://asciidoctor.org/docs/user-manual/), and [Syntax Quick Reference](https://asciidoctor.org/docs/asciidoc-syntax-quick-reference/).
 3. Make sure you have [tools](./what-is-asciidoc.md#writing--editing-asciidoc-files) that can edit and preview AsciiDoc files.
 4. Setup a [GitHub account](https://github.com/), if you haven't already.
 
@@ -104,14 +105,15 @@ The next section discusses this in more detail.
 
 ### Are You Working With Inline Code Examples, Images, and Attachments?
 
-If, however, you're linking to local files, such as inline code examples, images, and attachments, then you need to [install Antora's command-line tools](./docs/install-antora.md).
+If, however, you're linking to local files, such as inline code examples, images, and attachments, then you need to [install Antora's command-line tools](./install-antora.md).
 This is because the Live Preview plugin won’t know the complete path to the local file, so won’t be able to correctly render a link to it.
 All other kinds of links should work properly, however.
 
 In this case, you need to use Antora to regenerate the documentation and manually check if there are any broken links or if something looks amiss.
-Alternatively, you could use a tool, such as [NPM’s broken-link-checker](https://www.npmjs.com/package/broken-link-checker), to check broken links for you, on the pages that you changed.
 
-Next, you need to learn how to [build the docs](./docs/build-the-docs.md) from the command line and how to review the changes in your browser.
+To check for broken links manually see [install and use a broken-link-checker](./checking-broken-links.md).
+
+Next, you need to learn how to [build the docs](./build-the-docs.md) from the command line and how to review the changes in your browser.
 
 ## Getting Support
 

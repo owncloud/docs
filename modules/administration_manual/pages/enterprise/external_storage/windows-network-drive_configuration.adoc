@@ -1,9 +1,9 @@
 [[installing-and-configuring-the-external-storage-windows-network-drives-app]]
 == Installing and Configuring the External Storage: Windows Network Drives App
 
-The link:[External Storage: Windows Network Drives] app creates a
-control panel in your Admin page for seamlessly integrating Windows and
-Samba/CIFS shared network drives as external storages.
+The https://marketplace.owncloud.com/apps/windows_network_drive[External Storage: Windows Network Drives app]
+creates a control panel in your Admin page for seamlessly integrating Windows and Samba/CIFS shared network 
+drives as external storages.
 
 Any Windows file share and Samba servers on Linux and other Unix-type
 operating systems use the SMB/CIFS file-sharing protocol. The files and
@@ -19,8 +19,8 @@ These indicate that ownCloud cannot connect to the share because it
 requires the user to login, it is not available, or there is an error in
 the configuration.
 
-image:enterprise/external_storage/wnd-1.png[Figure 1: Windows Network Drive share on your
-Files page.]
+image:enterprise/external_storage/wnd-1.png[Windows Network Drive share on your
+Files page]
 
 Files are synchronized bi-directionally, and you can create, upload, and
 delete files and folders. ownCloud server admins can create Windows
@@ -37,20 +37,17 @@ which adds security.
 [[installation]]
 === Installation
 
-Install link:[the External Storage: Windows Network Drives app] from the
-ownCloud Market App or ownCloud Marketplace. For it to work, there are a
-few dependencies to install.
+Install the https://marketplace.owncloud.com/apps/windows_network_drive[External Storage: Windows Network Drives app]
+from the ownCloud Market App or ownCloud Marketplace. 
+To make it work, a few  dependencies have to be installed.
 
-* A Samba client. This is included in all Linux distributions. On
-Debian, Ubuntu, and other Debian derivatives it is called `smbclient`.
-On SUSE, Red Hat, CentOS, and other Red Hat derivatives it is
-`samba-client`.
-* `php-smbclient` (version 0.8.0+). It should be included in most Linux
-distributions. You can use
-https://github.com/eduardok/libsmbclient-php[eduardok/libsmbclient-php],
+* A Samba client. This is included in all Linux distributions. 
+On Debian, Ubuntu, and other Debian derivatives it is called `smbclient`.
+On SUSE, Red Hat, CentOS, and other Red Hat derivatives it is `samba-client`.
+* `php-smbclient` (version 0.8.0+). It should be included in most Linux distributions. 
+You can use https://github.com/eduardok/libsmbclient-php[eduardok/libsmbclient-php],
 if your distribution does not provide it.
-* `which` and `stdbuf`. These should be included in most Linux
-distributions.
+* `which` and `stdbuf`. These should be included in most Linux distributions.
 
 [[example]]
 ==== Example
@@ -137,7 +134,7 @@ For large storages with many files, you may want to disable previews,
 because this can significantly increase performance.
 
 image:enterprise/external_storage/wnd-3.png[Figure 3: WND server, credentials, and
-additional mount options.]
+additional mount options]
 
 Your changes are saved automatically.
 
@@ -253,8 +250,8 @@ sudo -u www-data ./occ wnd:listen MyHost mydata svc_owncloud password
 The WND listener for ownCloud 10 includes two different commands that
 need to be executed:
 
-* link:[wnd:listen]
-* link:[wnd:process-queue]
+* xref:wndlisten[wnd:listen]
+* xref:wndprocess-queue[wnd:process-queue]
 
 [[wndlisten]]
 === wnd:listen
@@ -319,14 +316,13 @@ minutes for example.
 [[basic-setup-for-one-owncloud-server]]
 === Basic Setup for One ownCloud Server
 
-First, go to the admin settings and set up the required WND mounts. Be
-aware though, that there are some limitations. These are:
+First, go to the admin settings and set up the required WND mounts. 
+Be aware though, that there are some limitations. 
+These are:
 
-* We need access to the Windows account password for the mounts to
-update the file cache properly. This means that ``__login credentials,
-saved in session__'' won’t work with the listener. ``__login
-credentials, saved in DB__'' should work and could be the best
-replacement.
+* We need access to the Windows account password for the mounts to update the file cache properly. 
+This means that "__login credentials, saved in session__" won’t work with the listener.
+"__login credentials, saved in DB__" should work and could be the best replacement.
 * The `$user` placeholder in the share, such as
 `//host/$user/path/to/root`, for providing a share which is accessible
 per/user won’t work with the listener. This is because the listener
@@ -429,8 +425,8 @@ base64 -d /tmp/encodedpass | sudo -u www-data \
 ----
 
 Similar to the previous example, but this time the contents are encoded
-in https://www.base64decode.org/[Base64 format] (there’s not much
-security, but it has additional obfuscation).
+in https://www.base64decode.org/[Base64 format]
+(there’s not much security, but it has additional obfuscation).
 
 Third party password managers can also be integrated. The only
 requirement is that they have to provide the password in plain text
@@ -440,7 +436,8 @@ password as plain text and inject it in the listener.
 As an example:
 
 You can use "pass" as a password manager.
-You can go through http://xmodulo.com/manage-passwords-command-line-linux.html to setup the keyring for whoever will fetch the password (probably root) and then use something like the following
+You can go through http://xmodulo.com/manage-passwords-command-line-linux.html
+to setup the keyring for whoever will fetch the password (probably root) and then use something like the following
 
 [source,console]
 ----
@@ -465,30 +462,20 @@ backends (currently only the ones that have logged in at least once
 because the others won’t have the storages that we’ll need updates).
 
 To optimize this, `wnd:process-queue` make use of two switches:
-``–serializer-type'' and ``–serializer-params''. These serialize
+`–serializer-type` and `–serializer-params`. These serialize
 storages for later use, so that future executions don’t need to fetch
 the users, saving precious time — especially for large organizations.
 
 [cols=",",options="header",]
-|=======================================================================
+|===
 | Switch | Allowed Values
-| `--serializer-type` | `file`. Other valid values may be added in the
-future, as more
-
-| | implementations are requested.
-
-| `--serializer-params` | Depends on `--serializer-type`, because those
-will be the parameters
-
-| | that the chosen serializer will use. For the `file` serializer, you
-
-| | need to provide a file location in the host FS where the storages
-will
-
-| | be serialized. You can use `--serializer-params file=/tmp/file` as an
-
-| | example.
-|=======================================================================
+| `--serializer-type` | `file`. Other valid values may be added in the future, as more
+implementations are requested.
+| `--serializer-params` | Depends on `--serializer-type`, because those will be the parameters 
+that the chosen serializer will use. For the `file` serializer, you 
+need to provide a file location in the host FS where the storages will be serialized. 
+You can use `--serializer-params file=/tmp/file` as an example.
+|===
 
 While the specific behavior will depend on the serializer
 implementation, the overall behavior can be simplified as follows:
@@ -569,13 +556,13 @@ option is set.
 === Interaction Between Listener, Serializer, and Windows Password Lockout
 
 Windows supports
-https://technet.microsoft.com/en-us/library/dd277400.aspx[password
-lockout policies]. If one is enabled on the server where an ownCloud
+https://technet.microsoft.com/en-us/library/dd277400.aspx[password lockout policies].
+If one is enabled on the server where an ownCloud
 share is located, and a user fails to enter their password correctly
 several times, they may be locked out and unable to access the share.
 
-This is https://github.com/owncloud/Windows_network_drive/issues/94[a
-known issue] that prevents these two inter-operating correctly.
+This is https://github.com/owncloud/Windows_network_drive/issues/94[a known issue]
+that prevents these two inter-operating correctly.
 Currently, the only viable solution is to ignore that feature and use
 the `wnd:listen` and `wnd:process-queue`, without the serializer
 options.
@@ -590,7 +577,7 @@ As a result, it’s recommended to force the execution serialization of
 that command to prevent this issue. You might want to use
 http://www.thegeekstuff.com/2011/05/anacron-examples[Anacron], which
 seems to have an option for this scenario, or wrap the command with
-http://linuxaria.com/howto/linux-shell-introduction-to-flock[flock].
+https://linuxaria.com/howto/linux-shell-introduction-to-flock[flock].
 
 If you need to serialize the execution of the `wnd:process-queue`, check
 the following example with
@@ -605,8 +592,8 @@ command if it isn’t possible. For our case, and considering that file
 isn’t being used by any other process, it will run only one
 `wnd:process-queue` at a time. If someone tries to run the same command
 a second time while the previous one is running, the second will fail
-and won’t be executed. Check https://linux.die.net/man/2/flock[flock’s
-documentation] for details and other options.
+and won’t be executed. Check https://linux.die.net/man/2/flock[flock’s documentation]
+for details and other options.
 
 [[multiple-server-setup]]
 === Multiple Server Setup
@@ -634,17 +621,17 @@ serializer for this scenario (based on Redis or DB)
 === Basic Command Execution Examples
 
 ....
-sudo -u www-data ./occ ``wnd:listen`` host share username password
+sudo -u www-data ./occ `wnd:listen` host share username password
 
-sudo -u www-data ./occ ``wnd:process-queue`` host share
+sudo -u www-data ./occ `wnd:process-queue` host share
 
-sudo -u www-data ./occ ``wnd:process-queue`` host share -c 500
+sudo -u www-data ./occ `wnd:process-queue` host share -c 500
 
-sudo -u www-data ./occ ``wnd:process-queue`` host share -c 500 \
+sudo -u www-data ./occ `wnd:process-queue` host share -c 500 \
     --serializer-type file \
     --serializer-params file=/opt/oc/store
 
-sudo -u www-data ./occ ``wnd:process-queue`` host2 share2 -c 500 \
+sudo -u www-data ./occ `wnd:process-queue` host2 share2 -c 500 \
     --serializer-type File \
     --serializer-params file=/opt/oc/store2
 ....
@@ -652,7 +639,7 @@ sudo -u www-data ./occ ``wnd:process-queue`` host2 share2 -c 500 \
 To set it up, make sure the listener is running as a system service:
 
 ....
-sudo -u www-data ./occ ``wnd:listen`` host share username password
+sudo -u www-data ./occ `wnd:listen` host share username password
 ....
 
 Setup a Cron job or similar with something like the following two

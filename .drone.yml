@@ -11,48 +11,71 @@ clone:
     pull: true
 
 pipeline:
-  # cache-restore:
-  #   image: plugins/s3-cache:1
-  #   pull: true
-  #   secrets: [ cache_s3_endpoint, cache_s3_access_key, cache_s3_secret_key ]
-  #   restore: true
-  #   when:
-  #     local: false
+  cache-restore:
+    image: plugins/s3-cache:1
+    pull: true
+    secrets: [ cache_s3_endpoint, cache_s3_access_key, cache_s3_secret_key ]
+    restore: true
+    when:
+      local: false
 
-  build-docs:
-    image: antora/antora:1.0.1
+  install-deps:
+    image: owncloudci/antora:latest
     pull: true
     commands:
-      - antora generate --cache-dir /drone/src/cache --redirect-facility netlify site.yml
+      - yarn install
 
-  # cache-rebuild:
-  #   image: plugins/s3-cache:1
+  # validate-adoc:
+  #   image: owncloudci/antora:latest
   #   pull: true
-  #   secrets: [ cache_s3_endpoint, cache_s3_access_key, cache_s3_secret_key ]
-  #   rebuild: true
-  #   mount:
-  #     - cache
-  #   when:
-  #     local: false
-  #     event: [ push ]
+  #   commands:
+  #     - make validate
 
-  # cache-flush:
-  #   image: plugins/s3-cache:1
-  #   pull: true
-  #   secrets: [ cache_s3_endpoint, cache_s3_access_key, cache_s3_secret_key ]
-  #   flush: true
-  #   flush_age: 14
-  #   when:
-  #     local: false
-  #     event: [ push ]
-
-  publish-netlify:
-    image: lucap/drone-netlify:latest
+  build-html:
+    image: owncloudci/antora:latest
     pull: true
-    secrets: [ netlify_token ]
-    site_id: 78b01cd5-9958-4423-af3d-6040d873132f
-    path: public/
+    commands:
+      - make html
+
+  build-pdfs:
+    image: owncloudci/asciidoctor:latest
+    pull: true
+    commands:
+      - make pdf
+
+  cache-rebuild:
+    image: plugins/s3-cache:1
+    pull: true
+    secrets: [ cache_s3_endpoint, cache_s3_access_key, cache_s3_secret_key ]
+    rebuild: true
+    mount:
+      - cache
     when:
+      local: false
+      event: [ push ]
+
+  cache-flush:
+    image: plugins/s3-cache:1
+    pull: true
+    secrets: [ cache_s3_endpoint, cache_s3_access_key, cache_s3_secret_key ]
+    flush: true
+    flush_age: 14
+    when:
+      local: false
+      event: [ push ]
+
+  upload-artifact:
+    image: plugins/s3:1
+    pull: true
+    secrets: [ aws_access_key_id, aws_secret_access_key ]
+    bucket: uploads
+    endpoint: https://minio.owncloud.com
+    path_style: true
+    strip_prefix: public/
+    source: public/
+    target: /deploy
+    when:
+      local: false
       event: [ push ]
 
   notify-slack:

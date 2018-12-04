@@ -4,23 +4,23 @@
 == Requirements
 
 * ownCloud >= 10.0. Make sure you have a running instance of ownCloud
-https://doc.owncloud.com/server/latest/admin_manual/installation/[completely
-setup].
+xref:administration_manual:installation/manual_installation.adoc[setup completely].
 * Default language set to `en` (in `config/config.php` set
 `'default_language' => 'en',`).
 * An admin user called `admin` with the password `admin`.
 * No self-signed SSL certificates.
+* The testing app installed and enabled.
 * Testing utils (running `make` in your terminal from the `webroot` directory will install them).
-* link:https://docs.docker.com/install/linux/docker-ce/ubuntu/[Docker CE Installed]
-* link:https://docs.docker.com/install/linux/linux-postinstall/[Docker Post-install] done to put your developer account in the docker group so you can run Docker without `sudo`
-* Docker subnet enabled for any firewall that may be active such as, link:https://help.ubuntu.com/community/UFW[ufw]. The example below shows how to update ufw's firewall rules to allow the `172.17.0.0/16` Docker subnet:
+* https://docs.docker.com/install/linux/docker-ce/ubuntu/[Docker CE Installed]
+* https://docs.docker.com/install/linux/linux-postinstall/[Docker Post-install] done to put your developer account in the docker group so you can run Docker without `sudo`
+* Docker subnet enabled for any firewall that may be active such as, https://help.ubuntu.com/community/UFW[ufw]. The example below shows how to update ufw's firewall rules to allow the `172.17.0.0/16` Docker subnet:
 
   sudo ufw status
   sudo ufw allow from 172.17.0.0/16
 
 
 * Docker containers pulled. It is recommended to use `standalone-chrome-debug` which allows seeing the browser live.
-You will also need link:https://github.com/mailhog/MailHog[MailHog].
+You will also need https://github.com/mailhog/MailHog[MailHog].
 Pull any or all of these Docker containers:
 
 [source]
@@ -39,7 +39,7 @@ docker pull mailhog/mailhog
 sudo apt install tigervnc-viewer
 ----
 
-* To run the link:https://www.seleniumhq.org[Selenium server] locally (not in Docker) see the notes at the end.
+* To run the https://www.seleniumhq.org[Selenium server] locally (not in Docker) see the notes at the end.
 
 [[overview]]
 == Overview
@@ -77,9 +77,9 @@ By running these in terminal windows, it is simple to press `ctrl-C` to stop the
 
 * Set the following environment variables:
 
-** ``TEST_SERVER_URL`` (The URL of your webserver)
-** ``TEST_SERVER_FED_URL`` (The alternative URL of your webserver for federation share tests.)
-** ``BROWSER`` (Any one of ``chrome``, ``firefox``, ``internet explorer`` or ``MicrosoftEdge``. Defaults to ``chrome``)
+** `TEST_SERVER_URL` (The URL of your webserver)
+** `TEST_SERVER_FED_URL` (The alternative URL of your webserver for federation share tests.)
+** `BROWSER` (Any one of `chrome`, `firefox`, `internet explorer` or `MicrosoftEdge`. Defaults to `chrome`)
 ** `BROWSER_VERSION` (version of the browser you want to use - _optional_)
 
 e.g., to test an instance running on the Docker subnet with Chrome do:
@@ -91,24 +91,20 @@ export TEST_SERVER_FED_URL=http://172.17.0.1:8180/owncloud-core
 export BROWSER=chrome
 ----
 
-* If your ownCloud install is running locally on Apache, then it should already be available on the Docker subnet at ``172.17.0.1``
+* If your ownCloud install is running locally on Apache, then it should already be available on the Docker subnet at `172.17.0.1`
 
 * To run the federation Sharing tests:
 1.  Make sure you have configured HTTPS with valid certificates on both
 servers URLs
-2.  https://doc.owncloud.org/server/latest/admin_manual/configuration/server/import_ssl_cert.html[Import
-SSL certificates] (or do not offer HTTPS).
+2.  xref:admininstration_manual:configuration/server/import_ssl_cert.adoc[Import SSL certificates] (or do not offer HTTPS).
 * Run a suite of tests:
 +
 [source,console]
 ----
-cd tests/acceptance
-./run.sh --suite webUILogin
+make test-acceptance-webui BEHAT_SUITE=webUILogin
 ----
 
 The names of suites are found in the `tests/acceptance/config/behat.yml` file, and start with `webUI`.
-The tests need to be run as the same user who is running the webserver and this user must also be the owner of the config file (``config/config.php``).
-To run the tests as a user that is different to your current terminal user run `sudo -E -u <username>`. For example, to execute the script as as `www-data`, run `sudo -E -u www-data run.sh`.
 
 * The browser for the tests runs inside the Selenium docker container. View it by running the `vnc` viewer: `vncviewer`.
 
@@ -160,7 +156,7 @@ feature file:
 
 [source,console]
 ----
-./run.sh --feature tests/acceptance/features/webUITrashbin/trashbinDelete.feature
+make test-acceptance-webui BEHAT_FEATURE=tests/acceptance/features/webUITrashbin/trashbinDelete.feature
 ----
 
 To run just a single scenario within a feature, specify the line number
@@ -168,28 +164,27 @@ of the scenario:
 
 [source,console]
 ----
-run.sh --feature tests/acceptance/features/webUITrashbin/trashbinDelete.feature:<linenumber>
+make test-acceptance-webui BEHAT_FEATURE=tests/acceptance/features/webUITrashbin/trashbinDelete.feature<linenumber>
 ----
 
 [[running-ui-tests-for-an-app]]
 == Running UI Tests for an App
 
-With the app installed, run the UI tests for the app by specifying the
-location of the app’s `behat.yml` config file:
+With the app installed, run the UI tests for the app from the app root folder:
 
 [source,console]
 ----
-run.sh --config apps/files_texteditor/tests/acceptance/config/behat.yml \
-  --suite webUITextEditor
+cd apps/files_texteditor
+../../tests/acceptance/run.sh --suite webUITextEditor
 ----
 
-Run UI the tests for just a single feature of the app by also specifying
+Run UI the tests for just a single feature of the app by specifying
 the feature file:
 
 [source,console]
 ----
-run.sh --config apps/files_texteditor/tests/acceptance/config/behat.yml \
-  --feature apps/files_texteditor/tests/acceptance/features/webUITextEditor/editTextFiles.feature
+cd apps/files_texteditor
+../../tests/acceptance/run.sh tests/acceptance/features/webUITextEditor/editTextFiles.feature
 ----
 
 [[skipping-tests]]
@@ -212,14 +207,14 @@ Run all skipped tests for a suite with:
 
 [source,console]
 ----
-run.sh --suite webUITrashbin --tags @skip
+make test-acceptance-webui BEHAT_SUITE=webUITrashbin BEHAT_FILTER_TAGS=@skip
 ----
 
 Or run just a particular test by using its unique tag:
 
 [source,console]
 ----
-run.sh --tags @trashbin-restore-problem-issue-1234
+make test-acceptance-webui BEHAT_SUITE=webUITrashbin BEHAT_FILTER_TAGS=@trashbin-restore-problem-issue-1234
 ----
 
 When fixing the bug, remove these skip tags in the PR along with the bug
@@ -233,7 +228,7 @@ However, you may run all UI tests with:
 
 [source]
 ----
-run.sh --type webUI
+make test-acceptance-webui
 ----
 
 By default, any test scenarios that fail are automatically rerun once.
@@ -244,9 +239,7 @@ To not rerun failed test scenarios:
 
 [source]
 ----
-run.sh \
-  --norerun \
-  --suite webUILogin
+make test-acceptance-webui NORERUN=true BEHAT_SUITE=webUILogin
 ----
 
 === Local Selenium Setup
@@ -254,9 +247,9 @@ run.sh \
 You may optionally run the Selenium server locally.
 Docker is now the recommended way, but local Selenium is also possible:
 
-* `Selenium standalone server <http://docs.seleniumhq.org/download/>`_ e.g. version 3.12.0 or newer.
+* https://docs.seleniumhq.org/download/[Selenium standalone server] e.g. version 3.12.0 or newer.
 * Browser installed that you would like to test on (e.g. chrome)
-* `Web driver for the browser that you want to test <http://www.seleniumhq.org/download/#thirdPartyDrivers>`_.
+* https://www.seleniumhq.org/download/#thirdPartyDrivers[Web driver for the browser] that you want to test.
 * Place the Selenium standalone server jar file and the web driver(s) somewhere in the same folder.
 * Start the Selenium server:
 
@@ -277,5 +270,5 @@ java -jar selenium-server-standalone-3.12.0.jar \
 
 * Tests that are known not to work in specific browsers are tagged e.g., `@skipOnFIREFOX47+` or `@skipOnINTERNETEXPLORER` and will be skipped by the script automatically
 * - The web driver for the current version of Firefox works differently to the old one. If you want to test FF < 56 you need to test on 47.0.2 and to use Selenium server 2.53.1 for it
-- link:https://ftp.mozilla.org/pub/firefox/releases/47.0.2/[Download and install version 47.0.2 of Firefox].
-- link:https://selenium-release.storage.googleapis.com/index.html?path=2.53/[Download version 2.53.2 of the Selenium web driver].
+- https://ftp.mozilla.org/pub/firefox/releases/47.0.2/[Download and install version 47.0.2 of Firefox].
+- https://selenium-release.storage.googleapis.com/index.html?path=2.53/[Download version 2.53.2 of the Selenium web driver].

@@ -58,6 +58,8 @@ like this:
 sudo -u apache /opt/rh/php54/root/usr/bin/php /var/www/html/owncloud/occ
 ....
 
+=== Example Commands
+
 Running `occ` with no options lists all commands and options, like this
 example on Ubuntu:
 
@@ -68,7 +70,7 @@ ownCloud version 10.0.8
 Usage:
  command [options] [arguments]
 
-=== Options
+==== Options
  -h, --help            Display this help message
  -q, --quiet           Do not output any message
  -V, --version         Display this application version
@@ -128,7 +130,7 @@ sudo -u www-data php occ help maintenance:mode
 Usage:
  maintenance:mode [options]
 
-=== Options
+==== Options
      --on              Enable maintenance mode
      --off             Disable maintenance mode
      --output[=OUTPUT] Output format (plain, json or json_pretty, default is plain) [default: "plain"]
@@ -333,7 +335,7 @@ sudo -u www-data php occ config:system:get [options] [--] <name> (<name>)...
 | `name` | Name of the config to get. Specify multiple for array parameter.
 |===
 
-=== Options
+==== Options
 
 [width="100%",cols="33%,70%",]
 |===
@@ -355,7 +357,7 @@ sudo -u www-data php occ config:app:set [options] [--] <app> <name>
 | `name` |  Name of the config to get.
 |===
 
-=== Options
+==== Options
 
 [width="100%",cols="33%,70%",]
 |===
@@ -392,7 +394,7 @@ sudo -u www-data php occ config:system:set [options] [--] <name> (<name>)...
 | `name` |  Name of the config parameter, specify multiple for array parameter.
 |===
 
-=== Options
+==== Options
 
 [width="100%",cols="20%,70%",]
 |===
@@ -416,7 +418,7 @@ sudo -u www-data php occ config:app:set [options] [--] <app> <name>
 | `name` |  Name of the config to set.
 |===
 
-=== Options
+==== Options
 
 [width="100%",cols="20%,70%",]
 |===
@@ -537,7 +539,7 @@ sudo -u www-data php occ config:system:delete [options] [--] <name> (<name>)...
 | `name` |  Name of the config to delete, specify multiple for array parameter.
 |===
 
-=== Options
+==== Options
 
 [width="100%",cols="20%,70%",]
 |===
@@ -558,7 +560,7 @@ sudo -u www-data php occ config:app:delete [options] [--] <app> <name>
 | `name` |  Name of the config to delete.
 |===
 
-=== Options
+==== Options
 
 [width="100%",cols="20%,70%",]
 |===
@@ -718,6 +720,8 @@ encryption
  encryption:status                   Lists the current status of encryption
 ----
 
+=== Command Description
+
 `encryption:status` shows whether you have active encryption, and your
 default encryption module. To enable encryption you must first enable
 the Encryption app, and then run `encryption:enable`:
@@ -752,27 +756,25 @@ app. Use `encryption:set-default-module [module name]` to set your
 desired module.
 
 `encryption:encrypt-all` encrypts all data files for all users.
-You must first put your ownCloud server into xref:maintenance-commands[single-user mode] to prevent any user activity until encryption is completed.
+You must first put your ownCloud server into xref:maintenance-commands[single-user mode] 
+to prevent any user activity until encryption is completed.
 
-`encryption:decrypt-all` decrypts all user data files, or optionally a
-single user:
+`encryption:decrypt-all` decrypts all user data files, or optionally a single user:
 
 ....
 sudo -u www-data php occ encryption:decrypt freda
 ....
 
 Users must have enabled recovery keys on their Personal pages. You must
-first put your ownCloud server into
-single-user mode <maintenance_commands> to prevent any user
-activity until decryption is completed.
+first put your ownCloud server into single-user mode <maintenance_commands> 
+to prevent any user activity until decryption is completed.
 
-=== Arguments
+==== Arguments
 
 [width="100%",cols="20%,70%",]
 |===
 | `-m=[METHOD]` | Accepts the methods: + 
 `recovery` or `password` +
-
 If the _recovery_ method is chosen, then the recovery password will be used to decrypt files. +
 If the _password_ method is chosen, then individual user passwords will be used to decrypt files.
 | `-c=[COMMAND]` | Accepts  the commands: +
@@ -911,7 +913,7 @@ sudo -u www-data php occ files:scan --help
 | `user_id` | Will rescan all files of the given user(s).
 |===
 
-=== Options
+==== Options
 
 [width="100%",cols="20%,70%",]
 |===
@@ -1067,7 +1069,7 @@ List configured mounts.
 
 [source,console]
 ....
-files_external:list [--show-password] [--full] [-a|--all] [--] [<user_id>]
+files_external:list [--show-password] [--full] [-a|--all] [-s|--short] [--] [<user_id>]
 ....
 
 ==== Arguments
@@ -1077,7 +1079,7 @@ files_external:list [--show-password] [--full] [-a|--all] [--] [<user_id>]
 | `user_id` | User ID to list the personal mounts for, if no user is provided admin mounts will be listed.
 |===
 
-=== Options
+==== Options
 
 [width="100%",cols="20%,70%",]
 |===
@@ -1085,6 +1087,7 @@ files_external:list [--show-password] [--full] [-a|--all] [--] [<user_id>]
 be added as system mount.
 | `--full`            | Don't save the imported mounts, only list the new mounts.
 | `-a, --all`         | Show both system-wide mounts and all personal mounts.
+| `-s, --short`       | Show only a reduced mount info.
 | `--output=[OUTPUT]` | The output format to use (`plain`, `json` or `json_pretty`, default is `plain`).
 |===
 
@@ -1092,7 +1095,13 @@ be added as system mount.
 
 [source,console]
 ....
-sudo -u www-data php occ files_external:list -- user1
+sudo -uwww-data ./occ files_external:list user_1 --short
++----------+------------------+----------+
+| Mount ID | Mount Point      | Type     |
++----------+------------------+----------+
+| 1        | /mount_1         | Personal |
+| 2        | /mount_2         | Personal |
++----------+------------------+----------+
 ....
 
 === files_external:applicable
@@ -1122,7 +1131,7 @@ files_external:applicable
 |===
 
 
-=== Options
+==== Options
 
 [width="100%",cols="20%,70%",]
 |===
@@ -1156,7 +1165,7 @@ files_external:backends [options]
 | `backend` | Only show information of a specific backend.
 |===
 
-=== Options
+==== Options
 
 [width="100%",cols="20%,70%",]
 |===
@@ -1188,7 +1197,7 @@ files_external:config [options]
 existing value will be printed.
 |===
 
-=== Options
+==== Options
 
 [width="100%",cols="20%,70%",]
 |===
@@ -1221,7 +1230,7 @@ files_external:create [options]
 `occ files_external:backends` for possible values.
 |===
 
-==== Options
+===== Options
 
 [width="100%",cols="20%,70%",]
 |===
@@ -1296,7 +1305,7 @@ files_external:delete [options] [--] <mount_id>
 | `mount_id` | The ID of the mount to edit.
 |===
 
-=== Options
+==== Options
 
 [width="100%",cols="20%,70%",]
 |===
@@ -1321,7 +1330,7 @@ files_external:export [options] [--] [<user_id>]
 mounts will be exported.
 |===
 
-==== Options
+===== Options
 
 [width="100%",cols="20%,70%",]
 |===
@@ -1346,7 +1355,7 @@ files_external:import [options] [--] <path>
 | `path` | Path to a json file containing the mounts to import, use `-` to read from stdin.
 |===
 
-==== Options
+===== Options
 
 [width="100%",cols="20%,70%",]
 |===
@@ -1395,7 +1404,7 @@ files_external:verify [options] [--] <mount_id>
 | `mount_id` | The ID of the mount to check.
 |===
 
-==== Options
+===== Options
 
 [width="100%",cols="20%,70%",]
 |===
@@ -1518,7 +1527,7 @@ Groups containing the `search-pattern` string are listed. Matching is
 not case-sensitive. If you do not provide a search-pattern then all
 groups are listed.
 
-=== Options
+==== Options
 
 [width="100%",cols="20%,50%",]
 |====
@@ -1556,7 +1565,7 @@ command. The syntax is:
 group:list-members [options] <group>
 ....
 
-=== Options
+==== Options
 
 [width="100%",cols="20%,50%",]
 |====
@@ -1719,7 +1728,7 @@ Gallery app.
 
 [NOTE]
 ====
-This example assumes that the ownCloud directory is `/var/www/owncloud`` and that it uses ownCloud's standard apps directory, `app`.
+This example assumes that the ownCloud directory is `/var/www/owncloud` and that it uses ownCloud's standard apps directory, `app`.
 ====
 
 First, create a source translation file in
@@ -1768,6 +1777,8 @@ log
  log:owncloud   Manipulate ownCloud logging backend
 ----
 
+=== Command Description
+
 Run `log:owncloud` to see your current logging status:
 
 ....
@@ -1777,7 +1788,7 @@ Log file: /opt/owncloud/data/owncloud.log
 Rotate at: disabled
 ....
 
-=== Options
+==== Options
 
 [width="100%",cols="20%,50%",]
 |====
@@ -1924,12 +1935,14 @@ Use these commands when you manage security related tasks
 Routes displays all routes of ownCloud. You can use this information to
 grant strict access via firewalls, proxies or load balancers etc.
 
+=== Command Description
+
 [source,console]
 ----
 security:routes [options]
 ----
 
-=== Options
+==== Options
 
 [width="100%",cols="20%,70%",]
 |====
@@ -2071,8 +2084,7 @@ Remove deleted files for users on backend Database
  edward
 ....
 
-This example removes the deleted files of users ``"molly''" and
-``"freda''":
+This example removes the deleted files of users `molly` and `freda`:
 
 ....
 sudo -u www-data php occ trashbin:cleanup molly freda
@@ -2129,7 +2141,7 @@ sudo -u www-data php occ user:add [--password-from-env] [--display-name [DISPLAY
 | `uid` | User ID used to login (must only contain a-z, A-Z, 0-9, -, _ and @).
 |====
 
-=== Options
+==== Options
 
 [width="100%",cols="30%,70%",]
 |====
@@ -2230,7 +2242,7 @@ sudo -u www-data php occ user:inactive [options] [--] <days>
 | `<days>`  | The number of days (integer) that the user has not logged in since.
 |===
 
-=== Options
+==== Options
 
 [width="100%",cols="20%,70%",]
 |===
@@ -2314,7 +2326,7 @@ User IDs containing the `search-pattern` string are listed. Matching is
 not case-sensitive. If you do not provide a search-pattern then all
 users are listed.
 
-=== Options
+==== Options
 
 [width="90%",cols="40%,80%",]
 |====
@@ -2369,7 +2381,7 @@ sudo -u www-data php occ user:list-groups [options] [--] <uid>
 | `uid` | User ID.
 |====
 
-=== Options
+==== Options
 
 [width="100%",cols="20%,70%",]
 |====
@@ -2466,7 +2478,7 @@ sudo -u www-data php occ user:resetpassword [options] [--] <user>
 | `uid` | The user's name.
 |====
 
-=== Options
+==== Options
 
 [width="100%",cols="25%,70%",]
 |====
@@ -2637,7 +2649,7 @@ sudo -u www-data php occ user:setting [options] [--] <uid> [<app>] [<key>]
 | `key`   | Setting key to set, get or delete [default: ""].
 |====
 
-=== Options
+==== Options
 
 [width="100%",cols="20%,40%",]
 |====
@@ -2696,7 +2708,7 @@ Synchronize users from a given backend to the accounts table.
 - Shibboleth:  `"OCA\User_Shibboleth\UserBackend"` +
 |===
 
-=== Options
+==== Options
 
 [width="90%",cols="40%,80%",]
 |===
@@ -2912,7 +2924,7 @@ ownCloud version 10.0.8
 Usage:
  [options] command [arguments]
 
-=== Options
+==== Options
  --help (-h)           Display this help message
  --quiet (-q)          Do not output any message
  --verbose (-v|vv|vvv) Increase the verbosity of messages: 1 for normal output,
@@ -2935,6 +2947,9 @@ Available commands:
   maintenance:install  Install ownCloud
 ....
 
+
+=== Command Description
+
 Display your `maintenance:install` options
 
 ....
@@ -2951,7 +2966,7 @@ maintenance:install [--database=["..."]] [--database-name=["..."]] \
                     [--admin-user=["..."]] [--admin-pass=["..."]] [--data-dir=["..."]]
 ----
 
-=== Options
+==== Options
 
 [width="100%",cols="22%,70%",]
 |===
@@ -2997,17 +3012,20 @@ These commands are available only after you have downloaded upgraded
 packages or tar archives, and before you complete the upgrade. List all
 options, like this example on CentOS Linux:
 
+=== Command Description
+
 ....
 sudo -u www-data php occ upgrade --help
 Usage:
 upgrade [options]
 ....
 
-=== Options
+==== Options
 
 [width="100%",cols="20%,70%",]
 |===
-| `--no-app-disable`  | Skip disabling of third party apps.
+| `--major`          | Automatically update apps to new major versions during minor updates of ownCloud Server.
+| `--no-app-disable` | Skip disabling of third party apps.
 |===
 
 When you are performing an update or upgrade on your ownCloud server
@@ -3077,13 +3095,13 @@ notifications
   notifications:generate   Generates a notification.
 ----
 
-=== Options
+=== Command Description
 
 ....
 sudo -u www-data php occ notifications:generate [-u|--user USER] [-g|--group GROUP] [-l|--link <linktext>] [--] <subject> [<message>]
 ....
 
-=== Arguments:
+==== Arguments:
 
 [width="100%",cols="20%,70%",]
 |===
@@ -3092,7 +3110,7 @@ sudo -u www-data php occ notifications:generate [-u|--user USER] [-g|--group GRO
 | `linktext` | A link to an HTML page.
 |===
 
-=== Options
+==== Options
 
 [width="100%",cols="20%,70%",]
 |===

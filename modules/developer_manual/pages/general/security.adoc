@@ -1,4 +1,5 @@
 = Security Guidelines
+:xss- https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)
 
 [[introduction]]
 == Introduction
@@ -116,8 +117,7 @@ browser history. Use cookies instead.
 === New Session ID After a Successful Login
 
 * After a successful login, regenerate the session id to prevent
-https://www.owasp.org/index.php/Session_fixation[session fixation
-attacks].
+https://www.owasp.org/index.php/Session_fixation[session fixation attacks].
 * If you have to switch between HTTPS and HTTP, you should change the
 session id, because an attacker could have already read the session id.
 
@@ -152,10 +152,8 @@ If you expect to receive an integer id as a GET parameter, then always
 explicitly cast it into an integer using the cast operator `(int)`,
 because all `$_REQUEST` parameters are strings. However, if you expect
 text as a parameter, use
-http://php.net/manual/en/function.htmlspecialchars.php[PHP’s
-htmlspecialchars function] with `ENT_QUOTES` or `strip_tags` to prevent
-https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)[Cross-site
-Scripting (XSS) attacks].
+http://php.net/manual/en/function.htmlspecialchars.php[PHP’s htmlspecialchars function] with
+`ENT_QUOTES` or `strip_tags` to prevent {xss-link}[Cross-site Scripting (XSS) attacks].
 
 [source,php]
 ----
@@ -195,12 +193,10 @@ UNIX/Linux filesystems (`.` and `..`), and empty strings.
 [[prevent-command-injection]]
 === Prevent Command Injection
 
-* Use http://php.net/manual/en/function.escapeshellarg.php[PHP’s
-escapeshellarg() function], if your input parameters are arguments for
+* Use http://php.net/manual/en/function.escapeshellarg.php[PHP’s escapeshellarg() function], if your input parameters are arguments for
 http://php.net/manual/en/function.exec.php[exec()],
 http://php.net/manual/en/function.popen.php[popen()],
-http://php.net/manual/en/function.system.php[system()], or the backtick
-(``) operator.
+http://php.net/manual/en/function.system.php[system()], or the backtick (``) operator.
 +
 [source,php]
 ----
@@ -238,18 +234,17 @@ to use a tool like http://htmlpurifier.org[HTMLPurifier].
 
 * You should not use sensitive information, like passwords or usernames,
 in unprotected requests.
-* All requests containing sensitive information should be protected with
-HTTPS.
+* All requests containing sensitive information should be protected with HTTPS.
 
 [[prevent-http-header-injection-http-response-splitting]]
 === Prevent HTTP-Header-Injection (HTTP Response Splitting)
 
 
 * To prevent
-https://www.owasp.org/index.php/HTTP_Response_Splitting[HTTP Response
-Splitting], check all request variables for `%0d` (CR) and `%0a` (LF),
+https://www.owasp.org/index.php/HTTP_Response_Splitting[HTTP Response Splitting],
+check all request variables for `%0d` (CR) and `%0a` (LF),
 if they are parameters provided to
-http://php.net/manual/en/function.header.php[PHP’s header() function].
+http://php.net/manual/en/function.header.php[PHP's header() function].
 This is because an attacker can deface your website, such as redirect
 the request to a phishing site or executing an XSS attack, by performing
 header manipulation.
@@ -278,22 +273,17 @@ https://github.com/owncloud/core/blob/master/lib/private/DB/QueryBuilder/QueryBu
 
 * Don’t save highly sensitive data in persistent storage on the client
 side. Persistent data storage includes:
-** http://www.allaboutcookies.org/cookies/cookies-the-same.html[Persistent
-HTTP cookies]
-** http://www.popularmechanics.com/technology/security/how-to/a6134/what-are-flash-cookies-and-how-can-you-stop-them/[Flash
-cookies]
-** https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API[HTML5
-Web-Storage]
-** https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API[HTML5
-Index DB]
+** http://www.allaboutcookies.org/cookies/cookies-the-same.html[Persistent HTTP cookies]
+** http://www.popularmechanics.com/technology/security/how-to/a6134/what-are-flash-cookies-and-how-can-you-stop-them/[Flash cookies]
+** https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API[HTML5 Web-Storage]
+** https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API[HTML5 Index DB]
 
 [[release-all-resources-in-case-of-an-error]]
 === Release all Resources in Case of an Error
 
 * All resources, such as database and file locks, must be released when
 errors occur. Doing so prevents the server from being subject to
-https://en.wikipedia.org/wiki/Denial-of-service_attack[denial-of-service
-(DOS) attacks].
+https://en.wikipedia.org/wiki/Denial-of-service_attack[denial-of-service (DOS) attacks].
 
 [[cryptography]]
 == Cryptography
@@ -325,8 +315,7 @@ key length of 4096.
 === Hash Algorithms
 
 * If you need a hash function in PHP, use the SHA512 hash algorithm.
-* You can use http://php.net/manual/en/function.crypt.php[PHP’s crypt()
-function], but only with a strong salt.
+* You can use http://php.net/manual/en/function.crypt.php[PHP’s crypt() function], but only with a strong salt.
 * Don’t use _MD5_, _SHA1_ or _SHA256_. These types of algorithms are
 designed to be very fast and efficient. However, with modern techniques
 and computer equipment, it has become trivial to brute force the output
@@ -346,8 +335,7 @@ secure flag] for your cookies.
 === HTTP Only
 
 * If you do not have to access your cookie content in JavaScript, then
-set https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies[the
-HttpOnly flag] on every cookie.
+set https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies[the HttpOnly flag] on every cookie.
 
 [[path]]
 === Path
@@ -453,8 +441,8 @@ To prevent such attacks ownCloud sends the X-Frame-Options header to all
 template responses. Don’t remove this header unless you need to!
 
 This functionality is built into ownCloud when
-https://doc.owncloud.org/server/latest/developer_manual/app/templates.html[ownCloud
-templates] or https://twig.symfony.com/[Twig Templates] are used.
+xref:developer_manual:app/templates.adoc[ownCloud templates] or
+https://twig.symfony.com/[Twig Templates] are used.
 
 [[code-executions-file-inclusions]]
 === Code executions / File inclusions

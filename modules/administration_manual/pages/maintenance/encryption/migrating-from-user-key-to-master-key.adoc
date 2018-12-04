@@ -1,0 +1,106 @@
+= Migrating User Key Encryption to Master Key Encryption
+
+== Why Should I Move Away From User Key-based Encryption
+
+NOTE: User key-based encryption is planned to be removed from ownCloud in the near future. For new installations, Master key-based encryption is the recommended setup. The decryption workflow described here will only work when users have enabled password recovery and if an admin recovery password is available for the ownCloud administrator.
+
+If you need to migrate from User Key-based to Master Key-based encryption, there are several steps that you need to follow to ensure a smooth and complete transition.
+These are:
+
+. xref:disable-user-key-based-encryption[Disable User Key-based encryption]
+. xref:remove-the-encryption-records-from-the-owncloud-database[Remove the encryption records from the ownCloud database]
+. xref:remove-the-files_encryption-directory[Remove the `files_encryption` directory]
+. xref:encrypt-the-filesystem-using-master-key-based-encryption[Encrypt the filesystem using Master Key-based encryption]
+
+include::{partialsdir}/configuration/server/enable-single-user-mode.adoc[leveloffset=+1]
+
+[[disable-user-key-based-encryption]]
+== Disable User Key-based Encryption
+
+The first part of the migration process is to take is to decrypt all files and to disable encryption in ownCloud, which requires three commands to be executed.
+These commands are: xref:configuration/server/occ_command.adoc#encryption[`occ encryption:decrypt-all` and `occ encryption:disable`], and xref::configuration/server/occ_command.adoc#apps-commands[`occ app:disable`].
+
+You can see an example of calling the commands listed below, configured to require no user interaction.
+
+[source,console]
+----
+sudo -u www-data occ encryption:decrypt-all --continue=yes && \
+  sudo -u www-data occ encryption:disable --no-interaction && \
+  sudo -u www-data occ app:disable --no-interaction encryption
+----
+
+[[remove-the-encryption-records-from-the-owncloud-database]]
+== Remove the Encryption Records from the ownCloud Database
+
+Once your ownCloud files are unencrypted, and encryption has been disabled, you need to remove the encryption records from the database.
+There is, currently, no `occ` command to handle this, so it has to be done manually.
+Specifically, you need to remove all records from the `oc_appconfig` table where the `appid` column is set to `encryption`.
+
+In the examples below you can see how to do this using the SQLite database.
+If you are not using SQLite, please use the commands specific to your database vendor.
+
+[NOTE]
+====
+The example code assumes that the path to the SQLite database is `<YOUR/OWNCLOUD/ROOT/DIRECTORY>data/owncloud.database`.
+====
+
+[source,console]
+----
+sqlite3 data/owncloud.database
+sqlite> delete from oc_appconfig where appid='encryption';
+sqlite> select * from oc_appconfig where appid='encryption';
+----
+
+[[remove-the-files_encryption-directory]]
+== Remove the `files_encryption` Directory
+
+With the database updated, next, the `files_encryption` directory needs to be removed.
+Below is an example of how to do so, to save you time.
+
+[source,console]
+----
+find ./data* -name files_encryption -exec rm -rvf {} \;
+----
+
+[[encrypt-the-filesystem-using-master-key-based-encryption]]
+== Encrypt the Filesystem Using Master Key-based Encryption
+
+Now, your ownCloud files can be encrypted using Master Key-based encryption.
+This requires the following steps:
+
+. The encryption app needs to be enabled
+. Encryption needs to be enabled
+. The encryption type needs to be set to master key
+. The ownCloud filesystem can be re-encrypted.
+
+The following example shows how to do this.
+
+[source,console]
+----
+sudo -u www-data occ app:enable encryption && \
+  sudo -u www-data occ encryption:enable && \
+  sudo -u www-data occ encryption:select-encryption-type masterkey -y && \
+  sudo -u www-data occ encryption:encrypt-all && \
+----
+
+[[verify-the-encrypted-files]]
+== Verify the Encrypted Files
+
+With the files encrypted using Master Key-based encryption, you should now verify that everything worked properly.
+To do so, run a `SELECT` query in your database which returns all files from the `oc_appconfig` table where the `appid` column is set to `encryption`.
+You should see a number of records, as in the output of the example below.
+
+[source,console]
+----
+$ sqlite3 data/owncloud.database
+sqlite> select * from oc_appconfig where appid='encryption';
+encryption|recoveryKeyId|recoveryKey_73facda6
+encryption|publicShareKeyId|pubShare_73facda6
+encryption|masterKeyId|master_73facda6
+encryption|installed_version|1.3.1
+encryption|types|filesystem
+encryption|enabled|yes
+encryption|useMasterKey|1
+----
+
+include::{partialsdir}/configuration/server/disable-single-user-mode.adoc[leveloffset=+1]

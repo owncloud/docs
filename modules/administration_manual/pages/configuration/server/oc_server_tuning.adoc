@@ -75,8 +75,8 @@ WARNING you have Transparent Huge Pages (THP) support enabled in your kernel. Th
 ----
 
 If so, unfortunately, when a Linux kernel has
-https://www.kernel.org/doc/Documentation/vm/transhuge.txt[Transparent
-Huge Pages] enabled, Redis incurs a significant latency penalty after
+https://www.kernel.org/doc/Documentation/vm/transhuge.txt[Transparent Huge Pages]
+enabled, Redis incurs a significant latency penalty after
 the fork call is used, to persist information to disk. Transparent Huge
 Pages are the cause of the following issue:
 
@@ -99,8 +99,7 @@ echo never > /sys/kernel/mm/transparent_hugepage/enabled
 === Redis Latency Problems
 
 If you are having issues with Redis latency, please refer to
-https://redis.io/topics/latency[the official Redis guide] on how to
-handle them.
+https://redis.io/topics/latency[the official Redis guide] on how to handle them.
 
 [[database-tuning]]
 == Database Tuning
@@ -124,8 +123,7 @@ help you find further information:
 
 * https://github.com/major/MySQLTuner-perl/[MySQLTuner].
 * https://tools.percona.com/wizard[Percona Tools for MySQL]
-* https://mariadb.com/kb/en/optimization-and-tuning/[Optimizing and
-Tuning MariaDB].
+* https://mariadb.com/kb/en/optimization-and-tuning/[Optimizing and Tuning MariaDB].
 
 [[tune-postgresql]]
 === Tune PostgreSQL
@@ -134,11 +132,9 @@ A comprehensive guide to tuning PostgreSQL is outside the scope of the
 ownCloud documentation. However, here are three links that can help you
 find further information:
 
-* http://de.slideshare.net/PGExperts/five-steps-perform2013[Five Steps
-to PostgreSQL Performance]
+* http://de.slideshare.net/PGExperts/five-steps-perform2013[Five Steps to PostgreSQL Performance]
 * http://grokbase.com/t/postgresql/pgsql-admin/103qcpdrpf/tuning-auto-vacuum-for-highly-active-tables#20100323hfs3jtjuaywwufukoqtexkpjti[Tuning
-the autovacuum proceff for tables with huge update workloads
-(oc_filecache)]
+the autovacuum proceff for tables with huge update workloads (oc_filecache)]
 
 [[ssl-encryption-app]]
 == SSL / Encryption App
@@ -155,9 +151,8 @@ the AES-NI extension:
 for all cores: `grep -m 1 ^flags /proc/cpuinfo` If the result contains
 any `aes`, the extension is present.
 * Search eg. on the Intel web if the processor used supports the
-extension http://ark.intel.com/MySearch.aspx?AESTech=true[Intel
-Processor Feature Filter] You may set a filter by
-`"AES New Instructions"` to get a reduced result set.
+extension http://ark.intel.com/MySearch.aspx?AESTech=true[Intel Processor Feature Filter].
+You may set a filter by `"AES New Instructions"` to get a reduced result set.
 * For versions of openssl >= 1.0.1, AES-NI does not work via an engine
 and will not show up in the `openssl engine` command. It is active by
 default on the supported hardware. You can check the openssl version via
@@ -178,9 +173,8 @@ for support.
 
 If you want to improve the speed of an ownCloud installation, while at
 the same time increasing its security, you can
-https://httpd.apache.org/docs/2.4/howto/http2.html[enable HTTP/2 support
-for Apache]. Please be aware that https://caniuse.com/#feat=http2[most
-browsers require HTTP/2 to be used with SSL enabled].
+https://httpd.apache.org/docs/2.4/howto/http2.html[enable HTTP/2 support for Apache].
+Please be aware that https://caniuse.com/#feat=http2[most browsers require HTTP/2 to be used with SSL enabled].
 
 [[apache-processes]]
 ==== Apache Processes
@@ -196,12 +190,13 @@ performance goes down.
 The https://en.wikipedia.org/wiki/HTTP_persistent_connection[KeepAlive]
 directive enables persistent HTTP connections, allowing multiple
 requests to be sent over the same TCP connection. Enabling it reduces
-latency by as much as 50%. In combination with the periodic checks of
+latency by as much as 50%. We recommend to keep the KeepAliveTimeout between 3 and 5.
+Higher numbers can block the Server with inactive connections. In combination with the periodic checks of
 the sync client the following settings are recommended:
 
 ....
 KeepAlive On
-KeepAliveTimeout 100
+KeepAliveTimeout 3
 MaxKeepAliveRequests 200
 ....
 
@@ -217,9 +212,6 @@ HostnameLookups off
 [[log-files]]
 ==== Log files
 
-Log files should be switched off for maximum performance. To do that,
-comment out the
-https://httpd.apache.org/docs/current/mod/mod_log_config.html#customlog[CustomLog]
-directive. However, keep
-https://httpd.apache.org/docs/2.4/logs.html#errorlog[ErrorLog] set, so
-errors can be tracked down.
+Log files should be switched off for maximum performance. 
+To do that, comment out the https://httpd.apache.org/docs/current/mod/mod_log_config.html#customlog[CustomLog] directive. 
+However, keep https://httpd.apache.org/docs/2.4/logs.html#errorlog[ErrorLog] set, so errors can be tracked down.

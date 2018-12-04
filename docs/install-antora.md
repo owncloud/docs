@@ -16,7 +16,7 @@ docker pull antora/antora
 yarn global add serve
 ```
 
-After the commands finishes executing, you’re ready to [build the documentation](./docs/build-the-docs.md).
+After the commands finishes executing, you’re ready to [build the documentation](./build-the-docs.md).
 You can find out more about *Serve* in [the official NPM documentation](https://www.npmjs.com/package/serve#usage).
 
 ## Install The Antora Tools Locally
@@ -36,4 +36,4 @@ To install the default Antora site generator, run the command: `npm i -g @antora
 This command installs it globally.
 If you want to install it locally, remove the `-g` switch.
 
-With the dependencies and Antora tools installed, you’re ready to [build the documentation](./docs/build-the-docs.md) locally.
+With the dependencies and Antora tools installed, you’re ready to [build the documentation](./build-the-docs.md) locally.
