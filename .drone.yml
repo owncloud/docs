@@ -65,15 +65,15 @@ pipeline:
       event: [ push ]
 
   upload-artifact:
-    image: plugins/s3:1
+    image: plugins/s3-sync:1
     pull: true
     secrets: [ aws_access_key_id, aws_secret_access_key ]
     bucket: uploads
     endpoint: https://doc.owncloud-demo.com
     path_style: true
-    strip_prefix: public/
     source: public/
     target: /deploy
+    delete: true
     when:
       local: false
       event: [ push ]
