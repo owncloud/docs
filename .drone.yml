@@ -19,17 +19,29 @@ pipeline:
     when:
       local: false
 
+  install-deps:
+    image: owncloudci/antora:latest
+    pull: true
+    commands:
+      - yarn install
+
+  # validate-adoc:
+  #   image: owncloudci/antora:latest
+  #   pull: true
+  #   commands:
+  #     - make validate
+
+  build-html:
+    image: owncloudci/antora:latest
+    pull: true
+    commands:
+      - make html
+
   build-pdfs:
-    image: toolhippie/asciidoctor:latest
+    image: owncloudci/asciidoctor:latest
     pull: true
     commands:
       - make pdf
-
-  build-docs:
-    image: antora/antora:1.0.1
-    pull: true
-    commands:
-      - antora generate --cache-dir cache/ --redirect-facility static site.yml
 
   cache-rebuild:
     image: plugins/s3-cache:1
@@ -52,13 +64,18 @@ pipeline:
       local: false
       event: [ push ]
 
-  publish-netlify:
-    image: lucap/drone-netlify:latest
+  upload-artifact:
+    image: plugins/s3:1
     pull: true
-    secrets: [ netlify_token ]
-    site_id: 78b01cd5-9958-4423-af3d-6040d873132f
-    path: public/
+    secrets: [ aws_access_key_id, aws_secret_access_key ]
+    bucket: uploads
+    endpoint: https://minio.owncloud.com
+    path_style: true
+    strip_prefix: public/
+    source: public/
+    target: /deploy
     when:
+      local: false
       event: [ push ]
 
   notify-slack:
