@@ -73,7 +73,8 @@ Reference: [`Cross Reference`](https://asciidoctor.org/docs/user-manual/#xref)
 
 In a nutshell, an internal link called `Cross Reference` can link to
 - a documentation file
-- a section title inside a documnentation file
+- a section title inside a documentation file
+- a reference to an anchor set inside a documentation file
 
 All referencable content **must be** inside the directory structure of `modules/`.
 
@@ -83,7 +84,7 @@ Where `module_name:`, `#section` and `[Printed Name]` are optional components.
 `module_name:` is mandatory when referenced content is not in the same module.
 `<path>` is the path to your refrenced file.
 
-You can reference to a section inside the same file or to a section in another file, even in another module.
+You can reference a section or an anchor inside the same file, another file - even in another module.
  
 Example: `xref:configuration/server/occ_command.adoc#apps-commands[the Market app]`
 
