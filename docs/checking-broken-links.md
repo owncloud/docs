@@ -12,28 +12,29 @@ Use the broken link checker of your choice, the following are usable examples.
 
 The command examples assume that the documentation built is accessible via ``http://localhost:5000``.
 
-.. note::
-   You may get false - positives because of sample links or addresses pointing to nowhere. 
-   This is normal and no broken link.
+**Note** You may get false positives because of sample links or addresses pointing to nowhere. 
+This is normal and not a broken link.
+
+**Note** It is a good advice to pipe the output of the results to a file for easy checking.
 
 ### Antora xref-validator
 
 The Antora ``xref-validator`` provided by the Antora core team, is able to check [the native Antora xref links](https://docs.antora.org/antora/1.0/asciidoc/page-to-page-xref/#xref-and-page-id-anatomy).
-It is automatically installed when you run ``npm i`` for the Antora setup in the root of your local clone of the docs repository. It doesn't check external links, but it's still a good start.
+It is automatically installed when you run ``yarn install`` for the Antora setup in the root of your local clone of the docs repository. It doesn't check external links, but it's still a good start.
 
-To use it, you need to pass the custom generator (in `./generator/xref-validator`) to the `generate` command, as in the example below.
+To use it, you need to pass the custom generator (in `./generators/xref-validator.js`) to the `generate` command, as in the example below.
 
 ```console
 antora generate \
     --pull \
-    --generator=./generator/xref-validator \
+    --generator=./generators/xref-validator.js \
     site.yml
 ```
 
 #### Example Output
 
-If invalid xrefs are detected, then it will output them to the console:
-You can see that it checks all the content source repositories, and lists the file that contains the broken xref and the broken xref.
+If invalid xrefs are detected, it will output them to the console:
+You can see that it checks all the content source repositories and lists the file that contains the broken xref.
 
 ```console
 worktree: /var/www/owncloud/docs | component: server | version: master
