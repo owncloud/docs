@@ -27,13 +27,12 @@ Before you get started, make sure that your development machine is one of [the s
 After that, install the system requirements for your platform, whether that's [Linux](https://docs.antora.org/antora/1.0/install/linux-requirements/), [macOS](https://docs.antora.org/antora/1.0/install/macos-requirements/), or [Microsoft Windows](https://docs.antora.org/antora/1.0/install/windows-requirements/).
 These include the base build tools, Node 8, and NVM.
 
-With that done, you're now ready to install Antora's two command-line tools; these are the Antora CLI and the default Antora site generator.
+Your system must have installed `yarn`. If this is not the case, [install yarn](https://yarnpkg.com/lang/en/docs/install)
+following the installation notes on the refrenced site. When `yarn`is installed, type following command
+in the root of your local docs repository to install all necessary dependencies:
 
-To install the Antora CLI, run the command: `npm i -g @antora/cli`.
-You can then test that it's installed by running the command: `antora -v`.
-
-To install the default Antora site generator, run the command: `npm i -g @antora/site-generator-default`.
-This command installs it globally.
-If you want to install it locally, remove the `-g` switch.
+```console
+make install
+```
 
 With the dependencies and Antora tools installed, you’re ready to [build the documentation](./build-the-docs.md) locally.
