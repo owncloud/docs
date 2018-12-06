@@ -22,9 +22,9 @@ docker run -ti --rm \
     -w /antora/ \
     antora:custom \
       --cache-dir /antora/cache/ \
-      --generator=./generate-site.js \
+      --redirect-facility nginx \
+      --generator ./generators/search \
       --stacktrace \
-      --url <URL or path to your Antora instance> \
       site.yml
 ```
 
@@ -48,16 +48,16 @@ Unable to find image 'antora/antora:1.0.1' locally
 d5a49762c0f9: Download complete
 ```
 
-### Using the Antora Tools On The Command-Line
+### Using the Antora Tools On The Command-Line
 
+**Note:** The environment variables at the beginning are required for building the docs with integrated site search.
 ```
 DOCSEARCH_ENABLED=true DOCSEARCH_ENGINE=lunr \
-antora --clean --pull --quiet --silent \
+antora --clean --pull \
     --cache-dir ./cache/ \
-    --generator=./generate-site.js \
-    --redirect-facility static \
+    --redirect-facility nginx \
+    --generator ./generators/search \
     --stacktrace \
-    --url <URL or path to your Antora instance> \
     site.yml
 ```
 
@@ -65,8 +65,6 @@ antora --clean --pull --quiet --silent \
 
 The playbook file (`site.yml`) sets the `site.url` configuration directive to `http://localhost:5000`.
 It's likely fair to assume that this isn't the domain where the documentation will be hosted.
-
-Given that, after the documentation has been generated the search index file (`public/search_index.json`) needs to be updated to change `http://localhost:5000` to the hosting server where the documentation is hosted.
 
 Using `sed`, such as in the following example, from the root directory of the project should suffice.
 
@@ -78,12 +76,14 @@ sed -i 's/localhost:5000/<hosted domain and port>/g' public/search_index.json
 
 ### Viewing The HTML Documentation
 
-Assuming that there are no errors, the next thing to do is to run the [NPM Serve tool](https://www.npmjs.com/package/serve) so that you can view your changes, before committing and pushing the changes to the remote docs repository.
-We suggest using it, as it's trivial to install and start.
+Assuming that there are no errors, the next thing to do is to view the result in your browser.
+In case you have already installed a webserver, you need to make the html docmentation
+available pointing to subdirectory `public`
+or for easy handling use the [NPM Serve tool](https://www.npmjs.com/package/serve) so that you can view your changes,
+before committing and pushing the changes to the remote docs repository.
 You could also use [PHP's built-in webserver](https://secure.php.net/manual/en/features.commandline.webserver.php) as well.
-By using either of these, you don't have to install and configure a complete webserver, such as Apache or NGINX.
 
-To start *Serve*, run the following command:
+The following example uses *Serve*, to start it run the following command in the root of your docs repository:
 
 ```
 serve public &
