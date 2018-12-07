@@ -17,15 +17,14 @@ Even if the ownCloud log file is stored in an alternate location (by changing th
 ====
 
 That said, https://marketplace.owncloud.com/apps/objectstore[the Object Storage Support app]
-(`objectstore`) is still available, but 
-https://marketplace.owncloud.com/apps/files_primary_s3[the S3 Object Storage app]
-(https://github.com/owncloud/files_primary_s3[files_primary_s3]) is the preferred way to provide S3
-storage support. However, OpenStack Swift has been deprecated.
-When using `files_primary_s3`, the Amazon S3 bucket needs to be created manually 
-https://docs.aws.amazon.com/AmazonS3/latest/gsg/CreatingABucket.html[according to the developer documentation],
-and versioning needs to be enabled.
+(`objectstore`) is still available, but https://marketplace.owncloud.com/apps/files_primary_s3[the S3 Object Storage app] (https://github.com/owncloud/files_primary_s3[files_primary_s3]) is the preferred way to provide S3
+storage support. 
 
-[WARNING]
+NOTE: OpenStack Swift has been deprecated.
+
+When using `files_primary_s3`, the Amazon S3 bucket needs to be created manually https://docs.aws.amazon.com/AmazonS3/latest/gsg/CreatingABucket.html[according to the developer documentation], and versioning needs to be enabled.
+
+[NOTE]
 ====
 ownCloud GmbH provides consulting for migrations from `objectstore` to `files_primary_s3`.
 ====
@@ -167,55 +166,6 @@ $CONFIG = [
                 'endpoint' => 'http://scality:8000/',
             ],
         ],
-    ],
-],
-....
-
-[[s3-multibucket-configuration]]
-== S3 Multibucket Configuration
-
-ownCloud 9.1+ has multibucket support for S3 object stores:
-
-[source,json]
-....
-'objectstore_multibucket' => [
-   'class' => 'OCA\ObjectStore\S3',
-   'arguments' => [
-       'autocreate' => true,
-       'options' => [
-           'version' => '2006-03-01',
-           'region'  => 'eu-central-1',
-           'credentials' => [
-               'key' => 'EJ39ITYZEUH5BGWDRUFY',
-               'secret' => 'M5MrXTRjkyMaxXPe2FRXMTfTfbKEnZCu+7uRTVSj',
-           ],
-       ],
-   ],
-],
-....
-
-[[openstack-swift]]
-=== OpenStack Swift
-
-The Swift backend mounts a container on an OpenStack Object Storage
-server into the virtual filesystem. The class to be used is
-`\\OC\\Files\\ObjectStore\\Swift`:
-
-[source,json]
-....
-'objectstore' => [
-    'class' => 'OC\\Files\\ObjectStore\\Swift',
-    'arguments' => [
-        'username' => 'demo',
-        'password' => 'password',
-        'container' => 'owncloud',
-        'autocreate' => true,
-        'region' => 'RegionOne',
-        'url' => 'http://devstack:5000/v2.0',
-        'tenantName' => 'demo',
-        'serviceName' => 'swift',
-        // url Type, optional, public, internal or admin
-        'urlType' => 'internal'
     ],
 ],
 ....
