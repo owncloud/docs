@@ -12,11 +12,11 @@ However, here's what has changed:
 
 ## Contributing to the Documentation
 
-To get started contributing to the documentation, please refer to [the Getting Started Guide](./docs/getting-started.md).
+To get started contributing to the documentation, please refer to the [Getting Started Guide](./docs/getting-started.md).
 
 ## Generating the Documentation
 
-To generate the documentation, whether in HTML or PDF format, please refer to [the Building the Documentation guide](./docs/build-the-docs.md).
+To generate the documentation, whether in HTML or PDF format, please refer to the [Building the Documentation guide](./docs/build-the-docs.md).
 
 ## Common Content and Styling the Documentation
 

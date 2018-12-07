@@ -338,13 +338,14 @@ Note: please check for documentation build warnings or use a [broken link checke
 Each section is by design it's own refrence ID called an `Anchor` which can be referenced with xref in the same or from another document. You can also give the section an own custom ID.
 
 When using [`Auto-generated IDs`](https://asciidoctor.org/docs/user-manual/#auto-generated-ids) some rules apply:
+Compared to AsciiDoc's standard, owncloud has set it's own definition:
+
 * All characters are converted to lowercase
-* Spaces, hyphens, and periods are substituted by an underscore `_`
-* An underscore `_` is prepended
+* Spaces, hyphens, and periods are substituted by a dash `-`
 
 Example:
 ```
-xref:_my_section[Text to Print]
+xref:my-section[Text to Print]
   text
 
 == My Section
