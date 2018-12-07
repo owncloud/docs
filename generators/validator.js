@@ -69,19 +69,24 @@ module.exports = async (args, env) => {
       accum[origin].push({ path: `${startPath}${page.path}`, xrefs })
       return accum
     }, {})
-    console.error('Invalid Xrefs Detected:')
-    console.error()
-    Object.keys(byOrigin).sort().forEach((origin) => {
-      console.error(origin)
-      byOrigin[origin].sort((a, b) => a.path.localeCompare(b.path)).forEach(({ path, xrefs }) => {
-        //console.error(`  path: ${path}`)
-        //xrefs.forEach((xref) => console.error(`    ${xref}`))
-        xrefs.forEach((xref) => console.error(`  path: ${path} | xref: ${xref}`))
-      })
+
+    if (Object.keys(byOrigin).size > 0) {
+      console.error('Invalid Xrefs Detected:')
       console.error()
-    })
-    console.error('antora: xref validation failed! See previous report for details.')
-    process.exitCode = 1
+      Object.keys(byOrigin).sort().forEach((origin) => {
+        console.error(origin)
+        byOrigin[origin].sort((a, b) => a.path.localeCompare(b.path)).forEach(({ path, xrefs }) => {
+          //console.error(`  path: ${path}`)
+          //xrefs.forEach((xref) => console.error(`    ${xref}`))
+          xrefs.forEach((xref) => console.error(`  path: ${path} | xref: ${xref}`))
+        })
+        console.error()
+      })
+      console.error('antora: xref validation failed! See previous report for details.')
+      process.exitCode = 1
+    } else {
+      process.exitCode = 0
+    }
   }
 }
 
