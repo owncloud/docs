@@ -35,4 +35,7 @@ in the root of your local docs repository to install all necessary dependencies:
 make install
 ```
 
+**Note:** if you identify issues because you have used as example `npm install` instead of `make install` delete
+the `node_modules` directory and rerun `make install`.
+
 With the dependencies and Antora tools installed, you’re ready to [build the documentation](./build-the-docs.md) locally.
