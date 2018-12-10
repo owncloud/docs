@@ -24,6 +24,18 @@ It is automatically installed when you run ``yarn install`` for the Antora setup
 
 To use it, you need to pass the custom generator (in `./generators/xref-validator.js`) to the `generate` command, as in the example below.
 
+#### Using Make
+
+This is the easiest way to validate the documentation, using predefined settings.
+
+```
+make validate
+```
+
+#### Using the Antora Tools On The Command-Line
+
+If you want to use your own settings, run the command passing the necessary parameters manually, as in the example below.
+
 ```console
 antora generate \
     --pull \

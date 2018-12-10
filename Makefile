@@ -10,7 +10,7 @@ CACHE_DIR ?= cache
 
 STYLE ?= owncloud
 VERSION ?= 10.0.10
-REDIRECTS ?= nginx
+REDIRECTS ?= static
 PLAYBOOK ?= site.yml
 
 #
@@ -19,12 +19,13 @@ PLAYBOOK ?= site.yml
 .PHONY: help
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
-	@echo "  install    to install the Antora command-line tools locally via Yarn and NodeJS."
-	@echo "  clean      to clean the build directory of any leftover artifacts from the previous build."
-	@echo "  validate   to validate all xref links of all manuals defined within configuration."
-	@echo "  html       to generate the HTML versions of all manuals defined within configuration."
-	@echo "  pdf        to generate the PDF versions of the administration, developer, and user manuals."
-
+	@echo "  install      to install the Antora command-line tools locally via Yarn and NodeJS."
+	@echo "  clean        to clean the build directory of any leftover artifacts from the previous build."
+	@echo "  validate     to validate all xref links of all manuals defined within configuration."
+	@echo "  html         to generate the HTML versions of all manuals defined within configuration."
+	@echo "  pdf          to generate the PDF versions of the administration, developer, and user manuals."
+	@echo "  check-prose  to lint English prose to support developers"
+	
 #
 # Installs the Antora command-line tools locally.
 #
@@ -48,7 +49,7 @@ clean:
 .PHONY: validate
 validate:
 	@echo "Validating xref links of all manuals defined within configuration"
-	antora generate --pull --cache-dir $(CACHE_DIR) --redirect-facility $(REDIRECTS) --generator ./generators/validator $(PLAYBOOK)
+	-antora generate --pull --cache-dir $(CACHE_DIR) --redirect-facility $(REDIRECTS) --stacktrace --generator=./generators/xref-validator.js $(PLAYBOOK)
 	@echo
 
 #
@@ -57,7 +58,7 @@ validate:
 .PHONY: html
 html:
 	@echo "Building HTML versions of all manuals defined within configuration"
-	antora generate --pull --cache-dir $(CACHE_DIR) --redirect-facility $(REDIRECTS) --generator ./generators/search $(PLAYBOOK)
+	-antora generate --pull --cache-dir $(CACHE_DIR) --redirect-facility $(REDIRECTS) --stacktrace --generator=./generators/search.js $(PLAYBOOK)
 	@echo
 
 #

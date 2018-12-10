@@ -21,9 +21,10 @@ docker run -ti --rm \
     -v $(pwd):/antora/ \
     -w /antora/ \
     antora:custom \
+      --pull \
       --cache-dir /antora/cache/ \
-      --redirect-facility nginx \
-      --generator ./generators/search \
+      --redirect-facility static \
+      --generator ./generators/search.js \
       --stacktrace \
       site.yml
 ```
@@ -33,6 +34,7 @@ This command:
 - Starts up [ownCloud's custom Antora Docker container](https://hub.docker.com/r/antora/antora/)
 - Removes any existing documentation
 - Runs Antora's `generate` command, which regenerates the documentation
+- You can add the `--clean` option to clean the build directory of any leftover artifacts from the previous build, including pdf's.
 
 If all goes well, you will _not_ see any console output.
 If a copy of the container doesn't exist locally, you can pull down a copy, by running `docker pull antora/antora`.
@@ -48,18 +50,30 @@ Unable to find image 'antora/antora:1.0.1' locally
 d5a49762c0f9: Download complete
 ```
 
+### Using Make
+
+This is the easiest way to build the documentation using predefined settings.
+
+```
+make html
+```
+
 ### Using the Antora Tools On The Command-Line
 
+If you want to use your own settings, run the command passing the necessary parameters manually, as in the example below.
+
 **Note:** The environment variables at the beginning are required for building the docs with integrated site search.
+
 ```
 DOCSEARCH_ENABLED=true DOCSEARCH_ENGINE=lunr \
-antora --clean --pull \
+antora --pull \
     --cache-dir ./cache/ \
-    --redirect-facility nginx \
-    --generator ./generators/search \
+    --redirect-facility static \
+    --generator ./generators/search.js \
     --stacktrace \
     site.yml
 ```
+- You can add the `--clean` option to clean the build directory of any leftover artifacts from the previous build, including pdf's.
 
 ### Update The Generated Search Index
 

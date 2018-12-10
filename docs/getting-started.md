@@ -43,7 +43,7 @@ To do this, follow the following three steps.
 Depending if you are making text changes only or if you change images, inline code examples or more complex content,
 you may need to use different tools to validate your outcome.
 
-### Are You Making Text Changes Only 
+### You Are Making Text Changes Only 
 
 If you're making text changes only, we recommend installing the AsciiDoc Live Preview plugin:
 
@@ -55,7 +55,7 @@ If the document renders as expected, then you can commit the changes and push th
 
 **NOTE:** Any links to internal files, such as code samples, and images will not render correctly, as the paths do not contain the absolute path to the asset. Links to internal files can only be previewed when the documentation is generated with Antora.
 
-### Are You Working With Inline Code Examples, Images, and Attachments?
+### You Are Working With Inline Code Examples, Images, and Attachments
 
 If, however, you're linking to local files, such as inline code examples, images, and attachments, then you need to [install Antora's command-line tools](./install-antora.md).
 This is because the Live Preview plugin won’t know the complete path to the local file, so won’t be able to correctly render a link to it.
