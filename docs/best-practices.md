@@ -204,7 +204,7 @@ Asciidoctor provides five admonition style labels: `NOTE`, `TIP`, `IMPORTANT`, `
 
 An `admonition` is written in following example style: `[<label>:]` Text
 
-Example: `[NOTE:]` If you have a large ownCloud installation and have shell access, you should ...
+Example: `NOTE:` If you have a large ownCloud installation and have shell access, you should ...
 
 ## Air Quotes
 
