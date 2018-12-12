@@ -153,6 +153,7 @@ Example:
 ## Code Blocks
 
 Reference: [`Listing and source code blocks`](https://asciidoctor.org/docs/asciidoc-writers-guide/#listing-and-source-code-blocks)
+Reference: [`Building blocks in AsciiDoc`](https://asciidoctor.org/docs/asciidoc-writers-guide/#building-blocks-in-asciidoc)
 
 ```
 [source, <language>]
@@ -197,14 +198,48 @@ Checking system health.
 ## Admonition
 
 Reference: [`Admonitions`](https://asciidoctor.org/docs/asciidoc-writers-guide/#admonitions)
+Reference: [`Admonition blocks`](https://asciidoctor.org/docs/asciidoc-writers-guide/#admonition-blocks)
 
 An admonition paragraph is rendered in a callout box with the admonition label — ​or its corresponding icon — ​in the gutter.
 
 Asciidoctor provides five admonition style labels: `NOTE`, `TIP`, `IMPORTANT`, `CAUTION` and `WARNING`
 
-An `admonition` is written in following example style: `[<label>:]` Text
+### Simple Admonitions
 
-Example: `NOTE:` If you have a large ownCloud installation and have shell access, you should ...
+Use this way when you just have to write text.
+A simple `admonition` is written in the following style: `<label>:` Text
+
+Example:
+```
+NOTE: If you have a large ownCloud installation and have
+shell access, you should ...
+```
+
+### Complex Admonitions
+
+A complex `admonition` can contain special formatting, tables, lists, literal text and blocks
+and is written in the following style, where `====` define the begin/end of the admonition block:
+```
+[<label>]
+====
+your complex text
+====
+```
+Example:
+
+```
+[TIP] 
+====
+We strongly encourage you to put your server in single user mode
+before setting up encryption.
+
+To do so, run the following command:
+
+....
+sudo -u www-data php occ maintenance:singleuser --on
+....
+====
+```
 
 ## Air Quotes
 
@@ -397,6 +432,21 @@ Example with defining table and cell width size plus the use of headers:
 | Cell in column 1, row 1 | long Cell in column 2, row 1  
 | Cell in column 1, row 2 | long Cell in column 2, row 2
 | Cell in column 1, row 3 | long Cell in column 2, row 3
+|===
+```
+
+This example shows that columns can also be written underneath:
+```
+[width="90%",cols="20%,80%",options="header",]
+|===
+| Directory
+| Description
+
+| `data/<user>/files_encryption`
+| Users’ private keys and all other keys necessary to decrypt the users’ files.
+
+| `data/files_encryption`
+| Private keys and all other keys necessary to decrypt the files stored on a system wide external storage.
 |===
 ```
 
