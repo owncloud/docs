@@ -11,7 +11,7 @@
  *
  * Usage (from root of playbook repository):
  *
- *  $ antora --pull --generator=./generator/xref-validator.js antora-production-playbook.yml
+ *  $ NODE_PATH=netlify/node_modules antora --pull --generator=./generator/xref-validator.js antora-playbook.yml
  */
 const aggregateContent = require('@antora/content-aggregator')
 const buildPlaybook = require('@antora/playbook-builder')
@@ -41,7 +41,7 @@ module.exports = async (args, env) => {
           // Q: should we report the while xref or just the target?
           brokenXrefs.add(pageSpec)
         }
-        docsWithBrokenXrefs.set(doc, [ ...brokenXrefs ])
+        if (brokenXrefs.size) docsWithBrokenXrefs.set(doc, [ ...brokenXrefs ])
       }
     })
   unsilenceStderr()
@@ -69,24 +69,19 @@ module.exports = async (args, env) => {
       accum[origin].push({ path: `${startPath}${page.path}`, xrefs })
       return accum
     }, {})
-
-    if (Object.keys(byOrigin).size > 0) {
-      console.error('Invalid Xrefs Detected:')
-      console.error()
-      Object.keys(byOrigin).sort().forEach((origin) => {
-        console.error(origin)
-        byOrigin[origin].sort((a, b) => a.path.localeCompare(b.path)).forEach(({ path, xrefs }) => {
-          //console.error(`  path: ${path}`)
-          //xrefs.forEach((xref) => console.error(`    ${xref}`))
-          xrefs.forEach((xref) => console.error(`  path: ${path} | xref: ${xref}`))
-        })
-        console.error()
+    console.error('Invalid Xrefs Detected:')
+    console.error()
+    Object.keys(byOrigin).sort().forEach((origin) => {
+      console.error(origin)
+      byOrigin[origin].sort((a, b) => a.path.localeCompare(b.path)).forEach(({ path, xrefs }) => {
+        //console.error(`  path: ${path}`)
+        //xrefs.forEach((xref) => console.error(`    ${xref}`))
+        xrefs.forEach((xref) => console.error(`  path: ${path} | xref: ${xref}`))
       })
-      console.error('antora: xref validation failed! See previous report for details.')
-      process.exitCode = 1
-    } else {
-      process.exitCode = 0
-    }
+      console.error()
+    })
+    console.error('antora: xref validation failed! See previous report for details.')
+    process.exitCode = 1
   }
 }
 
@@ -95,3 +90,4 @@ function silenceStderr () {
   process.stderr.write = () => {}
   return () => { process.stderr.write = stderrWriter }
 }
+
