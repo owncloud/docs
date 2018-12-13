@@ -25,7 +25,7 @@ help:
 	@echo "  html         to generate the HTML versions of all manuals defined within configuration."
 	@echo "  pdf          to generate the PDF versions of the administration, developer, and user manuals."
 	@echo "  check-prose  to lint English prose to support developers"
-	
+
 #
 # Installs the Antora command-line tools locally.
 #
@@ -127,4 +127,4 @@ pdf-user:
 .PHONY: check-prose
 check-prose:
 	@echo "Checking quality of the prose in all files"
-	write-good --parse **/*.adoc
+	@yarn prose
