@@ -12,10 +12,9 @@ http://www.regular-expressions.info/[regular expressions].
 [[how-the-file-firewall-works]]
 == How the File Firewall Works
 
-Each firewall rule set consists of one or more conditions. If a request
-matches all of the conditions, in at least one rule set, then the
-request is blocked by the firewall. Otherwise, the request is allowed by
-the firewall.
+Each firewall rule set consists of one or more conditions. If a request matches
+all of the conditions, in at least one rule set, then the request is blocked by the
+firewall. Otherwise, the request is allowed by the firewall.
 
 NOTE: The File Firewall app cannot lock out administrators from the web interface when rules are misconfigured.
 
@@ -27,8 +26,7 @@ level to *Blocked Requests Only* for debugging, and create a new rule
 set by clicking the *Add Group* button. After setting up your rules you
 must click the *Save Rules* button.
 
-image:enterprise/firewall/firewall-1.png[Figure 1: Empty File Firewall configuration
-panel]
+image:enterprise/firewall/firewall-1.png[Figure 1: Empty File Firewall configuration panel]
 
 Figure 2 shows two rules. The first rule, *No Support outside office
 hours*, prevents members of the support group from logging into the
@@ -69,36 +67,32 @@ beginning time to end time.
 [[request-url]]
 ==== Request URL
 
-The *full page URL* (has tocontainend) with a given string.
+The *full page URL* (has to contain) with a given string.
 
 [[request-type]]
 ==== Request Type
 
-The request (ispublic share link|other) request.
+The request (is public share link|other) request.
 
 [[request-ip-range-ipv4-and-ip-range-ipv6]]
 ==== Request IP Range (IPv4) and IP Range (IPv6)
 
-The request’s `REMOTE_ADDR` header (is|is not) matching the given IP
-range.
+The request’s `REMOTE_ADDR` header (is|is not) matching the given IP range.
 
 [[file-size-upload]]
 ==== File Size Upload
 
-When a file is uploaded the size has to be (lessgreater|greater or
-equal) to the given size.
+When a file is uploaded the size has to be (less|greater or equal) to the given size.
 
 [[file-mimetype-upload]]
 ==== File Mimetype Upload
 
-When a file is uploaded the mimetype (isbegins withends with|does not
-end with) the given string.
+When a file is uploaded the mimetype (begins with|does not end with) the given string.
 
 [[system-file-tag]]
 ==== System File Tag
 
-One of the parent folders or the file itself (is|is not) tagged with a
-System tag.
+One of the parent folders or the file itself (is|is not) tagged with a System tag.
 
 [[regular-expression]]
 ==== Regular Expression
@@ -120,7 +114,8 @@ both the support and the qa-team you could write your rule like this:
 Regular Expression > ^(support|qa-team)$ > is > User group
 ----
 
-CAUTION: We do not recommend modifying the configuration values directly in your `config.php`. These use JSON encoding, so the values are difficult to read and a single typo will break all of your rules.
+CAUTION: We do not recommend modifying the configuration values directly in your `config.php`.
+These use JSON encoding, so the values are difficult to read and a single typo will break all of your rules.
 
 [[controlling-access-to-folders]]
 === Controlling Access to Folders
@@ -161,11 +156,8 @@ To see these logs, the system log level must be set to a minimum level of **warn
 The firewall logs blocked and successful requests to the system log at **warning** and **info** levels respectively.
 To see all these logs, the system log level must be set to a minimum level of **info**.
 
-[NOTE]
-====
-Logging all requests can generate a large amount of log data.
+NOTE: Logging all requests can generate a large amount of log data.
 It is recommended to only select all requests for short-term checking of rule settings.
-====
 
 [[custom-configuration-for-branded-clients]]
 === Custom Configuration for Branded Clients
@@ -174,8 +166,7 @@ If you are using xref:enterprise/clients/creating_branded_apps.adoc[branded ownC
 define `firewall.branded_clients` in your `config.php` to identify your
 branded clients in the firewall *"User Device"* rule.
 
-The configuration is a `User-Agent` => `Device` map. `Device` must be
-one of the following:
+The configuration is a `User-Agent` => `Device` map. `Device` must be one of the following:
 
 * android
 * android_branded
@@ -193,8 +184,7 @@ anywhere. For technical reasons the `User-Agent` string must be at least
 you have the option to create a custom User Agent.
 
 In this example configuration you need to replace the example User Agent
-strings, for example `'android_branded'`, with your own User Agent
-strings:
+strings, for example `'android_branded'`, with your own User Agent strings:
 
 [source,php]
 ....
@@ -215,12 +205,9 @@ The Web UI dropdown then expands to the following options:
 * Android Client - always visible
 * iOS Client - always visible
 * Desktop Client - always visible
-* Android Client (Branded) - visible when at least one `android_branded`
-is defined
-* iOS Client (Branded) - visible when at least one `ios_branded` is
-defined
-* Desktop Client (Branded) - visible when at least one `desktop_branded`
-is defined
+* Android Client (Branded) - visible when at least one `android_branded` is defined
+* iOS Client (Branded) - visible when at least one `ios_branded` is defined
+* Desktop Client (Branded) - visible when at least one `desktop_branded` is defined
 * All branded clients - visible when at least one of `android_branded`,
 `ios_branded` or `desktop_branded` is defined
 * All non-branded clients - visible when at least one of
@@ -229,10 +216,7 @@ is defined
 
 Then these options operate this way:
 
-* The `* Client` options only match `android`, `ios` and `desktop`
-respectively.
-* The `* Client (Branded)` options match the `*_branded` agents
-equivalent.
-* `All branded clients` matches: `android_branded`, `ios_branded` and
-`desktop_branded`
+* The `* Client` options only match `android`, `ios` and `desktop` respectively.
+* The `* Client (Branded)` options match the `*_branded` agents equivalent.
+* `All branded clients` matches: `android_branded`, `ios_branded` and `desktop_branded`
 * `All non-branded clients` matches: `android`, `ios` and `desktop`
