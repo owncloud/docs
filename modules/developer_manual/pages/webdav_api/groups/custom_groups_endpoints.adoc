@@ -1,0 +1,155 @@
+=== List Groups
+:page-partial:
+:request_method: PROPFIND
+:request_path_suffix: 
+
+include::{partialsdir}/webdav_api/uri_request_table.adoc[]
+
+include::{partialsdir}/webdav_api/core_curl_request.adoc[]
+
+Successful requests return two things: 
+
+. An XML payload.
+. A status of `HTTP/1.1 207 Multi-Status`.
+
+You can see an example of the XML payload below.
+The XML payload contains a `response` element for each group.
+Each `response` element contains the following items:
+
+* The groups unique URI
+
+[source,xml]
+....
+<?xml version="1.0"?>
+<d:multistatus xmlns:d="DAV:" xmlns:s="http://sabredav.org/ns" xmlns:oc="http://owncloud.org/ns">
+  <d:response>
+    <d:href>/remote.php/dav/customgroups/groups/</d:href>
+    <d:propstat>
+      <d:prop>
+        <d:resourcetype>
+          <d:collection/>
+          <oc:customgroups-groups/>
+        </d:resourcetype>
+      </d:prop>
+      <d:status>HTTP/1.1 200 OK</d:status>
+    </d:propstat>
+  </d:response>
+  <d:response>
+    <d:href>/remote.php/dav/customgroups/groups/testgroup/</d:href>
+    <d:propstat>
+      <d:prop>
+        <d:resourcetype>
+          <d:collection/>
+          <oc:customgroups-group/>
+        </d:resourcetype>
+      </d:prop>
+      <d:status>HTTP/1.1 200 OK</d:status>
+    </d:propstat>
+    <d:propstat>
+      <d:prop>
+        <d:getlastmodified/>
+        <d:getcontentlength/>
+        <d:quota-used-bytes/>
+        <d:quota-available-bytes/>
+        <d:getetag/>
+        <d:getcontenttype/>
+      </d:prop>
+      <d:status>HTTP/1.1 404 Not Found</d:status>
+    </d:propstat>
+  </d:response>
+</d:multistatus>
+....
+
+==== No Results
+
+If there are no custom groups, then a response similar to the following will be returned.
+
+[source,xml]
+....
+<?xml version="1.0"?>
+<d:multistatus xmlns:d="DAV:" xmlns:s="http://sabredav.org/ns" xmlns:oc="http://owncloud.org/ns">
+  <d:response>
+    <d:href>/remote.php/dav/customgroups/groups/</d:href>
+    <d:propstat>
+      <d:prop>
+        <d:resourcetype>
+          <d:collection/>
+          <oc:customgroups-groups/>
+        </d:resourcetype>
+      </d:prop>
+      <d:status>HTTP/1.1 200 OK</d:status>
+    </d:propstat>
+  </d:response>
+</d:multistatus>
+....
+
+=== Rename Custom Group
+:request_method: PROPPATCH
+:request_path_suffix: <$groupId>
+
+include::{partialsdir}/webdav_api/uri_request_table.adoc[]
+
+include::{partialsdir}/webdav_api/core_curl_request.adoc[]
+
+==== Responses
+
+===== Success
+
+A successful request will only return a status of `HTTP/1.1 204 No Content`.
+No other information will be returned or displayed.
+
+===== Failure
+
+include::partial$webdav_api/responses/insufficient-privileges-overview.adoc[]
+
+====== Missing Group
+
+If the specified group does not exist, then the following XML response body will be returned, along with an `HTTP/1.1 207 Multi-Status` status.
+
+[source,xml]
+....
+<?xml version="1.0" encoding="utf-8"?>
+<d:error xmlns:d="DAV:" xmlns:s="http://sabredav.org/ns">
+  <s:exception>Sabre\DAV\Exception\NotFound</s:exception>
+  <s:message>Group with uri "testgroup" not found</s:message>
+</d:error>
+....
+
+===  Delete Group
+:request_method: DELETE
+:request_path_suffix: <$groupId>
+
+include::{partialsdir}/webdav_api/uri_request_table.adoc[]
+
+include::{partialsdir}/webdav_api/core_curl_request.adoc[]
+
+==== Responses
+
+===== Success
+
+A successful request will only return a status of `HTTP/1.1 204 No Content`.
+No other information will be returned or displayed.
+
+===== Failure
+
+include::partial$webdav_api/responses/insufficient-privileges-overview.adoc[]
+
+===  Create Group
+:request_method: MKCOL
+:request_path_suffix: <$groupId>
+
+include::{partialsdir}/webdav_api/uri_request_table.adoc[]
+
+include::{partialsdir}/webdav_api/core_curl_request.adoc[]
+
+==== Responses
+
+===== Success
+
+A successful request will only return a status of `HTTP/1.1 201 Created`.
+No other information will be returned or displayed.
+
+===== Failure
+
+include::{partialsdir}/webdav_api/responses/insufficient-privileges-overview.adoc[]
+

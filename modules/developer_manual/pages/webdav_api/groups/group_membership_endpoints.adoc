@@ -1,0 +1,203 @@
+== Group Membership
+:page-partial:
+
+===  List Members
+
+:request_method: PROPFIND
+:request_data_file: list-custom-group-members.xml
+:request_path_suffix: 
+
+include::{partialsdir}/webdav_api/uri_request_table.adoc[]
+
+include::{partialsdir}/webdav_api/core_curl_request.adoc[]
+
+==== Responses
+
+===== Success
+
+Successful requests return two things: 
+
+. An XML payload.
+. A status of `HTTP/1.1 207 Multi-Status`.
+
+You can see an example of the XML payload below.
+
+[source,xml]
+....
+<?xml version="1.0"?>
+<d:multistatus xmlns:d="DAV:" xmlns:s="http://sabredav.org/ns" xmlns:oc="http://owncloud.org/ns">
+  <d:response>
+    <d:href>/remote.php/dav/customgroups/groups/testgroup2/</d:href>
+    <d:propstat>
+      <d:prop>
+        <oc:role/>
+      </d:prop>
+      <d:status>HTTP/1.1 404 Not Found</d:status>
+    </d:propstat>
+  </d:response>
+  <d:response>
+    <d:href>/remote.php/dav/customgroups/groups/testgroup2/admin</d:href>
+    <d:propstat>
+      <d:prop>
+        <oc:role>admin</oc:role>
+      </d:prop>
+      <d:status>HTTP/1.1 200 OK</d:status>
+    </d:propstat>
+  </d:response>
+</d:multistatus>
+....
+
+===== Failure
+
+include::partial$webdav_api/responses/insufficient-privileges-overview.adoc[]
+
+===  Add Member
+:request_method: PUT
+:request_path_suffix: <$numericGroupId>/<$userId>
+
+include::{partialsdir}/webdav_api/uri_request_table.adoc[]
+
+include::{partialsdir}/webdav_api/core_curl_request.adoc[tag=!use-data-option]
+
+==== Responses
+
+===== Success
+
+If the request succeeds, then only a `HTTP/1.1 201 Created` status will be returned.
+
+===== Failure
+
+===== Method Not Allowed
+
+If the request was made using any other method than `PUT`, then an `HTTP/1.1 405 Method Not Allowed` status will be returned, along with the XML payload below:
+
+[source,xml]
+....
+<?xml version="1.0" encoding="utf-8"?>
+<d:error xmlns:d="DAV:" xmlns:s="http://sabredav.org/ns">
+  <s:exception>Sabre\DAV\Exception\MethodNotAllowed</s:exception>
+  <s:message>Cannot create collections</s:message>
+</d:error>
+....
+
+include::partial$webdav_api/responses/insufficient-privileges-overview.adoc[]
+
+===  Remove Member
+:request_method: DELETE
+:request_path_suffix: <$numericGroupId>/<$userId>
+
+include::{partialsdir}/webdav_api/uri_request_table.adoc[]
+
+include::{partialsdir}/webdav_api/core_curl_request.adoc[tag=!use-data-option]
+
+==== Responses
+
+===== Success
+
+A successful request will only return a status of `HTTP/1.1 204 No Content`.
+No other information will be returned or displayed.
+
+===== Failure
+
+include::partial$webdav_api/responses/insufficient-privileges-overview.adoc[]
+
+===  Change admin role of a member
+:request_method: PROPPATCH
+:request_path_suffix: <$numericGroupId>/<$userId>
+
+include::{partialsdir}/webdav_api/uri_request_table.adoc[]
+
+include::{partialsdir}/webdav_api/core_curl_request.adoc[tag=**,!use-data-option]
+
+==== Responses
+
+===== Success
+
+===== Failure
+
+include::partial$webdav_api/responses/insufficient-privileges-overview.adoc[]
+
+===  List Group Memberships of a given user
+:request_method: PROPFIND
+:request_base_path: /remote.php/dav/customgroups/users
+:request_path_suffix: <$userId>/<$membership>
+
+include::{partialsdir}/webdav_api/uri_request_table.adoc[]
+
+include::{partialsdir}/webdav_api/core_curl_request.adoc[tag=**,!use-data-option]
+
+==== Responses
+
+===== Success
+
+Successful requests return two things: 
+
+. An XML payload.
+. A status of `HTTP/1.1 207 Multi-Status`.
+
+You can see an example of the XML payload below.
+
+[source,xml]
+....
+<?xml version="1.0"?>
+<d:multistatus xmlns:d="DAV:" xmlns:s="http://sabredav.org/ns" xmlns:oc="http://owncloud.org/ns">
+  <d:response>
+    <d:href>/remote.php/dav/customgroups/users/settermjd/</d:href>
+    <d:propstat>
+      <d:prop>
+        <d:resourcetype>
+          <d:collection/>
+          <oc:customgroups-groups/>
+        </d:resourcetype>
+      </d:prop>
+      <d:status>HTTP/1.1 200 OK</d:status>
+    </d:propstat>
+  </d:response>
+  <d:response>
+    <d:href>/remote.php/dav/customgroups/users/settermjd/testgroup2/</d:href>
+    <d:propstat>
+      <d:prop>
+        <d:resourcetype>
+          <d:collection/>
+          <oc:customgroups-group/>
+        </d:resourcetype>
+      </d:prop>
+      <d:status>HTTP/1.1 200 OK</d:status>
+    </d:propstat>
+    <d:propstat>
+      <d:prop>
+        <d:getlastmodified/>
+        <d:getcontentlength/>
+        <d:quota-used-bytes/>
+        <d:quota-available-bytes/>
+        <d:getetag/>
+        <d:getcontenttype/>
+      </d:prop>
+      <d:status>HTTP/1.1 404 Not Found</d:status>
+    </d:propstat>
+  </d:response>
+</d:multistatus>
+....
+
+===== Failure
+
+include::partial$webdav_api/responses/insufficient-privileges-overview.adoc[]
+
+== REPORT
+
+.report-customgroups.xml
+[source,xml]
+....
+include::{examplesdir}/core/webdav_api/group/report-customgroups.xml[indent=0]
+....
+
+[source,console]
+....
+curl -u admin:admin -X REPORT -H "Content-Type: text/xml" --data-binary "@report-customgroups.xml" 'http://localhost/owncloud/remote.php/dav/customgroups/'
+....
+
+[source,xml]
+....
+include::{examplesdir}/core/webdav_api/group/response-success.xml[indent=0]
+....
+
