@@ -21,7 +21,7 @@ To contribute to the documentation, you need to:
 With this done, you then need to get your local copy of the docs repository ready.
 To do this, follow the following three steps.
 
-1. Fork [the docs repository](https://github.com/owncloud/docs/blob/master/docs/).
+1. Fork [the docs repository](https://github.com/owncloud/docs/).
    This is necessary, as you won't be able to push changes directly to the docs repository.
 
 2. Clone the docs repository locally and enter it.
@@ -43,7 +43,7 @@ To do this, follow the following three steps.
 Depending if you are making text changes only or if you change images, inline code examples or more complex content,
 you may need to use different tools to validate your outcome.
 
-### You Are Making Text Changes Only 
+### You Are Making Text Changes Only
 
 If you're making text changes only, we recommend installing the AsciiDoc Live Preview plugin:
 

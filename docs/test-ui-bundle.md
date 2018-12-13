@@ -13,10 +13,10 @@ The following example assumes:
 
 ```
 antora --clean \
-       --pull \
-       --ui-bundle-url ../docs/build/ui-bundle.zip \
-       --url http://localhost:5000 \
-       site.yml
+    --pull \
+    --ui-bundle-url ../docs/build/ui-bundle.zip \
+    --url http://localhost:5000 \
+    site.yml
 ```
 
 If the build returns without an error, open the documentation with your browser to see your changes.
