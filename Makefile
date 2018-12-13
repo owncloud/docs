@@ -49,7 +49,7 @@ clean:
 .PHONY: validate
 validate:
 	@echo "Validating xref links of all manuals defined within configuration"
-	-antora generate --pull --cache-dir $(CACHE_DIR) --redirect-facility $(REDIRECTS) --stacktrace --generator=./generators/xref-validator.js $(PLAYBOOK)
+	-antora generate --pull --cache-dir $(CACHE_DIR) --redirect-facility $(REDIRECTS) --stacktrace --generator ./generators/xref-validator.js $(PLAYBOOK)
 	@echo
 
 #
@@ -58,7 +58,7 @@ validate:
 .PHONY: html
 html:
 	@echo "Building HTML versions of all manuals defined within configuration"
-	-antora generate --pull --cache-dir $(CACHE_DIR) --redirect-facility $(REDIRECTS) --stacktrace --generator=./generators/search.js $(PLAYBOOK)
+	-antora generate --pull --cache-dir $(CACHE_DIR) --redirect-facility $(REDIRECTS) --stacktrace --generator ./generators/search.js $(PLAYBOOK)
 	@echo
 
 #
