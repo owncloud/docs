@@ -25,7 +25,7 @@ help:
 	@echo "  html         to generate the HTML versions of all manuals defined within configuration."
 	@echo "  pdf          to generate the PDF versions of the administration, developer, and user manuals."
 	@echo "  check-prose  to lint English prose to support developers"
-	
+
 #
 # Installs the Antora command-line tools locally.
 #
@@ -49,7 +49,7 @@ clean:
 .PHONY: validate
 validate:
 	@echo "Validating xref links of all manuals defined within configuration"
-	-antora generate --pull --cache-dir $(CACHE_DIR) --redirect-facility $(REDIRECTS) --stacktrace --generator=./generators/xref-validator.js $(PLAYBOOK)
+	-antora generate --pull --cache-dir $(CACHE_DIR) --redirect-facility $(REDIRECTS) --stacktrace --generator ./generators/xref-validator.js $(PLAYBOOK)
 	@echo
 
 #
@@ -58,7 +58,7 @@ validate:
 .PHONY: html
 html:
 	@echo "Building HTML versions of all manuals defined within configuration"
-	-antora generate --pull --cache-dir $(CACHE_DIR) --redirect-facility $(REDIRECTS) --stacktrace --generator=./generators/search.js $(PLAYBOOK)
+	-antora generate --pull --cache-dir $(CACHE_DIR) --redirect-facility $(REDIRECTS) --stacktrace --generator ./generators/search.js $(PLAYBOOK)
 	@echo
 
 #
@@ -127,4 +127,4 @@ pdf-user:
 .PHONY: check-prose
 check-prose:
 	@echo "Checking quality of the prose in all files"
-	write-good --parse **/*.adoc
+	@yarn prose

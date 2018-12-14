@@ -7,7 +7,7 @@ The documentation can be generated in HTML and PDF formats.
 
 There are two ways to generate the documentation in HTML format:
 
-- Using the Official Docker Container
+- Using ownCloud's custom Antora Docker Container
 - Running Antora from the Command-Line
 
 ### Using the Docker Container
@@ -20,29 +20,28 @@ docker run -ti --rm \
     -e DOCSEARCH_ENGINE=lunr \
     -v $(pwd):/antora/ \
     -w /antora/ \
-    antora:custom \
-      --pull \
-      --cache-dir /antora/cache/ \
-      --redirect-facility static \
-      --generator ./generators/search.js \
-      --stacktrace \
-      site.yml
+    owncloudci/antora:latest \
+    --pull \
+    --cache-dir /antora/cache/ \
+    --redirect-facility static \
+    --generator ./generators/search.js \
+    --stacktrace \
+    site.yml
 ```
 
 This command:
 
-- Starts up [ownCloud's custom Antora Docker container](https://hub.docker.com/r/antora/antora/)
-- Removes any existing documentation
+- Starts up [ownCloud's custom Antora Docker container](https://hub.docker.com/r/owncloudci/antora/)
 - Runs Antora's `generate` command, which regenerates the documentation
-- You can add the `--clean` option to clean the build directory of any leftover artifacts from the previous build, including pdf's.
+- You can add the `--clean` option to clean the build directory of any leftover artifacts from the previous build, including PDF's.
 
 If all goes well, you will _not_ see any console output.
-If a copy of the container doesn't exist locally, you can pull down a copy, by running `docker pull antora/antora`.
+If a copy of the container doesn't exist locally, you can pull down a copy, by running `docker pull owncloudci/antora:latest`.
 Otherwise, you should see output similar to the following:
 
 ```console
-Unable to find image 'antora/antora:1.0.1' locally
-1.0.1: Pulling from antora/antora
+Unable to find image 'owncloudci/antora:latest' locally
+latest: Pulling from owncloudci/antora
 605ce1bd3f31: Already exists
 0511902e1bcd: Downloading  5.347MB/19.61MB
 343e34c41f87: Download complete
@@ -65,15 +64,15 @@ If you want to use your own settings, run the command passing the necessary para
 **Note:** The environment variables at the beginning are required for building the docs with integrated site search.
 
 ```
-DOCSEARCH_ENABLED=true DOCSEARCH_ENGINE=lunr \
-antora --pull \
+DOCSEARCH_ENABLED=true DOCSEARCH_ENGINE=lunr antora --pull \
     --cache-dir ./cache/ \
     --redirect-facility static \
     --generator ./generators/search.js \
     --stacktrace \
     site.yml
 ```
-- You can add the `--clean` option to clean the build directory of any leftover artifacts from the previous build, including pdf's.
+
+- You can add the `--clean` option to clean the build directory of any leftover artifacts from the previous build, including PDF's.
 
 ### Update The Generated Search Index
 
@@ -110,10 +109,6 @@ _The URL is automatically copied to the clipboard._
 
 Open the URL in your browser of choice and you'll see two links, as below.
 
-![The initial page in the local copy of the Antora-generated documentation](./images/antora-initial-local-page.png)
-
-Click "**server/**", and you'll see the local copy of the documentation.
-
 ![Viewing the locally generated Antora documentation](./images/viewing-the-locally-generated-antora-documentation.png)
 
 If you're happy with your changes, as with any other change, create a set of meaningful commits and push them to the remote repository.
@@ -149,9 +144,6 @@ make pdf
 2. **The custom theme directory and the custom theme file**
 
     This ensures that the defaults are overridden, where relevant, to ensure that the generated PDF is as close to the current ownCloud style as possible.
-
-When generated, the PDF files will be generated in the build directory (`build`), and will be named after the respective manual.
-The build directory is called `build` and is located in the root of the repository.
 
 ## Viewing Build Errors
 
