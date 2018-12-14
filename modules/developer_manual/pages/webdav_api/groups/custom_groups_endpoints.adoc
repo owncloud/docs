@@ -1,11 +1,20 @@
 === List Groups
 :page-partial:
 :request_method: PROPFIND
+:request_data_file: list-custom-groups.xml
 :request_path_suffix: 
+
+This endpoint returns a list of all custom groups.
 
 include::{partialsdir}/webdav_api/uri_request_table.adoc[]
 
 include::{partialsdir}/webdav_api/core_curl_request.adoc[]
+
+.{request_data_file}
+[source,xml]
+....
+include::example$core/webdav_api/group/request/list-custom-groups.xml[]
+....
 
 Successful requests return two things: 
 
@@ -14,50 +23,10 @@ Successful requests return two things:
 
 You can see an example of the XML payload below.
 The XML payload contains a `response` element for each group.
-Each `response` element contains the following items:
-
-* The groups unique URI
 
 [source,xml]
 ....
-<?xml version="1.0"?>
-<d:multistatus xmlns:d="DAV:" xmlns:s="http://sabredav.org/ns" xmlns:oc="http://owncloud.org/ns">
-  <d:response>
-    <d:href>/remote.php/dav/customgroups/groups/</d:href>
-    <d:propstat>
-      <d:prop>
-        <d:resourcetype>
-          <d:collection/>
-          <oc:customgroups-groups/>
-        </d:resourcetype>
-      </d:prop>
-      <d:status>HTTP/1.1 200 OK</d:status>
-    </d:propstat>
-  </d:response>
-  <d:response>
-    <d:href>/remote.php/dav/customgroups/groups/testgroup/</d:href>
-    <d:propstat>
-      <d:prop>
-        <d:resourcetype>
-          <d:collection/>
-          <oc:customgroups-group/>
-        </d:resourcetype>
-      </d:prop>
-      <d:status>HTTP/1.1 200 OK</d:status>
-    </d:propstat>
-    <d:propstat>
-      <d:prop>
-        <d:getlastmodified/>
-        <d:getcontentlength/>
-        <d:quota-used-bytes/>
-        <d:quota-available-bytes/>
-        <d:getetag/>
-        <d:getcontenttype/>
-      </d:prop>
-      <d:status>HTTP/1.1 404 Not Found</d:status>
-    </d:propstat>
-  </d:response>
-</d:multistatus>
+include::example$core/webdav_api/group/response/list-groups-successful-response.xml[]
 ....
 
 ==== No Results
@@ -66,30 +35,27 @@ If there are no custom groups, then a response similar to the following will be 
 
 [source,xml]
 ....
-<?xml version="1.0"?>
-<d:multistatus xmlns:d="DAV:" xmlns:s="http://sabredav.org/ns" xmlns:oc="http://owncloud.org/ns">
-  <d:response>
-    <d:href>/remote.php/dav/customgroups/groups/</d:href>
-    <d:propstat>
-      <d:prop>
-        <d:resourcetype>
-          <d:collection/>
-          <oc:customgroups-groups/>
-        </d:resourcetype>
-      </d:prop>
-      <d:status>HTTP/1.1 200 OK</d:status>
-    </d:propstat>
-  </d:response>
-</d:multistatus>
+include::example$core/webdav_api/group/response/list-groups-no-results-response.xml[]
 ....
 
 === Rename Custom Group
 :request_method: PROPPATCH
+:request_data_file: rename-custom-group.xml
 :request_path_suffix: <$groupId>
+
+This endpoint allows a custom group to be renamed.
+
+NOTE: Only group admins can rename a group.
 
 include::{partialsdir}/webdav_api/uri_request_table.adoc[]
 
 include::{partialsdir}/webdav_api/core_curl_request.adoc[]
+
+.{request_data_file}
+[source,xml]
+....
+include::example$core/webdav_api/group/request/rename-custom-group.xml[]
+....
 
 ==== Responses
 
@@ -108,16 +74,17 @@ If the specified group does not exist, then the following XML response body will
 
 [source,xml]
 ....
-<?xml version="1.0" encoding="utf-8"?>
-<d:error xmlns:d="DAV:" xmlns:s="http://sabredav.org/ns">
-  <s:exception>Sabre\DAV\Exception\NotFound</s:exception>
-  <s:message>Group with uri "testgroup" not found</s:message>
-</d:error>
+include::example$core/webdav_api/group/response/list-groups-missing-group-response.xml[]
 ....
 
 ===  Delete Group
 :request_method: DELETE
+:request_data_file: 
 :request_path_suffix: <$groupId>
+
+This endpoint allows for a custom group to be deleted.
+
+NOTE: Only group admins can delete a group.
 
 include::{partialsdir}/webdav_api/uri_request_table.adoc[]
 
@@ -137,6 +104,10 @@ include::partial$webdav_api/responses/insufficient-privileges-overview.adoc[]
 ===  Create Group
 :request_method: MKCOL
 :request_path_suffix: <$groupId>
+
+This endpoint allows for creating a custom group.
+
+NOTE:  The group's creator automatically becomes the group's admin and its initial member.
 
 include::{partialsdir}/webdav_api/uri_request_table.adoc[]
 
