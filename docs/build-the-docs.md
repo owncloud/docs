@@ -33,7 +33,7 @@ This command:
 
 - Starts up [ownCloud's custom Antora Docker container](https://hub.docker.com/r/owncloudci/antora/)
 - Runs Antora's `generate` command, which regenerates the documentation
-- You can add the `--clean` option to clean the build directory of any leftover artifacts from the previous build, including ODF's.
+- You can add the `--clean` option to clean the build directory of any leftover artifacts from the previous build, including PDF's.
 
 If all goes well, you will _not_ see any console output.
 If a copy of the container doesn't exist locally, you can pull down a copy, by running `docker pull owncloudci/antora:latest`.
