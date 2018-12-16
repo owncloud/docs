@@ -25,8 +25,8 @@ Please ensure that the app you are going to configure is installed and enabled.
 * xref:market_commands[Market]
 * xref:password_policy[Password Policy]
 * xref:ransomware[Ransomware Protection]
-* xref:samle-sso-sibboleth-integration[SAML/SSO Shibboleth Integration]
-* xref:two_factor_auth[Two Factor Authentication]
+* xref:samle_sso_sibboleth_integration[SAML/SSO Shibboleth Integration]
+* xref:two_factor_authentication[Two Factor Authentication]
 
 [[run-occ-as-your-http-user]]
 == Run occ As Your HTTP User
@@ -189,7 +189,7 @@ Parameters for short form options will be written either directly after the opti
 sudo -u www-data ./occ files:scan -p "user_x/files/folder"  
 ....
 
-[[brute-force-protection]]
+[[brute_force_protection]]
 == Brute Force Protection
 
 Marketplace URL: https://marketplace.owncloud.com/apps/brute_force_protection[Brute-Force Protection]
@@ -299,7 +299,7 @@ instance:export:migrate:share <userId> <remoteServer>
 [width="80%",cols="30%,70%",]
 |===
 | `userId`       | The exported userId whose shares we want to migrate.
-| `remoteServer` | The remote ownCloud server where the exported user is now, +
+| `remoteServer` | The remote ownCloud server where the exported user is now,
 for example "https://myown.server:8080/owncloud".
 |===
 
@@ -317,7 +317,7 @@ Marketplace URL: https://marketplace.owncloud.com/apps/contacts[Contacts]
 
 For commands for managing contacts, please see the DAV Command section in the occ core command set.
 
-[[files_Antivirus]]
+[[files_antivirus]]
 == Anti-Virus
 
 Marketplace URL: https://marketplace.owncloud.com/apps/files_antivirus[Anti-Virus]
@@ -345,7 +345,7 @@ Antivirus Configuration.
 
 [width="80%",cols="30%,70%",]
 |===
-| Key             | 'av_mode'
+| Key             | `av_mode`
 | Default         | 'executable'
 | Possible Values | 'executable' +
 'daemon' +
@@ -358,7 +358,7 @@ Antivirus Socket.
 
 [width="80%",cols="30%,70%",]
 |===
-| Key             | 'av_socket'
+| Key             | `av_socket`
 | Default         | '/var/run/clamav/clamd.ctl'
 |===
 
@@ -368,7 +368,7 @@ Hostname or IP address of Antivirus Host.
 
 [width="80%",cols="30%,70%",]
 |===
-| Key             | 'av_host'
+| Key             | `av_host`
 | Default         | 
 |===
 
@@ -378,7 +378,7 @@ Port number of Antivirus Host, 1-65535.
 
 [width="80%",cols="30%,70%",]
 |===
-| Key             | 'av_port'
+| Key             | `av_port`
 | Default         | 
 | Possible Values | 1-65535
 |===
@@ -389,7 +389,7 @@ Extra command line options (comma-separated).
 
 [width="80%",cols="30%,70%",]
 |===
-| Key             | 'av_cmd_options'
+| Key             | `av_cmd_options`
 | Default         | 
 |===
 
@@ -399,7 +399,7 @@ Path to clamscan executable.
 
 [width="80%",cols="30%,70%",]
 |===
-| Key             | 'av_path'
+| Key             | `av_path`
 | Default         | '/usr/bin/clamscan'
 |===
 
@@ -409,7 +409,7 @@ File size limit, -1 means no limit.
 
 [width="80%",cols="30%,70%",]
 |===
-| Key             | 'av_max_file_size'
+| Key             | `av_max_file_size`
 | Default         | '-1'
 | Possible Values | '-1' +
 integer number
@@ -421,7 +421,7 @@ Max Stream Length.
 
 [width="80%",cols="30%,70%",]
 |===
-| Key             | 'av_stream_max_length'
+| Key             | `av_stream_max_length`
 | Default         | '26214400'
 |===
 
@@ -431,7 +431,7 @@ When infected files were found during a background scan.
 
 [width="80%",cols="30%,70%",]
 |===
-| Key             | 'av_infected_action'
+| Key             | `av_infected_action`
 | Default         | 'only_log'
 | Possible Values | 'only_log' +
 'delete'
@@ -443,13 +443,13 @@ Define scan process.
 
 [width="80%",cols="30%,70%",]
 |===
-| Key             | 'av_scan_background'
+| Key             | `av_scan_background`
 | Default         | 'true'
 | Possible Values | 'true' +
 'false'
 |===
 
-[[s3-objectstores]]
+[[s3-objectstore]]
 == S3 Objectstore
 
 Marketplace URL: https://marketplace.owncloud.com/apps/files_primary_s3[S3 Object Storage]
@@ -738,6 +738,24 @@ To install an application from the Marketplace, you need to supply the app’s i
 For example, the URL for _Two factor backup codes_ is https://marketplace.owncloud.com/apps/twofactor_backup_codes.
 So its app id is `twofactor_backup_codes`.
 
+....
+sudo -u www-data occ market:install <ids> [option]
+....
+
+==== Arguments:
+
+[width="80%",cols="30%,70%",]
+|===
+| `ids` |  Ids of the apps
+|===
+
+==== Options
+[width="80%",cols="30%,70%",]
+|===
+| `-l [LOCAL]` +
+`--local=[LOCAL]`  | Optional path to a local app package.
+|===
+
 [[install-apps-from-a-file-archive]]
 === Install Apps From a File Archive
 
@@ -755,7 +773,58 @@ sudo -u www-data occ market:install twofactor_backup_codes
 sudo -u www-data occ market:install -l /mnt/data/richdocuments-2.0.0.tar.gz
 ....
 
-[[password-policy]]
+[[uninstall-an-application]]
+=== Uninstall an Application
+
+To uninstall an application use the following commands:
+
+....
+sudo -u www-data occ market:uninstall <ids>
+....
+
+==== Arguments:
+
+[width="80%",cols="30%,70%",]
+|===
+| `ids` |  Ids of the apps
+|===
+
+[[list-apps-from-the-marketplace]]
+=== List Apps From The Marketplace
+
+This command lists apps available on the marketplace.
+It returns the ids if the apps.
+
+....
+sudo -u www-data occ market:list
+....
+
+[[upgrade-an-application]]
+=== Upgrade an Application
+
+Install new app versions if available on the marketplace by using following commands:
+
+....
+sudo -u www-data occ market:upgrade <ids> [options]
+....
+
+==== Arguments:
+
+[width="80%",cols="30%,70%",]
+|===
+| `ids` |  Ids of the apps
+|===
+
+==== Options
+[width="80%",cols="30%,70%",]
+|===
+| `-l [LOCAL]` +
+`--local=[LOCAL]`  | Optional path to a local app package.
+| `--major`        | Allow update to a new major version.
+|===
+
+
+[password-policy]]
 == Password Policy
 
 Marketplace URL: https://marketplace.owncloud.com/apps/password_policy[Password Policy]
@@ -773,15 +842,15 @@ sudo -u www-data occ user:expire-password <uid> [<expiredate>]
 [width="100%",cols="20%,82%",]
 |===
 | `uid`       | User ID.
-| `expiredate` | The date and time when a password expires, e.g.
-`2019-01-01 14:00:00 CET` or -1 days.
+| `expiredate` | The date and time when a password expires, +
+e.g. `2019-01-01 14:00:00 CET` or -1 days.
 |===
 
 The expiry date can be provided using any of https://secure.php.net/manual/en/datetime.formats.php[PHP's supported date and time formats].
 
 ==== Options
 
-[width="100%",cols="20%,82%",]
+[width="100%",cols="23%,82%",]
 |===
 | `-a, --all`      | Will add password expiry to all known users.
 uid and group option are discarded if the option is provided by user.
@@ -895,7 +964,7 @@ sudo -u www-data occ ransomguard:unlock <user>
 | `<user>` | Unlock a user account after ransomware issues have been resolved.
 |===
 
-[[samle-sso-sibboleth-integration]]
+[[samle_sso_sibboleth_integration]]
 == SAML/SSO Shibboleth Integration (Enterprise Edition only)
 
 Marketplace URL: https://marketplace.owncloud.com/apps/user_shibboleth[SAML/SSO Integration]
@@ -907,7 +976,7 @@ Marketplace URL: https://marketplace.owncloud.com/apps/user_shibboleth[SAML/SSO 
 shibboleth:mode [mode]
 ----
 
-[[two-factor-authentication]]
+[[two_factor_authentication]]
 == Two-factor Authentication
 
 Marketplace URL: https://marketplace.owncloud.com/apps/twofactor_totp[2-Factor Authentication]
