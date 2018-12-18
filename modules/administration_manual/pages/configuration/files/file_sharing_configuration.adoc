@@ -10,23 +10,32 @@ image:configuration/files/sharing-files-settings.png[ownCloud Sharing settings]
 
 From this section, ownCloud users can:
 
-* Share files with their ownCloud groups and other users on the same
-ownCloud server
-* Share files with ownCloud users on
-other ownCloud servers <federated_cloud_sharing_configuration>
+* Share files with their ownCloud groups and other users on the same ownCloud server
+* Share files with ownCloud users on other ownCloud servers, for more details see
+xref:configuration/files/federated_cloud_sharing_configuration.adoc[Federated Cloud Sharing Configuration].
 * Create public shares for people who are not ownCloud users.
 
 You have control of a number of user permissions on file shares:
 
 * Allow users to share files
-* Allow users to create public shares
-* Require a password on public shares
-* Allow public uploads to public shares
-* Require an expiration date on public share links
+* Allow users to create public link shares
+** Allow public uploads to public shares
+** Enforce password protection on public link shares
+** Set default expiration date on public share links
+** Allow users to send mail notification for shared files
+** Set the language used for public mail notification for shared files
+** Allow users to share file via social media
+* Automatically accept new incoming local user shares
 * Allow resharing
-* Restrict sharing to group members only
-* Allow email notifications of new public shares
+* Default user and group share permissions
+** Restrict users to only share with users in their groups
+** Restrict users to only share with groups they are a member of
+* Allow email notifications of new public link shares
 * Exclude groups from creating shares
+* Allow username autocompletion in share dialog
+** Restrict enumeration to group members
+** Default user and group share permissions
+* Extra field to display in autocomplete results
 
 NOTE: ownCloud Enterprise includes a
 xref:configuration/server/security/password_policy.adoc[Share Link Password Policy app].
@@ -35,28 +44,27 @@ xref:configuration/server/security/password_policy.adoc[Share Link Password Poli
 
 === Allow apps to use the Share API
 
-
 Check this option to enable users to share files.
 If this is not checked, no users can create file shares.
 
 === Allow users to share via link
 
-
 Check this option to enable creating public shares for people who are not ownCloud users via hyperlink.
 
-=== Enforce password protection
+==== Allow public uploads
 
+Check this option to allow anyone to upload files to public shares.
+
+==== Enforce password protection
 
 Check this option to force users to set a password on all public share links.
 This does not apply to local user and group shares.
 
-=== Allow public uploads
+==== Set default expiration date
 
+Check this option to set a default expiration date on public shares.
 
-Check this option to allow anyone to upload files to public shares.
-
-=== Allow users to send mail notification for shared files
-
+==== Allow users to send mail notification for shared files
 
 Check this option to enable sending notifications from ownCloud.
 When clicked, the administrator can choose the language for public mail notifications for shared files.
@@ -83,32 +91,46 @@ https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2[an ISO 3166-1 alpha-2 two-lette
 
 NOTE: To use this functionality, your ownCloud server must be configured to send mail.
 
-=== Allow users to share file via social media
-
+==== Allow users to share file via social media
 
 Check this option to enable displaying of a set of links that allow for quickly sharing files and share
 links via *Twitter*, *Facebook*, *Google+*, *Diaspora*, and email.
 
 image:configuration/files/sharing/sharing-files-via-social-media.png[ownCloud social media sharing links]
 
-=== Set default expiration date
-
-
-Check this option to set a default expiration date on public shares.
+=== Automatically accept new incoming local user shares
+Disabling this option activates the "Pending Shares" feature. Users will be notified and have to accept new
+incoming user shares before they appear in the file list and are available for access giving them more control
+over their account. More information about
+xref:release_notes.adoc#pending-shares[pending shares] can be found in the release notes.
 
 === Allow resharing
 
-
 Check this option to enable users to re-share files shared with them.
 
-=== Restrict users to only share with users in their groups
+=== Default user and group share permissions
 
+Administrators can define the permissions for user/group shares that are set by default when users create new
+shares. As shares are created instantly after choosing the recipient, administrators can set the default to
+e.g. read-only to avoid creating shares with too many permissions unintentionally.
+
+==== Restrict users to only share with users in their groups
 
 Check this option to confine sharing within group memberships.
 
 NOTE: This setting does not apply to the Federated Cloud sharing feature. +
 If xref:configuration/files/federated_cloud_sharing_configuration.adoc[Federated Cloud Sharing] is enabled,
 users can still share items with any users on any instances (_including the one they are on_) via a remote share.
+
+==== Restrict users to only share with groups they are a member of
+
+When this option is enabled, users can only share with groups they are a member of.
+They can still share with all users of the instance but not with groups they are not a member of.
+To restrict sharing to users in groups the sharer is a member of the option "Restrict users to only share
+with users in their groups" can be used.
+More information about
+xref:release_notes.adoc#more-granular-sharing-restrictions[more granular sharing restrictions]
+can be found in the release notes.
 
 === Allow users to send mail notification for shared files
 
@@ -124,13 +146,19 @@ Members of excluded groups can still receive shares, but not create any.
 
 Check this option to enable auto-completion of ownCloud usernames.
 
-=== Restrict enumeration to group members
+==== Restrict enumeration to group members
 
 Check this option to restrict auto-completion of ownCloud usernames to only those users who are members of
 the same group(s) that the user is in.
 
 NOTE: ownCloud does not preserve the mtime (modification time) of directories, though it does update
 the mtimes on files.
+
+=== Extra field to display in autocomplete results
+The autocomplete dropdowns in ownCloud usually show the display name of other users when it is set.
+If it's not set, they show the user ID / login name, I think. As display names are not unique you can run into
+situations where you can't distinguish the proposed users. This option enables to add mail addresses or user
+ID's to make them distinguishable.
 
 [[blacklist-groups-from-receiving-shares]]
 == Blacklist Groups From Receiving Shares
@@ -141,8 +169,8 @@ can be advisable to block it from receiving shares.
 In these cases, ownCloud administrators can blacklist one or more groups, so that they do not receive shares.
 
 To blacklist one or more groups, via the Web UI, under **"Admin -> Settings -> Sharing"**, add one or more
-groups to the _"Files Sharing"_ list.
-As you type the group’s name, if it exists, it will appear in the drop down list, where you can select it.
+groups to the _"Files Sharing"_ list. As you type the group’s name, if it exists, it will appear in the
+drop down list, where you can select it.
 
 image:configuration/files/sharing/blacklisting-groups.png[Blacklisting groups]
 
@@ -157,8 +185,7 @@ have to transfer a user’s files to another user before you delete them.
 
 Trashbin contents are not transferred.
 
-Here is an example of how to transfer all files from one user to
-another.
+Here is an example of how to transfer all files from one user to another.
 
 ....
 occ files:transfer-ownership <source-user> <destination-user>
@@ -178,11 +205,10 @@ When using this command keep two things in mind:
 2.  The directory (and its contents) won’t be moved as is between the
 users. It’ll be moved inside the destination user’s `files` directory,
 and placed in a directory which follows the format:
-`transferred from <source-user> on <timestamp>`. Using the example
-above, it will be stored under:
+`transferred from <source-user> on <timestamp>`. Using the example above, it will be stored under:
 `data/<destination-user>/files/transferred from <source-user> on 20170426_124510/`
 
-TIP: See xref:configuration/server/occ_command.adoc[the occ command], for a complete `occ` reference.)
+TIP: See xref:configuration/server/occ_command.adoc[the occ command], for a complete `occ` command reference.)
 
 [[creating-persistent-file-shares]]
 == Creating Persistent File Shares
