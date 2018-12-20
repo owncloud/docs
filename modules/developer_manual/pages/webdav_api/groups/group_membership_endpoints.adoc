@@ -1,0 +1,176 @@
+== Group Membership
+:page-partial:
+
+===  List Members
+:request_method: PROPFIND
+:request_data_file: list-custom-group-members.xml
+:request_path_suffix: 
+
+This endpoint allows for listing all of the members in a custom group.
+
+NOTE: Only group members can list a group's members. Other users will receive a status of `HTTP/1.1 403 Forbidden`
+
+include::partial$/webdav_api/uri_request_table.adoc[]
+
+include::partial$/webdav_api/core_curl_request.adoc[]
+
+.{request_data_file}
+[source,xml]
+....
+include::example$core/webdav_api/group/request/list-custom-group-members.xml[]
+....
+
+==== Responses
+
+===== Success
+
+Successful requests return two things: 
+
+. An XML payload.
+. A status of `HTTP/1.1 207 Multi-Status`.
+
+You can see an example of the XML payload below.
+
+[source,xml]
+....
+include::example$core/webdav_api/group/response/list-group-members-successful-response.xml[]
+....
+
+===== Failure
+
+include::partial$webdav_api/responses/insufficient-privileges-overview.adoc[]
+
+===  Add Member
+:request_method: PUT
+:request_data_file: 
+:request_path_suffix: <$numericGroupId>/<$userId>
+
+This endpoint allows for adding members to a custom group.
+
+NOTE: Only group admins can add members.
+
+include::partial$/webdav_api/uri_request_table.adoc[]
+
+include::partial$/webdav_api/core_curl_request.adoc[tag=!use-data-option]
+
+==== Responses
+
+===== Success
+
+If the request succeeds, then only a `HTTP/1.1 201 Created` status will be returned.
+
+===== Failure
+
+===== Method Not Allowed
+
+If the request was made using any other method than `PUT`, then an `HTTP/1.1 405 Method Not Allowed` status will be returned, along with the XML payload below:
+
+[source,xml]
+....
+<?xml version="1.0" encoding="utf-8"?>
+<d:error xmlns:d="DAV:" xmlns:s="http://sabredav.org/ns">
+  <s:exception>Sabre\DAV\Exception\MethodNotAllowed</s:exception>
+  <s:message>Cannot create collections</s:message>
+</d:error>
+....
+
+include::partial$webdav_api/responses/insufficient-privileges-overview.adoc[]
+
+===  Remove Member
+:request_method: DELETE
+:request_data_file: 
+:request_path_suffix: <$numericGroupId>/<$userId>
+
+This endpoint allows for removing members from a custom group.
+
+NOTE: Only group admins can remove members. 
+Group admins cannot remove themselves if no other admin exists in the group.
+A group member can remove themselves using this API call.
+
+include::partial$/webdav_api/uri_request_table.adoc[]
+
+include::partial$/webdav_api/core_curl_request.adoc[tag=!use-data-option]
+
+==== Responses
+
+===== Success
+
+A successful request will only return a status of `HTTP/1.1 204 No Content`.
+No other information will be returned or displayed.
+
+===== Failure
+
+include::partial$webdav_api/responses/insufficient-privileges-overview.adoc[]
+
+===  Change Admin Role of a Member
+:request_method: PROPPATCH
+:request_data_file: 
+:request_path_suffix: <$numericGroupId>/<$userId>
+
+This endpoint allows for changing the admin role of an existing member of the group.
+
+include::partial$/webdav_api/uri_request_table.adoc[]
+
+include::partial$/webdav_api/core_curl_request.adoc[tag=**,!use-data-option]
+
+==== Responses
+
+===== Success
+
+===== Failure
+
+include::partial$webdav_api/responses/insufficient-privileges-overview.adoc[]
+
+===  List Group Memberships of a Given User
+:request_method: PROPFIND
+:request_data_file: 
+:request_base_path: /remote.php/dav/customgroups/users
+:request_path_suffix: <$userId>/<$membership>
+
+This endpoint lists the groups that a user is a member of.
+
+include::partial$/webdav_api/uri_request_table.adoc[]
+
+include::partial$/webdav_api/core_curl_request.adoc[tag=**,!use-data-option]
+
+==== Responses
+
+===== Success
+
+Successful requests return two things: 
+
+. An XML payload.
+. A status of `HTTP/1.1 207 Multi-Status`.
+
+You can see an example of the XML payload below.
+
+[source,xml]
+....
+include::example$core/webdav_api/group/response/list-group-memberships-of-a-given-user-successful-response.xml[]
+....
+
+===== Failure
+
+include::partial$webdav_api/responses/insufficient-privileges-overview.adoc[]
+////
+== REPORT
+
+.report-customgroups.xml
+[source,xml]
+....
+include::{examplesdir}/core/webdav_api/group/report-customgroups.xml[indent=0]
+....
+
+[source,console]
+....
+curl -u admin:admin -X REPORT \
+  -H "Content-Type: text/xml" \
+  --data-binary "@report-customgroups.xml" \
+  'http://localhost/owncloud/remote.php/dav/customgroups/'
+....
+
+[source,xml]
+....
+include::{examplesdir}/core/webdav_api/group/response-success.xml[indent=0]
+....
+////

@@ -1,0 +1,126 @@
+=== List Groups
+:page-partial:
+:request_method: PROPFIND
+:request_data_file: list-custom-groups.xml
+:request_path_suffix: 
+
+This endpoint returns a list of all custom groups.
+
+include::{partialsdir}/webdav_api/uri_request_table.adoc[]
+
+include::{partialsdir}/webdav_api/core_curl_request.adoc[]
+
+.{request_data_file}
+[source,xml]
+....
+include::example$core/webdav_api/group/request/list-custom-groups.xml[]
+....
+
+Successful requests return two things: 
+
+. An XML payload.
+. A status of `HTTP/1.1 207 Multi-Status`.
+
+You can see an example of the XML payload below.
+The XML payload contains a `response` element for each group.
+
+[source,xml]
+....
+include::example$core/webdav_api/group/response/list-groups-successful-response.xml[]
+....
+
+==== No Results
+
+If there are no custom groups, then a response similar to the following will be returned.
+
+[source,xml]
+....
+include::example$core/webdav_api/group/response/list-groups-no-results-response.xml[]
+....
+
+=== Rename Custom Group
+:request_method: PROPPATCH
+:request_data_file: rename-custom-group.xml
+:request_path_suffix: <$groupId>
+
+This endpoint allows a custom group to be renamed.
+
+NOTE: Only group admins can rename the groups that they manage.
+
+include::{partialsdir}/webdav_api/uri_request_table.adoc[]
+
+include::{partialsdir}/webdav_api/core_curl_request.adoc[]
+
+.{request_data_file}
+[source,xml]
+....
+include::example$core/webdav_api/group/request/rename-custom-group.xml[]
+....
+
+==== Responses
+
+===== Success
+
+A successful request will only return a status of `HTTP/1.1 204 No Content`.
+No other information will be returned or displayed.
+
+===== Failure
+
+include::partial$webdav_api/responses/insufficient-privileges-overview.adoc[]
+
+====== Missing Group
+
+If the specified group does not exist, then the following XML response body will be returned, along with an `HTTP/1.1 207 Multi-Status` status.
+
+[source,xml]
+....
+include::example$core/webdav_api/group/response/list-groups-missing-group-response.xml[]
+....
+
+===  Delete Group
+:request_method: DELETE
+:request_data_file: 
+:request_path_suffix: <$groupId>
+
+This endpoint allows for a custom group to be deleted.
+
+NOTE: Only group admins can delete a group.
+
+include::{partialsdir}/webdav_api/uri_request_table.adoc[]
+
+include::{partialsdir}/webdav_api/core_curl_request.adoc[]
+
+==== Responses
+
+===== Success
+
+A successful request will only return a status of `HTTP/1.1 204 No Content`.
+No other information will be returned or displayed.
+
+===== Failure
+
+include::partial$webdav_api/responses/insufficient-privileges-overview.adoc[]
+
+===  Create Group
+:request_method: MKCOL
+:request_path_suffix: <$groupId>
+
+This endpoint allows for creating a custom group.
+
+NOTE:  The group's creator automatically becomes the group's admin and its initial member.
+
+include::{partialsdir}/webdav_api/uri_request_table.adoc[]
+
+include::{partialsdir}/webdav_api/core_curl_request.adoc[]
+
+==== Responses
+
+===== Success
+
+A successful request will only return a status of `HTTP/1.1 201 Created`.
+No other information will be returned or displayed.
+
+===== Failure
+
+include::{partialsdir}/webdav_api/responses/insufficient-privileges-overview.adoc[]
+
