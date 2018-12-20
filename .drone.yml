@@ -84,6 +84,22 @@ pipeline:
       local: false
       event: [ push ]
 
+  update-search-index:
+    image: algolia/docsearch-scraper:latest
+    pull: true
+    secrets:  
+    - algolia_app_id
+    - algolia_config
+    - algolia_index_name
+    - algolia_search_api_key
+    - algolia_write_api_key 
+    environment:
+      - API_KEY=${ALGOLIA_WRITE_API_KEY}
+      - CONFIG=search/algolia-config.json
+    when:
+      event:
+      - push
+
   notify-slack:
     image: plugins/slack
     secrets: [ slack_webhook ]
