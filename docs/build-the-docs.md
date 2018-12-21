@@ -1,16 +1,30 @@
 # Building the Documentation
 
-You're now ready to build (generate) the ownCloud documentation.
+## Install Antora's Dependencies
+
+Before you can build the documentation, you need to install the required dependencies.
+To install them, you need to run `yarn install`.
+This will install all the dependencies specified in `package.json`.
+**Note:** If your environment already has GNU make installed, you can run `make install` instead.
+
+```console
+make install
+```
+
+With the dependencies installed, you are now ready to build (generate) the ownCloud documentation.
+
+## Generating the Documentation
+
 The documentation can be generated in HTML and PDF formats.
 
-## Generating HTML Documentation
+### Generating HTML Documentation
 
 There are two ways to generate the documentation in HTML format:
 
 - Using ownCloud's custom Antora Docker Container
 - Running Antora from the Command-Line
 
-### Using the Docker Container
+#### Using the Docker Container
 
 To build the documentation using the Docker container, from the command line, in the root of the docs directory, run the following command:
 
@@ -49,7 +63,7 @@ latest: Pulling from owncloudci/antora
 d5a49762c0f9: Download complete
 ```
 
-### Using Make
+#### Using Make
 
 This is the easiest way to build the documentation using predefined settings.
 
@@ -57,7 +71,7 @@ This is the easiest way to build the documentation using predefined settings.
 make html
 ```
 
-### Using the Antora Tools On The Command-Line
+#### Using the Antora Tools On The Command-Line
 
 If you want to use your own settings, run the command passing the necessary parameters manually, as in the example below.
 
@@ -74,7 +88,7 @@ DOCSEARCH_ENABLED=true DOCSEARCH_ENGINE=lunr antora --pull \
 
 - You can add the `--clean` option to clean the build directory of any leftover artifacts from the previous build, including PDF's.
 
-### Update The Generated Search Index
+#### Update The Generated Search Index
 
 The playbook file (`site.yml`) sets the `site.url` configuration directive to `http://localhost:5000`.
 It's likely fair to assume that this isn't the domain where the documentation will be hosted.
@@ -87,7 +101,7 @@ set -e
 sed -i 's/localhost:5000/<hosted domain and port>/g' public/search_index.json
 ```
 
-### Viewing The HTML Documentation
+#### Viewing The HTML Documentation
 
 Assuming that there are no errors, the next thing to do is to view the result in your browser.
 In case you have already installed a webserver, you need to make the html docmentation
@@ -117,7 +131,7 @@ Your changes will be reflected in the local version of the site that Serve is re
 
 We hope that you can see that contributing to the documentation using Antora is a pretty straight-forward process, and not _that_ demanding.
 
-## Generating PDF Documentation
+### Generating PDF Documentation
 
 To generate the documentation in PDF format, you need to have `asciidoctor-pdf` and GNU `make` installed, as PDF generation isn't, _yet_, supported by Antora.
 To install asciidoctor-pdf, please refer to [the official installation instructions](https://asciidoctor.org/docs/asciidoctor-pdf/).
@@ -145,7 +159,7 @@ make pdf
 
     This ensures that the defaults are overridden, where relevant, to ensure that the generated PDF is as close to the current ownCloud style as possible.
 
-## Viewing Build Errors
+### Viewing Build Errors
 
 If an aspect of your change contains invalid AsciiDoc, then you'll see output similar to the example below.
 
