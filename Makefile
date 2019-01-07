@@ -19,7 +19,7 @@ PLAYBOOK ?= site.yml
 .PHONY: help
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
-	@echo "  install      to install the Antora command-line tools locally via Yarn and NodeJS."
+	@echo "  setup        to setup the Antora command-line tools locally via Yarn and NodeJS."
 	@echo "  clean        to clean the build directory of any leftover artifacts from the previous build."
 	@echo "  validate     to validate all xref links of all manuals defined within configuration."
 	@echo "  html         to generate the HTML versions of all manuals defined within configuration."
@@ -27,10 +27,10 @@ help:
 	@echo "  check-prose  to lint English prose to support developers"
 
 #
-# Installs the Antora command-line tools locally.
+# Installs the Antora command-line tools along with all of its dependencies.
 #
-.PHONY: install
-install:
+.PHONY: setup
+setup:
 	@echo "Installing Antora's command-line tools locally."
 	yarn install
 
