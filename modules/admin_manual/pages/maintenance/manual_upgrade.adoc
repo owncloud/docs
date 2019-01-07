@@ -64,9 +64,12 @@ sudo service apache2 stop
 [[download-the-latest-installation]]
 == Download the Latest Installation
 
-Download the latest ownCloud server release from
-https://owncloud.org/install/[owncloud.org/install/]
-into an empty directory *outside* of your current installation.
+Download the latest ownCloud server release from https://owncloud.org/install/[owncloud.org/install/] into an empty directory *outside* of your current installation.
+
+[IMPORTANT]
+====
+Once you have done that, ensure that the downloaded archive xref:maintenance/update.adoc#setting-permissions-for-updating[is owned by the web user and that the correct permissions are set].
+====
 
 NOTE: Enterprise users must download their new ownCloud archives from their accounts on
 https://customer.owncloud.com/owncloud/.
@@ -108,9 +111,8 @@ unzip -q owncloud-10.0.3.zip -d /var/www/
 [[the-power-user-upgrade]]
 === The Power User Upgrade
 
-Rename your current ownCloud directory, for example, from `owncloud` to
-`owncloud-old`. Extract the unpacked ownCloud server directory and its
-contents to the location of your original ownCloud installation. :
+Rename your current ownCloud directory, for example, from `owncloud` to `owncloud-old`. 
+Extract the unpacked ownCloud server directory and its contents to the location of your original ownCloud installation.
 
 ....
 # Assumes that the new release was unpacked into /tmp/
@@ -172,11 +174,15 @@ that the directory permissions are the same as for the other ones.
 [[disable-maintenance-mode]]
 == Disable Maintenance Mode
 
-Assuming your upgrade succeeded, next disable maintenance mode. The
-simplest way is by using occ from the command line.
+Assuming your upgrade succeeded, next disable maintenance mode and restart the Cron service. 
+The following example shows how to do both.
 
 ....
+# Disable maintenance mode using the occ command.
 sudo -u www-data php occ maintenance:mode --off
+
+# Restart the Cron service
+sudo service cron stop
 ....
 
 [[restart-the-webserver]]
