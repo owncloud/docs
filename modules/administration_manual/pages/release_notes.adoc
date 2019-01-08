@@ -1,5 +1,6 @@
 = Release Notes
 
+* xref:changes-in-10.1[Changes in 10.1]
 * xref:changes-in-10.0.10[Changes in 10.0.10]
 * xref:changes-in-10.0.9[Changes in 10.0.9]
 * xref:changes-in-10.0.8[Changes in 10.0.8]
@@ -16,6 +17,63 @@
 * xref:changes-in-8.1[Changes in 8.1]
 * xref:changes-in-8.0[Changes in 8.0]
 * xref:changes-in-7.0[Changes in 7.0]
+
+[[changes-in-10.1]]
+== Changes in 10.1
+
+Dear ownCloud administrator, please find below the changes and known issues in ownCloud Server 10.1 that need your attention. You can also read https://owncloud.org/changelog/server/[the full ownCloud Server changelog] for further details on what has changed.
+
+=== Semantic Versioning
+
+Starting with this release, ownCloud Server and the app ecosystem will follow the principles of https://semver.org/[Semantic Versioning].
+This step was taken to benefit operators by clearly indicating the contents and upgrade procedures of new releases via version numbers. Practically, the versioning scheme will follow the "Major.Minor.Patch" (or "Breaking.Feature.Fix") format.
+App developers need to re-release their apps to make them compatible with the new version. For details, please refer to https://owncloud.org/news/switching-owncloud-to-semantic-versioning/[this blog post].
+
+=== Change Management for Server Updates
+
+`occ upgrade` pulls app updates from the ownCloud Marketplace to make sure that not only the Server itself but also the installed apps are kept up-to-date. In line with the new versioning principles `occ upgrade` as well as the https://marketplace.owncloud.com/apps/market[Market App] now make a difference between major and minor app updates. Practically, this means that during a minor Server upgrade only new minor app versions will be installed. This is to make sure that apps with breaking changes will not be automatically installed when upgrading the Server. The `--major` option for `occ upgrade` and `occ market:install` provides the means for administrators to force installing new major app versions. Additionally, the https://marketplace.owncloud.com/apps/market[Market App] now includes a version picker to enable administrators to choose which version of an app they want to install or upgrade to.
+
+=== MS Office Online Server Compatibility 
+
+Version 10.1 delivers all the prerequisites to be compatible with the Microsoft Office Online Server Integration (WOPI) that is about to become available. This enables providers to integrate ownCloud Server with Microsoft's Office Online Server which brings users the benefits of working on Office documents in the browser as well as collaboratively with other users. The integration will work with MS Office Online Server (on-premise) out-of-the-box. We kindly ask you to get in touch with us if you want to make use of the Office 365 (cloud) version of Office Online.
+
+=== WebDAV Locks
+
+ownCloud Server 10.1 introduces WebDAV Locks that allow clients to lock and unlock resources to prevent other users from making changes. The feature has been implemented as a prerequisite for manual file locking and MS Office Online Server compatibility. In the current state, file locking is only available via API. Users can recognize locked files via the "lock" icon in the file list. Additionally a lock owner (the user who locked the file) can manually unlock them via the "Locks" tab in the right sidebar. The "Locks" tab will only appear for files that have active locks.
+
+=== Federation: Compliance with proposed OpenCloudMesh 1.0 specification
+
+Federation enables instances of ownCloud and other supporting platforms to exchange information. It allows users to share data across installations building a worldwide collaboration network of decentralized nodes - each under the full control of it's provider. Together with the other vendors the underlying OpenCloudMesh API specification has been shifted to a new level to clean up the interface, improve its stability and to set the foundation for future feature improvements. ownCloud Server 10.1 is compliant with the new specification proposal. The introduction of the new specification does not involve changes in functionality for users.
+
+=== New Collaborative Tags Scope: Static Tags
+
+Version 10.1 comes with a new scope for Collaborative Tags called "Static Tags". In addition to the https://doc.owncloud.com/server/10.0/user_manual/files/webgui/tagging.html#filter-by-tag[other tag scopes], these tags are intended to be supplied by administrators and linked with policies in the https://marketplace.owncloud.com/apps/firewall[File Firewall], https://marketplace.owncloud.com/apps/files_classifier[Document Classification] or https://marketplace.owncloud.com/apps/workflow[Workflows], for example. Every user will be able to see these tags assigned to files but only users in specified groups have the permission to assign or unassign them. This makes it possible to equip certain users with the means to impose pre-defined policies upon files. To create such tags administrators need to use the https://marketplace.owncloud.com/apps/systemtags_management[Collaborative Tags Management] extension.
+
+=== Other notable changes
+
+- The user/group deletion in the users page now has a confirmation dialog to prevent unintentional user deletion
+- The default public link share name has been changed to be "Public link" instead of formerly the file or folder's name
+- Allow loading JSON files in setups with pretty URLs. Please check that the .htaccess file has updated automatically. If not, see https://github.com/owncloud/core/pull/32718/files for the required change.
+
+
+=== Solved known issues
+
+- LDAP users can upload avatars again https://github.com/owncloud/core/issues/33369[#33369]
+- Versions list performance improvements https://github.com/owncloud/core/issues/33291[#33291]
+- Improved compatibility with third party WebDAV applications (fixed PROPFIND with depth infinity requests through Sabre update) https://github.com/owncloud/core/issues/28341[#28341]
+- Fixed `occ encrypt-all` command to not attempt re-encrypting already encrypted files https://github.com/owncloud/core/issues/33206[#33206]
+
+=== Known issues
+
+Currently there are no known issues with ownCloud Server 10.1.
+
+=== For developers
+
+- Added "getBucket" method to HomeObjectStore to fix S3 issue https://github.com/owncloud/core/issues/33513[#33513]
+- Public JS utility function for email validation https://github.com/owncloud/core/issues/33699[#33699]
+- If only the patch level of an app's version changes no migrations will run when updating https://github.com/owncloud/core/issues/33218[#33218]
+- Deprecated Sharing 1.0 PHP APIs which will be removed in ownCloud 11 https://github.com/owncloud/core/issues/33220[#33220]
+- Add "uid" argument to Symfony login events for consistency https://github.com/owncloud/core/issues/33470[#33470]
 
 [[changes-in-10.0.10]]
 == Changes in 10.0.10
