@@ -8,14 +8,20 @@ page is _community-maintained_. Thank you, contributors!
 * Adjust *server_name*, *root*, *ssl_certificate*, *ssl_certificate_key* ect. to suit your needs.
 * Make sure your SSL certificates are readable by the server (see
 http://wiki.nginx.org/HttpSslModule[NGINX HTTP SSL Module documentation]).
-* `add_header` statements are only valid in the current `location` block
-and are not derived or cascaded from or to a different `location` block.
-All necessary `add_header` statements *must* be defined in each `location` block needed.
-* For better readability it is possible to move _common_ `add_header`
-directives into a separate file and include that file wherever
-necessary. However, each `add_header` directive must be written in a
-single line to prevent connection problems with sync clients.
-* The same is true for `map` directives which also can be collected into a singe file and then be included.
+* NGINX configuration blocks inherit `add_header` directives from their enclosing blocks, so you just need to
+place the `add_header` directive in the top‑level server block. There’s one important exception:
+if a block includes an `add_header` directive itself, it does not inherit headers from enclosing blocks,
+and you need to redeclare all `add_header` directives or reinclude them.
+* Because NGINX does not allow nested http://nginx.org/en/docs/http/ngx_http_rewrite_module.html[if] directives,
+you need to use the http://nginx.org/en/docs/http/ngx_http_map_module.html[map] directive.
+The position of a http://nginx.org/en/docs/http/ngx_http_core_module.html#location[location]
+directive connected to the result of the `map` directive is important for success.
+
+TIP: For better readability, it is possible and advised to move _common_ `add_header`
+directives into a separate file and include that file wherever necessary. However, each `add_header`
+directive must be written in a single line to prevent connection problems with sync clients.
+
+TIP: The same is true for `map` directives which also can be collected into a singe file and then be included.
 
 [[example-configurations]]
 == Example Configurations
@@ -64,7 +70,8 @@ buffers, or can´t remove a existing ignore header directive, you can
 explicitly enable following directive in the location block
 `fastcgi_buffering off;`
 
-NOTE: The directives `fastcgi_ignore_headers X-Accel-Buffering;` and `fastcgi_buffering off;` can be used separately but not together.
+NOTE: The directives `fastcgi_ignore_headers X-Accel-Buffering;` and `fastcgi_buffering off;`
+can be used separately but not together.
 
 [[owncloud-in-the-web-root-of-nginx]]
 === ownCloud in the web root of NGINX
@@ -72,7 +79,8 @@ NOTE: The directives `fastcgi_ignore_headers X-Accel-Buffering;` and `fastcgi_bu
 The following config should be used when ownCloud is placed in the web
 root of your NGINX installation.
 
-The configuration assumes that ownCloud is installed in `/var/www/owncloud` and is accessed via `http(s)://cloud.example.com`.
+The configuration assumes that ownCloud is installed in `/var/www/owncloud` and is accessed via
+`http(s)://cloud.example.com`.
 
 [source,nginx]
 ----
@@ -86,7 +94,9 @@ The following config should be used when ownCloud is placed under a
 different context root of your NGINX installation such as /owncloud or
 /cloud.
 
-The configuration assumes that ownCloud is installed in `/var/www/owncloud` is accessed via `http(s)://example.com/owncloud` and that you have `'overwriteweb root' => '/owncloud',` set in your `config/config.php`.
+The configuration assumes that ownCloud is installed in `/var/www/owncloud` is accessed via
+`http(s)://example.com/owncloud` and that you have `'overwriteweb root' => '/owncloud',`
+set in your `config/config.php`.
 
 [source,nginx]
 ----
@@ -141,16 +151,7 @@ message:
 Error 0x80070043 "The network name cannot be found." while adding a network drive
 ....
 
-A known workaround for this issue is to update your web server
-configuration.
-
-[verse]
---
-Because NGINX does not allow nested http://nginx.org/en/docs/http/ngx_http_rewrite_module.html[if] directives,
-you need to use the http://nginx.org/en/docs/http/ngx_http_map_module.html[map] directive.
-The position of the http://nginx.org/en/docs/http/ngx_http_core_module.html#location[location]
-directive is important for success.
---
+A known workaround for this issue is to update your web server configuration.
 
 *1 Create a map directive outside your server block*
 
