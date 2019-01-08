@@ -155,16 +155,12 @@ The `config/config.php` as created by the xref:installation/installation_wizard.
 [[configure-mysql-for-4-byte-unicode-support]]
 ==== Configure MySQL for 4-byte Unicode Support
 
-For supporting such features as emoji, you have to enable 4-byte Unicode
-support in MySQL (instead of the default 3) _and_ in ownCloud. If you
-have a new installation, you don’t need to do anything, as mb4 support
-is checked during setup, and used if available. If it’s available,
-ownCloud is configured to use it.
+For supporting such features as emoji both MySQL (or MariaDB) *and* ownCloud need to be configured to use 4-byte Unicode support instead of the default 3-byte. 
+If you are setting up a new ownCloud installation, using version 10.0 or above, *and* you’re using a minimum MySQL version of 5.7, then you don’t need to do anything, as support is checked during setup and used if available. 
 
-However, if you have an existing installation that you need to convert
-to use 4-byte Unicode support, then you need to do two things:
+However, if you have an existing ownCloud installation that you need to convert to use 4-byte Unicode support or you are working with MySQL earlier than version 5.7, then you need to do two things:
 
-1.  In your MySQL configuration, add the configuration settings below.
+1. In your MySQL configuration, add the configuration settings below.
 If you already have them configured, update them to reflect the values
 specified:
 
@@ -175,29 +171,28 @@ innodb_file_format=Barracuda
 innodb_file_per_table=ON
 ....
 
-Then, run the following command:
+2. Run the following occ command:
 
 ....
 ./occ db:convert-mysql-charset
 ....
 
-When this is done, tables will be created with a:
+When this is done, tables will be created with:
 
-* `utf8mb4` character set.
-* `utf8mb4_bin` collation.
-* `row_format` of compressed.
+* A `utf8mb4` character set.
+* A `utf8mb4_bin` collation.
+* `row_format` set to compressed.
 
-For more information, please either refer to lines 1126 to 1156 in
-`config/config.sample.php`, or have a read through the following links:
+For more information, please either refer to `config/config.sample.php`, lines 1126 to 1156, or have a read through the following links:
 
 * https://dev.mysql.com/doc/refman/5.7/en/innodb-parameters.html#sysvar_innodb_large_prefix
 * https://mariadb.com/kb/en/mariadb/xtradbinnodb-server-system-variables/\#innodb_large_prefix
 * http://www.tocker.ca/benchmarking-innodb-page-compression-performance.html
 * http://mechanics.flite.com/blog/2014/07/29/using-innodb-large-prefix-to-avoid-error-1071/
 * http://dev.mysql.com/doc/refman/5.7/en/charset-unicode-utf8mb4.html
-
-This is not required for new installations, only existing ones, as mb4
-support is checked during setup, and used if available.
+* https://dev.mysql.com/doc/refman/5.7/en/innodb-file-format.html
+* https://dev.mysql.com/doc/refman/5.7/en/innodb-multiple-tablespaces.html
+* https://dev.mysql.com/doc/refman/5.7/en/innodb-parameters.html#sysvar_innodb_large_prefix
 
 [[postgresql-database]]
 === PostgreSQL Database
