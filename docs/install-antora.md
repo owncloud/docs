@@ -28,14 +28,14 @@ After that, install the system requirements for your platform, whether that's [L
 These include the base build tools, Node 8, and NVM.
 
 Your system must have installed `yarn`. If this is not the case, [install yarn](https://yarnpkg.com/lang/en/docs/install)
-following the installation notes on the refrenced site. When `yarn` is installed, type following command
+following the installation notes on the referenced site. When `yarn` is installed, type following command
 in the root of your local docs repository to install all necessary dependencies:
 
 ```console
-make install
+make setup
 ```
 
-**Note:** if you identify issues because you have used as example `yarn install` instead of `make install` delete
-the `node_modules` directory and rerun `make install`.
+**Note:** if you identify issues because you have used `yarn install` instead of `make setup` delete
+the `node_modules` directory and rerun `make setup`.
 
 With the dependencies and Antora tools installed, you’re ready to [build the documentation](./build-the-docs.md) locally.
