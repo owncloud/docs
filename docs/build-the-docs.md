@@ -16,15 +16,12 @@ To build the documentation using the Docker container, from the command line, in
 
 ```
 docker run -ti --rm \
-    -e DOCSEARCH_ENABLED=true \
-    -e DOCSEARCH_ENGINE=lunr \
     -v $(pwd):/antora/ \
     -w /antora/ \
     owncloudci/antora:latest \
     --pull \
     --cache-dir /antora/cache/ \
     --redirect-facility static \
-    --generator ./generators/search.js \
     --stacktrace \
     site.yml
 ```
@@ -74,10 +71,9 @@ If you want to use your own settings, run the command passing the necessary para
 **Note:** The environment variables at the beginning are required for building the docs with integrated site search.
 
 ```
-DOCSEARCH_ENABLED=true DOCSEARCH_ENGINE=lunr antora --pull \
+antora --pull \
     --cache-dir ./cache/ \
     --redirect-facility static \
-    --generator ./generators/search.js \
     --stacktrace \
     site.yml
 ```

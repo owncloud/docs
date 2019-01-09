@@ -59,7 +59,12 @@ validate:
 .PHONY: html
 html:
 	@echo "Building HTML versions of all manuals defined within configuration"
-	-antora generate --pull --cache-dir $(CACHE_DIR) --redirect-facility $(REDIRECTS) --stacktrace --generator ./generators/search.js $(PLAYBOOK)
+	-antora generate \
+		--pull \
+		--cache-dir $(CACHE_DIR) \
+		--redirect-facility $(REDIRECTS) \
+		--stacktrace \
+		$(PLAYBOOK)
 	@echo
 
 .PHONY: html-local
