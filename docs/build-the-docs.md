@@ -43,6 +43,8 @@ docker run -ti --rm \
     site.yml
 ```
 
+**Note:** Use `site.local.yml` instead of `site.yml` if you want to see any local changes.
+
 This command:
 
 - Starts up [ownCloud's custom Antora Docker container](https://hub.docker.com/r/owncloudci/antora/)
@@ -65,13 +67,21 @@ d5a49762c0f9: Download complete
 
 #### Using Make
 
-This is the easiest way to build the documentation using predefined settings.
+Using Make, as in the example below, is the easiest way to build the documentation.
+The Makefile has a predefined target (`html`) which calls Antora, supplying all of the required options to build the docs, to build the documentation on the master branch of [the ownCloud documentation repository](https://github.com/owncloud/docs).
 
 ```
 make html
 ```
 
-#### Using the Antora Tools On The Command-Line
+If you are making local changes in a development branch, use the `html-local` target instead.
+This target generates the HTML documentation using the local (git) working directory, not the remote branch.
+
+```console
+make html-local
+```
+
+### Using the Antora Tools On The Command-Line
 
 If you want to use your own settings, run the command passing the necessary parameters manually, as in the example below.
 
@@ -85,6 +95,8 @@ DOCSEARCH_ENABLED=true DOCSEARCH_ENGINE=lunr antora --pull \
     --stacktrace \
     site.yml
 ```
+
+**Note:** Use `site.local.yml` instead of `site.yml` if you want to see any local changes.
 
 - You can add the `--clean` option to clean the build directory of any leftover artifacts from the previous build, including PDF's.
 
