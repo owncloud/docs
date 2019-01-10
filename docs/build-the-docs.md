@@ -1,16 +1,30 @@
 # Building the Documentation
 
-You're now ready to build (generate) the ownCloud documentation.
+## Install Antora's Dependencies
+
+Before you can build the documentation, you need to install the required dependencies.
+To install them, you need to run `yarn install`.
+This will install all the dependencies specified in `package.json`.
+**Note:** If your environment already has GNU make installed, you can run `make install` instead.
+
+```console
+make install
+```
+
+With the dependencies installed, you are now ready to build (generate) the ownCloud documentation.
+
+## Generating the Documentation
+
 The documentation can be generated in HTML and PDF formats.
 
-## Generating HTML Documentation
+### Generating HTML Documentation
 
 There are two ways to generate the documentation in HTML format:
 
 - Using ownCloud's custom Antora Docker Container
 - Running Antora from the Command-Line
 
-### Using the Docker Container
+#### Using the Docker Container
 
 To build the documentation using the Docker container, from the command line, in the root of the docs directory, run the following command:
 
@@ -48,7 +62,7 @@ latest: Pulling from owncloudci/antora
 d5a49762c0f9: Download complete
 ```
 
-### Using Make
+#### Using Make
 
 Using Make, as in the example below, is the easiest way to build the documentation.
 The Makefile has a predefined target (`html`) which calls Antora, supplying all of the required options to build the docs, to build the documentation on the master branch of [the ownCloud documentation repository](https://github.com/owncloud/docs).
@@ -104,7 +118,7 @@ API_KEY=<YOUR_API_KEY> \
 ./docsearch docker:run <path_to_config>
 ```
 
-This command runs Algolia’s scrapes the documentation and builds a new search index based on the information found; a search index designed and optimized *specifically* for documentation sites.
+This command runs Algolia’s docsearch scraper, which scrapes the documentation and builds a new search index based on the information found; a search index designed and optimized *specifically* for documentation sites.
 
 #### Note
 
@@ -142,7 +156,7 @@ Your changes will be reflected in the local version of the site that Serve is re
 
 We hope that you can see that contributing to the documentation using Antora is a pretty straight-forward process, and not _that_ demanding.
 
-## Generating PDF Documentation
+### Generating PDF Documentation
 
 To generate the documentation in PDF format, you need to have `asciidoctor-pdf` and GNU `make` installed, as PDF generation isn't, _yet_, supported by Antora.
 To install asciidoctor-pdf, please refer to [the official installation instructions](https://asciidoctor.org/docs/asciidoctor-pdf/).
@@ -170,7 +184,7 @@ make pdf
 
     This ensures that the defaults are overridden, where relevant, to ensure that the generated PDF is as close to the current ownCloud style as possible.
 
-## Viewing Build Errors
+### Viewing Build Errors
 
 If an aspect of your change contains invalid AsciiDoc, then you'll see output similar to the example below.
 
