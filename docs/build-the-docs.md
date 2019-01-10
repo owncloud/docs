@@ -82,18 +82,35 @@ antora --pull \
 
 - You can add the `--clean` option to clean the build directory of any leftover artifacts from the previous build, including PDF's.
 
-### Update The Generated Search Index
+## Updating Search Index
 
-The playbook file (`site.yml`) sets the `site.url` configuration directive to `http://localhost:5000`.
-It's likely fair to assume that this isn't the domain where the documentation will be hosted.
+Manual updates of the search index, which powers the integrated site search, are not normally required, as the CI pipeline manages this process automatically.
+However, just in case an update is required, this is how to do it.
 
-Using `sed`, such as in the following example, from the root directory of the project should suffice.
+To update the search index you need to use [Algolia's docsearch-scraper](https://github.com/algolia/docsearch-scraper).
+If it is not already installed, here is how to do so:
 
-```bash
-#!/bin/bash
-set -e
-sed -i 's/localhost:5000/<hosted domain and port>/g' public/search_index.json
+1. Clone [the docsearch-scraper repository](https://github.com/algolia/docsearch-scraper).
+2. Install [pipenv](https://pipenv.readthedocs.io/en/latest/install/#installing-pipenv).
+3. Initialize and start pipenv by running `pipenv install` and `pipenv shell`.
+
+Once these steps are complete, run the following command, adding the relevant values from ownCloud's Algolia account, to update the search index.
+If you do not have access to ownCloud's Algolia account, please contact tboerger@owncloud.com.
+
 ```
+cd docsearch-scraper
+APPLICATION_ID=<YOUR_APP_ID> \
+API_KEY=<YOUR_API_KEY> \
+./docsearch docker:run <path_to_config>
+```
+
+This command runs Algolia’s scrapes the documentation and builds a new search index based on the information found; a search index designed and optimized *specifically* for documentation sites.
+
+#### Note
+
+1. To run this command, you will need [Docker](https://docs.docker.com/) installed.
+2. The configuration file for the script is stored in `algolia-config.json`, located in the root directory of ownCloud's docs repository.
+The configuration stores the documentation base URL, along with CSS selectors to help the scraper work with the site’s content structure.
 
 ### Viewing The HTML Documentation
 
