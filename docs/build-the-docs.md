@@ -1,30 +1,41 @@
 # Building the Documentation
 
-You're now ready to build (generate) the ownCloud documentation.
+## Install Antora's Dependencies
+
+Before you can build the documentation, you need to install the required dependencies.
+To install them, you need to run `yarn install`.
+This will install all the dependencies specified in `package.json`.
+**Note:** If your environment already has GNU make installed, you can run `make install` instead.
+
+```console
+make install
+```
+
+With the dependencies installed, you are now ready to build (generate) the ownCloud documentation.
+
+## Generating the Documentation
+
 The documentation can be generated in HTML and PDF formats.
 
-## Generating HTML Documentation
+### Generating HTML Documentation
 
 There are two ways to generate the documentation in HTML format:
 
 - Using ownCloud's custom Antora Docker Container
 - Running Antora from the Command-Line
 
-### Using the Docker Container
+#### Using the Docker Container
 
 To build the documentation using the Docker container, from the command line, in the root of the docs directory, run the following command:
 
 ```
 docker run -ti --rm \
-    -e DOCSEARCH_ENABLED=true \
-    -e DOCSEARCH_ENGINE=lunr \
     -v $(pwd):/antora/ \
     -w /antora/ \
     owncloudci/antora:latest \
     --pull \
     --cache-dir /antora/cache/ \
     --redirect-facility static \
-    --generator ./generators/search.js \
     --stacktrace \
     site.yml
 ```
@@ -51,7 +62,7 @@ latest: Pulling from owncloudci/antora
 d5a49762c0f9: Download complete
 ```
 
-### Using Make
+#### Using Make
 
 Using Make, as in the example below, is the easiest way to build the documentation.
 The Makefile has a predefined target (`html`) which calls Antora, supplying all of the required options to build the docs, to build the documentation on the master branch of [the ownCloud documentation repository](https://github.com/owncloud/docs).
@@ -74,10 +85,9 @@ If you want to use your own settings, run the command passing the necessary para
 **Note:** The environment variables at the beginning are required for building the docs with integrated site search.
 
 ```
-DOCSEARCH_ENABLED=true DOCSEARCH_ENGINE=lunr antora --pull \
+antora --pull \
     --cache-dir ./cache/ \
     --redirect-facility static \
-    --generator ./generators/search.js \
     --stacktrace \
     site.yml
 ```
@@ -86,18 +96,35 @@ DOCSEARCH_ENABLED=true DOCSEARCH_ENGINE=lunr antora --pull \
 
 - You can add the `--clean` option to clean the build directory of any leftover artifacts from the previous build, including PDF's.
 
-### Update The Generated Search Index
+## Updating Search Index
 
-The playbook file (`site.yml`) sets the `site.url` configuration directive to `http://localhost:5000`.
-It's likely fair to assume that this isn't the domain where the documentation will be hosted.
+Manual updates of the search index, which powers the integrated site search, are not normally required, as the CI pipeline manages this process automatically.
+However, just in case an update is required, this is how to do it.
 
-Using `sed`, such as in the following example, from the root directory of the project should suffice.
+To update the search index you need to use [Algolia's docsearch-scraper](https://github.com/algolia/docsearch-scraper).
+If it is not already installed, here is how to do so:
 
-```bash
-#!/bin/bash
-set -e
-sed -i 's/localhost:5000/<hosted domain and port>/g' public/search_index.json
+1. Clone [the docsearch-scraper repository](https://github.com/algolia/docsearch-scraper).
+2. Install [pipenv](https://pipenv.readthedocs.io/en/latest/install/#installing-pipenv).
+3. Initialize and start pipenv by running `pipenv install` and `pipenv shell`.
+
+Once these steps are complete, run the following command, adding the relevant values from ownCloud's Algolia account, to update the search index.
+If you do not have access to ownCloud's Algolia account, please contact tboerger@owncloud.com.
+
 ```
+cd docsearch-scraper
+APPLICATION_ID=<YOUR_APP_ID> \
+API_KEY=<YOUR_API_KEY> \
+./docsearch docker:run <path_to_config>
+```
+
+This command runs Algolia’s docsearch scraper, which scrapes the documentation and builds a new search index based on the information found; a search index designed and optimized *specifically* for documentation sites.
+
+#### Note
+
+1. To run this command, you will need [Docker](https://docs.docker.com/) installed.
+2. The configuration file for the script is stored in `algolia-config.json`, located in the root directory of ownCloud's docs repository.
+The configuration stores the documentation base URL, along with CSS selectors to help the scraper work with the site’s content structure.
 
 ### Viewing The HTML Documentation
 
@@ -129,7 +156,7 @@ Your changes will be reflected in the local version of the site that Serve is re
 
 We hope that you can see that contributing to the documentation using Antora is a pretty straight-forward process, and not _that_ demanding.
 
-## Generating PDF Documentation
+### Generating PDF Documentation
 
 To generate the documentation in PDF format, you need to have `asciidoctor-pdf` and GNU `make` installed, as PDF generation isn't, _yet_, supported by Antora.
 To install asciidoctor-pdf, please refer to [the official installation instructions](https://asciidoctor.org/docs/asciidoctor-pdf/).
@@ -157,7 +184,7 @@ make pdf
 
     This ensures that the defaults are overridden, where relevant, to ensure that the generated PDF is as close to the current ownCloud style as possible.
 
-## Viewing Build Errors
+### Viewing Build Errors
 
 If an aspect of your change contains invalid AsciiDoc, then you'll see output similar to the example below.
 
