@@ -30,6 +30,9 @@ To build the documentation using the Docker container, from the command line, in
 
 ```
 docker run -ti --rm \
+    -e ALGOLIA_APP_ID=<the algolia app id> \
+    -e ALGOLIA_API_KEY=<the algolia api key> \
+    -e ALGOLIA_INDEX_NAME=<the algolia index name> \
     -v $(pwd):/antora/ \
     -w /antora/ \
     owncloudci/antora:latest \
@@ -82,9 +85,12 @@ make html-local
 
 If you want to use your own settings, run the command passing the necessary parameters manually, as in the example below.
 
-**Note:** The environment variables at the beginning are required for building the docs with integrated site search.
+**Note:** The environment variables at the beginning are required for building the docs with integrated, Algolia, site search.
 
 ```
+ALGOLIA_APP_ID=<the algolia app id> \
+ALGOLIA_API_KEY=<the algolia api key> \
+ALGOLIA_INDEX_NAME=<the algolia index name> \
 antora --pull \
     --cache-dir ./cache/ \
     --redirect-facility static \
@@ -96,7 +102,7 @@ antora --pull \
 
 - You can add the `--clean` option to clean the build directory of any leftover artifacts from the previous build, including PDF's.
 
-## Updating Search Index
+## Updating the Search Index
 
 Manual updates of the search index, which powers the integrated site search, are not normally required, as the CI pipeline manages this process automatically.
 However, just in case an update is required, this is how to do it.
@@ -129,10 +135,8 @@ The configuration stores the documentation base URL, along with CSS selectors to
 ### Viewing The HTML Documentation
 
 Assuming that there are no errors, the next thing to do is to view the result in your browser.
-In case you have already installed a webserver, you need to make the html docmentation
-available pointing to subdirectory `public`
-or for easy handling use the [NPM Serve tool](https://www.npmjs.com/package/serve) so that you can view your changes,
-before committing and pushing the changes to the remote docs repository.
+In case you have already installed a webserver, you need to make the HTML docmentation
+available pointing to subdirectory `public` or for easy handling use the [NPM Serve tool](https://www.npmjs.com/package/serve) so that you can view your changes, before committing and pushing the changes to the remote docs repository.
 You could also use [PHP's built-in webserver](https://secure.php.net/manual/en/features.commandline.webserver.php) as well.
 
 The following example uses *Serve*, to start it run the following command in the root of your docs repository:
