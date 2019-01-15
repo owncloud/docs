@@ -287,13 +287,14 @@ ln -s /etc/apache2/sites-available/owncloud.conf /etc/apache2/sites-enabled/ownc
 
 * For ownCloud to work correctly, we need the module `mod_rewrite`.
 Enable it by running: `a2enmod rewrite`.
-Additionally recommended modules are `mod_headers`, `mod_env`, `mod_dir` and `mod_mime`.
+Additionally recommended modules are `mod_headers`, `mod_env`, `mod_dir`, `mod_mime`, and `mod_unique_id`.
 To enable them, run the following commands:
 
   a2enmod headers
   a2enmod env
   a2enmod dir
   a2enmod mime
+  a2enmod unique_id
 
 NOTE: If you want to use https://marketplace.owncloud.com/apps/oauth2[the OAuth2 app], then
 http://httpd.apache.org/docs/current/mod/mod_headers.html[mod_headers] must be installed and enabled.
@@ -321,6 +322,26 @@ service apache2 restart
 * If you’re running ownCloud in a sub-directory and want to use CalDAV
 or CardDAV clients make sure you have configured the correct
 service-discovery-label URLs.
+
+=== Apache Mod_Unique_Id Configuration
+
+http://httpd.apache.org/docs/current/mod/mod_unique_id.html[mod_unique_id]:
+
+> Provides a magic token for each request which is guaranteed to be unique across "all" requests under very specific conditions.
+
+If you enable the module, there is nothing else that you have to do, as ownCloud automatically includes the `UNIQUE_ID` environment variable, which the module makes available, in ownCloud's log file.
+
+To confirm that it's working though, check that the `UNIQUE_ID` environment variable is being set, by running `phpinfo()` (as in the screenshot below).
+
+image:installation/webservers/apache/mod_unique_id/phpinfo.png[phpinfo() showing that Apache is sending the UNIQUE_ID value from mod_unique_id]
+
+Next, compare the value set for `UNIQUE_ID` in the output of `phpinfo()` with the value in ownCloud's log file, to ensure that they're the same. 
+In the example below, you can see an example log entry, where ownCloud is logging the unique id provided by Apache, as the value for the first key `reqId` in the record.
+
+[source,json]
+....
+include::example$installation/webservers/apache/log-entry.json[]
+....
 
 [[multi-processing-module-mpm]]
 === Multi-Processing Module (MPM)
