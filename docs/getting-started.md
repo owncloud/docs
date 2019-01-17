@@ -15,7 +15,6 @@ Before you can contribute to the documentation, you need to:
 1. [Have a GitHub account](#have-a-github-account).
 2. [Know the AsciiDoc basics.](#asciidoc-basics)
 
-<a name="have-a-github-account"></a>
 #### Have a GitHub Account
 
 If you don't already have an account, you can [sign up for a new one](https://github.com/).
@@ -23,7 +22,6 @@ You only need to provide a _username_, _email address_, and a _password_.
 
 ![Create a new GitHub account.](images/getting-started/non-developers/github-signup.png)
 
-<a name="asciidoc-basics"></a>
 #### Know the AsciiDoc Basics
 
 While [the AsciiDoc file format](https://asciidoctor.org/docs/asciidoc-syntax-quick-reference/) is quite rich, you're likely to only need a small portion of it, a lot of the time.
@@ -47,7 +45,6 @@ puts "Hello, World!"
 
 Have a read through [the AsciiDoctor Syntax Quick Reference](https://asciidoctor.org/docs/asciidoc-syntax-quick-reference/) to familiarise yourself with the format's essentials.
 
-<a name="creating-new-issues"></a>
 #### Creating New Issues
 
 Creating new issues is one of the most helpful ways to contribute to the ownCloud documentation.
