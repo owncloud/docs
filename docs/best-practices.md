@@ -2,7 +2,7 @@
 
 This page gives contributors a quick overview of tips and best practices for 
 writing in AsciiDoc. It is for sure not complete nor covers all possibilities, but gives a quick
-refrence for common used writing and formatting tasks. For a complete reference see the
+reference for common used writing and formatting tasks. For a complete reference see the
 [Asciidoctor Documentation](https://asciidoctor.org/docs/).
 
 **Table of Contents**
@@ -82,10 +82,10 @@ An `xref` is written in following example style: `xref:module_name:<path>/file.a
 
 Where `module_name:`, `#section` and `[Printed Name]` are optional components.
 `module_name:` is mandatory when referenced content is not in the same module.
-`<path>` is the path to your refrenced file.
+`<path>` is the path to your referenced file.
 
 You can reference a section or an anchor inside the same file, another file - even in another module.
- 
+
 Example: `xref:configuration/server/occ_command.adoc#apps-commands[the Market app]`
 
 ## Images
@@ -101,7 +101,7 @@ An `image` is written in following example style: `image:<path>/image_name[Alter
 Example: `image:configuration/files/encryption1.png[Encryption]`
 
 **IMPORTANT**
-Please be adviced, in case you use an Alternative Image Text, not to use double quotes to highlight some text elements.
+Please be advised, in case you use an Alternative Image Text, not to use double quotes to highlight some text elements.
 Double quotes will be rendered properly when the html documentation is built, but creating the pdf will return
 a warning that the string can not be parsed and the complete image link is broken. 
 You can avoid that by using single quotes and ticks (not backticks!) instead.
@@ -185,7 +185,7 @@ include::{examplesdir}/installation/post-installation-steps.sh[]
 
 Reference: [`Literal Text and Blocks`](https://asciidoctor.org/docs/user-manual/#literal-text-and-blocks)
 
-Literal paragraphs and blocks display the text you write exactly as you enter it. Literal text is treated as preformatted text.
+Literal paragraphs and blocks display the text you write exactly as you enter it. Literal text is treated as pre-formatted text.
 
 Example:
 ```
@@ -277,9 +277,9 @@ This is the next line separated by a line break.
 Reference: [`Text Formatting`](https://asciidoctor.org/docs/user-manual/#text-formatting)
 
 There are various ways to emphasize text.
-You can use styles like `bold`, `italic`, ect respectively `quote` text.
+You can use styles like `bold`, `italic`, etc respectively `quote` text.
 
-If you want to print a tick or backtick ect as it is, you must escape it.
+If you want to print a tick or backtick etc as it is, you must escape it.
 
 Please see the reference link for more details.
 
@@ -370,10 +370,10 @@ Note: please check for documentation build warnings or use a [broken link checke
 
 #### Referencing Sections with xref
 
-Each section is by design it's own refrence ID called an `Anchor` which can be referenced with xref in the same or from another document. You can also give the section an own custom ID.
+Each section is by design it's own reference ID called an `Anchor` which can be referenced with xref in the same or from another document. You can also give the section an own custom ID.
 
 When using [`Auto-generated IDs`](https://asciidoctor.org/docs/user-manual/#auto-generated-ids) some rules apply:
-Compared to AsciiDoc's standard, owncloud has set it's own definition:
+Compared to AsciiDoc's standard, ownCloud has set it's own definition:
 
 * All characters are converted to lowercase
 * Spaces, hyphens, and periods are substituted by a dash `-`
@@ -403,7 +403,7 @@ xref:custom_id[Text to Print]
 
 Reference: [`Defining an Anchor`](https://asciidoctor.org/docs/user-manual/#anchordef)
 
-In the same way creating a custom ID (anchor) for sections, you can create an anchor at any location you want to refrence to.
+In the same way creating a custom ID (anchor) for sections, you can create an anchor at any location you want to reference to.
 
 Example:
 ```
@@ -419,8 +419,8 @@ xref:custom_id[Text to Print]
 Reference: [`Tables`](https://asciidoctor.org/docs/user-manual/#tables)
 
 Tables are delimited by `|===` and made up of cells.
-Cells are seperated by a vertical bar `|`.
-There are many ways to create and format tables, please see the refrence for more details.
+Cells are separated by a vertical bar `|`.
+There are many ways to create and format tables, please see the reference for more details.
 You can also take a look to already created tables in the documentation.
 
 Example with defining table and cell width size plus the use of headers:
