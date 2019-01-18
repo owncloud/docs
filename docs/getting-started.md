@@ -43,7 +43,7 @@ puts "Hello, World!"
 ====
 ```
 
-Have a read through [the AsciiDoctor Syntax Quick Reference](https://asciidoctor.org/docs/asciidoc-syntax-quick-reference/) to familiarise yourself with the format's essentials.
+Have a read through [the AsciiDoctor Syntax Quick Reference](https://asciidoctor.org/docs/asciidoc-syntax-quick-reference/) to familiarise yourself with the format's essentials. Please also refer to [Best Practices and Tips](./docs/best-practices.md) for more information.
 
 #### Creating New Issues
 
