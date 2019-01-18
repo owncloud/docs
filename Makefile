@@ -13,6 +13,10 @@ VERSION ?= 10.0.10
 REDIRECTS ?= static
 PLAYBOOK ?= site.yml
 
+ALGOLIA_API_KEY ?=
+ALGOLIA_APPLICATION_ID ?=
+ALGOLIA_INDEX_NAME ?= owncloud
+
 #
 # Print a basic help about the available targets.
 #
@@ -68,7 +72,7 @@ html:
 	@echo
 
 .PHONY: html-local
-html-local: 
+html-local:
 	@$(MAKE) html PLAYBOOK=site.local.yml
 
 #
