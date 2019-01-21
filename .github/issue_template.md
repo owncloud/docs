@@ -17,6 +17,18 @@ To make it possible for us to help you, please fill out below information carefu
 - [ ] Admin Manual
 - [ ] Developer Manual
 - [ ] User Manual
+- [ ] Android
+- [ ] iOS
+- [ ] Branded Clients
+- [ ] Desktop Client
+- [ ] Other
+
+## Where Does This Need To Be Documented?
+<!--
+If this is a new content addition, please provide the path(s)
+to the relevant file(s), if known, where the new information needs
+to be added.
+-->
 
 ## What Needs to be Documented?
 <!--
