@@ -1,4 +1,5 @@
 = Using occ apps commands
+:php-datetime-url: https://secure.php.net/manual/en/datetime.formats.php
 
 This command reference covers the ownCloud maintained apps commands.
 
@@ -23,7 +24,7 @@ Please ensure that the app you are going to configure is installed and enabled.
 * xref:s3-objectstore[S3 Objectstore]
 * xref:ldap[LDAP]
 * xref:market_commands[Market]
-* xref:password_policy[Password Policy]
+* xref:password-policy[Password Policy]
 * xref:ransomware[Ransomware Protection]
 * xref:samle_sso_sibboleth_integration[SAML/SSO Shibboleth Integration]
 * xref:two_factor_authentication[Two Factor Authentication]
@@ -823,13 +824,11 @@ sudo -u www-data occ market:upgrade <ids> [options]
 | `--major`        | Allow update to a new major version.
 |===
 
-
-[password-policy]]
 == Password Policy
 
 Marketplace URL: https://marketplace.owncloud.com/apps/password_policy[Password Policy]
 
-Command to expire a users password.
+Command to expire a user or group of users’ passwords.
 
 === Command Description
 
@@ -846,22 +845,25 @@ sudo -u www-data occ user:expire-password <uid> [<expiredate>]
 e.g. `2019-01-01 14:00:00 CET` or -1 days.
 |===
 
-The expiry date can be provided using any of https://secure.php.net/manual/en/datetime.formats.php[PHP's supported date and time formats].
+TIP: The expiry date can be provided using any of {php-datetime-url}[PHP's supported date and time formats].
 
 ==== Options
 
 [width="100%",cols="23%,82%",]
 |===
-| `-a, --all`      | Will add password expiry to all known users.
+| `-a, --all`      
+| Will add password expiry to all known users.
 uid and group option are discarded if the option is provided by user.
+
 | `-u [UID]` +
-`--uid=[UID]`     | The user’s uid is used. +
-This option can be used as `–uid Alice –uid Bob`.
+`--uid=[UID]`     
+| The uid of the user to expire the password for. +
+To expire the password of multiple users, pass the `-u` or `--uid` option multiple times, as in this example: `--uid "Alice" --uid "Bob"`.
+
 | `-g [GROUP]` +
-`--group=[GROUP]` | Add password expiry to user(s) under group(s). +
-This option can be used as –group `foo` –group `bar` to add expiry passwords for users 
-in group foo and bar. If uid option (eg: –uid `user1`) is passed with group, 
-then uid will also be processed.
+`--group=[GROUP]` 
+| Add password expiry to user(s) in one or more groups. +
+This option can be used as `--group foo --group bar` to add expiry passwords for users in multiple groups. 
 |===
 
 If an expiry date is not supplied, the password will expire with immediate effect.
@@ -879,16 +881,16 @@ The password for frank is set to expire on 2018-07-12 13:15:28 UTC.
 
 ....
 # The password for user "frank" will be set as being expired 24 hours before the command was run.
-sudo -u www-data php occ user:expire-password frank
+sudo -u www-data php occ user:expire-password -u frank
 
 # Expire the user "frank"'s password in 2 days time.
-sudo -u www-data php occ user:expire-password frank '+2 days'
+sudo -u www-data php occ user:expire-password -u frank '+2 days'
 
 # Expire the user "frank"'s password on the 15th of August 2005, at 15:52:01 in the local timezone.
-sudo -u www-data php occ user:expire-password frank '2005-08-15T15:52:01+00:00'
+sudo -u www-data php occ user:expire-password --uid frank '2005-08-15T15:52:01+00:00'
 
 # Expire the user "frank"'s password on the 15th of August 2005, at 15:52:01 UTC.
-sudo -u www-data php occ user:expire-password frank '15-Aug-05 15:52:01 UTC'
+sudo -u www-data php occ user:expire-password --uid frank '15-Aug-05 15:52:01 UTC'
 ....
 
 === Caveats
