@@ -1,5 +1,4 @@
-<!-- Short on time? Just write what you’re thinking. -->
-
+<!-- Short on time? Just write what you’re thinking. But be aware less info = longer time to implement  -->
 
 
 <!-- Have more time? Please answer out as many of the questions below as you can. -->
@@ -9,7 +8,12 @@ Describe, in detail, what changes are required.
 However, don’t make it a Ph.D. thesis or "War and Peace".
 -->
 
-
+## Where Does This Need To Be Documented?
+<!--
+If this is a new content addition, please provide the path(s)
+to the relevant file(s), if known, where the new information needs
+to be added.
+-->
 
 ## Why Should This Change Be Made? (Optional)
 <!--
@@ -17,16 +21,6 @@ Describe, in detail, why these changes are required.
 However, don’t make it a Ph.D. thesis or "War and Peace".
 This helps ensure that your issue is implemented.
 -->
-
-
-
-## Where Does This Need To Be Documented? (Optional)
-<!--
-If this is a new content addition, please provide the path(s)
-to the relevant file(s), if known, where the new information needs
-to be added.
--->
-
 
 
 <!--
