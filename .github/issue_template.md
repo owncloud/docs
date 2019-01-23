@@ -1,19 +1,44 @@
+<!-- Short on time? Just write what you’re thinking. -->
+
+
+
+<!-- Have more time? Please answer out as many of the questions below as you can. -->
+## What Needs to be Documented?
 <!--
-Thanks for wanting to contribute to the ownCloud documentation!
-
-However, before reporting any issues, please make sure that you're using the latest available version of master.
-
-To make it possible for us to help you, please fill out below information carefully.
+Describe, in detail, what changes are required.
+However, don’t make it a Ph.D. thesis or "War and Peace".
 -->
-## What Type Of Content Change Is This?
-<!-- Please choose all that apply. -->
+
+
+
+## Why Should This Change Be Made? (Optional)
+<!--
+Describe, in detail, why these changes are required.
+However, don’t make it a Ph.D. thesis or "War and Peace".
+This helps ensure that your issue is implemented.
+-->
+
+
+
+## Where Does This Need To Be Documented? (Optional)
+<!--
+If this is a new content addition, please provide the path(s)
+to the relevant file(s), if known, where the new information needs
+to be added.
+-->
+
+
+
+<!--
+The following questions are for planning by the docs team.
+-->
+## What Type Of Content Change Is This? (Optional)
 - [ ] New Content Addition
 - [ ] Old Content Deprecation
 - [ ] Existing Content Simplification
 - [ ] Bug Fix to Existing Content
 
-## Which Manual Does This Relate To?
-<!-- Please choose all that apply. -->
+## Which Manual Does This Relate To? (Optional)
 - [ ] Admin Manual
 - [ ] Developer Manual
 - [ ] User Manual
@@ -22,27 +47,4 @@ To make it possible for us to help you, please fill out below information carefu
 - [ ] Branded Clients
 - [ ] Desktop Client
 - [ ] Other
-
-## Where Does This Need To Be Documented?
-<!--
-If this is a new content addition, please provide the path(s)
-to the relevant file(s), if known, where the new information needs
-to be added.
--->
-
-## What Needs to be Documented?
-<!--
-Please be generous and describe, in detail, what change needs to be made.
-Don’t make it a Ph.D. thesis or War and Peace, but provide enough detail so that others can:
-
-1. Understand why the change should be made.
-2. Who to talk to, to collect the required information.
-3. Who the most appropriate person is to make the change.
-4. Who the most appropriate person is to review the change.
--->
-
-## Why Should This Change Be Made?
-<!--
-As with "What Needs to be Documented", be generous in describing the reasons why this change needs to be made. Sometimes it can be hard to justify the time to implement one issue over another. So to help ensure that your issue is implemented, make sure you provide enough information so that the team can know that your issue needs to have time allocated to it.
--->
 
