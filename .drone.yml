@@ -34,6 +34,11 @@ pipeline:
   build-html:
     image: owncloudci/antora:latest
     pull: true
+    secrets:
+      - source: algolia_search_key
+        target: algolia_api_key
+      - source: algolia_app_id
+        target: algolia_application_id
     commands:
       - make html
 
@@ -83,6 +88,22 @@ pipeline:
     when:
       local: false
       event: [ push ]
+
+  update-search:
+    image: algolia/docsearch-scraper:latest
+    pull: true
+    secrets:
+      - source: algolia_write_key
+        target: api_key
+      - source: algolia_app_id
+        target: application_id
+    environment:
+      - CONFIG=/drone/src/search/algolia/config.json
+    commands:
+      - cd /root && pipenv run python -m src.index
+    when:
+        local: false
+        event: [ push ]
 
   notify-slack:
     image: plugins/slack

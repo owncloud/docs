@@ -13,6 +13,10 @@ VERSION ?= 10.0.10
 REDIRECTS ?= static
 PLAYBOOK ?= site.yml
 
+ALGOLIA_API_KEY ?=
+ALGOLIA_APPLICATION_ID ?=
+ALGOLIA_INDEX_NAME ?= owncloud
+
 #
 # Print a basic help about the available targets.
 #
@@ -23,6 +27,7 @@ help:
 	@echo "  clean        to clean the build directory of any leftover artifacts from the previous build."
 	@echo "  validate     to validate all xref links of all manuals defined within configuration."
 	@echo "  html         to generate the HTML versions of all manuals defined within configuration."
+	@echo "  html-local   to generate the HTML versions of all manuals defined within configuration from the local working directory."
 	@echo "  pdf          to generate the PDF versions of the administration, developer, and user manuals."
 	@echo "  check-prose  to lint English prose to support developers"
 
@@ -58,8 +63,17 @@ validate:
 .PHONY: html
 html:
 	@echo "Building HTML versions of all manuals defined within configuration"
-	-antora generate --pull --cache-dir $(CACHE_DIR) --redirect-facility $(REDIRECTS) --stacktrace --generator ./generators/search.js $(PLAYBOOK)
+	-antora generate \
+		--pull \
+		--cache-dir $(CACHE_DIR) \
+		--redirect-facility $(REDIRECTS) \
+		--stacktrace \
+		$(PLAYBOOK)
 	@echo
+
+.PHONY: html-local
+html-local:
+	@$(MAKE) html PLAYBOOK=site.local.yml
 
 #
 # Generate PDF versions of the core manuals.
