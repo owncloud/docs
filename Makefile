@@ -9,7 +9,7 @@ STYLES_DIR ?= resources/themes
 CACHE_DIR ?= cache
 
 STYLE ?= owncloud
-VERSION ?= 10.0.10
+VERSION ?= 10.1.0
 REDIRECTS ?= static
 PLAYBOOK ?= site.yml
 
