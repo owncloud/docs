@@ -9,7 +9,8 @@ STYLES_DIR ?= resources/themes
 CACHE_DIR ?= cache
 
 STYLE ?= owncloud
-VERSION ?= 10.1.0
+VERSION ?= 10.0.10
+REVDATE ?= "$(shell date +'%B %d, %Y')"
 REDIRECTS ?= static
 PLAYBOOK ?= site.yml
 
@@ -93,7 +94,8 @@ pdf-admin:
 		-a pdf-fontsdir=$(FONTS_DIR) \
 		-a examplesdir=modules/administration_manual/examples \
 		-a imagesdir=modules/administration_manual/assets/images \
-		-a appversion=$(VERSION) \
+		-a revnumber=$(VERSION) \
+		-a revdate=$(REVDATE) \
 		--base-dir $(CURDIR) \
 		--out-file server/administration_manual/ownCloud_Administration_Manual.pdf \
 		--destination-dir $(BUILD_DIR) \
@@ -111,7 +113,8 @@ pdf-developer:
 		-a pdf-fontsdir=$(FONTS_DIR) \
 		-a examplesdir=modules/developer_manual/examples \
 		-a imagesdir=modules/developer_manual/assets/images \
-		-a appversion=$(VERSION) \
+		-a revnumber=$(VERSION) \
+		-a revdate=$(REVDATE) \
 		--base-dir $(CURDIR) \
 		--out-file server/developer_manual/ownCloud_Developer_Manual.pdf \
 		--destination-dir $(BUILD_DIR) \
@@ -129,7 +132,8 @@ pdf-user:
 		-a pdf-fontsdir=$(FONTS_DIR) \
 		-a examplesdir=modules/user_manual/examples \
 		-a imagesdir=modules/user_manual/assets/images \
-		-a appversion=$(VERSION) \
+		-a revnumber=$(VERSION) \
+		-a revdate=$(REVDATE) \
 		--base-dir $(CURDIR) \
 		--out-file server/user_manual/ownCloud_User_Manual.pdf \
 		--destination-dir $(BUILD_DIR) \
