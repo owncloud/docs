@@ -1,8 +1,7 @@
 = The Core Application Files
 
-Now that you know how the request life cycle works, let’s look at the
-core application files. Any ownCloud application, at its most
-elementary, only needs a few files and directories; these are:
+Now that you know how the request life cycle works, let’s look at the core application files. 
+Any ownCloud application, at its most elementary, only needs a few files and directories; these are:
 
 [source,console]
 ----
@@ -16,13 +15,29 @@ elementary, only needs a few files and directories; these are:
     └── Controller                  # Contains the application's controllers
 ----
 
-In addition to these, there are several additional, commonly used,
-directories:
+In addition to these, there are several additional, commonly used, directories:
 
+* `bin/`: Contains the command-line scripts
 * `css/`: Contains the CSS files
+* `img/`: Contains the image files
 * `js/`: Contains the JavaScript files
+* `l10n/`: Contains the translation files
+* `lib/`: Contains the source code files
 * `templates/`: Contains the templates
 * `tests/`: Contains the tests
+
+[[create-the-core-file-directory-structure]]
+== Create the Core File & Directory Structure
+
+To create these, in a new directory that will be called `ownnotes`, run the following code in your terminal, in the directory where you want to create the new project:
+
+[source,console]
+----
+mkdir -p ownnotes/{appinfo,lib/Controller}
+touch appinfo/{app,application,routes}.php appinfo/info.xml lib/Controller/PageController.php
+----
+
+== Understanding the Core Files
 
 Now let’s get an understanding of the core configuration files.
 
@@ -50,17 +65,18 @@ In `appinfo/info.xml`, add the following XML, changing it as necessary:
     <namespace>OwnNotes</namespace>
     <category>tool</category>
     <dependencies>
-        <owncloud min-version="9" />
-        <owncloud max-version="10" />
+        <owncloud min-version="10" max-version="10" />
     </dependencies>
 </info>
 ----
 
-Pay careful attention to the `namespace` element. This element defines
-the application’s relative namespace. This namespace, in turn, sits
-inside a parent ownCloud namespace, called `OCA`. As the application’s
-namespace is `OwnNotes`, then it’s fully-qualified namespace is
-`OCA\\OwnNotes`.
+[IMPORTANT]
+====
+Pay careful attention to the `namespace` element. 
+This element defines the application's relative namespace. 
+This namespace, in turn, sits inside a parent ownCloud namespace, called `OCA`. 
+As the application's namespace is `OwnNotes`, then it's fully-qualified namespace is `OCA\OwnNotes`.
+====
 
 To learn more about the options able to be stored in this file, check out xref:app/fundamentals/info.adoc[the App Metadata section] of the documentation.
 
@@ -112,11 +128,11 @@ It can also contain xref:app/fundamentals/backgroundjobs.adoc[background jobs] a
 
 [source,php]
 ----
-// execute OCA\MyApp\BackgroundJob\Task::run when cron is called
-\OC::$server->getJobList()->add('OCA\MyApp\BackgroundJob\Task');
+// execute OCA\OwnNotes\BackgroundJob\Task::run when cron is called
+\OC::$server->getJobList()->add('OCA\OwnNotes\BackgroundJob\Task');
 
-// execute OCA\MyApp\Hooks\User::deleteUser before a user is being deleted
-\OCP\Util::connectHook('OC_User', 'pre_deleteUser', 'OCA\MyApp\Hooks\User', 'deleteUser');
+// execute OCA\OwnNotes\Hooks\User::deleteUser before a user is being deleted
+\OCP\Util::connectHook('OC_User', 'pre_deleteUser', 'OCA\OwnNotes\Hooks\User', 'deleteUser');
 ----
 
 It is also possible to include xref:app/fundamentals/js.adoc[JavaScript] or xref:app/fundamentals/css.adoc[CSS] for other apps, by placing the `addScript` or `addStyle` functions inside this file as well.
@@ -126,8 +142,8 @@ However, this is strongly discouraged, because the file is loaded on each reques
 ----
 <?php
 
-\OCP\Util::addScript('myapp', 'script');  // include js/script.js for every app
-\OCP\Util::addStyle('myapp', 'style');    // include css/style.css for every app
+\OCP\Util::addScript('ownnotes', 'script');  // include js/script.js for every app
+\OCP\Util::addStyle('ownnotes', 'style');    // include css/style.css for every app
 ----
 
 [[libcontrollerpagecontroller.php]]
@@ -141,7 +157,7 @@ content, API content, or something else entirely. In
 [source,php]
 ----
 <?php
-namespace OCA\ownnotes\Controller;
+namespace OCA\OwnNotes\Controller;
 
 use OCP\AppFramework\{
     Controller,
@@ -176,7 +192,7 @@ the following code:
 ----
 <?php
 
-namespace OCA\ownnotes\AppInfo;
+namespace OCA\OwnNotes\AppInfo;
 
 $application = new Application();
 $application->registerRoutes($this, [
@@ -203,10 +219,10 @@ add the following code:
 [source,php]
 ----
 <?php
-namespace OCA\ownnotes\AppInfo;
+namespace OCA\OwnNotes\AppInfo;
 
 use \OCP\AppFramework\App;
-use \OCA\ownnotes\Controller\PageController;
+use \OCA\OwnNotes\Controller\PageController;
 
 class Application extends App {
     public function __construct(array $urlParams=array()){
@@ -221,17 +237,4 @@ class Application extends App {
         });
     }
 }
-----
-
-[[create-the-core-file-directory-structure]]
-== Create the Core File & Directory Structure
-
-To create these, in a new directory that will be called ownnotes, run
-the following code in your terminal, from where you want to create the
-new project:
-
-[source,console]
-----
-mkdir -p ownnotes/{appinfo,lib/Controller}
-touch appinfo/{app,application,routes}.php appinfo/info.xml lib/Controller/PageController.php
 ----
