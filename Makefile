@@ -17,6 +17,10 @@ ALGOLIA_API_KEY ?=
 ALGOLIA_APPLICATION_ID ?=
 ALGOLIA_INDEX_NAME ?= owncloud
 
+YAMLLINT_INSTALLED = $(shell command -v yamllint)
+JSONLINT_INSTALLED = $(shell command -v jsonlint)
+XMLLINT_INSTALLED = $(shell command -v xmllint)
+
 #
 # Print a basic help about the available targets.
 #
@@ -47,6 +51,43 @@ clean:
 	@echo "Cleaning up any artifacts from the previous build."
 	@-rm -rf $(BUILD_DIR)
 	@echo
+
+.PHONY: validate-xml
+validate-xml:
+ifneq ($(origin XMLLINT_INSTALLED), undefined)
+	@echo "Validating all XML example files"
+	@-find ./modules/*_manual/examples -type f -name "*.xml" -exec xmllint --noout {} \;	
+	@echo
+endif
+
+.PHONY: validate-php
+validate-php:
+	@echo "Validating all PHP example files"
+	@-find ./modules/*_manual/examples -type f -name "*.php" -exec php -l {} \;	
+	@echo
+
+.PHONY: validate-yaml
+validate-yaml:
+ifneq ($(origin YAMLLINT_INSTALLED), undefined)
+	@echo "Validating all YAML files"
+	@-find . -type f -name "*.yml" \
+		! -path "./node_modules/*" \
+		! -path "**/vendor/*" \
+		-exec sh -c 'echo Linting {} && yamllint -f parsable {} && echo' \;	
+	@echo
+endif
+
+.PHONY: validate-json
+validate-json:
+ifneq ($(origin JSONLINT_INSTALLED), undefined)
+	@echo "Validating all JSON files"
+	@-find . -type f -name "*.json" \
+		! -path "./node_modules/*" \
+		! -path "**/vendor/*" ! \
+		-path "./.git/*" \
+		-exec sh -c 'echo Linting {} && jsonlint -qp {}' \;	
+	@echo
+endif
 
 #
 # Validate xref links of all manuals.
