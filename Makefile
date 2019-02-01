@@ -19,7 +19,7 @@ ALGOLIA_APPLICATION_ID ?=
 ALGOLIA_INDEX_NAME ?= owncloud
 
 YAMLLINT_INSTALLED := $(shell command -v yamllint 2>/dev/null)
-JSONLINT_INSTALLED := $(shell command -v jsonlint 2>/dev/null)
+JSONLINT_INSTALLED := $(shell command -v jsonlint-php 2>/dev/null)
 XMLLINT_INSTALLED := $(shell command -v xmllint 2>/dev/null)
 
 #
@@ -96,7 +96,7 @@ ifneq ($(JSONLINT_INSTALLED),)
 		! -path "./node_modules/*" \
 		! -path "**/vendor/*" ! \
 		-path "./.git/*" \
-		-exec sh -c 'echo Linting {} && jsonlint -qp {}' \;	
+		-exec sh -c 'echo Linting {} && jsonlint-php -qp {}' \;	
 	@echo
 else
 	@echo "Command jsonlint not found, please install."
