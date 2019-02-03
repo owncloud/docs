@@ -19,7 +19,8 @@ ALGOLIA_APPLICATION_ID ?=
 ALGOLIA_INDEX_NAME ?= owncloud
 
 YAMLLINT_INSTALLED := $(shell command -v yamllint 2>/dev/null)
-JSONLINT_INSTALLED := $(shell command -v jsonlint-php 2>/dev/null)
+JSONLINT_INSTALLED := $(shell command -v jsonlint 2>/dev/null)
+JSONLINTPHP_INSTALLED := $(shell command -v jsonlint-php 2>/dev/null)
 XMLLINT_INSTALLED := $(shell command -v xmllint 2>/dev/null)
 
 #
@@ -91,6 +92,16 @@ endif
 .PHONY: validate-json
 validate-json:
 ifneq ($(JSONLINT_INSTALLED),)
+# jsonlint on many OS is called via jsonlint
+	@echo "Validating all JSON files"
+	@-find . -type f -name "*.json" \
+		! -path "./node_modules/*" \
+		! -path "**/vendor/*" ! \
+		-path "./.git/*" \
+		-exec sh -c 'echo Linting {} && jsonlint -qp {}' \;	
+	@echo
+else ifneq ($(JSONLINTPHP_INSTALLED),)
+# jsonlint on Ubuntu is called via jsonlint-php
 	@echo "Validating all JSON files"
 	@-find . -type f -name "*.json" \
 		! -path "./node_modules/*" \
