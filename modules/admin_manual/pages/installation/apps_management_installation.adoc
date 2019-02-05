@@ -1,5 +1,8 @@
 = Installing and Managing Apps
 :toc: right
+:clear-redis-cache-url: configuration/server/caching_configuration.adoc#clearing-the-redis-cache
+:clear-memcache-url: configuration/server/caching_configuration.adoc#clearing-the-memcached-cache
+:jq-url: http://https://stedolan.github.io/jq/
 
 == Introduction
 
@@ -13,12 +16,12 @@ See xref:installation/apps_supported.adoc[supported apps] for a list of supporte
 
 During the ownCloud installation, some apps are installed and enabled by
 default, and some are able to be installed and enabled later on. To see
-the status of your installation’s applications, go to your Apps page.
+the status of your installation's applications, go to your Apps page.
 
 image:oc_admin_apps.png[Apps page for enabling and disabling apps.]
 
 There, you will see which apps are currently: _enabled_, _not enabled_,
-and _recommended_. You’ll also see additional filters, such as
+and _recommended_. You'll also see additional filters, such as
 Multimedia, Productivity, and Tool for finding more apps quickly.
 
 == Managing Apps
@@ -48,20 +51,19 @@ refer to the xref:developer_manual:app/introduction.adoc[developer manual].
 == Using Custom App Directories
 
 There are several reasons for using custom app directories instead of
-ownCloud’s default. These are:
+ownCloud's default. These are:
 
-1.  It separates ownCloud’s core apps from user or admin downloaded
-apps. Doing so distinguishes which apps are core and which aren’t,
+1.  It separates ownCloud's core apps from user or admin downloaded
+apps. Doing so distinguishes which apps are core and which aren't,
 simplifying upgrades.
 2.  It eases manual upgrades. Downloaded apps must be manually copied.
 Having them in a separate directory makes it simpler to manage.
 3.  ownCloud may gain new core apps in newer versions. Doing so orphans
-deprecated apps, but doesn’t remove them.
+deprecated apps, but doesn't remove them.
 
-If you want to store apps in a custom directory, instead of ownCloud’s
-default (`/app`), you need to modify the `apps_paths` element in
-`config/config.php`. There, you need to add a new associative array that
-contains three elements. These are:
+If you want to store apps in a custom directory, instead of ownCloud's default (`/app`), you need to modify the `apps_paths` key in `config/config.php`. 
+There, you need to add a new associative array that contains three elements. 
+These are:
 
 * `path`: The absolute file system path to the custom app folder.
 * `url`: The request path to that folder relative to the ownCloud web
@@ -78,30 +80,64 @@ called `apps-external`.
 include::{examplesdir}installation/custom-app-directory-configuration.php[]
 ----
 
-After you add a new directory configuration, you can then move apps from
-the original app directory to the new one. To do so, follow these steps:
+After you add a new directory configuration, you can then move apps from the original app directory to the new one. 
+If you want to identify, as an example, all non-core or non-shipped apps, use the following command:
 
-1.  xref:configuration/server/occ_command.adoc#maintenance-commands[Enable maintenance mode].
-2.  xref:configuration/server/occ_command.adoc#apps-commands[Disable the apps] that you want to move.
-3.  Create a new apps directory and assign it the same user and group,
-and ownership permissions as the core apps directory.
-4.  Move the apps from the old apps directory to the new apps directory.
-5.  Add a new app directory in `config/config.php`.
-6.  If you’re using a cache, such as xref:configuration/server/caching_configuration.adoc#clearing-the-redis-cache[Redis] or xref:configuration/server/caching_configuration.adoc#clearing-the-memcached-cache[Memcached], ensure that you clear the cache.
-7.  Re-enable the apps.
-8.  Disable maintenance mode.
+[source,console]
+----
+sudo -u www-data php occ app:list --shipped=false
+----
+
+Follow these steps to manually move apps:
+
+. Enable maintenance mode <maintenance_commands_label>.
+. Disable the apps <apps_commands_label> that you want to move.
+. Create a new apps directory, like `apps-external` and assign it the same user, group, and ownership permissions as the core apps directory.
+. Move the apps from the old apps directory to the new apps directory.
+. Add the key for the new app directory in `config/config.php`.
+. If you're using a cache, such as xref:{clear-redis-cache-url}[Redis] or xref:{clear-memcache-url}[Memcached], ensure that you clear the cache.
+. Re-enable the apps.
+. Disable maintenance mode.
+
+== Script for moving non core apps in custom app directories
+
+In the same way as you can manually move apps, e.g., non-core or non-shipped, to a custom directory, a script might automate and help in this task.
+
+Follow these steps to automate moving apps:
+
+. xref:configuration/server/occ_command.adoc#maintenance-commands[Enable maintenance mode].
+. xref:configuration/server/occ_command.adoc#apps-commands[Disable the apps] that you want to move.
+. Create a new apps directory like `apps-external` and assign it the same user, group, and ownership permissions as the core apps directory.
+. Run the script described below in your ownCloud directory.
+. Add the key for the new app directory in `config/config.php`.
+. If you're using a cache, such as xref:{clear-redis-cache-url}[Redis] or xref:{clear-memcache-url}[Memcached], ensure that you clear the cache.
+. Re-enable the apps.
+. Disable maintenance mode.
+
+In preparation, please install {jq-url}[the jq library]. 
+jq is like sed for JSON data; you can use it to slice, filter, map and transform structured data.
+To install jq, run the following command:
+
+[source,console]
+----
+apt install -y jq
+----
+
+Here is a script to move all non-core and non-shipped apps to the custom folder, `apps-external`:
+
+[source,bash]
+----
+include::example$installation/apps_management_installation/move-non-core-shipped-apps-to-custom-dir.sh[]
+----
 
 == Manually Installing Apps
 
 To install an app manually instead of by using https://marketplace.owncloud.com[the Marketplace], copy the app either into ownCloud’s default app folder (`</path/to/owncloud>/apps`) or xref:using-custom-app-directories[a custom app folder].
 
-Be aware that the name of the app and its folder name *must be
-identical*! You can find these details in
-the application's metadata file, located in
-`<app directory>/appinfo/info.xml`.
+Be aware that the name of the app and its folder name *must be identical*! 
+You can find these details in the application's metadata file, located in `<app directory>/appinfo/info.xml`.
 
-Using the example below, both the app’s name and directory name would be
-`yourappname`.
+Using the example below, both the app's name and directory name would be `yourappname`.
 
 [source,xml]
 ----
