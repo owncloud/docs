@@ -1,4 +1,7 @@
 = Unit-Testing
+:writing-tests-url: https://phpunit.readthedocs.io/en/latest/writing-tests-for-phpunit.html
+:recommended-way-to-organise-tests-url: https://phpunit.readthedocs.io/en/latest/organizing-tests.html
+:phpunit-docs-url: https://phpunit.readthedocs.io/en/latest/installation.html
 
 [[php-unit-tests]]
 == PHP Unit Tests
@@ -65,8 +68,7 @@ This option is not supported from PHPUnit 6.0 onward. If you’re using
 this version or higher, please use either Composer or your package
 manager to upgrade to the latest version.
 
-You can find more information in
-https://phpunit.de/manual/current/en/installation.html[the PHPUnit documentation].
+You can find more information in {phpunit-docs-url}[the PHPUnit documentation].
 
 [[running-php-unit-tests-for-owncloud-10.0]]
 === Running PHP Unit tests for ownCloud >= 10.0
@@ -88,7 +90,7 @@ parameters when needed.
 
 To get started, do the following:
 
-* Create a directory called `tests` in the top level of your application
+* Create a directory called `tests/unit` in the top level of your application
 * Create a PHP file in the directory and `require_once` your class which you want to test.
 
 Then you can run the created test with `phpunit`.
@@ -97,63 +99,45 @@ If you use ownCloud functions in your class under test (i.e:
 OC::getUser()) you’ll need to bootstrap ownCloud or use dependency
 injection.
 
-You’ll most likely run your tests under a different user than the Web
-server. This might cause problems with your PHP settings (i.e.,
-`open_basedir`) and requires you to adjust your configuration.
+[NOTE]
+====
+You’ll most likely run your tests under a different user than the Web server. 
+This might cause problems with your PHP settings (i.e., `open_basedir`) and requires you to adjust your configuration.
+====
+
+Given the class `MyClass` in your app:
+
+./srv/http/owncloud/apps/myapp/tests/lib/MyClass.php
+[source,php]
+----
+include::example$core/unit-testing/MyClass.php[MyClass.php]
+----
 
 An example for a simple test would be:
 
-/srv/http/owncloud/apps/myapp/tests/testaddtwo.php
-
+./srv/http/owncloud/apps/myapp/tests/unit/MyClassTest.php
 [source,php]
 ----
-<?php
-namespace OCA\Myapp\Tests;
-
-class TestAddTwo extends \Test\TestCase {
-    protected $testMe;
-
-    protected function setUp() {
-        parent::setUp();
-        $this->testMe = new \OCA\Myapp\TestMe();
-    }
-
-    public function testAddTwo(){
-          $this->assertEquals(5, $this->testMe->addTwo(3));
-    }
-
-}
+include::example$core/unit-testing/MyClassTest.php[MyClassTest.php]
 ----
 
-/srv/http/owncloud/apps/myapp/lib/testme.php
+[NOTE]
+====
+The class under test and the test class should share the same namespace so you do not need to use a dedicated `use` statement for it. 
+This is {recommended-way-to-organise-tests-url}[the recommended way to organize tests].
+====
 
-[source,php]
-----
-<?php
-namespace OCA\Myapp;
+In `/srv/http/owncloud/apps/myapp/` you run the test with the following command:
 
-class TestMe {
-    public function addTwo($number){
-        return $number + 2;
-    }
-}
-----
-
-In /srv/http/owncloud/apps/myapp/ you run the test with:
-
+[source,console]
 ....
-phpunit tests/testaddtwo.php
+phpunit tests/unit/MyClassTest.php
 ....
 
-Make sure to extend the `\Test\TestCase` class with your test and always
-call the parent methods, when overwriting `setUp()`,
-`setUpBeforeClass()`, `tearDown()` or `tearDownAfterClass()` method from
-the `TestCase`. These methods set up important stuff and clean up the
-system after the test so that the next test can run without side
-effects, such as clearing files and entries from the file cache, etc.
-For more resources on writing tests for PHPUnit visit
-http://www.phpunit.de/manual/current/en/writing-tests-for-phpunit.html[the
-writing tests section] of the PHPUnit documentation.
+Make sure to extend the `\Test\TestCase` class with your test and always call the parent methods, when overwriting `setUp()`,
+`setUpBeforeClass()`, `tearDown()` or `tearDownAfterClass()` method from the `TestCase`. 
+These methods set up important stuff and clean up the system after the test so that the next test can run without side effects, such as clearing files and entries from the file cache, etc.
+For more resources on writing tests for PHPUnit visit {writing-tests-url}[the writing tests section] of the PHPUnit documentation.
 
 [[bootstrapping-owncloud]]
 === Bootstrapping ownCloud
@@ -278,7 +262,7 @@ make test-php NOCOVERAGE=true TEST_DATABASE=mysql TEST_PHP_SUITE=tests/lib/share
 === Further Reading
 
 * http://googletesting.blogspot.de/2008/08/by-miko-hevery-so-you-decided-to.html[Writing Testable Code]
-* http://www.phpunit.de/manual/current/en/writing-tests-for-phpunit.html[PHPUnit Manual]
+* https://phpunit.readthedocs.io/en/latest/index.html[PHPUnit Manual]
 * http://www.youtube.com/watch?v=4E4672CS58Q&feature=bf_prev&list=PLBDAB2BA83BB6588E[Clean Code Talks - `GuiceBerry`]
 * https://www.amazon.com/Clean-Code-Handbook-Software-Craftsmanship-ebook/dp/B001GSTOAM[Clean Code by Robert C. Martin]
 
