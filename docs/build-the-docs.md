@@ -2,13 +2,12 @@
 
 ## Install Antora's Dependencies
 
-Before you can build the documentation, you need to install the required dependencies.
-To install them, you need to run `yarn install`.
-This will install all the dependencies specified in `package.json`.
-**Note:** If your environment already has GNU make installed, you can run `make install` instead.
+Before you can build the documentation, you need to install the required dependencies. To install them, you need to run `yarn install`. This will install all the dependencies specified in `package.json`.
+
+**Note:** If your environment already has GNU make installed, you can run `make setup` instead.
 
 ```console
-make install
+make setup
 ```
 
 With the dependencies installed, you are now ready to build (generate) the ownCloud documentation.
@@ -30,30 +29,35 @@ To build the documentation using the Docker container, from the command line, in
 
 ```
 docker run -ti --rm \
-    -e ALGOLIA_APP_ID=<the algolia app id> \
-    -e ALGOLIA_API_KEY=<the algolia api key> \
-    -e ALGOLIA_INDEX_NAME=<the algolia index name> \
     -v $(pwd):/antora/ \
     -w /antora/ \
     owncloudci/antora:latest \
-    --pull \
-    --cache-dir /antora/cache/ \
-    --redirect-facility static \
-    --stacktrace \
-    site.yml
+    yarn install
+
+docker run -ti --rm \
+    -v $(pwd):/antora/ \
+    -w /antora/ \
+    owncloudci/antora:latest \
+    yarn antora
 ```
 
-**Note:** Use `site.local.yml` instead of `site.yml` if you want to see any local changes.
+If you want to serve your changes locally you have to overwrite the default URL, which points to https://doc.owncloud.com. You can append a custom URL to the command like this:
 
-This command:
+```
+docker run -ti --rm \
+    -v $(pwd):/antora/ \
+    -w /antora/ \
+    owncloudci/antora:latest \
+    yarn antora --url http://localhost:8080
+```
+
+These commands:
 
 - Starts up [ownCloud's custom Antora Docker container](https://hub.docker.com/r/owncloudci/antora/)
 - Runs Antora's `generate` command, which regenerates the documentation
-- You can add the `--clean` option to clean the build directory of any leftover artifacts from the previous build, including PDF's.
+- You can add the `--pull` option to update the dependent repositories, or any other available flag.
 
-If all goes well, you will _not_ see any console output.
-If a copy of the container doesn't exist locally, you can pull down a copy, by running `docker pull owncloudci/antora:latest`.
-Otherwise, you should see output similar to the following:
+If all goes well, you will _not_ see any console output. If a copy of the container doesn't exist locally, you can pull down a copy, by running `docker pull owncloudci/antora:latest`. Otherwise, you should see output similar to the following:
 
 ```console
 Unable to find image 'owncloudci/antora:latest' locally
@@ -65,106 +69,41 @@ latest: Pulling from owncloudci/antora
 d5a49762c0f9: Download complete
 ```
 
-#### Using Make
+#### Using Antora from the Command-Line
 
-Using Make, as in the example below, is the easiest way to build the documentation.
-The Makefile has a predefined target (`html`) which calls Antora, supplying all of the required options to build the docs, to build the documentation on the master branch of [the ownCloud documentation repository](https://github.com/owncloud/docs).
+Using Yarn, as in the example below, is the easiest way to build the documentation. This project has a predefined target (`antora`) which calls Antora, supplying all of the required options to build the docs, to build the documentation on any branch of [the ownCloud documentation repository](https://github.com/owncloud/docs).
 
 ```
-make html
+yarn antora
 ```
 
-If you are making local changes in a development branch, use the `html-local` target instead.
-This target generates the HTML documentation using the local (git) working directory, not the remote branch.
+If you want to serve your changes locally you have to overwrite the default URL, which points to https://doc.owncloud.com. You can append a custom URL to the command like this:
 
 ```console
-make html-local
+yarn antora --url http://localhost:8080
 ```
-
-### Using the Antora Tools On The Command-Line
-
-If you want to use your own settings, run the command passing the necessary parameters manually, as in the example below.
-
-**Note:** The environment variables at the beginning are required for building the docs with integrated, Algolia, site search.
-
-```
-ALGOLIA_APP_ID=<the algolia app id> \
-ALGOLIA_API_KEY=<the algolia api key> \
-ALGOLIA_INDEX_NAME=<the algolia index name> \
-antora --pull \
-    --cache-dir ./cache/ \
-    --redirect-facility static \
-    --stacktrace \
-    site.yml
-```
-
-**Note:** Use `site.local.yml` instead of `site.yml` if you want to see any local changes.
-
-- You can add the `--clean` option to clean the build directory of any leftover artifacts from the previous build, including PDF's.
-
-## Updating the Search Index
-
-Manual updates of the search index, which powers the integrated site search, are not normally required, as the CI pipeline manages this process automatically.
-However, just in case an update is required, this is how to do it.
-
-To update the search index you need to use [Algolia's docsearch-scraper](https://github.com/algolia/docsearch-scraper).
-If it is not already installed, here is how to do so:
-
-1. Clone [the docsearch-scraper repository](https://github.com/algolia/docsearch-scraper).
-2. Install [pipenv](https://pipenv.readthedocs.io/en/latest/install/#installing-pipenv).
-3. Initialize and start pipenv by running `pipenv install` and `pipenv shell`.
-
-Once these steps are complete, run the following command, adding the relevant values from ownCloud's Algolia account, to update the search index.
-If you do not have access to ownCloud's Algolia account, please contact tboerger@owncloud.com.
-
-```
-cd docsearch-scraper
-APPLICATION_ID=<YOUR_APP_ID> \
-API_KEY=<YOUR_API_KEY> \
-./docsearch docker:run <path_to_config>
-```
-
-This command runs Algolia’s docsearch scraper, which scrapes the documentation and builds a new search index based on the information found; a search index designed and optimized *specifically* for documentation sites.
-
-#### Note
-
-1. To run this command, you will need [Docker](https://docs.docker.com/) installed.
-2. The configuration file for the script is stored in `algolia-config.json`, located in the root directory of ownCloud's docs repository.
-The configuration stores the documentation base URL, along with CSS selectors to help the scraper work with the site’s content structure.
 
 ### Viewing The HTML Documentation
 
-Assuming that there are no errors, the next thing to do is to view the result in your browser.
-In case you have already installed a webserver, you need to make the HTML docmentation
-available pointing to subdirectory `public` or for easy handling use the [NPM Serve tool](https://www.npmjs.com/package/serve) so that you can view your changes, before committing and pushing the changes to the remote docs repository.
-You could also use [PHP's built-in webserver](https://secure.php.net/manual/en/features.commandline.webserver.php) as well.
+Assuming that there are no errors, the next thing to do is to view the result in your browser. In case you have already installed a webserver, you need to make the HTML docmentation available pointing to subdirectory `public` or for easy handling use our predefined Yarn target so that you can view your changes, before committing and pushing the changes to the remote docs repository. You could also use [PHP's built-in webserver](https://secure.php.net/manual/en/features.commandline.webserver.php) as well.
 
-The following example uses *Serve*, to start it run the following command in the root of your docs repository:
+The following example uses our Yarn target, to start it run the following command in the root of your docs repository:
 
 ```
-serve public &
+yarn serve
 ```
 
-This starts Serve and set it running in the background, using the `public` directory, (re)generated by `antora site.yml`, as the document root, listening on `http://localhost:5000`.
-_The URL is automatically copied to the clipboard._
-
-![Viewing the Antora docs with NPM serve](./images/viewing-the-antora-docs-with-npm-serve.png)
-
-Open the URL in your browser of choice and you'll see two links, as below.
+This starts a simple webserver, using the `public` directory, (re)generated by `antora`, as the document root, listening on `http://localhost:8080`. Open the URL in your browser of choice and you'll see two links, as below.
 
 ![Viewing the locally generated Antora documentation](./images/viewing-the-locally-generated-antora-documentation.png)
 
-If you're happy with your changes, as with any other change, create a set of meaningful commits and push them to the remote repository.
-If you're _not_ satisfied with the changes, however, continue to make further updates, as necessary, and run `antora site.yml` afterwards.
-Your changes will be reflected in the local version of the site that Serve is rendering.
+If you're happy with your changes, as with any other change, create a set of meaningful commits and push them to the remote repository. If you're _not_ satisfied with the changes, however, continue to make further updates, as necessary, and run `antora` afterwards. Your changes will be reflected in the local version of the site that Serve is rendering.
 
 We hope that you can see that contributing to the documentation using Antora is a pretty straight-forward process, and not _that_ demanding.
 
 ### Generating PDF Documentation
 
-To generate the documentation in PDF format, you need to have `asciidoctor-pdf` and GNU `make` installed, as PDF generation isn't, _yet_, supported by Antora.
-To install asciidoctor-pdf, please refer to [the official installation instructions](https://asciidoctor.org/docs/asciidoctor-pdf/).
-To install GNU Make, please refer to the link below for your operating system:
+To generate the documentation in PDF format, you need to have `asciidoctor-pdf` and GNU `make` installed, as PDF generation isn't, _yet_, supported by Antora. To install `asciidoctor-pdf`, please refer to [the official installation instructions](https://asciidoctor.org/docs/asciidoctor-pdf/). To install GNU Make, please refer to the link below for your operating system:
 
 - [Linux](https://www.cyberciti.biz/faq/howto-installing-gnu-c-compiler-development-environment-on-ubuntu/)
 - [macOS](http://brewformulas.org/Make)
