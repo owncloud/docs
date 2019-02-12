@@ -1,0 +1,163 @@
+= Manual Installation on Linux - Ubuntu 16.04
+:nginx-app-tracing-url: https://www.nginx.com/blog/application-tracing-nginx-plus/
+
+== Introduction
+This guide describes how to install the required dependencies, the database and ownCloud itself in a
+single server setup.
+
+
+[[install-the-required-packages]]
+== Prepare your Server
+
+*Necessary steps to prepare the installation of ownCloud*
+
+Before we can start to install ownCloud, we need to make sure that everything needed
+is available.
+
+Steps to take:
+
+* Install MariaDB Database
+* Install Redis Server
+* Install Apache and the necessary dependencies
+* Configure Apache
+* Download and install ownCloud 
+
+
+=== Install MariaDB Database
+
+Perform the following steps to install MariaDB and setting up a Database for ownCloud.
+
+....
+apt update
+apt install -y mariadb-server-10.0
+....
+After this has finish, create the database and a database user for ownCloud to use:
+
+....
+mysql -u root
+
+MariaDB [(none)]> create database owncloud;
+MariaDB [(none)]> GRANT USAGE ON owncloud.* TO owncloud@localhost IDENTIFIED BY 'password';
+MariaDB [(none)]> GRANT ALL PRIVILEGES ON owncloud.* TO owncloud@localhost IDENTIFIED BY 'password';
+MariaDB [(none)]> flush privileges;
+MariaDB [(none)]> exit
+....
+
+=== Install Redis Server
+Redis in needed for Transactional File Locking in ownCloud. Perform the following step to install it:
+....
+apt install -y redis-server
+....
+
+=== Install Apache and the necessary dependencies
+The following steps will install the Apache Webserver and the dependencies needed for ownCloud:
+....
+apt install -y \
+apache2 \
+libapache2-mod-php \
+php-gd \
+php-json \
+php-mysql \
+php-curl \
+php-intl \
+php-mcrypt \
+php-imagick \
+php-zip \
+php-xml \
+php-mbstring \
+php-soap \
+php-ldap \
+php-apcu \
+php-redis \
+smbclient \
+php-smbclient \
+gettext-base && \
+a2enmod ssl rewrite headers env dir mime ldap && \
+service apache2 restart
+....
+
+=== Configure Apache
+We will create a new apache config file for ownCloud:
+....
+vim /etc/apache2/sites-available/owncloud.conf
+....
+Please add the following to the file and adjust parameters like SERVER-NAME and
+the paths to the certificates.
+....
+<VirtualHost *:80>
+    ServerAdmin webmaster@localhost
+    ServerName  SERVER_NAME
+    Redirect permanent / https://SERVER_NAME/
+</VirtualHost>
+
+<IfModule mod_ssl.c>
+    <VirtualHost _default_:443>
+        ServerAdmin webmaster@localhost
+        ServerName  SERVER_NAME
+        DocumentRoot /var/www/owncloud/
+        <Directory />
+                Options FollowSymLinks
+                AllowOverride All
+        </Directory>
+
+        <IfModule mod_headers.c>
+                Header always set Strict-Transport-Security "max-age=15768000;  includeSubDomains; preload"
+        </IfModule>
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+
+        # Possible values include: debug, info, notice, warn, error, crit,
+        # alert, emerg.
+        LogLevel warn
+
+        SSLEngine on
+        SSLProtocol all -SSLv2 -SSLv3
+        SSLCipherSuite EDH+CAMELLIA:EDH+aRSA:EECDH+aRSA+AESGCM:EECDH+aRSA+SHA25 6:EECDH:+CAMELLIA128:+AES128:+SSLv3:!aNULL:!eNULL:!LOW:!3DES:!MD5:!EXP:  !PSK:!DSS:!RC4:!SEED:!IDEA:!ECDSA:kEDH:CAMELLIA128-SHA:AES128-SHA
+        SSLHonorCipherOrder on
+        SSLCompression off
+        SSLCertificateFile      /path/to/certificate
+        SSLCertificateKeyFile   /path/to/key
+        CustomLog /var/log/apache2/ssl_request_log "%t %h %{SSL_PROTOCOL}x  %{SSL_CIPHER}x \"%r\" %b"
+
+        BrowserMatch "MSIE [2-6]" nokeepalive ssl-unclean-shutdown  downgrade-1.0 force-response-1.0
+        BrowserMatch "MSIE [17-9]" ssl-unclean-shutdown
+
+    </VirtualHost>
+</IfModule>
+....
+
+After that enable the new config and reload Apache:
+....
+a2ensite owncloud
+service apache2 reload
+....
+
+== Download and install ownCloud
+After we have successfully prepared the Server, we can continue to install ownCloud.
+
+=== Download ownCloud
+Create/enter the directory that was configured for ownCloud in your vhost configuration,
+download and unpack the ownCloud tarfile.
+....
+mkdir /var/www/owncloud
+wget https://download.owncloud.org/community/owncloud-10.1.0.tar.bz2
+tar xjf owncloud-10.1.0.tar.bz2
+....
+
+=== Change permissions
+This step is necessary to make sure that the apache user can read and access the
+ownCloud directory:
+....
+find /var/www/owncloud/ -type f -print0 | xargs -0 chmod 0640
+find /var/www/owncloud/ -type d -print0 | xargs -0 chmod 0750
+chown -R www-data:www-data /var/www/owncloud
+....
+=== Install ownCloud
+Open your Browser and navigate to the your ownCloud URL:
+
+add Picture 1
+
+
+Choose a username and password and enter the values needed for the Database
+as shown in the picture:
+
+add Picture 2
