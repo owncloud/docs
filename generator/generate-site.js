@@ -111,7 +111,7 @@ function generateIndex (playbook, pages) {
     body: {
       query: {
         term: {
-          _type: 'page'
+          type: 'page'
         }
       }
     }
