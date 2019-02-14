@@ -70,6 +70,16 @@ These are:
 - [asciidoc-preview:](https://github.com/asciidoctor/atom-asciidoc-preview) This package allows Atom to show the rendered HTML of the AsciiDoc content in the current editor.
 - [autocomplete-asciidoc:](https://atom.io/packages/autocomplete-asciidoc) This package provides AsciiDoc language auto-completions in Atom.
 
+**Note:** to view images in the preview pane, you have to set the `imagesdir` attribute in the AsciiDoc plugin's preferences.
+To do that:
+
+1. Open the Preferences pane for the "_asciidoc-preview_" package.
+2. In the "_Default Attributes_" field, under "Settings", add _the absolute path_ to the image directory for one of the modules, at the end of the existing attributes.
+
+![Setting the AsciiDoc plugin's imagesdir attribute in Atom.](./images/what-is-asciidoc/setting-imagesdir-in-atom.png)
+
+Unfortunately, you cannot reference multiple image directories.
+
 ### Visual Studio Code
 
 ![Editing AsciiDoc in Visual Studio Code](./images/editing-asciidoc-in-vscode.png)
@@ -81,6 +91,8 @@ If you install [the AsciiDoc plugin](https://marketplace.visualstudio.com/items?
 - Syntax highlighting.
 - Open Preview to the Side.
 - View Symbols and Go to Symbol actions.
+
+**Note:** I’m not, currently, aware of how to enable rendering images in the preview pane.
 
 ### IntelliJ IDEA
 
@@ -95,6 +107,17 @@ It provides a minimal set of functionality when editing AsciiDoc files, which in
 - Code folding.
 - Syntax highlighting.
 - Convert non-AsciiDoc files to AsciiDoc.
+
+**Note:** to view images in the preview pane, you have to set the `imagesdir` attribute in the AsciiDoc plugin's preferences.
+To do that:
+
+1. Open the Preferences pane and filter by `"AsciiDoc"`.
+2. In the "_Attributes_" field, add a new entry, where "_Key_" is set to `imagesdir` and "_Value_" is set to _the absolute path_ to the image directory for one of the modules.
+3. Click either "_Apply_" or "_OK_".
+
+![Setting the AsciiDoc plugin's imagesdir attribute in IntelliJ.](./images/what-is-asciidoc/setting-imagesdir-in-intellij.png)
+
+Unfortunately, you cannot reference multiple image directories, whether by using a regular expression, nor can you specify `imagesdir` multiple times.
 
 ### Using Another Text Editor or IDE?
 
