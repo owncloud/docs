@@ -3,7 +3,7 @@ workspace:
   path: src
 
 branches:
-  - master
+  - 10.1
 
 clone:
   git:
@@ -19,37 +19,32 @@ pipeline:
     when:
       local: false
 
-  install-deps:
-    image: owncloudci/antora:latest
+  docs-deps:
+    image: owncloudci/nodejs:11
     pull: true
     commands:
       - yarn install
 
-  validate-adoc:
-    image: owncloudci/antora:latest
+  docs-validate:
+    image: owncloudci/nodejs:11
     pull: true
     commands:
-      - make validate
+      - yarn validate --pull
 
-  build-html:
-    image: owncloudci/antora:latest
+  docs-build:
+    image: owncloudci/nodejs:11
     pull: true
-    secrets:
-      - source: algolia_search_key
-        target: algolia_api_key
-      - source: algolia_app_id
-        target: algolia_application_id
     commands:
-      - make html
+      - yarn antora --pull
 
-  build-pdfs:
+  docs-pdf:
     image: owncloudci/asciidoctor:latest
     pull: true
     commands:
       - make pdf
 
-  list-artifact:
-    image: owncloudci/asciidoctor:latest
+  docs-artifacts:
+    image: owncloud/ubuntu:latest
     pull: true
     commands:
       - tree public/
@@ -60,7 +55,7 @@ pipeline:
     secrets: [ cache_s3_endpoint, cache_s3_access_key, cache_s3_secret_key ]
     rebuild: true
     mount:
-      - cache
+      - node_modules
     when:
       local: false
       event: [ push ]
@@ -75,35 +70,19 @@ pipeline:
       local: false
       event: [ push ]
 
-  upload-artifact:
+  upload-pdf:
     image: plugins/s3-sync:1
     pull: true
     secrets: [ aws_access_key_id, aws_secret_access_key ]
     bucket: uploads
     endpoint: https://doc.owncloud.com
     path_style: true
-    source: public/
+    source: build/
     target: /deploy
     delete: false
     when:
       local: false
       event: [ push ]
-
-  # update-search:
-  #   image: algolia/docsearch-scraper:latest
-  #   pull: true
-  #   secrets:
-  #     - source: algolia_write_key
-  #       target: api_key
-  #     - source: algolia_app_id
-  #       target: application_id
-  #   environment:
-  #     - CONFIG=/drone/src/search/algolia/config.json
-  #   commands:
-  #     - cd /root && pipenv run python -m src.index
-  #   when:
-  #       local: false
-  #       event: [ push ]
 
   notify-slack:
     image: plugins/slack
@@ -112,4 +91,4 @@ pipeline:
     when:
       local: false
       event: [ push ]
-      status: [ success, failure ]
+      status: [ failure, changed ]

@@ -1,9 +1,10 @@
 {
+  "private": true,
   "name": "owncloud-docs",
-  "description": "The ownCloud core documentation",
-  "version": "10.0.10",
+  "description": "The ownCloud Core documentation",
+  "version": "1.0.0",
   "license": "AGPL-3.0",
-  "author": "Matthew Setter <matthew@matthewsetter.com>",
+  "author": "The ownCloud Team <docs@owncloud.com>",
   "homepage": "https://github.com/owncloud/docs#readme",
   "repository": {
     "type": "git",
@@ -15,8 +16,7 @@
   "contributors": [
     {
       "name": "Matthew Setter",
-      "email": "matthew@matthewsetter.com",
-      "url": "https://matthewsetter.com"
+      "email": "matthew@matthewsetter.com"
     },
     {
       "name": "Martin Mattel",
@@ -27,20 +27,24 @@
       "email": "tboerger@owncloud.com"
     }
   ],
-  "directories": {
-    "doc": "docs"
-  },
   "scripts": {
     "prose": "write-good --parse **/*.adoc",
-    "serve": "serve public/"
+    "serve": "http-server public/ -d -i",
+    "antora": "antora --stacktrace generate --cache-dir cache --redirect-facility disabled --generator ./generator/generate-site.js --clean site.yml",
+    "validate": "antora --stacktrace generate --cache-dir cache --redirect-facility disabled --generator ./generator/xref-validator.js --clean site.yml",
+    "linkcheck": "broken-link-checker --filter-level 3 --recursive --verbose"
   },
   "dependencies": {
     "@antora/cli": "^2.0",
-    "@antora/site-generator-default": "^2.0"
+    "@antora/site-generator-default": "^2.0",
+    "cheerio": "^1.0.0-rc.2",
+    "elasticsearch": "^15.4.1",
+    "html-entities": "^1.2.1",
+    "lodash": "^4.17.11"
   },
   "devDependencies": {
     "broken-link-checker": "^0.7.8",
-    "serve": "^10.1.1",
+    "http-server": "^0.11.1",
     "write-good": "^0.13.1"
   },
   "keywords": [
