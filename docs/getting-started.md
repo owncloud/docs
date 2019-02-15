@@ -4,9 +4,7 @@ This guide is here to help you get started with this repository, primarily if yo
 
 ## For Non-Developers
 
-Even if you’re not a developer, you can contribute to the ownCloud documentation by [creating new issues](#creating-new-issues) and contributing to the discussion around them.
-You don’t need to be familiar with how to write or edit code, nor install any software.
-All that you need is a web browser, such as [Google Chrome](https://www.google.com/chrome/index.html), [Mozilla Firefox](https://www.mozilla.org/en-US/firefox/new/), [Apple Safari](https://www.apple.com/safari/), or [Microsoft Edge](https://www.microsoft.com/en-us/windows/microsoft-edge).
+Even if you’re not a developer, you can contribute to the ownCloud documentation by [creating new issues](#creating-new-issues) and contributing to the discussion around them. You don’t need to be familiar with how to write or edit code, nor install any software. All that you need is a web browser, such as [Google Chrome](https://www.google.com/chrome/index.html), [Mozilla Firefox](https://www.mozilla.org/en-US/firefox/new/), [Apple Safari](https://www.apple.com/safari/), or [Microsoft Edge](https://www.microsoft.com/en-us/windows/microsoft-edge).
 
 ### Initial Steps
 
@@ -17,15 +15,13 @@ Before you can contribute to the documentation, you need to:
 
 #### Have a GitHub Account
 
-If you don't already have an account, you can [sign up for a new one](https://github.com/).
-You only need to provide a _username_, _email address_, and a _password_.
+If you don't already have an account, you can [sign up for a new one](https://github.com/). You only need to provide a _username_, _email address_, and a _password_.
 
 ![Create a new GitHub account.](images/getting-started/non-developers/github-signup.png)
 
 #### Know the AsciiDoc Basics
 
-While [the AsciiDoc file format](https://asciidoctor.org/docs/asciidoc-syntax-quick-reference/) is quite rich, you're likely to only need a small portion of it, a lot of the time.
-In the example below, you can see a small example which shows how to format _headers_, _paragraphs_, _links_, _lists_, and _source code_.
+While [the AsciiDoc file format](https://asciidoctor.org/docs/asciidoc-syntax-quick-reference/) is quite rich, you're likely to only need a small portion of it, a lot of the time. In the example below, you can see a small example which shows how to format _headers_, _paragraphs_, _links_, _lists_, and _source code_.
 
 ```asciidoc
 = Top-Level Header
@@ -43,26 +39,22 @@ puts "Hello, World!"
 ====
 ```
 
-Have a read through [the AsciiDoctor Syntax Quick Reference](https://asciidoctor.org/docs/asciidoc-syntax-quick-reference/) to familiarise yourself with the format's essentials. Please also refer to [Best Practices and Tips](./docs/best-practices.md) for more information.
+Have a read through [the AsciiDoctor Syntax Quick Reference](https://asciidoctor.org/docs/asciidoc-syntax-quick-reference/) to familiarise yourself with the format's essentials. Please also refer to [Best Practices and Tips](./best-practices.md) for more information.
 
 #### Creating New Issues
 
-Creating new issues is one of the most helpful ways to contribute to the ownCloud documentation.
-Issues document changes that need to be made because:
+Creating new issues is one of the most helpful ways to contribute to the ownCloud documentation. Issues document changes that need to be made because:
 
 - Information is missing, incorrect, or outdated; or
 - A new feature has been created that needs to be documented.
 
-To create a new issue, open https://github.com/owncloud/docs/issues in your browser and click "_New Issue_" on the far right-hand side of the page.
-This takes you to the _New Issue_ form.
+To create a new issue, open https://github.com/owncloud/docs/issues in your browser and click "_New Issue_" on the far right-hand side of the page. This takes you to the _New Issue_ form.
 
 ![Create a new issue.](images/getting-started/non-developers/create-new-issue.png)
 
-First, enter a concise title, that describes the change that needs to be made.
-Please make it *only* as long as it needs to be, the shorter, the better.
+First, enter a concise title, that describes the change that needs to be made. Please make it *only* as long as it needs to be, the shorter, the better.
 
-Next, enter a description that describes the required change in greater depth.
-The description field is pre-loaded with a template which is designed to help you fill out a meaningful description.
+Next, enter a description that describes the required change in greater depth. The description field is pre-loaded with a template which is designed to help you fill out a meaningful description.
 
 Four sections should be filled out (the more, the better):
 
@@ -71,23 +63,19 @@ Four sections should be filled out (the more, the better):
 3. What Needs to be Documented?
 4. Why Should This Change Be Made?
 
-Each section has a comment, the text inside `<!--` and `-->`, designed to guide you about what you need to cover.
-The comment text is not visible when viewing the issue.
+Each section has a comment, the text inside `<!--` and `-->`, designed to guide you about what you need to cover. The comment text is not visible when viewing the issue.
 
 *Note:* The description text can be, if desired, formatted with [Markdown](https://guides.github.com/features/mastering-markdown/), which is a simple way of formatting text, to give it more significant meaning.
 
-After you've filled out a title and description, optionally assign the issue to the most relevant people, by clicking the cog icon, on the right-hand side of the Assignee field, and selecting one or more users from the list that appears.
-You can also add one or more labels, to categorise the new issue, if you so choose.
+After you've filled out a title and description, optionally assign the issue to the most relevant people, by clicking the cog icon, on the right-hand side of the Assignee field, and selecting one or more users from the list that appears. You can also add one or more labels, to categorise the new issue, if you so choose.
 
 ![Assign a GitHub Issue.](images/getting-started/non-developers/assign-issue.png)
 
-Assigning an issue helps ensure that the issue can be acted on as soon as possible.
-If you're not sure whom to assign it to, please do not assign it to anyone.
+Assigning an issue helps ensure that the issue can be acted on as soon as possible. If you're not sure whom to assign it to, please do not assign it to anyone.
 
 Once you've completed these steps, at the bottom of the form, click the "_Submit new issue_" button, which creates the new issue, and optionally assigns it to the nominated people.
 
-Now that the issue is created, the relevant developer(s) and other stakeholders can discuss the request, asking for clarification and further information if required, and can work through the request until it's completed.
-You will also see it in the issues list, which you can see an example of in the screenshot below.
+Now that the issue is created, the relevant developer(s) and other stakeholders can discuss the request, asking for clarification and further information if required, and can work through the request until it's completed. You will also see it in the issues list, which you can see an example of in the screenshot below.
 
 ![Current Issues.](images/getting-started/non-developers/current-docs-issues.png)
 
@@ -109,8 +97,7 @@ To contribute to the documentation, you need to:
 
 ### Setup Your Local Copy of the Docs Repository
 
-With this done, you then need to get your local copy of the docs repository ready.
-To do this, follow these three steps.
+With this done, you then need to get your local copy of the docs repository ready. To do this, follow these three steps.
 
 1. Fork [the docs repository](https://github.com/owncloud/docs/).
    This is necessary, as you won't be able to push changes directly to the docs repository.
@@ -131,8 +118,7 @@ To do this, follow these three steps.
 
 ### Environmental Setups Depending the Kind of Changes
 
-Depending if you are making text changes only or if you change images, inline code examples or more complex content,
-you may need to use different tools to validate your outcome.
+Depending if you are making text changes only or if you change images, inline code examples or more complex content, you may need to use different tools to validate your outcome.
 
 #### You Are Making Text Changes Only
 
@@ -141,16 +127,13 @@ If you're making text changes only, we recommend installing the AsciiDoc Live Pr
 1. To your [browser](https://asciidoctor.org/docs/editing-asciidoc-with-live-preview/) (The supported browsers are: *Firefox*, *Google Chrome*, or *Opera*).
 2. To your [text editor or IDE](https://asciidoctor.org/docs/editing-asciidoc-with-live-preview/#using-a-modern-text-editoride), *if it has one*.
 
-Using one, or both, of these, you can quickly check if the changes you make are what you expect, and if there are any render errors.
-If the document renders as expected, then you can commit the changes and push them to the docs repository.
+Using one, or both, of these, you can quickly check if the changes you make are what you expect, and if there are any render errors. If the document renders as expected, then you can commit the changes and push them to the docs repository.
 
 **NOTE:** Any links to internal files, such as code samples, and images will not render correctly, as the paths do not contain the absolute path to the asset. Links to internal files can only be previewed when the documentation is generated with Antora.
 
 #### You Are Working With Inline Code Examples, Images, and Attachments
 
-If, however, you're linking to local files, such as inline code examples, images, and attachments, then you need to [install Antora's command-line tools](./install-antora.md).
-This is because the Live Preview plugin won't know the complete path to the local file, so won't be able to correctly render a link to it.
-All other kinds of links should work properly, however.
+If, however, you're linking to local files, such as inline code examples, images, and attachments, then you need to [install Antora's command-line tools](./install-antora.md). This is because the Live Preview plugin won't know the complete path to the local file, so won't be able to correctly render a link to it. All other kinds of links should work properly, however.
 
 In this case, you need to use Antora to regenerate the documentation and manually check if there are any broken links or if something looks amiss.
 
@@ -160,8 +143,7 @@ Next, you need to learn how to [build the docs](./build-the-docs.md) from the co
 
 ### Contributing to the Documentation
 
-With that done, you're now ready to make regular contributions to the docs.
-To do that, here are the steps to follow to contribute changes.
+With that done, you're now ready to make regular contributions to the docs. To do that, here are the steps to follow to contribute changes.
 
 1. Create a local development branch off of `master` or another development branch and switch to it.
    You can do this in one command: `git checkout -b {branch-name}`.
@@ -193,9 +175,7 @@ To ssh://git@github.com/{username}/docs.git
 
 #### Cleaning Up Your Branches After They're Merged
 
-If you are a frequent contributor, you'll likely create a large number of branches, both locally and remotely.
-To avoid confusing which ones are new and which are old, once your pull requests are merged into the master repository, we suggest removing the underlying branches.
-Here's how to do this.
+If you are a frequent contributor, you'll likely create a large number of branches, both locally and remotely. To avoid confusing which ones are new and which are old, once your pull requests are merged into the master repository, we suggest removing the underlying branches. Here's how to do this.
 
 ##### Local Branch Cleanup
 
@@ -209,9 +189,8 @@ $ git branch -d <branchname>
 $ git push {username} :<branchname>
 ```
 
-**Note:** you can delete a remote branch through the GitHub UI.
+**Note:** you can also delete a remote branch through the GitHub UI.
 
 ## Getting Support
 
-If you need any support when making changes to the documentation, you can always get it in the `#documentation` channel in https://talk.owncloud.com.
-We're there to help you.
+If you need any support when making changes to the documentation, you can always get it in the `#documentation` channel in https://talk.owncloud.com. We're there to help you.
