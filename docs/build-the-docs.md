@@ -31,13 +31,13 @@ To build the documentation using the Docker container, from the command line, in
 docker run -ti --rm \
     -v $(pwd):/antora/ \
     -w /antora/ \
-    owncloudci/antora:latest \
+    owncloudci/nodejs:11 \
     yarn install
 
 docker run -ti --rm \
     -v $(pwd):/antora/ \
     -w /antora/ \
-    owncloudci/antora:latest \
+    owncloudci/nodejs:11 \
     yarn antora
 ```
 
@@ -47,26 +47,34 @@ If you want to serve your changes locally you have to overwrite the default URL,
 docker run -ti --rm \
     -v $(pwd):/antora/ \
     -w /antora/ \
-    owncloudci/antora:latest \
+    owncloudci/nodejs:11 \
     yarn antora --url http://localhost:8080
 ```
 
 These commands:
 
-- Starts up [ownCloud's custom Antora Docker container](https://hub.docker.com/r/owncloudci/antora/)
+- Starts up [ownCloud's NodeJS Docker container](https://hub.docker.com/r/owncloudci/nodejs/)
 - Runs Antora's `generate` command, which regenerates the documentation
 - You can add the `--pull` option to update the dependent repositories, or any other available flag.
 
-If all goes well, you will _not_ see any console output. If a copy of the container doesn't exist locally, you can pull down a copy, by running `docker pull owncloudci/antora:latest`. Otherwise, you should see output similar to the following:
+If all goes well, you will _not_ see any console output. If a copy of the container doesn't exist locally, you can pull down a copy, by running `docker pull owncloudci/nodejs:11`. Otherwise, you should see output similar to the following:
 
 ```console
-Unable to find image 'owncloudci/antora:latest' locally
-latest: Pulling from owncloudci/antora
-605ce1bd3f31: Already exists
-0511902e1bcd: Downloading  5.347MB/19.61MB
-343e34c41f87: Download complete
-1e0ba8eb567c: Downloading  4.569MB/37.51MB
-d5a49762c0f9: Download complete
+Unable to find image 'owncloudci/nodejs:11' locally
+11: Pulling from owncloudci/nodejs
+3b37166ec614: Already exists
+504facff238f: Already exists
+ebbcacd28e10: Already exists
+c7fb3351ecad: Already exists
+2e3debadcbf7: Already exists
+a5aa5acbbb21: Already exists
+fec54bf92721: Already exists
+37568f2dfa71: Pull complete
+cec1230fab6b: Pull complete
+08e882bea23f: Pull complete
+78bc608ac308: Pull complete
+Digest: sha256:d7706c693242c65b36b3205a52483d8aa567d09a1465707795d9273c0a99c0c2
+Status: Downloaded newer image for owncloudci/nodejs:11
 ```
 
 #### Using Antora from the Command-Line
