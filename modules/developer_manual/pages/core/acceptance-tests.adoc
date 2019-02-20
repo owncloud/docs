@@ -39,11 +39,11 @@ Here's an example configuration:
 ----
 default:
   autoload:
-    '': %paths.base%/../features/bootstrap
+    '': '%paths.base%/../features/bootstrap'
   suites:
     apiMain:
       paths:
-        - %paths.base%/../features/apiMain
+        - '%paths.base%/../features/apiMain'
       contexts:
         - FeatureContext: &common_feature_context_params
             baseUrl:  http://localhost:8080
@@ -57,7 +57,7 @@ default:
 
     apiCapabilities:
       paths:
-        - %paths.base%/../features/apiCapabilities
+        - '%paths.base%/../features/apiCapabilities'
       contexts:
         - FeatureContext: *common_feature_context_params
         - CapabilitiesContext:
@@ -101,20 +101,22 @@ The testing app must be installed and enabled on the system-under-test.
 
 The testing app also provides skeleton folders that the tests can use as the default set of files for new users.
 
-[[apps/testing/data/apiSkeleton]]
+[[apps-testing-data-apiSkeleton]]
 === `apps/testing/data/apiSkeleton/`
 
-This folder stores the initial files loaded for a new user during API acceptance tests.
+This folder stores the initial files loaded for a new user during API or CLI acceptance tests.
 
-[[apps/testing/data/webUISkeleton]]
+[[apps-testing-data-webUISkeleton]]
 === `apps/testing/data/webUISkeleton/`
 
 This folder stores the initial files loaded for a new user during webUI acceptance tests.
 
 [[running-acceptance-tests]]
+== Running Acceptance Tests
+
 === Preparing to Run Acceptance Tests
 
-This is a concise guide to running acceptance tests on ownCloud 10.0.
+This is a concise guide to running acceptance tests on ownCloud 10.
 Before you can do so, you need to meet a few prerequisites available; these are
 
 * ownCloud
@@ -196,7 +198,7 @@ make test-acceptance-cli BEHAT_SUITE=cliProvisioning BEHAT_FILTER_TAGS=@skip
 
 
 It can be useful to see the tail of the ownCloud log when the test run ends.
-To do that, specify `--show-oc-logs`:
+To do that, specify `SHOW_OC_LOGS=true`:
 
 [source,bash]
 ----
@@ -309,8 +311,8 @@ But creating a file must be done in the context of some user.
 So the user must be mentioned.
 
 The test code is free to achieve the desired system state however it likes.
-For example, by using an available API, by running a suitable `occ` command on the system-under-test, or by doing it withh the webUI.
-Typically the test code for `Given` steps will use an API,, because that is usually the most efficient.
+For example, by using an available API, by running a suitable `occ` command on the system-under-test, or by doing it with the webUI.
+Typically the test code for `Given` steps will use an API, because that is usually the most efficient.
 
 ==== Writing a When Step
 
@@ -368,8 +370,8 @@ They should contain the word `should` somewhere in the step text.
 ----
 
 Note that there are often multiple things that `should` or `should not` be the case after the `When` action.
-For example, in the above scenario, various files and folders should have been deleted.
-But other files and folders (that are part of the skeleton) should still be there.
+For example, in the above scenario, various files and folders (that are part of the skeleton) should still be there.
+But other files and folders under `FOLDER` should have been deleted.
 
 Where it makes the scenario read more easily, use the `But` as well as `And` keywords in the `Then` section.
 
@@ -420,8 +422,8 @@ Or you can mention the user in each step:
     ...
 ----
 
-Either form is acceptable. Longer tests with a single user work well with the first form.
-Shorter tests, or sharing tests that mix actions of multiple users, work well with the second form.
+Either form is acceptable. Longer tests with a single user read well with the first form.
+Shorter tests, or sharing tests that mix actions of multiple users, read well with the second form.
 
 When the actor is the administrator (a special user with privileges) then use `the administrator` in the step text.
 Do not write `When user "admin" does something`.
