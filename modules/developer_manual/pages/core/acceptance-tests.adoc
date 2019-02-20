@@ -1,4 +1,5 @@
 = Acceptance Tests
+:behat-tags-docs-url: http://behat.org/en/latest/user_guide/organizing.html#tags
 
 [[the-test-directory-structure]]
 == The Test Directory Structure
@@ -481,6 +482,154 @@ then put them into a `Background:` section. For example:
 ----
 
 This reduces some duplication in feature files.
+
+== Controlling Running Test Scenarios In Different Environments
+
+A feature or test scenario might only be relevant to run on a system-under-test that has a particular environment. 
+For example, a particular app enabled.
+
+To allow the test runner script to run the features and scenarios relevant to the system-under-test the feature file or individual scenarios are tagged.
+The test runner script can then filter by tags to select the relevant features or scenarios.
+
+TIP: For general information on tagging features and scenarios see {behat-tags-docs-url}[the Behat tags documentation].
+
+=== Tagging Features By API, CLI and webUI
+
+Tag every feature with its major acceptance test type `api`, `cli` or `webUI`, as in the following examples.
+Doing so allows the tests of a particular major type to be quickly run or skipped.
+
+==== `@api`
+
+[source,gherkin]
+----
+@api
+Feature: add groups
+  As an admin
+  I want to be able to add groups
+  So that I can more easily manage access to resources by groups rather than individual users
+----
+
+==== `@cli`
+
+[source,gherkin]
+----
+@cli
+Feature: add group
+  As an admin
+  I want to be able to add groups
+  So that I can more easily manage access to resources by groups rather than individual users
+----
+
+==== `@webUI`
+
+[source,gherkin]
+----
+@webUI
+Feature: login users
+  As a user
+  I want to be able to log into my account
+  So that I have access to my files
+----
+
+
+=== Tagging Scenarios That Require An App
+
+When a feature or scenario requires a core app to be enabled then tag it like:
+
+[source,gherkin]
+----
+@comments-app-required
+@federation-app-required
+@files_trashbin-app-required
+@files_versions-app-required
+@notifications-app-required
+@provisioning-app-required
+@systemtags-app-required
+----
+
+The above apps might be disabled on a system-under-test. 
+Tagging the feature or scenario allows all tests for the app to be quickly run or skipped.
+
+For tests in an app repository, do not tag them with the app name (e.g., `files_texteditor-app-required`).
+It is already a given that the app in the repository is required for running the tests!
+
+=== Tagging Scenarios That Need to Be Skipped
+
+==== Skip UI Tests On A Particular Browser
+
+Some browsers have difficulty with some automated test actions. 
+To skip scenarios for a browser tag them with the relevant tags:
+
+[source,gherkin]
+----
+@skipOnCHROME
+@skipOnFIREFOX
+@skipOnINTERNETEXPLORER
+@skipOnMICROSOFTEDGE
+----
+
+=== Skip Tests On A Particular Version Of ownCloud
+
+The acceptance test suite is sometimes run against a system-under-test that has an older version of ownCloud.
+When writing new test scenarios for a new or changed feature, tag them to be skipped on the previous recent release of ownCloud.
+Use tag formats like the following to skip on a particular major, minor or patch version.
+
+[source,gherkin]
+----
+@skipOnOcV10
+@skipOnOcV10.0
+@skipOnOcV10.0.10
+@skipOnOcV10.1
+----
+
+=== Skip Tests In Other Environments
+
+[cols="20,80",options="header"]
+|===
+|Annotation
+|Description
+|`@skipOnLDAP` 
+|skip the scenario if the test is running with the LDAP backend. For example, some user provisioning features may not be relevant when LDAP is the backend for authentication.
+|`@skipOnStorage:ceph` 
+|skip the scenario if the test is running with `ceph` backend storage.
+|`@skipOnStorage:scality` 
+|skip the scenario if the test is running with `scality` backend storage.
+|`@skipOnEncryption` 
+|skip the scenario if the test is running with encryption enabled.
+|`@skipOnEncryptionType:masterkey` 
+|skip the scenario if the test is running with `masterkey` encryption enabled.
+|`@skipOnEncryptionType:user-keys` 
+|skip the scenario if the test is running with `user-keys` encryption enabled.
+|===
+
+== Tags For Tests To Run In Special Environments
+
+[cols="25,75",options="header"]
+|===
+|Annotation
+|Description
+|`@smokeTest` 
+|this scenario has been selected as part of a base set of smoke tests.
+|`@TestAlsoOnExternalUserBackend` 
+|this scenario is selected as part of a base set of tests to run when a special user backend is in place (e.g., LDAP).
+|`@local_storage` 
+|this scenario requires and tests the local storage feature.
+|===
+
+== Special Tags for UI Tests
+
+[cols="25,75",options="header"]
+|===
+|Annotation
+|Description
+|`@insulated` 
+|this makes the browser driver restart the browser session between each scenario. 
+It helps isolate the browser state. 
+When the browser session is recording, there is a separate video for each scenario. 
+Use this tag on all UI scenarios.
+|`@disablePreviews`
+|generating previews/thumbnails takes time. Use this tag on UI test scenarios that do not need to test thumbnail behavior.
+|===
 
 [[how-to-add-a-new-feature]]
 == How to Add New Test Steps
