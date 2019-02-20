@@ -1,6 +1,6 @@
 # Makefile for the documentation
 
-SHELL ?= bash
+SHELL = bash
 
 FONTS_DIR ?= fonts
 STYLES_DIR ?= resources/themes
@@ -30,9 +30,9 @@ endif
 
 ifndef OUTPUT_ADMIN
 	ifneq ($(VERSION),master)
-		OUTPUT_ADMIN ?= build/server/$(VERSION)/administration_manual
+		OUTPUT_ADMIN ?= build/server/$(VERSION)/admin_manual
 	else
-		OUTPUT_ADMIN ?= build/server/administration_manual
+		OUTPUT_ADMIN ?= build/server/admin_manual
 	endif
 endif
 
@@ -92,8 +92,8 @@ pdf-admin: ## Generate PDF version of the administration manual
 		-a pdf-stylesdir=$(STYLES_DIR)/ \
 		-a pdf-style=$(STYLE) \
 		-a pdf-fontsdir=$(FONTS_DIR) \
-		-a examplesdir=modules/administration_manual/examples \
-		-a imagesdir=modules/administration_manual/assets/images \
+		-a examplesdir=modules/admin_manual/examples \
+		-a imagesdir=modules/admin_manual/assets/images \
 		-a revnumber=$(VERSION) \
 		-a revdate=$(REVDATE) \
 		--base-dir $(CURDIR) \
