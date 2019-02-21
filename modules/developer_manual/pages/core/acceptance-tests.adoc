@@ -568,7 +568,7 @@ To skip scenarios for a browser tag them with the relevant tags:
 @skipOnMICROSOFTEDGE
 ----
 
-=== Skip Tests On A Particular Version Of ownCloud
+==== Skip Tests On A Particular Version Of ownCloud
 
 The acceptance test suite is sometimes run against a system-under-test that has an older version of ownCloud.
 When writing new test scenarios for a new or changed feature, tag them to be skipped on the previous recent release of ownCloud.
@@ -582,7 +582,7 @@ Use tag formats like the following to skip on a particular major, minor or patch
 @skipOnOcV10.1
 ----
 
-=== Skip Tests In Other Environments
+==== Skip Tests In Other Environments
 
 [cols="20,80",options="header"]
 |===
@@ -602,7 +602,7 @@ Use tag formats like the following to skip on a particular major, minor or patch
 |skip the scenario if the test is running with `user-keys` encryption enabled.
 |===
 
-== Tags For Tests To Run In Special Environments
+=== Tags For Tests To Run In Special Environments
 
 [cols="25,75",options="header"]
 |===
@@ -616,7 +616,7 @@ Use tag formats like the following to skip on a particular major, minor or patch
 |this scenario requires and tests the local storage feature.
 |===
 
-== Special Tags for UI Tests
+=== Special Tags for UI Tests
 
 [cols="25,75",options="header"]
 |===
@@ -630,6 +630,41 @@ Use this tag on all UI scenarios.
 |`@disablePreviews`
 |generating previews/thumbnails takes time. Use this tag on UI test scenarios that do not need to test thumbnail behavior.
 |===
+
+== Writing Scenarios For Bugs
+
+If you are developing a new feature, and the scenarios that you have written do not pass,
+or existing scenarios are failing, then fix the code so that they pass.
+
+If you are writing scenarios to cover features and scenarios that are not currently covered
+by acceptance tests then you may find existing bugs.
+
+If the bug is easy to fix, then provide the bugfix and the new acceptance test scenario(s)
+in the same pull request.
+
+If the bug is not easy to fix, then:
+
+ - create an issue describing the bug.
+ - write a scenario that demonstrates the existing wrong behavior.
+ - include commented-out steps in the scenario to document what is the expected correct behavior.
+ - write the scenario so that it will fail when the bug is fixed.
+ - tag the scenario with the issue number.
+
+[source,gherkin]
+----
+  @issue-32385
+  Scenario: Change email address
+    When the user changes the email address to "new-address@owncloud.com" using the webUI
+    # When the issue is fixed, remove the following step and replace with the commented-out step
+    Then the email address "new-address@owncloud.com" should not have received an email
+    #And the user follows the email change confirmation link received by "new-address@owncloud.com" using the webUI
+    Then the attributes of user "user1" returned by the API should include
+      | email | new-address@owncloud.com |
+----
+
+The above scenario is an example of this.
+When the bug is fixed then the step about `should not have received an email` will fail.
+CI will fail, and so the developer will notice this scenario and will have to correct it.
 
 [[how-to-add-a-new-feature]]
 == How to Add New Test Steps
