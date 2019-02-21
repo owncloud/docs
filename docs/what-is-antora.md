@@ -27,7 +27,7 @@ In the screenshot above, you can see an example of what Antora documentation loo
 
 While not revolutionary, the layout uses well-recognized and understood navigation conventions. However, it has a rich navigational feature. Notice the link right at the bottom<sup>(5)</sup>. If you click it, it opens up a sub-navigation menu.
 
-![Antora documentation version navigation](./images/antora-version-navigation.png)
+![Antora documentation version navigation](./images/what-is-antora/the-antora-version-changer.gif)
 
 This is an excellent, time-saving feature that allows for direct navigation between different documentation versions (git branches). In the current documentation, an extra page exists to link to the various versions of the documentation, such as for version *8.2*, *9.x*, and *10.x.* However, by taking advantage of this feature in Antora, that's not necessary, thanks to this innovative feature.
 
