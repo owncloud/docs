@@ -1,6 +1,6 @@
 # The Branching Workflow
 
-![The Branching Workflow](images/the-branching-workflow.png.png)
+![The Branching Workflow](images/the-branching-workflow.png)
 
 In addition to the `master` branch, each documentation repository will have _two_ branches at any one time; one for the current version of the software and one for the previous version.
 
