@@ -686,26 +686,7 @@ Here's example code for a `Given` step:
 
 [source,php]
 ----
-/**
- * @Given the administrator has changed the password of user :user to :password
- *
- * @param string $user
- * @param string $password
- *
- * @return void
- * @throws \Exception
- */
-public function adminHasChangedPasswordOfUserTo(
-    $user, $password
-) {
-    $this->adminChangesPasswordOfUserToUsingTheProvisioningApi(
-        $user, $password
-    );
-    $this->theHTTPStatusCodeShouldBe(
-        200,
-        "could not change password of user $user"
-    );
-}
+include::example$core/acceptance-tests/given-step.php[]
 ----
 
 The code calls the method for the `When` step and then checks the HTTP status code.
@@ -721,27 +702,7 @@ Here's example code for a `When` step:
 
 [source,php]
 ----
-/**
- * @When the administrator changes the password of user :user to :password using the provisioning API
- *
- * @param string $user
- * @param string $password
- *
- * @return void
- * @throws \Exception
- */
-public function adminChangesPasswordOfUserToUsingTheProvisioningApi(
-    $user, $password
-) {
-    $this->response = UserHelper::editUser(
-        $this->getBaseUrl(),
-        $user,
-        'password',
-        $password,
-        $this->getAdminUsername(),
-        $this->getAdminPassword()
-    );
-}
+include::example$core/acceptance-tests/when-step.php[]
 ----
 
 The code saves the response so that later `Then` steps can examine it.
@@ -755,45 +716,18 @@ Here's example code for a `Then` step:
 
 [source,php]
 ----
-/**
- * @Then /^the groups returned by the API should include "([^"]*)"$/
- *
- * @param string $group
- *
- * @return void
- */
-public function theGroupsReturnedByTheApiShouldInclude($group) {
-    $respondedArray = $this->getArrayOfGroupsResponded($this->response);
-    PHPUnit_Framework_Assert::assertContains($group, $respondedArray);
-}
+include::example$core/acceptance-tests/then-step.php[]
 ----
 
-But a `Then` step may need to do actions of its own to retrieve more information about the state of the system.
+However, a `Then` step may need to do actions of its own to retrieve more information about the state of the system.
 For example, after changing a user password we could check that the user can still access some file:
 
 [source,php]
 ----
-/**
- * @Then /^as "([^"]*)" (file|folder|entry) "([^"]*)" should exist$/
- *
- * @param string $user
- * @param string $entry
- * @param string $path
- *
- * @return void
- * @throws \Exception
- */
-public function asFileOrFolderShouldExist($user, $entry, $path) {
-    $path = $this->substituteInLineCodes($path);
-    $this->responseXmlObject = $this->listFolder($user, $path, 0);
-    PHPUnit_Framework_Assert::assertTrue(
-        $this->isEtagValid(),
-        "$entry '$path' expected to exist but not found"
-    );
-}
+include::example$core/acceptance-tests/then-step-with-actions.php[]
 ----
 
-In the above example `listFolder` is called and does an API call to access the file and then asserts that the response has a valid etag.
+In the above example, `listFolder` is called and does an API call to access the file and then asserts that the response has a valid ETag.
 
 == References
 
