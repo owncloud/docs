@@ -669,39 +669,131 @@ CI will fail, and so the developer will notice this scenario and will have to co
 [[how-to-add-a-new-feature]]
 == How to Add New Test Steps
 
-To do - write this section. The following is some code that was already in this document:
+See http://behat.org/en/latest/user_guide.html[the Behat User Guide] for information about writing test step code.
 
-The first thing we need to do is create a new file for the context; we'll name it `TaskToTestContext.php`.
-In the file, we'll add the code snippet below:
+In addition to that, follow these guidelines.
+
+=== Given Steps
+
+The code of a `Given` step should achieve the desired system state by whatever means is quick to execute.
+Typically use a public API if available, rather than running an `occ` command via the testing app or entering data in the webUI.
+
+If there is a simple way to gain confidence that the `Given` step was successful, then do it.
+Typically this will check a status code returned in the API response.
+Doing simple confidence checks in `Given` steps makes it easier to catch some unexpected problem during the scenario `Given` section.
+
+Here's example code for a `Given` step:
 
 [source,php]
 ----
-<?php
-
-use Behat\Behat\Context\Context;
-
-require __DIR__ . '/../../vendor/autoload.php';
-
 /**
- * Example Context.
+ * @Given the administrator has changed the password of user :user to :password
+ *
+ * @param string $user
+ * @param string $password
+ *
+ * @return void
+ * @throws \Exception
  */
-class ExampleContext implements Context {
-  use Webdav;
+public function adminHasChangedPasswordOfUserTo(
+    $user, $password
+) {
+    $this->adminChangesPasswordOfUserToUsingTheProvisioningApi(
+        $user, $password
+    );
+    $this->theHTTPStatusCodeShouldBe(
+        200,
+        "could not change password of user $user"
+    );
 }
 ----
 
-Here's example code for a scenario:
+The code calls the method for the `When` step and then checks the HTTP status code.
+
+=== When Steps
+
+The code of a `When` step should perform the action but not check its result.
+A `When` step should not ordinarily fail.
+Often a `When` step will save the response.
+It is the responsibility of later `Then` steps to decide if the scenario passed or failed.
+
+Here's example code for a `When` step:
 
 [source,php]
 ----
 /**
- * @When Sending a :method to :url with requesttoken
+ * @When the administrator changes the password of user :user to :password using the provisioning API
  *
- * @param string $method
- * @param string $url
+ * @param string $user
+ * @param string $password
+ *
+ * @return void
+ * @throws \Exception
  */
-public function exampleFunction($method, $url) {
+public function adminChangesPasswordOfUserToUsingTheProvisioningApi(
+    $user, $password
+) {
+    $this->response = UserHelper::editUser(
+        $this->getBaseUrl(),
+        $user,
+        'password',
+        $password,
+        $this->getAdminUsername(),
+        $this->getAdminPassword()
+    );
+}
 ----
+
+The code saves the response so that later `Then` steps can examine it.
+
+=== Then Steps
+
+The code of a `Then` step should check some result of the `When` action.
+Often it will find information in the saved response and assert something.
+
+Here's example code for a `Then` step:
+
+[source,php]
+----
+/**
+ * @Then /^the groups returned by the API should include "([^"]*)"$/
+ *
+ * @param string $group
+ *
+ * @return void
+ */
+public function theGroupsReturnedByTheApiShouldInclude($group) {
+    $respondedArray = $this->getArrayOfGroupsResponded($this->response);
+    PHPUnit_Framework_Assert::assertContains($group, $respondedArray);
+}
+----
+
+But a `Then` step may need to do actions of its own to retrieve more information about the state of the system.
+For example, after changing a user password we could check that the user can still access some file:
+
+[source,php]
+----
+/**
+ * @Then /^as "([^"]*)" (file|folder|entry) "([^"]*)" should exist$/
+ *
+ * @param string $user
+ * @param string $entry
+ * @param string $path
+ *
+ * @return void
+ * @throws \Exception
+ */
+public function asFileOrFolderShouldExist($user, $entry, $path) {
+    $path = $this->substituteInLineCodes($path);
+    $this->responseXmlObject = $this->listFolder($user, $path, 0);
+    PHPUnit_Framework_Assert::assertTrue(
+        $this->isEtagValid(),
+        "$entry '$path' expected to exist but not found"
+    );
+}
+----
+
+In the above example `listFolder` is called and does an API call to access the file and then asserts that the response has a valid etag.
 
 == References
 
