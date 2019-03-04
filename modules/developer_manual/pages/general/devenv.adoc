@@ -16,7 +16,8 @@ the ownCloud source code.
 [[install-the-core-software]]
 == Install the Core Software
 
-The first thing to do is to ensure that your server has the necessary software for installing and running ownCloud. While you can go further,you need to install at least
+The first thing to do is to ensure that your server has the necessary software for installing and running ownCloud.
+While you can go further, you need to install at least
 xref:admin_manual:installation/manual_installation.adoc#install-the-required-packages[the required packages].
 Then you will need to install the software required to run the development environment's installation process.
 
@@ -28,17 +29,103 @@ Then you will need to install the software required to run the development envir
 * https://www.gnu.org/software/wget/[wget]
 
 [[install-dependencies-on-ubuntu-16.04]]
-=== Install Dependencies on Ubuntu 16.04
+=== Install Dependencies on Ubuntu 16.04/18.04
 
+**nodejs, make, unzip, git**
 [source,console]
 ....
 cd ~
 curl -sL https://deb.nodesource.com/setup_8.x -o nodesource_setup.sh
 sudo bash nodesource_setup.sh
 sudo apt-get -y -q update
-sudo apt-get -y -q update
+sudo apt-get -y -q upgrade
 sudo apt-get install nodejs build-essential make unzip git
 ....
+
+**composer**
+
+Prepare the installation:
+
+[source,console]
+....
+cd ~/tmp
+sudo apt-get install wget php-cli php-zip
+php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+HASH="$(wget -q -O - https://composer.github.io/installer.sig)"
+php -r "if (hash_file('SHA384', 'composer-setup.php') === '$HASH') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+....
+
+If the hashes match, you will see the following output:
+
+```
+Output
+Installer verified
+```
+
+Install Composer in the /usr/local/bin directory:
+
+[source,console]
+....
+sudo php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+....
+
+```
+Output
+All settings correct for using Composer
+Downloading...
+
+Composer (version 1.7.2) successfully installed to: /usr/local/bin/composer
+Use it: php /usr/local/bin/composer
+```
+Verify the installation:
+
+[source,console]
+....
+composer
+....
+```
+   ______
+  / ____/___  ____ ___  ____  ____  ________  _____
+ / /   / __ \/ __ `__ \/ __ \/ __ \/ ___/ _ \/ ___/
+/ /___/ /_/ / / / / / / /_/ / /_/ (__  )  __/ /
+\____/\____/_/ /_/ /_/ .___/\____/____/\___/_/
+                    /_/
+Composer version 1.8.4 2019-02-11 10:52:10
+```
+**yarn**
+
+Enable the Yarn repository:
+
+[source,console]
+....
+curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+....
+
+Add the Yarn APT repository to your system’s software repository list:
+
+[source,console]
+....
+echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+....
+
+Update the package list and install Yarn:
+
+[source,console]
+....
+sudo apt-get update
+sudo apt-get install --no-install-recommends yarn
+....
+
+Verify that Yarn installed successfully:
+
+[source,console]
+....
+yarn --version
+....
+```
+Output
+yarn version v1.13.0
+```
 
 [[install-dependencies-on-opensuse-leap-42.3]]
 === Install Dependencies on openSUSE Leap 42.3
