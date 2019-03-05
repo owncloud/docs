@@ -40,6 +40,7 @@ The ownCloud instance itself is installed in `/var/www/owncloud/`.
 Further Shibboleth specific configuration as defined in
 `/etc/apache2/conf.d/shib.conf`.
 
+
 [source,conf]
 ....
 # Load the Shibboleth module.
@@ -75,6 +76,10 @@ LoadModule mod_shib /usr/lib64/shibboleth/mod_shib_24.so
 </Location>
 
 # shib session for css, js and woff not needed
+#
+# WARNING!!!: The following lines could potentially override other location statements
+# made in other apache config-files depending on include-order, please double-check
+# your apache-config by consulting the apche debug-log
 <Location ~ "/.*\.(css|js|woff)">
     AuthType None
     Require all granted
