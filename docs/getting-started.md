@@ -191,6 +191,10 @@ $ git push {username} :<branchname>
 
 **Note:** you can also delete a remote branch through the GitHub UI.
 
+## The Branching Workflow
+
+Please refer to [the branching workflow](./the-branching-workflow.md) to learn about how git branches are used to manage and build the documentation.
+
 ## The Build Pipeline
 
 Please refer to [the documentation build pipeline](./the-build-pipeline.md) to learn about how the documentation is built.
