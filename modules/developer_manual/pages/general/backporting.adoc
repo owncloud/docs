@@ -54,7 +54,7 @@ involved, use the script below instead.
 
 if [ "$#" -lt 2 ]; then
     echo "Illegal number of parameters"
-    echo "  $0 <commit-sha> <targetBranchName>"
+    echo "  $0 <merge/commit-sha> <targetBranchName>"
     echo "  For example: $0 123456789 stable10"
     exit
 fi
@@ -87,7 +87,7 @@ echo
 
 git cherry-pick $commit || git cherry-pick -m 1 $commit
 
-message="[$targetBranch] [PR $pull_id] "$(git log -1 --pretty=%B $commit | tail -n 1)
+message="[$targetBranch] [PR $pull_id] "$(git log -1 --pretty=%B $commit | tail -n 2 | awk 'NF' | sed 's/^* //')
 echo
 
 git commit --amend -m "$message"
