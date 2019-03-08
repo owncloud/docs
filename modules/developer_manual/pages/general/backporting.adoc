@@ -51,28 +51,53 @@ involved, use the script below instead.
 [source,console]
 ----
 #!/bin/bash
-set -e
 
 if [ "$#" -lt 2 ]; then
     echo "Illegal number of parameters"
-    echo "  $0 <commit-sha> <targetBranchName>"
+    echo "  $0 <merge/commit-sha> <targetBranchName>"
     echo "  For example: $0 123456789 stable10"
     exit
 fi
 
 commit=$1
 targetBranch=$2
-echo "backporting $commit to $targetBranch"
+
+is_merged=$(git branch --contains $1 | grep -oP '(?<=\*).*')
+
+if [ -z "$is_merged" ]; then
+    echo "$commit has not been merged. Exiting"
+    echo
+    exit
+fi
+
+pull_id=$(git log $1^! --oneline 2>/dev/null | tail -n 3 | grep -oP '(?<=#)[0-9]*')
+targetCommit="$targetBranch-$commit-$pull_id"
+
+echo "Backporting commit $commit to $targetBranch"
+echo
+
+set -e
 
 git fetch -p
 git checkout $targetBranch
 git pull --rebase
-git checkout -b $targetBranch-$commit
+git checkout -b $targetCommit
+
+echo
+
 git cherry-pick $commit || git cherry-pick -m 1 $commit
 
-message=`git log -1 --pretty=%B`
-git commit --amend -m "[$targetBranch] $message"
-git push origin $targetBranch-$commit
+message="[$targetBranch] [PR $pull_id] "$(git log -1 --pretty=%B $commit | tail -n 2 | awk 'NF' | sed 's/^* //')
+echo
+
+git commit --amend -m "$message"
+
+echo
+echo "Pushing: $message"
+echo
+
+git push origin $targetCommit
+
 ----
 
 Assuming that you store the script in a file called `backport.sh`, the
@@ -81,6 +106,11 @@ command would be called as follows:
 [source,console]
 ----
 ./backport.sh 123456 stable10
+Backporting commit 123456 to stable10
+...
+Switched to a new branch ‘stable10-123456-34654‘
+...
+Pushing: [stable10] [PR 34654] Each generated birthday or death event gets a new UID
 ----
 
 When doing this yourself, remember to adapt the commit hash and the
