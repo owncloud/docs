@@ -1,8 +1,9 @@
 = Application Metadata
+:markdown-cheatsheet-url: https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
 
 The appinfo/info.xml contains metadata about the application. In this
 section, you will find a complete example configuration, along with an
-explanation of what each of file’s elements.
+explanation of what each of file's elements.
 
 [source,xml]
 ....
@@ -85,11 +86,60 @@ be unique in ownCloud, meaning no other application should have this id.
 This value also represents the URL your application is available on the
 marketplace.
 
-[[category]]
+[[name]]
+== name
+
+*Required*. This is the human-readable name (or title) of the
+application that will be displayed in the application overview page.
+
+[[description]]
+== description
+
+*Required*. The description provides all the necessary information about the application, and is shown in the application overview page. 
+Don't get lost in technical details, focus on the benefits which the application offers. 
+You can use {markdown-cheatsheet-url}[markdown] to format the description.
+
+NOTE: Max. 4000 characters.
+
+[[version]]
+== version
+
+This sets the version of your application.
+
+[[licence]]
+== licence
+
+*Required*. The sets the application's license. This license must be
+compatible with the AGPL and *must not be proprietary*.
+
+Two good examples are:
+
+* AGPL 3 (recommended)
+* MIT
+
+If a proprietary/non-AGPL compatible license must be used, then you have
+to use the https://owncloud.com/overview/enterprise-edition[ownCloud
+Enterprise Edition].
+
+[[author]]
+== author
+
+*Required*. The name of the application's author or authors.
+
+[[namespace]]
+== namespace
+
+Required if `routes.php` returns an array. For example, if your
+application is namespaced, e.g.,
+`\\OCA\\MyApp\\Controller\\PageController`, then the required namespace
+value is `MyApp`. If a namespace is not provided, the application tries
+to default to the first letter upper-cased application id, e.g., `myapp`
+would be tried under `Myapp`.
+
 == category
 
-The category you want to publish the application in. The following
-categories are available for applications to be filed under.
+The ownCloud Marketplace category where you want to publish the application. 
+The following categories are available:
 
 [width="52%",cols="50%,50%",options="header",]
 |================
@@ -107,68 +157,15 @@ categories are available for applications to be filed under.
 | Tools | tools
 |================
 
-For publishing themes this tag must be present — but empty.
+[IMPORTANT] 
+====
+For publishing themes the category tag must be present — _but empty_ — as in the example below.
 
 [source,xml]
 ....
 <category></category>
 ....
-
-[[description]]
-== description
-
-max. 4000 characters; This provides all the necessary, detailed
-information about the application. Don’t get lost in technical details,
-focus on the benefits which the application offers. You can use
-https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet[markdown]
-to format the description.
-
-[[name]]
-== name
-
-*Required*. This is the human-readable name (or title) of the
-application that will be displayed in the application overview page.
-
-[[description-1]]
-== description
-
-*Required*. This contains the description of the application which will
-be shown in the application overview page.
-
-[[version]]
-== version
-
-This sets the version of your application.
-
-[[licence]]
-== licence
-
-*Required*. The sets the application’s license. This license must be
-compatible with the AGPL and *must not be proprietary*.
-
-Two good examples are:
-
-* AGPL 3 (recommended)
-* MIT
-
-If a proprietary/non-AGPL compatible license must be used, then you have
-to use the https://owncloud.com/overview/enterprise-edition[ownCloud
-Enterprise Edition].
-
-[[author]]
-== author
-
-*Required*. The name of the application’s author or authors.
-
-[[namespace]]
-== namespace
-
-Required if `routes.php` returns an array. For example, if your
-application is namespaced, e.g.,
-`\\OCA\\MyApp\\Controller\\PageController`, then the required namespace
-value is `MyApp`. If a namespace is not provided, the application tries
-to default to the first letter upper-cased application id, e.g., `myapp`
-would be tried under `Myapp`.
+====
 
 [[summary]]
 == summary
@@ -218,7 +215,7 @@ point for developer documentation is the README.md in GitHub.
 [[website]]
 == website
 
-*Required*. A link to the project’s web page.
+*Required*. A link to the project's web page.
 
 [[repository]]
 == repository
@@ -229,16 +226,6 @@ point for developer documentation is the README.md in GitHub.
 == bugs
 
 *Required*. A link to the bug tracker, if any.
-
-[[category-1]]
-== category
-
-The ownCloud Marketplace category. It can be one of the following:
-
-* multimedia
-* productivity
-* game
-* tool
 
 [[dependencies]]
 == Dependencies
@@ -302,7 +289,7 @@ IMPORTANT: This will be mandatory from version 11 onwards.
 The following sections are listed just for reference and should not be
 used because:
 
-* *public/remote*: Use api instead because you’ll have to use xref:core/externalapi.adoc[the external API], which is known to be buggy. It only works properly with GET/POST requests.
+* *public/remote*: Use api instead because you'll have to use xref:core/externalapi.adoc[the external API], which is known to be buggy. It only works properly with GET/POST requests.
 * *standalone/default_enable*: They tell core what do on setup, you will not be able to even activate your application if it has those entries.
 
 This should be replaced by a config file inside core.
