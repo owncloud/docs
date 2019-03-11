@@ -48,77 +48,50 @@ based off of the branch that you wish to backport to. However, doing so
 can involve a number of manual steps. To reduce the effort and time
 involved, use the script below instead.
 
-[source,console]
-----
-#!/bin/bash
+NOTE: The script uses `curl` and the `jq` (lightweight and flexible
+command-line JSON processor) package. Please install them before first usage.
 
-if [ "$#" -lt 2 ]; then
-    echo "Illegal number of parameters"
-    echo "  $0 <merge/commit-sha> <targetBranchName>"
-    echo "  For example: $0 123456789 stable10"
-    exit
-fi
-
-commit=$1
-targetBranch=$2
-
-is_merged=$(git branch --contains $1 | grep -oP '(?<=\*).*')
-
-if [ -z "$is_merged" ]; then
-    echo "$commit has not been merged. Exiting"
-    echo
-    exit
-fi
-
-pull_id=$(git log $1^! --oneline 2>/dev/null | tail -n 3 | grep -oP '(?<=#)[0-9]*')
-targetCommit="$targetBranch-$commit-$pull_id"
-
-echo "Backporting commit $commit to $targetBranch"
-echo
-
-set -e
-
-git fetch -p
-git checkout $targetBranch
-git pull --rebase
-git checkout -b $targetCommit
-
-echo
-
-git cherry-pick $commit || git cherry-pick -m 1 $commit
-
-message="[$targetBranch] [PR $pull_id] "$(git log -1 --pretty=%B $commit | tail -n 2 | awk 'NF' | sed 's/^* //')
-echo
-
-git commit --amend -m "$message"
-
-echo
-echo "Pushing: $message"
-echo
-
-git push origin $targetCommit
-
-----
-
-Assuming that you store the script in a file called `backport.sh`, the
-command would be called as follows:
+NOTE: This script uses the github API. For unauthenticated requests, the rate
+limit allows for up to 60 requests per hour. Unauthenticated requests are
+associated with the originating IP address, and not the user making requests.
+For more information see https://developer.github.com/v3/#rate-limiting
 
 [source,console]
 ----
-./backport.sh 123456 stable10
-Backporting commit 123456 to stable10
+include::examples/scripts/backport.sh
+----
+
+TIP: It is highly recommended to use the merge commit sha when backporting a Pull Request.
+The merge commit includes all PR sub commits to be backported. With that, no individual
+sub commit backporting is necessary.
+
+The following example assumes that:
+
+- You save the script in a file called `<path>/backport.sh` and mark it executable
+- You have checked out the branch containing the merged sha (like `master`)
+- Your merge sha = 1234567 and your target branch = stable10
+
+The command to backport this Pull Request would be called as follows:
+
+[source,console]
+----
+<path>/backport.sh 1234567 stable10
+Backporting commit 1234567 to stable10
 ...
-Switched to a new branch ‘stable10-123456-34654‘
+Switched to a new branch ‘stable10-1234567-34654‘
 ...
 Pushing: [stable10] [PR 34654] Each generated birthday or death event gets a new UID
+...
 ----
 
-When doing this yourself, remember to adapt the commit hash and the
+Please keep in mind that this is an example and you have to adapt the commit hash and the
 target branch accordingly.
 
 When the script completes, go to GitHub, where it will suggest that you
-make a PR from pushed branch. Change the base branch to be committed
-against, from `master` to `stable10` and continue.
+make a PR from pushed branch.
+
+IMPORTANT: Change the base branch to be committed against,
+from `master` to your target branch (in our example `stable10`) and continue.
 
 In case you have installed the `xdg-utils` package, you can add at the
 end of the script above following code which opens the PR to be
@@ -126,9 +99,11 @@ finalized in your browser:
 
 [source,console]
 ----
-repo=`git remote -v | grep -m 1 "(push)" | sed -e "s/.*github.com[:/]\(.*\)\.git.*/\1/"`
-branch=`git name-rev --name-only HEAD`
-echo "Creating pull request for branch \"$branch\" in \"$repo\""
+echo "Creating pull request for branch $targetBranch in $repository"
 
-xdg-open "https://github.com/$repo/pull/new/$targetBranch...$branch"
+xdg-open "https://github.com/$repository/pull/new/$targetBranch...$targetCommit"
 ----
+
+NOTE: This command opens the Pull Request and sets the target branch
+(in our example `stable10`) for the backport automatically.
+
