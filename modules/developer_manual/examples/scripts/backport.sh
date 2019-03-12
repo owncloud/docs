@@ -59,17 +59,19 @@ else
   pullTitle=$(curl https://api.github.com/repos/$repository/pulls/$pullId 2>/dev/null | jq '.title' | sed 's/^.//' | sed 's/.$//')
 fi
 
+# build names used
+targetCommit="$targetBranch-$commit-$pullId"
+message="[$targetBranch] [PR $pullId] $pullTitle"
+
 echo
 echo "Info:"
 echo "You have $rateLimitRemaining backport requests remaining in the current github rate limit window"
 echo "The current rate limit window resets in $remaining"
 echo
-echo "Backporting commit $commit to $targetBranch"
-echo
+echo "Backporting commit $commit to $targetBranch with the following text:"
+echo "$message"
 
-# build names used
-targetCommit=$targetBranch-$commit-$pullId
-message="[$targetBranch] [PR $pullId] $pullTitle"
+echo
 
 set -e
 
