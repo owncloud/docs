@@ -21,11 +21,13 @@ fi
 
 commit=$1
 targetBranch=$2
+baseBranch=$(ggit rev-parse --abbrev-ref HEAD)
+
 
 is_merged=$(git branch --contains $1 | grep -oP '(?<=\*).*')
 
 if [ -z "$is_merged" ]; then
-    echo "$commit has not been merged or branch is not pulled/rebased. Exiting"
+    echo "$commit has not been merged or $baseBranch is not pulled/rebased. Exiting"
     echo
     exit
 fi
@@ -93,3 +95,5 @@ echo "Pushing: $message"
 echo
 
 git push origin $targetCommit
+
+git checkout $baseBranch
