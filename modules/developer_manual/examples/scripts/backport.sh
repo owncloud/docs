@@ -21,7 +21,7 @@ fi
 
 commit=$1
 targetBranch=$2
-baseBranch=$(ggit rev-parse --abbrev-ref HEAD)
+baseBranch=$(git rev-parse --abbrev-ref HEAD)
 
 
 is_merged=$(git branch --contains $1 | grep -oP '(?<=\*).*')
