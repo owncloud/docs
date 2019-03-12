@@ -1,0 +1,148 @@
+= Server Preparation for Ubuntu 18.04
+:hash-installation: http://php.net/manual/en/hash.installation.php
+:mcrypt-link-url: https://websiteforstudents.com/install-php-7-2-mcrypt-module-on-ubuntu-18-04-lts/
+:mcrypt-pecl-url: https://pecl.php.net/package/mcrypt
+:discover-samba-hosts: https://ubuntuforums.org/showthread.php?t=2384959
+:install-mariadb-latest: https://downloads.mariadb.org/mariadb/repositories/#
+
+== Webserver and php
+
+You only need to install one of the following webservers.
+ 
+=== apache webserver + php
+
+The following command installs Apache webserver and php.
+
+[source,console]
+----
+sudo apt install php libapache2-mod-php apache2
+----
+
+=== nginx webserver + php
+
+The following command installs nginx webserver and php-fpm.
+
+[source,console]
+----
+sudo apt install php-fpm nginx
+----
+
+== Common Prerequisites
+
+[source,console]
+----
+sudo apt install smbclient
+sudo apt install redis-server
+sudo apt install unzip
+sudo apt install php-mysql php-mbstring php-gettext php-intl php-redis \
+     php-imagick php-igbinary php-gmp php-curl php-gd php-zip php-imap \
+     php-ldap php-bz2 php-phpseclib
+----
+
+== HASH Message Digest Framework
+
+This framework does not need any manual interverntion anymore. +
+
+- As of PHP 5.1.2, the Hash extension is bundled and compiled into PHP by default.
+- As of PHP 7.4.0, the Hash extension is a core PHP extension, so it is always enabled.
+
+For more information see following {hash-installation}[link]
+
+== Exif Library
+
+This library should be already part of php 7.2. +
+Please check you `mods_available` directory and/or if the exif extension exists at all.
+
+The following command lists all enabled php extensions:
+[source,console]
+----
+ls `php -i | grep "^extension_dir" | sed -e 's/.*=> //'`
+----
+
+== mcrypt php library
+
+Referencing the following {mcrypt-link-url}[link], some steps are adopted. +
+Check the `mcrypt` version you want to use at following {mcrypt-pecl-url}[link].
+
+[source,console]
+----
+sudo apt install php-dev libmcrypt-dev php-pear
+sudo pecl channel-update pecl.php.net
+sudo pecl install mcrypt-1.0.2
+----
+
+- Create a new file `mcrypt.ini` in `/etc/php/7.2/mods-available` with following content: +
+`extension=mcrypt.so`
+- Create in any subdirectory of `7.2` containing a `conf.d` directory a symbolic link: +
+`sudo ln -s /etc/php/7.2/mods-available/mcrypt.ini 20-mcrypt.ini`
+- You need to restart php and your webserver, example based on nginx: +
+`sudo service php7.2-fpm restart` +
+`sudo service nginx restart`
+
+== php-libsodium
+
+If you get an error messages when invoking the command `php -v`
+or on every PHP program: +
+`PHP Fatal error: sodium_init() in Unknown on line 0` +
+This error does not have any harm but can be annoying. +
+You have to uninstall `php-libsodium` as it is already part of php 7.2 +
+`sudo apt remove php-libsodium` +
+You can check success by invoking the command `php -v` which should not return this error message anymore.
+
+== libsmbclient-php library
+
+[source,console]
+----
+sudo apt install php-dev libsmbclient-dev php-pear
+sudo pecl channel-update pecl.php.net
+sudo pecl install smbclient
+----
+
+- Create a new file `smbclient.ini` in `/etc/php/7.2/mods-available` with following content:
+`extension=smbclient.so`
+- Create in any subdirectory of `7.2` containing a `conf.d` directory a symbolic link: +
+`sudo ln -s /etc/php/7.2/mods-available/smbclient.ini 20-smbclient.ini` +
+- You need to restart php and your webserver, example based on nginx: +
+`sudo service php7.2-fpm restart` +
+`sudo service nginx restart`
+
+NOTE: Due to a change in the minimum protocol version used in the samba client in
+Ubuntu 18.04, you may not get a valid connection (red box at the mount definition
+and/or cannot list directory content). +
+In this case you have to add the following to +
+`/etc/samba/smb.cnf` +
+below the `workgroup =` statement: +
+`client max protocol = NT1`. +
+For more information see: {discover-samba-hosts}[Bionic Beaver can not discover samba hosts ]
+
+== Database mariadb
+
+For how to install the latest stable release see following {install-mariadb-latest}[link] +
+
+In case you want to install phpmyadmin:
+
+[source,console]
+----
+sudo apt install phpmyadmin
+----
+
+== Useful Tips
+
+=== Tip1
+
+If you have network resources eg NFS based mounts and you want to make sure that the database server or the web server only starts after the ressource has been mounted, look for following example.
+
+Example based on an NFS mount you want to be available before the service starts.
+
+- Add `_netdev` to the list of options of the NFS mountpoint in your fstab. +
+This option makes sure that the mount will happen __after__ the network is up. +
+`resource:path on local_path type nfs (<your options>,_netdev)`
+- Make sure that all mounts in fstab are mounted by running `sudo mount -a`.
+- Run `systemctl list-units` and look for the mount you want to be up. +
+`folder.mount loaded active mounted local_path` +
+Where `folder.mount` and `local_path` are examples. 
+- Add `folder.mount` after `After=network.target` in your `/etc/systemd/system/<name.service>` +
+Example: `After=network.target folder.mount`
+- Run `sudo systemctl daemon-reload`
+- Restart your service by invoking +
+`sudo system <your service> restart`.
