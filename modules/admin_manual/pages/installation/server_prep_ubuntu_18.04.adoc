@@ -59,7 +59,37 @@ The following command lists all enabled php extensions:
 ls `php -i | grep "^extension_dir" | sed -e 's/.*=> //'`
 ----
 
-== mcrypt php library
+== PHP 7.2 Cryptography Library
+
+Sodium and openssl are cryptographic libraries and already part of the php 7.2 core.
+There is no need to install an aditional cryptographic library like `php-libsodium` or `mcrypt`.
+The mcrypt library is depreciated and removed from the php 7.2 core and moved to PECL.
+
+=== php-libsodium
+
+If you get an error messages when invoking the command `php -v`
+or on every PHP program: +
+`PHP Fatal error: sodium_init() in Unknown on line 0` +
+You might have installed `php-libsodium` additionally. +
+This error does not have any harm but can be annoying. +
+You have to uninstall `php-libsodium` as `sodium` is already part of the php 7.2 core: +
+`sudo apt remove php-libsodium` +
+You can check success by invoking the command `php -v` which should not return this error message anymore. +
+You can also check the existance of `sodium` with following command:
+
+[source,console]
+----
+php -i | grep "sodium"
+sodium
+sodium support => enabled
+libsodium headers version => 1.0.16
+libsodium library version => 1.0.16
+----
+
+=== mcrypt php library
+
+Here are the steps for installing the mcrypt library in case you have
+the desperate need for. +
 
 Referencing the following {mcrypt-link-url}[link], some steps are adopted. +
 Check the `mcrypt` version you want to use at following {mcrypt-pecl-url}[link].
@@ -78,16 +108,6 @@ sudo pecl install mcrypt-1.0.2
 - You need to restart php and your webserver, example based on nginx: +
 `sudo service php7.2-fpm restart` +
 `sudo service nginx restart`
-
-== php-libsodium
-
-If you get an error messages when invoking the command `php -v`
-or on every PHP program: +
-`PHP Fatal error: sodium_init() in Unknown on line 0` +
-This error does not have any harm but can be annoying. +
-You have to uninstall `php-libsodium` as it is already part of php 7.2 +
-`sudo apt remove php-libsodium` +
-You can check success by invoking the command `php -v` which should not return this error message anymore.
 
 == libsmbclient-php library
 
