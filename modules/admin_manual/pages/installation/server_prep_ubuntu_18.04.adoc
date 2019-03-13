@@ -7,9 +7,9 @@
 
 == Webserver and php
 
-You only need to install one of the following webservers.
+You only need to install __one__ of the following webservers.
  
-=== apache webserver + php
+=== Apache Webserver + PHP (supported)
 
 The following command installs Apache webserver and php.
 
@@ -18,7 +18,26 @@ The following command installs Apache webserver and php.
 sudo apt install php libapache2-mod-php apache2
 ----
 
-=== nginx webserver + php
+=== Apache Webserver + PHP-FPM (unsupported)
+
+The following command installs and enables Apache webserver with php-fpm. +
+This setup can be used in high thruput environments. For performance
+comparison details please see following
+https://www.cloudways.com/blog/php-fpm-on-cloud/[link].
+
+[source,console]
+----
+sudo apt install php-fpm apache2
+sudo a2enmod proxy_fcgi
+sudo a2enconf php7.2-fpm
+sudo service apache2 restart
+----
+
+For examples how to configure this setup see 
+http://httpd.apache.org/docs/2.4/mod/mod_proxy.html#handler[link 1] and
+https://wiki.apache.org/httpd/PHP-FPM[link 2]
+
+=== Nginx Webserver + PHP-FPM (unsupported)
 
 The following command installs nginx webserver and php-fpm.
 
@@ -26,6 +45,9 @@ The following command installs nginx webserver and php-fpm.
 ----
 sudo apt install php-fpm nginx
 ----
+
+For details how to configure nginx please see the
+xref:installation/nginx_configuration.adoc[NGINX Configuration].
 
 == Common Prerequisites
 
@@ -61,17 +83,16 @@ ls `php -i | grep "^extension_dir" | sed -e 's/.*=> //'`
 
 == PHP 7.2 Cryptography Library
 
-Sodium and openssl are cryptographic libraries and already part of the php 7.2 core.
+`sodium` and `openssl` php libraries are cryptographic libraries and already part of the php 7.2 core.
 There is no need to install an aditional cryptographic library like `php-libsodium` or `mcrypt`.
-The mcrypt library is depreciated and removed from the php 7.2 core and moved to PECL.
+The `mcrypt` library is depreciated, removed from the php 7.2 core and moved to PECL.
 
 === php-libsodium
 
-If you get an error messages when invoking the command `php -v`
-or on every PHP program: +
+If you get an error messages when invoking the command `php -v` or on every PHP program: +
 `PHP Fatal error: sodium_init() in Unknown on line 0` +
 You might have installed `php-libsodium` additionally. +
-This error does not have any harm but can be annoying. +
+This error does not have any harm but can be annoying and will fill up your log. +
 You have to uninstall `php-libsodium` as `sodium` is already part of the php 7.2 core: +
 `sudo apt remove php-libsodium` +
 You can check success by invoking the command `php -v` which should not return this error message anymore. +
@@ -88,8 +109,7 @@ libsodium library version => 1.0.16
 
 === mcrypt php library
 
-Here are the steps for installing the mcrypt library in case you have
-the desperate need for. +
+Here are the steps for installing the mcrypt library in case you have the desperate need for. +
 
 Referencing the following {mcrypt-link-url}[link], some steps are adopted. +
 Check the `mcrypt` version you want to use at following {mcrypt-pecl-url}[link].
@@ -111,6 +131,9 @@ sudo pecl install mcrypt-1.0.2
 
 == libsmbclient-php library
 
+`libsmbclient-php` a PHP extension that uses Samba's libsmbclient library
+to provide Samba related functions to PHP programs.
+
 [source,console]
 ----
 sudo apt install php-dev libsmbclient-dev php-pear
@@ -118,7 +141,7 @@ sudo pecl channel-update pecl.php.net
 sudo pecl install smbclient
 ----
 
-- Create a new file `smbclient.ini` in `/etc/php/7.2/mods-available` with following content:
+- Create a new file `smbclient.ini` in `/etc/php/7.2/mods-available` with following content: +
 `extension=smbclient.so`
 - Create in any subdirectory of `7.2` containing a `conf.d` directory a symbolic link: +
 `sudo ln -s /etc/php/7.2/mods-available/smbclient.ini 20-smbclient.ini` +
@@ -127,19 +150,19 @@ sudo pecl install smbclient
 `sudo service nginx restart`
 
 NOTE: Due to a change in the minimum protocol version used in the samba client in
-Ubuntu 18.04, you may not get a valid connection (red box at the mount definition
-and/or cannot list directory content). +
+Ubuntu 18.04, you may not get a valid connection in ownCloud (red box at the mount
+definition and/or cannot list directory content). +
 In this case you have to add the following to +
 `/etc/samba/smb.cnf` +
 below the `workgroup =` statement: +
 `client max protocol = NT1`. +
-For more information see: {discover-samba-hosts}[Bionic Beaver can not discover samba hosts ]
+For more information see: {discover-samba-hosts}[Bionic Beaver can not discover samba hosts]
 
 == Database mariadb
 
 For how to install the latest stable release see following {install-mariadb-latest}[link] +
 
-In case you want to install phpmyadmin:
+In case you want to install phpmyadmin as a graphical interface for administrating the database:
 
 [source,console]
 ----
@@ -150,18 +173,21 @@ sudo apt install phpmyadmin
 
 === Tip1
 
-If you have network resources eg NFS based mounts and you want to make sure that the database server or the web server only starts after the ressource has been mounted, look for following example.
+If you have network resources like NFS based mounts and you want to make sure that the database server or the web server only starts after the ressource has been mounted, look for following example.
 
-Example based on an NFS mount you want to be available before the service starts.
+Example based on an NFS mount you want to be available before the service  with <name.service> starts.
 
-- Add `_netdev` to the list of options of the NFS mountpoint in your fstab. +
+- Add `_netdev` to the list of NFS mountpoint options in your fstab. +
 This option makes sure that the mount will happen __after__ the network is up. +
 `resource:path on local_path type nfs (<your options>,_netdev)`
 - Make sure that all mounts in fstab are mounted by running `sudo mount -a`.
-- Run `systemctl list-units` and look for the mount you want to be up. +
+- Run `systemctl list-units | grep -nP "\.mount"` +
+and look for the mount you want to be up. +
 `folder.mount loaded active mounted local_path` +
 Where `folder.mount` and `local_path` are examples. 
-- Add `folder.mount` after `After=network.target` in your `/etc/systemd/system/<name.service>` +
+- In `/etc/systemd/system/<name.service>` +
+add `folder.mount` after the directive +
+`After=network.target` +
 Example: `After=network.target folder.mount`
 - Run `sudo systemctl daemon-reload`
 - Restart your service by invoking +
