@@ -5,23 +5,23 @@
 :discover-samba-hosts: https://ubuntuforums.org/showthread.php?t=2384959
 :install-mariadb-latest: https://downloads.mariadb.org/mariadb/repositories/#
 
-== Webserver and php
+== Web server and PHP
 
-You only need to install __one__ of the following webservers.
+You only need to install _one_ of the following web servers.
  
-=== Apache Webserver + PHP (supported)
+=== Apache Web server + PHP (supported)
 
-The following command installs Apache webserver and php.
+The following command installs the Apache web server and PHP.
 
 [source,console]
 ----
 sudo apt install php libapache2-mod-php apache2
 ----
 
-=== Apache Webserver + PHP-FPM (unsupported)
+=== Apache Web server + PHP-FPM (unsupported)
 
-The following command installs and enables Apache webserver with php-fpm. +
-This setup can be used in high thruput environments. For performance
+The following command installs and enables the Apache web server with php-fpm. +
+This setup can be used in high throughput environments. For performance
 comparison details please see following
 https://www.cloudways.com/blog/php-fpm-on-cloud/[link].
 
@@ -37,21 +37,21 @@ sudo a2enmod http2
 sudo service apache2 restart
 ----
 
-For examples how to configure this setup see 
+For examples of how to configure this setup, see: 
 http://httpd.apache.org/docs/2.4/mod/mod_proxy.html#handler[link 1] and
 https://httpd.apache.org/docs/2.4/mod/mod_proxy_fcgi.html[link 2] and
 https://wiki.apache.org/httpd/PHP-FPM[link 3]
 
-=== Nginx Webserver + PHP-FPM (unsupported)
+=== Nginx Web server + PHP-FPM (unsupported)
 
-The following command installs nginx webserver and php-fpm.
+The following command installs the Nginx web server and php-fpm.
 
 [source,console]
 ----
 sudo apt install php-fpm nginx
 ----
 
-For details how to configure nginx please see the
+For details of how to configure Nginx, please see the
 xref:installation/nginx_configuration.adoc[NGINX Configuration].
 
 == Common Prerequisites
@@ -77,7 +77,7 @@ For more information see following {hash-installation}[link]
 
 == Exif Library
 
-This library should be already part of php 7.2. +
+This library should be already part of PHP 7.2. +
 Please check you `mods_available` directory and/or if the exif extension exists at all.
 
 The following command lists all enabled php extensions:
@@ -88,9 +88,9 @@ ls `php -i | grep "^extension_dir" | sed -e 's/.*=> //'`
 
 == PHP 7.2 Cryptography Library
 
-`sodium` and `openssl` php libraries are cryptographic libraries and already part of the php 7.2 core.
+`sodium` and `openssl` php libraries are cryptographic libraries and already part of the PHP 7.2 core.
 There is no need to install an aditional cryptographic library like `php-libsodium` or `mcrypt`.
-The `mcrypt` library is depreciated, removed from the php 7.2 core and moved to PECL.
+The `mcrypt` library is depreciated, removed from the PHP 7.2 core and moved to PECL.
 
 === php-libsodium
 
@@ -98,7 +98,7 @@ If you get an error messages when invoking the command `php -v` or on every PHP 
 `PHP Fatal error: sodium_init() in Unknown on line 0` +
 You might have installed `php-libsodium` additionally. +
 This error does not have any harm but can be annoying and will fill up your log. +
-You have to uninstall `php-libsodium` as `sodium` is already part of the php 7.2 core: +
+You have to uninstall `php-libsodium` as `sodium` is already part of the PHP 7.2 core: +
 `sudo apt remove php-libsodium` +
 You can check success by invoking the command `php -v` which should not return this error message anymore. +
 You can also check the existance of `sodium` with following command:
@@ -112,9 +112,9 @@ libsodium headers version => 1.0.16
 libsodium library version => 1.0.16
 ----
 
-=== mcrypt php library
+=== mcrypt PHP Library
 
-Here are the steps for installing the mcrypt library in case you have the desperate need for. +
+Here are the steps for installing the `mcrypt` library in case you have the desperate need for. +
 
 Referencing the following {mcrypt-link-url}[link], some steps are adopted. +
 Check the `mcrypt` version you want to use at following {mcrypt-pecl-url}[link].
@@ -130,11 +130,11 @@ sudo pecl install mcrypt-1.0.2
 `extension=mcrypt.so`
 - Create in any subdirectory of `7.2` containing a `conf.d` directory a symbolic link: +
 `sudo ln -s /etc/php/7.2/mods-available/mcrypt.ini 20-mcrypt.ini`
-- You need to restart php and your webserver, example based on nginx: +
+- You need to restart php and your web server, example based on nginx: +
 `sudo service php7.2-fpm restart` +
 `sudo service nginx restart`
 
-== libsmbclient-php library
+== libsmbclient-php Library
 
 `libsmbclient-php` a PHP extension that uses Samba's libsmbclient library
 to provide Samba related functions to PHP programs.
@@ -150,7 +150,7 @@ sudo pecl install smbclient
 `extension=smbclient.so`
 - Create in any subdirectory of `7.2` containing a `conf.d` directory a symbolic link: +
 `sudo ln -s /etc/php/7.2/mods-available/smbclient.ini 20-smbclient.ini` +
-- You need to restart php and your webserver, example based on nginx: +
+- You need to restart php and your web server, example based on nginx: +
 `sudo service php7.2-fpm restart` +
 `sudo service nginx restart`
 
@@ -165,9 +165,9 @@ For more information see: {discover-samba-hosts}[Bionic Beaver can not discover 
 
 == Database mariadb
 
-For how to install the latest stable release see following {install-mariadb-latest}[link] +
+For how to install the latest stable release of `mariadb` see following {install-mariadb-latest}[link] +
 
-In case you want to install phpmyadmin as a graphical interface for administrating the database:
+In case you want to install `phpmyadmin` as a graphical interface for administrating the database:
 
 [source,console]
 ----
