@@ -50,18 +50,21 @@ involved, use the script below instead.
 
 NOTE: The script uses `curl` and the `jq` (lightweight and flexible
 command-line JSON processor) package. Please install them before first usage.
+Please see this https://stedolan.github.io/jq/download/[link] for installation
+details of `jq` covering varios OS.
 
 NOTE: This script uses the github API. For unauthenticated requests, the rate
 limit allows for up to 60 requests per hour. Unauthenticated requests are
 associated with the originating IP address, and not the user making requests.
-For more information see https://developer.github.com/v3/#rate-limiting
+Please see this https://developer.github.com/v3/#rate-limiting[link] for more
+information about github rate limiting.
 
 NOTE: In case of conflicts, the script exits. The merge conflicts will need
 to be resolved before manually continuing the backport.
 
 [source,console]
 ----
-include::examples/scripts/backport.sh
+include::{examplesdir}/scripts/backport.sh[]
 ----
 
 TIP: It is highly recommended to use the merge commit sha when backporting a Pull Request.
@@ -98,13 +101,14 @@ from `master` to your target branch (in our example `stable10`) and continue.
 
 In case you have installed the `xdg-utils` package, you can add at the
 end of the script above following code which opens the PR to be
-finalized in your browser:
+finalized in your browser. macOS does not need this package, use the
+command `open` instead:
 
 [source,console]
 ----
 echo "Creating pull request for branch $targetBranch in $repository"
 
-xdg-open "https://github.com/$repository/pull/new/$targetBranch...$targetCommit"
+xdg-open "https://github.com/$repository/pull/new/$targetBranch...$targetCommit" &>/dev/null
 ----
 
 NOTE: This command opens the Pull Request and sets the target branch
