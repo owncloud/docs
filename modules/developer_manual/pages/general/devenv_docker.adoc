@@ -10,11 +10,10 @@ To be able to use and develop ownCloud using docker follow these steps.
 
 1. xref:get-the-source[Get the source]
 2. xref:prerequisite[Prerequisite]
-3.  xref:build-a-docker-container[Build a docker container]
-4.  xref:create-the-environment-with-docker-compose[Create the environment with docker-compose]
-5.  xref:set-user-group-and-permissions[Install software dependencies]
-6.  xref:enable-debug-mode[Enable debug mode]
-7.  xref:setup-owncloud[Setup ownCloud]
+3.  xref:create-the-environment-with-docker-compose[Create the environment with docker-compose]
+4.  xref:set-user-group-and-permissions[Install software dependencies]
+5.  xref:enable-debug-mode[Enable debug mode]
+6.  xref:setup-owncloud[Setup ownCloud]
 
 [[get-the-source]]
 == Get the source
@@ -49,36 +48,6 @@ Make sure that you have created a folder parallel to the owncloud sources.
 /home/<your-username>/src/oc_dev_docker
 ....
 
-[[build-a-docker-container]]
-=== Build a docker container
-
-Create a file named `dockerfile` with the following content inside that directory.
-[source,console]
-----
-FROM owncloud/base:bionic
-
-RUN apt-get update &&\
-    apt-get install -y npm make && \
-    npm install -g yarn
-----
-
-Now that you have created a `dockerfile` you can build your docker image.
-Open a terminal application and execute the following commands:
-
-[source,console]
-....
-cd /home/<your-username>/src/oc_dev_docker
-docker build -t oc_dev:latest .
-....
-
-After the command has terminated successfully check if you can find the new image
-with the command
-
-[source,console]
-....
-docker images
-....
-
 [[create-the-environment-with-docker-compose]]
 == Create the environmane with `docker-compose`
 
@@ -105,7 +74,7 @@ with
 ....
 services:
   owncloud:
-    image: owncloud/oc_dev:latest
+    image: owncloudci/base:latest
 ....
 
 the container prepared before.
