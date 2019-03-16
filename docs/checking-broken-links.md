@@ -54,21 +54,22 @@ worktree: /var/www/owncloud/docs | component: server | version: master
 If you already installed the Antora dependencies via `yarn install` you already got a broken link checker included, you can simple execute the following command:
 
 ```console
-yarn linkcheck http://localhost:8080
+yarn linkcheck http://localhost:8080 | grep "BROKEN"
 ```
 
 #### Example Output
 
 ```console
 ...
-$ broken-link-checker --filter-level 3 --recursive --verbose https://doc.owncloud.com
-Getting links from: http://localhost:8080/client/automatic_updater.html
-├───OK─── https://github.com/owncloud/client/edit/master-antora/docs/modules/ROOT/pages/automatic_updater.adoc
-├───OK─── https://doc.owncloud.org/branded_clients/
-├─BROKEN─ https://owncloud.org/history/ (HTTP_404)
-Finished! 60 links found. 57 excluded. 1 broken.
+├─BROKEN─ http://mechanics.flite.com/blog/2014/07/29/using-innodb-large-prefix-to-avoid-error-1071/ (BLC_UNKNOWN)
+├─BROKEN─ http://bucket.hostname.domain/ (ERRNO_ENOTFOUND)
+├─BROKEN─ http://hostname.domain/bucket (ERRNO_ENOTFOUND)
+├─BROKEN─ https://example.com/owncloud (HTTP_404)
+├─BROKEN─ https://example.com/owncloud (HTTP_404)
 ...
 ```
+Please consider that only the first entry is a broken link as the others in the list
+are example links and therefore not broken.
 
 ### A general linkchecker utility
 
