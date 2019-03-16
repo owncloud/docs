@@ -12,6 +12,14 @@ make setup
 
 With the dependencies installed, you are now ready to build (generate) the ownCloud documentation.
 
+## Prepared Yarn Commands
+
+To get all prepared yarn commands run following command:
+
+```console
+yarn run
+```
+
 ## Generating the Documentation
 
 The documentation can be generated in HTML and PDF formats.
