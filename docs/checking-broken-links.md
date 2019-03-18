@@ -44,9 +44,9 @@ If invalid xrefs are detected, it will output them to the console, You can see t
 
 ```console
 worktree: /var/www/owncloud/docs | component: server | version: master
-  path: modules/administration_manual/nav.adoc | xref: configuration/server/security/password-policy.adoc
-  path: modules/administration_manual/pages/configuration/files/external_storage_configuration_gui.adoc | xref: server/import_ssl_cert.adoc
-  path: modules/administration_manual/pages/configuration/files/file_sharing_configuration.adoc | xref: server/configuration/server/security/password_policy.adoc
+  path: modules/admin_manual/nav.adoc | xref: configuration/server/security/password-policy.adoc
+  path: modules/admin_manual/pages/configuration/files/external_storage_configuration_gui.adoc | xref: server/import_ssl_cert.adoc
+  path: modules/admin_manual/pages/configuration/files/file_sharing_configuration.adoc | xref: server/configuration/server/security/password_policy.adoc
 ```
 
 ### Our broken link checker via Yarn
@@ -108,7 +108,7 @@ linkchecker --no-status --complete --check-extern http://localhost:8080
 ...
 URL        `https://www.archlinux.org/packages/community/any/owncloud'
 Name       `stable\nversion'
-Parent URL http://localhost:5000/server/administration_manual/installation/linux_installation.html, line 1232, col 1
+Parent URL http://localhost:5000/server/admin_manual/installation/linux_installation.html, line 1232, col 1
 Real URL   https://www.archlinux.org/packages/community/any/owncloud/
 Check time 0.434 seconds
 Info       Redirected to
