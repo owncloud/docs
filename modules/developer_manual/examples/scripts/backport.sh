@@ -23,11 +23,9 @@ commit=$1
 targetBranch=$2
 baseBranch=$(git rev-parse --abbrev-ref HEAD)
 
-
 is_merged=$(git branch --contains $1 | grep -oP '(?<=\*).*')
-
 if [ -z "$is_merged" ]; then
-    echo "$commit has not been merged or $baseBranch is not pulled/rebased. Exiting"
+    echo "$commit has not been merged or branch $baseBranch is not pulled/rebased. Exiting"
     echo
     exit
 fi
@@ -37,6 +35,9 @@ pullId=$(git log $1^! --oneline 2>/dev/null | tail -n 3 | grep -oP '(?<=#)[0-9]*
 
 # get the repository from commit
 repository=$(git config --get remote.origin.url 2>/dev/null | perl -lne 'print $1 if /(?:(?:https?:\/\/github.com\/)|:)(.*?).git/')
+
+# get the list of commits in PR without any merge commit
+commitList=$(git log --no-merges --reverse --format=format:%h $1^..$1)
 
 # get the request reset time window from github in epoch
 rateLimitReset=$(curl -i https://api.github.com/users/octocat 2>&1 | grep -m1 'X-RateLimit-Reset:' | grep -o '[[:digit:]]*')
@@ -50,6 +51,17 @@ now=$(date +%s)
 
 # time remaining in HMS
 remaining=$(date -u -d @$remaining +%H:%M:%S)
+
+# check if there are commits to cherry pick and list them in case
+if [[ -z "$commitList" ]]; then
+  echo "There are no commits to cherry pick. Exiting"
+  exit
+else
+  lineCount=$(echo "$commitList" | grep '' | wc -l)
+  echo "$lineCount commits beeing cherry picked:"
+  echo
+  echo "$commitList"
+fi
 
 if [ $rateLimitRemaining -le 0 ]; then
   # do not continue if there are no remaining github requests available
@@ -72,28 +84,34 @@ echo "The current rate limit window resets in $remaining"
 echo
 echo "Backporting commit $commit to $targetBranch with the following text:"
 echo "$message"
-
 echo
 
 set -e
 
-git fetch -p
-git checkout $targetBranch
-git pull --rebase
-git checkout -b $targetCommit
+git fetch -p --quiet
+git checkout "$targetBranch"
+git pull --rebase --quiet
+git checkout -b "$targetCommit"
 
 echo
 
-git cherry-pick $commit || git cherry-pick -m 1 $commit
-
+# cherry pick all commits from commitList
+lC=1
+echo "$commitList" | while IFS= read -r line; do
+  echo "Cherry picking commit $lC: $line"
+  # if you do not want to use a default conflict resolution to take theirs
+  # (help fix missing cherry picked commits or file renames)
+  #git cherry-pick $line > /dev/null 
+  git cherry-pick -Xtheirs $line > /dev/null 
+  lC=$(( $lC + 1 ))
+done
 echo
 
-git commit --amend -m "$message"
+git commit --quiet --amend -m "$message" -m "Backport of PR #$pullId"
 
-echo
 echo "Pushing: $message"
 echo
 
-git push origin $targetCommit
+git push --quiet -u origin "$targetCommit"
+git checkout --quiet "$baseBranch"
 
-git checkout $baseBranch
