@@ -148,17 +148,18 @@ endif
 KTLINT_INSTALLED := $(shell command -v ktlint 2>/dev/null)
 
 .PHONY: validate-kotlin
-validate-kotlin:
+validate-kotlin: ## Validate all Kotlin files
 ifneq ($(KTLINT_INSTALLED),)
 	@ktlint --reporter=plain "./modules/*_manual/**/*.kt" || true;
 else
-	@echo "Command ktlint not found, please refer to the installation instructions at https://ktlint.github.io/ for further details."
+	@echo "Command ktlint not found, please refer to the installation instructions at https://github.com/pinterest/ktlint#installation for further details."
+	@echo "Please consider that you need a java package like the default-jdk to run ktlint." 
 endif
 
 GOLINT_INSTALLED := $(shell command -v golint 2>/dev/null)
 
 .PHONY: validate-go
-validate-go:
+validate-go: ## Validate all Golang files
 ifneq ($(GOLINT_INSTALLED),)
 	@-find . -type f -name "*.go" ! -path "./node_modules/*" ! -path "**/vendor/*" ! -path "./.git/*" -exec sh -c 'echo Linting {} && golint {} && echo' \;
 else
