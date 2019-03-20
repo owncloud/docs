@@ -37,6 +37,12 @@ pullId=$(git log $1^! --oneline 2>/dev/null | tail -n 3 | grep -oP '(?<=#)[0-9]*
 repository=$(git config --get remote.origin.url 2>/dev/null | perl -lne 'print $1 if /(?:(?:https?:\/\/github.com\/)|:)(.*?).git/')
 
 # get the list of commits in PR without any merge commit
+# $1^ means the first parent of the merge commit (that is passed in as $1).
+# Because $1 is a "magically-generated" merge commit, it happily "jumps back"
+# to the point on the main branch just before where the PR was merged.
+# And so the commits from that point are exactly the list of individual
+# commits in the original PR.
+# --no-merges leaves out the merge commit itself, and we get just what we want
 commitList=$(git log --no-merges --reverse --format=format:%h $1^..$1)
 
 # get the request reset time window from github in epoch
@@ -58,7 +64,7 @@ if [[ -z "$commitList" ]]; then
   exit
 else
   lineCount=$(echo "$commitList" | grep '' | wc -l)
-  echo "$lineCount commits beeing cherry picked:"
+  echo "$lineCount commits being cherry picked:"
   echo
   echo "$commitList"
 fi
