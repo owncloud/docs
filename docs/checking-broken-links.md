@@ -68,8 +68,8 @@ yarn linkcheck http://localhost:8080 | grep "BROKEN"
 ├─BROKEN─ https://example.com/owncloud (HTTP_404)
 ...
 ```
-Please consider that only the first entry is a broken link as the others in the list
-are example links and therefore not broken.
+Note: in the example output above, only the first entry is a genuine broken link.
+All the others in the list are example links, and therefore not broken.
 
 ### A general linkchecker utility
 
