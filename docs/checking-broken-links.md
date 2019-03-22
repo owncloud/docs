@@ -4,7 +4,7 @@
 
 To check broken links you need to prepare with following steps:
 
-1. Make the compiled documenatation available for browsing by using a webserver like
+1. Make the compiled documentation available for browsing by using a webserver like
    [our Yarn target](./build-the-docs.md#viewing-the-html-documentation), [PHP's built-in webserver](https://secure.php.net/manual/en/features.commandline.webserver.php), Apache or NGINX
 2. Install a Broken Link Checker like our Yarn target
 
@@ -49,12 +49,13 @@ worktree: /var/www/owncloud/docs | component: server | version: master
   path: modules/admin_manual/pages/configuration/files/file_sharing_configuration.adoc | xref: server/configuration/server/security/password_policy.adoc
 ```
 
-### Our broken link checker via Yarn
+### The Broken Link Checker Via Yarn
 
-If you already installed the Antora dependencies via `yarn install` you already got a broken link checker included, you can simple execute the following command:
+If you installed the Antora dependencies via `yarn install`, then a broken link checker is available.
+You can run it using the following command:
 
 ```console
-yarn linkcheck http://localhost:8080 | grep "BROKEN"
+yarn linkcheck http://localhost:8080/server/index.html | grep "BROKEN"
 ```
 
 #### Example Output
