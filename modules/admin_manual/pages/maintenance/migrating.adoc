@@ -93,18 +93,17 @@ long as it sends the correct `X-Forwarded-Host` header.
 [[example-migration]]
 == Example Migration
 
-Now, let’s step through an example migration. For this example to work,
-you will need the following on both the servers that you will use for
-the migration:
+The following is an example migration with assumptions to make
+this migration work:
 
-* Ubuntu 16.04
+* Ubuntu 16.04+
 * SSH with `PermitRootLogin` set to `yes`
+* Database used is MySql / MariaDB
 
 [[preparation]]
 === Preparation
 
-Before you can perform a migration, you have to prepare. To do this,
-first make sure SSH is installed:
+If not already available on the new server, make sure SSH is installed:
 
 [source,console]
 ----
@@ -143,7 +142,7 @@ cd /var/www/owncloud/
 sudo -u www-data php occ maintenance:mode --on
 ----
 
-After that’s done, wait for 6-7 minutes and stop Apache:
+After that’s done, wait for some minutes and stop your web server, in this case Apache:
 
 [source,console]
 ----
@@ -194,10 +193,16 @@ Either dumping your MyISAM tables separately from InnoDB tables or use `–lock-
 [[transfer-data-and-configure-the-new-server]]
 ==== Transfer Data and Configure the New Server
 
+The following ownCloud directories will be synced to the target instance:
+`apps`, `config` and `data`.
+
 [source,console]
 ----
-rsync -Aavxt config data root@new_server_address:/var/www/owncloud
+rsync -Aavxt apps config data root@new_server_address:/var/www/owncloud
 ----
+
+NOTE: If you have an additional apps directory like `apps-external`, this directory needs
+to be added to the sync list above.
 
 IMPORTANT: If you want to move your data directory to another location on the target server,
 it is advised to do this as a second step. Please see
@@ -241,6 +246,8 @@ https://certbot.eff.org/[certbot].
 
 Now you need to reverse the change to ssh-config. Specifically, set `PermitRootLogin`
 to `no` and restart ssh. To do that, run the following command:
+
+NOTE: This is a security measure and improves ssh security.
 
 [source,console]
 ----
