@@ -1,20 +1,29 @@
 = The HSM Daemon (hsmdaemon)
-:hsm-url: https://en.wikipedia.org/wiki/Hardware_security_module
 :base64-encoding-url: https://en.wikipedia.org/wiki/Base64
+:hsm-url: https://en.wikipedia.org/wiki/Hardware_security_module
+:jwt-url: https://jwt.io/
+:network-sockets-url: https://en.wikipedia.org/wiki/Network_socket
+:go-install-url: https://golang.org/doc/install
+:opensc-wiki-url: https://github.com/OpenSC/OpenSC/wiki
+:opensuse-security-repositories-url: https://download.opensuse.org/repositories/security/
+:php-exec-function-url: https://www.php.net/manual/en/function.exec.php
 :pkcs11-url: https://en.wikipedia.org/wiki/PKCS_11
+:pkcs11-tool-url: https://linux.die.net/man/1/pkcs11-tool 
+:softhsm2-url: https://www.opendnssec.org/softhsm/
+:unix-sockets-url: http://beej.us/guide/bgipc/html/multi/unixsock.html
 
 The hsmdaemon is a daemon to delegate encryption to an {hsm-url}[HSM (Hardware Security Module)].
 It can be necessary, as PHP cannot directly interface with {pkcs11-url}[a PKCS11 stack]; neither by an API wrapper, because one does not exist, yet, nor via the OpenSSL bindings
 Because of this, a separate process is needed to decrypt anything with the private key stored in an HSM. 
 
-Running exec() to decrypt the key with a command line command to do the encryption might leak the HSM credentials if the admin lists the currently running processes. 
+Running {php-exec-function-url}[exec()] to decrypt the key with a command line command to do the encryption might leak the HSM credentials if the admin lists the currently running processes. 
 To prevent that an "HSM" daemon will be used that can open a session to the HSM upon startup. 
+
 This daemon will be used by ownCloud to decrypt the current master key upon request. 
-The communication will happen via UNIX or TCP sockets and is authorized by a shared token that the daemon stores in the ownCloud database via a REST/JSON route.
+The communication happens via {unix-sockets-url}[UNIX sockets] or {network-sockets-url}[TCP sockets] and is authorized by a shared token that the daemon stores in the ownCloud database via a REST/JSON route.
 
 ownCloud internally uses OpenSSL to en-/decrypt keys and needs to be extended to support en-/decrypt operations via the new daemon. 
 The current solution would be to encrypt the current ownCloud master key with a key from the HSM. 
-Doing so only requires patching `KeyManagers` `getMasterKeyPassword()` and `getSystemPrivateKey()` methods to decrypt the key read from disk.
 
 == How The HSM Daemon Interacts with ownCloud
 
@@ -28,52 +37,128 @@ After connecting with the HSM daemon, an unsophisticated, line-based, protocol i
 
 Doing so ensures that an evil admin will need to wiretap the communication between either the database or the HSM daemon and ownCloud.
 
-== Installation
+== Quick Overview
 
-=== Overview
+HSM support consists of two core parts:
 
-HSM support consists of three main parts: 
+. An actual HSM PKCS11 module.
+. An hsmdaemon that provides a {jwt-url}[JWT]-protected web API for the PKCS11 stack to generate key pairs and decrypt data.
 
-. An actual HSM PKCS11 module 
-. The hsmdaemon that provides a JWT protected web API for the PKCS11 stack to generate key pairs and decrypt data 
-. A patch to the ownCloud encryption app
-
-All commands are assumed to be executed as root unless stated otherwise.
-
-=== Deployment and Resource Usage
+== Deployment Recommendation
 
 We recommend running hsmdaemon on every Apache server to reduce latency. 
-The daemon uses few resources:
+
+== Installation
+
+Integrating the hsmdaemon with ownCloud requires X steps; these are:
+
+. xref:install-a-pkcs11-module[Install a PKCS11 Module]
+. xref:install-and-configure-the-hsmdaemon[Install and Configure the hsmdaemon]
+. xref:configure-owncloud[Configure ownCloud]
+. xref:install-the-hsmdaemon-as-a-system-service[Install the hsmdaemon as a System Service]
+
+[NOTE]
+====
+The installation instructions in this guide have been designed to work with xref:installation/system_requirements.adoc#server[ownCloud's supported operating systems].
+If you are using a different operating system or distribution, please adjust the instructions to suit your environment.
+====
+
+=== Install a PKCS11 Module
+
+==== Install Using a Preconfigured PKCS11 Module
+
+At least one PKCS11 library is necessary, which is typically provided by an HSM vendor. 
+
+TIP: If none is available, you can follow the steps below to install a software HSM.
+
+==== Install SoftHSM2 (optional)
+
+If you do not have an HSM-provided PKCS11 library, then you can use {softhsm2-url}[SoftHSM2] instead.
+To do so, follow the instructions for you Linux distribution below.
+
+* xref:install-softhsm2-debian-ubuntu[Debian and Ubuntu]
+* xref:install-softhsm2-opensuse-suse-linux-enterprise-server[openSUSE and SUSE Linux Enterprise Server]
+* xref:install-softhsm2-fedora-red-hat-enterprise-linux-centos[Fedora and Red Hat Enterprise Linux and Centos]
+
+NOTE: Installing these two packages also installs `/usr/lib/x86_64-linux-gnu/softhsm/libsofthsm2.so`, which is a module that we will need later, for interaction with the PKCS11 API.
+
+[[install-softhsm2-debian-ubuntu]]
+===== Install on Debian and Ubuntu
+
+To install SoftHSM2 on either Debian or Ubuntu, run the command below.
 
 [source,console]
 ----
-$ ps aux --sort -rss | head -1
-USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
-$ ps aux --sort -rss | grep hsm | grep -v grep
-root     19568  0.0  0.0 231052  2608 ?        Ssl  Feb08   0:00 /home/jfd/Repositories/hsmdaemon/hsmdaemon
+sudo apt-get update
+sudo apt-get install -y softhsm2 libsofthsm2
 ----
 
-=== Installing a PKCS11 Module
+[[install-softhsm2-opensuse-suse-linux-enterprise-server]]
+===== Install on openSUSE and SUSE Linux Enterprise Server
 
-==== Using a Preconfigured PKCS11 Module
-
-At least one PKCS11 library is necessary. Ask the customer for the path to a fully configured PKCS11 module. 
-The HSM vendor typically provides the PKCS11 module, e.g., `/opt/nfast/toolkits/pkcs11/libcknfast.so` for Thales nShield.
-
-If none is available, you can follow the below optional steps to install a software HSM.
-
-==== [optional] Installing SoftHSM 2
-
-On Debian, two packages are available: `softhsm` and `softhsm2`. 
-Install `softhsm2` with
+To install SoftHSM2, you first have to ensure that you have {opensuse-security-repositories-url}[the official security repository] for your server enabled in your server's repositories list. 
+To check if it is, run the command `zypper lr`, which will show you output similar to the following:
 
 [source,console]
 ----
-apt install softhsm2
+#  | Alias                     | Name                                    | Enabled | GPG Check | Refresh
+---+---------------------------+-----------------------------------------+---------+-----------+--------
+ 1 | repo-debug                | openSUSE-Leap-15.0-Debug                | No      | ----      | ----   
+ 2 | repo-debug-non-oss        | openSUSE-Leap-15.0-Debug-Non-Oss        | No      | ----      | ----   
+ 3 | repo-debug-update         | openSUSE-Leap-15.0-Update-Debug         | No      | ----      | ----   
+ 4 | repo-debug-update-non-oss | openSUSE-Leap-15.0-Update-Debug-Non-Oss | No      | ----      | ----   
+ 5 | repo-non-oss              | openSUSE-Leap-15.0-Non-Oss              | Yes     | (r ) Yes  | Yes    
+ 6 | repo-oss                  | openSUSE-Leap-15.0-Oss                  | Yes     | (r ) Yes  | Yes    
+ 7 | repo-security             | openSUSE-Leap-15.0-Security             | Yes     | (r ) Yes  | Yes    
+ 8 | repo-source               | openSUSE-Leap-15.0-Source               | No      | ----      | ----   
+ 9 | repo-source-non-oss       | openSUSE-Leap-15.0-Source-Non-Oss       | No      | ----      | ----   
+10 | repo-update               | openSUSE-Leap-15.0-Update               | Yes     | (r ) Yes  | Yes    
+11 | repo-update-non-oss       | openSUSE-Leap-15.0-Update-Non-Oss       | Yes     | (r ) Yes  | Yes 
 ----
 
-Installing them also installs `/usr/lib/x86_64-linux-gnu/softhsm/libsofthsm2.so`, which is a module that we will need later, for interaction with the PKCS11 API.
-The Debian location of the config file is `/etc/softhsm/softhsm2.conf`:
+TIP: use the `-d` flag to show the URI for each repository as well.
+
+If there is no security repository available, then add it using the following command:
+
+[source,console]
+----
+# Replace <security-repository> with the URL for your distribution and architecture.
+sudo zypper addrepo \
+  --check \
+  --refresh \
+  --name "openSUSE-Leap-15.0-Security" \
+  <security-repository> \
+  "repo-security"
+----
+
+With the repository enabled, install SoftHSM2 by running the following command:
+
+[source,console]
+----
+sudo zypper install -y --auto-agree-with-licenses softhsm
+----
+
+[[install-softhsm2-fedora-red-hat-enterprise-linux-centos]]
+===== Install on Fedora and Red Hat Enterprise Linux and Centos 
+
+To install SoftHSM2 on Fedora and Red Hat Enterprise Linux and Centos, run the command below.
+
+[source,console]
+----
+sudo yum install --assumeyes softhsm
+----
+
+===== Check the Configuration File
+
+Once SoftHSM2 is installed, check that the directory specified by `directories.tokendir` in SoftHSM2's configuration file exists.
+
+[options="headers",cols="3"]
+|===
+|Distribution |Configuration File Location |Tokens Directory
+|Debian and Ubuntu |`/etc/softhsm/softhsm2.conf` .3+|`/var/lib/softhsm/tokens/`
+|openSUSE and SUSE Linux Enterprise Server |`/etc/softhsm2.conf`
+|Fedora and Red Hat Enterprise Linux and Centos |`/etc/softhsm2.conf`
+|===
 
 [source,ini]
 ....
@@ -86,7 +171,8 @@ objectstore.backend = file
 log.level = INFO
 ....
 
-Make sure the `directories.tokendir` exists.
+==== Initialise the Token
+
 Now we can initialize the token:
 
 [source,console]
@@ -94,51 +180,94 @@ Now we can initialize the token:
 softhsm2-util --init-token --slot 0 --label "My token 1"
 ----
 
-It will ask for two PINs, a user and SO pin.
+It will ask for two PINs, an SO and a User pin.
 See https://www.opendnssec.org/softhsm/, for more information.
 
-==== [optional] Installing PKCS11 CLI tools
+==== Install PKCS11 CLI tools (optional)
 
-To use the PKCS11 API on the CLI, we install `opensc` with:
+To use the PKCS11 API on the CLI, we need to install {opensc-wiki-url}[OpenSC]. 
+
+* xref:initialise-opensc-debian-ubuntu[Debian and Ubuntu]
+* xref:initialise-opensc-opensuse-suse-linux-enterprise-server[openSUSE and SUSE Linux Enterprise Server]
+* xref:initialise-opensc-fedora-red-hat-enterprise-linux-centos[Fedora and Red Hat Enterprise Linux and Centos]
+
+[[install-opensc-debian-ubuntu]]
+===== Initialise on Debian and Ubuntu
+
+To install OpenSC on Debian and Ubuntu, run the following command:
 
 [source,console]
 ----
-apt install opensc
+sudo apt install -y opensc
 ----
 
-Now we can list the tokens with
+[[install-opensc-opensuse-suse-linux-enterprise-server]]
+===== Initialise on openSUSE and SUSE Linux Enterprise Server
+
+To install OpenSC on openSUSE and SUSE Linux Enterprise Server, run the following command:
 
 [source,console]
 ----
-pkcs11-tool --module /usr/lib/x86_64-linux-gnu/softhsm/libsofthsm2.so -l --pin 1234 -O
+sudo sudo zypper install -y --auto-agree-with-licenses opensc
 ----
 
-The module parameter is the library provided by the HSM vendor; in this case, it was installed with SoftHSM 2.
-See https://github.com/OpenSC/OpenSC/wiki for more information.
+[[install-opensc-fedora-red-hat-enterprise-linux-centos]]
+===== Initialise on Fedora and Red Hat Enterprise Linux and Centos 
 
-=== Installing the hsmdaemon
+To install OpenSC on Fedora and Red Hat Enterprise Linux and Centos, run the following command:
+
+[source,console]
+----
+sudo yum install --assumeyes opensc
+----
+
+==== List Tokens
+
+You can list the available tokens using {pkcs11-tool-url}[pkcs11-tool], by running the following command.
+
+[source,console]
+----
+sudo pkcs11-tool --module </path/to/libsofthsm2.so> -l --pin <user-pin> -O
+----
+
+===== The Module Parameter
+
+The module parameter is either the library provided by the HSM vendor, or `libsofthsm2` which was installed with SoftHSM 2.
+If you are using `libsofthsm2`, the path to `libsofthsm2.so` for each of the supported distributions is available below.
+
+[options="headers",cols="2"]
+|===
+|Distribution |Path
+|Debian and Ubuntu |`/usr/lib/softhsm/libsofthsm2.so`
+|openSUSE and SUSE Linux Enterprise Server |`/usr/lib64/pkcs11/libsofthsm2.so`
+|Fedora and Red Hat Enterprise Linux and Centos |`/usr/lib64/pkcs11/libsofthsm2.so`
+|===
+
+TIP: See the {opensc-wiki-url}[OpenSC Wiki] for more information.
+
+== Install and Configure the hsmdaemon
 
 Installing hsmdaemon requires several steps. 
 These are:
 
-. xref:install-the-binary[Install the Binary]
-. xref:install-the-system-service[Install the System Service]
+. xref:install-the-hsmdaemon-binary[Install the hsmdaemon Binary]
 . xref:copy-the-config-file[Copy the Config File]
+. xref:install-the-system-service[Install the System Service]
 . xref:configure-the-pkcs11-module-path[Configure the PKCS 11 Module Path]
 . xref:configure-slot-and-pin[Configure Slot and Pin]
 . xref:test-key-generation[Test Key Generation]
 . xref:configure-other-options[Configure Other Options]
-. xref:owncloud-setup[ownCloud Setup]
 
-==== Install the Binary
+=== Install the hsmdaemon Binary
 
-To install the hsmdaemon, you first need to install the package’s dependencies, stored in `go.mod`. To install them, run `go get`. 
-The command should not show any console output and take no more than a few minutes.
+After you've obtained the hsmdaemon from ownCloud, you need to:
 
-Once the package dependencies are installed, you next need to compile hsmdaemon. 
-To do this, use the command: `make install`, which creates the hsmdaemon binary in the `bin` directory of your `$GOPATH`, naming it `hsmdaemon`.
-After compilation, you need to make the file executable and move it to a directory located in your system path.
+. Move the hsmdaemon binary to a directory located in your system path.
+. Make the hsmdaemon binary Executable
+. xref:copy-the-config-file[Copy the Config File] 
 
+[TIP]
+====
 If you are not sure which directories are in your system path, run the following script to see a complete list:
 
 [source,console]
@@ -159,26 +288,24 @@ You should see a list similar to the following:
 /sbin
 /bin
 ----
+====
 
-===== Installation Example
+==== Copy the Config File
 
-To save time, copy and paste the commands below to compile the hsmdaemon.
+The default location that hsmdaemon looks for its config file is `/etc/hsmdaemon/hsmdaemon.toml`. 
+To create it from the example config file available in provided package, run the following commands.
 
 [source,console]
 ----
-# Install hsmdaemon's dependencies
-go get
-
-# Compile hsmdaemon
-make install
-
-# Make the file executable
-chmod +x hsmdaemon
+$ mkdir /etc/hsmdaemon                              # Create the hsmdaemon configuration directory
+$ cp hsmdaemon.toml /etc/hsmdaemon/hsmdaemon.toml   # Copy the example config file
+$ chown root /etc/hsmdaemon/hsmdaemon.toml          # Set the owner of the file to root
+$ chmod 750 /etc/hsmdaemon/hsmdaemon.toml           # Allow only the root and users in the root group to read & write the configuration file
 ----
 
 ==== Install the System Service
 
-Now that the binary is available, hsmdaemon must be installed as a system service. 
+Now that the binary is available and the configuration file is in place, hsmdaemon must be installed as a system service. 
 To do this, run it with the `install` option, as in the example below.
 
 [source,console]
@@ -192,27 +319,16 @@ If it installs successfully, then you should see the following console output:
 Install HSM Daemon:                                     [  OK  ]
 ....
 
-==== Copy the Config File
+It should now be running and set to start automatically at boot time. 
 
-Now that the hsmdaemon is ready, its config file needs to be prepared. 
-The default location that hsmdaemon looks for its config file is `/etc/hsmdaemon/hsmdaemon.toml`. 
-To create it from the example config file available in the cloned repository, run the following commands.
+[TIP]
+====
+The daemon is managed using the following three commands:
 
-[source,console]
-----
-$ mkdir /etc/hsmdaemon                              # Create the hsmdaemon configuration directory
-$ cp hsmdaemon.toml /etc/hsmdaemon/hsmdaemon.toml   # Copy the example config file
-$ chown root /etc/hsmdaemon/hsmdaemon.toml          # Set the owner of the file to root
-$ chmod 750 /etc/hsmdaemon/hsmdaemon.toml           # Allow only the root and users in the root group to read & write the configuration file
-----
-
-Have a look at the options of the executable:
-
-[source,console]
-----
-$ hsmdaemon help
-Usage: hsmdaemon install | remove | start | stop | status | listslots | genkey <label> | showkey <id> | parsekey | encrypt <id> <base64> | version
-----
+* `sudo service hsmdaemon start`
+* `sudo service hsmdaemon stop` and 
+* `sudo service hsmdaemon status`.
+====
 
 ==== Configure the PKCS11 Module Path
 
@@ -268,32 +384,11 @@ Slot: 1989683358,
         Manufacturer ID:  SoftHSM project
         Hardware version: 2.2
         Firmware version: 2.2
-        Token present:    yes
-        Flags:
-    Token info:
-        Manufacturer ID:    SoftHSM project
-        Model:              SoftHSM v2
-        Hardware version:   2.2
-        Firmware version:   2.2
-        Serial number:      a7b6bdaf7698289e
-        Initialized:        yes
-        User PIN init.:     yes
-        Label:              SoftHSM token for oc
-        MaxSessionCount:    0
-        SessionCount:       18446744073709551615
-        MaxRwSessionCount:  0
-        RwSessionCount:     18446744073709551615
-        MaxPinLen:          255
-        MinPinLen:          4
-        TotalPublicMemory:  18446744073709551615
-        FreePublicMemory:   18446744073709551615
-        TotalPrivateMemory: 18446744073709551615
-        FreePrivateMemory:  18446744073709551615
-        UTCTime:            2019021408270200
-        Flags: CKF_RNG CKF_LOGIN_REQUIRED CKF_RESTORE_KEY_NOT_NEEDED
 ----
 
-==== Configure Slot and Pin
+TIP: See the {opensc-wiki-url}[OpenSC Wiki] for more information.
+
+==== Configure the Slot and Pin
 
 Ask the customer which slot to use and if a PIN is needed. 
 Update `/etc/hsmdaemon/hsmdaemon.toml` with the information that the customer provides, in the `pkcs11` section, as in the example below.
@@ -307,7 +402,11 @@ slot = 1989683358     # Find your slot id with `sudo hsmdaemon listslots`
 
 ==== Test Key Generation
 
-*Note:* If no PIN is supplied, generating a new key might be protected by an operator card that has to be inserted in the HSM. In this case, coordinate testing and final master key generation with the customers HSM team.
+[NOTE] 
+====
+If no PIN is supplied, generating a new key might be protected by an operator card that has to be inserted in the HSM. 
+In this case, coordinate testing and final master key generation with your HSM team.
+====
 
 For testing key generation, run the command `hsmdaemon genkey test`, as in the following example.
 
@@ -326,7 +425,7 @@ jwIDAQAB
 -----END PUBLIC KEY-----
 ----
 
-==== Testing Data Encryption
+==== Test Data Encryption
 
 For testing data encryption, run the `hsmdaemon encrypt` command, as in the following example.
 
@@ -347,9 +446,9 @@ If successful, you should see output similar to the below example.
 WcezVb2N6bF8wlDooKZcmFn3tZgoIpoFGx6wQetx9sp1nK7JW2Y4OKt7P+0VKKlFO7yXaffVDD2Q6jZZCQukQVRV1zJrwbI9xU3YlOAwJFPP+WM/dZ1vdUwi7L05wq8UpL13LJWlMkvd1eIqKJS7apMnFk2hbnxXP6UKZmI++1tXvqbAc6fwhcB5J+JG6lmS4RwnD+eJC3dq5t00zzdI6vuIM/y3UT7ESklmHl5bKl+N+d6yk6qLxnFnIJweL+M3Tf13+XPNAh5JxZpheJPvN3oL28uX76aizy4BCLnRgQ/ryUQeDF+a4zNF22sMwBh4Pt46KrYGNDZAnQpVzmkrZQ==
 ----
 
-==== Testing Showing Keys
+==== Test Showing Keys
 
-To show an existing key, use the `showkey` command with the key’s id, as in the following example.
+To show an existing key, use the `showkey` command with the key's id, as in the following example.
 
 [source,console]
 ----
@@ -366,13 +465,14 @@ TODO.
 TODO.
 ////
 
-==== [optional] Configure Other Options
+==== Configure Other Options (optional)
 
 For more options see the self-documented default config file `hsmdaemon.toml`.
 
-==== Run in Foreground During Setup
-
-During ownCloud config you might want to run the service in the foreground to see what is going on:
+[TIP]
+====
+During ownCloud config you might want to run the hsmdaemon service in the foreground to see what is going on.
+You can do so, using the following command (which also shows example console output, formatted for readability).
 
 [source,console]
 ----
@@ -388,28 +488,21 @@ $ ./hsmdaemon
     "build": "2019-02-08T10:47:55+00:00"
 }
 ----
+====
 
-NOTE: The above console output is formatted for readability.
+=== Configure ownCloud
 
-=== ownCloud Setup
-
-==== Shut Down Apache
-
+[TIP]
+====
 If anyone accesses ownCloud while encryption is enabled, it will automatically generate the keys. 
 To prevent this, shut down Apache until encryption is appropriately configured.
+====
 
-==== Patch ownCloud
+To configure ownCloud to work with the hsmdaemon requires the following steps:
 
-NOTE: The PR for HSM support https://github.com/owncloud/core/pull/34205[is in review].
-
-For now, we assume a fresh ownCloud installation. 
-Patch the encryption app, by following the example below.
-
-[source,console]
-----
-$ cd /path/to/owncloud/installation
-$ patch -p1 < /path/to/hsmdaemon/patch/hsmdaemon.patch
-----
+* xref:generate-a-secret-for-the-hsmdaemon-rest-api[Generate a Secret for the hsmdaemon REST API]
+* xref:configure-hsm-based-encryption[Configure HSM-based Encryption]
+* xref:initialize-and-check-generated-keys[Initialize and Check Generated Keys]
 
 ==== Generate a Secret for the hsmdaemon REST API
 
@@ -488,27 +581,8 @@ Check that the private key `/path/to/data/files_encryption/OC_DEFAULT_MODULE/` i
 If it is not, then something is not configured correctly. 
 You have to wipe all keys and reset the database flags for encryption to get a clean start for the ownCloud setup.
 
+////
 TODO
 
-* Provide occ commands for key initialization and removal. Don’t rely on user login to generate keys.
-
-=== Running as a Daemon on System Startup
-
-==== Install as a Service
-
-After installation, you can register hsmdaemon as a service by running the following command
-
-[source,console]
-----
-$ ./hsmdaemon install
-Install HSM Daemon:                                     [  OK  ]
-----
-
-==== Manage with Service Commands
-
-It should now be running and startup automatically. 
-The daemon is managed using the following three commands:
-
-* `sudo service hsmdaemon start`
-* `sudo service hsmdaemon stop` and 
-* `sudo service hsmdaemon status`.
+* Provide occ commands for key initialization and removal. Don't rely on user login to generate keys.
+////
