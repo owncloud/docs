@@ -40,13 +40,15 @@ patch release is out, the post-fix -next-maintenance is removed and a
 new -next-maintenance milestone is created for that series.
 
 [[steps]]
-== Steps
+== Backporting Steps
 
 Because pushing directly to particular ownCloud branches is forbidden
 (e.g., `origin/stable-xx`), you need to create your own remote branch,
 based off of the branch that you wish to backport to. However, doing so
 can involve a number of manual steps. To reduce the effort and time
 involved, use the script below instead.
+
+=== Backporting Script
 
 NOTE: The script uses `curl` and the `jq` (lightweight and flexible
 command-line JSON processor) package. Please install them before first usage.
@@ -60,7 +62,8 @@ Please see this https://developer.github.com/v3/#rate-limiting[link] for more
 information about github rate limiting.
 
 NOTE: In case of conflicts, the script exits. The merge conflicts will need
-to be resolved before manually continuing the backport.
+to be resolved before manually continuing the backport. When done, we suggest
+that you use the printed subject title from the script for the Pull Request.
 
 [source,console]
 ----
@@ -75,7 +78,7 @@ The following example assumes that:
 
 - You save the script in a file called `<path>/backport.sh` and mark it executable
 - You have checked out the branch containing the merged sha (like `master`)
-- Your merge sha = 1234567 and your target branch = stable10
+- Your Pull Request merge sha = 1234567 and your target branch = stable10
 
 The command to backport this Pull Request would be called as follows:
 
@@ -128,6 +131,8 @@ xdg-open "https://github.com/$repository/pull/new/$targetBranch...$targetCommit"
 
 NOTE: This command opens the Pull Request and sets the target branch
 (in our example `stable10`) for the backport automatically.
+
+=== Backporting Alias
 
 If you want to integrate the script into your git commands, you can use a git alias. +
 Open the `~/.gitconfig` file with the editor of your choice and add the following:
