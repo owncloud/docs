@@ -18,6 +18,12 @@ First, xref:maintenance/backup.adoc[backup] the following items:
 cp -rv /var/www/owncloud /opt/backup/owncloud && mysqldump <db_name> > /opt/backup/backup-file.sql
 ....
 
+[[review-installed-apps]]
+== Review Installed Apps
+
+Take note of apps that are currently installed and their versions by
+running `occ apps:list` and saving it for future reference.
+
 [[review-third-party-apps]]
 == Review Third-Party Apps
 
@@ -128,6 +134,32 @@ code) and the Market app is enabled, but there is no available internet
 connection, then these apps will need to be manually updated once the
 upgrade is finished.
 
+[[copy-old-updated-apps]]
+== Copy Old Updated Apps
+
+If your setup has a read-only `apps/` folder and is using a separate
+writable folder for updated apps like `apps-external/` or another location,
+please skip this section as well.
+
+If you are installing the standard owncloud community bundle, usually
+called `owncloud-$version.tar.bz2`, you can skip this section.
+
+If you are installing an enterprise bundle like `owncloud-enterprise-complete-$version.tar.bz2`,
+please verify that the xref:#review-installed-apps[apps you formerly had installed]
+have the same version as in the bundle. In some scenarios, it is possible that
+your local instance had app upgrades which are not present in the bundle.
+This could happen for example when installing a patch or hotfix bundle in which
+only minimal changes are contained without recent app updates that
+exist on the marketplace.
+
+For every app that has an older version in the bundle
+compared to the formerly installed version, please delete the one that
+came with the bundle and replace it with the one from your old `apps/`
+folder. This will make sure that there are no version discrepancies.
+
+Note that this procedure does not apply for third party apps which you are
+recommended to xref:#copy-old-third-party-apps[copy back only after the update].
+
 [[start-the-upgrade]]
 == Start the Upgrade
 
@@ -144,7 +176,8 @@ The upgrade operation can take anywhere from a few minutes to a few hours, depen
 When it is finished you will see either a success message, or an error message which indicates why the process did not complete successfully.
 
 [[copy-old-apps]]
-== Copy Old Apps
+[[copy-old-third-party-apps]]
+== Copy Old Third Party Apps
 
 If you are using 3rd party applications, look in your new
 `/var/www/owncloud/apps/` directory to see if they are there. If not,
