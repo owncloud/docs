@@ -1,9 +1,8 @@
-= The HSM Daemon (hsmdaemon)
+= The HSM (Hardware Security Module) Daemon (hsmdaemon)
 :base64-encoding-url: https://en.wikipedia.org/wiki/Base64
 :hsm-url: https://en.wikipedia.org/wiki/Hardware_security_module
 :jwt-url: https://jwt.io/
 :network-sockets-url: https://en.wikipedia.org/wiki/Network_socket
-:go-install-url: https://golang.org/doc/install
 :opensc-wiki-url: https://github.com/OpenSC/OpenSC/wiki
 :opensuse-security-repositories-url: https://download.opensuse.org/repositories/security/
 :php-exec-function-url: https://www.php.net/manual/en/function.exec.php
@@ -46,11 +45,11 @@ HSM support consists of two core parts:
 
 == Deployment Recommendation
 
-We recommend running hsmdaemon on every Apache server to reduce latency. 
+We recommend running hsmdaemon on every web server to reduce latency. 
 
 == Installation
 
-Integrating the hsmdaemon with ownCloud requires X steps; these are:
+Integrating the hsmdaemon with ownCloud requires 4 steps; these are:
 
 . xref:install-a-pkcs11-module[Install a PKCS11 Module]
 . xref:install-and-configure-the-hsmdaemon[Install and Configure the hsmdaemon]
@@ -297,10 +296,10 @@ To create it from the example config file available in provided package, run the
 
 [source,console]
 ----
-$ mkdir /etc/hsmdaemon                              # Create the hsmdaemon configuration directory
-$ cp hsmdaemon.toml /etc/hsmdaemon/hsmdaemon.toml   # Copy the example config file
-$ chown root /etc/hsmdaemon/hsmdaemon.toml          # Set the owner of the file to root
-$ chmod 750 /etc/hsmdaemon/hsmdaemon.toml           # Allow only the root and users in the root group to read & write the configuration file
+mkdir /etc/hsmdaemon                              # Create the hsmdaemon configuration directory
+cp hsmdaemon.toml /etc/hsmdaemon/hsmdaemon.toml   # Copy the example config file
+chown root /etc/hsmdaemon/hsmdaemon.toml          # Set the owner of the file to root
+chmod 750 /etc/hsmdaemon/hsmdaemon.toml           # Allow only the root and users in the root group to read & write the configuration file
 ----
 
 ==== Install the System Service
@@ -310,7 +309,7 @@ To do this, run it with the `install` option, as in the example below.
 
 [source,console]
 ----
-$ ./hsmdaemon install
+./hsmdaemon install
 ----
 
 If it installs successfully, then you should see the following console output:
@@ -345,7 +344,7 @@ This command lists the available slots.
 
 [source,console]
 ----
-$ hsmdaemon listslots
+hsmdaemon listslots
 {"level":"debug","ts":"2019-02-14T09:27:02.068+0100","caller":"hsmdaemon/keymanager.go:27","msg":"initialize pkcs11 module","module":"/usr/lib/softhsm/libsofthsm2.so"}
 {"level":"info","ts":"2019-02-14T09:27:02.087+0100","caller":"hsmdaemon/keymanager.go:65","msg":"Slots found","slotIds":[550099622,1989683358,2]}
 Available slots:
@@ -412,7 +411,7 @@ For testing key generation, run the command `hsmdaemon genkey test`, as in the f
 
 [source,console]
 ----
-$ hsmdaemon genkey test
+hsmdaemon genkey test
 Id: 9bac3719-2b8d-11e9-aeab-0242b5ece4c3, label: test
 -----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAl1BO4vsI+xDk+x0nccl7
@@ -431,8 +430,9 @@ For testing data encryption, run the `hsmdaemon encrypt` command, as in the foll
 
 [source,console]
 ----
-The first argument is the "Id:" value from running the genkey command above.
-$ sudo hsmdaemon encrypt 9bac3719-2b8d-11e9-aeab-0242b5ece4c3 Zm9vYmFy
+# The first argument is the "Id:" value from running the genkey command above.
+# The second is the base64-encoded data to be encrypted.
+sudo hsmdaemon encrypt 9bac3719-2b8d-11e9-aeab-0242b5ece4c3 Zm9vYmFy
 ----
 
 If successful, you should see output similar to the below example.
@@ -476,7 +476,7 @@ You can do so, using the following command (which also shows example console out
 
 [source,console]
 ----
-$ ./hsmdaemon
+./hsmdaemon
 {
     "level": "info",
     "ts": "2019-02-14T09:32:59.081+0100",
@@ -495,7 +495,7 @@ $ ./hsmdaemon
 [TIP]
 ====
 If anyone accesses ownCloud while encryption is enabled, it will automatically generate the keys. 
-To prevent this, shut down Apache until encryption is appropriately configured.
+To prevent this, shut down the web server until encryption is appropriately configured.
 ====
 
 To configure ownCloud to work with the hsmdaemon requires the following steps:
@@ -510,7 +510,7 @@ Generate a shared secret to use for the hsmdaemon.
 
 [source,console]
 ----
-$ cat /proc/sys/kernel/random/uuid
+cat /proc/sys/kernel/random/uuid
 7a7d1826-b514-4d9f-afc7-a7485084e8de
 ----
 
@@ -525,7 +525,7 @@ Set the generated secret for ownCloud:
 
 [source,console]
 ----
-$ sudo -u www-data ./occ config:app:set \
+sudo -u www-data ./occ config:app:set \
     encryption hsm.jwt.secret \
     --value '7a7d1826-b514-4d9f-afc7-a7485084e8de'
 ----
@@ -543,9 +543,9 @@ Enable HSM mode and enable encryption by running the commands in the following e
 
 [source,console]
 ----
-$ occ config:app:set encryption hsm.url --value 'http://localhost:8513'
-$ occ app:enable encryption
-$ occ encryption:enable
+occ config:app:set encryption hsm.url --value 'http://localhost:8513'
+occ app:enable encryption
+occ encryption:enable
 ----
 
 If the commands are successful, you should see the following console output:
@@ -565,7 +565,7 @@ If you want to use a single master key run
 
 [source,console]
 ----
-$ occ encryption:select-encryption-type masterkey
+occ encryption:select-encryption-type masterkey
 ----
 
 ////
@@ -576,7 +576,7 @@ TBW.
 
 ==== Initialize and Check Generated Keys
 
-Now start Apache, and log in with any user to initialize the keys, have a look at the output of the hsmdaemon to see key generation and decryption requests. 
+Now start your web server, and log in with any user to initialize the keys, have a look at the output of the hsmdaemon to see key generation and decryption requests. 
 Check that the private key `/path/to/data/files_encryption/OC_DEFAULT_MODULE/` is less than *1000 bytes*. 
 If it is not, then something is not configured correctly. 
 You have to wipe all keys and reset the database flags for encryption to get a clean start for the ownCloud setup.
