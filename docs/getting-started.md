@@ -191,6 +191,19 @@ $ git push {username} :<branchname>
 
 **Note:** you can also delete a remote branch through the GitHub UI.
 
+## The Branching Workflow
+
+Please refer to [the branching workflow](./the-branching-workflow.md) to learn about how git branches are used to manage and build the documentation.
+
+## Backporting
+
+If you want or need to backport a merged PR, you can easily do that by using this linked script:
+https://doc.owncloud.com/server/developer_manual/general/backporting.html#steps
+
+## Build Pipeline and Web Deployment
+
+Please refer to [the documentation build pipeline](./the-build-pipeline.md) to learn about how the documentation is built and deployed to production.
+
 ## Getting Support
 
 If you need any support when making changes to the documentation, you can always get it in the `#documentation` channel in https://talk.owncloud.com. We're there to help you.
