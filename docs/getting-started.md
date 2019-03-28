@@ -202,7 +202,7 @@ https://doc.owncloud.com/server/developer_manual/general/backporting.html#steps
 
 ## Build Pipeline and Web Deployment
 
-Please refer to [the documentation build pipeline](./the-build-pipeline.md) to learn about how the documentation is built and deployed to the web.
+Please refer to [the documentation build pipeline](./the-build-pipeline.md) to learn about how the documentation is built and deployed to production.
 
 ## Getting Support
 
