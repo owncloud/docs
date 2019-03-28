@@ -15,9 +15,9 @@ ownCloud instance the migration might take several hours.
 
 For the purpose of this use case, it is assumed that:
 
-1.  The end users reach the ownCloud instance via a virtual hostname
+1. The end users reach the ownCloud instance via a virtual hostname
 (such as a DNS `CNAME` record) which can be pointed at the new location.
-2.  The authentication method (e.g., LDAP) remains the same after the
+2. The authentication method (e.g., LDAP) remains the same after the
 migration.
 
 IMPORTANT: During the migration, do not make any changes to the original system, except for putting it into
@@ -38,8 +38,7 @@ After that, xref:maintenance/backup.adoc[create a database dump] from the databa
 Then, copy only your data, configuration, and database files from your original ownCloud instance to the new machine.
 
 IMPORTANT: You must keep the `data/` directory’s original file path during the migration.
-However, xref:maintenance/manually-moving-data-folders.adoc[you can change it] before you begin the migration,
-or after the migration’s completed.
+However, xref:maintenance/manually-moving-data-folders.adoc[you can change it] before you begin the migration, or after the migration’s completed.
 
 The data files should keep their original timestamp otherwise the
 clients will re-download all the files after the migration. This step
@@ -52,9 +51,9 @@ With ownCloud still in maintenance mode and before changing the DNS
 Then point your web browser to the migrated ownCloud instance and
 confirm that:
 
-1.  You see the maintenance mode notice
-2.  That a log file entry is written by both the web server and ownCloud
-3.  That no error messages occur.
+1. You see the maintenance mode notice
+2. That a log file entry is written by both the web server and ownCloud
+3. That no error messages occur.
 
 If all of these things occur, then take ownCloud out of maintenance mode
 and repeat. After doing this, log in as an admin and confirm that
@@ -67,7 +66,7 @@ the trusted domains.
 [[managing-trusted-domains]]
 == Managing Trusted Domains
 
-All URLs used to access your ownCloud server must be whitelisted in your
+All URLs used to access your ownCloud server must be white-listed in your
 `config.php` file, under the `trusted_domains` setting. Users are
 allowed to log into ownCloud only when they point their browsers to a
 URL that is listed in the `trusted_domains` setting.
@@ -85,7 +84,7 @@ A typical configuration looks like this:
 ],
 ----
 
-The loopback address, `127.0.0.1`, is automatically whitelisted, so as
+The loopback address, `127.0.0.1`, is automatically white-listed, so as
 long as you have access to the physical server you can always log in. In
 the event that a load-balancer is in place, there will be no issues as
 long as it sends the correct `X-Forwarded-Host` header.
@@ -93,22 +92,21 @@ long as it sends the correct `X-Forwarded-Host` header.
 [[example-migration]]
 == Example Migration
 
-Now, let’s step through an example migration. For this example to work,
-you will need the following on both the servers that you will use for
-the migration:
+The following is an example migration with assumptions to make
+this migration work:
 
-* Ubuntu 16.04
+* Ubuntu 16.04+
 * SSH with `PermitRootLogin` set to `yes`
+* Database used is MySQL / MariaDB
 
 [[preparation]]
 === Preparation
 
-Before you can perform a migration, you have to prepare. To do this,
-first make sure SSH is installed:
+If not already available on the new server, make sure SSH is installed:
 
 [source,console]
 ----
-apt install ssh -y
+sudo apt install ssh -y
 ----
 
 Next, edit ssh-config and enable root ssh login.
@@ -123,7 +121,7 @@ And then restart SSH.
 
 [source,console]
 ----
-service ssh restart
+sudo service ssh restart
 ----
 
 Lastly, install ownCloud on the new server.
@@ -143,11 +141,11 @@ cd /var/www/owncloud/
 sudo -u www-data php occ maintenance:mode --on
 ----
 
-After that’s done, wait for 6-7 minutes and stop Apache:
+After that’s done, then wait a few minutes and stop your web server, in this case Apache:
 
 [source,console]
 ----
-service apache2 stop
+sudo service apache2 stop
 ----
 
 [[transfer-the-database]]
@@ -159,7 +157,8 @@ one. To do that, first backup the database.
 [source,console]
 ----
 cd /var/www/owncloud/
-mysqldump --single-transaction -h localhost -u admin -ppassword owncloud > owncloud-dbbackup.bak
+mysqldump --single-transaction -h localhost \
+    -u admin -ppassword owncloud > owncloud-dbbackup.bak
 ----
 
 Then, export the database to the new server.
@@ -194,10 +193,16 @@ Either dumping your MyISAM tables separately from InnoDB tables or use `–lock-
 [[transfer-data-and-configure-the-new-server]]
 ==== Transfer Data and Configure the New Server
 
+The following ownCloud directories will be synced to the target instance:
+`apps`, `config` and `data`.
+
 [source,console]
 ----
-rsync -Aavxt config data root@new_server_address:/var/www/owncloud
+rsync -Aavxt apps config data root@new_server_address:/var/www/owncloud
 ----
+
+NOTE: If you have an additional apps directory like `apps-external`, this directory needs
+to be added to the sync list above.
 
 IMPORTANT: If you want to move your data directory to another location on the target server,
 it is advised to do this as a second step. Please see
@@ -218,8 +223,8 @@ Next, start up the database and web server on the new machine.
 
 [source,console]
 ----
-service mysql start
-service apache2 start
+sudo service mysql start
+sudo service apache2 start
 ----
 
 With that done, point your web browser to the migrated ownCloud
@@ -242,9 +247,11 @@ https://certbot.eff.org/[certbot].
 Now you need to reverse the change to ssh-config. Specifically, set `PermitRootLogin`
 to `no` and restart ssh. To do that, run the following command:
 
+NOTE: This is a security measure and improves SSH security.
+
 [source,console]
 ----
-service ssh restart
+sudo service ssh restart
 ----
 
 [[update-dns-and-trusted-domains]]
