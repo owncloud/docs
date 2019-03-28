@@ -6,7 +6,7 @@ Drone is a [Continuous Delivery](https://www.continuousdelivery.com/) platform t
 The build pipeline is configured in [.drone.yml](https://github.com/owncloud/docs/blob/master/.drone.yml), located in the root directory of the docs repository.
 You can view the current build status of the docs at https://drone.owncloud.com/owncloud/docs.
 
-Every push to the docs master branch triggers a drone build. At the end of the build process, the docs are getting deployed on the web.
+Every push to the docs master branch triggers a drone build. At the end of the build process, the docs are deployed to production.
 
 It's outside the scope of this file to discuss the process or [the `.drone.yml` file format](https://0-8-0.docs.drone.io/) in-depth.
 However, in essence, here is how the build pipeline works:
