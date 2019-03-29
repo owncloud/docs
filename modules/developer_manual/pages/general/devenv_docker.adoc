@@ -1,75 +1,52 @@
-= Setup Your Development Environment based on docker
+= Setup Your Development Environment Based on Docker
+:owncloud-core-repo-url: https://github.com/owncloud/core
+:owncloud-server-tarball-url: https://owncloud.org/download/#owncloud-server-tar-ball
+:owncloud-docker-compose-url: https://github.com/owncloud-docker/server/blob/master/docker-compose.yml
+:docker-download-url: https://www.docker.com/get-started 
+:docker-compose-file-reference-url: https://docs.docker.com/compose/compose-file/
 
-Using docker containers makes it such easier to create a execution-environment
-for developing. As a developer you nearly don't have to take care about myslq, redis or
-apache configuration. Most of the things are done by container orchestration.
+Docker containers reduce the complexity of creating development environments. 
+By using them, as a developer, you won't have to care too much about server administration, e.g., MySQL, Redis or Apache, as it is largely handled by container orchestration.
 
-The environment is described in a docker-compose.yml file.
+In this guide, you will learn how to setup an ownCloud development environment, using Docker.
+//The environment is described in a `docker-compose.yml` file.
+To be able to do so, you need to follow these steps:
 
-To be able to use and develop ownCloud using docker follow these steps.
+. xref:get-the-owncloud-source[Get the ownCloud source]
+. xref:create-the-environment-with-docker-compose[Create the environment with docker-compose]
+. xref:build-the-container[Build the container]
+. xref:install-the-software-dependencies[Install the software dependencies]
+. xref:enable-debug-mode[Enable debug mode]
+. xref:setup-owncloud[Setup ownCloud]
 
-1. xref:get-the-source[Get the source]
-2. xref:prerequisite[Prerequisite]
-3.  xref:create-the-environment-with-docker-compose[Create the environment with docker-compose]
-4.  xref:set-user-group-and-permissions[Install software dependencies]
-5.  xref:enable-debug-mode[Enable debug mode]
-6.  xref:setup-owncloud[Setup ownCloud]
-
-[[get-the-source]]
-== Get the source
-Get the owncloud source code from one of the next options:
-
-1. Download a tarball from here https://owncloud.org/download/#owncloud-server-tar-ball
-2. Create a clone of the github repo you can find here https://github.com/owncloud/core
-
-Be aware that cloning the git-repo brings a very raw version of owncloud.
-It must be enriched with some other apps inside the `owncloud/apps`
-folder. It is possible to clone some different apps to that location.
-The `user_management` app for example.
-
-For both cases place the code in a folder inside your home directory
-
-[source,console]
-....
-/home/<your-username>/src/owncloud
-....
-
-for example.
-
-[[prerequisite]]
 == Prerequisite
 
-Let's assume that you already have installed `docker` and `docker-compose` on your computer.
+This guide assumes that you already have `docker` and `docker-compose` installed on your computer.
+If you do not, {docker-download-url}[download the version for your operating system] and install it.
 
-Make sure that you have created a folder parallel to the owncloud sources.
+== Get the Source
 
-[source,console]
-....
-/home/<your-username>/src/oc_dev_docker
-....
+First, get the ownCloud source code, either by {owncloud-server-tarball-url}[downloading a tarball] or by {owncloud-core-repo-url}[cloning the source], and place it in a folder inside your home directory; for example: `/home/<your-username>/src/owncloud`.
 
-[[create-the-environment-with-docker-compose]]
-== Create the environmane with `docker-compose`
+[IMPORTANT]
+====
+Be aware that the ownCloud git repository contains a very raw version of ownCloud.
+It must be enriched with some other apps inside the `owncloud/apps` folder. 
+It is possible to clone some different apps to that location.
+The `user_management` app for example.
+====
 
-A good point to start for creating an environment for running an owncloud instance
-is the `docker-compose.yml' provided by owncloud. You can find it here:
+== Create the Development Environment with docker-compose
 
-https://github.com/owncloud-docker/server/blob/master/docker-compose.yml
+With the ownCloud source available, you can create a Docker-based development environment.
+To save time, we'll use {owncloud-docker-compose-url}[ownCloud's `docker-compose.yml` file].
+It is designed to create a very simple production environment, so it requires some modifications.
 
-Generally it is designed to create a very simple production environment. Make
-some modifications to it:
+TIP: See {docker-compose-file-reference-url}[the Docker Compose file reference] to learn all about the [docker-compose.yml] file format.
 
-First change the container image that is used with the owncloud service.
-Search for the services section and replace
+Download it to the root of the directory where you put the ownCloud source.
+After you download it, change the container image that is used within the ownCloud service to `owncloudci/base:latest`, as in the example below.
 
-[source, yml]
-....
-services:
-  owncloud:
-    image: owncloud/server:${OWNCLOUD_VERSION}
-....
-
-with
 [source,yml]
 ....
 services:
@@ -77,67 +54,64 @@ services:
     image: owncloudci/base:latest
 ....
 
-the container prepared before.
-
-Also it is necessary to mount the source folder into the container. To do so add
-a line to the volumes section inside the owncloud service
+Next, the downloaded/cloned ownCloud source folder must be mounted into the container. 
+To do so, add an entry to the `volumes` section, inside the ownCloud service configuration, as in the example below.
 
 [source,yml]
 ....
 services:
   owncloud:
     image: owncloud/oc_dev:latest
-    .
-    .
-    .
+    ...
     volumes:
-      - files:/mnt/data
-      - ../owncloud:/var/www/owncloud
+      - <owncloud_source_directory>:/var/www/owncloud
+      ... other volumes configuration
 ....
 
-Start the environment with the command
+With those two changes made, start the Docker environment by running `docker-compose up -d --build`.
 
-[source,console]
-....
-cd /home/<your-username>/src/oc_dev_docker
-docker-compose up
-....
+NOTE: This does not install ownCloud, only starts the Docker container.
 
-Before it is possible to access the application it must be build.
-To achieve this the `make` command inside the container must be executed. To
-attach to the container find out its name with
-[source,console]
-....
-docker ps
-....
-Inside the responding table search for the image name `oc_dev:latest` and take
-the container name from the last column for the next command:
+TIP: If this is your first time either running `docker-compose up` or using the `owncloud/oc_dev` container, it may take a few minutes to complete, as the container needs to be downloaded.
+
+== Build the Container
+
+With the container running, ownCloud needs to be installed, by running the `make` command from inside the container. 
+To do this, we first need to attach (log in) to the container.
+To do that, we need the running container's name.
+You find that by running `docker-compose ps`, which will render output similar to that below in the console:
 
 [source,console]
 ....
-docker exec -ti <container_name> /bin/bash
+              Name                 Command               State                  Ports
+-------------------------------------------------------------------------------------------------
+oc_dev_docker_oc_dev_1           apache                  Up               80/tcp
 ....
 
-Now the prompt changes to something like:
+Take note of the value in the `Name` column, i.e., `oc_dev_docker_oc_dev_1`.
+This string is a combination of three things, separated by underscores:
+
+. The directory in which you ran `docker-compose up` (`oc_dev_docker`)
+. The name of the container (`oc_dev`)
+. The container's auto-generated number (`1`)
+
+To log in to the running container, replace `<container_name>` in the command below with the name of the container in the output from `docker-compose ps`.
+
 [source,console]
 ....
-root@ebd5bf5a33c0: /var/www/owncloud
+docker-compose exec <container_name> /bin/bash
 ....
 
-simply type `make` and wait until everything is ready. Open a browser and try to access
-http://localhost.
+After logging in, run `make`.
+When the command completes, test that you can access ownCloud in your browser by opening `http://localhost`.
 
-With the access to the container it is also possible to use the `occ` command.
+TIP: You can also use xref:configuration/server/occ_command.adoc[the `occ` command] within the container, just as if you were on a production server.
 
-[[enable-debug-mode]]
 == Enable Debug Mode
 
-Now that ownCloud’s available to your web server and the dependencies
-are installed, we strongly encourage you to disable JavaScript and CSS
-caching during development. This is so that when changes are made,
-they’re immediately visible, not at some later stage when the respective
-caches expire. To do so, enable debug mode by setting `debug` to `true`
-in config/config.php, as in the example below.
+Now that ownCloud's available, we strongly encourage you to disable JavaScript and CSS caching during development. 
+This ensures that changes immediately visible, not later, when the respective caches expire. 
+To disable JavaScript and CSS caching, enable debug mode by setting `debug` to `true` in `config/config.php`, as in the example below.
 
 [source,php]
 ----
@@ -145,17 +119,16 @@ in config/config.php, as in the example below.
 
 $CONFIG = [
     'debug' => true,
-    ... configuration goes here ...
+    ... remaining configuration goes here ...
 ];
 ----
 
-Do not enable this for production! This can create security problems and
-is only meant for debugging and development!
+[IMPORTANT]
+====
+Do not enable this for production! 
+This can create security problems and is only meant for debugging and development!
+====
 
-[[setup-owncloud]]
 == Setup ownCloud
 
-With all that done, you’re now ready to use either
-xref:admin_manual:installation/installation_wizard.adoc[the installation wizard] or
-xref:admin_manual:installation/command_line_installation.adoc[command line installer]
-to finish setting up ownCloud.
+With the steps completed, you're now ready to use either xref:admin_manual:installation/installation_wizard.adoc[the ownCloud installation wizard] or xref:admin_manual:installation/command_line_installation.adoc[the command line installer] to finish setting up ownCloud.
