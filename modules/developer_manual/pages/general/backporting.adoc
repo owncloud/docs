@@ -40,13 +40,15 @@ patch release is out, the post-fix -next-maintenance is removed and a
 new -next-maintenance milestone is created for that series.
 
 [[steps]]
-== Steps
+== Backporting Steps
 
 Because pushing directly to particular ownCloud branches is forbidden
 (e.g., `origin/stable-xx`), you need to create your own remote branch,
 based off of the branch that you wish to backport to. However, doing so
 can involve a number of manual steps. To reduce the effort and time
 involved, use the script below instead.
+
+=== Backporting Script
 
 NOTE: The script uses `curl` and the `jq` (lightweight and flexible
 command-line JSON processor) package. Please install them before first usage.
@@ -60,7 +62,8 @@ Please see this https://developer.github.com/v3/#rate-limiting[link] for more
 information about github rate limiting.
 
 NOTE: In case of conflicts, the script exits. The merge conflicts will need
-to be resolved before manually continuing the backport.
+to be resolved before manually continuing the backport. When done, we suggest
+that you use the printed subject title from the script for the Pull Request.
 
 [source,console]
 ----
@@ -75,26 +78,41 @@ The following example assumes that:
 
 - You save the script in a file called `<path>/backport.sh` and mark it executable
 - You have checked out the branch containing the merged sha (like `master`)
-- Your merge sha = 1234567 and your target branch = stable10
+- Your Pull Request merge sha = 1234567 and your target branch = stable10
 
 The command to backport this Pull Request would be called as follows:
 
 [source,console]
 ----
 <path>/backport.sh 1234567 stable10
-Backporting commit 1234567 to stable10
+4 commits beeing cherry picked:
+
+2e03d938
+fef19729
+61ac3f09
+0528601f
 ...
 Switched to a new branch ‘stable10-1234567-34654‘
 ...
-Pushing: [stable10] [PR 34654] Each generated birthday or death event gets a new UID
+[stable10] [PR 34654] Each generated birthday or death event gets a new UID
+...
+Cherry picking commit 1: 2e03d938
+Cherry picking commit 1: fef19729
+...
+Pushing: ...
 ...
 ----
 
-Please keep in mind that this is an example and you have to adapt the commit hash and the
+NOTE: Please keep in mind that this is an example and you have to adapt the commit hash and the
 target branch accordingly.
 
+The script lists the quantity and commits to be backported and the current one in process.
+This can be helpful in case there is a conflict and you manually continue after the
+conflict has been resolved.
+
 When the script completes, go to GitHub, where it will suggest that you
-make a PR from pushed branch.
+make a PR from pushed branch. Even the script tries to automate, you may need
+to set the Pull Request subject and message text manually via copy/paste.
 
 IMPORTANT: Change the base branch to be committed against,
 from `master` to your target branch (in our example `stable10`) and continue.
@@ -114,3 +132,20 @@ xdg-open "https://github.com/$repository/pull/new/$targetBranch...$targetCommit"
 NOTE: This command opens the Pull Request and sets the target branch
 (in our example `stable10`) for the backport automatically.
 
+=== Backporting Alias
+
+Open the `~/.gitconfig` file with the editor of your choice and add the following:
+
+----
+[alias]
+	backport = !bash -c '<path_to_script>/backport.sh $1 $2' -
+----
+
+Create a backport by invoking following command
+
+[source,console]
+----
+git backport 1234567 stable10
+----
+
+NOTE: Please keep in mind that this is an example and you have to adapt the commit hash and the target branch accordingly.

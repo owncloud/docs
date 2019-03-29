@@ -11,10 +11,15 @@ two steps to be completed:
 == Create a Job Class
 
 The first step is to create a job class, which will provide the job
-functionality. For this example, we will call it: lib/Cron/SomeTask.php.
+functionality. For this example, we will call it: `lib/Cron/SomeTask.php`.
 The class only needs to define one, static, method called `run`. In this
 example, we’re retrieving a service from the container, and in turn
 calling its `run` method.
+
+[source,php]
+----
+include::{examplesdir}/app/fundamentals/cron/SomeTask.php[]
+----
 
 Try to keep the method as small as possible, because its hard to test
 static methods.
@@ -39,8 +44,9 @@ add the `SomeTask` class, which we just created, as a background job.:
 
 To test the job classes, you can run Cron manually, as in the example below:
 
+[source,console]
 ----
-sudo -u http php cron.php
+sudo -u www-data php cron.php
 ----
 
 After doing so, you will need to reset the job to allow it to be run,
@@ -59,14 +65,15 @@ Finally, don’t forget to add the ownCloud Cron process in the web
 server’s http://www.adminschoice.com/crontab-quick-reference[crontab].
 To do this, first open the web server’s crontab for editing by running:
 
-....
-# In this example "http" is the web server user
-sudo crontab -u http -e
-....
+In this example, `www-data` is the web server user:
 
-Then, add the ownCloud Cron process to the crontab, for example, like
-so:
+[source,console]
+----
+sudo crontab -u www-data -e
+----
+
+Then, add the ownCloud Cron process to the crontab, for example:
 
 ....
-*/15  *  *  *  * php -f /srv/http/owncloud/cron.php
+*/15  *  *  *  * php -f /var/www/owncloud/cron.php
 ....
