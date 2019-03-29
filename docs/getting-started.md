@@ -200,9 +200,9 @@ Please refer to [the branching workflow](./the-branching-workflow.md) to learn a
 If you want or need to backport a merged PR, you can easily do that by using this linked script:
 https://doc.owncloud.com/server/developer_manual/general/backporting.html#steps
 
-## The Build Pipeline
+## Build Pipeline and Web Deployment
 
-Please refer to [the documentation build pipeline](./the-build-pipeline.md) to learn about how the documentation is built.
+Please refer to [the documentation build pipeline](./the-build-pipeline.md) to learn about how the documentation is built and deployed to production.
 
 ## Getting Support
 
