@@ -1,0 +1,52 @@
+= Retrieve Log Files and Configuration Settings
+:experimental:
+:owncloud-central-url: https://central.owncloud.org/latest
+:owncloud-support-url: https://owncloud.com/licenses/owncloud-support-maintenance/
+
+When you report a problem to {owncloud-support-url}[ownCloud Support] or our {owncloud-central-url}[Forum (ownCloud Central)] you will be asked to provide certain log files or configurations for our engineers (or other users). 
+These are essential in better understanding your issue, your specific configuration, and the cause of the problem.
+
+Here are instructions for how to collect them.
+
+== Config Report
+
+You can use the webUI or the command line to generate a config report.
+Please note that you have to have the configreport app enabled. 
+You can enable this app using the following commands:
+
+[source,console]
+----
+# Install it, if it’s not already installed
+sudo -u www-data ./occ market:install configreport 
+
+# Or enable it, if it’s already installed
+sudo -u www-data ./occ:app enable configreport
+----
+
+=== webUI
+
+To generate a config report using the webUI, navigate to: menu:admin[settings > general > "Generate Config report" > "Download ownCloud config report"].
+
+=== Command Line
+
+To generate a config report from the command line, run the following command from the root directory of your ownCloud installation:
+
+[source,console]
+----
+sudo -u www-data ./occ configreport:generate > config_report.txt
+----
+
+== ownCloud Server Log File
+
+You can use the webUI to download your ownCloud Server log file.
+To do so, navigate to menu:admin[settings > general > Log > "Download logfile"].
+
+== LDAP Config
+
+Assuming that LDAP is used, viewing the LDAP configuration is important when checking for errors between your ownCloud instance and your LDAP server.
+To get the output file, execute this command:
+
+[source,console]
+----
+sudo -u www-data ./occ ldap:show-config > ldap_config.txt
+----
