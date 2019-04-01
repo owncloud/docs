@@ -22,7 +22,11 @@ This daemon will be used by ownCloud to decrypt the current master key upon requ
 The communication happens via {unix-sockets-url}[UNIX sockets] or {network-sockets-url}[TCP sockets] and is authorized by a shared token that the daemon stores in the ownCloud database via a REST/JSON route.
 
 ownCloud internally uses OpenSSL to en-/decrypt keys and needs to be extended to support en-/decrypt operations via the new daemon. 
-The current solution would be to encrypt the current ownCloud master key with a key from the HSM. 
+The current solution encrypts the ownCloud master key with a key from the HSM. 
+
+NOTE: From the technical point of view the `Crypt` class is extended to handle the key generation in the HSM device and also to get the key from HSM. 
+For the read/write operation on a file, the request goes to the HSM and then, based on the keys fetched from HSM, the files are encrypted or decrypted. 
+The keys are not replaced.
 
 == How The HSM Daemon Interacts with ownCloud
 
