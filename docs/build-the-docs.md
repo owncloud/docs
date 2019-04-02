@@ -12,6 +12,31 @@ make setup
 
 With the dependencies installed, you are now ready to build (generate) the ownCloud documentation.
 
+## Prepared Yarn Commands
+
+To get all prepared yarn commands run following command:
+
+```console
+yarn run
+
+yarn run vv1.15.2
+info Commands available from binary scripts: antora, blc, broken-link-checker, crc32, ecstatic, errno, esparse, esvalidate, handlebars, he, hs, http-server, isogit, js-yaml, json5, mime, mkdirp, nopt, opener, os-name, osx-release, printj, semver, sha.js, strip-ansi, supports-color, uglifyjs, write-good, writegood
+info Project commands
+   - antora
+      antora --stacktrace generate --cache-dir cache --redirect-facility disabled --generator ./generator/generate-site.js --clean site.yml
+   - linkcheck
+      broken-link-checker --filter-level 3 --recursive --verbose
+   - prose
+      write-good --parse **/*.adoc
+   - serve
+      http-server public/ -d -i
+   - validate
+      antora --stacktrace generate --cache-dir cache --redirect-facility disabled --generator ./generator/xref-validator.js --clean site.yml
+question Which command would you like to run?:
+```
+Please see the [documentaion](https://yarnpkg.com/lang/en/docs/cli/run/)
+for more information about the the `yarn run` command.
+
 ## Generating the Documentation
 
 The documentation can be generated in HTML and PDF formats.

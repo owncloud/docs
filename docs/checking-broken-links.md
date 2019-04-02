@@ -4,7 +4,7 @@
 
 To check broken links you need to prepare with following steps:
 
-1. Make the compiled documenatation available for browsing by using a webserver like
+1. Make the compiled documentation available for browsing by using a webserver like
    [our Yarn target](./build-the-docs.md#viewing-the-html-documentation), [PHP's built-in webserver](https://secure.php.net/manual/en/features.commandline.webserver.php), Apache or NGINX
 2. Install a Broken Link Checker like our Yarn target
 
@@ -44,31 +44,33 @@ If invalid xrefs are detected, it will output them to the console, You can see t
 
 ```console
 worktree: /var/www/owncloud/docs | component: server | version: master
-  path: modules/administration_manual/nav.adoc | xref: configuration/server/security/password-policy.adoc
-  path: modules/administration_manual/pages/configuration/files/external_storage_configuration_gui.adoc | xref: server/import_ssl_cert.adoc
-  path: modules/administration_manual/pages/configuration/files/file_sharing_configuration.adoc | xref: server/configuration/server/security/password_policy.adoc
+  path: modules/admin_manual/nav.adoc | xref: configuration/server/security/password-policy.adoc
+  path: modules/admin_manual/pages/configuration/files/external_storage_configuration_gui.adoc | xref: server/import_ssl_cert.adoc
+  path: modules/admin_manual/pages/configuration/files/file_sharing_configuration.adoc | xref: server/configuration/server/security/password_policy.adoc
 ```
 
-### Our broken link checker via Yarn
+### The Broken Link Checker Via Yarn
 
-If you already installed the Antora dependencies via `yarn install` you already got a broken link checker included, you can simple execute the following command:
+If you installed the Antora dependencies via `yarn install`, then a broken link checker is available.
+You can run it using the following command:
 
 ```console
-yarn linkcheck http://localhost:8080
+yarn linkcheck http://localhost:8080/server/index.html | grep "BROKEN"
 ```
 
 #### Example Output
 
 ```console
 ...
-$ broken-link-checker --filter-level 3 --recursive --verbose https://doc.owncloud.com
-Getting links from: http://localhost:8080/client/automatic_updater.html
-├───OK─── https://github.com/owncloud/client/edit/master-antora/docs/modules/ROOT/pages/automatic_updater.adoc
-├───OK─── https://doc.owncloud.org/branded_clients/
-├─BROKEN─ https://owncloud.org/history/ (HTTP_404)
-Finished! 60 links found. 57 excluded. 1 broken.
+├─BROKEN─ http://mechanics.flite.com/blog/2014/07/29/using-innodb-large-prefix-to-avoid-error-1071/ (BLC_UNKNOWN)
+├─BROKEN─ http://bucket.hostname.domain/ (ERRNO_ENOTFOUND)
+├─BROKEN─ http://hostname.domain/bucket (ERRNO_ENOTFOUND)
+├─BROKEN─ https://example.com/owncloud (HTTP_404)
+├─BROKEN─ https://example.com/owncloud (HTTP_404)
 ...
 ```
+Note: in the example output above, only the first entry is a genuine broken link.
+All the others in the list are example links, and therefore not broken.
 
 ### A general linkchecker utility
 
@@ -108,7 +110,7 @@ linkchecker --no-status --complete --check-extern http://localhost:8080
 ...
 URL        `https://www.archlinux.org/packages/community/any/owncloud'
 Name       `stable\nversion'
-Parent URL http://localhost:5000/server/administration_manual/installation/linux_installation.html, line 1232, col 1
+Parent URL http://localhost:5000/server/admin_manual/installation/linux_installation.html, line 1232, col 1
 Real URL   https://www.archlinux.org/packages/community/any/owncloud/
 Check time 0.434 seconds
 Info       Redirected to
