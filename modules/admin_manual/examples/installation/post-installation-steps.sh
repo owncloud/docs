@@ -67,20 +67,34 @@ if [ "$do_upgrade" = "y" ]; then
   (echo "$answer" | grep -iq "^y") && upgrdcfg="y" || upgrdcfg="n"
 fi
 
-
 # check if upgrading an existing installation
 if [ "$do_upgrade" = "y" ]; then
-  read -p "Please specify the file to extract with full path: " -r -e answer
-  if [ ! -f "$answer" ]; then
-    echo "File to extract not found. Exiting."
+  read -p "Is the instance in maintenance mode? (y/N)? " -r -e answer
+  (echo "$answer" | grep -iq "^y") && mmode="y" || mmode="n"
+  if [ "$mmode" = "n" ]; then
+    echo "Please enable maintenance mode first: sudo -uwww-data ./occ maintenance:mode --on"
     echo
     exit
   fi
+
+  read -p "Please specify the tar file to extract with full path: " -r -e answer
+  if [ ! -f "$answer" ]; then
+    echo "tar file to extract not found. Exiting."
+    echo
+    exit
+  fi
+
   if [ -d ${ocpath} ]; then
     mv $ocpath $oldocpath
   fi
+
   mkdir -p $ocpath
-  if [ ! tar xvf "$answer" -C $ocpath --strip-components=1 ]; then
+  tar xvf "$answer" -C $ocpath --strip-components=1
+
+  if [ $? != 0 ]; then
+    echo
+    echo "tar extract failed, please check !"
+    echo
     exit
   fi
 fi
@@ -226,9 +240,10 @@ if [ -f ${ocdata}/.htaccess ];then
 fi
 echo
 
-# tell to remove the old instance if all is fine
+# tell to remove the old instance, do upgrade and end maintenance mode if all is fine
 if [ "$do_upgrade" = "y" ]; then
-  echo "Please remove the directory of the old instance manually: $oldocpath"
+  echo "Please manually remove the directory of the old instance: $oldocpath"
+  echo "Please manually run: sudo -uwww-data ./occ upgrade"
+  echo "Please manually run: sudo -uwww-data ./occ maintenance:mode --off"
   echo
 fi
-
