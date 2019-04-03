@@ -1,14 +1,86 @@
 # Building the Documentation
+[link-git]: https://git-scm.com
+[link-Node-8]: https://nodejs.org
+[link-Gulp-CLI]: http://gulpjs.com
+[link-Yarn]: https://yarnpkg.com
+[link-git-package]: https://git-scm.com/downloads
+[link-nvm]: https://github.com/creationix/nvm
+[link-nvm-installation-instructions]: https://github.com/creationix/nvm#installation
+[link-open-windows-cmd-prompt]: https://www.lifewire.com/how-to-open-command-prompt-2618089
+[link-mingw]: http://mingw.org/wiki/msys
+[link-gnu-make]: https://www.gnu.org/software/make/
+
+## Install the Prerequisites
+
+Before you can build the ownCloud documentation, you need to install the following software:
+
+- [git][link-git] (command: `git`)
+- [Node 8][link-Node-8] (command: `node`)
+- [Yarn][link-Yarn] (command: `yarn`)
+
+### Checking for the Prerequisites on Linux
+
+To check if they are installed, when running a Linux distribution, run the following command:
+
+```
+dependencies=( git node npm yarn ) && for i in "${dependencies[@]}"; do command -v $i; done;
+```
+
+You will see the path to each binary displayed, if it is installed.
+For any that you do not see displayed, follow the instructions below to install it.
+
+### Checking for the Prerequisites on Microsoft Windows
+
+To check if the software is installed, when running Microsoft Windows, run the following commands in [the Windows Command Prompt][link-open-windows-cmd-prompt]:
+
+```
+git --version
+node --version
+yarn --version
+```
+
+### Install Prerequisites
+
+If one or more of these commands reports an error, then that prerequisite is not installed.
+For any prerequisite that is not installed, follow the instructions below to install it.
+
+#### git
+
+To install git, download and install the [git package][link-git-package] for your operating system, or use your package manager, if you are using a Linux distribution.
+
+#### Node 8
+
+While you can install Node from the official packages, we strongly recommend that you use [NVM][link-nvm] (Node Version Manager) to install and manage Node.
+Follow the [NVM installation instructions][link-nvm-installation-instructions] to set up NVM on your machine.
+Once you've installed NVM, open a new terminal and install Node 8 using the following command:
+
+```
+nvm install 8
+```
+
+You can switch to this version of Node at any time using the following command:
+
+```
+nvm use 8
+```
+
+To make Node 8 the default in new terminals, type:
+
+```
+nvm alias default 8
+```
+
+#### Yarn
+
+To [install yarn](https://yarnpkg.com/lang/en/docs/install) following the installation instructions for your operating system.
 
 ## Install Antora's Dependencies
 
-Before you can build the documentation, you need to install the required dependencies. To install them, you need to run `yarn install`. This will install all the dependencies specified in `package.json`.
+Before you can build the documentation, you need to install Antora's dependencies.
+To install them, you need to run `yarn install`, from the command line in the root directory of the `docs` directory.
+This will install all the dependencies specified in `package.json` (which is located in the root directory of the `docs` directory).
 
-**Note:** If your environment already has GNU make installed, you can run `make setup` instead.
-
-```console
-make setup
-```
+**Note:** If your environment already has [GNU make][link-gnu-make] installed, you can run `make setup` instead, from the root of the `docs` directory. If you are using Microsoft Windows, GNU make is available as part of [the MinGW package][link-mingw].
 
 With the dependencies installed, you are now ready to build (generate) the ownCloud documentation.
 
