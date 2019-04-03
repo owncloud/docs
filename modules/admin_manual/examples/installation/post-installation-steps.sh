@@ -77,8 +77,8 @@ if [ "$do_upgrade" = "y" ]; then
     exit
   fi
 
-  read -p "Please specify the tar file to extract with full path: " -r -e answer
-  if [ ! -f "$answer" ]; then
+  read -p "Please specify the tar file to extract with full path: " -r -e tarFile
+  if [ ! -f "$tarFile" ]; then
     echo "tar file to extract not found. Exiting."
     echo
     exit
@@ -89,7 +89,7 @@ if [ "$do_upgrade" = "y" ]; then
   fi
 
   mkdir -p $ocpath
-  tar xvf "$answer" -C $ocpath --strip-components=1
+  tar xvf "$tarFile" -C $ocpath --strip-components=1
 
   if [ $? != 0 ]; then
     echo
