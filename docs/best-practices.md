@@ -89,7 +89,7 @@ You can reference a section or an anchor inside the same file, another file - ev
 
 Example: `xref:configuration/server/occ_command.adoc#apps-commands[the Market app]`
 
-**Advise** Please consider using a ToC ([Table of Contents](#table-of-contents)) instead a list of xref´s.
+**Strongly** in favour of this where relevant, using a ToC ([Table of Contents](#table-of-contents)) instead a list of xref´s.
 
 ## Images
 
@@ -162,13 +162,13 @@ Example:
 
 Prefix: `toc`
 
-Refernce: [`Table of Contents (ToC)`](https://asciidoctor.org/docs/user-manual/#user-toc)
+Reference: [`Table of Contents (ToC)`](https://asciidoctor.org/docs/user-manual/#user-toc)
 
 A table of contents (ToC) is, if not otherwise defined, an index of section and subsection
 titles that can be automatically generated from the pages structure when converting a
 document with Asciidoctor.
 
-The easiest way adding a ToC is shown in the following example.
+The easiest way of adding a ToC is shown in the following example.
 
 ```
 = The Page Header
@@ -178,7 +178,7 @@ Page contents.
 ```
 Please also see additional directives like:
 [`toc-title`](https://asciidoctor.org/docs/user-manual/#user-toc-title),
-[`toc-level`](https://asciidoctor.org/docs/user-manual/#user-toc-levels) or
+[`toclevels`](https://asciidoctor.org/docs/user-manual/#user-toc-levels) or
 [`In-Document Placement`](https://asciidoctor.org/docs/user-manual/#manual-placement)
 
 **IMPORTANT** All directives of kind `:name:` must be direct under the page header without blank lines. 
