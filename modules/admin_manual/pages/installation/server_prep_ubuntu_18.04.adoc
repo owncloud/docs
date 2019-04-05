@@ -1,15 +1,17 @@
 = Server Preparation for Ubuntu 18.04
+:toc: right
+:toclevels: 1
 :hash-installation: http://php.net/manual/en/hash.installation.php
 :mcrypt-link-url: https://websiteforstudents.com/install-php-7-2-mcrypt-module-on-ubuntu-18-04-lts/
 :mcrypt-pecl-url: https://pecl.php.net/package/mcrypt
 :discover-samba-hosts: https://ubuntuforums.org/showthread.php?t=2384959
 :install-mariadb-latest: https://downloads.mariadb.org/mariadb/repositories/#
 
-== Web server and PHP
+== Web Server and PHP
 
 You only need to install _one_ of the following web servers.
  
-=== Apache Web server + PHP (supported)
+=== Apache Web Server + PHP (supported)
 
 The following command installs the Apache web server and PHP.
 
@@ -18,7 +20,7 @@ The following command installs the Apache web server and PHP.
 sudo apt install php libapache2-mod-php apache2
 ----
 
-=== Apache Web server + PHP-FPM (unsupported)
+=== Apache Web Server + PHP-FPM (unsupported)
 
 The following command installs and enables the Apache web server with php-fpm. +
 This setup can be used in high throughput environments. For performance
@@ -42,7 +44,7 @@ http://httpd.apache.org/docs/2.4/mod/mod_proxy.html#handler[link 1] and
 https://httpd.apache.org/docs/2.4/mod/mod_proxy_fcgi.html[link 2] and
 https://wiki.apache.org/httpd/PHP-FPM[link 3]
 
-=== Nginx Web server + PHP-FPM (unsupported)
+=== Nginx Web Server + PHP-FPM (unsupported)
 
 The following command installs the Nginx web server and php-fpm.
 
@@ -68,7 +70,7 @@ sudo apt install php-mysql php-mbstring php-gettext php-intl php-redis \
 
 == HASH Message Digest Framework
 
-This framework does not need any manual interverntion anymore. +
+This framework does not need manual interverntion anymore. +
 
 - As of PHP 5.1.2, the Hash extension is bundled and compiled into PHP by default.
 - As of PHP 7.4.0, the Hash extension is a core PHP extension, so it is always enabled.
@@ -78,9 +80,10 @@ For more information see following {hash-installation}[link]
 == Exif Library
 
 This library should be already part of PHP 7.2. +
-Please check you `mods_available` directory and/or if the exif extension exists at all.
+Please check your `mods_available` directory and/or if the exif extension exists at all.
 
 The following command lists all enabled php extensions:
+
 [source,console]
 ----
 ls `php -i | grep "^extension_dir" | sed -e 's/.*=> //'`
@@ -96,7 +99,7 @@ The `mcrypt` library is depreciated, removed from the PHP 7.2 core and moved to 
 
 If you get an error messages when invoking the command `php -v` or on every PHP program: +
 `PHP Fatal error: sodium_init() in Unknown on line 0` +
-You might have installed `php-libsodium` additionally. +
+You might have additionally installed `php-libsodium`. +
 This error does not have any harm but can be annoying and will fill up your log. +
 You have to uninstall `php-libsodium` as `sodium` is already part of the PHP 7.2 core: +
 `sudo apt remove php-libsodium` +
@@ -176,11 +179,11 @@ sudo apt install phpmyadmin
 
 == Useful Tips
 
-=== Tip1
+=== Start a Service after a Ressource has been Mounted
 
 If you have network resources like NFS based mounts and you want to make sure that the database server or the web server only starts after the ressource has been mounted, look for following example.
 
-Example based on an NFS mount you want to be available before the service  with <name.service> starts.
+Example based on an NFS mount you want to be available before the service with <name.service> starts.
 
 - Add `_netdev` to the list of NFS mountpoint options in your fstab. +
 This option makes sure that the mount will happen __after__ the network is up. +
