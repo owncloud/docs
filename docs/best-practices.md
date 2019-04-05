@@ -89,7 +89,7 @@ You can reference a section or an anchor inside the same file, another file - ev
 
 Example: `xref:configuration/server/occ_command.adoc#apps-commands[the Market app]`
 
-**Strongly** in favour of this where relevant, using a ToC ([Table of Contents](#table-of-contents)) instead a list of xref´s.
+**Strongly** in favour of this where relevant, using a ToC ([Table of Contents](#table-of-contents)) instead of a list of xref´s.
 
 ## Images
 
