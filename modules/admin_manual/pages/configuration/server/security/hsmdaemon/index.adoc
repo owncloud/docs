@@ -7,7 +7,6 @@
 :jwt-url: https://jwt.io/
 :network-sockets-url: https://en.wikipedia.org/wiki/Network_socket
 :opensc-wiki-url: https://github.com/OpenSC/OpenSC/wiki
-:opensuse-security-repositories-url: https://download.opensuse.org/repositories/security/
 :php-exec-function-url: https://www.php.net/manual/en/function.exec.php
 :pkcs11-url: https://en.wikipedia.org/wiki/PKCS_11
 :pkcs11-tool-url: https://linux.die.net/man/1/pkcs11-tool 
@@ -16,9 +15,11 @@
 
 == Introduction
 
-The hsmdaemon is a daemon to delegate encryption to an {hsm-url}[HSM (Hardware Security Module)].
-It can be necessary, as PHP cannot directly interface with {pkcs11-url}[a PKCS11 stack]; neither by an API wrapper, because one does not exist, yet, nor via the OpenSSL bindings
-Because of this, a separate process is needed to decrypt anything with the private key stored in an HSM. 
+The hsmdaemon is a daemon, provided by ownCloud, to delegate encryption to an {hsm-url}[HSM (Hardware Security Module)].
+This can be necessary, as PHP cannot, directly, interface with {pkcs11-url}[a PKCS11 stack]; neither with an API wrapper, because one does not exist, nor via the OpenSSL bindings.
+Because of this, a separate process is needed to decrypt anything with the private key stored in an HSM.
+
+NOTE: For hsmdaemon support, you need ownCloud server >= 10.2.
 
 Running {php-exec-function-url}[exec()] to decrypt the key with a command line command to do the encryption might leak the HSM credentials if the admin lists the currently running processes. 
 To prevent that, an HSM daemon will be used that can open a session to the HSM upon startup. 
@@ -75,108 +76,7 @@ If you are using a different operating system or distribution, please adjust the
 ==== Install Using a Preconfigured PKCS11 Module
 
 At least one PKCS11 library is necessary, which is typically provided by an HSM vendor. 
-
-TIP: If none is available, you can follow the steps below to install a software HSM.
-
-==== Install SoftHSM2 (optional)
-
-If you do not have an HSM-provided PKCS11 library, then you can use {softhsm2-url}[SoftHSM2] instead.
-To do so, follow the instructions for you Linux distribution below.
-
-* xref:install-softhsm2-debian-ubuntu[Debian and Ubuntu]
-* xref:install-softhsm2-opensuse-suse-linux-enterprise-server[openSUSE and SUSE Linux Enterprise Server]
-* xref:install-softhsm2-fedora-red-hat-enterprise-linux-centos[Fedora and Red Hat Enterprise Linux and Centos]
-
-NOTE: Installing these two packages also installs `/usr/lib/x86_64-linux-gnu/softhsm/libsofthsm2.so`, which is a module that we will need later, for interaction with the PKCS11 API.
-
-[[install-softhsm2-debian-ubuntu]]
-===== Install on Debian and Ubuntu
-
-To install SoftHSM2 on either Debian or Ubuntu, run the command below.
-
-[source,console]
-----
-sudo apt-get update
-sudo apt-get install -y softhsm2 libsofthsm2
-----
-
-[[install-softhsm2-opensuse-suse-linux-enterprise-server]]
-===== Install on openSUSE and SUSE Linux Enterprise Server
-
-To install SoftHSM2, you first have to ensure that you have {opensuse-security-repositories-url}[the official security repository] for your server enabled in your server's repositories list. 
-To check if it is, run the command `zypper lr`, which will show you output similar to the following:
-
-[source,console]
-----
-#  | Alias                     | Name                                    | Enabled | GPG Check | Refresh
----+---------------------------+-----------------------------------------+---------+-----------+--------
- 1 | repo-debug                | openSUSE-Leap-15.0-Debug                | No      | ----      | ----   
- 2 | repo-debug-non-oss        | openSUSE-Leap-15.0-Debug-Non-Oss        | No      | ----      | ----   
- 3 | repo-debug-update         | openSUSE-Leap-15.0-Update-Debug         | No      | ----      | ----   
- 4 | repo-debug-update-non-oss | openSUSE-Leap-15.0-Update-Debug-Non-Oss | No      | ----      | ----   
- 5 | repo-non-oss              | openSUSE-Leap-15.0-Non-Oss              | Yes     | (r ) Yes  | Yes    
- 6 | repo-oss                  | openSUSE-Leap-15.0-Oss                  | Yes     | (r ) Yes  | Yes    
- 7 | repo-security             | openSUSE-Leap-15.0-Security             | Yes     | (r ) Yes  | Yes    
- 8 | repo-source               | openSUSE-Leap-15.0-Source               | No      | ----      | ----   
- 9 | repo-source-non-oss       | openSUSE-Leap-15.0-Source-Non-Oss       | No      | ----      | ----   
-10 | repo-update               | openSUSE-Leap-15.0-Update               | Yes     | (r ) Yes  | Yes    
-11 | repo-update-non-oss       | openSUSE-Leap-15.0-Update-Non-Oss       | Yes     | (r ) Yes  | Yes 
-----
-
-TIP: use the `-d` flag to show the URI for each repository as well.
-
-If there is no security repository available, then add it using the following command:
-
-[source,console]
-----
-# Replace <security-repository> with the URL for your distribution and architecture.
-sudo zypper addrepo \
-  --check \
-  --refresh \
-  --name "openSUSE-Leap-15.0-Security" \
-  <security-repository> \
-  "repo-security"
-----
-
-With the repository enabled, install SoftHSM2 by running the following command:
-
-[source,console]
-----
-sudo zypper install -y --auto-agree-with-licenses softhsm
-----
-
-[[install-softhsm2-fedora-red-hat-enterprise-linux-centos]]
-===== Install on Fedora and Red Hat Enterprise Linux and Centos 
-
-To install SoftHSM2 on Fedora and Red Hat Enterprise Linux and Centos, run the command below.
-
-[source,console]
-----
-sudo yum install --assumeyes softhsm
-----
-
-===== Check the Configuration File
-
-Once SoftHSM2 is installed, check that the directory specified by `directories.tokendir` in SoftHSM2's configuration file exists.
-
-[options="headers",cols="3"]
-|===
-|Distribution |Configuration File Location |Tokens Directory
-|Debian and Ubuntu |`/etc/softhsm/softhsm2.conf` .3+|`/var/lib/softhsm/tokens/`
-|openSUSE and SUSE Linux Enterprise Server |`/etc/softhsm2.conf`
-|Fedora and Red Hat Enterprise Linux and Centos |`/etc/softhsm2.conf`
-|===
-
-[source,ini]
-....
-# SoftHSM v2 configuration file
-
-directories.tokendir = /var/lib/softhsm/tokens/
-objectstore.backend = file
-
-# ERROR, WARNING, INFO, DEBUG
-log.level = INFO
-....
+However, if none is available, you can xref:configuration/server/security/hsmdaemon/install-softhsm2.adoc[install a software HSM (SoftHSM2)].
 
 ==== Initialise the Token
 
