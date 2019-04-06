@@ -372,7 +372,7 @@ Example:
 ## Headers, Titles, Sections and Anchors
 
 Please use [title case](https://www.grammar-monster.com/lessons/capital_letters_title_case.htm)
-for headers and sections.
+for titles and sections.
 
 Good: `Examples of Title Case`
 
