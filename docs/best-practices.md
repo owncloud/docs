@@ -371,6 +371,13 @@ Example:
 
 ## Headers, Titles, Sections and Anchors
 
+Please use [title case](https://www.grammar-monster.com/lessons/capital_letters_title_case.htm)
+for headers and sections.
+
+Good: `Examples of Title Case`
+
+Bad: `Examples of title case`
+
 ### Headers
 
 Reference: [`Header`](https://asciidoctor.org/docs/user-manual/#doc-header)
