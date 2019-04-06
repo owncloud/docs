@@ -9,9 +9,13 @@
 
 == Web Server and PHP
 
-You only need to install _one_ of the following web servers.
- 
-=== Apache Web Server + PHP (supported)
+Only *one* of the following web servers is required:
+
+* xref:apache-web-server-and-php-supported[Apache Web Server and PHP (Supported)]
+* xref:apache-web-server-and-php-fpm-unsupported[Apache Web Server and PHP-FPM (Unsupported)]
+* xref:nginx-web-server-and-php-fpm-unsupported[Nginx Web Server and PHP-FPM (Unsupported)]
+
+=== Apache Web Server and PHP (Supported)
 
 The following command installs the Apache web server and PHP.
 
@@ -20,127 +24,136 @@ The following command installs the Apache web server and PHP.
 sudo apt install php libapache2-mod-php apache2
 ----
 
-=== Apache Web Server + PHP-FPM (unsupported)
+=== Apache Web Server and PHP-FPM (Unsupported)
 
-The following command installs and enables the Apache web server with php-fpm. +
-This setup can be used in high throughput environments. For performance
-comparison details please see following
-https://www.cloudways.com/blog/php-fpm-on-cloud/[link].
+The following command installs and enables the Apache web server with php-fpm.
+This setup can be used in high throughput environments. 
 
 [source,console]
 ----
+# Install PHP-FPM and Apache2 
 sudo apt install php-fpm apache2
-sudo a2enmod proxy_fcgi
-sudo a2enconf php7.2-fpm
+
+# Disable relevant modules
 sudo a2dismod php7.2
 sudo a2dismod mpm_prefork
+sudo a2enmod proxy_fcgi
+
+# Enable the php7.2-fpm configuration
+sudo a2enconf php7.2-fpm
+
+# Enable relevant modules
 sudo a2enmod mpm_event
 sudo a2enmod http2
+
+# Start Apache2
 sudo service apache2 restart
 ----
 
-For examples of how to configure this setup, see: 
-http://httpd.apache.org/docs/2.4/mod/mod_proxy.html#handler[link 1] and
-https://httpd.apache.org/docs/2.4/mod/mod_proxy_fcgi.html[link 2] and
-https://wiki.apache.org/httpd/PHP-FPM[link 3]
+TIP: For performance comparison details, please refer to https://www.cloudways.com/blog/php-fpm-on-cloud/[this guide from Cloudways].
 
-=== Nginx Web Server + PHP-FPM (unsupported)
+For examples of how to configure this setup, please refer to:
 
-The following command installs the Nginx web server and php-fpm.
+* http://httpd.apache.org/docs/2.4/mod/mod_proxy.html#handler[The mod_proxy Access via Handler documentation] 
+* https://httpd.apache.org/docs/2.4/mod/mod_proxy_fcgi.html[The mod_proxy_fcgi documentation] 
+* https://wiki.apache.org/httpd/PHP-FPM[High-performance PHP on apache httpd 2.4.x using mod_proxy_fcgi and php-fpm]
+
+=== Nginx Web Server and PHP-FPM (Unsupported)
+
+To install the Nginx web server and PHP-FPM, run the following command.
 
 [source,console]
 ----
 sudo apt install php-fpm nginx
 ----
 
-For details of how to configure Nginx, please see the
-xref:installation/nginx_configuration.adoc[NGINX Configuration].
+For details of how to configure Nginx, please refer to xref:installation/nginx_configuration.adoc[the NGINX Configuration].
 
 == Common Prerequisites
 
 [source,console]
 ----
-sudo apt install smbclient
-sudo apt install redis-server
-sudo apt install unzip
 sudo apt install php-mysql php-mbstring php-gettext php-intl php-redis \
      php-imagick php-igbinary php-gmp php-curl php-gd php-zip php-imap \
-     php-ldap php-bz2 php-phpseclib
+     php-ldap php-bz2 php-phpseclib smbclient redis-server unzip
 ----
 
 == HASH Message Digest Framework
 
-This framework does not need manual interverntion anymore. +
+This framework does not need manual intervention anymore, because
 
-- As of PHP 5.1.2, the Hash extension is bundled and compiled into PHP by default.
-- As of PHP 7.4.0, the Hash extension is a core PHP extension, so it is always enabled.
+* as of PHP 5.1.2, the Hash extension is bundled and compiled into PHP by default.
+* as of PHP 7.4.0, the Hash extension is a core PHP extension, so it is always enabled.
 
-For more information see following {hash-installation}[link]
+For more information refer to {hash-installation}[PHP's Hash Installation documentation].
 
 == Exif Library
 
-This library should be already part of PHP 7.2. +
-Please check your `mods_available` directory and/or if the exif extension exists at all.
-
-The following command lists all enabled php extensions:
+This library _should_ be already as part of PHP 7.2.
+However, you can check if it is by running the following command.
 
 [source,console]
 ----
-ls `php -i | grep "^extension_dir" | sed -e 's/.*=> //'`
+grep -q -P 'EXIF Support => enabled' <(php -i) && echo "Exif is installed and enabled"
 ----
 
 == PHP 7.2 Cryptography Library
 
-`sodium` and `openssl` php libraries are cryptographic libraries and already part of the PHP 7.2 core.
-There is no need to install an aditional cryptographic library like `php-libsodium` or `mcrypt`.
-The `mcrypt` library is depreciated, removed from the PHP 7.2 core and moved to PECL.
+The sodium and OpenSSL PHP libraries are cryptographic libraries which are part of the PHP 7.2 core.
+Consequently, there is no need to install additional cryptographic libraries, such as `php-libsodium` or `mcrypt`.
+
+NOTE: The `mcrypt` library is deprecated and removed from the PHP 7.2 core. However, it is available via PECL.
 
 === php-libsodium
 
-If you get an error messages when invoking the command `php -v` or on every PHP program: +
-`PHP Fatal error: sodium_init() in Unknown on line 0` +
-You might have additionally installed `php-libsodium`. +
-This error does not have any harm but can be annoying and will fill up your log. +
-You have to uninstall `php-libsodium` as `sodium` is already part of the PHP 7.2 core: +
-`sudo apt remove php-libsodium` +
-You can check success by invoking the command `php -v` which should not return this error message anymore. +
-You can also check the existance of `sodium` with following command:
+If you see the message `PHP Fatal error: sodium_init() in Unknown on line 0` when invoking the command `php -v` or when running PHP programs, `php-libsodium` might be installed.
+This error does not do any harm, but it can be annoying and will fill up your logs.
+
+To prevent it, you have to uninstall `php-libsodium`.
+You can do this by running the following command.
 
 [source,console]
 ----
-php -i | grep "sodium"
-sodium
-sodium support => enabled
-libsodium headers version => 1.0.16
-libsodium library version => 1.0.16
+sudo apt remove php-libsodium
 ----
 
-=== mcrypt PHP Library
+You can check success by invoking the command `php -v` which should not return this error message anymore.
+You can also check the existence of `sodium` with following command:
 
-Here are the steps for installing the `mcrypt` library in case you have the desperate need for. +
+[source,console]
+----
+grep -P "sodium support => enabled" <( php -i )
+----
 
-Referencing the following {mcrypt-link-url}[link], some steps are adopted. +
-Check the `mcrypt` version you want to use at following {mcrypt-pecl-url}[link].
+=== Mcrypt PHP Library
+
+Here are the steps for installing Mcrypt — when it is explicitly necessary.
+
+NOTE: Some of the steps were borrowed from the Website for Student’s {mcrypt-link-url}[guide to installing the PHP 7.2-Mcrypt module].
+
+First, determine the Mcrypt version you want to use in {mcrypt-pecl-url}[PECL's Mcrypt documentation].
+Then, run the following commands to install it.
 
 [source,console]
 ----
 sudo apt install php-dev libmcrypt-dev php-pear
 sudo pecl channel-update pecl.php.net
-sudo pecl install mcrypt-1.0.2
+sudo pecl install mcrypt-<desired mcrypt version>
 ----
 
-- Create a new file `mcrypt.ini` in `/etc/php/7.2/mods-available` with following content: +
-`extension=mcrypt.so`
-- Create in any subdirectory of `7.2` containing a `conf.d` directory a symbolic link: +
-`sudo ln -s /etc/php/7.2/mods-available/mcrypt.ini 20-mcrypt.ini`
-- You need to restart php and your web server, example based on nginx: +
-`sudo service php7.2-fpm restart` +
-`sudo service nginx restart`
+When the commands complete, you then have to:
+
+* Create `/etc/php/7.2/mods-available/mcrypt.ini` with the following content: `extension=mcrypt.so`.
+* Enable the module by running `phpenmod mcrypt`.
+* Restart php-fpm and your web server, by running the following commands:
++
+  sudo service php7.2-fpm restart`
+  sudo service nginx restart`
 
 == libsmbclient-php Library
 
-`libsmbclient-php` a PHP extension that uses Samba's libsmbclient library
-to provide Samba related functions to PHP programs.
+`libsmbclient-php` is a PHP extension that uses Samba's libsmbclient library to provide Samba-related functions to PHP programs.
+To install it, run the following commands.
 
 [source,console]
 ----
@@ -149,28 +162,30 @@ sudo pecl channel-update pecl.php.net
 sudo pecl install smbclient
 ----
 
-- Create a new file `smbclient.ini` in `/etc/php/7.2/mods-available` with following content: +
-`extension=smbclient.so`
-- Create in any subdirectory of `7.2` containing a `conf.d` directory a symbolic link: +
-`sudo ln -s /etc/php/7.2/mods-available/smbclient.ini 20-smbclient.ini` +
-- You need to restart php and your web server, example based on nginx: +
-`sudo service php7.2-fpm restart` +
-`sudo service nginx restart`
+When the commands complete, you then have to:
 
-NOTE: Due to a change in the minimum protocol version used in the samba client in
-Ubuntu 18.04, you may not get a valid connection in ownCloud (red box at the mount
-definition and/or cannot list directory content). +
-In this case you have to add the following to +
-`/etc/samba/smb.cnf` +
-below the `workgroup =` statement: +
-`client max protocol = NT1`. +
-For more information see: {discover-samba-hosts}[Bionic Beaver can not discover samba hosts]
+- Create `/etc/php/7.2/mods-available/smbclient.ini` with following content `extension=smbclient.so`.
+- Enable the module by running `phpenmod smbclient`.
+- Restart PHP and your web server by running the following command:
++
+  sudo service php7.2-fpm restart
+  sudo service apache2 restart
 
-== Database mariadb
+[NOTE]
+====
+Due to a change in the minimum protocol version used in the samba client in Ubuntu 18.04, you may not get a valid connection in ownCloud
+This error is identified by a red box at the mount definition or being unable to list directory content.
+In this case, you have to add the following to `/etc/samba/smb.cnf`, below the `workgroup =` statement:
 
-For how to install the latest stable release of `mariadb` see following {install-mariadb-latest}[link] +
+`client max protocol = NT1`
 
-In case you want to install `phpmyadmin` as a graphical interface for administrating the database:
+For more information see: {discover-samba-hosts}[Bionic Beaver can not discover Samba hosts]
+====
+
+== MariaDB Database
+
+For how to install the latest stable release of MariaDB, please refer to {install-mariadb-latest}[the MariaDB installation documentation].
+If you want to install phpMyAdmin as a graphical interface for administrating the database, run the following command:
 
 [source,console]
 ----
@@ -179,24 +194,20 @@ sudo apt install phpmyadmin
 
 == Useful Tips
 
-=== Start a Service after a Ressource has been Mounted
+=== Start a Service after a Resource is Mounted
 
-If you have network resources like NFS based mounts and you want to make sure that the database server or the web server only starts after the ressource has been mounted, look for following example.
+If you have network resources, such as NFS based mounts, and you want to make sure that the database or web server only starts _after_ the resource is mounted, consider the following example to help configure your system correctly.
 
-Example based on an NFS mount you want to be available before the service with <name.service> starts.
+The example is based on an NFS mount which you want to be available before the service with <name.service> starts.
 
-- Add `_netdev` to the list of NFS mountpoint options in your fstab. +
-This option makes sure that the mount will happen __after__ the network is up. +
+- Using the example below, add `_netdev` to the list of NFS mountpoint options in `/etc/fstab`.
+This option ensures that the mount will happen __after__ the network is up.
 `resource:path on local_path type nfs (<your options>,_netdev)`
-- Make sure that all mounts in fstab are mounted by running `sudo mount -a`.
-- Run `systemctl list-units | grep -nP "\.mount"` +
-and look for the mount you want to be up. +
-`folder.mount loaded active mounted local_path` +
-Where `folder.mount` and `local_path` are examples. 
-- In `/etc/systemd/system/<name.service>` +
-add `folder.mount` after the directive +
-`After=network.target` +
-Example: `After=network.target folder.mount`
+- Make sure that all mounts in `/etc/fstab` are mounted by running `sudo mount -a`.
+- Run `systemctl list-units | grep -nP "\.mount"` and look for the mount you want to be up.
+You should see the following printed to the console: `<folder.mount> loaded active mounted <local_path>`, where `folder.mount` and `local_path` are examples. 
+- In `/etc/systemd/system/<name.service>` add `folder.mount` after the directive `After=network.target`
+For example: `After=network.target folder.mount`.
 - Run `sudo systemctl daemon-reload`
-- Restart your service by invoking +
-`sudo system <your service> restart`.
+- Restart your service by invoking `sudo system <your service> restart`.
+
