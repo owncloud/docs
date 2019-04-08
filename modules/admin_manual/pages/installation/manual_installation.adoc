@@ -26,87 +26,14 @@ has been released, we are able to make this assessment, based on a
 number of criteria which include the submitted bug reports from systems
 administrators.
 
-[[on-ubuntu-18.04-lts-server]]
-=== On Ubuntu 18.04 LTS Server
-
-On a machine running a pristine Ubuntu 18.04 LTS server, install the
-required and recommended modules for a typical ownCloud installation,
-using Apache and MariaDB, by issuing the following commands in a
-terminal:
-
-....
-sudo apt-get install -y apache2 mariadb-server libapache2-mod-php7.2 \
-    openssl php-imagick php7.2-common php7.2-curl php7.2-gd \
-    php7.2-imap php7.2-intl php7.2-json php7.2-ldap php7.2-mbstring \
-    php7.2-mysql php7.2-pgsql php-smbclient php-ssh2 \
-    php7.2-sqlite3 php7.2-xml php7.2-zip
-....
-
-[TIP]
-====
-If the add-apt-repository command is not available install software-properties-common using the following two commands:
-
-....
-sudo add-apt-repository ppa:ondrej/php
-sudo apt-get update
-....
-====
-
-*Please note:*
-
-* `php7.2-common` provides: ftp, Phar, posix, iconv, ctype
-* The Hash extension is available from PHP 5.1.2 by default
-* `php7.2-xml` provides DOM, SimpleXML, XML, & XMLWriter
-* `php7.2-zip` provides zlib
-
-[[installing-smbclient]]
-==== Installing smbclient
-
-To install smbclient, you can use the following script. It first
-installs PEAR, which at the time of writing only installs version 1.9.4.
-However, smbclient requires version 1.9.5. So the final two commands
-upgrade PEAR to version 1.9.5 and then install smbclient using Pecl.
-
-....
-#!/usr/bin/expect
-spawn wget -O /tmp/go-pear.phar http://pear.php.net/go-pear.phar
-expect eof
-
-spawn php /tmp/go-pear.phar
-
-expect "1-11, 'all' or Enter to continue:"
-send "\r"
-expect eof
-
-spawn rm /tmp/go-pear.phar
-
-pear install PEAR-1.9.5
-pecl install smbclient
-....
-
-[[installing-ssh2]]
-==== Installing ssh2
-
-To install ssh2, which provides sftp, you can use the following command:
-
-....
-sudo spawn pecl install ssh2
-....
-
-[[running-additional-apps]]
-==== Running Additional Apps?
-
 If you are planning on running additional apps, keep in mind that you
 might require additional packages. See xref:installation/manual_installation.adoc#prerequisites[the prerequisites list] for details.
 
-NOTE: During the installation of the MySQL/MariaDB server, you will be prompted to create a root password. Be sure to remember your password as you will need it during ownCloud database setup.
+[[on-ubuntu-18.04-lts-server]]
+=== Ubuntu 18.04 LTS Server
 
-[[additional-extensions]]
-==== Additional Extensions
-
-....
-sudo apt-get install -y php-apcu php-redis redis-server php7.2-ldap
-....
+To prepare your Ubuntu 18.04 server for the use with ownCloud, follow
+xref:installation/server_prep_ubuntu_18.04.adoc[the Ubuntu 18.04 preparation guide].
 
 [[rhel-redhat-enterprise-linux-7.2]]
 === RHEL (RedHat Enterprise Linux) 7.2
@@ -344,7 +271,7 @@ In the example below, you can see an example log entry, where ownCloud is loggin
 
 [source,json]
 ....
-include::{examplesdir}/installation/webservers/apache/log-entry.json[]
+include::example$installation/webservers/apache/log-entry.json[]
 ....
 
 [[enable-ssl]]
