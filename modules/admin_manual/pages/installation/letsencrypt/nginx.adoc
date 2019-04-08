@@ -1,27 +1,50 @@
 = Setup NGINX
 :toc: right
 :toclevels: 1
+:diffie-hellman-url: https://en.wikipedia.org/wiki/Diffie–Hellman_key_exchange
+:forward-secrecy-url: https://scotthelme.co.uk/perfect-forward-secrecy/
+:ssl_dhparam: http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_dhparam
+:what_is_dh: https://en.wikipedia.org/wiki/Diffie–Hellman_key_exchange
+:letsencrypt-url: https://letsencrypt.org/getting-started/
 
 == Introduction
 
 The following is an example setup process for NGINX, please adapt it to your exact needs.
 
-[[nginx-ssl_dhparam]]
-== NGINX ssl_dhparam
+== Dependencies
 
-If not already present, add an
-http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_dhparam[ssl_dhparam]
-directive and a new certificate with stronger keys for
-https://en.wikipedia.org/wiki/Diffie–Hellman_key_exchange[Diffie-Hellman]
-based key exchange (which improves
-https://scotthelme.co.uk/perfect-forward-secrecy/[forward secrecy]).
-The OpenSSL command may take a while to complete, so please be patient. 
+To follow this guide, your server needs to have the following dependencies installed:
+
+- Nginx 1.4.4 or later 
+- OpenSSL 1.0.2 or later
+- {letsencrypt-url}[Let's Encrypt]
+
+== Assumptions
+
+This guide assumes two things:
+
+. That you are using Ubuntu Linux 18.04. 
+  If you are not using Ubuntu 18.04, please adjust the instructions to suit your distribution or operating system.
+. That the nginx server configuration file is stored under `/etc/nginx/sites-available/` and is enabled.
+  Not all distributions use this location, however. Please refer to your distribution's Apache documentation, to know where to store yours. 
+
+== Create and Configure a Diffie-Hellman Params File
+
+When using OpenSSL 1.0.2 or later you can generate and specify a
+{diffie-hellman-url}[Diffie-Hellman] (DH) params file.
+If not already present, add an {ssl_dhparam}[ssl_dhparam]
+directive and a new certificate with stronger keys for {what_is_dh}[Diffie-Hellman]
+based key exchange, which improves {forward-secrecy-url}[forward secrecy].
+
+TIP: The OpenSSL command may take a quite a while to complete, so please be patient.
+
 You can place the certificate into any directory you choose. However, in
-this guide we recommend `/etc/nginx/`, just for the sake of simplicity.
+this guide we recommend `/etc/nginx/`, solely for the sake of simplicity.
 
-....
+[source,console]
+----
 sudo openssl dhparam -out /etc/nginx/dh4096.pem 4096
-....
+----
 
 Add the following directive to your common SSL configuration:
 
@@ -29,6 +52,8 @@ Add the following directive to your common SSL configuration:
 ----
 ssl_dhparam /etc/nginx/dh4096.pem;
 ----
+
+== Letsencrypt ACME-Challenge
 
 Add the `/.well-known/acme-challenge` location in your server directive
 for port 80
@@ -48,18 +73,19 @@ server {
 ----
 
 [[prepare-a-server-directive-for-port-443]]
-== Prepare a server directive for port 443
+== Create an SSL Server Configuration
 
-It is easiest, if you create a separate file for the following `ssl_*`
-directives. If these directives already exist in this server block,
+We recommend creating a separate file for storing the SSL directives.
+If these directives already exist in this server block,
 delete them and include the file instead. When the certificate has been
 created, you can use this file in any SSL server block for which the
 certificate is valid without reissuing.
 
-....
+[source,console]
+----
 cd /etc/nginx/
 sudo mkdir ssl_rules
-....
+----
 
 Create a file named `ssl_mydom.tld` in the newly created directory.
 
@@ -74,10 +100,20 @@ ssl_certificate         /etc/letsencrypt/live/mydom.tld/fullchain.pem;
 ssl_certificate_key     /etc/letsencrypt/live/mydom.tld/privkey.pem;
 ssl_trusted_certificate /etc/letsencrypt/live/mydom.tld/cert.pem;
 
+----
+
+[TIP]
+====
+To improve SSL performance, we recommend that you use following directives. 
+Here's an example configuration:
+
+[source,nginx]
+....
 ssl_stapling on;
 ssl_stapling_verify on;
 ssl_session_timeout 5m;
-----
+....
+====
 
 Then adopt your server block:
 
@@ -94,34 +130,36 @@ server {
 }
 ----
 
-NOTE: Commenting the `include` directive is necessary, because the certificate files currently do not exist.
+IMPORTANT: For the moment, comment out the `Include` directive, as the certificate files do not, currently, exist.
 
-[[test-and-enable-your-nginx-configuration]]
 == Test and enable your NGINX configuration
 
 To test your configuration run
 
-....
+[source,console]
+----
 sudo nginx -t
-....
+----
 
 It should reply without errors.
 
 Load your new NGINX configuration:
 
-....
+[source,console]
+----
 sudo service nginx reload
-....
+----
 
-[[nginx-creating-certificates]]
-=== Creating certificates
+[[creating-ssl-certificates]]
+=== Create the SSL Certificates
 
 Check that you have commented out the `include` directive as stated
 above and run the following command:
 
-....
+[source,console]
+----
 sudo /etc/letsencrypt/<your-domain-name>.sh
-....
+----
 
 If successful, you will see output similar to that below, when the
 command completes:
@@ -167,9 +205,10 @@ IMPORTANT NOTES:
 To double check the issued certificate, run the `list.sh` script as
 follows.
 
-....
+[source,console]
+----
 sudo /etc/letsencrypt/list.sh
-....
+----
 
 If successful, you should see output similar to the following:
 
@@ -206,9 +245,10 @@ server {
 [[reload-the-nginx-configuration]]
 == Reload the NGINX configuration
 
-....
+[source,console]
+----
 sudo service nginx reload
-....
+----
 
 Your web server is now ready to serve https request for the given domain
 using the issued certificates.

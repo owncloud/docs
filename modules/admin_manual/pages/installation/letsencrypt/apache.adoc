@@ -36,8 +36,11 @@ This guide assumes two things:
 [[create-and-configure-a-diffie-hellman-params-file]]
 == Create and Configure a Diffie-Hellman Params File
 
-When using Apache 2.4.8 or later and OpenSSL 1.0.2 or later you can generate and specify a {diffie-hellman-url}[Diffie-Hellman] (DH) params file. 
-If not already present in your VirtualHost (vhost) file, add an {sslopensslconfcmd-url}[SSLOpenSSLConfCmd] directive and a new certificate with stronger keys (which improves {forward-secrecy-url}[forward secrecy]). 
+When using Apache 2.4.8 or later and OpenSSL 1.0.2 or later you can generate and specify a
+{diffie-hellman-url}[Diffie-Hellman] (DH) params file. 
+If not already present in your VirtualHost (vhost) file, add an
+{sslopensslconfcmd-url}[SSLOpenSSLConfCmd] directive and a new certificate with stronger
+keys, which improves {forward-secrecy-url}[forward secrecy]. 
 
 TIP: The OpenSSL command may take a quite a while to complete, so please be patient.
 
@@ -45,9 +48,9 @@ You can place the generated SSL certificate into any directory of your choice, b
 We recommend storing it in  `/etc/apache2/` in this guide, solely for sakes of simplicity.
 
 [source,console]
-....
+----
 sudo openssl dhparam -out /etc/apache2/dh4096.pem 4096
-....
+----
 
 Once the command completes, add the following directive to your common SSL configuration:
 
@@ -55,6 +58,8 @@ Once the command completes, add the following directive to your common SSL confi
 ----
 SSLOpenSSLConfCmd DHParameters /etc/apache2/dh4096.pem
 ----
+
+== Letsencrypt ACME-Challenge
 
 After that, add an Alias directive for the `/.well-known/acme-challenge` location in your HTTP VirtualHost configuration, as in line four in the following example.
 
@@ -79,13 +84,18 @@ After that, add an Alias directive for the `/.well-known/acme-challenge` locatio
 == Create an SSL VirtualHost Configuration
 
 We recommend creating a separate file for storing the `SSL` directives.
-This is because, when the certificate has been created, you can use this file in any SSL-enabled VirtualHost configuration for which the certificate is valid, without reissuing the SSL certificate.
+If these directives already exist in this Virtual Host,
+delete them and include the file instead.
+This is because, when the certificate has been created, you can use this file in any 
+SSL-enabled VirtualHost configuration for which the certificate is valid, without reissuing
+the SSL certificate.
 
-....
+[source,console]
+----
 cd /etc/apache2/
 sudo mkdir ssl_rules
 touch ssl_rules/ssl_mydom.tld
-....
+----
 
 ./etc/apache2/ssl_rules/ssl_mydom.tld
 [source,apacheconf]
@@ -103,7 +113,7 @@ SSLCertificateFile       /etc/letsencrypt/live/mydom.tld/cert.pem
 To improve SSL performance, we recommend that you use the {sslusestapling-url}[SSLUseStapling] and {sslstaplingcache-url}[SSLStaplingCache] directives. 
 Here's an example configuration:
 
-[source,console]
+[source,apache]
 ....
 SSLUseStapling on
 SSLStaplingCache         shmcb:/tmp/stapling_cache(2097152)
@@ -126,24 +136,23 @@ With the files created and filled-out, update your HTTPS VirtualHost configurati
 
 IMPORTANT: For the moment, comment out the `Include` directive, as the certificate files do not, currently, exist.
 
-[[test-and-enable-the-ssl-configuration]]
-== Test and Enable the SSL Configuration
+== Test and Enable the Apache Configuration
 
 With the configuration created, test it by running one of the following two commands:
 
 [source,console]
-....
+----
 sudo apache2ctl configtest
 sudo apache2ctl -t 
-....
+----
 
 It should not display any errors. 
 If it doesn't, load your new Apache configuration by running the following command:
 
 [source,console]
-....
+----
 sudo apache2ctl graceful
-....
+----
 
 [[creating-ssl-certificates]]
 === Create the SSL Certificates
@@ -151,19 +160,19 @@ sudo apache2ctl graceful
 To create the SSL certificates, run the following command:
 
 [source,console]
-....
+----
 sudo /etc/letsencrypt/<your-domain-name>.sh
-....
+----
 
 Next, double check that the certificates have been issued by running the `list.sh` script.
 
-....
+[source,console]
+----
 sudo /etc/letsencrypt/list.sh
-....
+----
 
 If successful, you will see output similar to that below when the command completes:
 
-[source,console]
 ....
 Saving debug log to /var/log/letsencrypt/letsencrypt.log
 
@@ -198,7 +207,7 @@ Finally, reload (or restart) Apache.
 
 It is now ready to serve HTTPS request for the given domain using the issued certificates.
 
-....
+[source,console]
+----
 sudo service apache2 reload
-....
-
+----
