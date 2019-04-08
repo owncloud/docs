@@ -132,11 +132,11 @@ Both types are used to make the raw documentation files easier to read and to ma
 When creating example files, these files must be saved into a path of the examples directory: `module_name`/`examples`
 
 The directive consists of following components:
-`include::{examplesdir}/<additional-path>/file.ext[]`
+`include::example$<additional-path>/file.ext[]`
 
 Example:
 
-`include::{examplesdir}/installation/post-installation-steps.sh[]`
+`include::example$installation/post-installation-steps.sh[]`
 
 {examplesdir} will be resolved by the build process automatically
 
@@ -182,7 +182,7 @@ Example:
 ```
 [source,console]
 ----
-include::{examplesdir}/installation/post-installation-steps.sh[]
+include::example$installation/post-installation-steps.sh[]
 ----
 ```
 
