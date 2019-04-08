@@ -12,6 +12,7 @@ reference for common used writing and formatting tasks. For a complete reference
 * [Links](#links)
 * [Images](#images)
 * [Include](#include)
+* [Table of Contents](#table-of-contents)
 * [Code Blocks](#code-blocks)
 * [Literal Text and Blocks](#literal-text-and-blocks)
 * [Admonition](#admonition)
@@ -88,6 +89,8 @@ You can reference a section or an anchor inside the same file, another file - ev
 
 Example: `xref:configuration/server/occ_command.adoc#apps-commands[the Market app]`
 
+**Strongly** in favour of this where relevant, using a ToC ([Table of Contents](#table-of-contents)) instead of a list of xref´s.
+
 ## Images
 
 Prefix: `image`
@@ -145,7 +148,7 @@ Example:
 If you include a standard page (a page that is stored in the pages directory) into another page, you must set the `page-partial` AsciiDoc attribute in the document header of the page being included.
 
 ```
-= The Page to be Included
+= The Page Header
 :page-partial:
 
 Page contents.
@@ -154,6 +157,31 @@ Page contents.
 Example:
 `include::encryption-types.adoc[leveloffset=+1]`
 (the including file in this example is in the same directory as the included file)
+
+## Table of Contents
+
+Prefix: `toc`
+
+Reference: [`Table of Contents (ToC)`](https://asciidoctor.org/docs/user-manual/#user-toc)
+
+A table of contents (ToC) is, if not otherwise defined, an index of section and subsection
+titles that can be automatically generated from the pages structure when converting a
+document with Asciidoctor.
+
+The easiest way of adding a ToC is shown in the following example.
+
+```
+= The Page Header
+:toc:
+
+Page contents.
+```
+Please also see additional directives like:
+[`toc-title`](https://asciidoctor.org/docs/user-manual/#user-toc-title),
+[`toclevels`](https://asciidoctor.org/docs/user-manual/#user-toc-levels) or
+[In-Document Placement](https://asciidoctor.org/docs/user-manual/#manual-placement)
+
+**IMPORTANT** All directives of kind `:name:` must be direct under the page header without blank lines. 
 
 ## Code Blocks
 
@@ -342,6 +370,13 @@ Example:
 ```
 
 ## Headers, Titles, Sections and Anchors
+
+Please use [title case](https://www.grammar-monster.com/lessons/capital_letters_title_case.htm)
+for titles and sections.
+
+Good: `Examples of Title Case`
+
+Bad: `Examples of title case`
 
 ### Headers
 
