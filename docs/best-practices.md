@@ -179,7 +179,7 @@ Page contents.
 Please also see additional directives like:
 [`toc-title`](https://asciidoctor.org/docs/user-manual/#user-toc-title),
 [`toclevels`](https://asciidoctor.org/docs/user-manual/#user-toc-levels) or
-[`In-Document Placement`](https://asciidoctor.org/docs/user-manual/#manual-placement)
+[In-Document Placement](https://asciidoctor.org/docs/user-manual/#manual-placement)
 
 **IMPORTANT** All directives of kind `:name:` must be direct under the page header without blank lines. 
 
