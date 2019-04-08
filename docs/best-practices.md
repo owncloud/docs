@@ -141,7 +141,7 @@ Example:
 
 `include::example$installation/post-installation-steps.sh[]`
 
-{examplesdir} will be resolved by the build process automatically
+`example$` will be resolved by the build process automatically
 
 ### Example Files of Type `asciidoc`
 
