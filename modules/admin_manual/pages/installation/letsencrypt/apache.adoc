@@ -54,7 +54,7 @@ sudo openssl dhparam -out /etc/apache2/dh4096.pem 4096
 
 Once the command completes, add the following directive to your common SSL configuration:
 
-[source,apacheconf]
+[source,apache]
 ----
 SSLOpenSSLConfCmd DHParameters /etc/apache2/dh4096.pem
 ----
@@ -63,7 +63,7 @@ SSLOpenSSLConfCmd DHParameters /etc/apache2/dh4096.pem
 
 After that, add an Alias directive for the `/.well-known/acme-challenge` location in your HTTP VirtualHost configuration, as in line four in the following example.
 
-[source,apacheconf]
+[source,apache]
 ----
 <virtualHost *.80>
   ServerName mydom.tld
@@ -98,7 +98,7 @@ touch ssl_rules/ssl_mydom.tld
 ----
 
 ./etc/apache2/ssl_rules/ssl_mydom.tld
-[source,apacheconf]
+[source,apache]
 ----
 # Eases letsencrypt initial cert issuing
 
@@ -122,7 +122,7 @@ SSLStaplingCache         shmcb:/tmp/stapling_cache(2097152)
 
 With the files created and filled-out, update your HTTPS VirtualHost configuration:
 
-[source,apacheconf]
+[source,apache]
 ----
 <virtualHost *:443>
   ServerName mydom.tld
@@ -188,7 +188,7 @@ Found the following certs:
 
 As the certificate files exist, you can uncomment the `Include` directive in your HTTPS VirtualHost configuration to use them.
 
-[source,apacheconf]
+[source,apache]
 ----
 <virtualHost *:443>
   ServerName mydom.tld
