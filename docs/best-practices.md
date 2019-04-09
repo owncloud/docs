@@ -70,13 +70,14 @@ This is an example of an URL containing problematic characters which needs speci
 
 ```
 = The Page Header
-:internal-link-name: https://example.com/content/link_can_be_very_long
+:internal-link-name-url: https://example.com/content/link_can_be_very_long
 
-Text {internal-link-name}[highlighted text] text.
+Text {internal-link-name-url}[highlighted text] text.
 ```
 
 It is important that `:internal-link-name:` is placed directly below the page header.
-Any number of these link directives can be added.
+Any number of these link directives can be added. Without being mandatory, it has turned
+out as a matter of good practice to end your link name with `-url`.
 
 ### Internal Links
 
