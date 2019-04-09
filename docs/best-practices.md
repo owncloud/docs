@@ -75,8 +75,8 @@ This is an example of an URL containing problematic characters which needs speci
 Text {internal-link-name}[highlighted text] text.
 ```
 
-It is important that `:internal-link-name:` is directly placed below the page header.
-More of these link directives can be added in new lines.
+It is important that `:internal-link-name:` is placed directly below the page header.
+Any number of these link directives can be added.
 
 ### Internal Links
 
