@@ -66,6 +66,19 @@ Please see [Troubleshooting Complex URLs](https://asciidoctor.org/docs/user-manu
 This is an example of an URL containing problematic characters which needs special treatment:
 `https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)`
 
+**Strongly** in favour of using the following method which greatly improves readability while authoring the document.
+
+```
+= The Page Header
+:internal-link-name-url: https://example.com/content/link_can_be_very_long
+
+Text {internal-link-name-url}[highlighted text] text.
+```
+
+It is important that `:internal-link-name:` is placed directly below the page header.
+Any number of these link directives can be added. Without being mandatory, it has turned
+out as a matter of good practice to end your link name with `-url`.
+
 ### Internal Links
 
 Prefix: `xref:`
