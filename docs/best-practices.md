@@ -12,6 +12,7 @@ reference for common used writing and formatting tasks. For a complete reference
 * [Links](#links)
 * [Images](#images)
 * [Include](#include)
+* [Table of Contents](#table-of-contents)
 * [Code Blocks](#code-blocks)
 * [Literal Text and Blocks](#literal-text-and-blocks)
 * [Admonition](#admonition)
@@ -21,7 +22,7 @@ reference for common used writing and formatting tasks. For a complete reference
 * [Keyboard Shortcuts and UI Button Text](#keyboard-shortcuts-and-ui-button-text)
 * [Menu Selections](#menu-selections)
 * [Lists](#lists)
-* [Headers, Titles, Sections and Anchors](#headers-titles-sections-and-anchors)
+* [Headers, Titles, Sections, Anchors and Paragraph Titles](#headers-titles-sections-anchors-and-paragraph-titles)
 * [Tables](#tables)
 * [Comments](#comments)
 
@@ -65,6 +66,19 @@ Please see [Troubleshooting Complex URLs](https://asciidoctor.org/docs/user-manu
 This is an example of an URL containing problematic characters which needs special treatment:
 `https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)`
 
+**Strongly** in favour of using the following method which greatly improves readability while authoring the document.
+
+```
+= The Page Header
+:internal-link-name-url: https://example.com/content/link_can_be_very_long
+
+Text {internal-link-name-url}[highlighted text] text.
+```
+
+It is important that `:internal-link-name-url:` is placed directly below the page header.
+Any number of these link directives can be added. Without being mandatory, it has turned
+out as a matter of good practice to end your link name with `-url`.
+
 ### Internal Links
 
 Prefix: `xref:`
@@ -87,6 +101,8 @@ Where `module_name:`, `#section` and `[Printed Name]` are optional components.
 You can reference a section or an anchor inside the same file, another file - even in another module.
 
 Example: `xref:configuration/server/occ_command.adoc#apps-commands[the Market app]`
+
+**Strongly** in favour of this where relevant, using a ToC ([Table of Contents](#table-of-contents)) instead of a list of xref´s.
 
 ## Images
 
@@ -132,20 +148,20 @@ Both types are used to make the raw documentation files easier to read and to ma
 When creating example files, these files must be saved into a path of the examples directory: `module_name`/`examples`
 
 The directive consists of following components:
-`include::{examplesdir}/<additional-path>/file.ext[]`
+`include::example$<additional-path>/file.ext[]`
 
 Example:
 
-`include::{examplesdir}/installation/post-installation-steps.sh[]`
+`include::example$installation/post-installation-steps.sh[]`
 
-{examplesdir} will be resolved by the build process automatically
+`example$` will be resolved by the build process automatically
 
 ### Example Files of Type `asciidoc`
 
 If you include a standard page (a page that is stored in the pages directory) into another page, you must set the `page-partial` AsciiDoc attribute in the document header of the page being included.
 
 ```
-= The Page to be Included
+= The Page Header
 :page-partial:
 
 Page contents.
@@ -154,6 +170,31 @@ Page contents.
 Example:
 `include::encryption-types.adoc[leveloffset=+1]`
 (the including file in this example is in the same directory as the included file)
+
+## Table of Contents
+
+Prefix: `toc`
+
+Reference: [`Table of Contents (ToC)`](https://asciidoctor.org/docs/user-manual/#user-toc)
+
+A table of contents (ToC) is, if not otherwise defined, an index of section and subsection
+titles that can be automatically generated from the pages structure when converting a
+document with Asciidoctor.
+
+The easiest way of adding a ToC is shown in the following example.
+
+```
+= The Page Header
+:toc:
+
+Page contents.
+```
+Please also see additional directives like:
+[`toc-title`](https://asciidoctor.org/docs/user-manual/#user-toc-title),
+[`toclevels`](https://asciidoctor.org/docs/user-manual/#user-toc-levels) or
+[In-Document Placement](https://asciidoctor.org/docs/user-manual/#manual-placement)
+
+**IMPORTANT** All directives of kind `:name:` must be direct under the page header without blank lines. 
 
 ## Code Blocks
 
@@ -182,7 +223,7 @@ Example:
 ```
 [source,console]
 ----
-include::{examplesdir}/installation/post-installation-steps.sh[]
+include::example$installation/post-installation-steps.sh[]
 ----
 ```
 
@@ -341,7 +382,14 @@ Example:
 * level 1
 ```
 
-## Headers, Titles, Sections and Anchors
+## Headers, Titles, Sections, Anchors and Paragraph Titles
+
+**IMPORTANT** Please use [title case](https://www.grammar-monster.com/lessons/capital_letters_title_case.htm)
+for titles and sections.
+
+Good: `Examples of Title Case`
+
+Bad: `Examples of title case`
 
 ### Headers
 
@@ -360,6 +408,8 @@ The document `title` resembles a level-0 section title, which is written using a
 Reference: [`Sections`](https://asciidoctor.org/docs/user-manual/#sections)
 
 `Sections` partition the document into a content hierarchy. A section title represents the heading for a section. Section title levels are specified by two to six equal `=` signs. The number of equal signs in front of the title represents the nesting level (using a 0-based index) of the section.
+
+**INFO** Sections automatically create a referencable anchor.
 
 Section numbering should be in single steps. This means you will get a warning when using `=` and then `===`.
 
@@ -417,6 +467,28 @@ xref:custom_id[Text to Print]
 
 [[custom_id]]
   text
+```
+
+### Paragraph Title
+
+Reference: [`Paragraph Title`](https://asciidoctor.org/docs/user-manual/#title)
+
+You can assign a title to any paragraph, list, delimited block, or block macro.
+In most cases, the title is displayed immediately above the content.
+If the content is a figure or image, the title is displayed below the content.
+
+The title text is rendered in a more visible style and the intention is usually to
+highlight the following paragraph inside a section.
+
+**INFO** Compared to sections, a paragraph title does not create a referencable anchor.
+
+A block title is defined on a line above the element. The line must begin with a dot (.)
+and be followed immediately by the title text.
+
+Example:
+```
+.Title for this Paragraph
+Text or lists or...
 ```
 
 ## Tables
