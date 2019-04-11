@@ -1,4 +1,5 @@
 = How To Install and Configure an LDAP Proxy-Cache Server
+:toc: right
 
 [[background]]
 == Background
@@ -23,17 +24,15 @@ performance, are:
 
 There’s not that much to it, just the following five steps:
 
-1.  Install OpenLDAP
-2.  Configure the server
-3.  Edit the default configuration directory
-4.  Perform a test search
-5.  Check the logs
-6.  Configure ownCloud LDAP app
-
-Let’s begin.
+1.  xref:install-openldap[Install OpenLDAP]
+2.  xref:configure-the-server[Configure the Server]
+3.  xref:enable-the-configuration-file[Enable the Configuration File]
+4.  xref:open-the-log[Check the Log]
+5.  xref:perform-a-test-search[Perform a Test Search]
+6.  xref:configure-owncloud-ldap-app[Configure ownCloud LDAP App]
 
 [[install-openldap]]
-== 1. Install OpenLDAP
+=== Install OpenLDAP
 
 There are a number of
 https://en.wikipedia.org/wiki/List_of_LDAP_software[LDAP server
@@ -56,7 +55,7 @@ apt-get install slapd ldap-utils -y
 ....
 
 [[configure-the-server]]
-== 2. Configure the Server
+=== Configure the Server
 
 With OpenLDAP installed and running, you now need to configure the
 server. One way of doing so, is to create a configuration file. So,
@@ -65,7 +64,7 @@ the following configuration to it.
 
 [source,conf]
 ----
-include::{examplesdir}/configuration/ldap/single.slapd.conf[]
+include::example$configuration/ldap/single.slapd.conf[]
 ----
 
 NOTE: This configuration only caches queries from a single Active Directory server. To cache queries from multiple Active Directory servers, a configuration is available below.
@@ -80,7 +79,7 @@ slaptest -f /etc/ldap/slapd.conf
 NOTE: If you see warnings in the console output, they are not crucial.
 
 [[enable-the-configuration-file]]
-== 3. Enable the configuration file
+=== Enable the Configuration File
 
 Next, we need to tell OpenLDAP to use our configuration. To do so, open
 `/etc/default/slapd` and add the following line to it:
@@ -96,7 +95,7 @@ service slapd restart
 ....
 
 [[open-the-log]]
-== 4. Open the log
+=== Open the Log
 
 Open another terminal and see the systemlog with the following command.:
 
@@ -111,7 +110,7 @@ apt install rsyslog
 ....
 
 [[perform-a-test-search]]
-== 5. Perform a test search
+=== Perform a Test Search
 
 Now that the server’s installed, configured, and running, we next need
 to perform a search. This will check that records are being correctly
@@ -149,7 +148,7 @@ name = Show only this attributes
 If you see results including: `"Query cachable"` and `"Query answered (x) times"`, then the setup works.
 
 [[configure-owncloud-ldap-app]]
-== 6. Configure ownCloud LDAP App
+=== Configure ownCloud LDAP App
 
 Login as ownCloud admin in your ownCloud server.
 
@@ -239,5 +238,5 @@ in section 6.
 
 [source,conf]
 ----
-include::{examplesdir}/configuration/ldap/Multi-AD.slapd.conf[]
+include::example$configuration/ldap/Multi-AD.slapd.conf[]
 ----
