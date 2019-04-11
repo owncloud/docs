@@ -130,6 +130,7 @@ PHPCLI_INSTALLED := $(shell command -v php 2>/dev/null)
 validate-php: ## Validate all PHP files
 ifneq ($(PHPCLI_INSTALLED),)
 	@-find ./modules/*_manual/examples -type f -name "*.php" -exec php -l {} \;
+	@phpcs ./modules/*_manual/examples
 	@echo
 else
 	@echo "Command php not found, please install."
