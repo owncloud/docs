@@ -79,9 +79,10 @@ root, for example `/var/www/html/phpinfo.php`. (Your Web root may be in
 a different location; your Linux distribution documentation will tell
 you where.) This file contains just this line:
 
-....
+[source,php]
+----
 <?php phpinfo(); ?>
-....
+----
 
 Open this file in a Web browser by pointing your browser to
 `localhost/phpinfo.php`:
@@ -216,10 +217,8 @@ overview of these modules:
 * mod_proxy_html (can cause broken PDF downloads)
 * mod_reqtimeout
 * mod_security
-* mod_spdy together with libapache2-mod-php5 / mod_php (use fcgi or
-php-fpm instead)
-* mod_xsendfile / X-Sendfile (causing broken downloads if not configured
-correctly)
+* mod_spdy together with libapache2-mod-php5 / mod_php (use fcgi or php-fpm instead)
+* mod_xsendfile / X-Sendfile (causing broken downloads if not configured correctly)
 
 ==== NGINX
 
@@ -237,8 +236,7 @@ correctly)
 [[general-troubleshooting-2]]
 === General troubleshooting
 
-ownCloud uses SabreDAV, and the SabreDAV documentation is comprehensive
-and helpful.
+ownCloud uses SabreDAV, and the SabreDAV documentation is comprehensive and helpful.
 
 See:
 
@@ -259,8 +257,7 @@ which contains various additional information about WebDAV problems.
 [[error-0x80070043-the-network-name-cannot-be-found.-while-adding-a-network-drive]]
 === Error 0x80070043 `The network name cannot be found.` while adding a network drive
 
-The windows native WebDAV client might fail with the following error
-message:
+The windows native WebDAV client might fail with the following error message:
 
 ....
 Error 0x80070043 "The network name cannot be found." while adding a network drive
@@ -275,13 +272,14 @@ You need to add the following rule set to your main web server or
 virtual host configuration, or the `.htaccess` file in your document
 root.
 
-....
+[source,apache]
+----
 # Fixes Windows WebDav client error 0x80070043 "The network name cannot be found."
 RewriteEngine On
 RewriteCond %{HTTP_USER_AGENT} ^(DavClnt)$
 RewriteCond %{REQUEST_METHOD} ^(OPTIONS)$
 RewriteRule .* - [R=401,L]
-....
+----
 
 [[troubleshooting-contacts-calendar]]
 == Troubleshooting Contacts & Calendar
@@ -320,10 +318,11 @@ If your ownCloud instance is installed in a subfolder called `owncloud`
 and you’re running Apache create or edit the .htaccess file within the
 document root of your Web server and add the following lines:
 
-....
+[source,apache]
+----
 Redirect 301 /.well-known/carddav /owncloud/remote.php/dav
 Redirect 301 /.well-known/caldav /owncloud/remote.php/dav
-....
+----
 
 Now change the URL in the client settings to just use:
 
