@@ -22,7 +22,7 @@ reference for common used writing and formatting tasks. For a complete reference
 * [Keyboard Shortcuts and UI Button Text](#keyboard-shortcuts-and-ui-button-text)
 * [Menu Selections](#menu-selections)
 * [Lists](#lists)
-* [Headers, Titles, Sections and Anchors](#headers-titles-sections-and-anchors)
+* [Headers, Titles, Sections, Anchors and Paragraph Titles](#headers-titles-sections-anchors-and-paragraph-titles)
 * [Tables](#tables)
 * [Comments](#comments)
 
@@ -65,6 +65,19 @@ Please see [Troubleshooting Complex URLs](https://asciidoctor.org/docs/user-manu
 
 This is an example of an URL containing problematic characters which needs special treatment:
 `https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)`
+
+**Strongly** in favour of using the following method which greatly improves readability while authoring the document.
+
+```
+= The Page Header
+:internal-link-name-url: https://example.com/content/link_can_be_very_long
+
+Text {internal-link-name-url}[highlighted text] text.
+```
+
+It is important that `:internal-link-name-url:` is placed directly below the page header.
+Any number of these link directives can be added. Without being mandatory, it has turned
+out as a matter of good practice to end your link name with `-url`.
 
 ### Internal Links
 
@@ -369,9 +382,9 @@ Example:
 * level 1
 ```
 
-## Headers, Titles, Sections and Anchors
+## Headers, Titles, Sections, Anchors and Paragraph Titles
 
-Please use [title case](https://www.grammar-monster.com/lessons/capital_letters_title_case.htm)
+**IMPORTANT** Please use [title case](https://www.grammar-monster.com/lessons/capital_letters_title_case.htm)
 for titles and sections.
 
 Good: `Examples of Title Case`
@@ -395,6 +408,8 @@ The document `title` resembles a level-0 section title, which is written using a
 Reference: [`Sections`](https://asciidoctor.org/docs/user-manual/#sections)
 
 `Sections` partition the document into a content hierarchy. A section title represents the heading for a section. Section title levels are specified by two to six equal `=` signs. The number of equal signs in front of the title represents the nesting level (using a 0-based index) of the section.
+
+**INFO** Sections automatically create a referencable anchor.
 
 Section numbering should be in single steps. This means you will get a warning when using `=` and then `===`.
 
@@ -452,6 +467,28 @@ xref:custom_id[Text to Print]
 
 [[custom_id]]
   text
+```
+
+### Paragraph Title
+
+Reference: [`Paragraph Title`](https://asciidoctor.org/docs/user-manual/#title)
+
+You can assign a title to any paragraph, list, delimited block, or block macro.
+In most cases, the title is displayed immediately above the content.
+If the content is a figure or image, the title is displayed below the content.
+
+The title text is rendered in a more visible style and the intention is usually to
+highlight the following paragraph inside a section.
+
+**INFO** Compared to sections, a paragraph title does not create a referencable anchor.
+
+A block title is defined on a line above the element. The line must begin with a dot (.)
+and be followed immediately by the title text.
+
+Example:
+```
+.Title for this Paragraph
+Text or lists or...
 ```
 
 ## Tables
