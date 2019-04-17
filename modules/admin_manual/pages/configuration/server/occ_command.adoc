@@ -787,25 +787,37 @@ See xref:configuration/files/encryption_configuration.adoc[encryption configurat
 
 `encryption:recreate-master-key` decrypts the ownCloud file system, replaces the existing master key with a new one, and encrypts the entire ownCloud file system with the new master key. Given the size of your ownCloud filesystem, this may take some time to complete. However, if your filesystem is quite small, then it will complete quite quickly. The `-y` switch can be supplied to automate acceptance of user input.
 
-[[federation-sync]]
-== Federation Sync
+== Federated Shares
 
-Synchronize the address books of all federated ownCloud servers.
+=== Synchronize All Federated Server Address Books
+
+Servers connected with federation shares can share user address books and auto-complete usernames in share dialogs. 
+Use this command to synchronize federated servers:
 
 [source,console]
 ----
-federation:sync-addressbooks  Synchronizes address books of all federated clouds
+sudo -u www-data php occ federation:sync-addressbooks
 ----
 
-Servers connected with federation shares can share user address books,
-and auto-complete usernames in share dialogs. Use this command to
-synchronize federated servers:
-
-....
-sudo -u www-data php occ federation:sync-addressbooks
-....
-
 NOTE: This command is only available when the "Federation" app (`federation`) is enabled.
+
+=== Poll Incoming Federated Shares For Updates
+
+This command must be used if received federated shares are being referenced by desktop clients but not regularly accessed via the webUI.
+This is because, for performance reasons, federated shares do not update automatically.
+Instead, federated share directories are only updated when users browse them using the xref:user_manual:files/webgui/overview.adoc[webUI].
+
+ownCloud and system administrators can use the `incoming-shares:poll` command to poll federated shares for updates.
+
+NOTE: The command polls all received federated shares, so does not require a path.
+
+[source,console]
+----
+sudo -u www-data php occ incoming-shares:poll
+----
+
+IMPORTANT: We recommend running the command no more than once every twelve hours. 
+However, for instances with a low number of federated shares, the command can be run once every two hours.
 
 [[file-operations]]
 == File Operations
