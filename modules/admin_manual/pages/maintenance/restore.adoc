@@ -1,4 +1,7 @@
 = Restoring ownCloud
+:toc: right
+
+== Introduction
 
 When you install ownCloud from packages, follow these steps to restore
 your ownCloud installation. Start with a fresh ownCloud package
@@ -24,9 +27,10 @@ Simply copy your configuration and data folder to your ownCloud
 environment. You could use this command, which restores the backup
 example in backup:
 
-....
-rsync -Aax config data /var/www/owncloud/
-....
+[source,console]
+----
+sudo rsync -Aax config data /var/www/owncloud/
+----
 
 There are many ways to restore normal files from backups, and you may
 use whatever method you are accustomed to.
@@ -41,25 +45,27 @@ NOTE: This guide assumes that your previous backup is called `owncloud-dbbackup.
 
 MySQL is the recommended database engine. To restore MySQL:
 
-....
-occ maintenance:mode --on
-mysql -h [server] -u [username] -p[password] [db_name] < owncloud-dbbackup.bak
-occ maintenance:data-fingerprint
-occ maintenance:mode --off
-....
+[source,console]
+----
+sudo -u www-data php occ maintenance:mode --on
+sudo mysql -h [server] -u [username] -p[password] [db_name] < owncloud-dbbackup.bak
+sudo -u www-data php occ maintenance:data-fingerprint
+sudo -u www-data php occ maintenance:mode --off
+----
 
 [[sqlite]]
 === SQLite
 
-....
-rm data/owncloud.db
-sqlite3 data/owncloud.db < owncloud-dbbackup.bak
-....
+[source,console]
+----
+sudo rm data/owncloud.db
+sudo sqlite3 data/owncloud.db < owncloud-dbbackup.bak
+----
 
 [[postgresql]]
 === PostgreSQL
 
-....
-PGPASSWORD="password" pg_restore -c -d owncloud -h [server] -U [username]
-owncloud-dbbackup.bak
-....
+[source,console]
+----
+PGPASSWORD="password" pg_restore -c -d owncloud -h [server] -U [username] owncloud-dbbackup.bak
+----
