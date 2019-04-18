@@ -1,6 +1,6 @@
 = Using the occ Command
 :toc: macro
-:toclevels: 1
+:toclevels: 2
 :toc-title: occ Command Directory
 
 ownCloud's `occ` command (ownCloud console) is ownCloud's command-line
@@ -2596,7 +2596,7 @@ sudo -u www-data php occ user:setting layla core
     - lang: en
 ....
 
-In the output, you can see that one setting is in effect, `lang`, which is set to `en`. 
+In the output, you can see that one setting is in effect, `lang`, which is set to `en`.
 
 Example for all settings set restricted to application `core`, key `lang` for a given user
 
@@ -3106,184 +3106,8 @@ sudo -u www-data php occ notifications:generate -g Office "Emergeny Alert" "Rebo
 ....
 
 = Using occ apps commands
-:toc: macro
-:toclevels: 1
-:toc-title: occ Apps Command Directory
-:php-datetime-url: https://secure.php.net/manual/en/datetime.formats.php
 
 This command reference covers the ownCloud maintained apps commands.
-
-ownCloud’s `occ` command (ownCloud console) is ownCloud’s command-line interface. 
-You can perform common server operations with `occ`, including installing and upgrading ownCloud, managing 
-users and groups, encryption, passwords, and LDAP setting.
-
-`occ` is in the owncloud/ directory; for example /var/www/owncloud on Ubuntu Linux. `occ` is a PHP script. 
-*You must run it as your HTTP user* to ensure that your ownCloud files and directories retain the correct permissions.
-
-Please ensure that the app you are going to configure is installed and enabled.
-
-toc::[]
-
-[[run-occ-as-your-http-user]]
-== Run occ As Your HTTP User
-
-The HTTP user is different on the various Linux distributions. 
-See strong_perms_label to learn how to find your HTTP user.
-
-* The HTTP user and group in Debian/Ubuntu is www-data.
-* The HTTP user and group in Fedora/CentOS is apache.
-* The HTTP user and group in Arch Linux is http.
-* The HTTP user in openSUSE is wwwrun, and the HTTP group is www.
-
-If your HTTP server is configured to use a different PHP version than the default (/usr/bin/php), `occ` should be run with the same version. 
-For example, in CentOS 6.5 with SCL-PHP54 installed, the command looks like this:
-
-....
-sudo -u apache /opt/rh/php54/root/usr/bin/php /var/www/html/owncloud/occ
-....
-
-=== Example Commands
- 
-The following examples are based on Ubuntu.
-
-Running `occ` with no options lists all commands and options
-
-....
-sudo -u www-data php occ 
-ownCloud version 10.0.8
-
-Usage:
- command [options] [arguments]
-....
-
-==== Options
-
--h, --help            Display this help message
- -q, --quiet           Do not output any message
- -V, --version         Display this application version
-     --ansi            Force ANSI output
-     --no-ansi         Disable ANSI output
- -n, --no-interaction  Do not ask any interactive question
-     --no-warnings     Skip global warnings, show command output only
- -v|vv|vvv, --verbose  Increase the verbosity of messages: 1 for normal output, 
-                       2 for more verbose output and 3 for debug
-
-Available commands:
- check                 Check dependencies of the server environment
- help                  Displays help for a command
- list                  Lists commands
- status                Show some status information
- upgrade               Run upgrade routines after installation of 
-                       a new release. The release has to be installed before
-
-This is the same as `sudo -u www-data php occ list`.
-
-[[general-syntax-help]]
-=== General syntax help
-
-Run occ with the `-h` option for syntax help
-
-....
-sudo -u www-data php occ -h
-....
-
-[[display-your-owncloud-version]]
-=== Display your ownCloud version
-
-....
-sudo -u www-data php occ -V
-  ownCloud version 10.0.8
-....
-
-[[query-your-owncloud-server-status]]
-=== Query your ownCloud server status
-
-....
-sudo -u www-data php occ status
-  - installed: true
-  - version: 10.0.8.5
-  - versionstring: 10.0.8
-  - edition: Community
-....
-
-[[command-syntax-help]]
-=== Command syntax help
-
-Get detailed information on individual commands with the `help` command, like this example for the `maintenance:mode` command
-
-....
-sudo -u www-data php occ --help maintenance:mode
-Usage:
- maintenance:mode [options]
-....
-
-==== Options
-
-     --on              Enable maintenance mode
-     --off             Disable maintenance mode
-     --output[=OUTPUT] Output format (plain, json or json_pretty, default is plain) [default: "plain"]
- -h, --help            Display this help message
- -q, --quiet           Do not output any message
- -V, --version         Display this application version
-     --ansi            Force ANSI output
-     --no-ansi         Disable ANSI output
- -n, --no-interaction  Do not ask any interactive question
-     --no-warnings     Skip global warnings, show command output only
- -v|vv|vvv, --verbose  Increase the verbosity of messages: 1 for normal output, 
-                       2 for more verbose output and 3 for debug
-
-[[options-and-arguments]]
-==== Options and Arguments
-
-`occ` has _options_, _commands_, and _arguments_. Commands are required.
-Options are optional. 
-Arguments can be required _or_ optional. 
-The, generic, syntax is
-
-....
-occ [options] command [arguments]
-....
-
-The `status` command from above has an option to define the output format.
-The default is plain text, but it can also be `json`
-
-....
-sudo -u www-data php occ status --output=json
-{"installed":true,"version":"9.0.0.19","versionstring":"9.0.0","edition":""}
-....
-
-or `json_pretty`
-
-....
-sudo -u www-data php occ status --output=json_pretty
-{
-   "installed": true,
-   "version": "10.0.8.5",
-   "versionstring": "10.0.8",
-   "edition": "Community"
-}
-....
-
-This output option is available on all list and list-like commands, which include `status`, `check`, `app:list`, `config:list`, `encryption:status` and `encryption:list-modules`.
-
-[[usage-of-parameters-in-options]]
-=== Usage of parameters in Options
-
-In case an option requires parameters, following format should be used for short or long Options forms
-
-The following example command has an option in `-p` (short) form and `--path` (long) form.
-
-Parameters for long form options will be written after a blank or equal sign
-
-....
-sudo -u www-data ./occ files:scan --path="user_x/files/folder"
-....
-
-Parameters for short form options will be written either directly after the option or after a blank. Do not use the equal sign as this could be interpreted as part of the parameter.
-
-....
-sudo -u www-data ./occ files:scan -p "user_x/files/folder"  
-....
 
 [[brute_force_protection]]
 == Brute Force Protection
@@ -3345,7 +3169,7 @@ This app is only available as a https://github.com/owncloud/data_exporter.git[gi
 See the xref:maintenance/export_import_instance_data.adoc[Data Exporter] description
 for more information how to install this app.
 
-Import and export users from one ownCloud instance in to another. 
+Import and export users from one ownCloud instance in to another.
 The export contains all user-settings, files and shares.
 
 === Export User Data
@@ -3465,7 +3289,7 @@ Hostname or IP address of Antivirus Host.
 [width="80%",cols="30%,70%",]
 |===
 | Key             | `av_host`
-| Default         | 
+| Default         |
 |===
 
 ==== Antivirus Port [integer]
@@ -3475,7 +3299,7 @@ Port number of Antivirus Host, 1-65535.
 [width="80%",cols="30%,70%",]
 |===
 | Key             | `av_port`
-| Default         | 
+| Default         |
 | Possible Values | 1-65535
 |===
 
@@ -3486,7 +3310,7 @@ Extra command line options (comma-separated).
 [width="80%",cols="30%,70%",]
 |===
 | Key             | `av_cmd_options`
-| Default         | 
+| Default         |
 |===
 
 ==== Antivirus Path to Executable [string]
@@ -3625,27 +3449,27 @@ Broaden the search to find, for example, `jeroboam` with the asterisk wildcard:
 sudo -u www-data php occ ldap:search "*rob"
 ....
 
-User search attributes are set with `ldap:set-config` (below). 
-For example, if your search attributes are `givenName` and `sn` you can find users by first name + last name very quickly. 
+User search attributes are set with `ldap:set-config` (below).
+For example, if your search attributes are `givenName` and `sn` you can find users by first name + last name very quickly.
 For example, you’ll find 'Terri Hanson' by searching for `te ha`.
 Trailing whitespace is ignored.
 
-Check if an LDAP user exists. 
+Check if an LDAP user exists.
 This works only if the ownCloud server is connected to an LDAP server.
 
 ....
 sudo -u www-data php occ ldap:check-user robert
 ....
 
-`ldap:check-user` will not run a check when it finds a disabled LDAP connection. 
-This prevents users that exist on disabled LDAP connections from being marked as deleted. 
+`ldap:check-user` will not run a check when it finds a disabled LDAP connection.
+This prevents users that exist on disabled LDAP connections from being marked as deleted.
 If you know for sure that the user you are searching for is not in one of the disabled connections, and exists on an active connection, use the `--force` option to force it to check all active LDAP connections.
 
 ....
 sudo -u www-data php occ ldap:check-user --force robert
 ....
 
-`ldap:create-empty-config` creates an empty LDAP configuration. 
+`ldap:create-empty-config` creates an empty LDAP configuration.
 The first one you create has no `configID`, like this example:
 
 ....
@@ -3653,12 +3477,12 @@ sudo -u www-data php occ ldap:create-empty-config
   Created new configuration with configID ''
 ....
 
-This is a holdover from the early days, when there was no option to create additional configurations. 
+This is a holdover from the early days, when there was no option to create additional configurations.
 The second, and all subsequent, configurations that you create are automatically assigned IDs.
 
 ....
 sudo -u www-data php occ ldap:create-empty-config
-   Created new configuration with configID 's01' 
+   Created new configuration with configID 's01'
 ....
 
 Then you can list and view your configurations:
@@ -3683,7 +3507,7 @@ Deleted configuration with configID 's01'
 The `ldap:set-config` command is for manipulating configurations, like this example that sets search attributes:
 
 ....
-sudo -u www-data php occ ldap:set-config s01 ldapAttributesForUserSearch 
+sudo -u www-data php occ ldap:set-config s01 ldapAttributesForUserSearch
 "cn;givenname;sn;displayname;mail"
 ....
 
@@ -3763,20 +3587,20 @@ The command takes the following format:
 ldap:update-group <groupID> <groupID <groupID> ...>
 ....
 
-The command allows for running a manual group sync on one or more groups, instead of having to wait 
-for group syncing to occur. 
-If users have been added or removed from these groups in LDAP, ownCloud will update its details. 
+The command allows for running a manual group sync on one or more groups, instead of having to wait
+for group syncing to occur.
+If users have been added or removed from these groups in LDAP, ownCloud will update its details.
 If a group was deleted in LDAP, ownCloud will also delete the local mapping info about this group.
 
-New groups in LDAP won’t be synced with this command. 
-The LDAP TTL configuration (by default 10 minutes) still applies. 
-This means that recently deleted groups from LDAP might be considered as 
+New groups in LDAP won’t be synced with this command.
+The LDAP TTL configuration (by default 10 minutes) still applies.
+This means that recently deleted groups from LDAP might be considered as
 'active' and might not be deleted in ownCloud immediately.
 
 *Configuring the LDAP Refresh Attribute Interval*
 
-You can configure the LDAP refresh attribute interval, but not with the `ldap` commands. 
-Instead, you need to use the `config:app:set` command, as in the following example, which takes a 
+You can configure the LDAP refresh attribute interval, but not with the `ldap` commands.
+Instead, you need to use the `config:app:set` command, as in the following example, which takes a
 number of seconds to the `--value` switch.
 
 ....
@@ -3807,19 +3631,19 @@ The `market` commands _install_, _uninstall_, _list_, and _upgrade_ applications
 [source,console]
 ----
 market
-  market:install    Install apps from the marketplace. If already installed and 
+  market:install    Install apps from the marketplace. If already installed and
                     an update is available the update will be installed.
   market:uninstall  Uninstall apps from the marketplace.
   market:list       Lists apps as available on the marketplace.
   market:upgrade    Installs new app versions if available on the marketplace
 ----
 
-NOTE: The user running the update command, which will likely be your webserver user, requires write 
-permission for the `/apps` respectively `apps-external` folder. 
+NOTE: The user running the update command, which will likely be your webserver user, requires write
+permission for the `/apps` respectively `apps-external` folder.
 
 NOTE: If they don’t have write permission, the command may report that the update was successful, but it may silently fail.
 
-These commands are not available in single-user (maintenance) mode. 
+These commands are not available in single-user (maintenance) mode.
 For more details please see the Maintenance Commands section in the occ core command set.
 
 [[install-an-application]]
@@ -3830,7 +3654,7 @@ Applications can be installed both from https://marketplace.owncloud.com/[the ow
 [[install-apps-from-the-marketplace]]
 === Install Apps From The Marketplace
 
-To install an application from the Marketplace, you need to supply the app’s id, which can be found in the app’s Marketplace URL. 
+To install an application from the Marketplace, you need to supply the app’s id, which can be found in the app’s Marketplace URL.
 For example, the URL for _Two factor backup codes_ is https://marketplace.owncloud.com/apps/twofactor_backup_codes.
 So its app id is `twofactor_backup_codes`.
 
@@ -3855,7 +3679,7 @@ sudo -u www-data occ market:install <ids> [option]
 [[install-apps-from-a-file-archive]]
 === Install Apps From a File Archive
 
-To install an application from a local file archive, you need to supply the path to the archive, and that you pass the `-l` switch. 
+To install an application from a local file archive, you need to supply the path to the archive, and that you pass the `-l` switch.
 Only `zip`, `gzip`, and `bzip2` archives are supported.
 
 [[usage-example]]
@@ -3946,24 +3770,24 @@ TIP: The expiry date can be provided using any of {php-datetime-url}[PHP's suppo
 
 [width="100%",cols="23%,82%",]
 |===
-| `-a, --all`      
+| `-a, --all`
 | Will add password expiry to all known users.
 uid and group option are discarded if the option is provided by user.
 
 | `-u [UID]` +
-`--uid=[UID]`     
+`--uid=[UID]`
 | The uid of the user to expire the password for. +
 To expire the password of multiple users, pass the `-u` or `--uid` option multiple times, as in this example: `--uid "Alice" --uid "Bob"`.
 
 | `-g [GROUP]` +
-`--group=[GROUP]` 
+`--group=[GROUP]`
 | Add password expiry to user(s) in one or more groups. +
-This option can be used as `--group foo --group bar` to add expiry passwords for users in multiple groups. 
+This option can be used as `--group foo --group bar` to add expiry passwords for users in multiple groups.
 |===
 
 If an expiry date is not supplied, the password will expire with immediate effect.
 This is because the password will be set as being expired 24 hours before the command was run.
-For example, if the command was run at `2018-07-**12** 13:15:28 UTC`, then the password's expiry 
+For example, if the command was run at `2018-07-**12** 13:15:28 UTC`, then the password's expiry
 date will be set to `2018-07-**11** 13:15:28 UTC`.
 
 After the command completes, console output, similar to that below, confirms when the user's password is set to expire.
@@ -3990,18 +3814,18 @@ sudo -u www-data php occ user:expire-password --uid frank '15-Aug-05 15:52:01 UT
 
 === Caveats
 
-Please be aware of the following implications of enabling or changing the password policy's "*days until 
+Please be aware of the following implications of enabling or changing the password policy's "*days until
 user password expires*" option.
 
 - Administrators need to run the `occ user:expire-password` command to initiate expiry for new users.
-- Passwords will never expire for users who have *not* changed their initial password, because they do 
+- Passwords will never expire for users who have *not* changed their initial password, because they do
 not have a password history. To force password expiration use the `occ user:expire-password` command.
-- A password expiration date will be set after users change their password for the first time. To force 
+- A password expiration date will be set after users change their password for the first time. To force
 password expiration use the `occ user:expire-password` command.
-- Passwords changed for the first time, will expire based on the *active* password policy. If the policy 
+- Passwords changed for the first time, will expire based on the *active* password policy. If the policy
 is later changed, it will not update the password's expiry date to reflect the new setting.
-- Password expiration dates of users where the administrator has run the `occ user:expire-password` 
-command *won't* automatically update to reflect the policy change. In these cases, Administrators need 
+- Password expiration dates of users where the administrator has run the `occ user:expire-password`
+command *won't* automatically update to reflect the policy change. In these cases, Administrators need
 to run the `occ user:expire-password` command again and supply a new expiry date.
 
 [[ransomware-protection]]
@@ -4009,7 +3833,7 @@ to run the `occ user:expire-password` command again and supply a new expiry date
 
 Marketplace URL: https://marketplace.owncloud.com/apps/ransomware_protection[Ransomware Protection]
 
-Use these commands to help users recover from a Ransomware attack. 
+Use these commands to help users recover from a Ransomware attack.
 You can find more information about the application in xref:enterprise/ransomware-protection/index.adoc[the Ransomware Protection documentation].
 
 === Command Description
@@ -4046,7 +3870,7 @@ sudo -u www-data occ ransomguard:lock <user>
 
 [width="100%",cols="20%,70%",]
 |===
-| `<user>` | Set a user account as read-only for ownCloud and other WebDAV clients when 
+| `<user>` | Set a user account as read-only for ownCloud and other WebDAV clients when
 malicious activity is suspected.
 |===
 
@@ -4078,7 +3902,7 @@ shibboleth:mode [mode]
 
 Marketplace URL: https://marketplace.owncloud.com/apps/twofactor_totp[2-Factor Authentication]
 
-If a two-factor provider app is enabled, it is enabled for all users by default (though the provider can decide whether or not the user has to pass the challenge). 
+If a two-factor provider app is enabled, it is enabled for all users by default (though the provider can decide whether or not the user has to pass the challenge).
 In the case of an user losing access to the second factor (e.g., a lost phone with two-factor SMS verification), the admin can temporarily disable the two-factor check for that user via the occ command:
 
 === Command Description
@@ -4092,4 +3916,3 @@ To re-enable two-factor authentication again, use the following command:
 ....
 sudo -u www-data php occ twofactor:enable <username>
 ....
-
