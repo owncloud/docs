@@ -6,8 +6,8 @@ In addition to the `master` branch, each documentation repository will have _two
 
 The three, currently active, branches are:
 
-- `10.0`: This tracks the current release of ownCloud core (10.1).
-- `10.1`: This tracks the previous ownCloud core (10.0).
+- `10.2`: This tracks the current release of ownCloud core (10.2).
+- `10.1`: This tracks the previous ownCloud core (10.1).
 - `master`: This is a moving target, as it's not tied to a released version.
 
 **Note:** [the default version of the docs](https://doc.owncloud.com) comes from `master`.
@@ -21,7 +21,7 @@ This approach aims to do two things:
 
 ## How It Works
 
-- PRs that document _upcoming_ release-ready features are merged into `master` **only**. These changes will be included in the next release branch (10.2), when the time comes.
+- PRs that document _upcoming_ release-ready features are merged into `master` **only**. These changes will be included in the next release branch (10.3), when the time comes.
 - PRs that correct mistakes are first merged to `master` and are then back-ported to any branches that have the mistake.
 - PRs that expand/fill-in things that are "just missing" from the documentation, will need to be back-ported to all the branches (that are currently being published).
 
