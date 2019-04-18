@@ -1,10 +1,11 @@
 = Install Antivirus Software in the ownCloud Appliance
+:toc: right
+:experimental:
+
+== Introduction
 
 This guide details how to enable a virus scanner in the ownCloud
-Appliance. It is composed of two parts:
-
-1.  xref:install-clamav-and-related-components[Install ClamAV and related components]
-2.  xref:configure-owncloud-to-use-clamav[Configure ownCloud to use ClamAV]
+Appliance.
 
 [[install-clamav-and-related-components]]
 == Install ClamAV and Related Components
@@ -14,7 +15,7 @@ First, start the appliance and go to "**System and domain settings**".
 image:appliance/ucs/clamav/ucs-owncloud-portal.png[UCS Portal: System and domain settings.]
 
 When there, log in with the administrator account. After you have done
-that, click "**Software**" and open "**Package Management**", as in the screenshot below.
+that, click btn:[Software] and open "**Package Management**", as in the screenshot below.
 
 image:appliance/ucs/clamav/ucs-software-package-management.png[UCS Portal: Software and Package Management.]
 
@@ -25,14 +26,14 @@ only those matching that phrase. In the filtered list of packages, check
 the checkboxes next to "**clamav**" (2), "**clamav-freshclam**", and
 "**clamav-daemon**".
 
-After doing that, click "**INSTALL**" (3) above the listed packages,
+After doing that, click btn:[INSTALL] (3) above the listed packages,
 next to "**SHOW DETAILS**'".
 
 image:appliance/ucs/clamav/install-clamav.png[UCS: Installing clamav, clamav-freshclam, and clamav-daemon.]
 
 After you do so, a confirmation dialog appears, as in the screenshot
 below, asking for confirmation to install the packages. Confirm the
-choice by again clicking "**INSTALL**".
+choice by again clicking btn:[INSTALL].
 
 image:appliance/ucs/clamav/confirm-clamav-installation.png[UCS: Confirm installation]
 
@@ -41,10 +42,9 @@ The installation should only take a few minutes.
 [[configure-owncloud-to-use-clamav]]
 == Configure ownCloud to Use ClamAV
 
-You next need to configure ClamAV in your ownCloud instance. Please
-refer to
-the ClamAV documentation <configure_clamav_antivirus_scanner_label> for
-instructions on how to do that.
+Next you need to configure ClamAV in your ownCloud instance. Please refer to
+xref:configuration/server/antivirus_configuration.adoc#configuring-the-clamav-antivirus-scanner[the ClamAV documentation]
+for instructions on how to do that.
 
 ""
 If you try to update the ClamAV virus database manually, by entering
@@ -68,19 +68,21 @@ Cron job. In the example below, the update would run every 47 minutes:
 If there are errors running the freshclam process, check if a process is
 blocking the log file, by running the following command:
 
-....
+[source,console]
+----
 lsof /var/log/clamav/freshclam.log
-....
+----
 
 If you want to refresh the ClamAV database manually, follow these steps:
 
-....
+[source,console]
+----
 # Gently end the freshclam process with this command:
 sudo pkill -15 -x freshclam
 
 # Start the refresh process again with this command:
 sudo freshclam
-....
+----
 
 [WARNING]
 ====
