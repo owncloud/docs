@@ -356,9 +356,14 @@ Reference: [`Menu Selections`](https://asciidoctor.org/docs/user-manual/#menu-se
 Trying to explain to someone how to select a menu item can be a pain. With the menu macro, the symbols do the work.
 The syntax for this is: `menu:start[next > next > *]`
 
-Example:
+If in the syntax description above, the text `start` consists of two or more words with
+a blank in between, like `this start`, you must use `{nbsp}` as replacement for the blank.
+
+Examples:
 ```
 Go to menu:Settings[Admin > Apps] and click on kbd:[Show disabled apps]
+Go to menu:This{nbsp}Settings[Admin > Apps] and click on kbd:[Show disabled apps]
+
 ```
 
 ## Lists
