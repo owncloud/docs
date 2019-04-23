@@ -76,7 +76,7 @@ Text {internal-link-name-url}[highlighted text] text.
 ```
 
 It is important that `:internal-link-name-url:` is placed directly below the page header.
-Any number of these link directives can be added. Without being mandatory, it has turned
+Any number of these link attributes can be added. Without being mandatory, it has turned
 out as a matter of good practice to end your link name with `-url`.
 
 ### Internal Links
@@ -194,7 +194,7 @@ Please also see additional directives like:
 [`toclevels`](https://asciidoctor.org/docs/user-manual/#user-toc-levels) or
 [In-Document Placement](https://asciidoctor.org/docs/user-manual/#manual-placement)
 
-**IMPORTANT** All directives of kind `:name:` must be direct under the page header without blank lines. 
+**IMPORTANT** All attributes of kind `:name:` must be direct under the page header without blank lines. 
 
 ## Code Blocks
 
@@ -334,6 +334,8 @@ Please see the reference link for more details.
 Reference: [`Keyboard Shortcuts`](https://asciidoctor.org/docs/user-manual/#keyboard-shortcuts)
 Reference: [`UI buttonss`](https://asciidoctor.org/docs/user-manual/#ui-buttons)
 
+**IMPORTANT** You must set the `:experimental:` attribute to enable the UI macros.
+
 You can create a button styled text like you want a user to press specific keyboard button(s) or browser text buttons.
 The syntax for keyboard shortcuts is: `kbd:[key(+key)*]`
 The syntax for UI button text is: `btn:[text]`
@@ -352,6 +354,8 @@ btn:[Open]
 ## Menu Selections
 
 Reference: [`Menu Selections`](https://asciidoctor.org/docs/user-manual/#menu-selections)
+
+**IMPORTANT** You must set the `:experimental:` attribute to enable the UI macros.
 
 Trying to explain to someone how to select a menu item can be a pain. With the menu macro, the symbols do the work.
 The syntax for this is: `menu:start[next > next > *]`
