@@ -12,6 +12,12 @@ The three, currently active, branches are:
 
 **Note:** [the default version of the docs](https://doc.owncloud.com) comes from `master`.
 
+In addition to these three active branches, documentation changes (additions, corrections, and deprecations) are backported to some of the earlier branches.
+This may seem like a strange thing to do, given that only the latest two branches reflect [the currently supported ownCloud versions].
+
+However, given ownCloud's age, there are a significant number of installations in active use which do not use one of the two latest versions.
+So, where possible, older documentation branches are updated so that administrators of these older installations have the most correct documentation available for their version.
+
 ## Workflow Aim
 
 This approach aims to do two things:
@@ -31,3 +37,5 @@ However, if PRs are small enough, then this shouldn't be too much work.
 
 In the not-too-distant future, a script will be developed to automate as much of this as possible.
 When it's complete, it will be documented here.
+
+[the currently supported ownCloud versions]: https://github.com/owncloud/core/wiki/Maintenance-and-Release-Schedule
