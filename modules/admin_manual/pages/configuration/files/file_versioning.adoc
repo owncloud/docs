@@ -1,11 +1,12 @@
 = Controlling File Versions
 :toc: right
+:toclevels: 1
 
-== How Versions are created
+== How Versions are Created
 
-Every time when a file gets rewritten to the storage the versions app
+Every time when a file gets rewritten to the storage, the versions app
 (`files_versions`) creates a new backup copy of the file. These backups are
-stored inside a folder `files_versions` inside the users root folder.
+stored inside a folder `files_versions` which is inside the users root folder.
 The app will add the suffix `.v` followed by the unix timestamp of the creation
 date of the backup copy.
 
@@ -25,12 +26,12 @@ mounted filesystem directly.
 
 Versions are displayed in the WebUI in the details view in the right sidebar if
 you click on the file row in the file listing. You can restore the current file
-to one of the earlier backup copies in the list by clicking on the restore icon
+to one of the earlier backup copies in the list, by clicking on the restore icon
 of the specific version.
 
 image:configuration/files/files-versions.png[File Versions in the WebUI]
 
-== How Versions are deleted
+== How Versions are Deleted
 
 The versions app deletes old file versions
 automatically to ensure that users do not exceed their storage quotas.
@@ -52,7 +53,7 @@ This is the default pattern used to delete old versions:
 The versions are adjusted along this pattern every time a new version is
 created and the background job was executed.
 
-=== Example
+==== Example
 
 [cols="2,3", options="header"]
 |===
@@ -95,7 +96,8 @@ is `auto`, which sets the default pattern:
 'versions_retention_obligation' => 'auto',
 ----
 
-=== Possible config values are:
+=== Possible Config Values
+
 [cols="1a,3"]
 |===
 |`D, auto`
@@ -111,7 +113,7 @@ is `auto`, which sets the default pattern:
 |Disable Versions; no files will be deleted.
 |===
 
-=== Example 1:
+==== Example 1:
 
 Keep all versions for at least 10 days, apply expiration rules to all versions that are older than 10 days.
 This will keep a lot more versions during the last 10 days compared to the default pattern.
@@ -121,7 +123,7 @@ This will keep a lot more versions during the last 10 days compared to the defau
 'versions_retention_obligation' => '10, auto',
 ----
 
-=== Example 2:
+==== Example 2:
 
 Apply expiration rules to all versions that are created during the last 30 days and do not keep any versions older than 30 days.
 
@@ -130,7 +132,7 @@ Apply expiration rules to all versions that are created during the last 30 days 
 'versions_retention_obligation' => 'auto, 30',
 ----
 
-=== Example 3:
+==== Example 3:
 
 Do not apply any expiration rules. Delete all versions after 30 days.
 
