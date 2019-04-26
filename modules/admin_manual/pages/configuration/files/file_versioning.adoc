@@ -1,37 +1,145 @@
-= Controlling File Versions and Aging
+= Controlling File Versions
+:toc: right
+:toclevels: 1
 
-The Versions app (files_versions) expires old file versions
-automatically to ensure that users don’t exceed their storage quotas.
+== How Versions are Created
+
+Every time when a file gets rewritten to the storage, the versions app
+(`files_versions`) creates a new backup copy of the file. These backups are
+stored inside a folder `files_versions` which is inside the users root folder.
+The app will add the suffix `.v` followed by the unix timestamp of the creation
+date of the backup copy.
+
+....
+.
+├── files
+│   └── welcome.txt
+└── files_versions
+    ├── welcome.txt.v1556203470
+    ├── welcome.txt.v1556203501
+    └── welcome.txt.v1556203567
+....
+
+NOTE: File versioning only gets triggered if the change is made via the
+ownCloud ecosystem. It does not get triggered if the change is made at a
+mounted filesystem directly.
+
+Versions are displayed in the WebUI in the details view in the right sidebar if
+you click on the file row in the file listing. You can restore the current file
+to one of the earlier backup copies in the list, by clicking on the restore icon
+of the specific version.
+
+image:configuration/files/files-versions.png[File Versions in the WebUI]
+
+== How Versions are Deleted
+
+The versions app deletes old file versions
+automatically to ensure that users do not exceed their storage quotas.
+This is done by automatic background jobs which clean up the versions following
+a specific pattern. This pattern defines the expiration date for each backup version.
+
+=== Default Versions Delete Patterns
+
 This is the default pattern used to delete old versions:
 
-* For the first second we keep one version
-* For the first 10 seconds ownCloud keeps one version every 2 seconds
-* For the first minute ownCloud keeps one version every 10 seconds
-* For the first hour ownCloud keeps one version every minute
-* For the first 24 hours ownCloud keeps one version every hour
-* For the first 30 days ownCloud keeps one version every day
-* After the first 30 days ownCloud keeps one version every week
+* For the last second we keep one version
+* For the last 10 seconds ownCloud keeps one version every 2 seconds
+* For the last minute ownCloud keeps one version every 10 seconds
+* For the last hour ownCloud keeps one version every minute
+* For the last 24 hours ownCloud keeps one version every hour
+* For the last 30 days ownCloud keeps one version every day
+* If the versions are older than 30 days ownCloud keeps one version every week
 
 The versions are adjusted along this pattern every time a new version is
-created.
+created and the background job was executed.
 
-The Versions app never uses more that 50% of the user’s storage quota.
+==== Example
+
+[cols="2,3", options="header"]
+|===
+|Time Period before last Expiration
+|Maximum Number of Versions:
+
+|1 second
+|1
+
+|10 seconds
+|5
+
+| 1 minute
+| 6
+
+| 1 hour
+| 59
+
+| 1 day
+| 23
+
+| 30 days
+| 30
+|===
+
+WARNING: The versions app never uses more that 50% of the user’s storage quota.
 If the stored versions exceed this limit, ownCloud deletes the oldest
 file versions until it meets the disk space limit again.
+
+TIP: Adjust the `'versions_retention_obligation'` setting in `config.php` to avoid
+filling up the user's quota.
+
+== Change the Expiration Settings
 
 You may alter the default pattern in `config.php`. The default setting
 is `auto`, which sets the default pattern:
 
-....
+[source,php]
+----
 'versions_retention_obligation' => 'auto',
-....
+----
 
-Additional options are:
+=== Possible Config Values
 
-* `D, auto`: Keep versions at least for D days, apply expiration rules to all versions that are older than D days
-* `auto, D`: Delete all versions that are older than D days automatically, delete other versions according to expiration rules
-* `D1, D2`: Keep versions for at least `D1` days and delete when they exceed `D2` days.
-* `disabled`: Disable Versions; no files will be deleted.
+[cols="1a,3"]
+|===
+|`D, auto`
+|Keep versions at least for D days, apply expiration rules to all versions that are older than D days
+
+|`auto, D`
+|Delete all versions that are older than D days automatically, delete other versions according to expiration rules
+
+|`D1, D2`
+|Keep versions for at least `D1` days and delete when they exceed `D2` days.
+
+|`disabled`
+|Disable Versions; no files will be deleted.
+|===
+
+==== Example 1:
+
+Keep all versions for at least 10 days, apply expiration rules to all versions that are older than 10 days.
+This will keep a lot more versions during the last 10 days compared to the default pattern.
+
+[source,php]
+----
+'versions_retention_obligation' => '10, auto',
+----
+
+==== Example 2:
+
+Apply expiration rules to all versions that are created during the last 30 days and do not keep any versions older than 30 days.
+
+[source,php]
+----
+'versions_retention_obligation' => 'auto, 30',
+----
+
+==== Example 3:
+
+Do not apply any expiration rules. Delete all versions after 30 days.
+
+[source,php]
+----
+'versions_retention_obligation' => '30, 30',
+----
 
 [[enterprise-file-retention]]
 == Enterprise File Retention
