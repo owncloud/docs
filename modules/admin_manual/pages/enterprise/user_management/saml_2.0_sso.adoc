@@ -1,4 +1,6 @@
 = SAML 2.0 Based SSO with Active Directory Federation Services (ADFS) and mod_shib
+:toc: right
+:toclevels: 1
 
 == Preparation
 
@@ -6,16 +8,16 @@ Before you can setup SAML 2.0 based Single Sign-On with
 https://msdn.microsoft.com/en-us/library/bb897402.aspx[Active Directory Federation Services (ADFS)]
 and mod_shib, ask your ADFS admin for the relevant server URLs. These are:
 
-- The SAML 2.0 single sign-on service URL, e.g., `https://<ADFS server FQDN>/ADFS/ls`
-- The IdP metadata URL, e.g., `https://<ADFS server FQDN>/FederationMetadata/2007-06/FederationMetadata.xml`
+- The SAML 2.0 single sign-on service URL, e.g., `\https://<ADFS server FQDN>/ADFS/ls`
+- The IdP metadata URL, e.g., `\https://<ADFS server FQDN>/FederationMetadata/2007-06/FederationMetadata.xml`
 
 Then, make sure that the web server is accessible with a trusted certificate:
 
 [source,console]
 ....
-$ sudo a2enmod ssl
-$ sudo a2ensite default-ssl
-$ sudo service apache2 restart
+sudo a2enmod ssl
+sudo a2ensite default-ssl
+sudo service apache2 restart
 ....
 
 == Installation
@@ -25,7 +27,7 @@ You can do this using the following command:
 
 [source,console]
 ....
-$ sudo apt-get install libapache2-mod_shib2
+sudo apt-get install libapache2-mod_shib2
 ....
 
 This will install packages needed for mod_shib, including `shibd`.
@@ -53,17 +55,21 @@ php apps/user_shibboleth/tools/adfs2fed.php \
 Next, you need to configure `shibd`.
 To do this, in `/etc/shibboleth/shibboleth2.xml`:
 
-=== Use the URL of the ownCloud instance as the `entityID` in the `ApplicationDefaults`, e.g.,
+=== Define the ownCloud Instance
+
+Use the URL of the ownCloud instance as the `entityID` in the `ApplicationDefaults`
 
 [source,console]
 ....
 <ApplicationDefaults entityID="https://<owncloud server FQDN>/login/saml" REMOTE_USER="eppn upn">
 ....
 
-NOTE: `https://<owncloud server FQDN>/login/saml` is just an example.
+NOTE: `\https://<owncloud server FQDN>/login/saml` is just an example. +
 Adjust `<owncloud server FQDN>` to the full qualified domain name of your server.
 
-=== Configure the SSO to use the `entityID` from the `filtered-metadata.xml`, e.g.,
+=== Configure SSO
+
+Configure the SSO to use the `entityID` from the `filtered-metadata.xml`
 
 [source,xml]
 ....
@@ -74,7 +80,9 @@ Adjust `<owncloud server FQDN>` to the full qualified domain name of your server
 
 NOTE: Grab `<ADFS server FQDN>/<URI>/` from the filtered-metadata.xml.
 
-=== Configure an XML `MetadataProvider` with the local `filtered-metadata.xml` file:
+=== Configure XML
+
+Configure an XML `MetadataProvider` with the local `filtered-metadata.xml` file
 
 [source,sml]
 ....
@@ -83,10 +91,10 @@ NOTE: Grab `<ADFS server FQDN>/<URI>/` from the filtered-metadata.xml.
 
 == Metadata Available
 
-Under `https://<owncloud server FQDN>/Shibboleth.sso/Metadata` shibd exposes the metadata that is needed by ADFS to add the SP as a Relying party.
+Under `\https://<owncloud server FQDN>/Shibboleth.sso/Metadata` shibd exposes the metadata that is needed by ADFS to add the SP as a Relying party.
 
-ADFS
-----
+== Active Directory Federation Services (ADFS)
+
 
 This part needs to be done by an ADFS administrator.
 Let him do his job while you continue with the Apache configuration below.
@@ -95,7 +103,7 @@ Let him do his job while you continue with the Apache configuration below.
 
 See step 2 in https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2008-R2-and-2008/gg317734(v=ws.10)[AD FS 2.0 Step-by-Step Guide].
 
-=== Configure ADFS to send the userPrincipalName in the SAML token
+=== Configure ADFS to Send the userPrincipalName in the SAML Token
 
 If you have control over ADFS make it send the `UPN` and `Group` by adding the following LDAP claim rule:
 
@@ -140,7 +148,7 @@ Add Claims in ADFS and map them in the `attribute-map.xml` if needed.
 == Testing
 
 - Close the browser tab to kill the session.
-- Then visit `https://<owncloud server FQDN>` again.
+- Then visit `\https://<owncloud server FQDN>` again.
 - You should be logged in automatically.
 - Close the tab or delete the cookies to log out.
 - To make the logout work see the Logout section in this document.
@@ -177,7 +185,7 @@ Restart-Service ADFSsrv
     - In the "Internet Settings" -> "Security" -> "Local Intranet"
     - Click on "Sites"
     - Click on "Advanced"
-    - Add your ADFS machine with `https://<ADFS server FQDN>/` and click OK.
+    - Add your ADFS machine with `\https://<ADFS server FQDN>/` and click OK.
     - Click on "customize level"
     - Find "User Authentication"
     - Check "Automatic login only for Intranet zone"

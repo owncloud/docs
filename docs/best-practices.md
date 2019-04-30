@@ -80,6 +80,18 @@ It is important that `:internal-link-name-url:` is placed directly below the pag
 Any number of these link attributes can be added. Without being mandatory, it has turned
 out as a matter of good practice to end your link name with `-url`.
 
+**NOTE** If you want to prevent automatic linking of a URL, prepend it with a backslash (\\).
+This will create text but not a clickable link and can be used for example URLs.
+This method helps prevent false positives when checking broken links.
+
+Example:
+
+```
+This is an example web address: \http://example.com
+```
+The above example renders as: `This is an example web address: http://example.com`
+but there is no link.
+
 ### Internal Links
 
 Prefix: `xref:`
