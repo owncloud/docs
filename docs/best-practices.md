@@ -25,6 +25,7 @@ reference for common used writing and formatting tasks. For a complete reference
 * [Headers, Titles, Sections, Anchors and Paragraph Titles](#headers-titles-sections-anchors-and-paragraph-titles)
 * [Tables](#tables)
 * [Comments](#comments)
+* [Relocating or Renaming Files](#relocating-or-renaming-files)
 
 ## Initial Reading
 
@@ -552,4 +553,25 @@ If you want to add a comment in your page to remark a writers note which will no
 Example:
 ```
 // Needs revision as a new release will change the parameter.
+```
+
+## Relocating or Renaming Files
+
+The following procedure is necessary to optimize search engines (SEO).
+This method will help with updating search engine results over time.
+
+In case you relocate a page to another phyiscal location, or you rename a page,
+you have to do two things:
+
+- Correct the path in the navigation
+- Add a `:page-aliases:` attribute in the document moved
+
+The page-alias attribute, which you can see in the example below, lists one or more pages that
+redirect to the current page. This attribute is given one or more AsciiDoc files that will redirect
+to the current page.
+
+Example:
+```
+= Page Title
+:page-aliases: upgrade/service/apache.adoc
 ```
