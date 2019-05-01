@@ -560,7 +560,7 @@ Example:
 The following procedure is necessary to optimize search engines (SEO).
 This method will help with updating search engine results over time.
 
-In case you relocate a page to another phyiscal location, or you rename a page,
+In case you relocate a page to another physical location, or you rename a page,
 you have to do two things:
 
 - Correct the path in the navigation
