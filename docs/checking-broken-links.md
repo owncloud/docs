@@ -23,7 +23,7 @@ Use the broken link checker of your choice, the following are usable examples. T
 
 **Note** You may get false positives because of sample links or addresses pointing to nowhere. This is normal and not a broken link.
 
-**Note** It is a good to pipe the output of the results to a file for easy checking.
+**Note** It is good to pipe the output of the results to a file for easy checking.
 
 ## Link Checkers provided by the Documentation
 ### Antora xref-validator
@@ -93,7 +93,7 @@ Follow [this](https://github.com/filiph/linkcheck#step-1-install-dart) procedure
 to install ``linkcheck``, which needs ``dart``:
 
 Because ``linkcheck`` provides the possibility to use a file to exclude search patterns,
-it is a good advice to create a file with following predefined content. In this example,
+it is good advice to create a file with following predefined content. In this example,
 the file is named ``my_skip_file.txt`` and saved one level below the local docs repository.
 Adapt the content to your needs.
 
