@@ -5,47 +5,6 @@
 
 This section describes how to manually upgrade your ownCloud installation.
 
-If you’re not comfortable performing a manual upgrade, you can also use your Linux distribution’s
-xref:installation/linux_installation.adoc[package manager].
-
-[[backup-your-existing-installation]]
-== Backup Your Existing Installation
-
-First, xref:maintenance/backup.adoc[backup] the following items:
-
-* The ownCloud server data directory
-* The `config.php` file
-* All 3rd party apps
-* The ownCloud server database
-
-[source,console]
-----
-# This example assumes Ubuntu Linux and MariaDB
-cp -rv /var/www/owncloud /opt/backup/owncloud && mysqldump <db_name> > /opt/backup/backup-file.sql
-----
-
-[[review-third-party-apps]]
-== Review Third-Party Apps
-
-Review any installed third-party apps for compatibility with the new ownCloud release. 
-You can find a list of all third-party apps by running the following command, from the root directory of your installation.
-
-[source,console]
-----
-sudo -u www-data php occ app:list --shipped=false
-----
-
-Ensure that they are all disabled before beginning the upgrade. 
-After the upgrade is complete, re-enable any apps that are compatible with the new release.
-
-WARNING: Install unsupported apps at your own risk.
-
-[[check-ownclouds-mandatory-requirements]]
-== Check ownCloud’s Mandatory Requirements
-
-ownCloud's xref:installation/manual_installation#requirements[mandatory requirements] (such as PHP versions and extensions) can change from one version to the next.
-Ensure that you review them and update your server(s), if required, before upgrading ownCloud.
-
 [[enable-maintenance-mode]]
 == Enable Maintenance Mode
 
@@ -61,9 +20,9 @@ The other way is by entering your `config.php` file and changing `'maintenance' 
 # Enable maintenance mode using the occ command.
 sudo -u www-data php occ maintenance:mode --on
 
-# Disable Cron jobs
-sudo service cron stop
 ----
+
+In clustered environment please check that all nodes are in maintenance mode.
 
 [[stop-the-webserver]]
 == Stop the Webserver
@@ -74,6 +33,46 @@ With those steps completed, stop your webserver.
 ----
 sudo service apache2 stop
 ----
+
+[[backup-your-existing-installation]]
+== Backup Your Existing Installation
+
+First, xref:maintenance/backup.adoc[backup] the following items:
+
+* The ownCloud server data directory
+* The `config.php` file
+* All 3rd party apps
+* The ownCloud server database
+
+[source,console]
+----
+# This example assumes Ubuntu Linux and MariaDB
+mkdir /opt/backup/
+cp -rv /var/www/owncloud /opt/backup/owncloud
+mysqldump -u<username> -p<password> <databasename> > <ownCloud-Versio-Dump.sql>
+----
+
+== Review Third-Party Apps
+
+Review any installed third-party apps for compatibility with the new ownCloud release.
+You can find a list of all third-party apps by running the following command, from the root directory of your installation.
+
+[source,console]
+----
+sudo -u www-data php occ app:list --shipped=false
+----
+
+Ensure that they are all disabled before beginning the upgrade.
+
+[source,console]
+----
+sudo -u www-data php occ app:disable app-id
+----
+
+After the upgrade is complete, re-enable any apps that are compatible with the new release.
+
+WARNING: Install unsupported apps at your own risk.
+
 
 [[download-the-latest-installation]]
 == Download the Latest Installation
@@ -89,49 +88,18 @@ NOTE: Enterprise users must download their new ownCloud archives from their acco
 https://customer.owncloud.com/owncloud/.
 
 [[setup-the-new-installation]]
-== Setup the New Installation
+== Upgrade
 
-Not all installations are the same, so we encourage you to take one of
-two paths to upgrade your ownCloud installation. These are
-the standard upgrade and the power user upgrade.
-
-If you’re reasonably new to ownCloud, or not too familiar with upgrading
-an ownCloud installation, please follow the standard upgrade. Otherwise,
-take the approach that you’re most comfortable with, likely the power
-user upgrade.
-
-NOTE: Regardless of which approach that you take, they will both assume that your existing ownCloud installation is located in the default location:
+NOTE: For this description we assume that your existing ownCloud installation is located in the default location:
 `/var/www/owncloud`.
+The path might differ, depending on your installation.
 
-[[the-standard-upgrade]]
-=== The Standard Upgrade
 
-Delete all files and folders in your existing ownCloud directory
-(`/var/www/owncloud`) — *_except_* `data` and `config`.
+===  Upgrade
 
-NOTE: Don’t keep the `apps` directory.
-
-With those files and folders deleted, extract the archive of the latest
-ownCloud server, over the top of your existing installation.
-
-[source,console]
-----
-# Extract the .tar.bz2 archive
-tar -jxf owncloud-10.0.3.tar.bz2 -C /var/www/
-
-# Extract the zip archive
-unzip -q owncloud-10.0.3.zip -d /var/www/
-----
-
-[[the-power-user-upgrade]]
-=== The Power User Upgrade
-
-Rename your current ownCloud directory, for example, from `owncloud` to `owncloud-old`. 
+Rename your current ownCloud directory, for example, from `owncloud` to `owncloud-old`.
 Extract the unpacked ownCloud server directory and its contents to the location of your original ownCloud installation.
 
-IMPORTANT: These steps must be run as your web server user. 
-Otherwise,  you will likely encounter errors during the upgrade process, and ownCloud will likely not function correctly. 
-For more information, please refer to xref:installation/manual_installation.adoc#set-strong-directory-permissions[the details on setting strong directory permissions].
 
 [source,console]
 ----
@@ -148,7 +116,7 @@ directory. :
 cp /var/www/owncloud-old/config/config.php /var/www/owncloud/config/config.php
 ----
 
-If you keep your `data/` directory _inside_ your `owncloud/` directory, copy it from your old version of ownCloud to your new version. 
+If you keep your `data/` directory _inside_ your `owncloud/` directory, copy it from your old version of ownCloud to your new version.
 If you keep it _outside_ of your `owncloud/` directory, then you don’t have to do anything with it, because its location is configured in your original `config.php`, and none of the upgrade steps touch it.
 
 [[market-and-marketplace-app-upgrades]]
@@ -166,41 +134,46 @@ code) and the Market app is enabled, but there is no available internet
 connection, then these apps will need to be manually updated once the
 upgrade is finished.
 
+[[copy-old-apps]]
+== Copy Old Apps
+If you are using third party or enterprise applications, look in your new `/var/www/owncloud/apps/` directory to see if they are there.
+If not, copy them from your old `apps/` directory to your new one, and make sure that the directory permissions are the same as for the other ones.
+
+
+[[change-permissions-to-webserver-user]]
+
+[source,console]
+
+----
+chown -R www-data:www-data /var/www/owncloud
+----
+
+
 [[start-the-upgrade]]
 == Start the Upgrade
 
-With the apps disabled and the webserver started, launch xref:configuration/server/occ_command.adoc#command-line-upgrade[the upgrade process] from the command line:
+With the apps disabled and owncloud in maintenance mode  xref:configuration/server/occ_command.adoc#command-line-upgrade[the upgrade process] from the command line:
 
 [source,console]
 ----
-# Here is an example on CentOS Linux
+# Here is an example on Ubuntu Linux, execute this within the ownCloud folder.
 sudo -u www-data php occ upgrade
 ----
-
-IMPORTANT: The optional parameter to skip migration tests during this step was removed in oC 10.0.
 
 The upgrade operation can take anywhere from a few minutes to a few hours, depending on the size of your installation.
 When it is finished you will see either a success message, or an error message which indicates why the process did not complete successfully.
 
-[[copy-old-apps]]
-== Copy Old Apps
-
-If you are using third party or enterprise applications, look in your new `/var/www/owncloud/apps/` directory to see if they are there. 
-If not, copy them from your old `apps/` directory to your new one, and make sure that the directory permissions are the same as for the other ones.
 
 [[disable-maintenance-mode]]
 == Disable Maintenance Mode
 
-Assuming your upgrade succeeded, next disable maintenance mode and restart the Cron service. 
-The following example shows how to do both.
+Assuming your upgrade succeeded, next disable maintenance mode.
 
 [source,console]
 ----
 # Disable maintenance mode using the occ command.
 sudo -u www-data php occ maintenance:mode --off
 
-# Restart the Cron service
-sudo service cron start
 ----
 
 [[restart-the-webserver]]
@@ -225,28 +198,10 @@ visible at the bottom of your Admin page.
 * Re-enable your third-party apps.
 * Apply xref:installation/manual_installation.adoc#set-strong-directory-permissions[strong permissions] to your ownCloud directories.
 
-[[test-the-upgrade]]
-== Test the Upgrade
-
-Previous versions of ownCloud included a migration test. ownCloud first
-ran a migration simulation by copying the ownCloud database and
-performing the upgrade on the copy, to ensure that the migration would
-succeed.
-
-Then the copied tables were deleted after the upgrade was completed.
-This doubled the upgrade time, so admins could skip this test (by
-risking a failed upgrade) with `php occ upgrade --skip-migration-test`.
-
-NOTE: The migration test was removed in ownCloud 10.0. 
-
-ownCloud server
-admins should have current backups before migration, and rely on backups
-to correct any problems from the migration.
-
 [[reverse-upgrade]]
 == Reverse Upgrade
 
-If you need to reverse your upgrade, see restore.
+If you need to reverse your upgrade, see xref:maintenance/upgrading/manual_upgrade/restore.adoc[restore]
 
 [[troubleshooting]]
 == Troubleshooting
