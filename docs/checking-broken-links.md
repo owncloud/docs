@@ -3,27 +3,27 @@
 ## Introduction
 
 Checking for broken links is a science on its own. External webpages, internal sites and
-references to anchors can cause broken links in various ways. While it looks relatively easy to check
-for broken anchors, not many free tools provide this functionaliy. On the other hand side,
-various tools behave and report access to links in different ways. Configuration, like the
-possibility to define patterns in an elegant way to exclude link searches is also a rare feature. 
-There is no free one-fits-all tool which means, you may have to use more than one tool to
-differenciate real broken links from false positives or to get results the other tools may not provide.
+references to anchors can cause broken links in various ways. While it looks relatively
+easy to check for broken anchors, not many free tools provide this functionality.
+Various tools behave and report access to links in different ways. Configuration, like the
+possibility to define patterns in an elegant way to exclude link searches, is also a rare feature. 
+There is no free one-fits-all tool which means you may have to use more than one tool to
+differentiate real broken links from false positives or to get results the other tools may not provide.
 
 ## Preparation
 
-To check broken links, you need to prepare with following steps:
+To check broken links, you need to prepare with the following steps:
 
 1. Make the compiled documentation available for browsing by using a webserver like
    [our Yarn target](./build-the-docs.md#viewing-the-html-documentation), [PHP's built-in webserver](https://secure.php.net/manual/en/features.commandline.webserver.php), Apache or NGINX
 2. Build the local docs with ``yarn antora --url http://localhost:8080``
-3. Use an alread provided or install a Broken Link Checker
+3. Use an already provided or install a Broken Link Checker
 
 Use the broken link checker of your choice, the following are usable examples. The command examples assume that the documentation built is accessible via `http://localhost:8080`.
 
 **Note** You may get false positives because of sample links or addresses pointing to nowhere. This is normal and not a broken link.
 
-**Note** It is a good advice to pipe the output of the results to a file for easy checking.
+**Note** It is a good to pipe the output of the results to a file for easy checking.
 
 ## Link Checkers provided by the Documentation
 ### Antora xref-validator
@@ -82,11 +82,11 @@ yarn linkcheck http://localhost:8080/server/index.html | grep "BROKEN"
 Note: in the example output above, only the first entry is a genuine broken link.
 All the others in the list are example links, and therefore not broken.
 
-## Public Available Linkcheckers
+## Publicly Available Linkcheckers
 
 ### Linkcheck by Filip Hracek
 
-This is a extreme fast and very comfortable / configurable link checker.
+This is a extremely fast and very comfortable / configurable link checker.
 
 A description of ``linkcheck`` can be found [here](https://github.com/filiph/linkcheck#linkcheck).
 Follow [this](https://github.com/filiph/linkcheck#step-1-install-dart) procedure,
@@ -95,7 +95,7 @@ to install ``linkcheck``, which needs ``dart``:
 Because ``linkcheck`` provides the possibility to use a file to exclude search patterns,
 it is a good advice to create a file with following predefined content. In this example,
 the file is named ``my_skip_file.txt`` and saved one level below the local docs repository.
-Adopt the content to your needs.
+Adapt the content to your needs.
 
 ```console
 # exclude check to sub-pages of owncloud
@@ -112,7 +112,7 @@ http://localhost:8080/desktop
 http://localhost:8080/android
 http://localhost:8080/ios
 
-# exclude because of denied by robots.txt anyway
+# exclude because these are denied by robots.txt anyway
 https://github.com
 https://gist.github.com
 https://www.samba.org
@@ -123,7 +123,7 @@ https://www.tscp.org
 
 ```
 
-As a good advice, first start to check excluding external pages / sites.
+It is good practice to first start checking excluding external pages / sites.
 ``linkcheck`` will report internal broken links AND broken links to anchors:
 
 ```console
@@ -153,7 +153,7 @@ http://localhost:8080/server/admin_manual/configuration/database/linux_database_
 ```
 
 In the example output above, the first entry ``HTTP 200 but missing anchor`` highlights a broken link to an anchor.
-The second entry ``connection failed`` highlights the possibility that the page may not longer be accessible.
+The second entry ``connection failed`` highlights the possibility that the page may no longer be accessible.
 You have to manually check if it is a false-positive or not.
 
 ### Linkchecker by Bastian Kleineidam
