@@ -12,14 +12,13 @@ Put your server in xref:configuration/server/occ_command.adoc#maintenance-comman
 Doing so prevents new logins, locks the sessions of logged-in users, and displays a status screen so that users know what is happening.
 
 There are two ways to enable maintenance mode.
-The preferred method is to use xref:configuration/server/occ_command#maintenance-commands[the occ command] — which you must run as your webserver user.
+. The preferred method is to use xref:configuration/server/occ_command#maintenance-commands[the occ command] — which you must run as your webserver user. +
 The other way is by entering your `config.php` file and changing `'maintenance' => false,` to `'maintenance' => true,`.
 
 [source,console]
 ----
 # Enable maintenance mode using the occ command.
 sudo -u www-data php occ maintenance:mode --on
-
 ----
 
 In clustered environment please check that all nodes are in maintenance mode.
@@ -49,19 +48,12 @@ First, xref:maintenance/backup.adoc[backup] the following items:
 # This example assumes Ubuntu Linux and MariaDB
 mkdir /opt/backup/
 cp -rv /var/www/owncloud /opt/backup/owncloud
-mysqldump -u<username> -p<password> <databasename> > <ownCloud-Versio-Dump.sql>
+mysqldump -u<username> -p<password> <databasename> > <ownCloud-Version-Dump.sql>
 ----
 
 == Review Third-Party Apps
 
 Review any installed third-party apps for compatibility with the new ownCloud release.
-You can find a list of all third-party apps by running the following command, from the root directory of your installation.
-
-[source,console]
-----
-sudo -u www-data php occ app:list --shipped=false
-----
-
 Ensure that they are all disabled before beginning the upgrade.
 
 [source,console]
@@ -136,9 +128,8 @@ upgrade is finished.
 
 [[copy-old-apps]]
 == Copy Old Apps
-If you are using third party or enterprise applications, look in your new `/var/www/owncloud/apps/` directory to see if they are there.
-If not, copy them from your old `apps/` directory to your new one, and make sure that the directory permissions are the same as for the other ones.
-
+If you are using third party or enterprise applications, look in your new `/var/www/owncloud/apps/` directory to see if they are present.
+If not, copy them from your old `apps/` directory to your new one, and make sure that the directory permissions match the existing ones.
 
 [[change-permissions-to-webserver-user]]
 
@@ -152,7 +143,7 @@ chown -R www-data:www-data /var/www/owncloud
 [[start-the-upgrade]]
 == Start the Upgrade
 
-With the apps disabled and owncloud in maintenance mode  xref:configuration/server/occ_command.adoc#command-line-upgrade[the upgrade process] from the command line:
+With the apps disabled and owncloud in maintenance mode, start  xref:configuration/server/occ_command.adoc#command-line-upgrade[the upgrade process] from the command line:
 
 [source,console]
 ----
@@ -201,7 +192,7 @@ visible at the bottom of your Admin page.
 [[reverse-upgrade]]
 == Reverse Upgrade
 
-If you need to reverse your upgrade, see xref:maintenance/upgrading/manual_upgrade/restore.adoc[restore]
+If you need to reverse your upgrade, see the xref:maintenance/restore.adoc[Restoring owncloud] documentation.
 
 [[troubleshooting]]
 == Troubleshooting
