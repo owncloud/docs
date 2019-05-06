@@ -66,7 +66,7 @@ setup: ## Install Antora's command tools locally
 	yarn install
 
 .PHONY: clean
-clean: ## Remove build artifacts from output dir
+clean: ## Remove build artifacts from PDF output dir
 	-rm -rf build/
 
 .PHONY: pdf
