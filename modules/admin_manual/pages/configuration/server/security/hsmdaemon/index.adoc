@@ -19,6 +19,10 @@ The hsmdaemon is a daemon, provided by ownCloud, to delegate encryption to an {h
 This can be necessary, as PHP cannot, directly, interface with {pkcs11-url}[a PKCS11 stack]; neither with an API wrapper, because one does not exist, nor via the OpenSSL bindings.
 Because of this, a separate process is needed to decrypt anything with the private key stored in an HSM.
 
+When using hsmdaemon with an HSM, the keys are not stored on the same physical machine as ownCloud. 
+As a result, if someone steals the machine that stores your ownCloud instance and boots it outside your network, your data cannot be accessed. 
+As the HSM is not accessible, the keys cannot be read, so they cannot be used to decrypt your data.
+
 NOTE: For hsmdaemon support, you need ownCloud Enterprise Edition >= 10.2. 
 We recommend consulting with us when deploying storage encryption with an HSM.
 
@@ -76,10 +80,9 @@ If you are using a different operating system or distribution, please adjust the
 
 ==== Install Using a Preconfigured PKCS11 Module
 
-At least one PKCS11 library is necessary, which is typically provided by an HSM vendor. 
-However, if none is available, you can xref:configuration/server/security/hsmdaemon/install-softhsm2.adoc[install a software HSM (SoftHSM2)].
-SoftHSM2 is the most simple approach to employ storage encryption with a master key in an HSM. 
-This is because it hands off the master key material to a user other than the web server user.
+At least one PKCS11 library is necessary. 
+This is typically provided by an HSM vendor. 
+If a PKCS11 library is not available, you can xref:configuration/server/security/hsmdaemon/softhsm2.adoc[use the software HSM, _SoftHSM2_].
 
 ==== Initialise the Token
 

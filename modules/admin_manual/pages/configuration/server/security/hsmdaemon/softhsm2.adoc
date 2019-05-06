@@ -1,6 +1,20 @@
-= Install SoftHSM2
+= SoftHSM2
 :softhsm2-url: https://www.opendnssec.org/softhsm/
 :opensuse-security-repositories-url: https://download.opensuse.org/repositories/security/
+
+SoftHSM2 is a simple approach for employing storage encryption with a master key in an HSM, because it store the keys in place of ownCloud.
+
+== Use SoftHSM2 With hsmdaemon
+
+SoftHSM2 can be used with and xref:configuration/server/security/hsmdaemon/index.adoc[hsmdaemon] to store keys in place of ownCloud; either on the same or a different machine as ownCloud.
+Because keys are stored with a different owner to ownCloud, it prevents the web server (xref:installation/system_requirements.adoc#officially-recommended-supported-options[typically Apache]) from directly reading the key material.
+This helps prevent a malicious actor from reading files, if they can impersonate the web server user.
+However, it doesn't help if the malicious actor can manipulate PHP files and run arbitrary code.
+
+IMPORTANT: If you run SoftHSM2 and hsmdaemon on a different machine on the network, know that the hsmdaemon traffic is not encrypted.
+In this scenario, the systems administrator would need to setup a secure tunnel to encrypt the traffic.
+
+== Install SoftHSM2
 
 If you do not have an HSM-provided PKCS11 library, then you can use {softhsm2-url}[SoftHSM2] instead.
 To do so, follow the instructions for you Linux distribution below.
@@ -12,7 +26,7 @@ To do so, follow the instructions for you Linux distribution below.
 NOTE: Installing these two packages also installs `/usr/lib/x86_64-linux-gnu/softhsm/libsofthsm2.so`, which is a module that we will need later, for interaction with the PKCS11 API.
 
 [[install-softhsm2-debian-ubuntu]]
-== Install on Debian and Ubuntu
+=== Install on Debian and Ubuntu
 
 To install SoftHSM2 on either Debian or Ubuntu, run the command below.
 
@@ -23,7 +37,7 @@ sudo apt-get install -y softhsm2 libsofthsm2
 ----
 
 [[install-softhsm2-opensuse-suse-linux-enterprise-server]]
-== Install on openSUSE and SUSE Linux Enterprise Server
+=== Install on openSUSE and SUSE Linux Enterprise Server
 
 To install SoftHSM2, you first have to ensure that you have {opensuse-security-repositories-url}[the official security repository] for your server enabled in your server's repositories list. 
 To check if it is, run the command `zypper lr`, which will show you output similar to the following:
@@ -68,7 +82,7 @@ sudo zypper install -y --auto-agree-with-licenses softhsm
 ----
 
 [[install-softhsm2-fedora-red-hat-enterprise-linux-centos]]
-== Install on Fedora and Red Hat Enterprise Linux and Centos 
+=== Install on Fedora and Red Hat Enterprise Linux and Centos 
 
 To install SoftHSM2 on Fedora and Red Hat Enterprise Linux and Centos, run the command below.
 
@@ -77,7 +91,7 @@ To install SoftHSM2 on Fedora and Red Hat Enterprise Linux and Centos, run the c
 sudo yum install --assumeyes softhsm
 ----
 
-== Check the Configuration File
+=== Check the Configuration File
 
 Once SoftHSM2 is installed, check that the directory specified by `directories.tokendir` in SoftHSM2's configuration file exists.
 
@@ -99,4 +113,3 @@ objectstore.backend = file
 # ERROR, WARNING, INFO, DEBUG
 log.level = INFO
 ....
-
