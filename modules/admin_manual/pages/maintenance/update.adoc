@@ -1,4 +1,7 @@
 = Upgrading ownCloud with the Updater App
+:toc: right
+
+== Introduction
 
 The Updater app automates many of the steps of upgrading an ownCloud
 installation. It is useful for installations that do not have root
@@ -37,12 +40,10 @@ directory
 directory, to `updater_backup/currentVersion-randomstring`
 * Moves all directories except `data` and `config` from the current
 instance to `updater_backup/tmp`
-* Moves all directories from `updater_backup/packageVersion` to the
-current version
+* Moves all directories from `updater_backup/packageVersion` to the current version
 * Copies your old `config.php` to the new `config/` directory
 
-Using the Updater app to update your ownCloud installation is just a few
-steps:
+Using the Updater app to update your ownCloud installation is just a few steps:
 
 1.  You should see a notification at the top of any ownCloud page when
 there is a new update available.
@@ -72,12 +73,13 @@ running it as your HTTP user, instead of clicking the Start Update button, in or
 
 This example is for Ubuntu Linux:
 
-....
-$ sudo -u www-data php occ upgrade
-....
+[source,console]
+----
+sudo -u www-data php occ upgrade
+----
 
 The optional parameter to skip migration tests during this step was
-removed in ownCloud 9.2. See xref:maintenance/manual_upgrade.adoc#test-the-upgrade[Testing a Migration] for more information.
+removed in ownCloud 10.0. See xref:maintenance/manual_upgrade.adoc#test-the-upgrade[Testing a Migration] for more information.
 
 1.  It runs for a few minutes, and when it is finished displays a
 success message, which disappears after a short time.
@@ -116,7 +118,7 @@ chown -R ${htuser}:${htgroup} ${ocpath}
 ....
 
 You can find your HTTP user in your HTTP server configuration files. Or
-you can use xref:issues/general_troubleshooting.adoc#php-version-and-information[PHP Version and Information].
+you can use xref:configuration/general_topics/general_troubleshooting.adoc#php-version-and-information[PHP Version and Information].
 Look for the `User/Group` line.
 
 * The HTTP user and group in Debian/Ubuntu is `www-data`.
@@ -136,26 +138,29 @@ create checkpoints and to roll back to older checkpoints. You must run
 it as your HTTP user. This example on Ubuntu Linux displays command
 options:
 
-....
+[source,console]
+----
 sudo -u www-data php updater/application.php list
-....
+----
 
-See usage for commands, like this example for the `upgrade:checkpoint`
-command:
+See usage for commands, like this example for the `upgrade:checkpoint` command:
 
-....
+[source,console]
+----
 sudo -u www-data php updater/application.php upgrade:checkpoint -h
-....
+----
 
 You can display a help summary:
 
-....
+[source,console]
+----
 sudo -u www-data php updater/application.php --help
-....
+----
 
 When you run it without options it runs a system check:
 
-....
+[source,console]
+----
 sudo -u www-data php owncloud/updater/application.php
 ownCloud updater 1.0 - CLI based ownCloud server upgrades
 Checking system health.
@@ -163,30 +168,33 @@ Checking system health.
 Current version is 9.0.0.12
 No updates found online.
 Done
-....
+----
 
 Create a checkpoint:
 
-....
-sudo -u www-data php updater/application.php upgrade:checkpoint  --create
+[source,console]
+----
+sudo -u www-data php updater/application.php upgrade:checkpoint --create
 Created checkpoint 9.0.0.12-56d5e4e004964
-....
+----
 
 List checkpoints:
 
-....
+[source,console]
+----
 sudo -u www-data php updater/application.php upgrade:checkpoint --list
-....
+[source,console]
+----
 
 Restore an earlier checkpoint:
 
-....
-sudo -u www-data php owncloud/updater/application.php upgrade:checkpoint
+[source,console]
+----
+sudo -u www-data php updater/application.php upgrade:checkpoint
  --restore=9.0.0.12-56d5e4e004964
-....
+----
 
-Add a line like this to your crontab to automatically create daily
-checkpoints:
+Add a line like this to your crontab to automatically create daily checkpoints:
 
 ....
 2 15 * * * sudo -u www-data php /path/to/owncloud/updater/application.php
@@ -203,13 +211,15 @@ to enter the unhashed secret into the web form.
 In case you forgot your password/secret, you can re-create it by
 changing config.php. You can run this on your shell:
 
-....
+[source,console]
+----
 php -r 'echo password_hash("Enter a random password here", PASSWORD_DEFAULT)."\n";'
-....
+----
 
 Please replace `Enter a random password here` with your own.
 Then add this into your config.php:
 
-....
+[source,php]
+----
 'updater.secret' => 'The value you got from the above hash command',
-....
+----
