@@ -823,8 +823,17 @@ NOTE: The command polls all received federated shares, so does not require a pat
 sudo -u www-data php occ incoming-shares:poll
 ----
 
-IMPORTANT: We recommend running the command no more than once every twelve hours. 
-However, for instances with a low number of federated shares, the command can be run once every two hours.
+[IMPORTANT] 
+====
+When using federation, it is recommended to execute `occ incoming-shares:poll` regularly xref:configuration/server/background_jobs_configuration.adoc#cron-jobs[using Cron jobs]. 
+The time interval between executions is a trade-off between the availability of changes in federated shares and resource consumption; which naturally depends a lot on the number of federated shares and the frequency of changes within those shares. 
+
+Executing the command once every 12 hours _should_ be safe enough for most instances. 
+However, the interval can be reduced to once every 2 hours, for instances with a small number of federated shares.
+
+Depending on the desired resource consumption, this value should be lowered or increased based on individual expectations. 
+To find a value that fits a specific setup, it is recommended to execute the command once, measure the execution time and set the interval, so that the background job can finish before the next execution is triggered.
+====
 
 [[file-operations]]
 === File Operations
@@ -833,6 +842,7 @@ However, for instances with a low number of federated shares, the command can be
 
 [source,console]
 ----
+
 files
  files:checksums:verify     Get all checksums in filecache and compares them by
                             recalculating the checksum of the file.
