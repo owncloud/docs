@@ -438,3 +438,22 @@ PostgreSQL: \c owncloud; \d
 MySQL     : quit
 PostgreSQL: \q
 ....
+
+[[how-to-solve-deadlock-error]]
+=== How to solve deadlock error
+
+WARNING: **SQLSTATE[40001]: Serialization failure: 1213 Deadlock found when trying to get lock; try restarting transaction**
+
+**Explanation**
+
+This error is caused when two transactions writing to same rows and committing in separate cluster nodes, and only one of them can successfully commit. The failing one will be aborted. For cluster level aborts, Galera Cluster gives back deadlock error. 
+
+**Solution**
+
+The solution, for Galera Cluster, would be to send all write requests to a single DB node, instead of all of them. Here is a useful https://severalnines.com/blog/avoiding-deadlocks-galera-set-haproxy-single-node-writes-and-multi-node-reads[Guide], when using **HAProxy**. 
+
+Still, the same concept applies in case **MaxScale** is used as DB proxy. This needs to be configured in order to send all write requests to a single DB node, instead all of them, while read statements will be balanced across the rest of the nodes. Here is a useful https://mariadb.com/kb/en/mariadb-enterprise/mariadb-maxscale-14/maxscale-readwrite-splitting-with-galera-cluster/[Guide] on how to configure MaxScale with Read/Write splitting.
+
+**Enabling causality checks**
+
+Additionally, to solve this issue, when using Galera Cluster, customers should try to set `wsrep_sync_wait=1`. When enabled, the node triggers causality checks in response to certain types of queries. This is disabled by default.
