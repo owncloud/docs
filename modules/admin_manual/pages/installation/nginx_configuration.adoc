@@ -203,57 +203,6 @@ location = /data/\.ocdata {
 }
 ----
 
-[[prevent-access-log-entries-when-accessing-thumbnails]]
-=== Prevent access log entries when accessing thumbnails
-
-When using, for example, the Gallery App, any access to a thumbnail of a picture will be logged. 
-This can cause a massive log quantity making log reading challenging. 
-With this approach, you can prevent access logging for those thumbnails.
-
-*1 Create a map directive outside your server block like*
-
-(Adopt the path queried according your needs.)
-
-
-[source,nginx]
-----
-# do not access log to gallery thumbnails, flooding access logs only, error will be logged anyway
-map $request_uri $loggable {
-    default                              1;
-    ~*\/apps\/gallery\/thumbnails        0;
-}
-----
-
-*2 Inside your server block where you define your logs*
-
-[source,nginx]
-----
-access_log /path-to-your-log-file combined if=$loggable;
-----
-
-If you want or need to log thumbnails access, you can easily add another
-logfile which only logs this access. You can easily enable / disable
-this kind of logging if you uncomment / comment the line starting with
-`0` in the following `map` directive.
-
-*Below the above map statement*
-
-[source,nginx]
-----
-# invert the $loggable variable
-map $loggable $invertloggable {
-    default                         0;
-    0                               1;
-}
-----
-
-*Below the above access_log statement*
-
-[source,nginx]
-----
-access_log /var/log/nginx/<your-log-file-inverted> combined if=$invertloggable;
-----
-
 [[performance-tuning]]
 == Performance Tuning
 
@@ -304,8 +253,8 @@ open_file_cache_min_uses        1;
 open_file_cache_errors          on;
 ----
 
-[[configure-nginx-to-use-caching-for-owncloud-internal-images-and-thumbnails]]
-=== Configure NGINX to use caching for ownCloud internal images and thumbnails
+[[configure-nginx-to-use-caching-for-owncloud-internal-images]]
+=== Configure NGINX to use caching for ownCloud internal images
 
 This mechanism speeds up presentation as it shifts requests to NGINX and
 minimizes PHP invocations, which otherwise would take place for every
@@ -313,9 +262,8 @@ thumbnail or internal image presented every time.
 
 *1 Preparation*
 
-* Create a directory where NGINX will save the cached thumbnails or
-internal images. Use any path that fits to your environment. Replace
-`/opt/cachezone` in this example with your path created:
+* Create a directory where NGINX will save the internal images, using any path that fits to your environment. 
+  Replace `/opt/cachezone` in the following example with the path that you created.
 
 [source,bash]
 ----
@@ -337,8 +285,6 @@ This is the preferred method. In the `http{}` block, but _outside_ the
 # skip_cache, default skip
 map $request_uri $skip_cache {
      default              1;
-     ~*\/thumbnail.php    0;
-     ~*\/apps\/gallery\/  0;
      ~*\/core\/img\/      0;
 }
 ----
@@ -350,8 +296,6 @@ In the `server{}` block, above the location block mentioned below:
 [source,nginx]
 ----
 set $skip_cache 1;
-if ($request_uri ~* "thumbnail.php")      { set $skip_cache 0; }
-if ($request_uri ~* "/apps/gallery/")     { set $skip_cache 0; }
 if ($request_uri ~* "/core/img/")         { set $skip_cache 0; }
 ----
 
@@ -398,7 +342,6 @@ location ~ \.php(?:$/) {
     fastcgi_cache_valid  60m;
     fastcgi_cache_methods GET HEAD;
     ## End - FastCGI caching
-
 }
 ----
 
@@ -408,14 +351,3 @@ location ~ \.php(?:$/) {
 sudo nginx -t
 sudo service nginx reload
 ....
-
-* Open your browser and clear your cache.
-* Logon to your ownCloud instance, open the gallery app, move thru your
-folders and watch while the thumbnails are generated for the first time.
-* You may also watch with eg. `htop` your system load while the
-thumbnails are processed.
-* Go to another app or logout and relogon.
-* Open the gallery app again and browse to the folders you accessed
-before. Your thumbnails should appear more or less immediately.
-* `htop` will not show up additional load while processing, compared to
-the high load before.
