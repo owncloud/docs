@@ -1,0 +1,69 @@
+= The Media Viewer App
+:browser-image-support-url: https://en.wikipedia.org/wiki/Comparison_of_web_browsers#Image_format_support
+:webm-url: https://www.webmproject.org/
+:ogg-url: https://xiph.org/vorbis/
+:mp4-url: https://en.wikipedia.org/wiki/MPEG-4_Part_14
+
+image:media-viewer-app/app-overview.gif[]
+
+== Introduction
+
+The Media Viewer app is a lightweight viewer for pictures and videos which integrates in the files app, and released under the GPLv2. 
+It replaces the gallery and files_videoplayer apps, which have now been deprecated, and supports the same basic feature set as the deprecated apps.
+
+IMPORTANT: Please remove the gallery and files_videoplayer apps before installing it.
+
+It supports the following functionality:
+
+* *Image*: _preview_, _zoom_, _rotation_, and _download_
+* *Video*: _playback_ and _download_
+
+NOTE: The app will support paginating through all media files in the current directory, even if only one media file was chosen to be previewed.
+
+== Features
+
+* A la carte features, including external shares, and browser SVG rendering.
+* Browser rendering of SVG images (disabled by default).
+* https://github.com/owncloud/gallery#redirect-gallery-link-shares[Converts] "old" album view public links
+* Ignore folders containing a ".nomedia" file.
+* Image download straight from the slideshow or the gallery.
+* Large, zoomable previews which can be shown in full-screen mode.
+* Mobile support.
+* Per album design, description and copyright statement.
+* Sort images by name or date added.
+* Support for a large selection of media types (dependent on the server setup).
+* Switch to Gallery from any folder in files and vice-versa.
+* Upload and organise images and albums straight from the app.
+
+== Supported File Formats
+
+* Video: {mp4-url}[MP4], {ogg-url}[Ogg], {webm-url}[WebM]
+* Image: PNG, JPEG, GIF, TIFF.
+
+TIP: Make sure you have ImageMagick and its PECL extension installed.
+
+== Configuring the Media Viewer App
+
+[source=php]
+----
+'enabledPreviewProviders' => [
+    'OC\\Preview\\PNG',
+    'OC\\Preview\\JPEG',
+    'OC\\Preview\\GIF',
+    'OC\\Preview\\TIFF'
+],
+----
+
+NOTE: The Media Viewer app only supports thumbnail functionality of TIFF images. 
+Image preview functionality is *not* supported.
+
+== Improving Media Viewer App Performance
+
+=== Use Redis for Files Locking
+
+Using Redis for files locking improves app performance by a factor of 10, when loading an album.
+
+=== Assets Pipelining
+
+Make sure to enable `asset pipelining`, so that all the JavaScript and CSS resources can be mixed together. 
+This can greatly reduce the loading time of the app.

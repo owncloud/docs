@@ -1,5 +1,9 @@
 = Gallery App
 :toc: right
+:media-viewer-app-url: https://github.com/owncloud/files_mediaviewer
+
+IMPORTANT: This app has been superseded by {media-viewer-app-url}[the Media Viewer app].
+We strongly encourage you to begin planning a migration from the Gallery app to the Media Viewer app.
 
 == Introduction
 
@@ -243,13 +247,20 @@ You can add standard configuration items to the same configuration file:
  native_svg: yes
 ----
 
-[[possible-future-extensions]]
-== Possible Future Extensions
+== Uninstalling Gallery App
 
-Different sorting parameters for albums.
+=== Redirect gallery link shares
 
-[[keeping-up-with-new-features]]
-== Keeping Up With New Features
+When disabling or uninstalling the app, all link shares created with the app will stop working.
+Instead of having to resend new links to all recipients, you can setup a redirection on the server to redirect gallery-style links to regular public links. 
 
-See the https://github.com/owncloud/gallery/wiki[Gallery Wiki page] to
-stay informed of new developments.
+This means that people with the original link will get redirected to the regular file view instead of getting a 404 page.
+For this, edit your `.htaccess` file in the ownCloud root folder and add a new rewrite rule among the existing ones, or alternatively with a new block at the bottom of the file, as in the following example.
+
+[source,apache]
+----
+<IfModule mod_rewrite.c>
+  RewriteEngine on  
+  RewriteRule ^/apps/gallery/s/(.*)$ /s/$1 [L,R=301]
+</IfModule>
+----
