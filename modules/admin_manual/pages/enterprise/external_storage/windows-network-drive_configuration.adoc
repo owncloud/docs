@@ -1,5 +1,11 @@
 = Installing and Configuring the External Storage: Windows Network Drives App
 :toc: right
+:msft-security-bulletin-ms17-010-url: https://docs.microsoft.com/en-us/security-updates/SecurityBulletins/2017/ms17-010
+:samba-478-url: https://www.samba.org/samba/history/samba-4.7.8.html
+:samba-481-url: https://www.samba.org/samba/history/samba-4.8.1.html 
+:samba-url: https://www.samba.org/
+:smb2-url: https://en.wikipedia.org/wiki/Server_Message_Block#SMB_2.0
+:wannacry-ransomware-attack-url: https://en.wikipedia.org/wiki/WannaCry_ransomware_attack
 
 == Introduction
 
@@ -204,6 +210,24 @@ SMB/CIFS mounts.
 
 [[windows-network-drive-listener]]
 == Windows Network Drive Listener
+
+[IMPORTANT]
+====
+ownCloud requires at least {samba-478-url}[Samba version 4.7.8] or {samba-481-url}[Samba 4.8.1] on the ownCloud server, when:
+
+. The Windows Network Drive Listener is used; *and* 
+. The remote Windows/Samba file server requires at least {smb2-url}[version 2.0 of the SMB protocol].
+
+The xref:{wnd-config-path}[Windows Network Drive Listener] only supports version 1 of the SMB protocol with earlier Samba versions. 
+
+*Here's Why*
+
+A {samba-url}[Samba] server, often a Microsoft Windows Server, can enforce the minimum and maximum protocol versions used by connecting clients.
+However, in light of {wannacry-ransomware-attack-url}[the WannaCry ransomware attack], {msft-security-bulletin-ms17-010-url}[Microsoft patched Windows Server] to only allow SMB2 protocol by default (as SMB1 is insecure).
+
+The ownCloud windows network drive listener utilizes the SMB notification feature which works well with SMB1 in conjunction with most Samba versions. 
+However, when the minimum protocol a server accepts is SMB2, ownCloud require Samba 4.7.8+ (4.8+ etc.) to be able to properly work, as prior versions of Samba had a bug that break this feature.
+====
 
 The SMB protocol supports registering for notifications of file changes
 on remote Windows SMB storage servers. Notifications are more efficient
