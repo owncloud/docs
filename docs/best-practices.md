@@ -25,6 +25,7 @@ reference for common used writing and formatting tasks. For a complete reference
 * [Headers, Titles, Sections, Anchors and Paragraph Titles](#headers-titles-sections-anchors-and-paragraph-titles)
 * [Tables](#tables)
 * [Comments](#comments)
+* [Relocating or Renaming Files](#relocating-or-renaming-files)
 
 ## Initial Reading
 
@@ -76,8 +77,20 @@ Text {internal-link-name-url}[highlighted text] text.
 ```
 
 It is important that `:internal-link-name-url:` is placed directly below the page header.
-Any number of these link directives can be added. Without being mandatory, it has turned
+Any number of these link attributes can be added. Without being mandatory, it has turned
 out as a matter of good practice to end your link name with `-url`.
+
+**NOTE** If you want to prevent automatic linking of a URL, prepend it with a backslash (\\).
+This will create text but not a clickable link and can be used for example URLs.
+This method helps prevent false positives when checking broken links.
+
+Example:
+
+```
+This is an example web address: \http://example.com
+```
+The above example renders as: `This is an example web address: http://example.com`
+but there is no link.
 
 ### Internal Links
 
@@ -194,7 +207,7 @@ Please also see additional directives like:
 [`toclevels`](https://asciidoctor.org/docs/user-manual/#user-toc-levels) or
 [In-Document Placement](https://asciidoctor.org/docs/user-manual/#manual-placement)
 
-**IMPORTANT** All directives of kind `:name:` must be direct under the page header without blank lines. 
+**IMPORTANT** All attributes of kind `:name:` must be direct under the page header without blank lines. 
 
 ## Code Blocks
 
@@ -334,6 +347,8 @@ Please see the reference link for more details.
 Reference: [`Keyboard Shortcuts`](https://asciidoctor.org/docs/user-manual/#keyboard-shortcuts)
 Reference: [`UI buttonss`](https://asciidoctor.org/docs/user-manual/#ui-buttons)
 
+**IMPORTANT** You must set the `:experimental:` attribute to enable the UI macros.
+
 You can create a button styled text like you want a user to press specific keyboard button(s) or browser text buttons.
 The syntax for keyboard shortcuts is: `kbd:[key(+key)*]`
 The syntax for UI button text is: `btn:[text]`
@@ -352,6 +367,8 @@ btn:[Open]
 ## Menu Selections
 
 Reference: [`Menu Selections`](https://asciidoctor.org/docs/user-manual/#menu-selections)
+
+**IMPORTANT** You must set the `:experimental:` attribute to enable the UI macros.
 
 Trying to explain to someone how to select a menu item can be a pain. With the menu macro, the symbols do the work.
 The syntax for this is: `menu:start[next > next > *]`
@@ -536,4 +553,25 @@ If you want to add a comment in your page to remark a writers note which will no
 Example:
 ```
 // Needs revision as a new release will change the parameter.
+```
+
+## Relocating or Renaming Files
+
+The following procedure is necessary to optimize search engines (SEO).
+This method will help with updating search engine results over time.
+
+In case you relocate a page to another physical location, or you rename a page,
+you have to do two things:
+
+- Correct the path in the navigation
+- Add a `:page-aliases:` attribute in the document moved
+
+The page-alias attribute, which you can see in the example below, lists one or more pages that
+redirect to the current page. This attribute is given one or more AsciiDoc files that will redirect
+to the current page.
+
+Example:
+```
+= Page Title
+:page-aliases: upgrade/service/apache.adoc
 ```
