@@ -1,5 +1,6 @@
 = Accessing ownCloud Files Using WebDAV
 :toc: right
+:experimental:
 
 == Introduction
 
@@ -93,20 +94,18 @@ image:webdav_dolphin.png[screenshot of configuring Dolphin file manager to use W
 
 You can create a permanent link to your ownCloud server:
 
-1.  Open Dolphin and click "Network" in the left hand "Places"
-column.
-2.  Click on the icon labeled *Add a Network Folder*. The resulting
-dialog should appear with WebDAV already selected.
-3.  If WebDAV is not selected, select it.
-4.  Click *Next*.
-5.  Enter the following settings:
+. Open Dolphin and click btn:[Network] in the left hand menu:Places[] column.
+. Click on the icon labeled btn:[Add a Network Folder]. +
+The resulting dialog should appear with WebDAV already selected.
+. If WebDAV is not selected, select it.
+. Click btn:[Next].
+. Enter the following settings:
 * Name: The name you want to see in the *Places* bookmark, for example ownCloud.
 * User: The ownCloud username you used to log in, for example admin.
 * Server: The ownCloud domain name, for example *example.com* (without **http://** before or directories afterwards).
-+
-* Folder – Enter the path `owncloud/remote.php/dav/files/USERNAME/`.
-6.  (Optional) Check the "Create icon checkbox" for a bookmark to appear in the Places column.
-7.  (Optional) Provide any special settings or an SSL certificate in the "Port & Encrypted" checkbox.
+* Folder: Enter the path `owncloud/remote.php/dav/files/USERNAME/`.
+. (Optional) Check the btn:[create] icon checkbox for a bookmark to appear in the menu:Places[] column.
+. (Optional) Provide any special settings or an SSL certificate in the btn:[Port & Encrypted] checkbox.
 
 [[creating-webdav-mounts-on-the-linux-command-line]]
 == Creating WebDAV Mounts on the Linux Command Line
@@ -117,62 +116,61 @@ filesystem mount. The following example shows how to create a personal
 mount and have it mounted automatically every time you log in to your
 Linux computer.
 
-1.  Install the `davfs2` WebDAV filesystem driver, which allows you to
+. Install the `davfs2` WebDAV filesystem driver, which allows you to
 mount WebDAV shares just like any other remote filesystem. Use this
 command to install it on Debian/Ubuntu:
 +
 ....
 apt-get install davfs2
 ....
-2.  Use this command to install it on CentOS, Fedora, and openSUSE:
+. Use this command to install it on CentOS, Fedora, and openSUSE:
 +
 ....
 yum install davfs2
 ....
-3.  Add yourself to the `davfs2` group:
+. Add yourself to the `davfs2` group:
 +
 ....
 usermod -aG davfs2 <username>
 ....
-4.  Then create an `owncloud` directory in your home directory for the
+. Then create an `owncloud` directory in your home directory for the
 mountpoint, and `.davfs2/` for your personal configuration file:
 +
 ....
 mkdir ~/owncloud
 mkdir ~/.davfs2
 ....
-5.  Copy `/etc/davfs2/secrets` to `~/.davfs2`:
+. Copy `/etc/davfs2/secrets` to `~/.davfs2`:
 +
 ....
 cp  /etc/davfs2/secrets ~/.davfs2/secrets
 ....
-6.  Set yourself as the owner and make the permissions read-write owner
+. Set yourself as the owner and make the permissions read-write owner
 only:
 +
 ....
 chown <username>:<username>  ~/.davfs2/secrets
 chmod 600 ~/.davfs2/secrets
 ....
-7.  Add your ownCloud login credentials to the end of the `secrets`
+. Add your ownCloud login credentials to the end of the `secrets`
 file, using your ownCloud server URL and your ownCloud username and
 password:
 +
 ....
 example.com/owncloud/remote.php/dav/files/USERNAME/ <username> <password>
 ....
-8.  Add the mount information to `/etc/fstab`:
+. Add the mount information to `/etc/fstab`:
 +
 ....
-example.com/owncloud/remote.php/dav/files/USERNAME/ /home/<username>/owncloud
-davfs user,rw,auto 0 0
+example.com/owncloud/remote.php/dav/files/USERNAME/ /home/<username>/owncloud davfs user,rw,auto 0 0
 ....
-9.  Then test that it mounts and authenticates by running the following
+. Then test that it mounts and authenticates by running the following
 command. If you set it up correctly you won’t need root permissions:
 +
 ....
 mount ~/owncloud
 ....
-10. You should also be able to unmount it:
+. You should also be able to unmount it:
 +
 ....
 umount ~/owncloud
@@ -223,32 +221,23 @@ and should only be used if the ownCloud server runs on *Apache* and *mod_php*, o
 
 To access files through the Mac OS X Finder:
 
-1.  Choose *Go > Connect to Server*.
-
+. Choose menu:Go[Connect to Server]. +
 The "Connect to Server" window opens.
-
-[start=2]
-.  Specify the address of the server in the *Server Address* field.
-
-image:osx_webdav1.png[Screenshot of entering your ownCloud server address on Mac OS X]
-
-For example, the URL used to connect to the ownCloud server from the Mac
-OS X Finder is:
-
+. Specify the address of the server in the *Server Address* field. +
+image:osx_webdav1.png[Screenshot of entering your ownCloud server address on Mac OS X] +
++
+For example, the URL used to connect to the ownCloud server from the Mac OS X Finder is: +
++
 ....
 https://example.com/owncloud/remote.php/dav/files/USERNAME/
 ....
-
++
 image:osx_webdav2.png[image]
-
-[start=3]
-.  Click *Connect*.
-
-The device connects to the server.
-
-For added details about how to connect to an external server using Mac
-OS X, check the
-http://docs.info.apple.com/article.html?path=Mac/10.6/en/8160.html[vendor documentation]
+. Click btn:[Connect]. +
+The device connects to the server. +
++
+For added details about how to connect to an external server using Mac OS X, check the
+https://www.wikihow.com/Connect-to-a-Server-on-a-Mac[wikihow documentation]
 
 [[accessing-files-using-microsoft-windows]]
 == Accessing Files Using Microsoft Windows
@@ -258,15 +247,14 @@ http://www.webdav.org/projects/[WebDAV Project page] .
 
 If you must use the native Windows implementation, you can map ownCloud
 to a new drive. Mapping to a drive enables you to browse files stored on
-an ownCloud server the way you would files stored in a mapped network
-drive.
+an ownCloud server the way you would files stored in a mapped network drive.
 
 Using this feature requires network connectivity. If you want to store
 your files offline, use the ownCloud Desktop Client to sync all files on
 your ownCloud to one or more directories of your local hard drive.
 
-NOTE: Prior to mapping your drive, you must permit the use of Basic Authentication in the Windows Registry. 
-The procedure is documented in 
+NOTE: Prior to mapping your drive, you must permit the use of Basic Authentication in the
+Windows Registry. The procedure is documented in 
 http://support.microsoft.com/kb/841215[KB841215] and differs between
 Windows XP/Server 2003 and Windows Vista/7. Please follow the Knowledge Base article before proceeding, 
 and follow the Vista instructions if you run Windows 7.
@@ -277,29 +265,28 @@ and follow the Vista instructions if you run Windows 7.
 The following example shows how to map a drive using the command line.
 To map the drive:
 
-1.  Open a command prompt in Windows.
-2.  Enter the following line in the command prompt to map to the computer Z drive, 
-where <drive_path> is the URL to your ownCloud server:
-
+. Open a command prompt in Windows.
+. Enter the following line in the command prompt to map to the computer Z drive, 
+where <drive_path> is the URL to your ownCloud server: +
++
 ....
 net use Z: https://<drive_path>/remote.php/dav/files/USERNAME/ /user:youruser yourpassword
 ....
-
-
-For example:
-
-`net use Z: https://example.com/owncloud/remote.php/dav/files/USERNAME/ /user:youruser yourpassword`
-
++
+**Example:**
++
+`net use Z: \https://example.com/owncloud/remote.php/dav/files/USERNAME/ /user:youruser yourpassword`
++
 ""
 The computer maps the files of your ownCloud account to the drive letter Z.
 ""
-
++
 NOTE: Though not recommended, you can also mount the ownCloud server using HTTP, leaving the connection unencrypted. 
 If you plan to use HTTP connections on devices while in a public place, we strongly recommend using a 
 VPN tunnel to provide the necessary security.
-
++
 An alternative command syntax is:
-
++
 ....
 net use Z: \\example.com@ssl\owncloud\remote.php\dav /user:youruser yourpassword
 ....
@@ -309,23 +296,21 @@ net use Z: \\example.com@ssl\owncloud\remote.php\dav /user:youruser yourpassword
 
 To map a drive using the Microsoft Windows Explorer:
 
-1.  Migrate to your computer in Windows Explorer.
-2.  Right-click on *Computer* entry and select *Map network drive…* from the drop-down menu.
-3.  Choose a local network drive to which you want to map ownCloud.
-4.  Specify the address to your ownCloud instance, followed by */remote.php/dav/files/USERNAME/*.
-
+. Migrate to your computer in Windows Explorer.
+. Right-click on btn:[Computer] entry and select btn:[Map network drive…] from the drop-down menu.
+. Choose a local network drive to which you want to map ownCloud.
+. Specify the address to your ownCloud instance, followed by */remote.php/dav/files/USERNAME/*.
++
 For example:
-
++
 ....
 https://example.com/owncloud/remote.php/dav/files/USERNAME/
 ....
-
++
 NOTE: For SSL protected servers, check *Reconnect at logon* to ensure that the mapping is persistent upon subsequent reboots. If you want to connect to the ownCloud server as a different user, check *Connect using different credentials*.
-
++
 image:explorer_webdav.png[image]
-
-1.  Click the `Finish` button.
-
+. Click the btn:[Finish] button. +
 Windows Explorer maps the network drive, making your ownCloud instance available.
 
 [[accessing-files-using-cyberduck]]
@@ -338,29 +323,25 @@ NOTE: This example uses Cyberduck version 4.2.1.
 
 To use Cyberduck:
 
-1.  Specify a server without any leading protocol information. For example:
-
+. Specify a server without any leading protocol information. For example:
++
 ----
 `example.com`
 ----
-
-[start=2]
 . Specify the appropriate port. The port you choose depends on whether
 or not your ownCloud server supports SSL. Cyberduck requires that you
 select a different connection type if you plan to use SSL. For example:
-
++
 ----
 80 (for WebDAV)
 443 (for WebDAV (HTTPS/SSL))
 ----
-
-[start=3]
-. Use the `More Options' drop-down menu to add the rest of your WebDAV
+. Use the `More Options` drop-down menu to add the rest of your WebDAV
 URL into the `Path' field. For example:
-
-""
-`remote.php/dav/files/USERNAME/`
-""
++
+----
+remote.php/dav/files/USERNAME/
+----
 
 Now Cyberduck enables file access to the ownCloud server.
 
@@ -378,9 +359,8 @@ https://example.com/owncloud/public.php/webdav
 in a WebDAV client, use the share token as username and the (optional)
 share password as password.
 
-NOTE: `Settings → Administration → Sharing → Allow users on this server
-to send shares to other servers` needs to be enabled in order to make
-this feature work.
+NOTE: menu:Settings[Administration > Sharing > Allow users on this server
+to send shares to other servers] needs to be enabled in order to make this feature work.
 
 [[known-problems]]
 == Known Problems
@@ -401,16 +381,15 @@ dedicated IP address for your SSL-based server.
 
 The Windows WebDAV Client might not support TSLv1.1 / TSLv1.2
 connections. If you have restricted your server config to only provide
-TLSv1.1 and above the connection to your server might fail. Please refer
-to the
+TLSv1.1 and above the connection to your server might fail. Please refer to the
 https://msdn.microsoft.com/en-us/library/windows/desktop/aa382925.aspx#WinHTTP_5.1_Features[WinHTTP]
 documentation for further information.
 
 [[problem-3]]
 === Problem: The File Size Exceeds the Limit Allowed and Cannot be Saved
 
-You receive the following error message: *Error 0x800700DF: The file
-size exceeds the limit allowed and cannot be saved.*
+You receive the following error message: +
+*Error 0x800700DF: The file size exceeds the limit allowed and cannot be saved.*
 
 [[solution-3]]
 ==== Solution
@@ -418,11 +397,10 @@ size exceeds the limit allowed and cannot be saved.*
 Windows limits the maximum size a file transferred from or to a WebDAV
 share may have. You can increase the value *FileSizeLimitInBytes* in
 *HKEY_LOCAL_MacHINE\SYSTEM\CurrentControlSet\Services\WebClient\Parameters*
-by clicking on *Modify*.
+by clicking on btn:[Modify].
 
-To increase the limit to the maximum value of 4GB, select *Decimal*,
-enter a value of *4294967295*, and reboot Windows or restart the
-*WebClient* service.
+To increase the limit to the maximum value of 4GB, select *Decimal*, enter a value of
+*4294967295*, and reboot Windows or restart the *WebClient* service.
 
 [[problem-4]]
 === Problem: Accessing your files from Microsoft Office via WebDAV fails
@@ -441,29 +419,27 @@ Cannot map ownCloud as a WebDAV drive in Windows using self-signed certificate.
 [[solution-5]]
 ==== Solution
 
-""
-1.  Go to the your ownCloud instance via your favorite Web browser.
-2.  Click through until you get to the certificate error in the browser
-status line.
-3.  View the cert, then from the Details tab, select Copy to File.
-4.  Save to the desktop with an arbitrary name, for example `myOwnCloud.cer`.
-5.  Start, Run, MMC.
-6.  File, Add/Remove Snap-In.
-7.  Select Certificates, Click Add, My User Account, then Finish, then OK.
-8.  Dig down to Trust Root Certification Authorities, Certificates.
-9.  Right-Click Certificate, Select All Tasks, Import.
-10. Select the Save Cert from the Desktop.
-11. Select Place all Certificates in the following Store, Click Browse,
-12. Check the Box that says Show Physical Stores, Expand out Trusted
-Root Certification Authorities, and select Local Computer there, click
-OK, Complete the Import.
-13. Check the list to make sure it shows up. You will probably need to
-Refresh before you see it. Exit MMC.
-14. Open Browser, select Tools, Delete Browsing History.
-15. Select all but In Private Filtering Data, complete.
-16. Go to Internet Options, Content Tab, Clear SSL State.
-17. Close browser, then re-open and test.
-""
+.  Go to the your ownCloud instance via your favorite Web browser.
+.  Click through until you get to the certificate error in the browser status line.
+.  View the cert, then from the Details tab, select Copy to File.
+.  Save to the desktop with an arbitrary name, for example `myOwnCloud.cer`.
+.  Start, Run, MMC.
+.  menu:File[Add/Remove Snap-In].
+.  Select menu:Certificates[Add > My User Account > Finish > OK].
+.  Dig down to Trust Root Certification Authorities, Certificates.
+.  Right-Click menu:Certificate[Select All Tasks > Import].
+. Select btn:[Save Cert] from the Desktop.
+. Select Place all Certificates in the following Store, click btn:[Browse],
+. Check the Box that says menu:Show Physical Stores[]. +
+Expand out *Trusted Root Certification Authorities*. +
+select *Local Computer*, click btn:[OK] to complete the Import.
+. Check the list to make sure it shows up. +
+You will probably need to Refresh before you see it. +
+Exit MMC.
+. Open Browser, select Tools, Delete Browsing History.
+. Select all but In Private Filtering Data, complete.
+. Go to Internet Options, Content Tab, Clear SSL State.
+. Close browser, then re-open and test.
 
 [[problem-6]]
 === Problem: Upload Large Files or Upload Takes Long
@@ -487,13 +463,11 @@ Error 0x80070043 "The network name cannot be found." while adding a network driv
 
 Make Windows service *WebClient* start automatically:
 
-1.  Open *Control Panel*.
-2.  Go to *Administrative Tools*.
-3.  Launch *Services*.
-4.  Find *WebClient* service.
-5.  Right-click on it and choose *Properties*.
-6.  Select *Startup type*: *Automatic*.
-7.  Click *OK* button.
+. Open menu:Control Panel[Administrative Tools > Services].
+. Find *WebClient* service.
+. Right-click on it and choose *Properties*.
+. Select *Startup type*: *Automatic*.
+. Click btn:[OK] button.
 
 Or in command prompt (as Admin):
 
@@ -502,40 +476,39 @@ sc config "WebClient" start=auto
 sc start "WebClient"
 ....
 
-More details https://github.com/owncloud/documentation/pull/2668[here].
+More details can be found https://github.com/owncloud/documentation/pull/2668[here].
 
 [[accessing-files-using-curl]]
 == Accessing Files Using cURL
 
-Since WebDAV is an extension of HTTP cURL can be used to script file
-operations.
+Since WebDAV is an extension of HTTP cURL can be used to script file operations.
 
 To create a folder with the current date as name:
 
 [source,bash]
 ----
-$ curl -u user:pass -X MKCOL "https://example.com/owncloud/remote.php/dav/files/USERNAME/$(date '+%d-%b-%Y')"
+sudo curl -u user:pass -X MKCOL "https://example.com/owncloud/remote.php/dav/files/USERNAME/$(date '+%d-%b-%Y')"
 ----
 
 To upload a file `error.log` into that directory:
 
 [source,bash]
 ----
-$ curl -u user:pass -T error.log "https://example.com/owncloud/remote.php/dav/files/USERNAME/$(date '+%d-%b-%Y')/error.log"
+sudo curl -u user:pass -T error.log "https://example.com/owncloud/remote.php/dav/files/USERNAME/$(date '+%d-%b-%Y')/error.log"
 ----
 
 To move a file:
 
 [source,bash]
 ----
-$ curl -u user:pass -X MOVE --header 'Destination: https://example.com/owncloud/remote.php/dav/files/USERNAME/target.jpg' https://example.com/owncloud/remote.php/dav/files/USERNAME/source.jpg
+sudo curl -u user:pass -X MOVE --header 'Destination: https://example.com/owncloud/remote.php/dav/files/USERNAME/target.jpg' https://example.com/owncloud/remote.php/dav/files/USERNAME/source.jpg
 ----
 
 To get the properties of files in the root folder:
 
 [source,bash]
 ----
-$ curl -X PROPFIND -H "Depth: 1" -u user:pass https://example.com/owncloud/remote.php/dav/files/USERNAME/ | xml_pp
+sudo curl -X PROPFIND -H "Depth: 1" -u user:pass https://example.com/owncloud/remote.php/dav/files/USERNAME/ | xml_pp
 <?xml version="1.0" encoding="utf-8"?>
 <d:multistatus xmlns:d="DAV:" xmlns:oc="http://owncloud.org/ns" xmlns:s="http://sabredav.org/ns">
   <d:response>
@@ -572,11 +545,10 @@ $ curl -X PROPFIND -H "Depth: 1" -u user:pass https://example.com/owncloud/remot
 To get the file id of a file, regardless of location, you need to make a
 PROPFIND request. This request requires two things:
 
-1.  A PROPFIND XML element in the body of the request method.
-2.  The path to the file that you want to find out more about
+. A PROPFIND XML element in the body of the request method.
+. The path to the file that you want to find out more about
 
-Here’s an example PROPFIND XML element, which we’ll store as
-`propfind-fileid.xml`.
+Here’s an example PROPFIND XML element, which we’ll store as `propfind-fileid.xml`.
 
 [source,xml]
 ----
@@ -587,22 +559,21 @@ Here’s an example PROPFIND XML element, which we’ll store as
 </a:propfind>
 ----
 
-NOTE: You could pass this directly to the Curl request. However, it can often be easier to create, maintain, and to share, if it’s created in a standalone file.
+NOTE: You could pass this directly to the Curl request. However, it can often be easier to create,
+maintain, and to share, if it’s created in a standalone file.
 
-With the file created, make the request by running the following Curl
-command:
+With the file created, make the request by running the following Curl command:
 
 [source,xml]
 ----
-curl -u username:password -X PROPFIND \
+sudo curl -u username:password -X PROPFIND \
   -H "Content-Type: text/xml" \
   --data-binary "@propfind-fileid.xml" \
   'http://localhost/remote.php/dav/files/admin/Photos/San%20Francisco.jpg'
 ----
 
 This will return an XML response payload similar to the following
-example. It contains the relative path to the file and the fileid of the
-file.
+example. It contains the relative path to the file and the fileid of the file.
 
 [source,xml]
 ----

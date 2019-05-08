@@ -4,6 +4,9 @@
 :novapath_url: https://www.m-und-h.de/en-novapath/
 :document_classification_url: https://marketplace.owncloud.com/apps/files_classifier
 :msft_azure_info_protection_url: https://azure.microsoft.com/en-us/services/information-protection/
+:experimental:
+
+== Introduction
 
 When dealing with large amounts of data in an enterprise, it is essential to have mechanisms in place that allow you to stay in control of data flows.
 To implement such mechanisms the first step to take is to define guidelines that describe how the content of different security levels have to be treated.
@@ -48,19 +51,6 @@ Specifically, it enables ownCloud providers to:
 * Prevent human mistakes when dealing with sensitive information.
 * Fulfil corporate data protection requirements.
 
-== Overview
-
-* xref:classification[Classification]
-** xref:tags-for-classification[Tags for Classification]
-** xref:automated-classification-based-on-document-metadata[Automated Classification based on Document Metadata]
-** xref:automated-classification-based-on-file-or-user-properties[Automated Classification based on File or User Properties]
-** xref:manual-classification[Manual Classification]
-* xref:policy-enforcement[Policy Enforcement]
-** xref:feature-policies[Feature Policies]
-** xref:access-policies[Access Policies]
-* xref:logging[Logging]
-* xref:limitations[Limitations]
-
 [[classification]]
 == Classification
 
@@ -77,7 +67,7 @@ Document classification levels in ownCloud are represented via xref:user_manual:
 Different categories of tags can be used to achieve different behaviors for users; these are detailed in the table below.
 
 .Tag Categories Available in ownCloud
-[cols="1,2", options="header"]
+[cols="15%,85", options="header"]
 |===
 | Tag Name
 | Description
@@ -134,7 +124,7 @@ In addition, let's assume that you take the classification level for documents c
 
 This is how you set up an automated classification and the access policy in ownCloud:
 
-* As an ownCloud administrator, navigate to the "_Settings_" section "_Workflows & Tags_".
+* As an ownCloud administrator, navigate to menu:Settings[Workflows & Tags].
   Adding a group with special privileges for the tag is optional.
 * Within "User Management", create the group "_Trainees_" and add some users.
 * Set up the classification rule in the panel "_Document Classification and Feature Policies_" in the same section, and set the following two properties:
@@ -144,19 +134,19 @@ This is how you set up an automated classification and the access policy in ownC
 --
 TIP: Take care, the property and value fields are case-sensitive!
 --
-* For "_Tag_", choose `Class: Confidential`.
+* For "_Tag_", choose btn:[Class: Confidential].
 * Don't tick a policy checkbox as you don't want to set up a feature policy but an access policy.
-* Hit "_Save_".
-* Set up the access policy in the "_Settings_" section "_Security_".
+* Hit btn:[Save].
+* Set up the access policy in menu:Settings[Security].
 * In the panel "_File Firewall_" enter a name for the group of rules, e.g., `Confidential` (optional).
-  Hint: first click "_Add group_" if you already have other rules configured.
-* From the drop-down menu, choose "_System file tag_".
-  In the tag picker, choose `Class: Confidential`.
+  Hint: first click btn:[Add group] if you already have other rules configured.
+* From the drop-down menu, choose btn:[System file] tag.
+  In the tag picker, choose btn:[Class: Confidential].
   Now you should have `[System file tag] [is] [Class: Confidential]`.
-* To add the group restriction, click "_Add rule_", choose "_User group_" from the drop-down menu.
-  In the group picker drop-down, choose `Trainees`.
+* To add the group restriction, click btn:[Add rule], choose btn:[User group] from the drop-down menu.
+  In the group picker drop-down, choose btn:[Trainees].
   Now you should have `[User group] [is] [Trainees]`.
-* Hit "_Save Rules_" to put the rules in place.
+* Hit btn:[Save Rules] to put the rules in place.
 * To verify that the rule is in place, upload a classified file and check for the tag.
   Then share it with a member of the group "Trainees" (or with the whole group) and try to access it from a user account that is a member of said group.
 
@@ -176,16 +166,16 @@ There are three default BAF categories that come with different classification l
 Assume you want to use the BAF category "_Intellectual Property_" and take the classification level for documents classified as "_Confidential_" over to ownCloud, to set up a policy that prevents said documents from being shared via a xref:user_manual:files/public_link_shares.adoc[public link].
 This is how you set up an automated classification and the feature policy in ownCloud:
 
-* As an ownCloud administrator, navigate to the "_Settings_" section "_Workflows & Tags_".
+* As an ownCloud administrator, navigate to menu:Settings[Workflows & Tags].
   Adding a group with special privileges for the tag is optional.
 * Set up the classification rule and feature policy in the panel "_Document Classification and Feature Policies_" of the same section:
 ** **Property XPath** = `//property[@name='urn:bails:IntellectualProperty:BusinessAuthorizationCategory:Name']/vt:lpwstr`
 ** **Property Value** = `Confidential`
   (Take care, the property and value fields are case-sensitive!)
-** For "_Tag_" choose `Class: Confidential`.
-** Tick the checkbox "_Prevent link sharing_".
-** Hit "_Save_".
-* To verify that the rule is in place, upload a classified file, check for the tag and try to create a xref:user_manual:files/public_link_shares.adoc[public link] share.
+** For "_Tag_" choose btn:[Class: Confidential].
+** Tick the checkbox btn:[Prevent link sharing].
+** Hit btn:[Save].
+* To verify that the rule is in place, upload a classified file, check for the tag and try to create a public link share.
 
 == General Approach
 
@@ -203,7 +193,7 @@ Apart from the concrete examples above, a generalized method to employ document 
 [[set-up-classification-rules]]
 === Set Up Classification Rules
 
-* As an ownCloud administrator, navigate to the "_Settings_" section "_Workflows & Tags_"
+* As an ownCloud administrator, navigate to menu:Settings[Workflows & Tags]
 * In the panel _**Document Classification and Feature Policies**_ set up the rules:
 ** **Property XPath**: Enter the XPath that identifies the classification property.
   Below you find a generalized example where `classification-property` is a placeholder for the property to evaluate.
@@ -232,15 +222,15 @@ Assume you want to automatically classify all PDF documents uploaded by users th
 You can construct a workflow rule using the following steps:
 
 * Within user management create the group "_Management_" and add some users.
-* Navigate to the "_Settings_" section "_Workflows & Tags_".
+* Navigate to menu:Settings[Workflows & Tags].
 * In the xref:enterprise/file_management/files_tagging.adoc#tag-manager[Collaborative Tags Management] panel, create a tag of type "_Static_" and call it `Class: Confidential`.
   Adding a group with special privileges for the tag is optional.
-* In the panel "_Workflow_" you can now set up the classification rules. Hit "_Add new workflow_" and specify a useful name.
+* In the panel "_Workflow_" you can now set up the classification rules. Hit btn:[Add new workflow] and specify a useful name.
   Now configure the conditions that trigger the classification once they are met.
-  For that choose "_User group_" from the drop-down menu, hit **+**, then choose "_File mimetype_" and hit **+** again.
+  For that choose "_User group_" from the drop-down menu, click btn:[\+], then choose "_File mimetype_" and click btn:[+] again.
   Then you have to provide the group "_Management_" and the MIME type for PDF (`application/pdf`) in the respective fields.
-* Select the tag `Class: Confidential` to be added when the rules match.
-* Hit "_Add workflow_" to save and enable it.
+* Select the tag btn:[Class: Confidential] to be added when the rules match.
+* Click btn:[Add workflow] to save and enable it.
 
 NOTE: For more information, please check the options available for auto-tagging and consult the
 xref:enterprise/file_management/files_tagging.adoc[Workflow Extension documentation].
@@ -253,7 +243,7 @@ as described in the next section.
 As a further measure, it is possible to supply tags for users to autonomously classify all types of files in their own or shared spaces.
 
 - As an ownCloud administrator, create a group within user management and add the users that should be able to classify files.
-- Then navigate to the "_Settings_" section "_Workflows & Tags_".
+- Then navigate to menu:Settings[Workflows & Tags].
 - In the xref:enterprise/file_management/files_tagging.adoc#tag-manager[Collaborative Tags Management] panel, create a tag of type "_Static_" and give it a meaningful name.
   Then assign the group you created, in the beginning, to give it's users special privileges for the tag.
 - Users that are not a member of the specified group(s) will only be able to see the respective tag but can't alter or assign/un-assign it.
@@ -327,7 +317,7 @@ This option currently is also mutually exclusive and will always override the po
 
 All policies can also be enforced when using xref:manual-classification[Manual Classification] or xref:automated-classification-based-on-file-or-user-properties[Automated Classification based on File or User Properties].
 For this, specify the tag that determines the files that the policy should apply to and leave the fields for "_Property XPath_" and "_Property Value_" empty.
-Then choose the desired policy and hit "_Save_".
+Then choose the desired policy and click btn:[Save].
 
 [[access-policies]]
 == Access Policies
