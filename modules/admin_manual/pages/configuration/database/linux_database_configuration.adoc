@@ -1,5 +1,9 @@
 = Database Configuration on Linux
 :toc: right
+:avoid-deadlocks-galery-haproxy-url: https://severalnines.com/blog/avoiding-deadlocks-galera-set-haproxy-single-node-writes-and-multi-node-reads
+:haproxy-url: https://www.haproxy.org/
+:maxscale-url: https://github.com/mariadb-corporation/MaxScale/wiki
+:maxscale-readwrite-splitting-with-galera-cluster-url: https://mariadb.com/kb/en/mariadb-enterprise/mariadb-maxscale-14/maxscale-readwrite-splitting-with-galera-cluster/
 
 == Introduction
 
@@ -438,3 +442,32 @@ PostgreSQL: \c owncloud; \d
 MySQL     : quit
 PostgreSQL: \q
 ....
+
+=== How to Solve Deadlock Errors
+
+[source,console]
+....
+SQLSTATE[40001]: Serialization failure: 1213 Deadlock found when trying to get lock; try restarting transaction
+....
+
+**Explanation**
+
+This error is caused when two transactions write and commit to the same rows in separate cluster nodes. 
+Only one of them can successfully commit. 
+The failing one will be aborted. 
+For cluster level aborts, Galera Cluster returns a deadlock error. 
+
+**Solution**
+
+The solution, for Galera Cluster, would be to send all write requests to a single DB node, instead of all of them. 
+Here is {avoid-deadlocks-galery-haproxy-url}[a useful guide], when using {haproxy-url}[HAProxy]. 
+
+The same concept applies when {maxscale-url}[MaxScale] is used as DB proxy. 
+It needs to be configured in order to send all write requests to a single DB node, instead all of them, and  balance read statements across the rest of the nodes. 
+Here is {maxscale-readwrite-splitting-with-galera-cluster-url}[a useful guide] on how to configure MaxScale with Read/Write splitting.
+
+**Enabling causality checks**
+
+Additionally, to solve this issue, when using Galera Cluster, customers should try to set `wsrep_sync_wait=1`. 
+When enabled, the node triggers causality checks in response to certain types of queries. 
+This is disabled by default.
