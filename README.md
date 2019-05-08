@@ -1,5 +1,7 @@
 # ownCloud Documentation
+.
 
+Check CI for 10.2 branch
 [![Build Status](http://drone.owncloud.com/api/badges/owncloud/docs/status.svg?branch=master)](http://drone.owncloud.com/owncloud/docs)
 
 This project is a port of the ownCloud documentation, that was previously generated using [Sphinx-Doc](http://www.sphinx-doc.org), to [Antora](./docs/what-is-antora.md). Fundamentally, not that much has changed. All of the same information is still available. However, here's what has changed:
