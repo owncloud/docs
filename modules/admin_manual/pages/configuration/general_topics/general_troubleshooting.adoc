@@ -35,9 +35,9 @@ If you think you have found a bug in ownCloud, please:
 * Double-check your configuration
 
 If you can’t find a solution, please use our 
-xref:developer_manual:bugtracker/index.html[bugtracker].
+xref:developer_manual:bugtracker/index.adoc[bugtracker].
 You can generate a configuration report with the 
-xref:configuration/server/occ_command.adoc#config-command[occ config command], 
+xref:configuration/server/occ_command.adoc#config-commands[occ config command], 
 with passwords automatically obscured.
 
 [[general-troubleshooting-1]]
@@ -51,7 +51,7 @@ When you see warnings about `code integrity`, refer to xref:configuration/genera
 
 It might be possible that 3rd party / non-shipped apps are causing various different issues.
 Always disable 3rd party apps before upgrades, and for troubleshooting.
-Please refer to the xref:configuration/server/occ_command.adoc#apps-command[Apps Commands] on how to disable an app from command line.
+Please refer to the xref:configuration/server/occ_command.adoc#apps-commands[Apps Commands] on how to disable an app from command line.
 
 [[owncloud-logfiles]]
 === ownCloud Logfiles
@@ -110,7 +110,7 @@ If you need to directly upload files from the same server please use a
 WebDAV command line client like `cadaver` to upload files to the WebDAV
 interface at:
 
-`https://example.com/owncloud/remote.php/dav`
+`\https://example.com/owncloud/remote.php/dav`
 
 [[common-problems-error-messages]]
 === Common problems / error messages
@@ -120,7 +120,7 @@ described above:
 
 * `SQLSTATE[HY000] [1040] Too many connections` -> You need to increase the connection limit of your database, please refer to the manual of your database for more information.
 * `SQLSTATE[HY000]: General error: 5 database is locked` -> You’re using `SQLite` which can’t handle a lot of parallel requests. Please consider converting to another database like described in xref:configuration/database/db_conversion.adoc[converting Database Type].
-* `SQLSTATE[HY000]: General error: 2006 MySQL server has gone away` -> Please refer to xref:configuration/database/linux_database_configuration.adoc#troubleshooting[Troubleshooting] for more information.
+* `SQLSTATE[HY000]: General error: 2006 MySQL server has gone away` -> Please refer to xref:configuration/database/linux_database_configuration.adoc#database-configuration-troubleshooting[Troubleshooting] for more information.
 * `SQLSTATE[HY000] [2002] No such file or directory` -> There is a problem accessing your SQLite database file in your data directory (`data/owncloud.db`). Please check the permissions of this folder/file or if it exists at all. If you’re using MySQL please start your database.
 * `Connection closed / Operation cancelled` or `expected filesize 4734206 got 458752` -> This could be caused by wrong 
 `KeepAlive` settings within your Apache config. Make sure that `KeepAlive` is set to `On` and also try to raise the 
@@ -296,8 +296,8 @@ is important to have a correct working setup of the following URLs:
 
 [verse]
 --
-`https://example.com/.well-known/carddav`
-`https://example.com/.well-known/caldav`
+`\https://example.com/.well-known/carddav`
+`\https://example.com/.well-known/caldav`
 
 --
 
@@ -305,11 +305,11 @@ Those need to be redirecting your clients to the correct DAV endpoints.
 If running ownCloud at the document root of your Web server the correct
 URL is:
 
-`https://example.com/remote.php/dav`
+`\https://example.com/remote.php/dav`
 
 and if running in a subfolder like `owncloud`:
 
-`https://example.com/owncloud/remote.php/dav`
+`\https://example.com/owncloud/remote.php/dav`
 
 For the first case the .htaccess file shipped with ownCloud should do
 this work for your when running Apache. You only need to make sure that
@@ -327,11 +327,11 @@ Redirect 301 /.well-known/caldav /owncloud/remote.php/dav
 
 Now change the URL in the client settings to just use:
 
-`https://example.com`
+`\https://example.com`
 
 instead of e.g.
 
-`https://example.com/owncloud/remote.php/dav/principals/username`.
+`\https://example.com/owncloud/remote.php/dav/principals/username`.
 
 There are also several techniques to remedy this, which are described
 extensively at the http://sabre.io/dav/service-discovery/[Sabre DAV website].
@@ -341,7 +341,7 @@ extensively at the http://sabre.io/dav/service-discovery/[Sabre DAV website].
 
 If you get an error like:
 
-`PATCH https://example.com/remote.php/dav HTTP/1.0 501 Not Implemented`
+`PATCH \https://example.com/remote.php/dav HTTP/1.0 501 Not Implemented`
 
 it is likely caused by one of the following reasons:
 
