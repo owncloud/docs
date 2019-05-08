@@ -1,88 +1,86 @@
 = How To Install and Configure an LDAP Proxy-Cache Server
 :toc: right
+:experimental:
+:list-of-ldap-url: https://en.wikipedia.org/wiki/List_of_LDAP_software
+:open-ldap-url: https://en.wikipedia.org/wiki/OpenLDAP
+:syslog-url: https://en.wikipedia.org/wiki/Syslog 
+:rsyslog-url: https://www.rsyslog.com/
 
 [[background]]
 == Background
 
-To reduce network traffic overhead and avoid problems either logging in
-or performing user searches while sharing, it’s an excellent idea to
-implement an LDAP proxy cache.
+To reduce network traffic overhead and avoid problems either logging in or performing user searches while sharing, it's an excellent idea to implement an LDAP proxy cache.
+An LDAP proxy cache server, similar to other kinds of caching servers, is a special type of LDAP replica. 
+It can cache a range of LDAP records, often resulting in improved LDAP server performance.
 
-An LDAP proxy cache server, similar to other kinds of caching servers,
-is a special type of LDAP replica. It can cache a range of LDAP records,
-often resulting in improved LDAP server performance.
-
-Specifically, the records which need to be cached, for improved ownCloud
-performance, are:
+Specifically, the records which need to be cached for improved ownCloud performance are:
 
 * Users that are allowed to log in
 * Groups (limited to the allowed users)
-* Search fields (e.g., `sAMAccountName`, `cn`, `sn`, `givenName`, and `displayName`)
+* Search fields (e.g., `sAMAccountName`, `CN`, `SN`, `givenName`, and `displayName`)
 
-[[how-to-setup-the-server]]
-== How To Setup the Server
+== How To Set Up the Server
 
-There’s not that much to it, just the following five steps:
+To set up the LDAP Proxy-Cache server work through the following five steps:
 
 1.  xref:install-openldap[Install OpenLDAP]
 2.  xref:configure-the-server[Configure the Server]
 3.  xref:enable-the-configuration-file[Enable the Configuration File]
 4.  xref:open-the-log[Check the Log]
 5.  xref:perform-a-test-search[Perform a Test Search]
-6.  xref:configure-owncloud-ldap-app[Configure ownCloud LDAP App]
+6.  xref:configure-owncloud-ldap-app[Configure the ownCloud LDAP app]
 
 [[install-openldap]]
 === Install OpenLDAP
 
-There are a number of
-https://en.wikipedia.org/wiki/List_of_LDAP_software[LDAP server
-implementations] available. The one used in this guide is
-https://en.wikipedia.org/wiki/OpenLDAP[OpenLDAP].
+There are a number of {list-of-ldap-url}[LDAP server implementations] available. 
+The one used in this guide is {open-ldap-url}[OpenLDAP].
 
-NOTE: While OpenLDAP does work on any operating system, for the purposes of this guide, we’ll be using a Debian-based Linux distribution.
+NOTE: While OpenLDAP does work on most of the common operating systems, for the purposes of this guide we'll be using a Debian-based Linux distribution.
 
-Firstly, log in as root, and update your system, to ensure that you’re
-using the latest packages.:
+First, update your system to ensure that you are using the latest packages.
+Then, run the following command:
 
-....
-apt-get update && apt-get upgrade -y
-....
+[source,console]
+----
+sudo apt-get update && apt-get upgrade -y
+----
 
-Next, install OpenLDAP and its associated packages.:
+Next, install OpenLDAP and its associated packages by running the following command:
 
-....
-apt-get install slapd ldap-utils -y
-....
+[source,console]
+----
+sudo apt-get install slapd ldap-utils -y
+----
 
 [[configure-the-server]]
 === Configure the Server
 
-With OpenLDAP installed and running, you now need to configure the
-server. One way of doing so, is to create a configuration file. So,
-create `/etc/ldap/slapd.conf` with your text editor of choice, and add
-the following configuration to it.
+With OpenLDAP installed and running, you now need to configure it. 
+One way of doing so is to create a configuration file. 
+Create `/etc/ldap/slapd.conf` with your text editor of choice, and add the following configuration to it.
 
 [source,conf]
 ----
 include::example$configuration/ldap/single.slapd.conf[]
 ----
 
-NOTE: This configuration only caches queries from a single Active Directory server. To cache queries from multiple Active Directory servers, a configuration is available below.
+NOTE: This configuration only caches queries from a single Active Directory server. 
+To cache queries from multiple Active Directory servers, xref:cache-multiple-active-directory-servers[a configuration is available below].
 
-After you’ve done that, save the file, test that there are no errors in
-the configuration by running:
+After you've done that, save the file and test that there are no errors in the configuration by running:
 
-....
-slaptest -f /etc/ldap/slapd.conf
-....
+[source,console]
+----
+sudo slaptest -f /etc/ldap/slapd.conf
+----
 
 NOTE: If you see warnings in the console output, they are not crucial.
 
-[[enable-the-configuration-file]]
 === Enable the Configuration File
 
-Next, we need to tell OpenLDAP to use our configuration. To do so, open
-`/etc/default/slapd` and add the following line to it:
+Next, we need to tell OpenLDAP to use our configuration.
+To do so, open `/etc/default/slapd` and add the following line to it:
 
 ....
 SLAPD_CONF=/etc/ldap/slapd.conf
@@ -90,151 +88,159 @@ SLAPD_CONF=/etc/ldap/slapd.conf
 
 With that done, restart OpenLDAP by running the following command:
 
-....
-service slapd restart
-....
+[source,console]
+----
+sudo service slapd restart
+----
 
-[[open-the-log]]
 === Open the Log
 
-Open another terminal and see the systemlog with the following command.:
+With OpenLDAP running, review {syslog-url}[the system log output] with the following command:
 
-....
+[source,console]
+----
 tail -f /var/log/syslog | grep QUERY
-....
+----
 
-If there is no such file, you need to install rsyslog with.
+If there is no such file, you need to install a Syslog daemon. 
+We recommend using {rsyslog-url}[Rsyslog].
+To install it, run the following command:
 
-....
-apt install rsyslog
-....
+[source,console]
+----
+sudo apt install rsyslog
+----
 
-[[perform-a-test-search]]
 === Perform a Test Search
 
-Now that the server’s installed, configured, and running, we next need
-to perform a search. This will check that records are being correctly
-cached. To do so, update the command below with values from your Active
-Directory server configuration, and then run it.:
-
-....
-ldapsearch -h localhost -x -LLL \
-	-D "cn=admin,cn=users,dc=example,dc=com" \
- 	-b "cn=users,dc=example,dc=com" \
-	-w "Password" "(cn=Administrator)" name
-....
-
-or
+Now that the server's installed, configured, and running, we next need to perform a test search. 
+This will check that records are being correctly cached. 
+To do so, run one of the following commands below, after updating it with values from your Active Directory server configuration.
 
 [source]
 ----
-ldapsearch -H ldaps://localhost:636 -x -LLL \
-	-D "cn=admin,cn=users,dc=example,dc=com" \
-	-b "cn=users,dc=example,dc=com" \
-	-W "(cn=Administrator)" name
+sudo ldapsearch -h localhost -x -LLL \
+    -D "cn=admin,cn=users,dc=example,dc=com" \
+    -b "cn=users,dc=example,dc=com" \
+    -w "Password" "(cn=Administrator)" name
 ----
 
--h = host address (Example: `localhost` or `192.168.1.1`)
--H = host address (Example: `ldap://` or `ldaps://` hostname or ip and port `:389` or `:636`)
--x = simple authentication
--b = Search Base, (Example: `cn=Users,dc=example,dc=com`)
--D = User with permissions (Example: `cn=Admin,dc=example,dc=com`)
--LLL = Show only results, no extra information
--w = Password ("Password")
--W = Password, will ask for password and hide your input
-`(cn=Administrator)` = Filter the search
-name = Show only this attributes
+[source]
+----
+sudo ldapsearch -H ldaps://localhost:636 -x -LLL \
+    -D "cn=admin,cn=users,dc=example,dc=com" \
+    -b "cn=users,dc=example,dc=com" \
+    -W "(cn=Administrator)" name
+----
 
-If you see results including: `"Query cachable"` and `"Query answered (x) times"`, then the setup works.
+.Description of Options
+[width="100%",cols="20%,80%",options="header",]
+|===
+| Option
+| Description
 
-[[configure-owncloud-ldap-app]]
+| -h
+| Host address (Example: `localhost` or `192.168.1.1`)
+
+| -H
+| Host address (Example: `ldap://` or `ldaps://` hostname or ip and port `:389` or `:636`)
+
+| -x
+| Simple authentication
+
+| -b
+| Search Base, (Example: `cn=Users,dc=example,dc=com`)
+
+| -D
+| User with permissions (Example: `cn=Admin,dc=example,dc=com`)
+
+| -LLL
+| Show only results, no extra information
+
+| -w
+| Password ("Password")
+
+| -W
+| Password, will ask for password and hide your input
+
+| `(cn=Administrator)`
+| Filter the search
+
+| name
+| Show only these attributes
+|===
+
+If the results include: `"Query cachable"` and `"Query answered (x) times"`, then the setup works.
+
 === Configure ownCloud LDAP App
 
-Login as ownCloud admin in your ownCloud server.
+Configuring the ownCloud LDAP application involves several step; these are:
 
-Click on the dropdown menu in the top-left corner next to "Files",
-then on Apps.
+* xref:enable-the-ldap-application[Enable the LDAP application]
+* xref:configure-the-ldap-application[Configure the LDAP application]
 
-Click on "Not enabled", and enable the "LDAP user and group backend" App.
+==== Enable the LDAP Application
 
-Go to the admin dropdown menu in the top-right corner, select "Admin".
+First, login to your ownCloud server as an ownCloud admin; then:
 
-In the administration section, click on the left side on "LDAP".
+* Click on the menu:Settings[] dropdown menu in the top-right corner.
+** Then, click on menu:Admin[Apps].
+** Click on btn:[Show Disabled Apps] and enable the "_LDAP Integration_" app, and reload the page.
+* Click on the menu in the left-hand side, menu:Admin[User Authentication].
+** Select `LDAP`, if available and not already selected.
 
-Configure Server-Tab
+==== Configure the LDAP Application
 
-First enter the server address, either IP or DN.
+image::configuration/ldap/ldap-configuration-form.png[ownCloud's LDAP configuration form.]
 
-You can click on the button to detect your servers port or enter it manually.
+* Select the menu:Server[] tab.
+** In the first field, enter the server address (either the IP address or hostname). +
+   TIP: You can click on the button to detect your server's port or enter it manually.
+** In the next two fields, enter the user `DN` of the user you want to log in with, and the password.
+** Click on btn:[Detect Base DN], or enter the base DN manually.
+** Click on btn:[Test Base DN].
 
-Next, enter the dn of the user, you want to log in with and in the next line enter the password.
+* If you fulfill all the requirements, you should get a green light and see the message: `Configuration OK`.
 
-Then you can click on "detect base dn" or enter it manually. then click on "test base dn".
+* Select menu:Users[] tab.
+** Select the `objectclass` for the users, for example `user`.
+** Click btn:[Verify settings and count users] near the bottom of the form.
+You will then see the number of users found.
 
-If you fulfill all the requirements you should get a green light and "configuration ok" message.
+* Select menu:Login Attributes[] tab.
+** A configuration appears; adjust it to your users configuration.
+** If required, adjust the login parameters additional login attributes.
+** You can check users with any of the allowed login options.
+You can adjust them or leave them the way they are.
 
-Configure Users
+* Select menu:Groups[] tab.
+** Select all the `objectclasses` for your groups, for example `group`. 
+   Then, verify your settings
 
-Select the objectclass for the users, for example `user`.
+* Select menu:Advanced[] tab.
+** Under "Configuration Settings":
+   * Configuration Active should be selected.
+   * Adjust the Cache TTL (time to live) value as required. 
+     However, ownCloud usually auto-selects the best settings for each AD configuration.
+** Under "Directory Settings"
+   * Check if the Group-Member association is `Member (AD)`. 
+     This is important for the users being shown in their respective groups.
+   * Select `Nested groups`, if you have them.
 
-Verify your settings; where you will see the number of users being found.
+* Select menu:Expert[] tab.
+** In the "Internal Username Attribute" field, we need to set `CN` for the users being shown with their unique name. 
+   If you leave that field empty, each user will get a unique UID as a string of numbers and letters.
+** At the bottom of the form, click both btn:[Clear Username-LDAP User Mapping] and btn:[Clear Groupname-LDAP Group Mapping], and then test your configuration by clicking btn:[Test Configuration].
 
-Configure Login Attributes
+* Navigate to our ownCloud `User` administration page and check if all your users are listed properly, and shown in the right groups.
+* Go to the homepage of your ownCloud server and try to share something with one of your users
 
-A configuration appears by default, adjusted it to your users configuration.
+If everything is set up correctly, you now have an LDAP proxy server to your active directory that will reduce the network traffic by caching the searches your perform.
 
-If required, adjust the login paramethers additional login attributes.
-
-You can check users with any of the allowed login options. You can
-adjust them or leave them the way they are.
-
-Configure Groups
-
-Select all the objectclasses for your groups, for example "group".
-Verify your settings.
-
-Configure Advanced
-
-Configuration Active shoud be selected.
-
-Adjust the Cache TTL (time to live) value as required.
-
-ownCloud usualy autoselects the best settings for each AD configuration.
-
-Check if the Group-Member association is "Member (AD)".
-That’s important for the users being shown in their respective groups.
-
-Select "Nested groups", if you have them.
-
-Configure Expert
-
-"Internal Username Attribute"
-
-Here we need to set "cn" for the users being shown with their unique
-name. If you leave that field empty, each user will get a unique uid as
-a string of numbers and letters.
-
-Clear the Username and Groupname Mapping and test your configuration by
-clicking on the buttons below.
-
-Navigate to Admin -> Users and check if all your users are listed
-properly, and shown in the right groups.
-
-Go to the homepage of your ownCloud server and try to share something
-with one of your users
-
-If everything is set up correctly, you now have an LDAP proxy server to
-your active directory that will
-
-reduce the network traffic by caching the searches your perform.
-
-[[cache-multiple-active-directory-servers]]
 == Cache Multiple Active Directory Servers
 
-If you have more than one that you want to cache, in
-`/etc/ldap/slapd.conf` add the following configuration instead,
-adjusting as necessary. The ownCloud LDAP app settings are the same as
-in section 6.
+If you have more than one Active Directory Server that you want to cache, in `/etc/ldap/slapd.conf` add the following configuration instead, adjusting it as necessary. 
+The ownCloud LDAP app settings are the same as in section 6.
 
 [source,conf]
 ----
