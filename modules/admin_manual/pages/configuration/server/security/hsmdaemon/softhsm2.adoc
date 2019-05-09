@@ -1,0 +1,116 @@
+= SoftHSM2
+:toc: right
+:softhsm2-url: https://www.opendnssec.org/softhsm/
+:opensuse-security-repositories-url: https://download.opensuse.org/repositories/security/
+
+SoftHSM2 is a simple approach for employing storage encryption with a master key in an HSM, because it store the keys in place of ownCloud.
+
+== Use SoftHSM2 With hsmdaemon
+
+SoftHSM2 can be used with and xref:configuration/server/security/hsmdaemon/index.adoc[hsmdaemon] to store keys in place of ownCloud; either on the same or a different machine as ownCloud.
+Because keys are stored with a different owner to ownCloud, it prevents the web server (xref:installation/system_requirements.adoc#officially-recommended-supported-options[typically Apache]) from directly reading the key material.
+This helps prevent a malicious actor from reading files, if they can impersonate the web server user.
+However, it doesn't help if the malicious actor can manipulate PHP files and run arbitrary code.
+
+IMPORTANT: If you run SoftHSM2 and hsmdaemon on a different machine on the network, know that the hsmdaemon traffic is not encrypted.
+In this scenario, the systems administrator would need to setup a secure tunnel to encrypt the traffic.
+
+== Install SoftHSM2
+
+If you do not have an HSM-provided PKCS11 library, then you can use {softhsm2-url}[SoftHSM2] instead.
+To do so, follow the instructions for you Linux distribution below.
+
+* xref:install-softhsm2-debian-ubuntu[Debian and Ubuntu]
+* xref:install-softhsm2-opensuse-suse-linux-enterprise-server[openSUSE and SUSE Linux Enterprise Server]
+* xref:install-softhsm2-fedora-red-hat-enterprise-linux-centos[Fedora and Red Hat Enterprise Linux and Centos]
+
+NOTE: Installing these two packages also installs `/usr/lib/x86_64-linux-gnu/softhsm/libsofthsm2.so`, which is a module that we will need later, for interaction with the PKCS11 API.
+
+[[install-softhsm2-debian-ubuntu]]
+=== Install on Debian and Ubuntu
+
+To install SoftHSM2 on either Debian or Ubuntu, run the command below.
+
+[source,console]
+----
+sudo apt-get update
+sudo apt-get install -y softhsm2 libsofthsm2
+----
+
+[[install-softhsm2-opensuse-suse-linux-enterprise-server]]
+=== Install on openSUSE and SUSE Linux Enterprise Server
+
+To install SoftHSM2, you first have to ensure that you have {opensuse-security-repositories-url}[the official security repository] for your server enabled in your server's repositories list. 
+To check if it is, run the command `zypper lr`, which will show you output similar to the following:
+
+[source,console]
+----
+#  | Alias                     | Name                                    | Enabled | GPG Check | Refresh
+---+---------------------------+-----------------------------------------+---------+-----------+--------
+ 1 | repo-debug                | openSUSE-Leap-15.0-Debug                | No      | ----      | ----   
+ 2 | repo-debug-non-oss        | openSUSE-Leap-15.0-Debug-Non-Oss        | No      | ----      | ----   
+ 3 | repo-debug-update         | openSUSE-Leap-15.0-Update-Debug         | No      | ----      | ----   
+ 4 | repo-debug-update-non-oss | openSUSE-Leap-15.0-Update-Debug-Non-Oss | No      | ----      | ----   
+ 5 | repo-non-oss              | openSUSE-Leap-15.0-Non-Oss              | Yes     | (r ) Yes  | Yes    
+ 6 | repo-oss                  | openSUSE-Leap-15.0-Oss                  | Yes     | (r ) Yes  | Yes    
+ 7 | repo-security             | openSUSE-Leap-15.0-Security             | Yes     | (r ) Yes  | Yes    
+ 8 | repo-source               | openSUSE-Leap-15.0-Source               | No      | ----      | ----   
+ 9 | repo-source-non-oss       | openSUSE-Leap-15.0-Source-Non-Oss       | No      | ----      | ----   
+10 | repo-update               | openSUSE-Leap-15.0-Update               | Yes     | (r ) Yes  | Yes    
+11 | repo-update-non-oss       | openSUSE-Leap-15.0-Update-Non-Oss       | Yes     | (r ) Yes  | Yes 
+----
+
+TIP: use the `-d` flag to show the URI for each repository as well.
+
+If there is no security repository available, then add it using the following command:
+
+[source,console]
+----
+# Replace <security-repository> with the URL for your distribution and architecture.
+sudo zypper addrepo \
+  --check \
+  --refresh \
+  --name "openSUSE-Leap-15.0-Security" \
+  <security-repository> \
+  "repo-security"
+----
+
+With the repository enabled, install SoftHSM2 by running the following command:
+
+[source,console]
+----
+sudo zypper install -y --auto-agree-with-licenses softhsm
+----
+
+[[install-softhsm2-fedora-red-hat-enterprise-linux-centos]]
+=== Install on Fedora and Red Hat Enterprise Linux and Centos 
+
+To install SoftHSM2 on Fedora and Red Hat Enterprise Linux and Centos, run the command below.
+
+[source,console]
+----
+sudo yum install --assumeyes softhsm
+----
+
+=== Check the Configuration File
+
+Once SoftHSM2 is installed, check that the directory specified by `directories.tokendir` in SoftHSM2's configuration file exists.
+
+[options="headers",cols="3"]
+|===
+|Distribution |Configuration File Location |Tokens Directory
+|Debian and Ubuntu |`/etc/softhsm/softhsm2.conf` .3+|`/var/lib/softhsm/tokens/`
+|openSUSE and SUSE Linux Enterprise Server |`/etc/softhsm2.conf`
+|Fedora and Red Hat Enterprise Linux and Centos |`/etc/softhsm2.conf`
+|===
+
+[source,ini]
+....
+# SoftHSM v2 configuration file
+
+directories.tokendir = /var/lib/softhsm/tokens/
+objectstore.backend = file
+
+# ERROR, WARNING, INFO, DEBUG
+log.level = INFO
+....
