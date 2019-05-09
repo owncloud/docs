@@ -347,8 +347,6 @@ Please see the reference link for more details.
 Reference: [`Keyboard Shortcuts`](https://asciidoctor.org/docs/user-manual/#keyboard-shortcuts)
 Reference: [`UI buttonss`](https://asciidoctor.org/docs/user-manual/#ui-buttons)
 
-**IMPORTANT** You must set the `:experimental:` attribute to enable the UI macros.
-
 You can create a button styled text like you want a user to press specific keyboard button(s) or browser text buttons.
 The syntax for keyboard shortcuts is: `kbd:[key(+key)*]`
 The syntax for UI button text is: `btn:[text]`
