@@ -1,0 +1,502 @@
+= The HSM (Hardware Security Module) Daemon (hsmdaemon)
+:toc: right
+:description: Learn how to install ownCloud’s custom HSM (Hardware Security Module) and configure ownCloud to delegate encryption to it.
+:keywords: hsmdaemon, hardware security module, security, pkcs11, softhsm2
+:base64-encoding-url: https://en.wikipedia.org/wiki/Base64
+:hsm-url: https://en.wikipedia.org/wiki/Hardware_security_module
+:jwt-url: https://jwt.io/
+:network-sockets-url: https://en.wikipedia.org/wiki/Network_socket
+:opensc-wiki-url: https://github.com/OpenSC/OpenSC/wiki
+:php-exec-function-url: https://www.php.net/manual/en/function.exec.php
+:pkcs11-url: https://en.wikipedia.org/wiki/PKCS_11
+:pkcs11-tool-url: https://linux.die.net/man/1/pkcs11-tool 
+:softhsm2-url: https://www.opendnssec.org/softhsm/
+:unix-sockets-url: http://beej.us/guide/bgipc/html/multi/unixsock.html
+
+== Introduction
+
+The hsmdaemon is a daemon, provided by ownCloud, to delegate encryption to an {hsm-url}[HSM (Hardware Security Module)].
+This can be necessary, as PHP cannot, directly, interface with {pkcs11-url}[a PKCS11 stack]; neither with an API wrapper, because one does not exist, nor via the OpenSSL bindings.
+Because of this, a separate process is needed to decrypt anything with the private key stored in an HSM.
+
+NOTE: When using hsmdaemon with an HSM, the keys _may_ still be stored on the same physical machine as ownCloud.
+
+NOTE: For hsmdaemon support, you need ownCloud Enterprise Edition >= 10.2. 
+We recommend consulting with us when deploying storage encryption with an HSM.
+
+Running {php-exec-function-url}[exec()] to decrypt the key with a command line command to do the encryption might leak the HSM credentials if the admin lists the currently running processes. 
+To prevent that, an HSM daemon will be used that can open a session to the HSM upon startup. 
+
+This daemon will be used by ownCloud to decrypt the current master key upon request. 
+The communication happens via {unix-sockets-url}[UNIX sockets] or {network-sockets-url}[TCP sockets] and is authorized by a shared token that the daemon stores in the ownCloud database via a REST/JSON route.
+
+ownCloud internally uses OpenSSL to en-/decrypt keys and needs to be extended to support en-/decrypt operations via the new daemon. 
+The current solution encrypts the ownCloud master key with a key from the HSM. 
+
+NOTE: From the technical point of view the `Crypt` class is extended to handle the key generation in the HSM device and also to get the key from HSM. 
+For the read/write operation on a file, the request goes to the HSM and then, based on the keys fetched from HSM, the files are encrypted or decrypted. 
+The keys are not replaced.
+
+== How The HSM Daemon Interacts with ownCloud
+
+Upon startup, the daemon will generate a token and send it to ownCloud via a new REST/JSON route. 
+After connecting with the HSM daemon, an unsophisticated, line-based, protocol is used (every line ends with CRLF):
+
+. ownCloud sends the token read from database.
+. The daemon compares the received token with its token and returns an `"OK"` line.
+. ownCloud then sends the data it wants to decrypt as a {base64-encoding-url}[Base64-encoded], one-line string.
+. The daemon returns the decrypted data as a Base64-encoded one-line string.
+
+Doing so ensures that an evil admin will need to wiretap the communication between either the database or the HSM daemon and ownCloud.
+
+== Quick Overview
+
+HSM support consists of two core parts:
+
+. An actual HSM PKCS11 module.
+. An hsmdaemon that provides a {jwt-url}[JWT]-protected web API for the PKCS11 stack to generate key pairs and decrypt data.
+
+== Deployment Recommendation
+
+We recommend running hsmdaemon on every web server to reduce latency. 
+
+== Installation
+
+Integrating the hsmdaemon with ownCloud requires 3 steps; these are:
+
+. xref:install-a-pkcs11-module[Install a PKCS11 Module]
+. xref:install-and-configure-the-hsmdaemon[Install and Configure the hsmdaemon]
+. xref:configure-owncloud[Configure ownCloud]
+
+[NOTE]
+====
+The installation instructions in this guide have been designed to work with xref:installation/system_requirements.adoc#server[ownCloud's supported operating systems].
+If you are using a different operating system or distribution, please adjust the instructions to suit your environment.
+====
+
+=== Install a PKCS11 Module
+
+==== Install Using a Preconfigured PKCS11 Module
+
+At least one PKCS11 library is necessary. 
+This is typically provided by an HSM vendor. 
+If a PKCS11 library is not available, you can xref:configuration/server/security/hsmdaemon/softhsm2.adoc[use the software HSM, _SoftHSM2_].
+
+==== Initialise the Token
+
+Now we can initialize the token:
+
+[source,console]
+----
+softhsm2-util --init-token --slot 0 --label "My token 1"
+----
+
+It will ask for two PINs, an SO and a User pin.
+See https://www.opendnssec.org/softhsm/, for more information.
+
+==== Install PKCS11 CLI tools (optional)
+
+To use the PKCS11 API on the CLI, we need to install {opensc-wiki-url}[OpenSC]. 
+
+* xref:initialise-opensc-debian-ubuntu[Debian and Ubuntu]
+* xref:initialise-opensc-opensuse-suse-linux-enterprise-server[openSUSE and SUSE Linux Enterprise Server]
+* xref:initialise-opensc-fedora-red-hat-enterprise-linux-centos[Fedora and Red Hat Enterprise Linux and Centos]
+
+[[install-opensc-debian-ubuntu]]
+===== Initialise on Debian and Ubuntu
+
+To install OpenSC on Debian and Ubuntu, run the following command:
+
+[source,console]
+----
+sudo apt install -y opensc
+----
+
+[[install-opensc-opensuse-suse-linux-enterprise-server]]
+===== Initialise on openSUSE and SUSE Linux Enterprise Server
+
+To install OpenSC on openSUSE and SUSE Linux Enterprise Server, run the following command:
+
+[source,console]
+----
+sudo sudo zypper install -y --auto-agree-with-licenses opensc
+----
+
+[[install-opensc-fedora-red-hat-enterprise-linux-centos]]
+===== Initialise on Fedora and Red Hat Enterprise Linux and Centos 
+
+To install OpenSC on Fedora and Red Hat Enterprise Linux and Centos, run the following command:
+
+[source,console]
+----
+sudo yum install --assumeyes opensc
+----
+
+==== List Tokens
+
+You can list the available tokens using {pkcs11-tool-url}[pkcs11-tool], by running the following command.
+
+[source,console]
+----
+sudo pkcs11-tool --module </path/to/libsofthsm2.so> -l --pin <user-pin> -O
+----
+
+===== The Module Parameter
+
+The module parameter is either the library provided by the HSM vendor, or `libsofthsm2` which was installed with SoftHSM 2.
+If you are using `libsofthsm2`, the path to `libsofthsm2.so` for each of the supported distributions is available below.
+
+[options="headers",cols="2"]
+|===
+|Distribution |Path
+|Debian and Ubuntu |`/usr/lib/softhsm/libsofthsm2.so`
+|openSUSE and SUSE Linux Enterprise Server |`/usr/lib64/pkcs11/libsofthsm2.so`
+|Fedora and Red Hat Enterprise Linux and Centos |`/usr/lib64/pkcs11/libsofthsm2.so`
+|===
+
+TIP: See the {opensc-wiki-url}[OpenSC Wiki] for more information.
+
+=== Install and Configure the hsmdaemon
+
+Installing hsmdaemon requires several steps. 
+These are:
+
+. xref:install-the-hsmdaemon-binary[Install the hsmdaemon Binary]
+. xref:copy-the-config-file[Copy the Config File]
+. xref:install-the-system-service[Install the System Service]
+. xref:configure-the-pkcs11-module-path[Configure the PKCS 11 Module Path]
+. xref:configure-slot-and-pin[Configure Slot and Pin]
+. xref:test-key-generation[Test Key Generation]
+. xref:configure-other-options[Configure Other Options]
+
+==== Install the hsmdaemon Binary
+
+After you've obtained the hsmdaemon from ownCloud, you need to:
+
+. Move the hsmdaemon binary to a directory located in your system path.
+. Make the hsmdaemon binary Executable
+. xref:copy-the-config-file[Copy the Config File] 
+
+[TIP]
+====
+If you are not sure which directories are in your system path, run the following script to see a complete list:
+
+[source,console]
+----
+OFS=$IFS && IFS=':'
+for i in $(echo $PATH); do echo $i; done;
+IFS=$OFS;
+----
+
+You should see a list similar to the following:
+
+[source,console]
+----
+/usr/local/sbin
+/usr/local/bin
+/usr/sbin
+/usr/bin
+/sbin
+/bin
+----
+====
+
+==== Copy the Config File
+
+The default location that hsmdaemon looks for its config file is `/etc/hsmdaemon/hsmdaemon.toml`. 
+To create it from the example config file available in provided package, run the following commands.
+
+[source,console]
+----
+mkdir /etc/hsmdaemon                              # Create the hsmdaemon configuration directory
+cp hsmdaemon.toml /etc/hsmdaemon/hsmdaemon.toml   # Copy the example config file
+chown root /etc/hsmdaemon/hsmdaemon.toml          # Set the owner of the file to root
+chmod 750 /etc/hsmdaemon/hsmdaemon.toml           # Allow only the root and users in the root group to read & write the configuration file
+----
+
+==== Install the System Service
+
+Now that the binary is available and the configuration file is in place, hsmdaemon must be installed as a system service. 
+To do this, run it with the `install` option, as in the example below.
+
+[source,console]
+----
+./hsmdaemon install
+----
+
+If it installs successfully, then you should see the following console output:
+
+....
+Install HSM Daemon:                                     [  OK  ]
+....
+
+It should now be running and set to start automatically at boot time. 
+
+[TIP]
+====
+The daemon is managed using the following three commands:
+
+* `sudo service hsmdaemon start`
+* `sudo service hsmdaemon stop` and 
+* `sudo service hsmdaemon status`.
+====
+
+==== Configure the PKCS11 Module Path
+
+To set the path to the PKCS11 module, update the line below in `/etc/hsmdaemon/hsmdaemon.toml`, with the appropriate path on your system.
+
+....
+[pkcs11]
+module = "/usr/lib/x86_64-linux-gnu/softhsm/libsofthsm2.so" # softhsm v2
+....
+
+==== List Available Slots
+
+This command lists the available slots.
+
+[source,console]
+----
+hsmdaemon listslots
+{"level":"debug","ts":"2019-02-14T09:27:02.068+0100","caller":"hsmdaemon/keymanager.go:27","msg":"initialize pkcs11 module","module":"/usr/lib/softhsm/libsofthsm2.so"}
+{"level":"info","ts":"2019-02-14T09:27:02.087+0100","caller":"hsmdaemon/keymanager.go:65","msg":"Slots found","slotIds":[550099622,1989683358,2]}
+Available slots:
+Slot: 550099622,
+    Slot info:
+        Description:      SoftHSM slot ID 0x20c9daa6
+        Manufacturer ID:  SoftHSM project
+        Hardware version: 2.2
+        Firmware version: 2.2
+        Token present:    yes
+        Flags:
+    Token info:
+        Manufacturer ID:    SoftHSM project
+        Model:              SoftHSM v2
+        Hardware version:   2.2
+        Firmware version:   2.2
+        Serial number:      e8ba06bca0c9daa6
+        Initialized:        yes
+        User PIN init.:     yes
+        Label:              oc token without pin
+        MaxSessionCount:    0
+        SessionCount:       18446744073709551615
+        MaxRwSessionCount:  0
+        RwSessionCount:     18446744073709551615
+        MaxPinLen:          255
+        MinPinLen:          4
+        TotalPublicMemory:  18446744073709551615
+        FreePublicMemory:   18446744073709551615
+        TotalPrivateMemory: 18446744073709551615
+        FreePrivateMemory:  18446744073709551615
+        UTCTime:            2019021408270200
+        Flags: CKF_RNG CKF_LOGIN_REQUIRED CKF_RESTORE_KEY_NOT_NEEDED CKF_USER_PIN_COUNT_LOW
+Slot: 1989683358,
+    Slot info:
+        Description:      SoftHSM slot ID 0x7698289e
+        Manufacturer ID:  SoftHSM project
+        Hardware version: 2.2
+        Firmware version: 2.2
+----
+
+TIP: See the {opensc-wiki-url}[OpenSC Wiki] for more information.
+
+==== Configure the Slot and Pin
+
+Ask the customer which slot to use and if a PIN is needed. 
+Update `/etc/hsmdaemon/hsmdaemon.toml` with the information that the customer provides, in the `pkcs11` section, as in the example below.
+
+....
+[pkcs11]
+module = "/usr/lib/x86_64-linux-gnu/softhsm/libsofthsm2.so" # softhsm v2
+pin = "1234"          # The user pin supplied when running softhsm2-util --init-token, comment it out , or leave empty if no pin is necessary
+slot = 1989683358     # Find your slot id with `sudo hsmdaemon listslots`
+....
+
+=== Testing
+
+==== Test Key Generation
+
+[NOTE] 
+====
+If no PIN is supplied, generating a new key might be protected by an operator card that has to be inserted in the HSM. 
+In this case, coordinate testing and final master key generation with your HSM team.
+====
+
+For testing key generation, run the command `hsmdaemon genkey test`, as in the following example.
+
+[source,console]
+----
+hsmdaemon genkey test
+Id: 9bac3719-2b8d-11e9-aeab-0242b5ece4c3, label: test
+-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAl1BO4vsI+xDk+x0nccl7
+HQhMR/hwfa0+N8fyYNI8yzTTmYDqz9aaF20qG48+mjC0AUEt2kfKo94xM3UeEw4c
+st4j1dpRJtmAJThcuN8OH3sa+3MeXWgGuWxjB1lxEEOqax2A6XzllDlbDsogwkOL
+hSkUU9AaMRBtF8fASJGtJDP+iXwdb7OsFg78PS1wBAISYSUwk06xY7LwWIxge+hY
+4oU+5x4itusdO6rz6kbcJtmUyDUb8DhKnN6OdkhnifUZLBG9HQyTa5OM+BAabbFZ
+mTM2gZlUnGKXN7c4kaBPFt1IfjjVYu7pvj3B2uxUf4GywuSuWGWnAy89FqeXteRV
+jwIDAQAB
+-----END PUBLIC KEY-----
+----
+
+==== Test Data Encryption
+
+For testing data encryption, run the `hsmdaemon encrypt` command, as in the following example.
+
+[source,console]
+----
+# The first argument is the "Id:" value from running the genkey command above.
+# The second is the base64-encoded data to be encrypted.
+sudo hsmdaemon encrypt 9bac3719-2b8d-11e9-aeab-0242b5ece4c3 Zm9vYmFy
+----
+
+If successful, you should see output similar to the below example.
+
+[source,console]
+----
+{"level":"debug","ts":"2019-03-20T12:43:40.540+0100","caller":"hsmdaemon/keymanager.go:27","msg":"initialize pkcs11 module","module":"/usr/lib/softhsm/libsofthsm2.so"}
+{"level":"debug","ts":"2019-03-20T12:43:40.545+0100","caller":"hsmdaemon/keymanager.go:205","msg":"openHSMSession","slotID":858597139}
+{"level":"info","ts":"2019-03-20T12:43:40.549+0100","caller":"hsmdaemon/keymanager.go:621","msg":"Fetching private key","keyID":"9bac3719-2b8d-11e9-aeab-0242b5ece4c3"}
+{"level":"debug","ts":"2019-03-20T12:43:40.549+0100","caller":"hsmdaemon/keymanager.go:641","msg":"Got uuid","string":"13d34146-4b02-11e9-adbd-0023ae27c404"}
+WcezVb2N6bF8wlDooKZcmFn3tZgoIpoFGx6wQetx9sp1nK7JW2Y4OKt7P+0VKKlFO7yXaffVDD2Q6jZZCQukQVRV1zJrwbI9xU3YlOAwJFPP+WM/dZ1vdUwi7L05wq8UpL13LJWlMkvd1eIqKJS7apMnFk2hbnxXP6UKZmI++1tXvqbAc6fwhcB5J+JG6lmS4RwnD+eJC3dq5t00zzdI6vuIM/y3UT7ESklmHl5bKl+N+d6yk6qLxnFnIJweL+M3Tf13+XPNAh5JxZpheJPvN3oL28uX76aizy4BCLnRgQ/ryUQeDF+a4zNF22sMwBh4Pt46KrYGNDZAnQpVzmkrZQ==
+----
+
+==== Test Showing Keys
+
+To show an existing key, use the `showkey` command with the key's id, as in the following example.
+
+[source,console]
+----
+sudo hsmdaemon showkey 9bac3719-2b8d-11e9-aeab-0242b5ece4c3
+----
+
+////
+==== Testing Data Decryption
+
+TODO.
+
+==== Testing Key Deletion
+
+TODO.
+////
+
+=== Configure Other Options (optional)
+
+For more options see the self-documented default config file `hsmdaemon.toml`.
+
+[TIP]
+====
+During ownCloud config you might want to run the hsmdaemon service in the foreground to see what is going on.
+You can do so, using the following command (which also shows example console output, formatted for readability).
+
+[source,console]
+----
+./hsmdaemon
+{
+    "level": "info",
+    "ts": "2019-02-14T09:32:59.081+0100",
+    "caller": "hsmdaemon/hsmdaemon.go:146",
+    "msg": "Server listening",
+    "host": "localhost",
+    "port": 8513,
+    "version": "0.0.7",
+    "build": "2019-02-08T10:47:55+00:00"
+}
+----
+====
+
+=== Configure ownCloud
+
+[TIP]
+====
+If anyone accesses ownCloud while encryption is enabled, it will automatically generate the keys. 
+To prevent this, shut down the web server until encryption is appropriately configured.
+====
+
+To configure ownCloud to work with the hsmdaemon requires the following steps:
+
+* xref:generate-a-secret-for-the-hsmdaemon-rest-api[Generate a Secret for the hsmdaemon REST API]
+* xref:configure-hsm-based-encryption[Configure HSM-based Encryption]
+* xref:initialize-and-check-generated-keys[Initialize and Check Generated Keys]
+
+==== Generate a Secret for the hsmdaemon REST API
+
+Generate a shared secret to use for the hsmdaemon.
+
+[source,console]
+----
+cat /proc/sys/kernel/random/uuid
+7a7d1826-b514-4d9f-afc7-a7485084e8de
+----
+
+Use this secret for hsmdaemon in `/etc/hsmdaemon/hsmdaemon.toml`
+
+....
+[jwt]
+secret = "7a7d1826-b514-4d9f-afc7-a7485084e8de"
+....
+
+Set the generated secret for ownCloud:
+
+[source,console]
+----
+sudo -u www-data ./occ config:app:set \
+    encryption hsm.jwt.secret \
+    --value '7a7d1826-b514-4d9f-afc7-a7485084e8de'
+----
+
+If the command succeeds, you should see the following console output:
+
+[source,console]
+----
+Config value hsm.jwt.secret for app encryption set to 7a7d1826-b514-4d9f-afc7-a7485084e8de
+----
+
+==== Configure HSM-based Encryption
+
+Enable HSM mode and enable encryption by running the commands in the following example.
+
+[source,console]
+----
+occ config:app:set encryption hsm.url --value 'http://localhost:8513'
+occ app:enable encryption
+occ encryption:enable
+----
+
+If the commands are successful, you should see the following console output:
+
+[source,console]
+----
+Config value hsm.url for app encryption set to http://localhost:8513
+
+encryption enabled
+
+Encryption enabled
+
+Default module: OC_DEFAULT_MODULE
+----
+
+If you want to use a single master key run
+
+[source,console]
+----
+occ encryption:select-encryption-type masterkey
+----
+
+////
+==== Configure Authorization
+
+TBW.
+////
+
+==== Initialize and Check Generated Keys
+
+Now start your web server, and log in with any user to initialize the keys, have a look at the output of the hsmdaemon to see key generation and decryption requests. 
+Check that the private key `/path/to/data/files_encryption/OC_DEFAULT_MODULE/` is less than *1000 bytes*. 
+If it is not, then something is not configured correctly. 
+You have to wipe all keys and reset the database flags for encryption to get a clean start for the ownCloud setup.
+
+////
+TODO
+
+* Provide occ commands for key initialization and removal. Don't rely on user login to generate keys.
+////

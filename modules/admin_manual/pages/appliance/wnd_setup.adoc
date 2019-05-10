@@ -1,4 +1,7 @@
 = Windows Network Drive Configuration (WND)
+:toc: right
+
+== Introduction
 
 Here are the steps to configure WND in the Appliance.
 
@@ -11,10 +14,12 @@ NOTE: The steps need to be done in / on the docker host
 
 Create a service following the instructions below that checks the share for changes:
 
-* For each WND mount point distinguished by a SERVER - SHARE pair, place one copy of a file
-with following content under `/etc/systemd/system/owncloud-wnd-listen-SERVER-SHARE.service`
-replacing the all upper case words `SERVER`, `SHARE`, `USER` and `PASSWORD` in both,
-the **filename** and in the **contents** below with their respective values.
+* For each WND mount point distinguished by a SERVER - SHARE pair, 
+** place one copy of a file
+with following content under +
+`/etc/systemd/system/owncloud-wnd-listen-SERVER-SHARE.service`
+** replacing the all upper case words `SERVER`, `SHARE`, `USER` and `PASSWORD`
+** in both, the **filename** and in the **contents** below with their respective values. +
 Take care to also adjust the paths in `WorkingDirectory` and `ExecStart`
 according to your installation.
 +
@@ -39,10 +44,11 @@ Restart=always
 
 * Run once for each created file the following commands:
 +
-....
-systemctl enable owncloud-wnd-listen-SERVER-SHARE.service
-systemctl start  owncloud-wnd-listen-SERVER-SHARE.service
-....
+[source,console]
+----
+sudo systemctl enable owncloud-wnd-listen-SERVER-SHARE.service
+sudo systemctl start  owncloud-wnd-listen-SERVER-SHARE.service
+----
 
 == WND Process Queue
 
