@@ -1,16 +1,7 @@
 = Manual Installation on Linux
+:toc: right
 :nginx-app-tracing-url: https://www.nginx.com/blog/application-tracing-nginx-plus/
-
-* xref:prerequisites[Prerequisites]
-* xref:required-for-specific-apps[Required For Specific Apps]
-* xref:configure-apache-web-server[Configure Apache Web Server]
-* xref:enable-ssl[Enable SSL]
-* xref:run-the-installation-wizard[Run the Installation Wizard]
-* xref:set-strong-directory-permissions[Set Strong Directory Permissions]
-* xref:installation/configuration_notes_and_tips.adoc#selinux[SELinux]
-* xref:installation/configuration_notes_and_tips.adoc#php.ini[php.ini]
-* xref:installation/configuration_notes_and_tips.adoc#php-fpm[PHP-FPM]
-* xref:installation/configuration_notes_and_tips.adoc#other-web-servers[Other Web Servers]
+:mod_headers-url: https://httpd.apache.org/docs/current/mod/mod_headers.html#page-header
 
 [[install-the-required-packages]]
 == Install the Required Packages
@@ -251,7 +242,7 @@ service apache2 restart
 ....
 * If you’re running ownCloud in a sub-directory and want to use CalDAV
 or CardDAV clients make sure you have configured the correct
-service-discovery-label URLs.
+xref:configuration/general_topics/general_troubleshooting.adoc#service-discovery[Service Discovery] URLs.
 
 ==== Apache Mod_Unique_Id Configuration
 
@@ -270,7 +261,7 @@ In the example below, you can see an example log entry, where ownCloud is loggin
 
 [source,json]
 ....
-include::{examplesdir}/installation/webservers/apache/log-entry.json[]
+include::example$installation/webservers/apache/log-entry.json[]
 ....
 
 [[enable-ssl]]
@@ -330,12 +321,20 @@ chown -R www-data:www-data /var/www/owncloud/
 ....
 
 NOTE: Admins of SELinux-enabled distributions may need to write new SELinux rules to complete their ownCloud installation; 
-see xref:installation/configuration_notes_and_tips.adoc#selinuxi[the SELinux guide] for a suggested configuration.
+see
+xref:installation/configuration_notes_and_tips.adoc#config-notes-and-tips-selinux[the SELinux guide]
+for a suggested configuration.
 
 To use `occ` refer to the xref:installation/command_line_installation.adoc[command-line installation details].
 To use the graphical Installation Wizard refer to xref:installation/installation_wizard.adoc[the installation_wizard].
 
 IMPORTANT: Please know that ownCloud’s data directory *must be exclusive to ownCloud* and not be modified manually by any other process or user.
+
+== Headers
+
+NOTE: ownCloud has a mechanism to set headers programmatically. 
+These headers are set with the `always` directive to avoid errors when there are additional headers set in the web servers configuration file like `http.conf`. 
+More information on headers can be found {mod_headers-url}[in the `mod_headers` documentation].
 
 [[set-strong-directory-permissions]]
 == Set Strong Directory Permissions
@@ -371,7 +370,10 @@ long as it sends the correct `X-Forwarded-Host` header.
 
 NOTE: For further information on improving the quality of your ownCloud installation, please see xref:installation/configuration_notes_and_tips.adoc[the configuration notes and tips guide].
 
-NOTE: Admins of SELinux-enabled distributions such as _CentOS_, _Fedora_, and _Red Hat Enterprise Linux_ may need to set new rules to enable installing ownCloud. See xref:installation/configuration_notes_and_tips.adoc#selinux[SELinux] for a suggested configuration.
+NOTE: Admins of SELinux-enabled distributions such as _CentOS_, _Fedora_, and
+_Red Hat Enterprise Linux_ may need to set new rules to enable installing ownCloud. See
+xref:installation/configuration_notes_and_tips.adoc#config-notes-and-tips-selinux[SELinux]
+for a suggested configuration.
 
 [[prerequisites]]
 == Prerequisites

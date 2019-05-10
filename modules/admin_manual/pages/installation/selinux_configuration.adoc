@@ -1,4 +1,14 @@
 = SELinux Configuration
+:toc: right
+:toclevels: 1
+:selinux-url: https://selinuxproject.org/page/Main_Page
+
+== Introduction
+
+{selinux-url}[Security-Enhanced Linux (SELinux)] is a Linux kernel security module that provides a mechanism
+for supporting access control security policies, including mandatory access controls (MAC).
+
+== Preparation
 
 When you have SELinux enabled on your Linux distribution, you may run
 into permissions problems after a new ownCloud installation, and see
@@ -12,6 +22,7 @@ adjust the filepaths in these examples for your installation
 semanage fcontext -a -t httpd_sys_rw_content_t '/var/www/html/owncloud/data(/.*)?'
 semanage fcontext -a -t httpd_sys_rw_content_t '/var/www/html/owncloud/config(/.*)?'
 semanage fcontext -a -t httpd_sys_rw_content_t '/var/www/html/owncloud/apps(/.*)?'
+semanage fcontext -a -t httpd_sys_rw_content_t '/var/www/html/owncloud/apps-external(/.*)?'
 semanage fcontext -a -t httpd_sys_rw_content_t '/var/www/html/owncloud/.htaccess'
 semanage fcontext -a -t httpd_sys_rw_content_t '/var/www/html/owncloud/.user.ini'
 
@@ -26,6 +37,7 @@ uninstalling ownCloud
 semanage fcontext -d '/var/www/html/owncloud/data(/.*)?'
 semanage fcontext -d '/var/www/html/owncloud/config(/.*)?'
 semanage fcontext -d '/var/www/html/owncloud/apps(/.*)?'
+semanage fcontext -d '/var/www/html/owncloud/apps-external(/.*)?'
 semanage fcontext -d '/var/www/html/owncloud/.htaccess'
 semanage fcontext -d '/var/www/html/owncloud/.user.ini'
 
@@ -39,6 +51,7 @@ you must give the HTTP server write access to these directories:
 /var/www/html/owncloud/data
 /var/www/html/owncloud/config
 /var/www/html/owncloud/apps
+/var/www/html/owncloud/apps-external
 ....
 
 [[enable-updates-via-the-web-interface]]

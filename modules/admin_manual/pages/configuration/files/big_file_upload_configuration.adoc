@@ -1,4 +1,7 @@
 = Big File Upload Configuration (> 512MB)
+:toc: right
+
+== Introduction
 
 The default maximum file size for uploads, in ownCloud, is 512MB. You
 can increase this limit up to the maximum file size which your
@@ -11,7 +14,9 @@ filesystem, operating system, or other software allows, for example:
 64-bit filesystems have much higher limits. Please consult the
 documentation for your filesystem.
 
-NOTE: The ownCloud sync client itself however is able to upload files of any size, as it uploads files by transmitting them in small chunks. But, it can never exceed the maximum file size limits of the remote host.
+NOTE: The ownCloud sync client itself however is able to upload files of any size,
+as it uploads files by transmitting them in small chunks. But, it can never exceed the
+maximum file size limits of the remote host.
 
 [[system-configuration]]
 == System Configuration
@@ -26,9 +31,12 @@ temp space has to hold at least 10x100 GB
 [[configuring-your-web-server]]
 == Configuring Your Web server
 
-NOTE: ownCloud comes with its own `owncloud/.htaccess` file. Because `php-fpm` can’t read PHP settings in `.htaccess` these settings must be set in the `owncloud/.user.ini` file.
+NOTE: ownCloud comes with its own `owncloud/.htaccess` file. Because `php-fpm` can’t read
+PHP settings in `.htaccess` these settings must be set in the `owncloud/.user.ini` file.
 
-Set the following two parameters inside the corresponding php.ini file (see the *Loaded Configuration File* section of xref:issues/general_troubleshooting.adoc#php-version-and-information[PHP Version and Information] to find your relevant php.ini files) :
+Set the following two parameters inside the corresponding php.ini file
+(see the *Loaded Configuration File* section of xref:configuration/general_topics/general_troubleshooting.adoc#php-version-and-information[PHP Version and Information]
+to find your relevant php.ini files) :
 
 ....
 php_value upload_max_filesize = 16G
@@ -87,7 +95,10 @@ partition of your system.
 For more info how to configure NGINX to raise the upload limits see also
 https://github.com/owncloud/documentation/wiki/Uploading-files-up-to-16GB#configuring-nginx[this] wiki entry.
 
-TIP: Make sure that `client_body_temp_path` points to a partition with adequate space for your upload file size, and on the same partition as the `upload_tmp_dir` or `tempdirectory` (see below). For optimal performance, place these on a separate hard drive that is dedicated to swap and temp storage.
+TIP: Make sure that `client_body_temp_path` points to a partition with adequate space for
+your upload file size, and on the same partition as the `upload_tmp_dir` or `tempdirectory`
+(see below). For optimal performance, place these on a separate hard drive that is dedicated
+to swap and temp storage.
 
 If your site is behind a NGINX frontend (for example a loadbalancer):
 
@@ -162,7 +173,9 @@ ownCloud (Apache only)
 files `.htaccess` and `.user.ini`
 
 xref:installation/manual_installation.adoc#set-strong-directory-permissions[Directory permissions] might prevent write access to these files.
-As an admin you need to decide between the ability to use the input box and a more secure ownCloud installation where you need to manually modify the upload limits in the `.htaccess` and `.user.ini` files described above.
+As an admin you need to decide between the ability to use the input box and a more secure
+ownCloud installation where you need to manually modify the upload limits in the `.htaccess`
+and `.user.ini` files described above.
 
 [[general-upload-issues]]
 == General upload issues
@@ -173,4 +186,4 @@ size. Examples are:
 * The `LVE Manager` of `CloudLinux` which sets a `I/O limit`
 * Some services like `Cloudflare` are also known to cause uploading issues
 * Upload limits enforced by proxies used by your clients
-* Other webserver modules like described in xref:issues/general_troubleshooting.adoc[General Troubleshooting]
+* Other webserver modules like described in xref:configuration/general_topics/general_troubleshooting.adoc[General Troubleshooting]

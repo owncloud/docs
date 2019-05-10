@@ -86,7 +86,7 @@ class MyStorage extends StorageAdapter {
 		// many libraries might not support touch, so need to adapt
 		if (!$this->file_exists($path)) {
 			// create empty file
-			$this->file_put_contents($path, '');
+			$this->file_put_contents($path);
 		}
 		// set mtime to existing file
 		return $this->connection->setModifiedTime($path, $time);
@@ -145,12 +145,12 @@ class MyStorage extends StorageAdapter {
 			case 'c+':
 				// most storages do not support on the fly stream upload for all modes,
 				// so we use a temporary file first
-				$ext = pathinfo($filename, PATHINFO_EXTENSION);
+				$ext = pathinfo($path, PATHINFO_EXTENSION);
 				$tmpFile = \OC::$server->getTempManager()->getTemporaryFile($ext);
 
 				// this wrapper will call the callback whenever fclose() was called on the file,
 				// after which we send the file to the library
-				$result = CallbackWrapper::wrap(
+				return CallbackWrapper::wrap(
 					$source,
 					null,
 					null,
@@ -160,6 +160,7 @@ class MyStorage extends StorageAdapter {
 					}
 				);
 		}
+
 		return false;
 	}
 

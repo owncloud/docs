@@ -6,11 +6,17 @@ In addition to the `master` branch, each documentation repository will have _two
 
 The three, currently active, branches are:
 
-- `10.0`: This tracks the current release of ownCloud core (10.1).
-- `10.1`: This tracks the previous ownCloud core (10.0).
+- `10.2`: This tracks the current release of ownCloud core (10.2).
+- `10.1`: This tracks the previous ownCloud core (10.1).
 - `master`: This is a moving target, as it's not tied to a released version.
 
 **Note:** [the default version of the docs](https://doc.owncloud.com) comes from `master`.
+
+In addition to these three active branches, documentation changes (additions, corrections, and deprecations) are backported to some of the earlier branches.
+This may seem like a strange thing to do, given that only the latest two branches reflect [the currently supported ownCloud versions].
+
+However, given ownCloud's age, there are a significant number of installations in active use which do not use one of the two latest versions.
+So, where possible, older documentation branches are updated so that administrators of these older installations have the most correct documentation available for their version.
 
 ## Workflow Aim
 
@@ -21,7 +27,7 @@ This approach aims to do two things:
 
 ## How It Works
 
-- PRs that document _upcoming_ release-ready features are merged into `master` **only**. These changes will be included in the next release branch (10.2), when the time comes.
+- PRs that document _upcoming_ release-ready features are merged into `master` **only**. These changes will be included in the next release branch (10.3), when the time comes.
 - PRs that correct mistakes are first merged to `master` and are then back-ported to any branches that have the mistake.
 - PRs that expand/fill-in things that are "just missing" from the documentation, will need to be back-ported to all the branches (that are currently being published).
 
@@ -31,3 +37,5 @@ However, if PRs are small enough, then this shouldn't be too much work.
 
 In the not-too-distant future, a script will be developed to automate as much of this as possible.
 When it's complete, it will be documented here.
+
+[the currently supported ownCloud versions]: https://github.com/owncloud/core/wiki/Maintenance-and-Release-Schedule

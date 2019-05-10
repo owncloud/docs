@@ -1,4 +1,5 @@
 = Migrating User Key Encryption to Master Key Encryption
+:toc: right
 
 == Why Should I Move Away From User Key-based Encryption
 
@@ -29,9 +30,9 @@ You can see an example of calling the commands listed below, configured to requi
 
 [source,console]
 ----
-sudo -u www-data occ encryption:decrypt-all --continue=yes && \
-  sudo -u www-data occ encryption:disable --no-interaction && \
-  sudo -u www-data occ app:disable --no-interaction encryption
+sudo -u www-data php occ encryption:decrypt-all --continue=yes && \
+  sudo -u www-data php occ encryption:disable --no-interaction && \
+  sudo -u www-data php occ app:disable --no-interaction encryption
 ----
 
 [[remove-the-encryption-records-from-the-owncloud-database]]
@@ -49,7 +50,7 @@ NOTE: The example code assumes that the path to the SQLite database is
 
 [source,console]
 ----
-sqlite3 data/owncloud.database
+sudo sqlite3 data/owncloud.database
 sqlite> delete from oc_appconfig where appid='encryption';
 sqlite> select * from oc_appconfig where appid='encryption';
 ----
@@ -81,9 +82,9 @@ The following example shows how to do this.
 [source,console]
 ----
 sudo -u www-data occ app:enable encryption && \
-  sudo -u www-data occ encryption:enable && \
-  sudo -u www-data occ encryption:select-encryption-type masterkey -y && \
-  sudo -u www-data occ encryption:encrypt-all && \
+  sudo -u www-data php occ encryption:enable && \
+  sudo -u www-data php occ encryption:select-encryption-type masterkey -y && \
+  sudo -u www-data php occ encryption:encrypt-all
 ----
 
 [[verify-the-encrypted-files]]
@@ -95,7 +96,7 @@ You should see a number of records, as in the output of the example below.
 
 [source,console]
 ----
-$ sqlite3 data/owncloud.database
+sudo sqlite3 data/owncloud.database
 sqlite> select * from oc_appconfig where appid='encryption';
 encryption|recoveryKeyId|recoveryKey_73facda6
 encryption|publicShareKeyId|pubShare_73facda6
