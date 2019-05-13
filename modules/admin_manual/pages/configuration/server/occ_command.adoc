@@ -217,10 +217,11 @@ Analysing /var/www/owncloud/apps/files/foo_app.php
 
 You can get the full file path to an app
 
-....
+[source,console]
+----
 sudo -u www-data php occ app:getpath notifications
 /var/www/owncloud/apps/notifications
-....
+----
 
 [[background-jobs-selector]]
 === Background Jobs Selector
@@ -239,10 +240,11 @@ background
 
 This example selects Ajax:
 
-....
+[source,console]
+----
 sudo -u www-data php occ background:ajax
   Set mode for background jobs to 'ajax'
-....
+----
 
 The other two commands are:
 
@@ -250,6 +252,118 @@ The other two commands are:
 * `background:webcron`
 
 TIP: See xref:configuration/server/background_jobs_configuration.adoc[background jobs configuration] to learn more.
+
+=== Managing Background Jobs
+
+Use the `background:queue` command to manage background jobs.
+
+[source,console]
+----
+background:queue
+ background:queue:delete     Delete a job from the queue
+ background:queue:execute    Run a single background job from the queue
+ background:queue:status     List queue status
+----
+
+==== Deleting a Background Job
+
+The command `background:queue:delete` deletes a queued background job.
+It requires the job id of the job to be deleted.
+
+....
+background:queue:delete <Job ID>
+....
+
+===== Arguments
+
+[width="100%",cols="20%,70%",]
+|===
+| `Job ID` | ID of the job to be deleted
+|===
+
+WARNING: Deleting a job cannot be undone. Be sure that you want to delete the job before doing so.
+
+This example deletes queued background job #12 
+
+[source,console]
+----
+sudo -u www-data php occ background:queue:delete 12
+  
+Job has been deleted.
+----
+
+==== Executing a Background Job
+
+The command `background:queue:execute` executes a queued background job.
+It requires the job id of the job to be executed.
+
+....
+background:queue:execute [options] [--] <Job ID>
+....
+
+===== Arguments
+
+[width="100%",cols="20%,70%",]
+|===
+| `Job ID` | ID of the job to be deleted
+|===
+
+===== Options
+
+[width="100%",cols="20%,70%",]
+|===
+| `-f` +
+`--force`            | Force run the job even if within timing interval
+| `--accept-warning` | No warning about the usage of this command will be displayed
+|===
+
+This example executes queued background job #12.
+
+[source,console]
+----
+sudo -u www-data php occ background:queue:execute 12
+  
+This command is for maintenance and support purposes. 
+This will run the specified background job now. Regular scheduled runs of the job will
+continue to happen at their scheduled times. 
+If you still want to use this command please confirm the usage by entering: yes
+yes
+Found job: OCA\UpdateNotification\Notification\BackgroundJob with ID 12
+Running job...
+Finished in 0 seconds
+----
+
+==== List Queued Backgroundjobs
+
+The command `background:queue:status` will list queued background jobs, including
+details when it last ran.
+
+....
+background:queue:status
+....
+
+This example lists the queue status:
+
+[source,console]
+----
+sudo -u www-data php occ background:queue:status
+
+  +----+---------------------------------------------------+---------------------------+---------------+
+  | Id | Job                                               | Last run                  | Job Arguments |
+  +----+---------------------------------------------------+---------------------------+---------------+
+  | 1  | OCA\Files\BackgroundJob\ScanFiles                 | 2018-06-13T15:15:04+00:00 |               |
+  | 2  | OCA\Files\BackgroundJob\DeleteOrphanedItems       | 2018-06-13T15:15:04+00:00 |               |
+  | 3  | OCA\Files\BackgroundJob\CleanupFileLocks          | 2018-06-13T15:15:04+00:00 |               |
+  | 4  | OCA\DAV\CardDAV\SyncJob                           | 2018-06-12T19:15:02+00:00 |               |
+  | 5  | OCA\Federation\SyncJob                            | 2018-06-12T19:15:02+00:00 |               |
+  | 6  | OCA\Files_Sharing\DeleteOrphanedSharesJob         | 2018-06-13T15:15:04+00:00 |               |
+  | 7  | OCA\Files_Sharing\ExpireSharesJob                 | 2018-06-12T19:15:02+00:00 |               |
+  | 8  | OCA\Files_Trashbin\BackgroundJob\ExpireTrash      | 2018-06-13T15:15:04+00:00 |               |
+  | 9  | OCA\Files_Versions\BackgroundJob\ExpireVersions   | 2018-06-13T15:15:04+00:00 |               |
+  | 10 | OCA\UpdateNotification\Notification\BackgroundJob | 2018-06-12T19:15:03+00:00 |               |
+  | 11 | OC\Authentication\Token\DefaultTokenCleanupJob    | 2018-06-13T15:15:04+00:00 |               |
+  +----+---------------------------------------------------+---------------------------+---------------+
+----
 
 [[config-commands]]
 === Config Commands
