@@ -22,6 +22,38 @@ first 72 characters of passwords. This applies to all passwords that you
 use in ownCloud: user passwords, passwords on link shares, and passwords
 on external shares.
 
+== Rate Limiting
+
+Currently ownCloud deliberately does not provide any form of rate-limiting (though it does provide https://marketplace.owncloud.com/apps/brute_force_protection[brute-force protection]). 
+This is because ownCloud needs to integrate in to a diverse range of environments and infrastructure, which often already provide specialized rate-limiting solutions, e.g., _NGINX_, _HAProxy_, and _F5_.
+
+If you are yet to implement a rate-limiting solution for your ownCloud instance, start by retrieving a list of all active routes.
+This information is obtained by running xref:configuration/server/occ_command.adoc#security[occ's security:routes command], as in the following example.
+
+....
+sudo -u www-data ./occ security:routes
+....
+
+It should print a list of all the routes, as in the following, truncated, example.
+
+[source,console]
+....
++-----------------------------------------------------------+-----------------+
+| Path                                                      | Methods         |
++-----------------------------------------------------------+-----------------+
+| /apps/encryption/ajax/adminRecovery                       | POST            |
+| /apps/encryption/ajax/changeRecoveryPassword              | POST            |
+| /apps/encryption/ajax/getStatus                           | GET             |
+| /apps/encryption/ajax/setEncryptHomeStorage               | POST            |
+| /apps/encryption/ajax/updatePrivateKeyPassword            | POST            |
+| /apps/encryption/ajax/userSetRecovery                     | POST            |
+| /apps/federatedfilesharing/                               | GET             |
+| /apps/federatedfilesharing/notifications                  | POST            |
++-----------------------------------------------------------+-----------------+
+....
+
+With that information, you are then able to customise a rate-limiting solution specific to your ownCloud installation.
+
 [[operating-system]]
 == Operating system
 
