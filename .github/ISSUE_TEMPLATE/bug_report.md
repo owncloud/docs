@@ -10,18 +10,14 @@ assignees: ''
 **Describe the bug**
 A clear and concise description of what the bug is.
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
-
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+**Where was the bug found?**
+Please provide a link to the file in which the bug was found.
 
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
+
+**Backport to which branches**
+Please specify the branches that this change needs to be backported to after it's been merged.
 
 **Additional context**
 Add any other context about the problem here.
