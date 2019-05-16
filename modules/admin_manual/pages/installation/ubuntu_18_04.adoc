@@ -1,0 +1,142 @@
+= Manual installation of ownCloud on Ubuntu 18.04
+
+:toc: right
+
+TIP: You can just copy/paste these commands into you terminal/shell
+
+== Preparation
+First we have to prepare our server for ownCloud.
+
+=== Prerequisites
+Freshly installed Ubuntu 18.04(https://www.ubuntu.com/download/desktop) Server with SSH.
+
+==== Update OS
+
+....
+apt update && apt upgrade -y
+....
+
+==== Create helper script
+
+....
+FILE="/usr/local/bin/occ"
+/bin/cat <<EOM >$FILE
+#! /bin/bash
+cd /var/www/owncloud
+sudo -u www-data php /var/www/owncloud/occ "\$@"
+EOM
+
+chmod +x /usr/local/bin/occ
+
+....
+
+==== Install the required packages
+
+....
+apt install -y \
+apache2 \
+mariadb-server \
+libapache2-mod-php7.2 \
+openssl \
+php-imagick php7.2-common php7.2-curl \
+php7.2-gd php7.2-imap php7.2-intl \
+php7.2-json php7.2-ldap php7.2-mbstring \
+php7.2-mysql php7.2-pgsql php-smbclient \
+php-ssh2 php7.2-sqlite3 php7.2-xml \
+php7.2-zip php-apcu ssh \
+php-apcu php-redis redis-server \
+wget nano bzip2 \
+sudo inetutils-ping rsync \
+smbclient php-smbclient coreutils \
+curl jq
+
+....
+
+==== Configure the web Server
+
+Execute
+....
+sed -i  "s#html#owncloud#" /etc/apache2/sites-available/000-default.conf
+
+service apache2 restart
+
+....
+
+Create ownCloud.conf
+
+....
+FILE="/etc/apache2/sites-available/owncloud.conf"
+/bin/cat <<EOM >$FILE
+Alias /owncloud "/var/www/owncloud/"
+
+<Directory /var/www/owncloud/>
+  Options +FollowSymlinks
+  AllowOverride All
+
+ <IfModule mod_dav.c>
+  Dav off
+ </IfModule>
+
+ SetEnv HOME /var/www/owncloud
+ SetEnv HTTP_HOME /var/www/owncloud
+
+</Directory>
+EOM
+....
+
+Create Symlink
+
+....
+ln -s /etc/apache2/sites-available/owncloud.conf \
+/etc/apache2/sites-enabled/owncloud.conf
+
+service apache2 restart
+....
+
+Configure the Database
+
+....
+echo -e  "\n\t Cleanup"
+mysql -uroot -e "Drop database owncloud";
+rm -rf /var/www/owncloud
+mysql -u root -e "CREATE DATABASE IF NOT EXISTS owncloud; \
+GRANT ALL PRIVILEGES ON owncloud.* TO owncloud@localhost IDENTIFIED BY 'password'";
+....
+
+
+....
+echo "Enabling a2mod Modules"
+a2enmod rewrite
+a2enmod headers
+a2enmod env
+a2enmod dir
+a2enmod mime
+a2enmod setenvif
+service apache2 restart
+....
+
+
+....
+cd /var/www 
+wget https://download.owncloud.org/community/owncloud-10.0.10.tar.bz2 
+tar xjf owncloud-10.0.10.tar.bz2
+chown -R www-data. /var/www/owncloud
+....
+....
+occ maintenance:install \
+    --database "mysql" --database-name "owncloud" \
+    --database-user "owncloud" --database-pass "password" \
+    --admin-user "admin" --admin-pass "admin"
+....
+
+....
+echo -e "\n\t Adding host IP to Trusted Domains"
+myip=$(hostname -I|cut -f1 -d ' ')
+occ config:system:set trusted_domains 1 --value="$myip"
+....
+
+....
+echo "*/15  *  *  *  * php -f /var/www/owncloud/cron.php" > /var/spool/cron/crontabs/www-data
+chown www-data.crontab  /var/spool/cron/crontabs/www-data
+chmod 0600  /var/spool/cron/crontabs/www-data
+....
