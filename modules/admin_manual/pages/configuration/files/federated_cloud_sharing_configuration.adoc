@@ -70,6 +70,30 @@ user names exchanged. A red light means the connection failed.
 
 image:configuration/files/federation-1.png[image]
 
+== Automatically Accept Remote Shares From Trusted Servers 
+
+To automatically accept remote shares from servers in xref:configuring-trusted-owncloud-servers[the trusted servers list], when configuring Federated Cloud sharing, under menu:admin[Settings > Sharing > Federated Cloud Sharing], check the checkbox labeled "_Automatically accept remote shares from trusted servers_".
+
+image:configuration/files/sharing/federated-cloud-sharing/automatically-accept-remote-shares-from-trusted-servers.png[Automatically accept remote shares from trusted servers in ownCloud]
+
+IMPORTANT: Due to security reasons auto-accepting doesn't work when "_Add server automatically once a federated share was created successfully_" is checked.
+
+All incoming shares from remote servers are accepted automatically when:
+
+. The federation app's `autoAddServers` config option is set to `0` (default); for example:
++
+[source,php]
+....
+occ config:app:set federation auto_accept_trusted --value '0'
+....
+. The `federatedfilesharing` app's `auto_accept_trusted config` option is set to `yes`; for example:
++
+[source,php]
+....
+occ config:app:set federatedfilesharing auto_accept_trusted --value 'yes'
+....
+. A remote server is listed as trusted in the Federation app.
+
 [[creating-federation-shares-via-public-link-share]]
 == Creating Federation Shares via Public Link Share
 
