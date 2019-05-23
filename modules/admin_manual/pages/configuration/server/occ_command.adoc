@@ -33,16 +33,16 @@ the default (/usr/bin/php), `occ` should be run with the same version.
 For example, in CentOS 6.5 with SCL-PHP54 installed, the command looks
 like this:
 
-....
+----
 sudo -u apache /opt/rh/php54/root/usr/bin/php /var/www/html/owncloud/occ
-....
+----
 
 === Example Commands
 
 Running `occ` with no options lists all commands and options, like this
 example on Ubuntu:
 
-....
+----
 sudo -u www-data php occ
 ownCloud version 10.0.8
 
@@ -67,44 +67,44 @@ Available commands:
  status                Show some status information
  upgrade               Run upgrade routines after installation of
                        a new release. The release has to be installed before
-....
+----
 
 This is the same as `sudo -u www-data php occ list`. Run it with the
 `-h` option for syntax help:
 
-....
+----
 sudo -u www-data php occ -h
-....
+----
 
 Display your ownCloud version:
 
-....
+----
 sudo -u www-data php occ -V
   ownCloud version 10.0.8
-....
+----
 
 Query your ownCloud server status:
 
-....
+----
 sudo -u www-data php occ status
   - installed: true
   - version: 10.0.8.5
   - versionstring: 10.0.8
   - edition: Community
-....
+----
 
 `occ` has _options_, _commands_, and _arguments_. Commands are required.
 Options are optional. Arguments can be required _or_ optional. The,
 generic, syntax is
 
-....
+----
 occ [options] command [arguments]
-....
+----
 
 Get detailed information on individual commands with the `help` command,
 like this example for the `maintenance:mode` command
 
-....
+----
 sudo -u www-data php occ help maintenance:mode
 Usage:
  maintenance:mode [options]
@@ -122,19 +122,19 @@ Usage:
      --no-warnings     Skip global warnings, show command output only
  -v|vv|vvv, --verbose  Increase the verbosity of messages: 1 for normal output,
                        2 for more verbose output and 3 for debug
-....
+----
 
 The `status` command from above has an option to define the output
 format. The default is plain text, but it can also be `json`
 
-....
+----
 sudo -u www-data php occ status --output=json
 {"installed":true,"version":"9.0.0.19","versionstring":"9.0.0","edition":""}
-....
+----
 
 or `json_pretty`
 
-....
+----
 sudo -u www-data php occ status --output=json_pretty
 {
    "installed": true,
@@ -142,7 +142,7 @@ sudo -u www-data php occ status --output=json_pretty
    "versionstring": "10.0.8",
    "edition": "Community"
 }
-....
+----
 
 This output option is available on all list and list-like commands,
 which include `status`, `check`, `app:list`, `config:list`,
@@ -158,37 +158,37 @@ This command reference covers the ownCloud core commands.
 The `app` commands list, enable, and disable apps
 
 [source,console]
-....
+----
 app
  app:check-code   check code to be compliant
  app:disable      disable an app
  app:enable       enable an app
  app:getpath      Get an absolute path to the app directory
  app:list         List all available apps
-....
+----
 
 List all of your installed apps or optionally provide a search pattern
 to restrict the list of apps to those whose name matches the given
 regular expression. The output shows whether they are enabled or
 disabled
 
-....
+----
 sudo -u www-data php occ app:list [<search-pattern>]
-....
+----
 
 Enable an app, for example the Market app
 
-....
+----
 sudo -u www-data php occ app:enable market
 market enabled
-....
+----
 
 Disable an app
 
-....
+----
 sudo -u www-data php occ app:disable market
 market disabled
-....
+----
 
 NOTE: Be aware that the following apps cannot be disabled: _DAV_, _FederatedFileSharing_, _Files_ and _Files_External_.
 
@@ -198,14 +198,14 @@ for deprecated methods and the validity of the `info.xml` file. By
 default all checks are enabled. The Activity app is an example of a
 correctly-formatted app
 
-....
+----
 sudo -u www-data php occ app:check-code notifications
 App is compliant - awesome job!
-....
+----
 
 If your app has issues, you'll see output like this
 
-....
+----
 sudo -u www-data php occ app:check-code foo_app
 Analysing /var/www/owncloud/apps/files/foo_app.php
 4 errors
@@ -213,7 +213,7 @@ Analysing /var/www/owncloud/apps/files/foo_app.php
    line   46: OCP\Response - Static method of deprecated class must not be called
    line   47: OCP\Response - Static method of deprecated class must not be called
    line   49: OC_Util - Static method of private class must not be called
-....
+----
 
 You can get the full file path to an app
 
@@ -270,9 +270,9 @@ background:queue
 The command `background:queue:delete` deletes a queued background job.
 It requires the job id of the job to be deleted.
 
-....
+----
 background:queue:delete <Job ID>
-....
+----
 
 ===== Arguments
 
@@ -297,9 +297,9 @@ Job has been deleted.
 The command `background:queue:execute` executes a queued background job.
 It requires the job id of the job to be executed.
 
-....
+----
 background:queue:execute [options] [--] <Job ID>
-....
+----
 
 ===== Arguments
 
@@ -338,9 +338,9 @@ Finished in 0 seconds
 The command `background:queue:status` will list queued background jobs, including
 details when it last ran.
 
-....
+----
 background:queue:status
-....
+----
 
 This example lists the queue status:
 
@@ -370,7 +370,7 @@ sudo -u www-data php occ background:queue:status
 
 The `config` commands are used to configure the ownCloud server.
 
-....
+----
 config
  config:app:delete      Delete an app config value
  config:app:get         Get an app config value
@@ -380,37 +380,37 @@ config
  config:system:delete   Delete a system config value
  config:system:get      Get a system config value
  config:system:set      Set a system config value
-....
+----
 
 You can list all configuration values with one command:
 
-....
+----
 sudo -u www-data php occ config:list
-....
+----
 
 By default, passwords and other sensitive data are omitted from the
 report, so the output can be posted publicly (e.g., as part of a bug
 report). In order to generate a full backport of all configuration
 values the `--private` flag needs to be set:
 
-....
+----
 sudo -u www-data php occ config:list --private
-....
+----
 
 The exported content can also be imported again to allow the fast setup
 of similar instances. The import command will only add or update values.
 Values that exist in the current configuration, but not in the one that
 is being imported are left untouched.
 
-....
+----
 sudo -u www-data php occ config:import filename.json
-....
+----
 
 It is also possible to import remote files, by piping the input:
 
-....
+----
 sudo -u www-data php occ config:import < local-backup.json
-....
+----
 
 NOTE: While it is possible to update/set/delete the versions and installation statuses of apps and ownCloud
 itself, it is *not* recommended to do this directly. Use the `occ app:enable`, `occ app:disable` and
@@ -423,9 +423,9 @@ These commands get the value of a single app or system configuration:
 
 ==== config:system:get
 
-....
+----
 sudo -u www-data php occ config:system:get [options] [--] <name> (<name>)...
-....
+----
 
 ===== Arguments
 
@@ -444,9 +444,9 @@ the command will exit with 1.
 |===
 
 ==== config:app:get
-....
+----
 sudo -u www-data php occ config:app:set [options] [--] <app> <name>
-....
+----
 
 ===== Arguments
 
@@ -467,13 +467,13 @@ the command will exit with 1.
 
 Examples
 
-....
+----
 sudo -u www-data php occ config:system:get version
 10.0.8.5
 
 sudo -u www-data php occ config:app:get activity installed_version
 2.2.1
-....
+----
 
 [[setting-a-single-configuration-value]]
 ==== Setting a Single Configuration Value
@@ -482,9 +482,9 @@ These commands set the value of a single app or system configuration.
 
 ==== config:system:set
 
-....
+----
 sudo -u www-data php occ config:system:set [options] [--] <name> (<name>)...
-....
+----
 
 ===== Arguments
 
@@ -505,9 +505,9 @@ Note: you must use json to write multi array values.
 |===
 
 ==== config:app:set
-....
+----
 sudo -u www-data php occ config:app:set [options] [--] <app> <name>
-....
+----
 
 ===== Arguments
 
@@ -528,32 +528,32 @@ sudo -u www-data php occ config:app:set [options] [--] <app> <name>
 
 Examples
 
-....
+----
 sudo -u www-data php occ config:system:set \
    logtimezone \
    --value="Europe/Berlin"
 System config value logtimezone set to Europe/Berlin
-....
-....
+----
+----
 sudo -u www-data php occ config:app:set \
    files_sharing \
    incoming_server2server_share_enabled \
    --value=true \
    --type=boolean
 Config value incoming_server2server_share_enabled for app files_sharing set to yes
-....
+----
 
 The `config:system:set` command creates the value, if it does not
 already exist. To update an existing value, set `--update-only`:
 
-....
+----
 sudo -u www-data php occ config:system:set \
    doesnotexist \
    --value=true \
    --type=boolean \
    --update-only
 Value not updated, as it has not been set before.
-....
+----
 
 NOTE: In order to write a boolean, float, JSON, or integer value to the configuration file,
 you need to specify the type on your command. This applies only to the `config:system:set` command.
@@ -563,19 +563,19 @@ Examples
 
 Disable the maintenance mode:
 
-....
+----
 sudo -u www-data php occ config:system:set maintenance \
    --value=false \
    --type=boolean
 
 ownCloud is in maintenance mode - no app have been loaded
 System config value maintenance set to boolean false
-....
+----
 
 Create the `app_paths` config setting (using a JSON payload because of multi array values):
 
 [source,console]
-....
+----
 sudo -u www-data php occ config:system:set apps_paths \
       --type=json \
       --value='[
@@ -590,7 +590,7 @@ sudo -u www-data php occ config:system:set apps_paths \
             "writable": true
         }
     ]'
-....
+----
 
 [[setting-an-array-of-configuration-values]]
 ==== Setting an Array of Configuration Values
@@ -600,17 +600,17 @@ data. The array starts counting with 0. In order to set (and also get)
 the value of one key, you can specify multiple `config` names separated
 by spaces:
 
-....
+----
 sudo -u www-data php occ config:system:get trusted_domains
 localhost
 owncloud.local
 sample.tld
-....
+----
 
 To replace `sample.tld` with `example.com` trusted_domains => 2 needs to
 be set:
 
-....
+----
 sudo -u www-data php occ config:system:set trusted_domains 2 --value=example.com
 System config value trusted_domains => 2 set to string example.com
 
@@ -618,7 +618,7 @@ sudo -u www-data php occ config:system:get trusted_domains
 localhost
 owncloud.local
 example.com
-....
+----
 
 [[deleting-a-single-configuration-value]]
 ==== Deleting a Single Configuration Value
@@ -627,9 +627,9 @@ These commands delete the configuration of an app or system configuration:
 
 ==== config:system:delete
 
-....
+----
 sudo -u www-data php occ config:system:delete [options] [--] <name> (<name>)...
-....
+----
 
 ===== Arguments
 
@@ -647,9 +647,9 @@ sudo -u www-data php occ config:system:delete [options] [--] <name> (<name>)...
 |===
 
 ==== config:app:delete
-....
+----
 sudo -u www-data php occ config:app:delete [options] [--] <app> <name>
-....
+----
 
 ===== Arguments
 
@@ -669,22 +669,22 @@ sudo -u www-data php occ config:app:delete [options] [--] <app> <name>
 
 Examples:
 
-....
+----
 sudo -u www-data php occ config:system:delete maintenance:mode
 System config value maintenance:mode deleted
 
 sudo -u www-data php occ config:app:delete myappname provisioning_api
 Config value provisioning_api of app myappname deleted
-....
+----
 
 The delete command will by default not complain if the configuration was
 not set before. If you want to be notified in that case, set the
 `--error-if-not-exists` flag.
 
-....
+----
 sudo -u www-data php occ config:system:delete doesnotexist --error-if-not-exists
 Config provisioning_api of app appname could not be deleted because it did not exist
-....
+----
 
 [[dav-commands]]
 === Dav Commands
@@ -710,28 +710,28 @@ chunks more than 2 days old. However, by supplying the number of days to
 the command, the range can be increased. For example, in the example
 below, chunks older than 10 days will be removed.
 
-....
+----
 sudo -u www-data php occ dav:cleanup-chunks 10
 
 # example output
 Cleaning chunks older than 10 days(2017-11-08T13:13:45+00:00)
 Cleaning chunks for admin
    0 [>---------------------------]
-....
+----
 
 The syntax for `dav:create-addressbook` and `dav:create-calendar` is
 `dav:create-addressbook [user] [name]`. This example creates the
 addressbook `mollybook` for the user molly:
 
-....
+----
 sudo -u www-data php occ dav:create-addressbook molly mollybook
-....
+----
 
 This example creates a new calendar for molly:
 
-....
+----
 sudo -u www-data php occ dav:create-calendar molly mollycal
-....
+----
 
 Molly will immediately see these on her Calendar and Contacts pages.
 Your existing calendars and contacts should migrate automatically when
@@ -739,30 +739,30 @@ you upgrade. If something goes wrong you can try a manual migration.
 First delete any partially-migrated calendars or address books. Then run
 this command to migrate user's contacts:
 
-....
+----
 sudo -u www-data php occ dav:migrate-addressbooks [user]
-....
+----
 
 Run this command to migrate calendars:
 
-....
+----
 sudo -u www-data php occ dav:migrate-calendars [user]
-....
+----
 
 `dav:sync-birthday-calendar` adds all birthdays to your calendar from
 address books shared with you. This example syncs to your calendar from
 user `bernie`:
 
-....
+----
 sudo -u www-data php occ dav:sync-birthday-calendar bernie
-....
+----
 
 `dav:sync-system-addressbook` synchronizes all users to the system
 addressbook.
 
-....
+----
 sudo -u www-data php occ dav:sync-system-addressbook
-....
+----
 
 [[database-conversion]]
 === Database Conversion
@@ -787,9 +787,9 @@ You need:
 
 This is example converts SQLite to MySQL/MariaDB:
 
-....
+----
 sudo -u www-data php occ db:convert-type mysql oc_dbuser 127.0.0.1 oc_database
-....
+----
 
 TIP: For a more detailed explanation see xref:configuration/database/db_conversion.adoc[converting database types].
 
@@ -823,29 +823,29 @@ encryption
 default encryption module. To enable encryption you must first enable
 the Encryption app, and then run `encryption:enable`:
 
-....
+----
 sudo -u www-data php occ app:enable encryption
 sudo -u www-data php occ encryption:enable
 sudo -u www-data php occ encryption:status
  - enabled: true
  - defaultModule: OC_DEFAULT_MODULE
-....
+----
 
 `encryption:change-key-storage-root` is for moving your encryption keys
 to a different folder. It takes one argument, `newRoot`, which defines
 your new root folder. The folder must exist, and the path is relative to
 your root ownCloud directory.
 
-....
+----
 sudo -u www-data php occ encryption:change-key-storage-root ../../etc/oc-keys
-....
+----
 
 You can see the current location of your keys folder:
 
-....
+----
 sudo -u www-data php occ encryption:show-key-storage-root
 Current key storage root:  default storage location (data/)
-....
+----
 
 `encryption:list-modules` displays your available encryption modules.
 You will see a list of modules only if you have enabled the Encryption
@@ -858,9 +858,9 @@ to prevent any user activity until encryption is completed.
 
 `encryption:decrypt-all` decrypts all user data files, or optionally a single user:
 
-....
+----
 sudo -u www-data php occ encryption:decrypt freda
-....
+----
 
 Users must have enabled recovery keys on their Personal pages. You must
 first put your ownCloud server into single-user mode <maintenance_commands>
@@ -992,7 +992,7 @@ CAUTION: Executing this command might take some time depending on the file count
 Below is sample output that you can expect to see when using the
 command.
 
-....
+----
 sudo -u www-data php occ files:checksums:verify
 This operation might take very long.
 Mismatch for files/welcome.txt:
@@ -1001,7 +1001,7 @@ Mismatch for files/welcome.txt:
 Mismatch for thumbnails/9/2048-2048-max.png:
  Filecache:   SHA1:2634fed078d1978f24f71892bf4ee0e4bd0c3c99 MD5:dd249372f7a68c551f7e6b2615d49463 ADLER32:821230d4
  Actual:  SHA1:da39a3ee5e6b4b0d3255bfef95601890afd80709 MD5:d41d8cd98f00b204e9800998ecf8427e ADLER32:00000001
-....
+----
 
 [[the-filescleanup-command]]
 ==== The files:cleanup command
@@ -1021,11 +1021,11 @@ The `files:scan` command
 
 File scans can be performed per-user, for a space-delimited list of users, for groups of users, and for all users.
 
-....
+----
 sudo -u www-data php occ files:scan --help
  Usage:
    files:scan [options] [--] [<user_id>]...
-....
+----
 
 ===== Arguments
 
@@ -1059,24 +1059,24 @@ TIP: If not using `--quiet`, statistics will be shown at the end of the scan.
 When using the `--path` option, the path must be in one of the following
 formats:
 
-....
+----
 "user_id/files/path"
 "user_id/files/mount_name"
 "user_id/files/mount_name/path"
-....
+----
 
 For example:
 
-....
+----
 --path="/alice/files/Music"
-....
+----
 
 In the example above, the user_id `alice` is determined implicitly from the path component given.
 To get a list of scannable mounts for a given user, use the following command:
 
-....
+----
 sudo -u www-data php occ files_external:list user_id
-....
+----
 
 TIP: Mounts are only scannable at the point of origin. Scanning of shares including federated shares is not necessary on the receiver side and therefore not possible.
 
@@ -1109,16 +1109,16 @@ The `--repair` option can be run within two different scenarios:
 The following commands show how to enable single user mode, run a repair file scan in bulk on all storages,
 and then disable single user mode. This way is much faster than running the command for every user seperately, but it requires single user mode.
 
-....
+----
 sudo -u www-data php occ maintenance:singleuser --on
 sudo -u www-data php occ files:scan --all --repair
 sudo -u www-data php occ maintenance:singleuser --off
-....
+----
 
 The following command filters by the storage of the specified user.
-....
+----
 sudo -u www-data php occ files:scan USERID --repair
-....
+----
 
 TIP: If many users are affected, it could be convenient to create a shell script, which iterates over a list of User ID's.
 
@@ -1129,18 +1129,18 @@ You may transfer all files and shares from one user to another. This is
 useful before removing a user. For example, to move all files from
 `<source-user>` to `<destination-user>`, use the following command:
 
-....
+----
 sudo -u www-data php occ files:transfer-ownership <source-user> <destination-user>
-....
+----
 
 You can also move a limited set of files from `<source-user>` to
 `<destination-user>` by making use of the `--path` switch, as in the
 example below. In it, `folder/to/move`, and any file and folder inside
 it will be moved to `<destination-user>`.
 
-....
+----
 sudo -u www-data php occ files:transfer-ownership --path="folder/to/move" <source-user> <destination-user>
-....
+----
 
 When using this command, please keep in mind:
 
@@ -1194,9 +1194,9 @@ List configured mounts.
 ===== Usage
 
 [source,console]
-....
+----
 files_external:list [--show-password] [--full] [-a|--all] [-s|--short] [--] [<user_id>]
-....
+----
 
 ===== Arguments
 
@@ -1220,7 +1220,7 @@ be added as system mount.
 ===== Example
 
 [source,console]
-....
+----
 sudo -uwww-data ./occ files_external:list user_1 --short
 +----------+------------------+----------+
 | Mount ID | Mount Point      | Type     |
@@ -1228,7 +1228,7 @@ sudo -uwww-data ./occ files_external:list user_1 --short
 | 1        | /mount_1         | Personal |
 | 2        | /mount_2         | Personal |
 +----------+------------------+----------+
-....
+----
 
 ==== files_external:applicable
 
@@ -1237,7 +1237,7 @@ Manage applicable users and groups for a mount.
 ===== Usage
 
 [source,console]
-....
+----
 files_external:applicable
     [--add-user     ADD-USER]
     [--remove-user  REMOVE-USER]
@@ -1247,7 +1247,7 @@ files_external:applicable
     [--output       [OUTPUT]]
     [--]
     <mount_id>
-....
+----
 
 ===== Arguments
 
@@ -1276,12 +1276,12 @@ Show available authentication and storage backends.
 ===== Usage
 
 [source,console]
-....
+----
 files_external:backends [options]
     [--]
     [<type>]
     [<backend>]
-....
+----
 
 ===== Arguments
 
@@ -1305,13 +1305,13 @@ Manage backend configuration for a mount.
 ===== Usage
 
 [source,console]
-....
+----
 files_external:config [options]
     [--]
     <mount_id>
     <key>
     [<value>]
-....
+----
 
 ===== Arguments
 
@@ -1337,13 +1337,13 @@ Create a new mount configuration.
 ===== Usage
 
 [source,console]
-....
+----
 files_external:create [options]
     [--]
     <mount_point>
     <storage_backend>
     <authentication_backend>
-....
+----
 
 ===== Arguments
 
@@ -1417,9 +1417,9 @@ Delete an external mount.
 ===== Usage
 
 [source,console]
-....
+----
 files_external:delete [options] [--] <mount_id>
-....
+----
 
 ===== Arguments
 
@@ -1441,9 +1441,9 @@ files_external:delete [options] [--] <mount_id>
 ===== Usage
 
 [source,console]
-....
+----
 files_external:export [options] [--] [<user_id>]
-....
+----
 
 ===== Arguments
 
@@ -1467,9 +1467,9 @@ Import mount configurations.
 ===== Usage
 
 [source,console]
-....
+----
 files_external:import [options] [--] <path>
-....
+----
 
 ===== Arguments
 
@@ -1495,9 +1495,9 @@ Manage mount options for a mount.
 ===== Usage
 
 [source,console]
-....
+----
 files_external:option <mount_id> <key> [<value>]
-....
+----
 
 ===== Arguments
 
@@ -1516,9 +1516,9 @@ Verify mount configuration.
 ===== Usage
 
 [source,console]
-....
+----
 files_external:verify [options] [--] <mount_id>
-....
+----
 
 ===== Arguments
 
@@ -1542,9 +1542,9 @@ You can create general (for all users) and personal (user-specific) shares by pa
 The syntax is:
 
 [source,console]
-....
+----
 files_external:create [options] [--] <mount_point> <storage_backend> <authentication_backend>
-....
+----
 
 ===== Arguments
 
@@ -1622,16 +1622,16 @@ group
 
 You can create a new group with the `group:add` command. The syntax is:
 
-....
+----
 group:add groupname
-....
+----
 
 This example adds a new group, called "Finance":
 
-....
+----
 sudo -u www-data php occ group:add Finance
   Created group "Finance"
-....
+----
 
 [[listing-groups]]
 ==== Listing Groups
@@ -1639,9 +1639,9 @@ sudo -u www-data php occ group:add Finance
 You can list the names of existing groups with the `group:list` command.
 The syntax is:
 
-....
+----
 group:list [options] [<search-pattern>]
-....
+----
 
 Groups containing the `search-pattern` string are listed. Matching is
 not case-sensitive. If you do not provide a search-pattern then all
@@ -1656,24 +1656,24 @@ groups are listed.
 
 This example lists groups containing the string "finance".
 
-....
+----
 sudo -u www-data php occ group:list finance
  - All-Finance-Staff
  - Finance
  - Finance-Managers
-....
+----
 
 This example lists groups containing the string "finance" formatted
 with `json_pretty`.
 
-....
+----
 sudo -u www-data php occ group:list --output=json_pretty finance
  [
    "All-Finance-Staff",
    "Finance",
    "Finance-Managers"
  ]
-....
+----
 
 [[listing-group-members]]
 ==== Listing Group Members
@@ -1681,9 +1681,9 @@ sudo -u www-data php occ group:list --output=json_pretty finance
 You can list the user IDs of group members with the `group:list-members`
 command. The syntax is:
 
-....
+----
 group:list-members [options] <group>
-....
+----
 
 ===== Options
 
@@ -1694,22 +1694,22 @@ group:list-members [options] <group>
 
 This example lists members of the "Finance" group.
 
-....
+----
 sudo -u www-data php occ group:list-members Finance
  - aaron: Aaron Smith
  - julie: Julie Jones
-....
+----
 
 This example lists members of the Finance group formatted with
 `json_pretty`.
 
-....
+----
 sudo -u www-data php occ group:list-members --output=json_pretty Finance
  {
    "aaron": "Aaron Smith",
    "julie": "Julie Jones"
  }
-....
+----
 
 [[adding-members-to-groups]]
 ==== Adding Members to Groups
@@ -1717,28 +1717,28 @@ sudo -u www-data php occ group:list-members --output=json_pretty Finance
 You can add members to an existing group with the `group:add-member`
 command. Members must be existing users. The syntax is
 
-....
+----
 group:add-member [-m|--member [MEMBER]] <group>
-....
+----
 
 This example adds members "aaron" and "julie" to group "Finance":
 
-....
+----
 sudo -u www-data php occ group:add-member --member aaron --member julie Finance
   User "aaron" added to group "Finance"
   User "julie" added to group "Finance"
-....
+----
 
 You may attempt to add members that are already in the group, without
 error. This allows you to add members in a scripted way without needing
 to know if the user is already a member of the group. For example:
 
-....
+----
 sudo -u www-data php occ group:add-member --member aaron --member julie --member fred Finance
   User "aaron" is already a member of group "Finance"
   User "julie" is already a member of group "Finance"
   User fred" added to group "Finance"
-....
+----
 
 [[removing-members-from-groups]]
 ==== Removing Members from Groups
@@ -1746,29 +1746,29 @@ sudo -u www-data php occ group:add-member --member aaron --member julie --member
 You can remove members from a group with the `group:remove-member`
 command. The syntax is:
 
-....
+----
 group:remove-member [-m|--member [MEMBER]] <group>
-....
+----
 
 This example removes members "aaron" and "julie" from group
 "Finance".
 
-....
+----
 sudo -u www-data php occ group:remove-member --member aaron --member julie Finance
   Member "aaron" removed from group "Finance"
   Member "julie" removed from group "Finance"
-....
+----
 
 You may attempt to remove members that have already been removed from
 the group, without error. This allows you to remove members in a
 scripted way without needing to know if the user is still a member of
 the group. For example:
 
-....
+----
 sudo -u www-data php occ group:remove-member --member aaron --member fred Finance
   Member "aaron" could not be found in group "Finance"
   Member "fred" removed from group "Finance"
-....
+----
 
 [[deleting-a-group]]
 ==== Deleting a Group
@@ -1776,9 +1776,9 @@ sudo -u www-data php occ group:remove-member --member aaron --member fred Financ
 To delete a group, you use the `group:delete` command, as in the example
 below:
 
-....
+----
 sudo -u www-data php occ group:delete Finance
-....
+----
 
 [[integrity-check]]
 === Integrity Check
@@ -1798,18 +1798,18 @@ integrity
 
 After creating your signing key, sign your app like this example:
 
-....
+----
 sudo -u www-data php occ integrity:sign-app \
    --privateKey=/Users/karlmay/contacts.key \
    --certificate=/Users/karlmay/CA/contacts.crt \
    --path=/Users/karlmay/Programming/contacts
-....
+----
 
 Verify your app:
 
-....
+----
 sudo -u www-data php occ integrity:check-app --path=/pathto/app appname
-....
+----
 
 When it returns nothing, your app is signed correctly.
 When it returns a message then there is an error.
@@ -1866,9 +1866,9 @@ $PLURAL_FORMS = "nplurals=2; plural=(n != 1);";
 
 After that, run the following command to create the translation.
 
-....
+----
 sudo -u www-data php occ l10n:createjs gallery de_AT
-....
+----
 
 This will generate two translation files, `de_AT.js` and `de_AT.json`,
 in `/var/www/owncloud/apps/gallery/l10n`.
@@ -1879,9 +1879,9 @@ in `/var/www/owncloud/apps/gallery/l10n`.
 To create translations in multiple languages simultaneously, supply
 multiple languages to the command, as in the following example:
 
-....
+----
 sudo -u www-data php occ l10n:createjs gallery de_AT de_DE hu_HU es fr
-....
+----
 
 [[logging-commands]]
 === Logging Commands
@@ -1899,12 +1899,12 @@ log
 
 Run `log:owncloud` to see your current logging status:
 
-....
+----
 sudo -u www-data php occ log:owncloud
 Log backend ownCloud: enabled
 Log file: /opt/owncloud/data/owncloud.log
 Rotate at: disabled
-....
+----
 
 ===== Options
 
@@ -1933,10 +1933,10 @@ Options for `log:manage`:
 
 Log level can be adjusted by entering the number or the name:
 
-....
+----
 sudo -u www-data php occ log:manage --level 4
 sudo -u www-data php occ log:manage --level error
-....
+----
 
 TIP: Setting the log level to debug ( 0 ) can be used for finding the cause of an error, but should not be the standard as it increases the log file size.
 
@@ -1966,26 +1966,26 @@ until maintenance mode is turned off. When you take the server out of
 maintenance mode logged-in users must refresh their Web browsers to
 continue working.
 
-....
+----
 sudo -u www-data php occ maintenance:mode --on
 sudo -u www-data php occ maintenance:mode --off
-....
+----
 
 Putting your ownCloud server into single-user mode allows admins to log
 in and work, but not ordinary users. This is useful for performing
 maintenance and troubleshooting on a running server.
 
-....
+----
 sudo -u www-data php occ maintenance:singleuser --on
 Single user mode enabled
-....
+----
 
 Turn it off when you're finished:
 
-....
+----
 sudo -u www-data php occ maintenance:singleuser --off
 Single user mode disabled
-....
+----
 
 Run `maintenance:data-fingerprint` to tell desktop and mobile clients
 that a server backup has been restored. This command changes the ETag
@@ -2038,14 +2038,14 @@ a|Increase the verbosity of messages:
 Here is an example of running the command:
 
 [source,console]
-....
+----
 sudo -u www-data php occ maintenance:repair
-....
+----
 
 To list all off the possible repair steps, use the `--list` option. 
 It should output the following list to the console:
 
-....
+----
 Found 16 repair steps
 
 OC\Repair\RepairMimeTypes -> Repair mime types
@@ -2064,16 +2064,16 @@ OC\Repair\RepairUnmergedShares -> Repair unmerged shares
 OC\Repair\DisableExtraThemes -> Disable extra themes
 OC\Repair\OldGroupMembershipShares -> Remove shares of old group memberships
 OCA\DAV\Repair\RemoveInvalidShares -> Remove invalid calendar and addressbook shares
-....
+----
 
 ===== Running a Single Repair Step
 
 To run a single repair step, use either the `-s` or `--single` options, as in the following example.
 
 [source,console]
-....
+----
 sudo -u www-data php occ maintenance:repair --single="OCA\DAV\Repair\RemoveInvalidShares"
-....
+----
 
 TIP: The step's name must be quoted, otherwise you will see the following warning message appear, and the command will fail:
 "_Repair step not found. Use --list to show available steps._"
@@ -2096,27 +2096,27 @@ From the command-line in the root directory of your ownCloud
 installation, run it as your webserver user as follows, (assuming your
 webserver user is `www-data`):
 
-....
+----
 sudo -u www-data occ configreport:generate
-....
+----
 
 This will generate the report and send it to `STDOUT`. You can
 optionally pipe the output to a file and then attach it to an email to
 ownCloud support, by running the following command:
 
-....
+----
 sudo -u www-data occ configreport:generate > generated-config-report.txt
-....
+----
 
 Alternatively, you could generate the report and email it all in one
 command, by running:
 
-....
+----
 sudo -u www-data occ configreport:generate | mail \
     -s "configuration report" \
     -r <the email address to send from> \
     support@owncloud.com
-....
+----
 
 NOTE: These commands are not available in single-user (maintenance) mode <maintenance_commands_label>.
 
@@ -2145,11 +2145,11 @@ security:routes [options]
 
 Example 1:
 
-....
+----
 sudo -uwww-data ./occ security:routes
-....
+----
 
-....
+----
 +-----------------------------------------------------------+-----------------+
 | Path                                                      | Methods         |
 +-----------------------------------------------------------+-----------------+
@@ -2159,15 +2159,15 @@ sudo -uwww-data ./occ security:routes
 | /apps/files/                                              | GET             |
 | /apps/files/ajax/download.php                             |                 |
 ...
-....
+----
 
 Example 2:
 
-....
+----
 sudo  -uwww-data ./occ security:routes --output=json-pretty
-....
+----
 
-....
+----
 [
   {
       "path": "\/apps\/federation\/auto-add-servers",
@@ -2175,22 +2175,22 @@ sudo  -uwww-data ./occ security:routes --output=json-pretty
           "POST"
       ]
   },
-....
+----
 
 Example 3:
 
-....
+----
 sudo  -uwww-data ./occ security:routes --with-details
-....
+----
 
-....
+----
 +---------------------------------------------+---------+-------------------------------------------------------+--------------------------------+
 | Path                                        | Methods | Controller                                            | Annotations                    |
 +---------------------------------------------+---------+-------------------------------------------------------+--------------------------------+
 | /apps/files/api/v1/sorting                  | POST    | OCA\Files\Controller\ApiController::updateFileSorting | NoAdminRequired                |
 | /apps/files/api/v1/thumbnail/{x}/{y}/{file} | GET     | OCA\Files\Controller\ApiController::getThumbnail      | NoAdminRequired,NoCSRFRequired |
 ...
-....
+----
 
 
 The following commands manage server-wide SSL certificates. These are
@@ -2206,21 +2206,21 @@ security:certificates:remove  Remove trusted certificate
 
 This example lists your installed certificates:
 
-....
+----
 sudo -u www-data php occ security:certificates
-....
+----
 
 Import a new certificate:
 
-....
+----
 sudo -u www-data php occ security:certificates:import /path/to/certificate
-....
+----
 
 Remove a certificate:
 
-....
+----
 sudo -u www-data php occ security:certificates:remove [certificate name]
-....
+----
 
 [[sharing]]
 === Sharing
@@ -2242,9 +2242,9 @@ command is available.
 
 So, to cleanup all orphaned remote storages, run it as follows:
 
-....
+----
 sudo -u www-data php occ sharing:cleanup-remote-storages
-....
+----
 
 You can also set it up to run as xref:background-jobs-selector[a background job].
 
@@ -2267,7 +2267,7 @@ The `trashbin:cleanup` command removes the deleted files of the
 specified users in a space-delimited list, or all users if none are
 specified. This example removes all the deleted files of all users:
 
-....
+----
 sudo -u www-data php occ trashbin:cleanup
 Remove all deleted files
 Remove deleted files for users on backend Database
@@ -2276,15 +2276,15 @@ Remove deleted files for users on backend Database
  stash
  rosa
  edward
-....
+----
 
 This example removes the deleted files of users `molly` and `freda`:
 
-....
+----
 sudo -u www-data php occ trashbin:cleanup molly freda
 Remove deleted files of   molly
 Remove deleted files of   freda
-....
+----
 
 `trashbin:expire` deletes only expired files according to the `trashbin_retention_obligation` setting in `config.php` (see xref:configuration/server/config_sample_php_parameters.adoc[the "Deleted Files" section documentation]).
 The default is to delete expired files for all users, or you may list users in a space-delimited list.
@@ -2324,9 +2324,9 @@ user
 You can create a new user with the `user:add` command.
 
 [source,console]
-....
+----
 sudo -u www-data php occ user:add [--password-from-env] [--display-name [DISPLAY-NAME]] [--email [EMAIL]] [-g|--group [GROUP]] [--] <uid>
-....
+----
 
 ===== Arguments
 
@@ -2362,7 +2362,7 @@ in your ownCloud Web UI
 This example adds new user Layla Smith, and adds her to the *users* and
 *db-admins* groups. Any groups that do not exist are created.
 
-....
+----
 sudo -u www-data php occ user:add \
   --display-name="Layla Smith" \
   --group="users" \
@@ -2375,7 +2375,7 @@ sudo -u www-data php occ user:add \
   Email address set to "layla.smith@example.com"
   User "layla" added to group "users"
   User "layla" added to group "db-admins"
-....
+----
 
 After the command completes, go to your Users page, and you will see
 your new user.
@@ -2397,27 +2397,27 @@ sudo -u www-data php occ user:delete <uid>
 | `uid` | The username.
 |====
 
-....
+----
 sudo -u www-data php occ user:delete fred
-....
+----
 
 [[disable-users]]
 ==== Disable Users
 
 Admins can disable users via the occ command too:
 
-....
+----
 sudo -u www-data php occ user:disable <username>
-....
+----
 
 NOTE: Once users are disabled, their connected browsers will be disconnected.Use the following command to enable the user again:
 
 [[enable-users]]
 ==== Enable Users
 
-....
+----
 sudo -u www-data php occ user:enable <username>
-....
+----
 
 [[finding-inactive-users]]
 ==== Finding Inactive Users
@@ -2425,9 +2425,9 @@ sudo -u www-data php occ user:enable <username>
 To view a list of users who've not logged in for a given number of days,
 use the `user:inactive` command.
 
-....
+----
 sudo -u www-data php occ user:inactive [options] [--] <days>
-....
+----
 
 ===== Arguments
 
@@ -2444,18 +2444,18 @@ sudo -u www-data php occ user:inactive [options] [--] <days>
 |===
 
 The example below searches for users inactive for five days, or more.
-....
+----
 sudo -u www-data php occ user:inactive 5
-....
+----
 
 By default, this will generate output in the following format:
 
-....
+----
 - 0:
   - uid: admin
   - displayName: admin
   - inactiveSinceDays: 5
-....
+----
 
 You can see a counting number starting with `0`, the user's user id, display name, and the number of days
 they've been inactive. If you're passing or piping this information to
@@ -2489,9 +2489,9 @@ as follows.
 
 To view a user's most recent login, use the `user:lastseen` command
 
-....
+----
 sudo -u www-data php occ user:lastseen <uid>
-....
+----
 
 ===== Arguments
 
@@ -2501,10 +2501,10 @@ sudo -u www-data php occ user:lastseen <uid>
 |====
 
 Example
-....
+----
 sudo -u www-data php occ user:lastseen layla
   layla's last login: 09.01.2015 18:46
-....
+----
 
 [[listing-users]]
 ==== Listing Users
@@ -2534,39 +2534,39 @@ Allowed attributes, multiple values possible: +
 
 This example lists user IDs containing the string `ron`
 
-....
+----
 sudo -u www-data php occ user:list ron
  - aaron: Aaron Smith
-....
+----
 
 The output can be formatted in JSON with the output option `json` or
 `json_pretty`.
 
-....
+----
 sudo -u www-data php occ user:list --output=json_pretty
  {
    "aaron": "Aaron Smith",
    "herbert": "Herbert Smith",
    "julie": "Julie Jones"
  }
-....
+----
 
 This example lists all users including the attribute `enabled`.
 
-....
+----
 sudo -u www-data php occ user:list -a enabled
  - admin: true
  - foo: true
-....
+----
 
 [[listing-group-membership-of-a-user]]
 ==== Listing Group Membership of a User
 
 You can list the group membership of a user with the `user:list-groups` command.
 
-....
+----
 sudo -u www-data php occ user:list-groups [options] [--] <uid>
-....
+----
 
 ===== Arguments
 
@@ -2586,22 +2586,22 @@ Examples
 
 This example lists group membership of user `julie`:
 
-....
+----
 sudo -u www-data php occ user:list-groups julie
  - Executive
  - Finance
-....
+----
 
 The output can be formatted in JSON with the output option `json` or
 `json_pretty`:
 
-....
+----
 sudo -u www-data php occ user:list-groups --output=json_pretty julie
  [
    "Executive",
    "Finance"
  ]
-....
+----
 
 [[modify-user-details]]
 ==== Modify user details
@@ -2627,9 +2627,9 @@ All three arguments are mandatory and can not be empty.
 
 Example to set the email address:
 
-....
+----
 sudo -u www-data php occ user:modify carla email foobar@foo.com
-....
+----
 
 The email address of `carla` is updated to `foobar@foo.com`
 
@@ -2639,12 +2639,12 @@ The email address of `carla` is updated to `foobar@foo.com`
 Generate a simple report that counts all users, including users on
 external user authentication servers such as LDAP.
 
-....
+----
 sudo -u www-data php occ user:report
-....
+----
 
 There are no arguments and no options beside the default once to parametrize the output
-....
+----
 sudo -u www-data php occ user:report
 +------------------+----+
 | User Report      |    |
@@ -2656,14 +2656,14 @@ sudo -u www-data php occ user:report
 |                  |    |
 | user directories | 2  |
 +------------------+----+
-....
+----
 
 [[setting-a-users-password]]
 ==== Setting a User's Password
 
-....
+----
 sudo -u www-data php occ user:resetpassword [options] [--] <user>
-....
+----
 
 ===== Arguments
 
@@ -2696,51 +2696,51 @@ Examples
 
 Add a new user, called Fred Jones:
 
-....
+----
 export OC_PASS=newpassword
 su -s /bin/sh www-data -c 'php occ user:add --password-from-env
   --display-name="Fred Jones" --group="users" fred'
 The user "fred" was created successfully
 Display name set to "Fred Jones"
 User "fred" added to group "users"
-....
+----
 
 You can reset any user's password, including administrators (see xref:configuration/user/reset_admin_password.adoc[Reset Admin Password]):
 
-....
+----
 sudo -u www-data php occ user:resetpassword layla
   Enter a new password:
   Confirm the new password:
 Successfully reset password for layla
-....
+----
 
 You may also use `password-from-env` to reset passwords:
 
-....
+----
 export OC_PASS=newpassword
 su -s /bin/sh www-data -c 'php occ user:resetpassword \
   --password-from-env \
   layla'
 Successfully reset password for layla
-....
+----
 
 This example emails a password reset link to the user.
 Additionally, when the command completes, it outputs the password reset link to the console:
 
-....
+----
 sudo -u www-data php occ user:resetpassword \
   --send-email \
   --output-link \
   layla
 The password reset link is: http://localhost:8080/index.php/lostpassword/reset/form/rQAlCjNeQf3aphA6Hraq2/layla
-....
+----
 
 
 If the specified user does not have a valid email address set, then the following error will be output to the console, and the email will not be sent:
 
-....
+----
 Email address is not set for the user layla
-....
+----
 
 [[user-application-settings]]
 ==== User Application Settings
@@ -2780,9 +2780,9 @@ or deleted) by the `user:setting` command.
 To retrieve all settings for a user, you need to call the `user:setting`
 command and supply at least the user's username.
 
-....
+----
 sudo -u www-data php occ user:setting <uid> [<app>] [<key>]
-....
+----
 
 ===== Arguments
 
@@ -2794,7 +2794,7 @@ sudo -u www-data php occ user:setting <uid> [<app>] [<key>]
 |====
 
 Example for all settings set for a given user
-....
+----
 sudo -u www-data php occ user:setting layla
   - core:
     - lang: en
@@ -2802,35 +2802,35 @@ sudo -u www-data php occ user:setting layla
     - lastLogin: 1465910968
   - settings:
     - email: layla@example.tld
-....
+----
 
 Here we see that the user has settings for the application `core`, when
 they last logged in, and what their email address is.
 
 Example for all settings set restricted to application `core` for a given user
 
-....
+----
 sudo -u www-data php occ user:setting layla core
  - core:
     - lang: en
-....
+----
 
 In the output, you can see that one setting is in effect, `lang`, which is set to `en`.
 
 Example for all settings set restricted to application `core`, key `lang` for a given user
 
-....
+----
 sudo -u www-data php occ user:setting layla core lang en
-....
+----
 
 This will display the value for that setting, such as `en`.
 
 [[setting-and-deleting-a-setting]]
 ===== Setting and Deleting a Setting
 
-....
+----
 sudo -u www-data php occ user:setting [options] [--] <uid> [<app>] [<key>]
-....
+----
 
 ===== Arguments
 
@@ -2859,17 +2859,17 @@ will exit with 1. Only applicable on get.
 
 Here's an example of how you would set the language of the user `layla`.
 
-....
+----
 sudo -u www-data php occ user:setting layla core lang --value=en
-....
+----
 
 Deleting a setting is quite similar to setting a setting. In this case,
 you supply the username, application (or setting category) and key as
 above. Then, in addition, you supply the `--delete` flag.
 
-....
+----
 sudo -u www-data php occ user:setting layla core lang --delete
-....
+----
 
 [[syncing-user-accounts]]
 ==== Syncing User Accounts
@@ -2886,9 +2886,9 @@ NOTE: This command replaces the old `show-remnants` functionality, and brings th
 
 ===== Usage
 
-....
+----
 user:sync [options] [--] [<backend-class>]
-....
+----
 
 Synchronize users from a given backend to the accounts table.
 
@@ -2927,29 +2927,29 @@ and _Shibboleth_ backend.
 [[ldap]]
 ===== LDAP
 
-....
+----
 sudo -u www-data ./occ user:sync "OCA\User_LDAP\User_Proxy"
-....
+----
 
 [[samba]]
 ===== Samba
 
-....
+----
 sudo -u www-data ./occ user:sync "OCA\User\SMB" -vvv
-....
+----
 
 [[shibboleth]]
 ===== Shibboleth
 
-....
+----
 sudo -u www-data ./occ user:sync "OCA\User_Shibboleth\UserBackend"
-....
+----
 
 Below are examples of how to use the command with the *LDAP* backend along with example console output.
 
 ===== Example 1
 
-....
+----
 sudo ./occ user:sync "OCA\User_LDAP\User_Proxy" -m disable -r
   Analysing all users ...
       6 [============================]
@@ -2960,11 +2960,11 @@ sudo ./occ user:sync "OCA\User_LDAP\User_Proxy" -m disable -r
 
   Insert new and update existing users ...
       4 [============================]
-....
+----
 
 ===== Example 2
 
-....
+----
 sudo  ./occ user:sync "OCA\User_LDAP\User_Proxy" -m disable -r
   Analysing all users ...
       6 [============================]
@@ -2979,11 +2979,11 @@ sudo  ./occ user:sync "OCA\User_LDAP\User_Proxy" -m disable -r
 
   Insert new and update existing users ...
       1 [============================]
-....
+----
 
 ===== Example 3
 
-....
+----
 sudo./occ user:sync "OCA\User_LDAP\User_Proxy" -m disable -r
   Analysing all users ...
       6 [============================]
@@ -2999,11 +2999,11 @@ sudo./occ user:sync "OCA\User_LDAP\User_Proxy" -m disable -r
 
   Insert new and update existing users ...
       1 [============================]
-....
+----
 
 ===== Example 4
 
-....
+----
 sudo ./occ user:sync "OCA\User_LDAP\User_Proxy" -m disable -r
   Analysing all users ...
       6 [============================]
@@ -3017,20 +3017,20 @@ sudo ./occ user:sync "OCA\User_LDAP\User_Proxy" -m disable -r
 
   Insert new and update existing users ...
       4 [============================]
-....
+----
 
 [[syncing-via-cron-job]]
 ===== Syncing via cron job
 
 Here is an example for syncing with LDAP four times a day on Ubuntu:
 
-....
+----
 crontab -e -u www-data
 
 * */6 * * * /usr/bin/php /var/www/owncloud/occ user:sync -vvv \
     --missing-account-action="disable" \
     -n "OCA\User_LDAP\User_Proxy"
-....
+----
 
 [[versions]]
 === Versions
@@ -3043,9 +3043,9 @@ These commands are not available in xref:maintenance-commands[single-user (maint
 `versions:cleanup` can delete all versioned files, as well as the
 `files_versions` folder, for either specific users, or for all users.
 
-....
+----
 sudo -u www-data php occ versions:cleanup [<user_id>]...
-....
+----
 
 Options
 
@@ -3056,7 +3056,7 @@ Options
 
 The example below deletes all versioned files for all users:
 
-....
+----
 sudo -u www-data php occ versions:cleanup
 Delete all versions
 Delete versions for users on backend Database
@@ -3065,15 +3065,15 @@ Delete versions for users on backend Database
   stash
   rosa
   edward
-....
+----
 
 You can delete versions for specific users in a space-delimited list:
 
-....
+----
 sudo -u www-data php occ versions:cleanup freda molly
 Delete versions of   freda
 Delete versions of   molly
-....
+----
 
 ==== versions:expire
 
@@ -3083,9 +3083,9 @@ versions section in config_sample_php_parameters). The default is to
 delete expired files for all users, or you may list users in a
 space-delimited list.
 
-....
+----
 sudo -u www-data php occ versions:expire [<user_id>]...
-....
+----
 
 Options
 
@@ -3110,7 +3110,7 @@ see xref:installation/command_line_installation.adoc[strong_permissions].
 
 Then choose your `occ` options. This lists your available options:
 
-....
+----
 sudo -u www-data php occ
 ownCloud is not installed - only a limited number of commands are available
 ownCloud version 10.0.8
@@ -3139,18 +3139,18 @@ Available commands:
   l10n:createjs        Create javascript translation files for a given app
  maintenance
   maintenance:install  Install ownCloud
-....
+----
 
 
 ==== Command Description
 
 Display your `maintenance:install` options
 
-....
+----
 sudo -u www-data php occ help maintenance:install
 ownCloud is not installed - only a limited number of commands are available
 Usage:
-....
+----
 
 [source,console]
 ----
@@ -3176,7 +3176,7 @@ maintenance:install [--database=["..."]] [--database-name=["..."]] \
 
 This example completes the installation:
 
-....
+----
 cd /var/www/owncloud/
 sudo -u www-data php occ maintenance:install \
    --database "mysql" \
@@ -3187,7 +3187,7 @@ sudo -u www-data php occ maintenance:install \
    --admin-pass "password"
 ownCloud is not installed - only a limited number of commands are available
 ownCloud was successfully installed
-....
+----
 
 Supported databases are:
 
@@ -3208,11 +3208,11 @@ options, like this example on CentOS Linux:
 
 ==== Command Description
 
-....
+----
 sudo -u www-data php occ upgrade --help
 Usage:
 upgrade [options]
-....
+----
 
 ===== Options
 
@@ -3232,7 +3232,7 @@ After performing all the preliminary steps
 (see xref:maintenance/upgrade.adoc[the maintenance upgrade documentation]) use this command
 to upgrade your databases, like this example on CentOS Linux:
 
-....
+----
 sudo -u www-data php occ upgrade
 ownCloud or one of the apps require upgrade - only a limited number of
 commands are available
@@ -3246,11 +3246,11 @@ Updating <activity> ...
 Updated <activity> to 2.1.0
 Update successful
 Turned off maintenance mode
-....
+----
 
 Note how it details the steps. Enabling verbosity displays timestamps:
 
-....
+----
 sudo -u www-data php occ upgrade -v
 ownCloud or one of the apps require upgrade - only a limited number of commands are available
 2017-06-23T09:06:15+0000 Turned on maintenance mode
@@ -3260,13 +3260,13 @@ ownCloud or one of the apps require upgrade - only a limited number of commands 
 2017-06-23T09:06:15+0000 Updated <files_sharing> to 0.6.6
 2017-06-23T09:06:15+0000 Update successful
 2017-06-23T09:06:15+0000 Turned off maintenance mode
-....
+----
 
 If there is an error it throws an exception, and the error is detailed
 in your ownCloud logfile, so you can use the log output to figure out
 what went wrong, or to use in a bug report.
 
-....
+----
 Turned on maintenance mode
 Checked database schema update
 Checked database schema update for apps
@@ -3276,7 +3276,7 @@ Exception
 ServerNotAvailableException: LDAP server is not available
 Update failed
 Turned off maintenance mode
-....
+----
 
 [[notifications]]
 === Notifications
@@ -3291,9 +3291,9 @@ notifications
 
 ==== Command Description
 
-....
+----
 sudo -u www-data php occ notifications:generate [-u|--user USER] [-g|--group GROUP] [-l|--link <linktext>] [--] <subject> [<message>]
-....
+----
 
 ===== Arguments:
 
@@ -3320,9 +3320,9 @@ At least one user or group must be set.
 A link can be useful for notifications shown in client apps.
 Example:
 
-....
+----
 sudo -u www-data php occ notifications:generate -g Office "Emergeny Alert" "Rebooting in 5min"
-....
+----
 
 == ownCloud Maintained Application Commands
 
@@ -3339,17 +3339,17 @@ The combination of `uid` and `IP address` is used to trigger the ban.
 
 ==== List the Current Settings
 
-....
+----
 sudo -u www-data php occ config:list brute_force_protection
-....
+----
 
 ==== Set the Setting
 
 To set a new value, use the command below and replace `<Key>` and value `<Value>` accordingly.
 
-....
+----
 sudo -u www-data php occ config:app:set brute_force_protection <Key> --value=<Value> --update-only
-....
+----
 
 ===== Fail Tolerance [attempts]
 
@@ -3393,9 +3393,9 @@ The export contains all user-settings, files and shares.
 
 ==== Export User Data
 
-....
+----
 instance:export:user <userId> <exportDirectory>
-....
+----
 
 ===== Arguments
 
@@ -3407,9 +3407,9 @@ instance:export:user <userId> <exportDirectory>
 
 ==== Import User Data
 
-....
+----
 instance:import:user [options] [--] <importDirectory>
-....
+----
 
 ===== Arguments
 
@@ -3429,9 +3429,9 @@ instance:import:user [options] [--] <importDirectory>
 
 ==== Migrate Shares
 
-....
+----
 instance:export:migrate:share <userId> <remoteServer>
-....
+----
 
 ===== Arguments
 
@@ -3466,17 +3466,17 @@ Parametrisation must be done with the `occ config` command set.
 
 ==== List the Current Settings
 
-....
+----
 sudo -u www-data php occ config:list files_antivirus
-....
+----
 
 ==== Set the Setting
 
 To set a new value, use the command below and replace `<Key>` and value `<Value>` accordingly.
 
-....
+----
 sudo -u www-data php occ config:app:set files_antivirus <Key> --value=<Value> --update-only
-....
+----
 
 ===== Antivirus Mode [string]
 
@@ -3596,9 +3596,9 @@ Marketplace URL: https://marketplace.owncloud.com/apps/files_primary_s3[S3 Objec
 [[list-objects-buckets-or-versions-of-an-object]]
 ==== List objects, buckets or versions of an object
 
-....
+----
 sudo -u www-data occ s3:list
-....
+----
 
 ===== Arguments
 
@@ -3611,9 +3611,9 @@ sudo -u www-data occ s3:list
 [[create-a-bucket-as-necessary-to-be-used]]
 ==== Create a bucket as necessary to be used
 
-....
+----
 sudo -u www-data occ s3:create-bucket
-....
+----
 
 ===== Arguments
 
@@ -3649,23 +3649,23 @@ ldap
 
 Search for an LDAP user, using this syntax:
 
-....
+----
 sudo -u www-data php occ ldap:search [--group] [--offset="..."] [--limit="..."] search
-....
+----
 
 Searches match at the beginning of the attribute value only.
 This example searches for `givenNames` that start with 'rob':
 
-....
+----
 sudo -u www-data php occ ldap:search "rob"
-....
+----
 
 This will find "robbie", "roberta", and "robin".
 Broaden the search to find, for example, `jeroboam` with the asterisk wildcard:
 
-....
+----
 sudo -u www-data php occ ldap:search "*rob"
-....
+----
 
 User search attributes are set with `ldap:set-config` (below).
 For example, if your search attributes are `givenName` and `sn` you can find users by first name + last name very quickly.
@@ -3675,65 +3675,65 @@ Trailing whitespace is ignored.
 Check if an LDAP user exists.
 This works only if the ownCloud server is connected to an LDAP server.
 
-....
+----
 sudo -u www-data php occ ldap:check-user robert
-....
+----
 
 `ldap:check-user` will not run a check when it finds a disabled LDAP connection.
 This prevents users that exist on disabled LDAP connections from being marked as deleted.
 If you know for sure that the user you are searching for is not in one of the disabled connections, and exists on an active connection, use the `--force` option to force it to check all active LDAP connections.
 
-....
+----
 sudo -u www-data php occ ldap:check-user --force robert
-....
+----
 
 `ldap:create-empty-config` creates an empty LDAP configuration.
 The first one you create has no `configID`, like this example:
 
-....
+----
 sudo -u www-data php occ ldap:create-empty-config
   Created new configuration with configID ''
-....
+----
 
 This is a holdover from the early days, when there was no option to create additional configurations.
 The second, and all subsequent, configurations that you create are automatically assigned IDs.
 
-....
+----
 sudo -u www-data php occ ldap:create-empty-config
    Created new configuration with configID 's01'
-....
+----
 
 Then you can list and view your configurations:
 
-....
+----
 sudo -u www-data php occ ldap:show-config
-....
+----
 
 And view the configuration for a single `configID`:
 
-....
+----
 sudo -u www-data php occ ldap:show-config s01
-....
+----
 
 `ldap:delete-config [configID]` deletes an existing LDAP configuration.
 
-....
+----
 sudo -u www-data php occ ldap:delete  s01
 Deleted configuration with configID 's01'
-....
+----
 
 The `ldap:set-config` command is for manipulating configurations, like this example that sets search attributes:
 
-....
+----
 sudo -u www-data php occ ldap:set-config s01 ldapAttributesForUserSearch
 "cn;givenname;sn;displayname;mail"
-....
+----
 
 The command takes the following format:
 
-....
+----
 ldap:set-config <configID> <configKey> <configValue>
-....
+----
 
 All of the available keys, along with default values for configValue, are listed in the table below.
 
@@ -3793,17 +3793,17 @@ All of the available keys, along with default values for configValue, are listed
 
 `ldap:test-config` tests whether your configuration is correct and can bind to the server.
 
-....
+----
 sudo -u www-data php occ ldap:test-config s01
 The configuration is valid and the connection could be established!
-....
+----
 
 `ldap:update-group` updates the specified group membership information stored locally.
 The command takes the following format:
 
-....
+----
 ldap:update-group <groupID> <groupID <groupID> ...>
-....
+----
 
 The command allows for running a manual group sync on one or more groups, instead of having to wait
 for group syncing to occur.
@@ -3821,9 +3821,9 @@ You can configure the LDAP refresh attribute interval, but not with the `ldap` c
 Instead, you need to use the `config:app:set` command, as in the following example, which takes a
 number of seconds to the `--value` switch.
 
-....
+----
 sudo -u www-data php occ config:app:set user_ldap updateAttributesInterval --value=7200
-....
+----
 
 In the example above, the interval is being set to 7200 seconds.
 Assuming the above example was used, the command would output the following:
@@ -3835,9 +3835,9 @@ Config value updateAttributesInterval for app user_ldap set to 7200
 
 If you want to reset (or unset) the setting, then you can use the following command:
 
-....
+----
 sudo -u www-data php occ config:app:delete user_ldap updateAttributesInterval
-....
+----
 
 [[market]]
 === Market
@@ -3876,9 +3876,9 @@ To install an application from the Marketplace, you need to supply the app’s i
 For example, the URL for _Two factor backup codes_ is https://marketplace.owncloud.com/apps/twofactor_backup_codes.
 So its app id is `twofactor_backup_codes`.
 
-....
+----
 sudo -u www-data occ market:install <ids> [option]
-....
+----
 
 ===== Arguments
 
@@ -3903,13 +3903,13 @@ Only `zip`, `gzip`, and `bzip2` archives are supported.
 [[usage-example]]
 ==== Usage Example
 
-....
+----
 # Install an app from the marketplace.
 sudo -u www-data occ market:install twofactor_backup_codes
 
 # Install an app from a local archive.
 sudo -u www-data occ market:install -l /mnt/data/richdocuments-2.0.0.tar.gz
-....
+----
 
 NOTE: The target directory has to be *accessable to the webserver user* and you have to *enable* the app afterwards with the `occ app:enable` command.
 
@@ -3918,9 +3918,9 @@ NOTE: The target directory has to be *accessable to the webserver user* and you 
 
 To uninstall an application use the following commands:
 
-....
+----
 sudo -u www-data occ market:uninstall <ids>
-....
+----
 
 ===== Arguments
 
@@ -3935,18 +3935,18 @@ sudo -u www-data occ market:uninstall <ids>
 This command lists apps available on the marketplace.
 It returns the ids if the apps.
 
-....
+----
 sudo -u www-data occ market:list
-....
+----
 
 [[upgrade-an-application]]
 ==== Upgrade an Application
 
 Install new app versions if available on the marketplace by using following commands:
 
-....
+----
 sudo -u www-data occ market:upgrade <ids> [options]
-....
+----
 
 ===== Arguments
 
@@ -3972,9 +3972,9 @@ Command to expire a user or group of users’ passwords.
 
 ==== Command Description
 
-....
+----
 sudo -u www-data occ user:expire-password <uid> [<expiredate>]
-....
+----
 
 ===== Arguments
 
@@ -4013,13 +4013,13 @@ date will be set to `2018-07-**11** 13:15:28 UTC`.
 
 After the command completes, console output, similar to that below, confirms when the user's password is set to expire.
 
-....
+----
 The password for frank is set to expire on 2018-07-12 13:15:28 UTC.
-....
+----
 
 ==== Command Examples
 
-....
+----
 # The password for user "frank" will be set as being expired 24 hours before the command was run.
 sudo -u www-data php occ user:expire-password -u frank
 
@@ -4031,7 +4031,7 @@ sudo -u www-data php occ user:expire-password --uid frank '2005-08-15T15:52:01+0
 
 # Expire the user "frank"'s password on the 15th of August 2005, at 15:52:01 UTC.
 sudo -u www-data php occ user:expire-password --uid frank '15-Aug-05 15:52:01 UTC'
-....
+----
 
 ==== Caveats
 
@@ -4059,9 +4059,9 @@ You can find more information about the application in xref:enterprise/ransomwar
 
 ==== Command Description
 
-....
+----
 sudo -u www-data occ ransomguard:scan <timestamp> <user>
-....
+----
 
 ===== Arguments
 
@@ -4071,9 +4071,9 @@ sudo -u www-data occ ransomguard:scan <timestamp> <user>
 `<user>`          | Report all changes in a user's account, starting from timestamp.
 |===
 
-....
+----
 sudo -u www-data occ ransomguard:restore <timestamp> <user>
-....
+----
 
 ===== Arguments
 
@@ -4083,9 +4083,9 @@ sudo -u www-data occ ransomguard:restore <timestamp> <user>
 `<user>`          | Revert all operations in a user account after a point in time.
 |===
 
-....
+----
 sudo -u www-data occ ransomguard:lock <user>
-....
+----
 
 ===== Arguments
 
@@ -4095,9 +4095,9 @@ sudo -u www-data occ ransomguard:lock <user>
 malicious activity is suspected.
 |===
 
-....
+----
 sudo -u www-data occ ransomguard:unlock <user>
-....
+----
 
 ===== Arguments
 
@@ -4128,12 +4128,12 @@ In the case of an user losing access to the second factor (e.g., a lost phone wi
 
 ==== Command Description
 
-....
+----
 sudo -u www-data php occ twofactor:disable <username>
-....
+----
 
 To re-enable two-factor authentication again, use the following command:
 
-....
+----
 sudo -u www-data php occ twofactor:enable <username>
-....
+----

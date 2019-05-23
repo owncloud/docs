@@ -10,22 +10,22 @@ instead of `\https://example.com/index.php/apps/files/`, you can enable it by fo
 
 Log in to the Docker container running ownCloud, and execute the following command on the host system of the appliance:
 
-....
+----
 univention-app shell owncloud
-....
+----
 
 Your web server needs to have the following modules enabled: `mod_rewrite` and `mod_env`.
 If you have not yet enabled these modules, or are not sure if you have, execute these commands:
 
-....
+----
 a2enmod env rewrite
-....
+----
 
 You need an *owncloud.conf* in your `/etc/apache2/sites-available/` directory.
 
 Open `/etc/apache2/sites-available/owncloud.conf` in nano, Vim, or your editor of choice, and paste the following:
 
-....
+----
 Alias /owncloud "/var/www/owncloud/"
 
 <Directory /var/www/owncloud/>
@@ -40,33 +40,33 @@ Alias /owncloud "/var/www/owncloud/"
  SetEnv HTTP_HOME /var/www/owncloud
 
 </Directory>
-....
+----
 
 Then create a symlink to `/etc/apache2/sites-enabled`, as follows:
 
-....
+----
 ln -s /etc/apache2/sites-available/owncloud.conf /etc/apache2/sites-enabled/owncloud.conf
-....
+----
 
 == Enable index.php-less URLs
 
 Adjust your config.php to look like the following:
 
-....
+----
 'overwrite.cli.url' => 'https://example.com/owncloud',
 'htaccess.RewriteBase' => '/owncloud',
-....
+----
 
 Execute the command command:
 
-....
+----
 occ maintenance:update:htaccess
-....
+----
 
 Restart or reload your Apache server, by running the following command:
 
-....
+----
 service apache2 reload
-....
+----
 
 Now you should have index.php-less URLs.

@@ -81,13 +81,13 @@ working correctly, you should expect to see output similar to that
 below:
 
 [source,console]
-....
+----
 Name                Command                       State             Ports
 __________________________________________________________________________________________
 server_db_1         /usr/bin/entrypoint/bin/s …   Up                3306/tcp
 server_owncloud_1   /usr/local/bin/entrypoint …   Up                0.0.0.0:8080->8080/tcp
 server_redis_1      /bin/s6-svscan /etc/s6        Up                6379/tcp
-....
+----
 
 In it, you can see that the database, ownCloud, and Redis containers are
 running, and that ownCloud is accessible via port 8080 on the host machine.
@@ -126,17 +126,17 @@ exists. Second, put ownCloud into maintenance mode; you can do so using
 the following command:
 
 [source,console]
-....
+----
 docker-compose exec owncloud occ maintenance:mode --on
-....
+----
 
 Third, create a backup in case something goes wrong during the upgrade
 process, using the following command:
 
 [source,console]
-....
+----
 docker-compose exec db backup
-....
+----
 
 NOTE: This assumes that you are using 
 https://hub.docker.com/r/webhippie/mariadb/[the default database container from Webhippie].
@@ -144,38 +144,38 @@ https://hub.docker.com/r/webhippie/mariadb/[the default database container from 
 Fifth, shutdown the containers.
 
 [source,console]
-....
+----
 docker-compose down
-....
+----
 
 Sixth, update the version number of ownCloud in your `.env` file or the
 YAML file. You can use sed for it, as in the following example.
 
 [source,console]
-....
+----
 # Make sure that you adjust the example to match your installation.
 sed -i 's/^OWNCLOUD_VERSION=.*$/OWNCLOUD_VERSION=<newVersion>/' /compose/*/.env
-....
+----
 
 Seventh, view the file to ensure the changes has been implemented.
 
 [source,console]
-....
+----
 cat .env
-....
+----
 
 Eighth, start your docker instance again.
 
 [source,console]
-....
+----
 docker-compose up -d
-....
+----
 
 Now you should have the current ownCloud running with docker-compose.
 Please note that the container will automatically run `occ upgrade` when starting up.
 If you notice the container starting over and over again, you can check the update log with the following command:
 
 [source,console]
-....
+----
 docker-compose logs --timestamp owncloud
-....
+----

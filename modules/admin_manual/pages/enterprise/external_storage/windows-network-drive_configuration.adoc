@@ -92,16 +92,16 @@ Regardless of the method you use, remember to check if an smbclient.ini
 file exists in `/etc/php/<your php version>/mods-available` and contains
 the following line:
 
-....
+----
 extension="smbclient.so"
-....
+----
 ====
 
 If so, then make it available via by running the following command:
 
-....
+----
 sudo phpenmod -v ALL smbclient
-....
+----
 
 [[creating-a-new-share]]
 == Creating a New Share
@@ -171,39 +171,39 @@ in Apache to prevent a segmentation fault. If you have
 won’t have to change your HOME variable. To set up the HOME variable on
 Ubuntu, modify the `/etc/apache2/envvars` file:
 
-....
+----
 unset HOME
 export HOME=/var/www
-....
+----
 
 In Red Hat/CentOS, modify the `/etc/sysconfig/httpd` file and add the
 following line to set the HOME variable in Apache:
 
-....
+----
 export HOME=/usr/share/httpd
-....
+----
 
 By default, CentOS has activated SELinux, and the `httpd` process can
 not make outgoing network connections. This will cause problems with the
 `curl`, `ldap` and `samba` libraries. You’ll need to get around this to
 make this work. First, check the status:
 
-....
+----
 getsebool -a | grep httpd
 httpd_can_network_connect --> off
-....
+----
 
 Then enable support for network connections:
 
-....
+----
 setsebool -P httpd_can_network_connect 1
-....
+----
 
 In openSUSE, modify the `/usr/sbin/start_apache2` file:
 
-....
+----
 export HOME=/var/lib/apache2
-....
+----
 
 Restart Apache, open your ownCloud Admin page and start creating
 SMB/CIFS mounts.
@@ -261,15 +261,15 @@ on the command line of the ownCloud server
 Take the example of attempting to connect to the share named MyData
 using `occ wnd:listen`. Running the following command would work:
 
-....
+----
 sudo -u www-data ./occ wnd:listen MyHost MyData svc_owncloud password
-....
+----
 
 However, running this command would not:
 
-....
+----
 sudo -u www-data ./occ wnd:listen MyHost mydata svc_owncloud password
-....
+----
 
 [[setting-up-the-wnd-listener]]
 == Setting Up the WND Listener
@@ -293,18 +293,18 @@ NOTE: You can increase the command’s verbosity by using `-vvv`. Doing so displ
 The simplest way to start the `wnd:listen` process manually, perhaps for
 initial testing, is as follows
 
-....
+----
 sudo -u www-data ./occ wnd:listen <host> <share> <username>
-....
+----
 
 The password is an optional parameter and you’ll be asked for it if you
 didn’t provide it, as in the example above. In order to start the
 `wnd:listen` without any user interaction, provide the password as the
 user’s 4th parameter, as in the following example:
 
-....
+----
 sudo -u www-data ./occ wnd:listen <host> <share> <username> <password>
-....
+----
 
 For additional options to provide the password, check xref:password-options[Password Options]
 
@@ -328,9 +328,9 @@ you need more information, increase the verbosity by calling
 
 As a simple example, you can check the following:
 
-....
+----
 sudo -u www-data ./occ wnd:process-queue <host> <share>
-....
+----
 
 You can run that command, even if there are no notifications to be
 processed.
@@ -398,29 +398,29 @@ There are several ways to supply a password:
 
 . Interactively in response to a password prompt.
 +
-....
+----
 sudo -u www-data ./occ wnd:listen <host> <share> <username>
-....
+----
 . Sent as a parameter to the command.
 +
-....
+----
 sudo -u www-data ./occ wnd:listen <host> <share> <username> <password>
-....
+----
 . Read from a file, using the `--password-file` switch to specify the
 file to read from. Note that the password must be in plain text inside
 the file, and neither spaces nor newline characters will be removed from
 the file by default, unless the `--pasword-trim` option is added. The
 password file must be readable by the apache user (or www-data)
 +
-....
+----
 sudo -u www-data ./occ wnd:listen <host> <share> <username> \
   --password-file=/my/secret/password/file
-....
+----
 +
-....
+----
 sudo -u www-data ./occ wnd:listen <host> <share> <username> \
   --password-file=/my/secret/password/file --password-trim
-....
+----
 
 NOTE: If you use the `--password-file` switch, the entire contents of the file will be used for the password, so please be careful with newlines.
 
@@ -609,9 +609,9 @@ If you need to serialize the execution of the `wnd:process-queue`, check
 the following example with
 https://linuxaria.com/howto/linux-shell-introduction-to-flock[flock]
 
-....
+----
 flock -n /my/lock/file sudo -u www-data ./occ wnd:process-queue <host> <share>
-....
+----
 
 In that case, flock will try get the lock of that file and won’t run the
 command if it isn’t possible. For our case, and considering that file
@@ -646,7 +646,7 @@ serializer for this scenario (based on Redis or DB)
 [[basic-command-execution-examples]]
 == Basic Command Execution Examples
 
-....
+----
 sudo -u www-data ./occ `wnd:listen` host share username password
 
 sudo -u www-data ./occ `wnd:process-queue` host share
@@ -660,24 +660,24 @@ sudo -u www-data ./occ `wnd:process-queue` host share -c 500 \
 sudo -u www-data ./occ `wnd:process-queue` host2 share2 -c 500 \
     --serializer-type File \
     --serializer-params file=/opt/oc/store2
-....
+----
 
 To set it up, make sure the listener is running as a system service:
 
-....
+----
 sudo -u www-data ./occ `wnd:listen` host share username password
-....
+----
 
 Setup a Cron job or similar with something like the following two
 commands:
 
-....
+----
 sudo -u www-data ./occ wnd:process-queue host share -c 500 \
     --serializer-type file \
     --serializer-params file=/opt/oc/store1
 
 rm -f /opt/oc/store1 # With a different schedule
-....
+----
 
 The first run will create the `/opt/oc/store1` with the serialized
 storages, the rest of the executions will use that file. The second Cron

@@ -29,9 +29,9 @@ The ownCloud instance itself is installed in `/var/www/owncloud/`.
 Further Shibboleth specific configuration as defined in `/etc/apache2/conf.d/shib.conf`.
 
 [source,apache]
-....
+----
 include::example$enterprise/user_management/shibboleth/apache-2.4-configuration.conf[]
-....
+----
 
 To allow users to login via the IdP, add a login alternative with the `login.alternatives` option in `config/config.php`.
 Depending on the ownCloud Shibboleth app mode, you may need to revisit this configuration.
@@ -50,10 +50,10 @@ Use this mode to set up the environment mapping for the other modes, and in case
 You can also change the app mode and environment mappings by using the `occ` command, like this example on Ubuntu Linux:
 
 [source,console]
-....
+----
 sudo -u www-data php occ shibboleth:mode notactive
 sudo -u www-data php occ shibboleth:mapping --uid login
-....
+----
 
 In *Single sign-on only* mode the app checks if the environment variable for the Shibboleth session, by default *Shib-Session-Id*, is set. 
 If that is the case it will take the value of the environment variable as the `uid`, by default `eppn`, and check if a user is known by that `uid`. 
@@ -85,17 +85,17 @@ From 3.1.2 you can now specify a mapper that is used on inbound ownCloud user ID
 You can set the mapper using `occ`:
 
 [source,console]
-....
+----
 sudo -u www-data php occ config:app:set user_shibboleth \
      uid_mapper --value="OCA\User_Shibboleth\Mapper\ADFSMapper"
-....
+----
 
 You may view the currently configured mapper using:
 
 [source,console]
-....
+----
 sudo -u www-data php occ shibboleth:mapping
-....
+----
 
 The following mappers are provided with the app:
 

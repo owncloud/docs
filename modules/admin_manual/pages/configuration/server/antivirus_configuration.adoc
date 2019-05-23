@@ -80,9 +80,9 @@ Red Hat-based distributions.
 On Debian, Ubuntu, and their many variants, install ClamAV with the
 following command:
 
-....
+----
 sudo apt-get install clamav clamav-daemon
-....
+----
 
 This automatically creates the default configuration files and launches
 the `clamd` and `freshclam` daemons. You shouldn’t have to do anything
@@ -96,11 +96,11 @@ On Red Hat 7 and related systems, you must install the `Extra Packages
 for Enterprise Linux (EPEL)` repository, and then install ClamAV. To do
 so, run the following commands:
 
-....
+----
 yum install epel-release
 yum install clamav clamav-scanner clamav-scanner-systemd clamav-server
 clamav-server-systemd clamav-update
-....
+----
 
 NOTE: Regardless of your operating system, we recommend that you enable verbose logging in both 
 `clamd.conf` and `freshclam.conf` until you get any kinks with your ClamAV installation worked out.
@@ -121,10 +121,10 @@ When you’re finished editing the configuration files, you must enable
 the `clamd` service file and start `clamd`. You can do so using the
 following commands:
 
-....
+----
 systemctl enable clamav-daemon.service
 systemctl start clamav-daemon.service
-....
+----
 
 That should take care of everything.
 
@@ -146,10 +146,10 @@ After that, create a https://en.wikipedia.org/wiki/Cron[cron job] to
 automate the process. For example, to run it every hour at 47 minutes
 past the hour, add the following in the applicable user’s crontab:
 
-....
+----
 # m   h  dom mon dow  command
 47  *  *   *    *  /usr/bin/freshclam --quiet
-....
+----
 
 NOTE: Please avoid any multiples of 10, because those are when the ClamAV servers are hit the hardest for updates.
 
@@ -210,10 +210,10 @@ ownCloud should detect your `clamd` socket and fill in the `Socket`
 field. This is the `LocalSocket` option in `clamd.conf`. You can run
 `netstat` to verify:
 
-....
+----
 netstat -a|grep clam
 unix 2 [ ACC ] STREAM LISTENING 15857 /var/run/clamav/clamd.ctl
-....
+----
 
 image:antivirus-daemon-socket.png[image]
 
@@ -236,15 +236,15 @@ ClamAV and the server’s port number.
 
 To configure the port add the following line in `/etc/clamav/clamd.conf`:
 
-....
+----
 TCPSocket 3310
-....
+----
 
 Then restart the Clamd service:
 
-....
+----
 /etc/init.d/clamav-daemon restart
-....
+----
 
 Back on the ownCloud server, navigate to the Admin page and configure the Antivirus Configuration as follows:
 
