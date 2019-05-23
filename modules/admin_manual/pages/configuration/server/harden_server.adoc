@@ -22,6 +22,53 @@ first 72 characters of passwords. This applies to all passwords that you
 use in ownCloud: user passwords, passwords on link shares, and passwords
 on external shares.
 
+== Rate Limiting
+
+Currently ownCloud deliberately does not provide any form of rate-limiting (though it does provide https://marketplace.owncloud.com/apps/brute_force_protection[brute-force protection]). 
+This is because ownCloud needs to integrate in to a diverse range of environments and infrastructure, which often already provide specialized rate-limiting solutions, e.g., _NGINX_, _HAProxy_, and _F5_.
+
+If you are yet to implement a rate-limiting solution for your ownCloud instance, start by retrieving a list of all active routes.
+This information is obtained by running xref:configuration/server/occ_command.adoc#security[occ's security:routes command], as in the following example.
+
+[source,console,subs="attributes"]
+....
+{occ-command-example-prefix} security:routes
+....
+
+It should print a list of all the routes, as in the following, truncated, example.
+
+[source,console]
+....
++-----------------------------------------------------------+-----------------+
+| Path                                                      | Methods         |
++-----------------------------------------------------------+-----------------+
+| /apps/encryption/ajax/adminRecovery                       | POST            |
+| /apps/encryption/ajax/changeRecoveryPassword              | POST            |
+| /apps/encryption/ajax/getStatus                           | GET             |
+| /apps/encryption/ajax/setEncryptHomeStorage               | POST            |
+| /apps/encryption/ajax/updatePrivateKeyPassword            | POST            |
+| /apps/encryption/ajax/userSetRecovery                     | POST            |
+| /apps/federatedfilesharing/                               | GET             |
+| /apps/federatedfilesharing/notifications                  | POST            |
++-----------------------------------------------------------+-----------------+
+....
+
+With that information, you are then able to begin customising a rate-limiting solution specific to your ownCloud installation.
+
+=== Further Reading
+
+* Rate limiting with Apache
+** http://dembol.org/blog/mod_cband/[mod_cband]
+** https://github.com/jzdziarski/mod_evasive[mod_evasive]
+** https://httpd.apache.org/docs/2.4/mod/mod_ratelimit.html[mod_ratelimit]
+** https://johnleach.co.uk/words/2012/05/15/rate-limiting-with-apache-and-mod-security/[mod_security]
+** Rate limiting with Fail2Ban
+** https://www.fail2ban.org/wiki/index.php/Main_Page[Fail2Ban]
+** https://centos.tips/fail2ban-behind-a-proxyload-balancer/[Fail2Ban Behind A Proxy/Load Balancer]
+* https://gist.github.com/procrastinatio/6b6579230d99be5bfa26d04acd788e7a[Rate limiting with HaProxy]
+* https://www.fir3net.com/Loadbalancers/F5-BIG-IP/f5-ltm-ratelimiting.html[Rate limiting with F5]
+* https://www.nginx.com/blog/rate-limiting-nginx/[Rate limiting with NGINX]
+
 [[operating-system]]
 == Operating system
 
