@@ -107,11 +107,11 @@ NOTE: For security reasons, federated shares from untrusted servers will never b
 In the spirit of self-service, ownCloud Server 10.2 introduces new options for users that previously were reserved for global admin settings:
 
 * As discussed in the section above, there are global options for *Pending Shares* regarding federated as well as regular user/group shares.
-  To give users more control over the sharing behavior in the scope of their account, user-based override options were introduced that allow users to enable/disable *Pending Shares* independent of an instance's global setting. 
+  To give users more control over the sharing behavior in the scope of their account, user-based override options were introduced that allow users to enable/disable *Pending Shares* for themselves if the instance's global setting is disabled (when "_Automatically accept new incoming local user shares_" is enabled). 
   The two new checkboxes can be found in the 'Sharing' settings panel of personal settings.
 * In addition to the option "_Allow username autocompletion in share dialog_" in the global 'Sharing' settings, users can now autonomously decide to opt-out of autocompletion to protect their privacy. 
   When enabled, other users need to enter a user's full identifier to be able to share with them.
-  In contrast to the *Pending Shares* options, this option is not a general override but an opt-out, meaning it can only be used when "_Allow username autocompletion in share dialog_" is enabled. 
+  This option is not a general override but an opt-out, meaning it can only be used when "_Allow username autocompletion in share dialog_" is enabled. 
   The new checkbox is available in the 'Sharing' settings panel of personal settings.
 
 === Other Notable Changes
@@ -163,6 +163,7 @@ In the spirit of self-service, ownCloud Server 10.2 introduces new options for u
 
 NOTE: This section will be updated if further issues become known.
 
+- The HTML email that confirms a successful password change is rendered in plain text. Please apply this https://patch-diff.githubusercontent.com/raw/owncloud/core/pull/35260.patch[patch] to fix the issue.
 - WebDAV Locks: When a file in a folder is locked, exclusively locking the parent folder currently still works ("conflicting lock"; divergent from https://tools.ietf.org/html/rfc4918#section-7.4)[RFC 4918]))
 
 === For Developers
@@ -566,8 +567,8 @@ Privacy Policy:
 
 * In the "_General_" Administration settings section
 * Via the following OCC commands:
-** `php occ config:app:set core legal.imprint_url <link>`
-** `php occ config:app:set core legal.privacy_policy_url <link>`
+** `{occ-command-example-prefix} config:app:set core legal.imprint_url <link>`
+** `{occ-command-example-prefix} config:app:set core legal.privacy_policy_url <link>`
 
 These links can be displayed on all pages of the ownCloud web interface
 and in the footer of mail notifications. When using one of the default
@@ -1243,9 +1244,9 @@ https://github.com/owncloud/core/issues/27075 for more info.
 
 This causes an SQL error such as the following:
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-sudo -u www-data ./occ market:install user_ldap
+{occ-command-example-prefix} market:install user_ldap
 
 user_ldap: Installing new app ...
 user_ldap: An exception occurred while executing 'CREATE TABLE `ldap_user_mapping` (`ldap_dn` VARCHAR(255) DEFAULT '' NOT NULL, `owncloud_name` VARCHAR(255) DEFAULT '' NOT NULL, `directory_uuid` VARCHAR(255) DEFAULT '' NOT NULL, UNIQUE INDEX ldap_dn_users (`ldap_dn`), PRIMARY KEY(`owncloud_name`)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin ENGINE = InnoDB ROW_FORMAT = compressed':
@@ -1503,11 +1504,12 @@ you will see this message in your ownCloud log:
 Fix this by disabling the `memberof` attribute on your ownCloud server
 with the `occ` command, like this example on Ubuntu Linux:
 
+[source,console,subs="attributes+"]
 ....
-sudo -u www-data php occ ldap:set-config "s01" useMemberOfToDetectMembership 0
+{occ-command-example-prefix} ldap:set-config "s01" useMemberOfToDetectMembership 0
 ....
 
-Run `sudo -u www-data php occ ldap:show-config` to find the correct
+Run `{occ-command-example-prefix} ldap:show-config` to find the correct
 `sNN` value; if there is not one then use empty quotes, `""`. (See
 configuration/server/occ_command.)
 
