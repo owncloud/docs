@@ -240,11 +240,11 @@ It is zero by default at ownCloud. To check what yours is currently set
 to, check the `dbindex` value in `config/config.php`. Here’s an example
 of what to look for:
 
-[source,php]
+[source,php,subs="attributes+"]
 ----
 'redis' => [
     'host' => 'localhost',  // Can also be a unix domain socket => '/tmp/redis.sock'
-    'port' => 6379,
+    'port' => {std-port-redis},
     'timeout' => 0,
     'password' => '',       // Optional, if not defined no password will be used.
     'dbindex' => 0          // Optional, if undefined SELECT will not run and will
@@ -271,12 +271,9 @@ cache at any time. Given that, Redis is the best memory cache to use.
 NOTE: Be sure to install the *memcached* PHP module, and not _memcache_, as in the following examples.
 ownCloud supports only the *memcached* PHP module.
 
-[[installing-memcached]]
 ==== Installing Memcached
 
-[[on-debianubuntumint]]
-On Debian/Ubuntu/Mint
-+++++++++++++++++++++
+===== On Debian/Ubuntu/Mint
 
 On Debian/Ubuntu/Mint run the following command:
 
@@ -287,9 +284,7 @@ apt-get install memcached php5-memcached
 
 NOTE: The installer will automatically start `memcached` and configure it to launch at startup.
 
-[[on-redhatcentosfedora]]
-On RedHat/CentOS/Fedora
-+++++++++++++++++++++++
+===== On RedHat/CentOS/Fedora
 
 On RedHat/CentOS/Fedora run the following command:
 
@@ -304,8 +299,8 @@ run the following command:
 
 [source,console]
 ----
-systemctl start memcached
 systemctl enable memcached
+systemctl start memcached
 ----
 
 You can verify that the Memcached daemon is running using one of the
@@ -354,8 +349,9 @@ of common Linux/UNIX tools, including `netcat` and `telnet`.
 The following example uses telnet to login, run 
 https://github.com/memcached/memcached/wiki/Commands#flushall[the flush_all command], and logout:
 
+[source,console,subs="attributes+"]
 ....
-telnet localhost 11211
+telnet localhost {std-port-memcache}
 flush_all
 quit
 ....
@@ -395,12 +391,12 @@ should disappear.
 This example `config.php` configuration uses Redis for the local server
 cache:
 
-[source,php]
+[source,php,subs="attributes+"]
 ----
 'memcache.local' => '\OC\Memcache\Redis',
 'redis' => [
     'host' => 'localhost',
-    'port' => 6379,
+    'port' => {std-port-redis},
 ],
 ----
 
@@ -433,14 +429,14 @@ This example uses APCu for the local cache, Memcached as the distributed
 memory cache, and lists all the servers in the shared cache pool with
 their port numbers:
 
-[source,php]
+[source,php,subs="attributes+"]
 ----
 'memcache.local' => '\OC\Memcache\APCu',
 'memcache.distributed' => '\OC\Memcache\Memcached',
 'memcached_servers' => [
-     ['localhost', 11211],
-     ['server1.example.com', 11211],
-     ['server2.example.com', 11211],
+     ['localhost', {std-port-memcache}],
+     ['server1.example.com', {std-port-memcache}],
+     ['server2.example.com', {std-port-memcache}],
  ],
 ----
 
@@ -461,13 +457,13 @@ their port numbers:
 
 Use APCu for local caching, Redis for file locking
 
-[source,php]
+[source,php,subs="attributes+"]
 ----
 'memcache.local' => '\OC\Memcache\APCu',
 'memcache.locking' => '\OC\Memcache\Redis',
 'redis' => [
     'host' => 'localhost',
-    'port' => 6379,
+    'port' => {std-port-redis},
 ],
 ----
 
@@ -477,7 +473,7 @@ Use APCu for local caching, Redis for file locking
 Use Redis for everything except a local memory cache. Use the server’s
 IP address or hostname so that it is accessible to other hosts:
 
-[source,php]
+[source,php,subs="attributes+"]
 ----
 'memcache.distributed' => '\OC\Memcache\Redis',
 'memcache.locking' => '\OC\Memcache\Redis',
@@ -485,7 +481,7 @@ IP address or hostname so that it is accessible to other hosts:
 'redis' => [
     'host' => 'server1',      // hostname example
     'host' => '12.34.56.78',  // IP address example
-    'port' => 6379,
+    'port' => {std-port-redis},
 ],
 ----
 
@@ -495,13 +491,13 @@ IP address or hostname so that it is accessible to other hosts:
 xref:configuration/files/files_locking_transactional.adoc[Transactional File Locking] prevents simultaneous file saving.
 It is enabled by default and uses the database to store the locking data. This places a significant load on your database. It is recommended to use a cache backend instead. You have to configure it in `config.php` as in the following example, which uses Redis as the cache backend:
 
-[source,php]
+[source,php,subs="attributes+"]
 ----
 'filelocking.enabled' => true,
 'memcache.locking' => '\OC\Memcache\Redis',
 'redis' => [
      'host' => 'localhost',
-     'port' => 6379,
+     'port' => {std-port-redis},
      'timeout' => 0.0,
      'password' => '', // Optional, if not defined no password will be used.
  ],
