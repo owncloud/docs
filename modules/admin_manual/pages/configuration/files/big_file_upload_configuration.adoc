@@ -51,15 +51,33 @@ php_value max_input_time 3600
 php_value max_execution_time 3600
 ....
 
-The https://httpd.apache.org/docs/current/mod/mod_reqtimeout.html[mod_reqtimeout]
-Apache module could also stop large uploads from completing. If you’re
-using this module and getting failed uploads of large files either
-disable it in your Apache config or raise the configured
-`RequestReadTimeout` timeouts.
+=== mod_reqtimeout
 
-There are also several other configuration options in your Web server
-config which could prevent the upload of larger files. Please see the
-manual of your Web server for how to configure those values correctly:
+The https://httpd.apache.org/docs/current/mod/mod_reqtimeout.html[mod_reqtimeout] Apache module could also stop large uploads from completing. 
+If you’re using this module and getting failed uploads of large files, either disable it in your Apache config or raise the configured `RequestReadTimeout` timeouts.
+
+==== Disable mod_reqtimeout On Ubuntu
+
+On Ubuntu, you can disable the module by running the following command:
+
+[source,console]
+....
+a2dismod reqtimeout
+....
+
+==== Disable mod_reqtimeout On CentOS
+
+On CentOS, you have to edit `/etc/httpd/conf/httpd.conf`, and comment out the following line: 
+
+[source,apache]
+....
+LoadModule reqtimeout_module modules/mod_reqtimeout.so
+....
+
+When you have done run `asdismod` or updated `/etc/httpd/conf/httpd.conf`, restart Apache.
+
+TIP: There are also several other configuration options in your web server config which could prevent the upload of larger files. 
+Please see your web server's manual, for how to configure those values correctly:
 
 [[apache]]
 === Apache
