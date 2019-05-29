@@ -155,9 +155,75 @@ TIP: The Anti-Virus app can also be downloaded, installed, and enabled manually.
 
 == Configuring ClamAV within ownCloud
 
+IMPORTANT: If the app is enabled but either not configured or incorrectly configured it will *strictly reject all uploads* for the whole instance
+
+ClamAV can be configured in two ways:
+
+. xref:configure-clamav-using-occ[By using the `occ config:app:set` command.]
+. xref:configure-clamav-using-the-antivirus-configuration-panel[By using the Antivirus Configuration panel]
+
+=== Configure ClamAV Using occ
+
+All of the configuration settings for ClamAV are configurable by passing the relevant key and value to the `occ config:app:set files_antivirus` command.
+For example:
+
+[source,console,subs="attributes+"]
+....
+{occ-command-example-prefix} config:app:set \
+    files_antivirus av_socket "/var/run/clamav/clamd.ctl"
+....
+
+==== Available Configuration Settings
+
+[cols=",43%,15%",options="header"]
+|===
+|Setting 
+|Description 
+|Default
+
+|`av_cmd_options`
+|Extra command line options (comma-separated) to pass to ClamAV.
+|
+
+|`av_host`
+|The hostname or IP address of the Antivirus server.
+|
+
+|`av_infected_action`
+|The action to take when infected files were found during a background scan.
+It can be set to one of `only_log` and `delete`.
+|`only_log`
+
+|`av_max_file_size`
+|The maximum file size limit; `-1` means no limit.
+|`-1`
+
+|`av_mode`
+|The operating mode. It can be set to one of `executable`, `daemon`, and `socket`.
+|`executable`
+
+|`av_path`
+|The path to the `clamscan` executable.
+|`/usr/bin/clamscan`
+
+|`av_port`
+|The port number of the Antivirus server. Allowed values are 1 - 65535.
+|
+
+|`av_socket`
+|The name of ClamAV's UNIX socket file.
+|`/var/run/clamav/clamd.ctl`
+
+|`av_stream_max_length`
+|The maximum stream length that ClamAV will accept.
+|`26214400`
+|===
+
+=== Configure ClamAV Using The Antivirus Configuration Panel
+
 Once ClamAV is installed, select menu:Settings[General (Admin)] and, in the "*Log*" section, set btn:[Log level] to "_Everything (fatal issues, errors, warnings, info, debug)_".
 
-image:apps/files_antivirus/antivirus-logging.png[image]
+image:apps/files_antivirus/antivirus-logging.png[the ownCloud Antivirus configuration panel]
 
 Now, navigate to menu:Settings[Security (Admin)], where you'll find the "**Antivirus Configuration**" panel. 
 There, as below, you'll see the configuration options which ownCloud passes to ClamAV.
