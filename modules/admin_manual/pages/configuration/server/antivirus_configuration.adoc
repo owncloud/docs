@@ -155,7 +155,7 @@ TIP: The Anti-Virus app can also be downloaded, installed, and enabled manually.
 
 == Configuring ClamAV within ownCloud
 
-Once ClamAV is installed, select menu:Settings[General (Admin)] and set your ownCloud logging level to "_Everything (fatal issues, errors, warnings, info, debug)_" in the "*Log*" section.
+Once ClamAV is installed, select menu:Settings[General (Admin)] and, in the "*Log*" section, set btn:[Log level] to "_Everything (fatal issues, errors, warnings, info, debug)_".
 
 image:apps/files_antivirus/antivirus-logging.png[image]
 
@@ -163,17 +163,6 @@ Now, navigate to menu:Settings[Security (Admin)], where you'll find the "**Antiv
 There, as below, you'll see the configuration options which ownCloud passes to ClamAV.
 
 image:apps/files_antivirus/antivirus-daemon.png[The antivirus configuration panel in ownCloud]
-
-=== Configuration Warnings
-
-The Antivirus App shows one of three warnings if it is misconfigured or ClamAV is not available. 
-You can see an example of all three below.
-
-image:configuration/server/anti-virus-message-host-connection-problem.png[Configuration error message: 'Antivirus app is misconfigured or antivirus inaccessible. Could not connect to host 'localhost' on port 999'.]
-
-image:configuration/server/anti-virus-message-misconfiguration-problem.png[Configuration error message: 'Antivirus app is misconfigured or antivirus inaccessible. The antivirus executable could not be found at path '/usr/bin/clamsfcan".]
-
-image:configuration/server/anti-virus-message-socket-connection-problem.png[Configuration error message: 'Antivirus app is misconfigured or antivirus inaccessible. Could not connect to socket ´/var/run/clamav/cslamd-socket´: No such file or directory (code 2)'.]
 
 === Mode Configuration
 
@@ -185,7 +174,7 @@ ClamAV runs in one of three modes:
 
 ==== Daemon (Socket)
 
-In this mode, ClamAV runs in the background on the same server as the ownCloud installation. 
+In this mode, ClamAV runs in the background on the same server as the ownCloud installation, or the socket can be made available via a share mount.
 When there is no activity, `clamd` places a minimal load on your system. 
 However, if your users upload large volumes of files, you will see high CPU usage. 
 Please keep this in mind.
@@ -194,7 +183,7 @@ IMPORTANT: You must run `freshclam` at least once for ClamAV to generate the soc
 
 image:apps/files_antivirus/antivirus-daemon-socket.png[image]
 
-First, set "*Mode*" to "*Daemon (Socket)*".
+First, set btn:[Mode] to "*Daemon (Socket)*".
 ownCloud should detect your `clamd` socket and fill in the "*Socket*" field. 
 This is the `LocalSocket` option in `clamd.conf`. 
 
@@ -231,9 +220,10 @@ This is a good option for ownCloud servers with high volumes of file uploads.
 
 image:apps/files_antivirus/antivirus-daemon.png[image]
 
-First, set "*Mode*" to "*Daemon*".
-Then, you need to set the hostname or IP address of the remote server running ClamAV and the server's port number.
-The port number is the value of `TCPSocket` in `/etc/clamav/clamd.conf`.
+First, set btn:[Mode] to "*Daemon*".
+Then, you need to set btn:[Host] to the hostname or IP address of the remote server running ClamAV, and set btn:[Port] to the server's port number.
+
+TIP: The port number is the value of `TCPSocket` in `/etc/clamav/clamd.conf`.
 
 ==== Executable
 
@@ -243,12 +233,23 @@ TIP: `clamscan` is slow and not always reliable for on-demand usage; it is bette
 
 image:apps/files_antivirus/antivirus-executable.png[image]
 
-First, set "*Mode*" to "*Executable*".
-Then, set "*Path to clamscan*" to the path to `clamscan`, which is the interactive ClamAV scanning command, on your server.
+First, set btn:[Mode] to "*Executable*".
+Then, set btn:[Path to clamscan] to the path to `clamscan`, which is the interactive ClamAV scanning command, on your server.
 ownCloud should automatically find it.
 However, if it doesn't, run `which clamscan` to find the command's path.
 
 When you are satisfied with how ClamAV is operating, you might want to go back and change all of your logging to less verbose levels.
+
+=== Configuration Warnings
+
+The Antivirus App shows one of three warnings if it is misconfigured or ClamAV is not available. 
+You can see an example of all three below.
+
+image:configuration/server/anti-virus-message-host-connection-problem.png[Configuration error message: 'Antivirus app is misconfigured or antivirus inaccessible. Could not connect to host 'localhost' on port 999'.]
+
+image:configuration/server/anti-virus-message-misconfiguration-problem.png[Configuration error message: 'Antivirus app is misconfigured or antivirus inaccessible. The antivirus executable could not be found at path '/usr/bin/clamsfcan".]
+
+image:configuration/server/anti-virus-message-socket-connection-problem.png[Configuration error message: 'Antivirus app is misconfigured or antivirus inaccessible. Could not connect to socket ´/var/run/clamav/cslamd-socket´: No such file or directory (code 2)'.]
 
 === Rule Configuration
 
