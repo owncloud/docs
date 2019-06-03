@@ -119,8 +119,8 @@ service apache2 restart
 ==== Download ownCloud
 
 ....
-cd /var/www 
-wget https://download.owncloud.org/community/owncloud-10.2.0.tar.bz2 
+cd /var/www
+wget https://download.owncloud.org/community/owncloud-10.2.0.tar.bz2
 tar xjf owncloud-10.2.0.tar.bz2
 chown -R www-data. /var/www/owncloud
 ....
@@ -155,4 +155,34 @@ NOTE: If you haven a LDAP/Active Directory Server connected to ownCloud you need
 echo "*  */6  *  *  * /usr/bin/php -f /var/www/owncloud/cron.php" > /var/spool/cron/crontabs/www-data
 chown www-data.crontab  /var/spool/cron/crontabs/www-data
 chmod 0600  /var/spool/cron/crontabs/www-data
+....
+
+==== Configure Caching and File Locking
+
+Add this to your config.php
+
+....
+'memcache.local' => '\OC\Memcache\APCu',
+'memcache.locking' => '\OC\Memcache\Redis',
+'redis' => array(
+      'host' => 'localhost',
+      'port' => 6379,
+       ),
+....
+
+==== Configure Log Rotation
+
+Execute this command to set up log rotation.
+
+....
+FILE="/etc/logrotate.d/owncloud"
+/bin/cat <<EOM >$FILE
+/var/www/owncloud_data/owncloud.log {
+size 10M
+rotate 12
+copytruncate
+missingok
+compress
+compresscmd  /bin/gzip
+EOM
 ....
