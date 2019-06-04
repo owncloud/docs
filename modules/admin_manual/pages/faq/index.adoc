@@ -1,30 +1,56 @@
 = Frequently Asked Questions
 :toc: right
 
-[[i-want-to-upgrade-from-community-version-to-enterprise-version.-what-are-the-changes]]
-== I want to upgrade from Community Version to Enterprise Version. What are the changes?
+== I Cannot See New LDAP Accounts
 
-In ownCloud Enterprise you will get access to new apps and features, mainly targeted towards enterprises; apps and features that ensure security, for example.
+Set up a new xref:configuration/server/background_jobs_configuration.adoc#cron-jobs[Cron job] for your Apache user to run occ with xref:configuration/server/occ_command.adoc#listing-users[the `user:sync` command] regularly.
+To do so, use `crontab` to open the cron configuration editor.
 
-You can upgrade to the Enterprise version without concern, as your existing files, shares, and users remain as they are.
+[source,console]
+....
+# Replace `www-data` with the correct Apache user for your Linux distribution.
+crontab -u www-data -e
+....
 
-[[how-do-i-transfer-files-from-one-user-to-another]]
-== How do I transfer files from one user to another?
+Then, add the configuration below, save the changes, and exit the cron configuration editor.
 
-See xref:configuration/files/file_sharing_configuration.adoc#transferring-files-to-another-user[transferring files to another user].
+[source,cron]
+....
+*/6 * * * * /usr/bin/php /var/www/owncloud/occ user:sync -n -m disable -r "OCA\User_LDAP\User_Proxy"
+....
 
-[[how-do-i-deal-with-problems-caused-by-using-self-signed-ssl-certificates]]
-== How do I deal with problems caused by using self-signed SSL certificates?
+The command will now be executed every ten minutes.
 
-See xref:configuration/server/occ_command.adoc#security[the security section of the OCC command].
+== I Want To Upgrade From The Community To Enterprise Version. What Is Required?
 
-[[im-the-admin-and-i-lost-my-password-what-do-i-do-now]]
-== I’m the admin and I lost my password! What do I do now!
+To make this migration, please contact sales@owncloud.com.
+For a comparison of the two editions, see https://owncloud.com/standard-or-enterprise/.
+
+== Code Integrity Warning
+
+Please see xref:configuration/general_topics/code_signing.adoc#fixing-invalid-code-integrity-messages[].
+
+== Warnings in Admin Settings
+
+Please see xref:configuration/server/security_setup_warnings.adoc[].
+
+== Why Do My Uploads Fail?
+
+PHP may time out when uploading large files. 
+This issue has been resolved with ownCloud 10.0.10. 
+From this version onwards, the web interface also supports https://doc.owncloud.com/server/10.1/admin_manual/release_notes.html#improved-reliability-for-uploads-via-web-interface-on-unreliable-connections[chunked uploads].
+
+== Why Am I Unable To Upgrade My Enterprise Apps Via The Marketplace?
+
+Please log in to https://customer.owncloud.com/, navigate to "_ownCloud Enterprise_", then to your version and then to "_Enterprise Apps_". 
+Here, you can download all enterprise Apps.
+
+== I'm The Admin And I Lost My Password! What Do I Do Now!
 
 See xref:configuration/user/reset_admin_password.adoc[the reset admin password documentation].
 
-[[what-is-a-federated-system]]
-== What is a Federated System?
+== How Do I Transfer Files From One User To Another?
 
-A Federated System is another ownCloud or https://oc.owncloud.com/opencloudmesh.html[OpenCloudMesh]
-supporting cloud service.
+See xref:configuration/files/file_sharing_configuration.adoc#transferring-files-to-another-user[transferring files to another user].
+
+TIP: You can find more frequently asked questions answered at https://central.owncloud.org/c/faq.
