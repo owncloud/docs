@@ -119,8 +119,8 @@ service apache2 restart
 ==== Download ownCloud
 
 ....
-cd /var/www 
-wget https://download.owncloud.org/community/owncloud-10.2.0.tar.bz2 
+cd /var/www
+wget https://download.owncloud.org/community/owncloud-10.2.0.tar.bz2
 tar xjf owncloud-10.2.0.tar.bz2
 chown -R www-data. /var/www/owncloud
 ....
@@ -155,4 +155,79 @@ NOTE: If you haven a LDAP/Active Directory Server connected to ownCloud you need
 echo "*  */6  *  *  * /usr/bin/php -f /var/www/owncloud/cron.php" > /var/spool/cron/crontabs/www-data
 chown www-data.crontab  /var/spool/cron/crontabs/www-data
 chmod 0600  /var/spool/cron/crontabs/www-data
+....
+
+==== Configure Caching and File Locking
+
+Add this to your config.php
+
+....
+'memcache.local' => '\OC\Memcache\APCu',
+'memcache.locking' => '\OC\Memcache\Redis',
+'redis' => [
+      'host' => 'localhost',
+      'port' => 6379,
+       ],
+....
+
+==== Configure Log Rotation
+
+Execute this command to set up log rotation.
+
+....
+FILE="/etc/logrotate.d/owncloud"
+/bin/cat <<EOM >$FILE
+/var/www/owncloud/data/owncloud.log {
+size 10M
+rotate 12
+copytruncate
+missingok
+compress
+compresscmd  /bin/gzip
+EOM
+....
+
+==== Adjust the Permissions
+
+....
+FILE="/usr/local/bin/ocpermissions"
+/bin/cat <<EOM >$FILE
+#!/bin/bash 
+ocpath='/var/www/owncloud' 
+datadir='/var/www/owncloud/data' 
+htuser='www-data' 
+htgroup='www-data' 
+rootuser='root' 
+printf "Creating possible missing Directories\n" 
+mkdir -p \$ocpath/assets 
+mkdir -p \$ocpath/updater 
+mkdir -p \$datadir 
+printf "chmod Files and Directories\n" 
+find \${ocpath}/ -type f -print0 | xargs -0 chmod 0640 
+find \${ocpath}/ -type d -print0 | xargs -0 chmod 0750 
+printf "chown Directories\n" 
+chown -R \${rootuser}:\${htgroup} \${ocpath}/ 
+chown -R \${htuser}:\${htgroup} \${ocpath}/apps/ 
+chown -R \${htuser}:\${htgroup} \${ocpath}/apps-external/ 
+chown -R \${htuser}:\${htgroup} \${ocpath}/assets/ 
+chown -R \${htuser}:\${htgroup} \${ocpath}/config/ 
+chown -R \${htuser}:\${htgroup} \${datadir} 
+chown -R \${htuser}:\${htgroup} \${ocpath}/updater/ 
+chmod +x \${ocpath}/occ
+printf "chmod/chown .htaccess\n"
+if [ -f \${ocpath}/.htaccess ] 
+then  
+chmod 0644 \${ocpath}/.htaccess  
+chown \${rootuser}:\${htgroup} \${ocpath}/.htaccess 
+fi 
+if [ -f \${datadir}/.htaccess ] 
+then  
+chmod 0644 \${datadir}/.htaccess  
+chown \${rootuser}:\${htgroup} \${datadir}/.htaccess
+fi 
+EOM
+
+chmod +x /usr/local/bin/ocpermissions
+
+ocpermissions
 ....
