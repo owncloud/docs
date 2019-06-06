@@ -1,4 +1,4 @@
-= System Requirements
+= Software Requirements
 :toc: right
 :toclevels: 1
 :php-intl-ext-url: http://php.net/manual/en/intro.intl.php
@@ -21,18 +21,18 @@ we officially recommend and support:
 | Operating System
 |
 * Ubuntu 16.04 and 18.04
-* Debian 7, 8 and 9;
-* SUSE Linux Enterprise Server 12 with SP1, SP2 and SP3
-* Red Hat Enterprise Linux/Centos 6.9, 7.3, 7.4, and 7.5
-* Fedora 27, 28 and 29
+* Debian 8 and 9
+* SUSE Linux Enterprise Server 12 with SP4 and 15
+* Red Hat Enterprise Linux/Centos 7.5 and 8
+* Fedora 28 and 29
 * openSUSE Leap 42.3 and  15
 
 | Database
 |
-* MySQL or MariaDB 5.5+
-* Oracle 11g
+* MySQL 8+ or MariaDB 10+ (RECOMMENDED)
+* Oracle 12g
 * PostgreSQL 9 (versions 10 and above are not _yet_ supported)
-* SQLite
+* SQLite (NOT FOR PRODUCTION)
 
 | Web server
 | * Apache 2.4 with xref:installation/manual_installation.adoc#multi-processing-module-mpm[`prefork` and `mod_php`]
@@ -60,23 +60,36 @@ It is recommended to use *PHP {recommended-php-version}* as older versions have 
 ====
 * Red Hat Enterprise Linux & Centos 7 are 64-bit only.
 * Oracle 11g is only supported for the Enterprise edition.
-* SQLite is not encouraged for production use.
+* SQLite is NOT FOR PRODUCTION.
 ====
+
+[NOTE]
+====
+The following database settings are currently required if you’re running ownCloud together
+with a MySQL or MariaDB database:
+
+* Disabled or `BINLOG_FORMAT = MIXED` or `BINLOG_FORMAT = ROW` configured Binary Logging (See: xref:configuration/database/linux_database_configuration.adoc#mysql-mariadb-with-binary-logging-enabled[MySQL / MariaDB with Binary Logging Enabled])
+* InnoDB storage engine (The MyISAM storage engine is not supported, see:
+xref:configuration/database/linux_database_configuration.adoc#mysql-mariadb-storage-engine[MySQL / MariaDB storage engine])
+* `READ COMMITED` transaction isolation level (See: 
+xref:configuration/database/linux_database_configuration.adoc#mysql-mariadb-read-commited-transaction-isolation-level[MySQL / MariaDB `READ COMMITED` transaction isolation level])
+====
+
 
 [[mobile]]
 === Mobile
 
 * iOS 9.0+
-* Android 4.0+
+* Android 4.4+
 
 [[web-browser]]
 === Web Browser
 
 * Edge (current version on Windows 10)
-* IE11+ (except Compatibility Mode)
-* Firefox 57+ or 52 ESR
-* Chrome 66+
-* Safari 10+
+* IE11 or newer (except Compatibility Mode)
+* Firefox 60 ESR or newer 
+* Chrome 66 or newer
+* Safari 10 or newer
 
 [[hypervisors]]
 === Hypervisors
@@ -90,59 +103,18 @@ It is recommended to use *PHP {recommended-php-version}* as older versions have 
 === Desktop
 
 * Windows 7+
-* Mac OS X 10.7+ (*64-bit only*)
-* CentOS 6 & 7 (64-bit only)
+* Mac OS X 10.10+ (*64-bit only*)
+* CentOS 7 (64-bit only)
 * Debian 8.0 & 9.0
-* Fedora 27 & 28
+* Fedora 29 & 30
 * Ubuntu 16.04 & 18.04
-* openSUSE Leap 42.2 & 42.3
+* openSUSE Leap 42.3 & openSUSE 15
 
 NOTE: For Linux distributions, we support, if technically feasible, the latest 2 versions per platform and the 
 previous https://wiki.ubuntu.com/LTS[LTS].
 
-Client Versions
-~~~~~~~~~~~~~~~
+=== Clients and Mobile Apps
 
-Here are the oldest versions of the Desktop Client, Android app and iOS app supported with the latest server release:
-
-* Desktop Client 2.3.3
-* Android App
-* iOS App
-
-[[alternative-but-unsupported-options]]
-== Alternative (But Unsupported) Options
-
-If you are not able to use one or more of the above tools, the following
-options are also available.
-
-[[web-server]]
-=== Web Server
-
-* NGINX with PHP-FPM
-
-[[memory-requirements]]
-== Memory Requirements
-
-Memory requirements for running an ownCloud server are greatly variable,
-depending on the numbers of users and files, and volume of server
-activity. ownCloud officially requires a minimum of 128MB RAM. But, we
-recommend a minimum of 512MB.
-
-[NOTE]
-.Consideration for low memory environments
-====
-Scanning of files is committed internally in 10k files chunks.
-Based on tests, server memory usage for scanning greater than 10k files uses about 75MB of additional memory.
-====
-
-[[database-requirements]]
-== Database Requirements
-
-The following are currently required if you’re running ownCloud together
-with a MySQL or MariaDB database:
-
-* Disabled or `BINLOG_FORMAT = MIXED` or `BINLOG_FORMAT = ROW` configured Binary Logging (See: xref:configuration/database/linux_database_configuration.adoc#mysql-mariadb-with-binary-logging-enabled[MySQL / MariaDB with Binary Logging Enabled])
-* InnoDB storage engine (The MyISAM storage engine is not supported, see:
-xref:configuration/database/linux_database_configuration.adoc#mysql-mariadb-storage-engine[MySQL / MariaDB storage engine])
-* `READ COMMITED` transaction isolation level (See: 
-xref:configuration/database/linux_database_configuration.adoc#mysql-mariadb-read-commited-transaction-isolation-level[MySQL / MariaDB `READ COMMITED` transaction isolation level])
+We always recommend to use the newest clients and mobile apps with the latest server release.
+You can find out more here:
+https://owncloud.org/changelog
