@@ -1,7 +1,9 @@
 = Release Notes
 :server-10_2-avatar-change-url: https://github.com/owncloud/core/issues/35311
+:release-notes-known-issues-url: https://doc.owncloud.com/server/admin_manual/release_notes.html#known-issues
+:owncloud-server-changelog-url: https://owncloud.org/changelog/server/
 
-* xref:changes-in-10-2-0[Changes in 10.2.1]
+* xref:changes-in-10-2-1[Changes in 10.2.1]
 * xref:changes-in-10-2-0[Changes in 10.2.0]
 * xref:changes-in-10-1-1[Changes in 10.1.1]
 * xref:changes-in-10-1-0[Changes in 10.1.0]
@@ -24,27 +26,34 @@
 
 == Changes in 10.2.1
 
-ownCloud Server 10.2.1 is a bugfix and maintenance release taking care of several bugs and known issues. Please find, below, the changes in ownCloud Server 10.2.1 that need your attention. 
-You can also read https://owncloud.org/changelog/server/[the full ownCloud Server changelog] for further details on what has changed.
+ownCloud Server 10.2.1 is a bug fix and maintenance release taking care of several bugs and known issues. 
+Please find, below, the changes in ownCloud Server 10.2.1 that need your attention. 
+You can also read {owncloud-server-changelog-url}[the full ownCloud Server changelog] for further details on what has changed.
 It is recommended to schedule an upgrade to this version soon, especially if you're running 10.2.0 already.
 
-No occ upgrade necessary when upgrading from 10.2.0?
+TIP: No occ upgrade is required when upgrading from 10.2.0.
 
-=== Improved performance for storage encryption with master key
+=== Improved Performance For Storage Encryption With Master Key
 
-ownCloud Server offers two ways for key management with storage encryption. Either a central master key pair or individual user key pairs are used to encrypt/decrypt data. Previously both modes used the same mechanisms which resulted in potentially large overhead when master key encryption was used as user key encryption relies on so-called `share keys` which are necessary to allow share recipients to decrypt shared files.
-With master key encryption, `share keys` are redundant as you have one central key that can be used to decrypt all files. Version 10.2.1 corrects this behavior by dropping `share keys` for master key encryption, thereby increasing the performance dramatically, especially when sharing folders with many files as said keys do not have to be generated anymore for each file.
+ownCloud Server offers two ways for key management with storage encryption. 
+Either a central master key pair or individual user key pairs are used to encrypt/decrypt data. 
+Previously both modes used the same mechanisms which resulted in potentially significant overhead when master key encryption was used as user key encryption relies on so-called `share keys` which are necessary to allow share recipients to decrypt shared files.
 
-=== Solved issues
+With master key encryption, `share keys` are redundant as you have one central key that can be used to decrypt all files. 
+Version 10.2.1 corrects this behavior by dropping `share keys` for master key encryption, thereby increasing the performance dramatically, especially when sharing folders with many files as said keys do not have to be generated anymore for each file.
+
+=== Solved Issues
 
 * **Fixed reshare privilege escalation issue** +
-ownCloud Server 10.2.0 introduced an issue that allows users to increase sharing permissions beyond their own permissions in a reshare scenario: When user A shares a folder "Project" with user B granting only read and share permission, then the Sharing API allowed user B to reshare a subfolder of "Project" with user C granting full permissions. This undesired behavior is fixed with 10.2.1.
+ownCloud Server 10.2.0 introduced an issue that allows users to increase sharing permissions beyond their own permissions in a reshare scenario: When user A shares a folder "_Project_" with user B, granting only read and share permission, then the Sharing API allowed user B to reshare a subfolder of "_Project_" with user C granting full permissions. 
+This undesired behavior is fixed with 10.2.1.
 * **Fixed known issue with user avatar paths** +
-Version 10.2.0 https://doc.owncloud.com/server/admin_manual/release_notes.html#known-issues[accidentally changed the location of user avatars] making them unavailable and storing uploaded avatar images in the wrong location.
-10.2.1 restores the earlier behavior and provides a repair step to move back the avatar images uploaded with 10.2.0 to the right location. As it is not necessary nor possible to run `occ upgrade` when upgrading from 10.2.0 to this patch release, **you need to run `occ maintenance:repair -s 'OC\Repair\MoveAvatarIntoSubFolder'` manually to trigger the repair step**.
-* **Fixed https://doc.owncloud.com/server/admin_manual/release_notes.html#known-issues[known issue] with "Password changed" HTML emails rendered in plain text** +
+Version 10.2.0 {release-notes-known-issues-url}[accidentally changed the location of user avatars] making them unavailable and storing uploaded avatar images in the wrong location.
+10.2.1 restores the earlier behavior and provides a repair step to move back the avatar images uploaded with 10.2.0 to the right location. 
+As it is not necessary nor possible to run `occ upgrade` when upgrading from 10.2.0 to this patch release, **you need to run `occ maintenance:repair -s 'OC\Repair\MoveAvatarIntoSubFolder'` manually to trigger the repair step**.
+* **Fixed https://doc.owncloud.com/server/admin_manual/release_notes.html#known-issues[known issue] with "Password changed" HTML emails rendered in plain text**
 
-Apart from this patch release, please consider the ownCloud Server 10.2.0 release notes.
+TIP: Apart from this patch release, please consider xref:changes-in-10-2-0[the ownCloud Server 10.2.0 release notes].
 
 == Changes in 10.2.0
 
