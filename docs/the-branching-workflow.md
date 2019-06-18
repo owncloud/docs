@@ -4,13 +4,12 @@
 
 In addition to the `master` branch, each documentation repository will have _two_ branches at any one time; one for the current version of the software and one for the previous version.
 
-The three, currently active, branches are:
+The two, currently active, branches are:
 
 - `10.2`: This tracks the current release of ownCloud core (10.2).
 - `10.1`: This tracks the previous ownCloud core (10.1).
-- `master`: This is a moving target, as it's not tied to a released version.
 
-**Note:** [the default version of the docs](https://doc.owncloud.com) comes from `master`.
+**Note:** [the default version of the docs](https://doc.owncloud.com) comes from `10.2`.
 
 In addition to these three active branches, documentation changes (additions, corrections, and deprecations) are backported to some of the earlier branches.
 This may seem like a strange thing to do, given that only the latest two branches reflect [the currently supported ownCloud versions].
@@ -22,7 +21,7 @@ So, where possible, older documentation branches are updated so that administrat
 
 This approach aims to do two things:
 
-- **Document the major _and minor_ release versions.** Doing so should make it easier for systems administrators, as well as ownCloud administrators and users, to maintain and use their ownCloud installations, because they can use the documentation **specifically-targetted at their installation's major and minor release**.
+- **Document the major _and minor_ release versions.** Doing so should make it easier for systems administrators, as well as ownCloud administrators and users, to maintain and use their ownCloud installations, because they can use the documentation **specifically-targeted at their installation's major and minor release**.
 - **Reduce the documentation maintenance overhead.** If the documentation for each version only covered the major release, it would invariably need periodic minor — _and optionally patch_ — specific changes to cover _new_, _deprecated_, and _changed features_. While doing this, initially, would not incur too much overhead, over time it would become a maintenance nightmare.
 
 ## How It Works
