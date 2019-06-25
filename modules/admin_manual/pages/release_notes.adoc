@@ -1,4 +1,5 @@
 = Release Notes
+:server-10_2-avatar-change-url: https://github.com/owncloud/core/issues/35311
 
 * xref:changes-in-10-2-0[Changes in 10.2.0]
 * xref:changes-in-10-1-1[Changes in 10.1.1]
@@ -163,6 +164,7 @@ In the spirit of self-service, ownCloud Server 10.2 introduces new options for u
 
 NOTE: This section will be updated if further issues become known.
 
+- Server 10.2 {server-10_2-avatar-change-url}[accidentally changes the location of user avatars] on the storage from `data/avatars/..` to `data/..`, making existing avatars unavailable and storing uploaded avatar images in the wrong location. The next release will correct the behavior.
 - The HTML email that confirms a successful password change is rendered in plain text. Please apply this https://patch-diff.githubusercontent.com/raw/owncloud/core/pull/35260.patch[patch] to fix the issue.
 - WebDAV Locks: When a file in a folder is locked, exclusively locking the parent folder currently still works ("conflicting lock"; divergent from https://tools.ietf.org/html/rfc4918#section-7.4)[RFC 4918]))
 
@@ -1244,7 +1246,7 @@ https://github.com/owncloud/core/issues/27075 for more info.
 
 This causes an SQL error such as the following:
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
 sudo -u www-data ./occ market:install user_ldap
 
@@ -1504,6 +1506,7 @@ you will see this message in your ownCloud log:
 Fix this by disabling the `memberof` attribute on your ownCloud server
 with the `occ` command, like this example on Ubuntu Linux:
 
+[source,console,subs="attributes+"]
 ....
 sudo -u www-data php occ ldap:set-config "s01" useMemberOfToDetectMembership 0
 ....

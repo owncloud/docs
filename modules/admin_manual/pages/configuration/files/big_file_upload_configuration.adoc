@@ -51,15 +51,33 @@ php_value max_input_time 3600
 php_value max_execution_time 3600
 ....
 
-The https://httpd.apache.org/docs/current/mod/mod_reqtimeout.html[mod_reqtimeout]
-Apache module could also stop large uploads from completing. If you’re
-using this module and getting failed uploads of large files either
-disable it in your Apache config or raise the configured
-`RequestReadTimeout` timeouts.
+=== mod_reqtimeout
 
-There are also several other configuration options in your Web server
-config which could prevent the upload of larger files. Please see the
-manual of your Web server for how to configure those values correctly:
+The https://httpd.apache.org/docs/current/mod/mod_reqtimeout.html[mod_reqtimeout] Apache module could also stop large uploads from completing. 
+If you’re using this module and getting failed uploads of large files, either disable it in your Apache config or raise the configured `RequestReadTimeout` timeouts.
+
+==== Disable mod_reqtimeout On Ubuntu
+
+On Ubuntu, you can disable the module by running the following command:
+
+[source,console]
+....
+a2dismod reqtimeout
+....
+
+==== Disable mod_reqtimeout On CentOS
+
+On CentOS, you have to edit `/etc/httpd/conf/httpd.conf`, and comment out the following line: 
+
+[source,apache]
+....
+LoadModule reqtimeout_module modules/mod_reqtimeout.so
+....
+
+When you have done run `asdismod` or updated `/etc/httpd/conf/httpd.conf`, restart Apache.
+
+TIP: There are also several other configuration options in your web server config which could prevent the upload of larger files. 
+Please see your web server's manual, for how to configure those values correctly:
 
 [[apache]]
 === Apache
@@ -150,32 +168,6 @@ As an alternative to the `upload_tmp_dir` of PHP (e.g., if you don’t have acce
 
 If you have configured the `session_lifetime` setting in your `config.php` (See xref:configuration/server/config_sample_php_parameters.adoc[Sample Config PHP Parameters]) file then make sure it is not too low. This setting needs to be configured to at least the time (in seconds) that the longest upload will take.
 If unsure remove this completely from your configuration to reset it to the default shown in the `config.sample.php`.
-
-[[configuring-upload-limits-within-the-gui]]
-=== Configuring upload limits within the GUI
-
-If all prerequisites described in this documentation are in place an
-admin can change the upload limits on demand by using the
-`File handling` input box within the administrative backend of ownCloud.
-
-image:configuration/files/admin_filehandling-1.png[image]
-
-Depending on your environment you might get an insufficient permissions
-message shown for this input box.
-
-image:configuration/files/admin_filehandling-2.png[image]
-
-To be able to use this input box you need to make sure that:
-
-* Your Web server is be able to use the `.htaccess` file shipped by
-ownCloud (Apache only)
-* The user your Web server is running as has write permissions to the
-files `.htaccess` and `.user.ini`
-
-xref:installation/manual_installation.adoc#set-strong-directory-permissions[Directory permissions] might prevent write access to these files.
-As an admin you need to decide between the ability to use the input box and a more secure
-ownCloud installation where you need to manually modify the upload limits in the `.htaccess`
-and `.user.ini` files described above.
 
 [[general-upload-issues]]
 == General upload issues

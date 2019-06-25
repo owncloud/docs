@@ -97,6 +97,11 @@ If so, then make it available via by running the following command:
 sudo phpenmod -v ALL smbclient
 ....
 
+== Enabling External Storage
+
+To enable external storage go to menu:Settings[Storage (in the admin section)], as the ownCloud administrator.
+Tick the checkbox to enable external storage.
+
 [[creating-a-new-share]]
 == Creating a New Share
 
@@ -237,12 +242,14 @@ on the command line of the ownCloud server
 Take the example of attempting to connect to the share named MyData
 using `occ wnd:listen`. Running the following command would work:
 
+[source,console,subs="attributes+"]
 ....
 sudo -u www-data ./occ wnd:listen MyHost MyData svc_owncloud password
 ....
 
 However, running this command would not:
 
+[source,console,subs="attributes+"]
 ....
 sudo -u www-data ./occ wnd:listen MyHost mydata svc_owncloud password
 ....
@@ -269,6 +276,7 @@ NOTE: You can increase the command’s verbosity by using `-vvv`. Doing so displ
 The simplest way to start the `wnd:listen` process manually, perhaps for
 initial testing, is as follows
 
+[source,console,subs="attributes+"]
 ....
 sudo -u www-data ./occ wnd:listen <host> <share> <username>
 ....
@@ -278,6 +286,7 @@ didn’t provide it, as in the example above. In order to start the
 `wnd:listen` without any user interaction, provide the password as the
 user’s 4th parameter, as in the following example:
 
+[source,console,subs="attributes+"]
 ....
 sudo -u www-data ./occ wnd:listen <host> <share> <username> <password>
 ....
@@ -304,6 +313,7 @@ you need more information, increase the verbosity by calling
 
 As a simple example, you can check the following:
 
+[source,console,subs="attributes+"]
 ....
 sudo -u www-data ./occ wnd:process-queue <host> <share>
 ....
@@ -374,11 +384,13 @@ There are several ways to supply a password:
 
 . Interactively in response to a password prompt.
 +
+[source,console,subs="attributes+"]
 ....
 sudo -u www-data ./occ wnd:listen <host> <share> <username>
 ....
 . Sent as a parameter to the command.
 +
+[source,console,subs="attributes+"]
 ....
 sudo -u www-data ./occ wnd:listen <host> <share> <username> <password>
 ....
@@ -388,11 +400,13 @@ the file, and neither spaces nor newline characters will be removed from
 the file by default, unless the `--pasword-trim` option is added. The
 password file must be readable by the apache user (or www-data)
 +
+[source,console,subs="attributes+"]
 ....
 sudo -u www-data ./occ wnd:listen <host> <share> <username> \
   --password-file=/my/secret/password/file
 ....
 +
+[source,console,subs="attributes+"]
 ....
 sudo -u www-data ./occ wnd:listen <host> <share> <username> \
   --password-file=/my/secret/password/file --password-trim
@@ -409,7 +423,7 @@ on standard output.
 [[rd-party-software-examples]]
 === 3rd Party Software Examples
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
 cat /tmp/plainpass | sudo -u www-data ./occ wnd:listen <host> <share> <username> --password-file=-
 ----
@@ -440,7 +454,7 @@ You can use "pass" as a password manager.
 You can go through http://xmodulo.com/manage-passwords-command-line-linux.html
 to setup the keyring for whoever will fetch the password (probably root) and then use something like the following
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
 pass the-password-name | sudo -u www-data ./occ wnd:listen <host> <share> <username> --password-file=-
 ----
@@ -585,6 +599,7 @@ If you need to serialize the execution of the `wnd:process-queue`, check
 the following example with
 https://linuxaria.com/howto/linux-shell-introduction-to-flock[flock]
 
+[source,console,subs="attributes+"]
 ....
 flock -n /my/lock/file sudo -u www-data ./occ wnd:process-queue <host> <share>
 ....
@@ -622,6 +637,7 @@ serializer for this scenario (based on Redis or DB)
 [[basic-command-execution-examples]]
 == Basic Command Execution Examples
 
+[source,console,subs="attributes+"]
 ....
 sudo -u www-data ./occ `wnd:listen` host share username password
 
@@ -640,6 +656,7 @@ sudo -u www-data ./occ `wnd:process-queue` host2 share2 -c 500 \
 
 To set it up, make sure the listener is running as a system service:
 
+[source,console,subs="attributes+"]
 ....
 sudo -u www-data ./occ `wnd:listen` host share username password
 ....
@@ -647,6 +664,7 @@ sudo -u www-data ./occ `wnd:listen` host share username password
 Setup a Cron job or similar with something like the following two
 commands:
 
+[source,console,subs="attributes+"]
 ....
 sudo -u www-data ./occ wnd:process-queue host share -c 500 \
     --serializer-type file \
