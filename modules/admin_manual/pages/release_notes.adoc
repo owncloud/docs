@@ -1,5 +1,7 @@
 = Release Notes
+:server-10_2-avatar-change-url: https://github.com/owncloud/core/issues/35311
 
+* xref:changes-in-10-2-0[Changes in 10.2.0]
 * xref:changes-in-10-1-1[Changes in 10.1.1]
 * xref:changes-in-10-1-0[Changes in 10.1.0]
 * xref:changes-in-10-0-10[Changes in 10.0.10]
@@ -18,6 +20,162 @@
 * xref:changes-in-8-1[Changes in 8.1]
 * xref:changes-in-8-0[Changes in 8.0]
 * xref:changes-in-7-0[Changes in 7.0]
+
+== Changes in 10.2.0
+
+Dear ownCloud administrator, please find, below, the changes and known issues in ownCloud Server 10.2 that need your attention. 
+You can also read https://owncloud.org/changelog/server/[the full ownCloud Server changelog] for further details on what has changed.
+
+=== Migrations
+
+Please note that this minor release contains database migrations which impact the upgrade duration.
+Specifically:
+
+* The `oc_share` table has a new column. The time the upgrade takes for this change depends on the number of shares in your ownCloud installation.
+* The `oc_authtoken` table's login name column size has been increased. The time the upgrade takes for this change depends on the number of recently logged in users, and the number of app passwords that have been created.
+
+=== PHP 5.6 Deprecation
+
+Following up the https://doc.owncloud.com/server/admin_manual/release_notes.html#php-5-6-deprecation[PHP 5.6/7.0 deprecation notice in the ownCloud Server 10.0.8 releases] ownCloud Server 10.2 *does not support PHP 5.6* and some apps no longer support older PHP versions. 
+Additionally, PHP 7.3 support will be available in an upcoming version.
+
+If you're still running PHP 5.6, **you must upgrade to PHP 7 before upgrading to ownCloud Server 10.2**. 
+Please be aware that apps that do not support outdated PHP versions will not upgrade.
+
+TIP: See the xref:installation/system_requirements.adoc#officially-recommended-supported-options[system requirements in the ownCloud documentation]. 
+
+To allow for additional upgrade time, version 10.2 still supports PHP 7.0, because some of the major Linux distributions continue to support it. 
+However, support for PHP 7.0 will be discontinued in an upcoming version of ownCloud 10, to enhance both security and performance. 
+To prepare for this change, we strongly encourage you to begin planning an upgrade as soon as possible.
+
+=== Advanced Sharing Permissions
+
+The new server version https://github.com/owncloud/core/issues/34951[introduces the means] for extensions to implement additional, advanced permissions for user and group sharing. This feature increases sharing flexibility and opens the doors for extension developers to introduce new functionality based on sharing permissions.
+
+Especially, considering collaborative editing solutions, this addition provides the foundation for mode-based document sharing, such as "view-only", "comments-only" or "enforce change tracking". In the future, such advanced permissions should significantly improve the security as well as the usability of review processes, working on Office documents collaboratively, or exchanging information securely.
+
+Based on the new capabilities a set of features has been developed together with Collabora Online, called _Secure View_. Secure View is designed to enable information distribution processes for sensitive data, meaning that information can be provided securely yet can — *under no circumstances* — leave the platform.
+
+Practically, it enables users to share documents (such as docx, xlsx, pptx, and PDF files) in such a way that the recipient can't edit, download, copy and paste, nor print them. 
+Additional protection for screenshots and photos is provided by watermarks which display user information. 
+What's more, users can decide to allow printing and exporting of documents protected by watermarks as well.
+
+=== More Granular Permissions for Public Links on Folders
+
+With ownCloud Server 10.2, the former "Download / View / Upload" permission has been renamed to "Download / View / Edit", as this better reflects its behavior (full permissions).
+Additionally, a new permission ("Download / View / Upload") has been introduced which allows recipients to view, download, and upload contents but not to make any changes to existing content (e.g., rename, move, delete, update). Another way of looking at it is as a public file drop folder for distributing and gathering information with a single link, yet which prevents recipients from altering the existing content.
+
+=== Storage Encryption with Master Key in HSM
+
+With version 10.2, ownCloud Server officially supports storage encryption with master keys stored in hardware security modules (HSM). 
+In contrast to regular master key-based storage encryption, which stores the keys on the storage, storage encryption with keys in an HSM allows administrators to completely prevent anyone with access to the storage from accessing the data stored in ownCloud. 
+
+As a result, the bundled `encryption` app has been updated to support HSM, and a standalone service (`hsmdaemon`) that connects ownCloud Server and the HSM device is now available within ownCloud Enterprise Edition. 
+To get started with storage encryption and HSM, https://owncloud.com/contact/[please get in touch with us].
+For more information around the different encryption types ownCloud offers, consider https://oc.owncloud.com/rs/038-KRL-592/images/Whitepaper_Data_Protection_and_Data_Secrecy_in_ownCloud_EN.pdf[this whitepaper].
+
+=== Background Job for Change Detection of Nested Federated Shares
+
+When using federation to share data across ownCloud instances, deeply nested folders (e.g., folders with many sub-items) https://github.com/owncloud/docs/issues/856[are not discovered automatically for performance reasons]. 
+This leads to several issues such as the ownCloud Desktop Client not being able to synchronize newly added or changed content unless the user navigates down the hierarchy using the web interface, which manually triggers content discovery. 
+
+Also, the size of such folders can't be calculated, showing "Pending" instead, until the discovery is manually triggered. 
+To help alleviate this problem, a new `occ` command has been introduced.
+It can be executed regularly as a background job to discover federated shares (`occ incoming-shares:poll`). 
+This is aimed at handling this issue while providing the means for administrators to control resource usage.
+
+When using federation, it is recommended to execute `occ incoming-shares:poll` regularly xref:configuration/server/background_jobs_configuration.adoc#cron-jobs[using Cron jobs]. 
+The time interval to choose between executions is a trade-off between the availability of changes in federated shares and resource consumption, which naturally depends a lot on the number of federated shares and the frequency of changes within those shares. 
+
+Executing the command once per 12 hours should be safe enough for any instance. 
+However, the interval could be reduced to once per 2 hours for instances with a low number of federated shares.
+
+Depending on the desired resource consumption this value should be lowered or increased based on individual expectations. 
+To find a value that fits a specific setup, it is recommended to execute the command once, measure the execution time and set the interval so that the background job can finish before the next execution is triggered.
+
+=== New Option to Automatically Accept Federated Shares from Trusted Servers
+
+ownCloud Server 10.0.9 https://doc.owncloud.com/server/10.1/admin_manual/release_notes.html#pending-shares[introduced the *Pending Shares* feature] which allows users to decide whether or not they want to accept local user shares instead of just making the decision for them, giving more control thereby. 
+In contrast, Federated shares always had to be accepted as they can originate from external, potentially untrusted, sources. 
+
+ownCloud Server 10.2 introduces a global option to automatically accept https://doc.owncloud.com/server/admin_manual/configuration/files/federated_cloud_sharing_configuration.html#configuring-trusted-owncloud-servers[federated shares originating from trusted servers]. 
+This option enables providers of several instances (e.g., an external and an internal instance) to facilitate or automate data exchange between them, not requiring users to accept shares. 
+
+NOTE: For security reasons, federated shares from untrusted servers will never be accepted automatically.
+
+=== New Privacy and Self-Service Options for Users
+
+In the spirit of self-service, ownCloud Server 10.2 introduces new options for users that previously were reserved for global admin settings:
+
+* As discussed in the section above, there are global options for *Pending Shares* regarding federated as well as regular user/group shares.
+  To give users more control over the sharing behavior in the scope of their account, user-based override options were introduced that allow users to enable/disable *Pending Shares* for themselves if the instance's global setting is disabled (when "_Automatically accept new incoming local user shares_" is enabled). 
+  The two new checkboxes can be found in the 'Sharing' settings panel of personal settings.
+* In addition to the option "_Allow username autocompletion in share dialog_" in the global 'Sharing' settings, users can now autonomously decide to opt-out of autocompletion to protect their privacy. 
+  When enabled, other users need to enter a user's full identifier to be able to share with them.
+  This option is not a general override but an opt-out, meaning it can only be used when "_Allow username autocompletion in share dialog_" is enabled. 
+  The new checkbox is available in the 'Sharing' settings panel of personal settings.
+
+=== Other Notable Changes
+
+* *Added email footer with motto in email for changing passwords.*
+  If you use customized email templates, it is necessary to adapt those to incorporate the footer. 
+  Please compare the original templates with your custom templates (`core/templates/lostpassword/notify.php` and `core/templates/lostpassword/altnotify.php`).
+* *Repair steps can now be executed individually in case one would need to be run again.*
+  Repair steps are employed to clean up and resolve issues from former versions. 
+  Usually, they run during upgrades, but some scenarios make it necessary to rerun them. 
+  To save time when only specific steps need to be taken, administrators can now individually execute them using `occ maintenance:repair --list` and `occ maintenance:repair --single "<repair step>"`.
+* *Command for the first run wizard to reset for all users.*
+   In some cases, administrators customize the First Run Wizard in order to distribute information to users. 
+   Using `occ firstrunwizard:reset-all` you can reset the popup so that it will appear for each user upon their next login.
+* *Added checkboxes to hide quota and password in user management.* 
+   The columns in user management have been made more flexible. 
+   Using the bottom left cog wheel you can now show/hide the columns for _Quota_ and _Password_.
+* *By default, the "apps-external" directory is included in config.php during installation.* 
+  For new installations, there will be two apps directories so that the bundled apps are distinguishable from the apps that were installed or updated by the administrator. 
+  Existing installations will not change but, generally, xref:installation/apps_management_installation.adoc#using-custom-app-directories[this separation is recommended] in all scenarios, as it makes upgrading easier and less error-prone.
+* *Update the `occ files:scan` `--group` and `--groups` options.* 
+  The `occ files:scan` command is used to scan resources on the storage and make them available in ownCloud. 
+  While previously it could only be used for all or single users and groups of users, you can now also execute it for groups where the group name contains a comma.
+* *Allow administrators to enable/disable medial search for users and groups.* 
+  Medial search is used to get search results when typing keys within a search term in autocomplete fields (e.g. when typing "_ter_" you'll find "Peter"). 
+  Depending on the configuration of available search terms (e.g., attributes from LDAP), search results can deliver better results without medial search. 
+  For these reasons medial search can now be enabled/disabled for user (`'accounts.enable_medial_search'`) and group (`'groups.enable_medial_search'`) search. 
+  See https://github.com/owncloud/core/blob/stable10/config/config.sample.php#L285[config.sample.php] for more information.
+* Added a new occ command, `background:queue:execute`, for running cron jobs manually.
+* Added two new `occ background:queue` commands: `status` and `delete`.
+** `status` lists the current background job queue status
+** `delete` removes a single background job, identified by its id.
+ 
+=== Solved Known Issues
+
+* Fixed public link share default expiration behavior https://github.com/owncloud/core/issues/34971[#34971].
+  Previously, when a default expiration date for public links had been set by an administrator (without enforcement option), the default value has been applied upon link creation even when a user removed it.
+  The only way to create a link without expiration date was to subsequently edit it and remove the expiration date. 
+  This has been fixed to work as expected.
+* Better support for international email addresses after Swiftmailer update https://github.com/owncloud/core/issues/34759[#34759]
+* Improved speed of apps list settings page by caching integrity check results https://github.com/owncloud/core/issues/34584[#34584]
+* Improved upgrade speed when migrating avatars from oC < 10 https://github.com/owncloud/core/issues/34592[#34592]
+* Improved performance and memory usage of account sync service https://github.com/owncloud/core/issues/34546[#34546]
+* Store quota overrides in the `oc_preferences` table https://github.com/owncloud/core/issues/34467[#34467]. In former versions, functionality has been introduced to preserve quota values either imported via LDAP attributes against manual changes by the administrator in ownCloud user management, or via the provisioning API. This functionality works again properly. If you sync accounts from LDAP and have a quota attribute specified in LDAP, each `user:sync` run will set the quota values to the ones from LDAP, no matter if they were changed manually.
+* Images are again properly rotated now based on EXIF rotation, also affects gallery app https://github.com/owncloud/core/issues/34356[#34356]
+* An exception is logged when a background job class is not found - https://github.com/owncloud/core/issues/34723[34723]
+
+=== Known Issues
+
+NOTE: This section will be updated if further issues become known.
+
+- Server 10.2 {server-10_2-avatar-change-url}[accidentally changes the location of user avatars] on the storage from `data/avatars/..` to `data/..`, making existing avatars unavailable and storing uploaded avatar images in the wrong location. The next release will correct the behavior.
+- The HTML email that confirms a successful password change is rendered in plain text. Please apply this https://patch-diff.githubusercontent.com/raw/owncloud/core/pull/35260.patch[patch] to fix the issue.
+- WebDAV Locks: When a file in a folder is locked, exclusively locking the parent folder currently still works ("conflicting lock"; divergent from https://tools.ietf.org/html/rfc4918#section-7.4)[RFC 4918]))
+
+=== For Developers
+
+- It is now possible for apps to specify extra permissions for shares https://github.com/owncloud/core/issues/34951[#34951]
+- Add before-after share link auth events https://github.com/owncloud/core/issues/34399[#34399]
+- Add events for user preference changes https://github.com/owncloud/core/issues/34820[#34820]
+- Added CORS headers for many existing API calls, required for Phoenix https://github.com/owncloud/core/issues/34476[#34476]
+- Remove classes that were deprecated since OC 8.0.0: OCP\Config, OCP\PERMISSION_XXX, OCP\Template https://github.com/owncloud/core/issues/34927[#34927]
+- A capability has been added to the Capabilities API to allow clients to check whether the server supports the details parameter for private links, e.g., as a direct link to a resource's sharing or versions tab in the web interface https://github.com/owncloud/core/issues/35104[#35104]
 
 == Changes in 10.1.1
 
@@ -411,8 +569,8 @@ Privacy Policy:
 
 * In the "_General_" Administration settings section
 * Via the following OCC commands:
-** `php occ config:app:set core legal.imprint_url <link>`
-** `php occ config:app:set core legal.privacy_policy_url <link>`
+** `{occ-command-example-prefix} config:app:set core legal.imprint_url <link>`
+** `{occ-command-example-prefix} config:app:set core legal.privacy_policy_url <link>`
 
 These links can be displayed on all pages of the ownCloud web interface
 and in the footer of mail notifications. When using one of the default
@@ -1088,9 +1246,9 @@ https://github.com/owncloud/core/issues/27075 for more info.
 
 This causes an SQL error such as the following:
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-sudo -u www-data ./occ market:install user_ldap
+{occ-command-example-prefix} market:install user_ldap
 
 user_ldap: Installing new app ...
 user_ldap: An exception occurred while executing 'CREATE TABLE `ldap_user_mapping` (`ldap_dn` VARCHAR(255) DEFAULT '' NOT NULL, `owncloud_name` VARCHAR(255) DEFAULT '' NOT NULL, `directory_uuid` VARCHAR(255) DEFAULT '' NOT NULL, UNIQUE INDEX ldap_dn_users (`ldap_dn`), PRIMARY KEY(`owncloud_name`)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin ENGINE = InnoDB ROW_FORMAT = compressed':
@@ -1348,11 +1506,12 @@ you will see this message in your ownCloud log:
 Fix this by disabling the `memberof` attribute on your ownCloud server
 with the `occ` command, like this example on Ubuntu Linux:
 
+[source,console,subs="attributes+"]
 ....
-sudo -u www-data php occ ldap:set-config "s01" useMemberOfToDetectMembership 0
+{occ-command-example-prefix} ldap:set-config "s01" useMemberOfToDetectMembership 0
 ....
 
-Run `sudo -u www-data php occ ldap:show-config` to find the correct
+Run `{occ-command-example-prefix} ldap:show-config` to find the correct
 `sNN` value; if there is not one then use empty quotes, `""`. (See
 configuration/server/occ_command.)
 

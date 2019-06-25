@@ -1,0 +1,72 @@
+= Windows Network Drive Configuration (WND)
+:toc: right
+:page-aliases: appliance/wnd_setup.adoc
+
+== Introduction
+
+Here are the steps to configure WND in the Appliance.
+
+NOTE: You will need both of the following described steps for each share.
+
+NOTE: The steps need to be done in / on the docker host
+(appliance virtual machine) and not inside the docker container
+
+== WND Listener
+
+Create a service following the instructions below that checks the share for changes:
+
+* For each WND mount point distinguished by a SERVER - SHARE pair, 
+** place one copy of a file
+with following content under +
+`/etc/systemd/system/owncloud-wnd-listen-SERVER-SHARE.service`
+** replacing the all upper case words `SERVER`, `SHARE`, `USER` and `PASSWORD`
+** in both, the **filename** and in the **contents** below with their respective values. +
+Take care to also adjust the paths in `WorkingDirectory` and `ExecStart`
+according to your installation.
++
+....
+[Unit]
+Description=ownCloud WND Listener for SERVER SHARE
+After=docker-app-owncloud.service
+Requires=docker-app-owncloud.service
+[Service]
+User=root
+Group=root
+WorkingDirectory=/root
+ExecStart=/usr/bin/univention-app shell owncloud occ wnd:listen -vvv SERVER SHARE USER PASSWORD
+Type=simple
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=%n
+KillMode=process
+RestartSec=1
+Restart=always
+....
+
+* Run once for each created file the following commands:
++
+[source,console]
+----
+sudo systemctl enable owncloud-wnd-listen-SERVER-SHARE.service
+sudo systemctl start  owncloud-wnd-listen-SERVER-SHARE.service
+----
+
+== WND Process Queue
+
+Create or add a `crontab` file in `/etc/cron.d/oc-wnd-process-queue`.
+
+* Make a `crontab` entry to run a script iterating over all `SERVER SHARE` pairs with
+an appropriate `occ wnd:process-queue` command. The commands must be **strictly sequential**.
+This can be done by using `flock -n` and tuning the `-c` parameter of `occ wnd:process-queue`
+
+....
+* * * * *     root  /usr/bin/univention-app shell owncloud occ wnd:process-queue -vvv SERVER SHARE
+....
+
+== Further Reading
+
+Please see also:
+
+* https://central.owncloud.org/t/wnd-listener-configuration/3114[The ownCloud forum] and the 
+* xref:enterprise/external_storage/windows-network-drive_configuration.adoc#wnd-listen[Windows Network Drive Configuration]
+documentation.
