@@ -1,7 +1,6 @@
 = Virus Scanner Support
 :toc: right
 
-[[overview]]
 == Overview
 
 http://www.clamav.net/index.html[ClamAV] is the only _officially_
@@ -19,7 +18,6 @@ be used, so long as they:
 exit code
 2.  Return a parsable result on stdout
 
-[[how-clamav-works-with-owncloud]]
 === How ClamAV Works With ownCloud
 
 Before you install and configure ClamAV, here is a bit of background
@@ -46,7 +44,6 @@ file.
 
 NOTE: Scanner exit status rules are used to handle errors when ClamAV is run in CLI mode. Scanner output rules are used in daemon/socket mode.
 
-[[things-to-note]]
 ==== Things To Note
 
 1.  Files are checked when they are uploaded or updated (whether because
@@ -58,7 +55,6 @@ rejects file uploads.
 5.  A file size limit applies both to background jobs and to file
 uploads.
 
-[[configuring-the-clamav-antivirus-scanner]]
 == Configuring the ClamAV Antivirus Scanner
 
 You can configure your ownCloud server to automatically run a virus scan
@@ -67,14 +63,12 @@ https://github.com/owncloud/files_antivirus[Antivirus App for Files].
 
 NOTE: ClamAV must be installed before installing and configuring Antivirus App for Files.
 
-[[installing-clamav]]
 == Installing ClamAV
 
 As always, Linux distributions install and configure ClamAV in different
 ways. Below you can find the instructions for installing it on Debian or
 Red Hat-based distributions.
 
-[[debian-ubuntu-linux-mint]]
 === Debian, Ubuntu, Linux Mint
 
 On Debian, Ubuntu, and their many variants, install ClamAV with the
@@ -89,7 +83,6 @@ the `clamd` and `freshclam` daemons. You shouldn’t have to do anything
 else, though it is a good idea to review the ClamAV documentation, as
 well ClamAV’s settings in `/etc/clamav/`.
 
-[[red-hat-7-and-centos-7]]
 === Red Hat 7 and CentOS 7
 
 On Red Hat 7 and related systems, you must install the `Extra Packages
@@ -105,7 +98,6 @@ clamav-server-systemd clamav-update
 NOTE: Regardless of your operating system, we recommend that you enable verbose logging in both 
 `clamd.conf` and `freshclam.conf` until you get any kinks with your ClamAV installation worked out.
 
-[[configuring-and-running-clamav]]
 == Configuring and Running ClamAV
 
 After installing ClamAV and the related tools, you will now have two
@@ -130,7 +122,6 @@ That should take care of everything.
 
 NOTE: Enable verbose logging in `scan.conf` and `freshclam.conf` until it is running the way you want.
 
-[[automating-clamav-virus-database-updates]]
 == Automating ClamAV Virus Database Updates
 
 To update your malware database and get the latest malware signatures,
@@ -153,7 +144,6 @@ past the hour, add the following in the applicable user’s crontab:
 
 NOTE: Please avoid any multiples of 10, because those are when the ClamAV servers are hit the hardest for updates.
 
-[[install-the-anti-virus-app]]
 == Install the Anti-Virus App
 
 The Anti-Virus app needs to be installed from the ownCloud Market, under
@@ -162,7 +152,6 @@ App Switcher).
 
 image:antivirus-app.png[image]
 
-[[configuring-clamav-within-owncloud]]
 == Configuring ClamAV within ownCloud
 
 Once it is installed, go to your ownCloud Admin page and set your
@@ -176,7 +165,6 @@ configuration options which ownCloud will pass to ClamAV.
 
 image:antivirus-config.png[image]
 
-[[configuration-warnings]]
 === Configuration Warnings
 
 The Antivirus App for Files will show one of three warnings if it is
@@ -189,13 +177,11 @@ image:configuration/server/anti-virus-message-misconfiguration-problem.png[Confi
 
 image:configuration/server/anti-virus-message-socket-connection-problem.png[Configuration error message: 'Antivirus app is misconfigured or antivirus inaccessible. Could not connect to socket ´/var/run/clamav/cslamd-socket´: No such file or directory (code 2)'.]
 
-[[mode-configuration]]
 === Mode Configuration
 
 ClamAV runs in one of three modes: xref:daemon-socket[Daemon (Socket)],
 xref:daemon[Daemon], and xref:executable[Executable].
 
-[[daemon-socket]]
 === Daemon (Socket)
 
 
@@ -226,7 +212,6 @@ no larger than the PHP `memory_limit` settings or physical memory if
 logging any alerts without deleting the files or immediately deleting
 infected files.
 
-[[daemon]]
 === Daemon
 
 In this mode, ClamAV runs on a different server. This is a good option
@@ -252,7 +237,6 @@ image:antivirus-daemon.png[image]
 
 Where the host is the IP of the server running the ClamAV Daemon and the port is what was configured in the above step.
 
-[[executable]]
 === Executable
 
 In this mode, ClamAV runs on the same server as the ownCloud
@@ -268,7 +252,6 @@ image:antivirus-executable.png[image]
 When you are satisfied with how ClamAV is operating, you might want to
 go back and change all of your logging to less verbose levels.
 
-[[rule-configuration]]
 === Rule Configuration
 
 ownCloud provides the ability to customize how it reacts to the response
@@ -291,7 +274,6 @@ in CLI mode while
 * In case there are no matching rules, the status is: `Unknown`, and a
 warning will be logged.
 
-[[default-ruleset]]
 === Default Ruleset
 
 The default rule set for ClamAV is populated automatically with the
@@ -349,7 +331,6 @@ The rules are always checked in the following order:
 In case there are no matching rules, the status would be `Unknown` and a
 warning would be logged.
 
-[[update-an-existing-rule]]
 ==== Update An Existing Rule
 
 To match on an exit status, change the "**Match by**" dropdown list to
@@ -378,14 +359,12 @@ The dropdown supports the following three options:
 With all these changes made, click the btn:[check mark] on the lefthand side
 of the "**Match by**" column, to confirm the change to the rule.
 
-[[add-a-new-rule]]
 ==== Add A New Rule
 
 To add a new rule, click the button marked btn:[Add a rule] at the bottom
 left of the rules table. Then follow the process outlined in
 xref:default-ruleset[Update An Existing Rule].
 
-[[delete-an-existing-rule]]
 ==== Delete An Existing Rule
 
 To delete an existing rule, click the btn:[rubbish bin] icon on the far

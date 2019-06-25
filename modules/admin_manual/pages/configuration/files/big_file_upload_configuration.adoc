@@ -18,7 +18,6 @@ NOTE: The ownCloud sync client itself however is able to upload files of any siz
 as it uploads files by transmitting them in small chunks. But, it can never exceed the
 maximum file size limits of the remote host.
 
-[[system-configuration]]
 == System Configuration
 
 * Make sure that the latest version of PHP (at least 5.6) is installed
@@ -28,7 +27,6 @@ parallel uploads from multiple users; e.g. if the max upload size is
 10GB and the average number of users uploading at the same time is 100:
 temp space has to hold at least 10x100 GB
 
-[[configuring-your-web-server]]
 == Configuring Your Web server
 
 NOTE: ownCloud comes with its own `owncloud/.htaccess` file. Because `php-fpm` can’t read
@@ -79,13 +77,11 @@ When you have done run `asdismod` or updated `/etc/httpd/conf/httpd.conf`, resta
 TIP: There are also several other configuration options in your web server config which could prevent the upload of larger files. 
 Please see your web server's manual, for how to configure those values correctly:
 
-[[apache]]
 === Apache
 
 * https://httpd.apache.org/docs/current/en/mod/core.html#limitrequestbody[LimitRequestBody]
 * https://httpd.apache.org/docs/current/mod/mod_ssl.html#sslrenegbuffersize[SSLRenegBufferSize]
 
-[[apache-with-mod_fcgid]]
 === Apache with mod_fcgid
 
 * https://httpd.apache.org/mod_fcgid/mod/mod_fcgid.html#fcgidmaxrequestinmem[FcgidMaxRequestInMem]
@@ -96,7 +92,6 @@ WARNING: If you are using Apache/2.4 with mod_fcgid, as of February/March 2016, 
 Setting `FcgidMaxRequestInMem` significantly higher than normal may no
 longer be necessary, once bug #51747 is fixed.
 
-[[nginx]]
 === NGINX
 
 * http://nginx.org/en/docs/http/ngx_http_core_module.html#client_max_body_size[client_max_body_size]
@@ -132,7 +127,6 @@ from the default 1GB.
 http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_buffering[X-Accel-Buffering]
 header to `add_header X-Accel-Buffering no;` on your backend server.
 
-[[configuring-php]]
 == Configuring PHP
 
 If you don’t want to use the ownCloud `.htaccess` or `.user.ini` file,
@@ -161,7 +155,6 @@ upload_tmp_dir = /var/big_temp_file/
 
 * `output_buffering = 0`
 
-[[configuring-owncloud]]
 == Configuring ownCloud
 
 As an alternative to the `upload_tmp_dir` of PHP (e.g., if you don’t have access to your `php.ini`) you can also configure a temporary location for uploaded files by using the `tempdirectory` setting in your `config.php`.
@@ -169,7 +162,6 @@ As an alternative to the `upload_tmp_dir` of PHP (e.g., if you don’t have acce
 If you have configured the `session_lifetime` setting in your `config.php` (See xref:configuration/server/config_sample_php_parameters.adoc[Sample Config PHP Parameters]) file then make sure it is not too low. This setting needs to be configured to at least the time (in seconds) that the longest upload will take.
 If unsure remove this completely from your configuration to reset it to the default shown in the `config.sample.php`.
 
-[[general-upload-issues]]
 == General upload issues
 
 Various environmental factors could cause a restriction of the upload
