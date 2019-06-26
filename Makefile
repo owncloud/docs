@@ -75,11 +75,13 @@ pdf: pdf-user pdf-admin pdf-developer ## Generate PDF version of the manuals
 .PHONY: pdf-user
 pdf-user: ## Generate PDF version of the user manual
 	asciidoctor-pdf \
+		-d book \
 		-a pdf-stylesdir=$(STYLES_DIR)/ \
 		-a pdf-style=$(STYLE) \
 		-a pdf-fontsdir=$(FONTS_DIR) \
-		-a examplesdir=modules/user_manual/examples \
-		-a imagesdir=modules/user_manual/assets/images \
+		-a examplesdir=$(CURDIR)/modules/user_manual/examples/ \
+		-a imagesdir=$(CURDIR)/modules/user_manual/assets/images/ \
+		-a partialsdir=$(CURDIR)/modules/user_manual/pages/_partials/ \
 		-a revnumber=$(VERSION) \
 		-a revdate=$(REVDATE) \
 		--base-dir $(CURDIR) \
@@ -88,12 +90,13 @@ pdf-user: ## Generate PDF version of the user manual
 
 .PHONY: pdf-admin
 pdf-admin: ## Generate PDF version of the administration manual
-	asciidoctor-pdf \
+	asciidoctor-pdf -d book \
 		-a pdf-stylesdir=$(STYLES_DIR)/ \
 		-a pdf-style=$(STYLE) \
 		-a pdf-fontsdir=$(FONTS_DIR) \
-		-a examplesdir=modules/admin_manual/examples \
-		-a imagesdir=modules/admin_manual/assets/images \
+		-a examplesdir=$(CURDIR)/modules/admin_manual/examples/ \
+		-a imagesdir=$(CURDIR)/modules/admin_manual/assets/images/ \
+		-a partialsdir=$(CURDIR)/modules/admin_manual/pages/_partials/ \
 		-a revnumber=$(VERSION) \
 		-a revdate=$(REVDATE) \
 		--base-dir $(CURDIR) \
@@ -106,8 +109,9 @@ pdf-developer: ## Generate PDF version of the developer manual
 		-a pdf-stylesdir=$(STYLES_DIR)/ \
 		-a pdf-style=$(STYLE) \
 		-a pdf-fontsdir=$(FONTS_DIR) \
-		-a examplesdir=modules/developer_manual/examples \
-		-a imagesdir=modules/developer_manual/assets/images \
+		-a examplesdir=$(CURDIR)/modules/developer_manual/examples/ \
+		-a imagesdir=$(CURDIR)/modules/developer_manual/assets/images/ \
+		-a partialsdir=$(CURDIR)/modules/developer_manual/pages/_partials/ \
 		-a revnumber=$(VERSION) \
 		-a revdate=$(REVDATE) \
 		--base-dir $(CURDIR) \
