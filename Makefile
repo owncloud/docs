@@ -74,49 +74,15 @@ pdf: pdf-user pdf-admin pdf-developer ## Generate PDF version of the manuals
 
 .PHONY: pdf-user
 pdf-user: ## Generate PDF version of the user manual
-	asciidoctor-pdf \
-		-d book \
-		-a pdf-stylesdir=$(STYLES_DIR)/ \
-		-a pdf-style=$(STYLE) \
-		-a pdf-fontsdir=$(FONTS_DIR) \
-		-a examplesdir=$(CURDIR)/modules/user_manual/examples/ \
-		-a imagesdir=$(CURDIR)/modules/user_manual/assets/images/ \
-		-a partialsdir=$(CURDIR)/modules/user_manual/pages/_partials/ \
-		-a revnumber=$(VERSION) \
-		-a revdate=$(REVDATE) \
-		--base-dir $(CURDIR) \
-		--out-file $(OUTPUT_USER)/ownCloud_User_Manual.pdf \
-		books/ownCloud_User_Manual.adoc
+	bin/create-pdf.sh user $(VERSION) $(REVDATE) $(OUTPUT_USER)
 
 .PHONY: pdf-admin
 pdf-admin: ## Generate PDF version of the administration manual
-	asciidoctor-pdf -d book \
-		-a pdf-stylesdir=$(STYLES_DIR)/ \
-		-a pdf-style=$(STYLE) \
-		-a pdf-fontsdir=$(FONTS_DIR) \
-		-a examplesdir=$(CURDIR)/modules/admin_manual/examples/ \
-		-a imagesdir=$(CURDIR)/modules/admin_manual/assets/images/ \
-		-a partialsdir=$(CURDIR)/modules/admin_manual/pages/_partials/ \
-		-a revnumber=$(VERSION) \
-		-a revdate=$(REVDATE) \
-		--base-dir $(CURDIR) \
-		--out-file $(OUTPUT_ADMIN)/ownCloud_Admin_Manual.pdf \
-		books/ownCloud_Admin_Manual.adoc
+	bin/create-pdf.sh admin $(VERSION) $(REVDATE) $(OUTPUT_ADMIN)
 
 .PHONY: pdf-developer
 pdf-developer: ## Generate PDF version of the developer manual
-	asciidoctor-pdf \
-		-a pdf-stylesdir=$(STYLES_DIR)/ \
-		-a pdf-style=$(STYLE) \
-		-a pdf-fontsdir=$(FONTS_DIR) \
-		-a examplesdir=$(CURDIR)/modules/developer_manual/examples/ \
-		-a imagesdir=$(CURDIR)/modules/developer_manual/assets/images/ \
-		-a partialsdir=$(CURDIR)/modules/developer_manual/pages/_partials/ \
-		-a revnumber=$(VERSION) \
-		-a revdate=$(REVDATE) \
-		--base-dir $(CURDIR) \
-		--out-file $(OUTPUT_DEVELOPER)/ownCloud_Developer_Manual.pdf \
-		books/ownCloud_Developer_Manual.adoc
+	bin/create-pdf.sh developer $(VERSION) $(REVDATE) $(OUTPUT_DEVELOPER)
 
 XMLLINT_INSTALLED := $(shell command -v xmllint 2>/dev/null)
 
