@@ -1,30 +1,35 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
+set -e
 set -o noclobber
 set -o errexit
 set -o pipefail
 set -o nounset
 
+ACTION=
 FONTS_DIRECTORY="fonts"
 RELEASE_DATE=$(date +'%B %d, %Y')
 STYLE="owncloud"
 STYLES_DIRECTORY="resources/themes"
+LANGUAGE=
 
 ERR_UNSUPPORTED_LANGUAGE=20
 ERR_UNSUPPORTED_MANUAL=21
 ERR_UNSUPPORTED_ACTION=22
+ERR_LINTER_NOT_AVAILABLE=23
+ERR_NO_LANGUAGE_SPECIFIED=24
 
-if [[ -z $VERSION ]]; then
-    if [[ -n $DRONE_TAG ]]; then
+if [[ -z "${VERSION:-}" ]]; then
+    if [[ -n "${DRONE_TAG:-}" ]]; then
         VERSION=${DRONE_TAG/v//}
     else
-        [[ -n $DRONE_BRANCH ]] && VERSION=${DRONE_BRANCH/v//} || VERSION=master
+        [[ -n "${DRONE_BRANCH:-}" ]] && VERSION=${DRONE_BRANCH/v//} || VERSION=master
     fi
 fi
 
 function usage()
 {
-    echo "Usage: cmd [-c] [-b <admin|developer|user>] [-v <go|xml|json|php|kotlin|yaml>] -r <revision> -d <release date>"
+    echo "Usage: bin/cli [-c] [-h] [-m <admin|developer|user>] [-l <go|xml|json|php|kotlin|yaml>]"
 }
 
 function clean_build_dir()
@@ -36,50 +41,72 @@ function clean_build_dir()
 
 function validate_code_files()
 {
-    language="$1"
-
-    case $language in
+    case $LANGUAGE in
         go)
-            command -v golint &>/dev/null && \
+            if command -v golint &>/dev/null; then
                 echo "Validating go source files" && \
-                find . -type f -name "*.go" \
-                    ! -path "./node_modules/*" \
-                    ! -path "**/vendor/*" \
-                    ! -path "./.git/*" \
+                find ./modules/*_manual/examples -type f -name "*.go" \
                     -exec sh -c 'echo Linting {} && golint {} && echo' \;
+            else
+                echo "Golint is not available."
+                echo "Exiting."
+                exit $ERR_LINTER_NOT_AVAILABLE
+            fi
             ;;
 
         json)
-            command -v jsonlint &>/dev/null && \
-                find . -type f -name "*.json" \
-                    ! -path "./node_modules/*" \
-                    ! -path "**/vendor/*" \
-                    ! -path "./.git/*" \
+            if command -v jsonlint &>/dev/null; then
+                find ./modules/*_manual/examples -type f -name "*.json" \
                     -exec sh -c 'echo Linting {} && jsonlint -qp {} && echo' \;
+            else
+                echo "jsonlint is not available."
+                echo "Exiting."
+                exit $ERR_LINTER_NOT_AVAILABLE
+            fi
             ;;
 
         kotlin)
-            command -v ktlint &>/dev/null && \
+            if command -v ktlint &>/dev/null; then
                 ktlint --reporter=plain "./modules/*_manual/**/*.kt" || true;
+            else
+                echo "ktlint is not available."
+                echo "Exiting."
+                exit $ERR_LINTER_NOT_AVAILABLE
+            fi
             ;;
 
         php)
-            command -v php &>/dev/null && \
-                find ./modules/*_manual/examples -type f -name "*.php" -exec php -l {} \;
+            if command -v php &>/dev/null; then
+                find ./modules/*_manual/examples -type f -name "*.php" \
+                    ! -path "**/vendor/*" \
+                    -exec php -l {} \;
+            else
+                echo "Golint is not available."
+                echo "Exiting."
+                exit $ERR_LINTER_NOT_AVAILABLE
+            fi
             ;;
 
         xml)
-            command -v xmllint &>/dev/null && \
-                find ./modules/*_manual/examples -type f -name "*.xml" -exec xmllint --noout {} \;
+            if command -v xmllint &>/dev/null; then
+                find ./modules/*_manual/examples -type f -name "*.xml" \
+                    -exec xmllint --noout {} \;
+            else
+                echo "xmllint is not available."
+                echo "Exiting."
+                exit $ERR_LINTER_NOT_AVAILABLE
+            fi
             ;;
 
         yaml)
-            command -v yamllint &>/dev/null && \
-                find . -type f -name "*.yml" \
-                    ! -path "./node_modules/*" \
-                    ! -path "**/vendor/*" \
-                    ! -path "./.git/*" \
+            if command -v yamllint &>/dev/null; then
+                find ./modules/*_manual/examples -type f -name "*.yml" \
                     -exec sh -c 'echo Linting {} && yamllint -f parsable {} && echo' \;
+            else
+                echo "yamllint is not available."
+                echo "Exiting."
+                exit $ERR_LINTER_NOT_AVAILABLE
+            fi
             ;;
 
         *)
@@ -91,10 +118,9 @@ function validate_code_files()
 
 function convert_antora_nav_to_asciidoc_list()
 {
-    filename="$1"
+    local filename="$1"
 
-    while read line 
-    do
+    while read line; do
         if [[ ${line} =~ \]$ ]]; then 
             level_offset=$(echo "$line" | awk -F"*" '{print NF-1}')
             revised_line=$(echo "$line" | sed 's/xref:/include::{module_base_path}/' | sed 's/\[.*\]//g' | sed -r 's/^\*{1,} //')
@@ -105,14 +131,13 @@ function convert_antora_nav_to_asciidoc_list()
 
 function build_pdf_manual()
 {
-    manual="$1"
-    release_date="$2"
-    revision="$3"
-    build_directory="$(pwd)/build/server/${revision}/${manual}_manual/"
-    manual_infix="$(tr '[:lower:]' '[:upper:]' <<< ${manual:0:1})${manual:1}"
-    book_file="books/ownCloud_${manual_infix}_Manual.adoc" 
-    nav_file="modules/${manual}_manual/nav.adoc"
-    input_file="books/catfile.$$.adoc"
+    local manual="$1"
+    local release_date="$2"
+    local revision="$3"
+    local build_directory="$(pwd)/build/server/${revision}/${manual}_manual/"
+    local manual_infix="$(tr '[:lower:]' '[:upper:]' <<< ${manual:0:1})${manual:1}"
+    local book_file="books/ownCloud_${manual_infix}_Manual.adoc" 
+    local nav_file="modules/${manual}_manual/nav.adoc"
 
     if [[ $manual != "admin" && $manual != "developer" && $manual != "user" ]]; then
         echo "That is not a valid manual" 
@@ -137,40 +162,44 @@ function build_pdf_manual()
         <(cat $book_file <(convert_antora_nav_to_asciidoc_list "$nav_file"))
 }
 
-while getopts ":ucmvl:" o; do
+while getopts ":hcml:" o; do
     case "${o}" in
         m)
             ACTION="BUILD_MANUALS"
             ;;
-        v)
-            ACTION="VALIDATE"
-            ;;
         l)
-            language=${OPTARG}
+            ACTION="VALIDATE"
+            LANGUAGE=${OPTARG}
             ;;
         c)
             ACTION="CLEAN"
             ;;
-        u|*)
-            usage
+        h|*)
+            ACTION="HELP"
             ;;
     esac
 done
 shift $((OPTIND-1))
 
 case "$ACTION" in 
-    BUILD_MANUALS) 
+    BUILD_MANUALS)
         build_pdf_manual "admin" "$RELEASE_DATE" "$VERSION"
         build_pdf_manual "developer" "$RELEASE_DATE" "$VERSION"
         build_pdf_manual "user" "$RELEASE_DATE" "$VERSION"
         ;;
-    CLEAN) 
-        clean_build_dir 
+    CLEAN)
+        clean_build_dir
         ;;
-    VALIDATE) 
-        validate_code_files "$language" 
+    VALIDATE)
+        if [[ -z $LANGUAGE ]]; then 
+            echo "No language was specified to be validated."
+            echo "Use the -l option to specify one."
+            echo "exiting."
+            exit $ERR_NO_LANGUAGE_SPECIFIED
+        fi
+        validate_code_files 
         ;;
-    *)
+    HELP | *)
         usage
         exit $ERR_UNSUPPORTED_ACTION
         ;;
