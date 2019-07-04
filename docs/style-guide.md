@@ -4,6 +4,16 @@ When contributing to the documentation, please ensure you follow [the AsciiDoc r
 They are not currently rigidly enforced.
 However, this may change in the future.
 
+## Document Structure
+
+For App or Service installation please follow this structure. Keep these headers lvl 2 and the table of contents limited to them.
+
+- Introduction
+- Installation
+- Configuration
+- Troubleshooting
+
+
 ## Key Terms, Jargon, and Terminology
 
 - AMD64
