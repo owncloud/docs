@@ -17,7 +17,6 @@ files and directories.
 
 toc::[]
 
-[[run-occ-as-your-http-user]]
 == Run occ As Your HTTP User
 
 The HTTP user is different on the various Linux distributions. See
@@ -159,7 +158,6 @@ which include `status`, `check`, `app:list`, `config:list`,
 
 This command reference covers the ownCloud core commands.
 
-[[apps-commands]]
 === Apps Commands
 
 The `app` commands list, enable, and disable apps
@@ -235,7 +233,6 @@ sudo -u www-data php occ app:getpath notifications
 /var/www/owncloud/apps/notifications
 ----
 
-[[background-jobs-selector]]
 === Background Jobs Selector
 
 Use the `background` command to select which scheduler you want to use
@@ -377,7 +374,6 @@ sudo -u www-data php occ background:queue:status
   +----+---------------------------------------------------+---------------------------+---------------+
 ----
 
-[[config-commands]]
 === Config Commands
 
 The `config` commands are used to configure the ownCloud server.
@@ -432,7 +428,6 @@ NOTE: While it is possible to update/set/delete the versions and installation st
 itself, it is *not* recommended to do this directly. Use the `occ app:enable`, `occ app:disable` and
 `occ update` commands instead.
 
-[[getting-a-single-configuration-value]]
 ==== Getting a Single Configuration Value
 
 These commands get the value of a single app or system configuration:
@@ -495,7 +490,6 @@ sudo -u www-data php occ config:app:get activity installed_version
 2.2.1
 ....
 
-[[setting-a-single-configuration-value]]
 ==== Setting a Single Configuration Value
 
 These commands set the value of a single app or system configuration.
@@ -620,7 +614,6 @@ sudo -u www-data php occ config:system:set apps_paths \
     ]'
 ....
 
-[[setting-an-array-of-configuration-values]]
 ==== Setting an Array of Configuration Values
 
 Some configurations (e.g., the trusted domain setting) are an array of
@@ -650,7 +643,6 @@ owncloud.local
 example.com
 ....
 
-[[deleting-a-single-configuration-value]]
 ==== Deleting a Single Configuration Value
 
 These commands delete the configuration of an app or system configuration:
@@ -721,7 +713,6 @@ sudo -u www-data php occ config:system:delete doesnotexist --error-if-not-exists
 Config provisioning_api of app appname could not be deleted because it did not exist
 ....
 
-[[dav-commands]]
 === Dav Commands
 
 A set of commands to create address books, calendars, and to migrate
@@ -806,7 +797,6 @@ addressbook.
 sudo -u www-data php occ dav:sync-system-addressbook
 ....
 
-[[database-conversion]]
 === Database Conversion
 
 The SQLite database is good for testing, and for ownCloud servers with
@@ -836,7 +826,6 @@ sudo -u www-data php occ db:convert-type mysql oc_dbuser 127.0.0.1 oc_database
 
 TIP: For a more detailed explanation see xref:configuration/database/db_conversion.adoc[converting database types].
 
-[[encryption]]
 === Encryption
 
 `occ` includes a complete set of commands for managing encryption.
@@ -950,11 +939,9 @@ version upgrade.
 You may optionally specify individual users in a space-delimited list.
 See xref:configuration/files/encryption/encryption_configuration.adoc[encryption configuration] to learn more.
 
-[[recreate-master-key]]
 
 `encryption:recreate-master-key` decrypts the ownCloud file system, replaces the existing master key with a new one, and encrypts the entire ownCloud file system with the new master key. Given the size of your ownCloud filesystem, this may take some time to complete. However, if your filesystem is quite small, then it will complete quite quickly. The `-y` switch can be supplied to automate acceptance of user input.
 
-[[federation-sync]]
 === Federation Sync
 
 Synchronize the address books of all federated ownCloud servers.
@@ -997,7 +984,6 @@ Depending on the desired resource consumption, this value should be lowered or i
 To find a value that fits a specific setup, it is recommended to execute the command once, measure the execution time and set the interval, so that the background job can finish before the next execution is triggered.
 ====
 
-[[file-operations]]
 === File Operations
 
 `occ` has three commands for managing files in ownCloud.
@@ -1017,7 +1003,6 @@ files
 
 NOTE: These commands are not available in xref:maintenance-commands[single-user (maintenance) mode].
 
-[[the-fileschecksumsverify-command]]
 ==== The files:checksums:verify command
 
 ownCloud supports file integrity checking, by computing and matching
@@ -1051,13 +1036,11 @@ Mismatch for thumbnails/9/2048-2048-max.png:
  Actual:  SHA1:da39a3ee5e6b4b0d3255bfef95601890afd80709 MD5:d41d8cd98f00b204e9800998ecf8427e ADLER32:00000001
 ....
 
-[[the-filescleanup-command]]
 ==== The files:cleanup command
 
 `files:cleanup` tidies up the server's file cache by deleting all file
 entries that have no matching entries in the storage table.
 
-[[the-filesscan-command]]
 ==== The files:scan command
 
 The `files:scan` command
@@ -1102,7 +1085,6 @@ the user_id is determined by the path and the user_id parameter and --all are ig
 
 TIP: If not using `--quiet`, statistics will be shown at the end of the scan.
 
-[[the---path-option]]
 ===== The `--path` Option
 
 When using the `--path` option, the path must be in one of the following
@@ -1135,7 +1117,6 @@ NOTE: Mounts based on session credentials can not be scanned as the users creden
 
 The `--path`, `--all`, `--group`, `--groups` and `[user_id]` parameters are exclusive - only one must be specified.
 
-[[the-repair-option]]
 ===== The `--repair` Option
 
 As noted above, repairs can be performed for individual users, groups of
@@ -1175,7 +1156,6 @@ sudo -u www-data php occ files:scan USERID --repair
 
 TIP: If many users are affected, it could be convenient to create a shell script, which iterates over a list of User ID's.
 
-[[the-filestransfer-ownership-command]]
 ==== The files:transfer-ownership command
 
 You may transfer all files and shares from one user to another. This is
@@ -1210,7 +1190,6 @@ above, it will be stored under:
 3.  Currently file versions can't be transferred. Only the latest
 version of moved files will appear in the destination user's account.
 
-[[files-external]]
 === Files External
 
 These commands replace the `data/mount.json` configuration file used in
@@ -1651,7 +1630,6 @@ files_external:create [options] [--] <mount_point> <storage_backend> <authentica
 
 NOTE: Each Storage Backend needs its corresponding authentication methods.
 
-[[group-commands]]
 === Group Commands
 
 The `group` commands provide a range of functionality for managing
@@ -1672,7 +1650,6 @@ group
  group:remove-member                 Remove member(s) from a group
 ----
 
-[[creating-groups]]
 ==== Creating Groups
 
 You can create a new group with the `group:add` command. The syntax is:
@@ -1689,7 +1666,6 @@ sudo -u www-data php occ group:add Finance
   Created group "Finance"
 ....
 
-[[listing-groups]]
 ==== Listing Groups
 
 You can list the names of existing groups with the `group:list` command.
@@ -1733,7 +1709,6 @@ sudo -u www-data php occ group:list --output=json_pretty finance
  ]
 ....
 
-[[listing-group-members]]
 ==== Listing Group Members
 
 You can list the user IDs of group members with the `group:list-members`
@@ -1771,7 +1746,6 @@ sudo -u www-data php occ group:list-members --output=json_pretty Finance
  }
 ....
 
-[[adding-members-to-groups]]
 ==== Adding Members to Groups
 
 You can add members to an existing group with the `group:add-member`
@@ -1802,7 +1776,6 @@ sudo -u www-data php occ group:add-member --member aaron --member julie --member
   User fred" added to group "Finance"
 ....
 
-[[removing-members-from-groups]]
 ==== Removing Members from Groups
 
 You can remove members from a group with the `group:remove-member`
@@ -1834,7 +1807,6 @@ sudo -u www-data php occ group:remove-member --member aaron --member fred Financ
   Member "fred" removed from group "Finance"
 ....
 
-[[deleting-a-group]]
 ==== Deleting a Group
 
 To delete a group, you use the `group:delete` command, as in the example
@@ -1845,7 +1817,6 @@ below:
 sudo -u www-data php occ group:delete Finance
 ....
 
-[[integrity-check]]
 === Integrity Check
 
 Apps which have an official tag *must* be code signed. Unsigned official
@@ -1885,7 +1856,6 @@ When it returns a message then there is an error.
 
 TIP: See xref:configuration/general_topics/code_signing.adoc[code signing] to learn more.
 
-[[l10n-create-javascript-translation-files-for-apps]]
 === l10n, Create Javascript Translation Files for Apps
 
 This command creates JavaScript and JSON translation files for ownCloud
@@ -1907,7 +1877,6 @@ The command takes two parameters; these are:
 To create the two translation files, the command reads translation data
 from a source PHP translation file.
 
-[[a-working-example]]
 ==== A Working Example
 
 In this example, we'll create Austrian German translations for the
@@ -1941,7 +1910,6 @@ sudo -u www-data php occ l10n:createjs gallery de_AT
 This will generate two translation files, `de_AT.js` and `de_AT.json`,
 in `/var/www/owncloud/apps/gallery/l10n`.
 
-[[create-translations-in-multiple-languages]]
 ===== Create Translations in Multiple Languages
 
 To create translations in multiple languages simultaneously, supply
@@ -1952,7 +1920,6 @@ multiple languages to the command, as in the following example:
 sudo -u www-data php occ l10n:createjs gallery de_AT de_DE hu_HU es fr
 ....
 
-[[logging-commands]]
 === Logging Commands
 
 These commands view and configure your ownCloud logging preferences.
@@ -2011,7 +1978,6 @@ sudo -u www-data php occ log:manage --level error
 
 TIP: Setting the log level to debug ( 0 ) can be used for finding the cause of an error, but should not be the standard as it increases the log file size.
 
-[[maintenance-commands]]
 === Maintenance Commands
 
 Use these commands when you upgrade ownCloud, manage encryption, perform
@@ -2158,7 +2124,6 @@ TIP: The step's name must be quoted, otherwise you will see the following warnin
 Run this command after modifying `config/mimetypemapping.json`. 
 If you change a mimetype, run `maintenance:mimetype:update-db --repair-filecache` to apply the change to existing files.
 
-[[config-reports]]
 === Config Reports
 
 If you're working with ownCloud support and need to send them a
@@ -2197,7 +2162,6 @@ sudo -u www-data occ configreport:generate | mail \
 
 NOTE: These commands are not available in single-user (maintenance) mode <maintenance_commands_label>.
 
-[[security]]
 === Security
 
 Use these commands when you manage security related tasks
@@ -2305,7 +2269,6 @@ Remove a certificate:
 sudo -u www-data php occ security:certificates:remove [certificate name]
 ....
 
-[[sharing]]
 === Sharing
 
 This is an occ command to cleanup orphaned remote storages. To explain
@@ -2334,7 +2297,6 @@ You can also set it up to run as xref:background-jobs-selector[a background job]
 
 NOTE: These commands are not available in xref:maintenance-commands[single-user (maintenance) mode].
 
-[[trashbin]]
 === Trashbin
 
 NOTE: These commands are only available when the 'Deleted files' app (`files_trashbin`) is enabled.
@@ -2375,7 +2337,6 @@ Remove deleted files of   freda
 `trashbin:expire` deletes only expired files according to the `trashbin_retention_obligation` setting in `config.php` (see xref:configuration/server/config_sample_php_parameters.adoc[the "Deleted Files" section documentation]).
 The default is to delete expired files for all users, or you may list users in a space-delimited list.
 
-[[user-commands]]
 === User Commands
 
 The `user` commands provide a range of functionality for managing
@@ -2404,7 +2365,6 @@ user
  user:sync                           Sync local users with an external backend service
 ----
 
-[[creating-users]]
 ==== Creating Users
 
 You can create a new user with the `user:add` command.
@@ -2467,7 +2427,6 @@ sudo -u www-data php occ user:add \
 After the command completes, go to your Users page, and you will see
 your new user.
 
-[[deleting-a-user]]
 ==== Deleting A User
 
 To delete a user, you use the `user:delete` command.
@@ -2489,7 +2448,6 @@ sudo -u www-data php occ user:delete <uid>
 sudo -u www-data php occ user:delete fred
 ....
 
-[[disable-users]]
 ==== Disable Users
 
 Admins can disable users via the occ command too:
@@ -2501,7 +2459,6 @@ sudo -u www-data php occ user:disable <username>
 
 NOTE: Once users are disabled, their connected browsers will be disconnected.Use the following command to enable the user again:
 
-[[enable-users]]
 ==== Enable Users
 
 [source,console,subs="attributes+"]
@@ -2509,7 +2466,6 @@ NOTE: Once users are disabled, their connected browsers will be disconnected.Use
 sudo -u www-data php occ user:enable <username>
 ....
 
-[[finding-inactive-users]]
 ==== Finding Inactive Users
 
 To view a list of users who've not logged in for a given number of days,
@@ -2577,7 +2533,6 @@ as follows.
 ]
 ----
 
-[[finding-the-users-last-login]]
 ==== Finding the User's Last Login
 
 To view a user's most recent login, use the `user:lastseen` command
@@ -2602,7 +2557,6 @@ sudo -u www-data php occ user:lastseen layla
   layla's last login: 09.01.2015 18:46
 ....
 
-[[listing-users]]
 ==== Listing Users
 
 You can list existing users with the `user:list` command.
@@ -2658,7 +2612,6 @@ sudo -u www-data php occ user:list -a enabled
  - foo: true
 ....
 
-[[listing-group-membership-of-a-user]]
 ==== Listing Group Membership of a User
 
 You can list the group membership of a user with the `user:list-groups` command.
@@ -2734,7 +2687,6 @@ sudo -u www-data php occ user:modify carla email foobar@foo.com
 
 The email address of `carla` is updated to `foobar@foo.com`
 
-[[generating-a-user-count-report]]
 ==== Generating a User Count Report
 
 Generate a simple report that counts all users, including users on
@@ -2762,7 +2714,6 @@ sudo -u www-data php occ user:report
 +------------------+----+
 ....
 
-[[setting-a-users-password]]
 ==== Setting a User's Password
 
 [source,console,subs="attributes+"]
@@ -2849,7 +2800,6 @@ If the specified user does not have a valid email address set, then the followin
 Email address is not set for the user layla
 ....
 
-[[user-application-settings]]
 ==== User Application Settings
 
 To manage application settings for a user, use the `user:setting`
@@ -2881,7 +2831,6 @@ as it is impossible to know the entire list of applications which a user could, 
 or deleted) by the `user:setting` command.
 |====
 
-[[retrieving-user-settings]]
 ===== Retrieving User Settings
 
 To retrieve all settings for a user, you need to call the `user:setting`
@@ -2937,7 +2886,6 @@ sudo -u www-data php occ user:setting layla core lang en
 
 This will display the value for that setting, such as `en`.
 
-[[setting-and-deleting-a-setting]]
 ===== Setting and Deleting a Setting
 
 [source,console,subs="attributes+"]
@@ -2986,7 +2934,6 @@ above. Then, in addition, you supply the `--delete` flag.
 sudo -u www-data php occ user:setting layla core lang --delete
 ....
 
-[[syncing-user-accounts]]
 ==== Syncing User Accounts
 
 This command syncs users stored in external backend services, such as _LDAP_, _Shibboleth_, and _Samba_, with ownCloud's, internal user database.
@@ -3039,7 +2986,6 @@ but available in the synced backend.
 Below are examples of how to use the command with an _LDAP_, _Samba_,
 and _Shibboleth_ backend.
 
-[[ldap]]
 ===== LDAP
 
 [source,console,subs="attributes+"]
@@ -3047,7 +2993,6 @@ and _Shibboleth_ backend.
 sudo -u www-data ./occ user:sync "OCA\User_LDAP\User_Proxy"
 ....
 
-[[samba]]
 ===== Samba
 
 [source,console,subs="attributes+"]
@@ -3055,7 +3000,6 @@ sudo -u www-data ./occ user:sync "OCA\User_LDAP\User_Proxy"
 sudo -u www-data ./occ user:sync "OCA\User\SMB" -vvv
 ....
 
-[[shibboleth]]
 ===== Shibboleth
 
 [source,console,subs="attributes+"]
@@ -3141,7 +3085,6 @@ sudo ./occ user:sync "OCA\User_LDAP\User_Proxy" -m disable -r
       4 [============================]
 ....
 
-[[syncing-via-cron-job]]
 ===== Syncing via cron job
 
 Here is an example for syncing with LDAP four times a day on Ubuntu:
@@ -3154,7 +3097,6 @@ crontab -e -u www-data
     -n "OCA\User_LDAP\User_Proxy"
 ....
 
-[[versions]]
 === Versions
 
 NOTE: These commands are only available when the "Versions" app (`files_versions`) is enabled.
@@ -3221,7 +3163,6 @@ Options
 for all users will be expired.
 |===
 
-[[command-line-installation]]
 === Command Line Installation
 
 ownCloud can be installed entirely from the command line.
@@ -3328,7 +3269,6 @@ Supported databases are:
 | `oci`    | Oracle (ownCloud Enterprise edition only
 |===
 
-[[command-line-upgrade]]
 === Command Line Upgrade
 
 These commands are available only after you have downloaded upgraded
@@ -3410,7 +3350,6 @@ Update failed
 Turned off maintenance mode
 ....
 
-[[notifications]]
 === Notifications
 
 If you want to send notifications to users or groups use the following command.
@@ -3462,7 +3401,6 @@ Example:
 
 This command reference covers the ownCloud maintained apps commands.
 
-[[brute_force_protection]]
 === Brute Force Protection
 
 Marketplace URL: https://marketplace.owncloud.com/apps/brute_force_protection[Brute-Force Protection]
@@ -3517,7 +3455,6 @@ Time how long the ban will be active if triggered.
 | Default | 300
 |===
 
-[[data_exporter]]
 === Data Exporter
 
 This app is only available as a https://github.com/owncloud/data_exporter.git[git clone].
@@ -3578,21 +3515,18 @@ instance:export:migrate:share <userId> <remoteServer>
 for example "https://myown.server:{std-port-http}/owncloud".
 |===
 
-[[calendar]]
 === Calendar
 
 Marketplace URL: https://marketplace.owncloud.com/apps/calendar[Calendar]
 
 For commands for managing the calendar, please see the DAV Command section in the occ core command set.
 
-[[contacts]]
 === Contacts
 
 Marketplace URL: https://marketplace.owncloud.com/apps/contacts[Contacts]
 
 For commands for managing contacts, please see the DAV Command section in the occ core command set.
 
-[[files_antivirus]]
 === Anti-Virus
 
 Marketplace URL: https://marketplace.owncloud.com/apps/files_antivirus[Anti-Virus]
@@ -3726,12 +3660,10 @@ Define scan process.
 'false'
 |===
 
-[[s3-objectstore]]
 === S3 Objectstore
 
 Marketplace URL: https://marketplace.owncloud.com/apps/files_primary_s3[S3 Object Storage]
 
-[[list-objects-buckets-or-versions-of-an-object]]
 ==== List objects, buckets or versions of an object
 
 [source,console,subs="attributes+"]
@@ -3747,7 +3679,6 @@ sudo -u www-data occ s3:list
 | `object` | Key of the object; it`s versions will be listed.
 |===
 
-[[create-a-bucket-as-necessary-to-be-used]]
 ==== Create a bucket as necessary to be used
 
 [source,console,subs="attributes+"]
@@ -3993,7 +3924,6 @@ If you want to reset (or unset) the setting, then you can use the following comm
 sudo -u www-data php occ config:app:delete user_ldap updateAttributesInterval
 ....
 
-[[market]]
 === Market
 
 Marketplace URL: https://marketplace.owncloud.com/apps/market[Market]
@@ -4018,12 +3948,10 @@ NOTE: If they don’t have write permission, the command may report that the upd
 These commands are not available in single-user (maintenance) mode.
 For more details please see the Maintenance Commands section in the occ core command set.
 
-[[install-an-application]]
 ==== Install an Application
 
 Applications can be installed both from https://marketplace.owncloud.com/[the ownCloud Marketplace] and from a local file archive.
 
-[[install-apps-from-the-marketplace]]
 ==== Install Apps From The Marketplace
 
 To install an application from the Marketplace, you need to supply the app’s id, which can be found in the app’s Marketplace URL.
@@ -4049,13 +3977,11 @@ sudo -u www-data occ market:install <ids> [option]
 `--local=[LOCAL]`  | Optional path to a local app package.
 |===
 
-[[install-apps-from-a-file-archive]]
 ==== Install Apps From a File Archive
 
 To install an application from a local file archive, you need to supply the path to the archive, and that you pass the `-l` switch.
 Only `zip`, `gzip`, and `bzip2` archives are supported.
 
-[[usage-example]]
 ==== Usage Example
 
 [source,console,subs="attributes+"]
@@ -4069,7 +3995,6 @@ sudo -u www-data occ market:install -l /mnt/data/richdocuments-2.0.0.tar.gz
 
 NOTE: The target directory has to be *accessable to the webserver user* and you have to *enable* the app afterwards with the `occ app:enable` command.
 
-[[uninstall-an-application]]
 ==== Uninstall an Application
 
 To uninstall an application use the following commands:
@@ -4086,7 +4011,6 @@ sudo -u www-data occ market:uninstall <ids>
 | `ids` |  Ids of the apps
 |===
 
-[[list-apps-from-the-marketplace]]
 ==== List Apps From The Marketplace
 
 This command lists apps available on the marketplace.
@@ -4097,7 +4021,6 @@ It returns the ids if the apps.
 sudo -u www-data occ market:list
 ....
 
-[[upgrade-an-application]]
 ==== Upgrade an Application
 
 Install new app versions if available on the marketplace by using following commands:
@@ -4210,7 +4133,6 @@ is later changed, it will not update the password's expiry date to reflect the n
 command *won't* automatically update to reflect the policy change. In these cases, Administrators need
 to run the `occ user:expire-password` command again and supply a new expiry date.
 
-[[ransomware-protection]]
 === Ransomware Protection (Enterprise Edition only)
 
 Marketplace URL: https://marketplace.owncloud.com/apps/ransomware_protection[Ransomware Protection]
@@ -4271,7 +4193,6 @@ sudo -u www-data occ ransomguard:unlock <user>
 | `<user>` | Unlock a user account after ransomware issues have been resolved.
 |===
 
-[[samle_sso_sibboleth_integration]]
 === SAML/SSO Shibboleth Integration (Enterprise Edition only)
 
 Marketplace URL: https://marketplace.owncloud.com/apps/user_shibboleth[SAML/SSO Integration]
@@ -4283,7 +4204,6 @@ Marketplace URL: https://marketplace.owncloud.com/apps/user_shibboleth[SAML/SSO 
 shibboleth:mode [mode]
 ----
 
-[[two_factor_authentication]]
 === Two-factor Authentication
 
 Marketplace URL: https://marketplace.owncloud.com/apps/twofactor_totp[2-Factor Authentication]
