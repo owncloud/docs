@@ -27,7 +27,6 @@ directive must be written in a single line to prevent connection problems with s
 
 TIP: The same is true for `map` directives which also can be collected into a singe file and then be included.
 
-[[example-configurations]]
 == Example Configurations
 
 CAUTION: Be careful about line breaks if you copy the examples, as long lines may be broken for page formatting.
@@ -42,7 +41,6 @@ plain HTTP:
 3.  Remove all `ssl_` entries.
 4.  Remove `fastcgi_params HTTPS on;`
 
-[[note-1]]
 === Note 1
 
 ....
@@ -55,7 +53,6 @@ it is set to 8.
 system memory over time. This is especially problematic on low-memory
 systems.
 
-[[note-2]]
 === Note 2
 
 ....
@@ -77,7 +74,6 @@ explicitly enable following directive in the location block
 NOTE: The directives `fastcgi_ignore_headers X-Accel-Buffering;` and `fastcgi_buffering off;`
 can be used separately but not together.
 
-[[owncloud-in-the-web-root-of-nginx]]
 === ownCloud in the web root of NGINX
 
 The following config should be used when ownCloud is placed in the web
@@ -88,10 +84,9 @@ The configuration assumes that ownCloud is installed in `/var/www/owncloud` and 
 
 [source,nginx]
 ----
-include::example$installation/nginx/default-configuration.conf[]
+include::{examplesdir}installation/nginx/default-configuration.conf[]
 ----
 
-[[owncloud-in-a-subdirectory-of-nginx]]
 === ownCloud in a subdirectory of NGINX
 
 The following config should be used when ownCloud is placed under a
@@ -104,13 +99,11 @@ set in your `config/config.php`.
 
 [source,nginx]
 ----
-include::example$installation/nginx/subdirectory-configuration.conf[]
+include::{examplesdir}installation/nginx/subdirectory-configuration.conf[]
 ----
 
-[[nginx-configuration-troubleshooting]]
 == Troubleshooting
 
-[[javascript-.js-or-css-.css-files-not-served-properly]]
 === JavaScript (.js) or CSS (.css) files not served properly
 
 A standard issue with custom NGINX configurations is, that JavaScript
@@ -135,7 +128,6 @@ The following sequence is correct:
 Other custom configurations like caching JavaScript (.js) or CSS (.css)
 files via gzip could also cause such issues.
 
-[[not-all-of-my-contacts-are-synchronized]]
 === Not all of my contacts are synchronized
 
 Check for server timeouts! It turns out that CardDAV sync often fails
@@ -145,7 +137,6 @@ To solve this, first check the `default_socket_timeout` setting in `/etc/php/7.0
 increase the above `fastcgi_read_timeout` accordingly. Depending on your
 server’s performance a timeout of 180s should be sufficient to sync an address book of ~1000 contacts.
 
-[[windows-error-0x80070043-the-network-name-cannot-be-found.-while-adding-a-network-drive]]
 === Windows: Error 0x80070043 "The network name cannot be found." while adding a network drive
 
 The windows native WebDAV client might fail with the following error
@@ -177,10 +168,8 @@ location = / {
 }
 ----
 
-[[log-optimisation]]
 == Log Optimisation
 
-[[suppressing-htaccesstest.txt-and-.ocdata-log-messages]]
 === Suppressing `htaccesstest.txt` and `.ocdata` Log Messages
 
 If you are seeing meaningless messages in your logfile, for example
@@ -203,7 +192,6 @@ location = /data/\.ocdata {
 }
 ----
 
-[[prevent-access-log-entries-when-accessing-thumbnails]]
 === Prevent access log entries when accessing thumbnails
 
 When using eg. the Gallery App, any access to a thumbnail of a picture
@@ -255,7 +243,6 @@ map $loggable $invertloggable {
 access_log /var/log/nginx/<your-log-file-inverted> combined if=$invertloggable;
 ----
 
-[[performance-tuning]]
 == Performance Tuning
 
 *1 HTTP/2*
@@ -305,7 +292,6 @@ open_file_cache_min_uses        1;
 open_file_cache_errors          on;
 ----
 
-[[configure-nginx-to-use-caching-for-owncloud-internal-images-and-thumbnails]]
 === Configure NGINX to use caching for ownCloud internal images and thumbnails
 
 This mechanism speeds up presentation as it shifts requests to NGINX and
