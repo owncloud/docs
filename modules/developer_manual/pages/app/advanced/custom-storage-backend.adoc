@@ -10,7 +10,6 @@ taken care of. What’s more, it provides common implementations and
 fallbacks to reduce the amount of work it is to create a storage
 backend.
 
-[[required-methods]]
 == Required Methods
 
 All storage backends sub-classing the common storage backend must
@@ -41,7 +40,6 @@ files, unlike PHP’s unlink method.
 If `$mtime` is omitted the current time should be used.
 |=======================================================================
 
-[[suggested-methods]]
 == Suggested Methods
 
 The common storage backends provide fallback implementations for a
@@ -79,7 +77,6 @@ defaults to `isUpdatable($path)`.
 | `free_space($path)` | Checks the free space on the storage in bits.
 |=======================================================================
 
-[[other-useful-methods]]
 == Other Useful Methods
 
 The default implementation for the following methods are good for most
@@ -112,7 +109,6 @@ storage backend. It defaults to checking for invalid characters or names
 for the server platform.
 |=======================================================================
 
-[[copying-and-moving-between-storage-backends]]
 == Copying and Moving Between Storage Backends
 
 When copying or moving files between different storages a stream copy is
@@ -125,7 +121,6 @@ behavior by overriding the following methods:
 * `copyFromStorage(\OCP\Files\Storage $sourceStorage, $sourceInternalPath, $targetInternalPath, $preserveMtime = false);`
 * `moveFromStorage(\OCP\Files\Storage $sourceStorage, $sourceInternalPath ,$targetInternalPath);`
 
-[[working-with-streams]]
 == Working With Streams
 
 Both `fopen()` and `opendir()` require storage backends to return native
@@ -134,7 +129,6 @@ classes which make it easier for storage backends to create native PHP
 streams for backends not supported by PHP’s own
 https://secure.php.net/manual/en/class.streamwrapper.php[streamWrapper].
 
-[[iteratordirectory]]
 === IteratorDirectory
 
 `Icewind\Streams\IteratorDirectory` allows for creating a directory
@@ -146,7 +140,6 @@ $fileNames = $this->getFolderContentsSomehow();
 return IteratorDirectory::wrap($fileNames);
 ----
 
-[[callbackwrapper]]
 === CallbackWrapper
 
 `Icewind\Streams\CallbackWrapper` wraps an existing file handle, and
@@ -168,7 +161,6 @@ return CallBackWrapper::wrap($handle, null, null function() use ($path, $tempFil
 }
 ----
 
-[[storage-wrappers]]
 == Storage Wrappers
 
 Besides implementing a complete custom storage backend, ownCloud allows
@@ -191,7 +183,6 @@ specific storage, while mounting the storage from the app. Implementing
 a storage wrapper is done by sub-classing
 `\OC\Files\Storage\Wrapper\Wrapper` and overwriting any of its methods.
 
-[[global-storage-wrappers]]
 === Global Storage Wrappers
 
 For using a storage wrapper globally, you provide a callback which will
@@ -210,7 +201,6 @@ Filesystem::addStorageWrapper('fooWrapper', function($mountPoint, $storage) {
 }
 ----
 
-[[wrappers-for-a-single-storage]]
 === Wrappers for a Single Storage
 
 Sometimes an app can avoid having to create a custom storage backend by
@@ -218,7 +208,6 @@ instead modifying the behavior of an existing one. ownCloud comes with a
 few generic storage wrappers which might be useful when doing so, which
 include `PermissionsMask` and `Jail`.
 
-[[permissionsmask]]
 ==== PermissionsMask
 
 `\OC\Files\Storage\Wrapper\PermissionsMask` can be used to restrict the
@@ -234,7 +223,6 @@ return new PermissionsMask([
 ]);
 ----
 
-[[jail]]
 ==== Jail
 
 `\OC\Files\Storage\Wrapper\Jail` can be used to limit storage
@@ -249,7 +237,6 @@ return new Jail([
 ]);
 ----
 
-[[a-note-on-instanceof]]
 === A Note on instanceof()
 
 
@@ -275,7 +262,6 @@ if ($storage->instanceOfStorage('\OC\Files\Storage\DAV')) {
 `instanceOfStorage()` can also be used to check if a certain wrapper is
 applied to a storage.
 
-[[mounting-storages]]
 == Mounting Storages
 
 For an app to add its storages to the filesystem it should implement a

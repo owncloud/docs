@@ -4,7 +4,6 @@
 :mod_headers-url: https://httpd.apache.org/docs/current/mod/mod_headers.html#page-header
 :page-aliases: installation/source_installation.adoc
 
-[[install-the-required-packages]]
 == Install the Required Packages
 
 *When Are Stable Channel Packages Updated?*
@@ -20,16 +19,13 @@ administrators.
 If you are planning on running additional apps, keep in mind that you
 might require additional packages. See xref:installation/manual_installation.adoc#prerequisites[the prerequisites list] for details.
 
-[[on-ubuntu-18.04-lts-server]]
 === Ubuntu 18.04 LTS Server
 
 To prepare your Ubuntu 18.04 server for the use with ownCloud, follow
 xref:installation/server_prep_ubuntu_18.04.adoc[the Ubuntu 18.04 preparation guide].
 
-[[rhel-redhat-enterprise-linux-7.2]]
 === RHEL (RedHat Enterprise Linux) 7.2
 
-[[required-extensions]]
 ==== Required Extensions
 
 ....
@@ -41,7 +37,6 @@ sudo yum install httpd mariadb-server php72 php72-php php72-php-opcache \
     php72-php-gd php72-php-mbstring php72-php-mysqlnd
 ....
 
-[[optional-extensions]]
 ==== Optional Extensions
 
 ....
@@ -67,10 +62,8 @@ sudo yum install -y -q epel-release http://rpms.remirepo.net/enterprise/remi-rel
   && sudo scl enable php72 bash
 ....
 
-[[sles-suse-linux-enterprise-server-12]]
 === SLES (SUSE Linux Enterprise Server) 12
 
-[[required-extensions-1]]
 ==== Required Extensions
 
 ....
@@ -78,14 +71,12 @@ sudo zypper install -y apache2 apache2-mod_php7 php7-gd php7-openssl \
     php7-json php7-curl php7-intl php7-sodium php7-zip php7-zlib
 ....
 
-[[optional-extensions-1]]
 ==== Optional Extensions
 
 ....
 sudo zypper install -y php7-ldap
 ....
 
-[[apcu]]
 APCu
 ++++
 
@@ -99,7 +90,6 @@ zypper refresh
 zypper install php5-APCu
 ....
 
-[[redis]]
 Redis
 +++++
 
@@ -117,7 +107,6 @@ zypper install -y php7-redis
 ....
 
 
-[[install-owncloud]]
 == Install ownCloud
 
 Now download the archive of the latest ownCloud version:
@@ -172,7 +161,6 @@ the document root.
 
 == Configure the Web Server
 
-[[configure-apache-web-server]]
 === Configure Apache
 
 On Debian, Ubuntu, and their derivatives, Apache installs with a useful
@@ -204,7 +192,6 @@ Then create a symlink to /etc/apache2/sites-enabled:
 ln -s /etc/apache2/sites-available/owncloud.conf /etc/apache2/sites-enabled/owncloud.conf
 ....
 
-[[additional-apache-configurations]]
 ==== Additional Apache Configurations
 
 * For ownCloud to work correctly, we need the module `mod_rewrite`.
@@ -262,10 +249,9 @@ In the example below, you can see an example log entry, where ownCloud is loggin
 
 [source,json]
 ....
-include::example$installation/webservers/apache/log-entry.json[]
+include::{examplesdir}installation/webservers/apache/log-entry.json[]
 ....
 
-[[enable-ssl]]
 === Enable SSL
 
 NOTE: You can use ownCloud over plain HTTP, but we strongly encourage you to use SSL/TLS 
@@ -286,7 +272,6 @@ ownCloud server publicly accessible. You might want to consider getting a certif
 by a commercial signing authority. Check with your domain name registrar or hosting service 
 for good deals on commercial certificates.
 
-[[multi-processing-module-mpm]]
 === Multi-Processing Module (MPM)
 
 https://httpd.apache.org/docs/2.4/mod/prefork.html[Apache prefork]
@@ -306,7 +291,6 @@ fastcgi_param UNIQUE_ID $request_id;
 
 TIP: For more details, please refer to {nginx-app-tracing-url}[Application Tracing with NGINX and NGINX Plus].
 
-[[run-the-installation-wizard]]
 == Run the Installation Wizard
 
 After restarting Apache, you must complete your installation by running
@@ -337,13 +321,11 @@ NOTE: ownCloud has a mechanism to set headers programmatically.
 These headers are set with the `always` directive to avoid errors when there are additional headers set in the web servers configuration file like `http.conf`. 
 More information on headers can be found {mod_headers-url}[in the `mod_headers` documentation].
 
-[[set-strong-directory-permissions]]
 == Set Strong Directory Permissions
 
 After completing the installation, you must immediately xref:installation/installation_wizard.adoc#post-installation-steps[set the directory permissions] in your ownCloud installation as strictly as possible for stronger security.
 After you do so, your ownCloud server will be ready to use.
 
-[[managing-trusted-domains]]
 == Managing Trusted Domains
 
 All URLs used to access your ownCloud server must be whitelisted in your
@@ -376,7 +358,6 @@ _Red Hat Enterprise Linux_ may need to set new rules to enable installing ownClo
 xref:installation/configuration_notes_and_tips.adoc#config-notes-and-tips-selinux[SELinux]
 for a suggested configuration.
 
-[[prerequisites]]
 == Prerequisites
 
 The ownCloud tar archive contains all of the required third-party PHP
@@ -393,10 +374,8 @@ the required extensions. You can check the presence of a module by
 typing `php -m | grep -i <module_name>`. If you get a result, the module
 is present.
 
-[[required]]
 === Required
 
-[[php-version]]
 ==== PHP Version
 
 PHP (5.6+, 7.0, 7.1, & 7.2)
@@ -407,7 +386,6 @@ ownCloud recommends the use of PHP 7.2 in new installations.
 Sites using a version earlier than PHP 7.2 are *strongly encouraged* to migrate to PHP 7.2.
 ====
 
-[[php-extensions]]
 ==== PHP Extensions
 
 [width="100%",cols="28%,72%",options="header",]
@@ -448,7 +426,6 @@ https://www.gnu.org/software/make/[Make]
 xref:developer_manual:general/devenv.adoc[to setup your ownCloud environment], 
 prior to running either the web installation wizard, or the command line installer.
 
-[[database-extensions]]
 ==== Database Extensions
 
 [cols=",",options="header",]
@@ -461,7 +438,6 @@ It requires PostgreSQL 9.0 or above.
 It requires SQLite 3 or above. This is, usually, not recommended for performance reasons.
 |=======================================================================
 
-[[required-for-specific-apps]]
 === Required For Specific Apps
 
 [cols=",",options="header",]
@@ -477,7 +453,6 @@ It requires SQLite 3 or above. This is, usually, not recommended for performance
 NOTE: SMB/Windows Network Drive mounts require the PHP module smbclient version 0.8.0+.
 See xref:configuration/files/external_storage/smb.adoc[SMB/CIFS].
 
-[[manual-installation-optional]]
 === Optional
 
 [cols=",",options="header",]
@@ -492,10 +467,8 @@ as it enhances file analysis performance
 images and preview thumbnails
 |=======================================================================
 
-[[recommended]]
 === Recommended
 
-[[for-specific-apps]]
 ==== For Specific Apps
 
 [cols=",",options="header",]
@@ -505,7 +478,6 @@ images and preview thumbnails
 | https://php.net/manual/en/book.gmp.php[GMP]   | For working with arbitrary-length integers
 |=======================================================================
 
-[[for-server-performance]]
 ==== For Server Performance
 
 For enhanced server performance consider installing one of the following
@@ -517,13 +489,11 @@ cache extensions:
 
 See xref:configuration/server/caching_configuration.adoc[Caching Configuration] to learn how to select and configure Memcache.
 
-[[for-preview-generation]]
 ==== For Preview Generation
 
 * https://libav.org/[avconv] or https://ffmpeg.org/[ffmpeg]
 * https://www.openoffice.org/[OpenOffice] or https://www.libreoffice.org/[LibreOffice]
 
-[[for-command-line-processing]]
 ==== For Command Line Processing
 
 [cols=",",options="header",]
@@ -537,7 +507,6 @@ as ownCloud has a built-in WebDAV server of its own, http://sabre.io/[SabreDAV].
 If `mod_webdav` is enabled you must disable it for ownCloud. 
 See xref:configure-apache-web-server[the Apache Web Server configuration] for an example configuration.
 
-[[for-mysqlmariadb]]
 === For MySQL/MariaDB
 
 The InnoDB storage engine is required, and MyISAM is not supported, 
