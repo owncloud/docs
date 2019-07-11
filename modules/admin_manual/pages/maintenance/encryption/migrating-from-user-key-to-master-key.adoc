@@ -1,30 +1,27 @@
 = Migrating User Key Encryption to Master Key Encryption
 :toc: right
 
-== Why Should I Move Away From User Key-based Encryption
+== Why Should I Move Away From User Key-based Encryption?
 
-NOTE: User key-based encryption is planned to be removed from ownCloud in the near future.
-For new installations, Master key-based encryption is the recommended setup.
-The decryption workflow described here will only work when users have enabled password recovery
-and if an admin recovery password is available for the ownCloud administrator.
+NOTE: User key-based encryption is planned to be removed from ownCloud in the near future. 
+While it is a bit more secure than a central encryption approach, User key-based encryption has some disadvantages. 
+It blocks some additional functions such as the integration of an online editor like LibreOffice or OnlyOffice into ownCloud and can cause problems when sharing files with groups. 
+Therefore Master-key-based encryption is now the recommended setup for all new installations.
 
-If you need to migrate from User Key-based to Master Key-based encryption, there are several steps that you
-need to follow to ensure a smooth and complete transition. These are:
+The decryption workflow described here works for both MySQL and SQLite based databases. It will only work when users have enabled the password recovery. Moreover, an admin recovery password needs to be activated and available for the ownCloud administrator.
+
+If you need to migrate from User Key-based to Master Key-based encryption, there are several steps that you need to follow to ensure a smooth and complete transition:
 
 . xref:disable-user-key-based-encryption[Disable User Key-based encryption]
 . xref:remove-the-encryption-records-from-the-owncloud-database[Remove the encryption records from the ownCloud database]
 . xref:remove-the-files_encryption-directory[Remove the `files_encryption` directory]
 . xref:encrypt-the-filesystem-using-master-key-based-encryption[Encrypt the filesystem using Master Key-based encryption]
 
-include::{partialsdir}/configuration/server/enable-single-user-mode.adoc[leveloffset=+1]
-
 [[disable-user-key-based-encryption]]
 == Disable User Key-based Encryption
 
-The first part of the migration process is to decrypt all files and to disable encryption in ownCloud,
-which requires three commands to be executed. These commands are:
-xref:configuration/server/occ_command.adoc#encryption[`occ encryption:decrypt-all` and `occ encryption:disable`],
-and xref::configuration/server/occ_command.adoc#apps-commands[`occ app:disable`].
+The first part of the migration process is to decrypt all files and to disable encryption in ownCloud, which requires three commands to be executed.
+These commands are: xref:configuration/server/occ_command.adoc#encryption[`occ encryption:decrypt-all` and `occ encryption:disable`], and xref::configuration/server/occ_command.adoc#apps-commands[`occ app:disable`].
 
 You can see an example of calling the commands listed below, configured to require no user interaction.
 
@@ -34,6 +31,9 @@ sudo -u www-data php occ encryption:decrypt-all --continue=yes && \
   sudo -u www-data php occ encryption:disable --no-interaction && \
   sudo -u www-data php occ app:disable --no-interaction encryption
 ----
+
+NOTE: The decryption of the files by the ownCloud administrator requires the current passwords of all users!
+This only works when users have enabled password recovery and if an admin recovery password is available.
 
 [[remove-the-encryption-records-from-the-owncloud-database]]
 == Remove the Encryption Records from the ownCloud Database
@@ -53,6 +53,12 @@ NOTE: The example code assumes that the path to the SQLite database is
 sudo sqlite3 data/owncloud.database
 sqlite> delete from oc_appconfig where appid='encryption';
 sqlite> select * from oc_appconfig where appid='encryption';
+----
+
+Same for mysql:
+
+----
+SELECT * FROM `oc_appconfig` WHERE `appid` LIKE 'encryption'
 ----
 
 [[remove-the-files_encryption-directory]]
