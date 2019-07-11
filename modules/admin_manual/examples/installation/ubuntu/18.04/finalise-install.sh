@@ -10,9 +10,9 @@ htgroup="{webserver-group}"
 rootuser="root" 
 
 printf "Creating any missing directories" 
-sudo -u {webserver-user} mkdir -p "$ocpath/assets" 
-sudo -u {webserver-user} mkdir -p "$ocpath/updater" 
-sudo -u {webserver-user} mkdir -p "$datadir" 
+sudo -u "${htuser}" mkdir -p "$ocpath/assets" 
+sudo -u "${htuser}" mkdir -p "$ocpath/updater" 
+sudo -u "${htuser}" mkdir -p "$datadir" 
 
 printf "Update file and directory permissions" 
 sudo find "${ocpath}/" -type f -print0 | xargs -0 chmod 0640 
