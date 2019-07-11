@@ -1,0 +1,230 @@
+= Trashbin API
+:toc: right
+:toclevels: 1
+:request-base-path: remote.php/dav/trash-bin
+
+== Introduction
+
+The trash bin API provides support for managing files in ownCloud’s trash bin.
+Specifically, it provides the following functionality:
+
+* xref:list-files[List files in the trash bin]
+* xref:delete-files[Delete files permanently from the trash bin]
+* xref:restore-deleted-file[Restore deleted files to the trash bin]
+
+== List Files
+
+List all files in the trash bin
+
+* Path: `{request-base-path}/<username>`
+* Method: `PROPFIND`
+
+=== Request Parameters
+
+[cols=",,",options="header",]
+|===
+|Attribute 
+|Type 
+|Description
+
+|`username` 
+|string 
+|The username of the user to list files for.
+|===
+
+=== Request Headers
+
+[cols="25%,25%,50%",options="header",]
+|===
+|Header
+|Type
+|Description
+
+|`Depth`
+|int
+a|The maximum level to descend to, when retrieving a listing of the files in the user's trash bin.
+
+NOTE: Only one level of files and directories is returned if this header is omitted.
+|===
+
+=== Code Example
+
+[tabs]
+====
+Curl::
++
+--
+[source,console,subs="attributes+"]
+....
+include::{examplesdir}core/scripts/curl/dav/trashbin_api/list-files-in-trashbin.sh[]
+....
+--
+====
+
+=== Returns
+
+This method returns an HTTP 207 (Multi-Status) status code and an XML response that contains the files in the trash bin of the authenticating user, limited to the depth specified by the `Depth` header.
+
+==== Example Response
+
+If the user that you’re connecting with is authorized, then you will see output similar to the following:
+
+[tabs]
+====
+Curl::
++
+--
+[source,xml,subs="attributes+"]
+....
+include::{examplesdir}core/webdav_api/trashbin/list-files-in-trashbin-success-response.xml[]
+....
+--
+====
+
+== Delete Files
+
+Permanently delete a file from the trash bin.
+
+* Path: `{request-base-path}/<username>/<fileid>`
+* Method: `DELETE`
+
+=== Request Parameters
+
+[cols=",,",options="header",]
+|===
+|Attribute 
+|Type 
+|Description
+
+|`username` 
+|string 
+|The username of the user to list files for.
+
+|`fileid` 
+|integer 
+|The id of the file to delete.
+|===
+
+=== Code Example
+
+[tabs]
+====
+Curl::
++
+--
+[source,console,subs="attributes+"]
+....
+include::{examplesdir}core/scripts/curl/dav/trashbin_api/delete-file-from-trashbin.sh[]
+....
+--
+====
+
+=== Returns
+
+This method returns an HTTP 204 (No Content) status code, if the file is successfully deleted.
+If there is no file in the trash bin with the specified file id, then an HTTP 404 (Not Found) status code is returned.
+
+== Restore Deleted File
+
+Restore a file from the trash bin.
+
+* Path: `{request-base-path}/<username>/<fileid>`
+* Method: `MOVE`
+
+=== Request Parameters
+
+[cols=",,",options="header",]
+|===
+|Attribute 
+|Type 
+|Description
+
+|`username` 
+|string 
+|The username of the user to list files for.
+
+|`fileid` 
+|integer 
+|The id of the file to delete.
+|===
+
+=== Request Headers
+
+[cols="15%,15%,40%,30%",options="header",]
+|===
+|Header
+|Type
+|Value
+|Description
+
+|`Overwrite`
+|string
+|`F` or `T`
+|Whether to overwrite an existing file.
+
+|`Destination`
+|string
+|`${SERVER_URI}/remote.php/dav/files/<username>/<filepath>`
+|The path where the file will be restored to.
+|===
+
+=== Code Example
+
+[tabs]
+====
+Curl::
++
+--
+[source,console,subs="attributes+"]
+....
+include::{examplesdir}core/scripts/curl/dav/trashbin_api/restore-file-to-trashbin.sh[]
+....
+--
+====
+
+=== Returns
+
+==== Success
+
+If `Overwrite` is set to `F` and a file with the same name in the specified location does not exist, or if `Overwrite` is set to `T`, an HTTP 204 (No Content) status code will be returned, if the resource is successfully restored.
+
+==== File Already Exists
+
+If the `Overwrite` header is set to `F` and a file exists with the same name as specified in the `Destination` string, then an HTTP 412 (Precondition Failed) status code is returned, along with the following XML response:
+
+[source,xml]
+....
+<?xml version="1.0" encoding="utf-8"?>
+<d:error xmlns:d="DAV:" xmlns:s="http://sabredav.org/ns">
+  <s:exception>Sabre\DAV\Exception\PreconditionFailed</s:exception>
+  <s:message>The destination node already exists, and the overwrite header is set to false</s:message>
+  <s:header>Overwrite</s:header>
+</d:error>
+....
+
+==== Incorrect Overwrite Header
+
+If the `Overwrite` header is not set to either `T` or `F`, then an HTTP 400 (Bad Request) status code will be returned, along with the following XML response:
+
+[source,xml]
+....
+<?xml version="1.0" encoding="utf-8"?>
+<d:error xmlns:d="DAV:" xmlns:s="http://sabredav.org/ns">
+  <s:exception>Sabre\DAV\Exception\BadRequest</s:exception>
+  <s:message>The HTTP Overwrite header should be either T or F</s:message>
+</d:error>
+....
+
+==== Destination Directory Does Not Exist
+
+If the destination directory does not exist, then an HTTP 409 (Conflict) status code will be returned, along with the following XML response:
+
+[source,xml]
+....
+<?xml version="1.0" encoding="utf-8"?>
+<d:error xmlns:d="DAV:" xmlns:s="http://sabredav.org/ns">
+  <s:exception>Sabre\DAV\Exception\Conflict</s:exception>
+  <s:message>The destination node is not found</s:message>
+</d:error>
+....
+
