@@ -17,16 +17,16 @@ Run the following commands in your terminal to complete the installation.
 First, ensure that all of the installed packages are entirely up to date.
 
 [source,console,subs="attributes+"]
-....
+----
 sudo apt update && sudo apt upgrade -y
-....
+----
 
 === Create the occ Helper Script
 
 Create a helper script to simplify running xref:configuration/server/occ_command.adoc[occ commands].
 
 [source,console,subs="attributes+"]
-....
+----
 FILE="/usr/local/bin/occ"
 /bin/cat <<EOM >$FILE
 #! /bin/bash
@@ -34,19 +34,19 @@ FILE="/usr/local/bin/occ"
 cd {install-directory}
 sudo -u {webserver-user} /usr/bin/php {install-directory}/occ "\$@"
 EOM
-....
+----
 
 Make helper script executable:
 
 [source,console,subs="attributes+"]
-....
+----
 sudo chmod +x /usr/local/bin/occ
-....
+----
 
 === Install the Required Packages
 
 [source,console,subs="attributes+"]
-....
+----
 sudo apt install -y \
   apache2 \
   libapache2-mod-php7.2 \
@@ -58,17 +58,17 @@ sudo apt install -y \
   php-ssh2 php7.2-xml php7.2-zip \
   php-apcu php-redis redis-server \
   wget
-....
+----
 
 === Install the Recommended Packages
 
 [source,console,subs="attributes+"]
-....
+----
 sudo apt install -y \
   ssh bzip2 rsync curl jq \
   sudo inetutils-ping \
   smbclient php-smbclient coreutils php7.2-ldap
-....
+----
 
 WARNING: Ubuntu 18.04 includes smbclient 4.7.6, which has a known limitation of only using version 1 of the SMB protocol.
 
@@ -79,62 +79,62 @@ WARNING: Ubuntu 18.04 includes smbclient 4.7.6, which has a known limitation of 
 ==== Change the Document Root
 
 [source,console,subs="attributes+"]
-....
+----
 sudo sed -i "s#html#owncloud#" /etc/apache2/sites-available/000-default.conf
 
 sudo service apache2 restart
-....
+----
 
 ==== Create a Virtual Host Configuration
 
 [source,console,subs="attributes+"]
-....
+----
 include::{examplesdir}installation/ubuntu/18.04/create-vhost-config.sh[]
-....
+----
 
 ==== Enable the Virtual Host Configuration
 
 [source,console,subs="attributes+"]
-....
+----
 sudo a2ensite owncloud.conf
 sudo service apache2 reload
-....
+----
 
 === Configure the Database
 
 [source,console,subs="attributes+"]
-....
+----
 mysql -u root -e "CREATE DATABASE IF NOT EXISTS owncloud; \
 GRANT ALL PRIVILEGES ON owncloud.* \
   TO owncloud@localhost \
   IDENTIFIED BY 'password'";
-....
+----
 
 ==== Enable the Recommended Apache Modules
 
 [source,console,subs="attributes+"]
-....
+----
 echo "Enabling Apache Modules"
 
 sudo a2enmod dir env headers mime rewrite setenvif
 sudo service apache2 reload
-....
+----
 
 === Setup ownCloud
 
 ==== Download ownCloud
 
 [source,console,subs="attributes+"]
-....
+----
 sudo -u {webserver-user} wget -P=/var/www https://download.owncloud.org/community/owncloud-10.2.0.tar.bz2 && \
   sudo tar -xjf owncloud-10.2.0.tar.bz2 && \
   sudo chown -R {webserver-user} {install-directory}
-....
+----
 
 ==== Install ownCloud
 
 [source,console,subs="attributes+"]
-....
+----
 occ maintenance:install \
     --database "mysql" \
     --database-name "owncloud" \
@@ -142,37 +142,37 @@ occ maintenance:install \
     --database-pass "password" \
     --admin-user "admin" \
     --admin-pass "admin"
-....
+----
 
 ==== Configure ownCloud's Trusted Domains
 
 [source,console,subs="attributes+"]
-....
+----
 myip=$(hostname -I|cut -f1 -d ' ')
 occ config:system:set trusted_domains 1 --value="$myip"
-....
+----
 
 ==== Set Up a Cron Job
 
 [source,console,subs="attributes+"]
-....
+----
 echo "*/15  *  *  *  * /usr/bin/php -f {install-directory}/cron.php" \
   > /var/spool/cron/crontabs/{webserver-user}
 sudo -u {webserver-user} chown {webserver-user}.crontab /var/spool/cron/crontabs/{webserver-user}
 sudo -u {webserver-user} chmod 0600 /var/spool/cron/crontabs/{webserver-user}
-....
+----
 
 [NOTE]
 ====
 If you need to sync your users from an LDAP or Active Directory Server, add this additional xref:configuration/server/background_jobs_configuration.adoc[Cron job].
 
 [source,console,subs="attributes+"]
-....
+----
 echo "*  */6  *  *  * /usr/bin/php -f {install-directory}/cron.php" \
   > /var/spool/cron/crontabs/{webserver-user}
 sudo -u {webserver-user} chown {webserver-user}.crontab /var/spool/cron/crontabs/{webserver-user}
 sudo -u {webserver-user} chmod 0600 /var/spool/cron/crontabs/{webserver-user}
-....
+----
 ====
 
 ==== Configure Caching and File Locking
@@ -180,25 +180,25 @@ sudo -u {webserver-user} chmod 0600 /var/spool/cron/crontabs/{webserver-user}
 Add this to the existing xref:configuration/server/config_sample_php_parameters.adoc[configuration] in `{install-directory}/config/config.php`.
 
 [source,php]
-....
+----
 include::{examplesdir}installation/ubuntu/18.04/memcache-configuration.php[]
-....
+----
 
 === Configure Log Rotation
 
 Execute this command to set up {logrotate-url}[log rotation].
 
 [source,console,subs="attributes+"]
-....
+----
 include::{examplesdir}installation/ubuntu/18.04/configure-log-rotation.sh[]
-....
+----
 
 ==== Finalise the Installation 
 
 [source,console,subs="attributes+"]
-....
+----
 include::{examplesdir}installation/ubuntu/18.04/finalise-install.sh[]
-....
+----
 
 ownCloud is now installed. 
 You can confirm that it is ready to use by pointing your web browser to your ownCloud installation.

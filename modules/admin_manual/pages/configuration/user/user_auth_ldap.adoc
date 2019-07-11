@@ -150,15 +150,15 @@ Active Directory offers "_Recursive retrieval of all AD group memberships of a u
 This means essentially that you would be able to search the group you enter and all the other child groups from this groups for users.
 Enter this filter to access this feature for a single group:
 
-....
+----
 (&(objectClass=user)(memberof:1.2.840.113556.1.4.1941:=CN=<groupname>,DC=example,DC=com))
-....
+----
 
 Enter your group name instead of the "<groupname>" placeholder.
 If you want to search multiple groups with this feature, adjust your filter like this:
 
 [source]
-....
+----
 (&
   (objectClass=user)
     (|
@@ -166,7 +166,7 @@ If you want to search multiple groups with this feature, adjust your filter like
       (memberOf:1.2.840.113556.1.4.1941:=CN=<groupname2>,CN=Users,DC=example,DC=com)
     )
 )
-....
+----
 
 You can add as many groups to recurse by using the format: `(|(m1)(m2)(m3).....)`.
 https://social.technet.microsoft.com/wiki/contents/articles/5392.active-directory-ldap-syntax-filters.aspx[Here is the description from Microsoft (point #10)]:
@@ -220,15 +220,15 @@ Examples:
 
 * only username:
 
-....
+----
 (&(objectClass=inetOrgPerson)(memberOf=cn=owncloudusers,ou=groups,dc=example,dc=com)(uid=%uid)
-....
+----
 
 * username or email address:
 
-....
+----
 ((&(objectClass=inetOrgPerson)(memberOf=cn=owncloudusers,ou=groups,dc=example,dc=com)(|(uid=%uid)(mail=%uid)))
-....
+----
 
 [[group-filter]]
 === Group Filter
@@ -501,9 +501,9 @@ Also, the filesystem will not be set up for that user, so their file shares will
 For older versions you may enforce the home folder rule with the `occ` command, like this example on Ubuntu:
 
 [source,console,subs="attributes+"]
-....
+----
 {occ-command-example-prefix} config:app:set user_ldap enforce_home_folder_naming_rule --value=1
-....
+----
 
 Since ownCloud 10.0 the home folder naming rule is only applied when first provisioning the user. 
 This prevents data loss due to re-provisioning the users home folder in case of unintentional changes in LDAP.

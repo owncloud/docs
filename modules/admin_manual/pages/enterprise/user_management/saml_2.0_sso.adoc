@@ -14,11 +14,11 @@ and mod_shib, ask your ADFS admin for the relevant server URLs. These are:
 Then, make sure that the web server is accessible with a trusted certificate:
 
 [source,console]
-....
+----
 sudo a2enmod ssl
 sudo a2ensite default-ssl
 sudo service apache2 restart
-....
+----
 
 == Installation
 
@@ -26,17 +26,17 @@ Firstly, install https://packages.ubuntu.com/search?keywords=libapache2-mod-shib
 You can do this using the following command:
 
 [source,console]
-....
+----
 sudo apt-get install libapache2-mod_shib2
-....
+----
 
 This will install packages needed for mod_shib, including `shibd`.
 Then, generate certificates for the `shibd` daemon by running the following command:
 
 [source,console]
-....
+----
 sudo shib-keygen
-....
+----
 
 == Download and Filter the ADFS Metadata
 
@@ -44,11 +44,11 @@ The metadata provided by ADFS cannot be automatically imported, and must be clea
 To do so, use `adfs2fed.php`, as in the following command:
 
 [source,console]
-....
+----
 php apps/user_shibboleth/tools/adfs2fed.php \
    https://<ADFS server FQDN>/FederationMetadata/2007-06/FederationMetadata.xml \
    <AD-Domain> > /etc/shibboleth/filtered-metadata.xml
-....
+----
 
 == Configure shibd
 
@@ -60,9 +60,9 @@ To do this, in `/etc/shibboleth/shibboleth2.xml`:
 Use the URL of the ownCloud instance as the `entityID` in the `ApplicationDefaults`
 
 [source,console]
-....
+----
 <ApplicationDefaults entityID="https://<owncloud server FQDN>/login/saml" REMOTE_USER="eppn upn">
-....
+----
 
 NOTE: `\https://<owncloud server FQDN>/login/saml` is just an example. +
 Adjust `<owncloud server FQDN>` to the full qualified domain name of your server.
@@ -72,11 +72,11 @@ Adjust `<owncloud server FQDN>` to the full qualified domain name of your server
 Configure the SSO to use the `entityID` from the `filtered-metadata.xml`
 
 [source,xml]
-....
+----
 <SSO entityID="https://<ADFS server FQDN>/<URI>/">
   SAML2
 </SSO>
-....
+----
 
 NOTE: Grab `<ADFS server FQDN>/<URI>/` from the filtered-metadata.xml.
 
@@ -85,9 +85,9 @@ NOTE: Grab `<ADFS server FQDN>/<URI>/` from the filtered-metadata.xml.
 Configure an XML `MetadataProvider` with the local `filtered-metadata.xml` file
 
 [source,sml]
-....
+----
 <MetadataProvider type="XML" file="/etc/shibboleth/filtered-metadata.xml"/>
-....
+----
 
 == Metadata Available
 
@@ -113,11 +113,11 @@ If you have control over ADFS make it send the `UPN` and `Group` by adding the f
 Change shibd `attribute-map.xml` to:
 
 [source,xml]
-....
+----
 <Attributes xmlns="urn:mace:shibboleth:2.0:attribute-map" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
    <Attribute name="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn" id="upn"/>
 </Attributes>
-....
+----
 
 That will make the `userPrincipalName` available as the environment variable `upn`.
 
@@ -137,10 +137,10 @@ In the "User Authentication" settings for Shibboleth the `upn` environment varia
 Use `upn` as `uid` and set the app mode to 'SSO Only' by running:
 
 [source,console]
-....
+----
 occ shibboleth:mode ssoonly
 occ shibboleth:mapping -u upn
-....
+----
 
 `displayName` and email are only relevant for `autoprovisioning` mode.
 Add Claims in ADFS and map them in the `attribute-map.xml` if needed.
@@ -161,7 +161,7 @@ Add Claims in ADFS and map them in the `attribute-map.xml` if needed.
   - Run the following Powershell script for Firefox:
 
 [source,console]
-....
+----
 # Save the list of currently supported browser user-agents to a variable
 $browsers=Get-ADFSProperties | Select -ExpandProperty WIASupportedUseragents
 
@@ -176,7 +176,7 @@ Set-ADFSProperties -WIASupportedUseragents $browsers
 
 # Restart the AD FS service
 Restart-Service ADFSsrv
-....
+----
 
 - On the Windows client:
 
@@ -204,11 +204,11 @@ Now if you logged into the domain and open your ownCloud server in the browser o
 In `/etc/shibboleth/shibd.logger`, set the overall behavior to debug:
 
 [source,ini]
-....
+----
 # set overall behavior
 log4j.rootCategory=DEBUG, shibd_log, warn_log
 [...]
-....
+----
 
 After a restart `/var/log/shibbloeth/shibd.log` will show the parsed SAML requests and also which claims / attributes were found and mapped, or why not.
 

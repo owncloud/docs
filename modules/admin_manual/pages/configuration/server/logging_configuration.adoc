@@ -38,35 +38,35 @@ The desired date format can optionally be defined using the *logdateformat* para
 By default the http://www.php.net/manual/en/function.date.php[PHP date function] parameter `__c__` is used, and therefore the date/time is written in the format `__2013-01-10T15:20:25+02:00__`. 
 By using the date format in the example below, the date/time format will be written in the format `__January 10, 2013 15:20:25__`.
 
-....
+----
 "log_type" => "owncloud",
 "logfile" => "owncloud.log",
 "loglevel" => "3",
 "logdateformat" => "F d, Y H:i:s",
-....
+----
 
 [[syslog]]
 === syslog
 
 All log information will be sent to your default syslog daemon.
 
-....
+----
 "log_type" => "syslog",
 "logfile" => "",
 "loglevel" => "3",
-....
+----
 
 The syslog format can be changed to remove or add information. In
 addition to the `%replacements%` below `%level%` can be used, but it is
 used as a dedicated parameter to the syslog logging facility anyway.
 
-....
+----
 'log.syslog.format' => '[%reqId%][%remoteAddr%][%user%][%app%][%method%][%url%] %message%',
 
    For the old syslog message format use:
 
 'log.syslog.format' => '{%app%} %message%',
-....
+----
 
 [[conditional-logging-level-increase]]
 === Conditional Logging Level Increase
@@ -92,7 +92,7 @@ The first one that matches triggers the condition block writing the log entry to
 --
 
 [source,php]
-....
+----
 'log.conditions' => [
   [
     'shared_secret' => '57b58edb6637fe3059b3595cf9c41b9',
@@ -101,17 +101,17 @@ The first one that matches triggers the condition block writing the log entry to
     'logfile' => '/tmp/test2.log'
   ]
 ],
-....
+----
 
 Based on the conditional log settings above, following logs are written
 to the same logfile defined:
 
 * Requests matching `log_secret` are debug logged.
 
-....
+----
 curl -X PROPFIND -u sample-user:password \
   https://your_domain/remote.php/webdav/?log_secret=57b58edb6637fe3059b3595cf9c41b9
-....
+----
 
 * `user1` and `user2` gets debug logged.
 * Access to app `comments` gets debug logged.

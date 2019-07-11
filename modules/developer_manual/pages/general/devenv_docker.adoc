@@ -48,17 +48,17 @@ Download it to the root of the directory where you put the ownCloud source.
 After you download it, change the container image that is used within the ownCloud service to `owncloudci/base:latest`, as in the example below.
 
 [source,yml]
-....
+----
 services:
   owncloud:
     image: owncloudci/base:latest
-....
+----
 
 Next, the downloaded/cloned ownCloud source folder must be mounted into the container. 
 To do so, add an entry to the `volumes` section, inside the ownCloud service configuration, as in the example below.
 
 [source,yml]
-....
+----
 services:
   owncloud:
     image: owncloud/oc_dev:latest
@@ -66,7 +66,7 @@ services:
     volumes:
       - <owncloud_source_directory>:/var/www/owncloud
       ... other volumes configuration
-....
+----
 
 With those two changes made, start the Docker environment by running `docker-compose up -d --build`.
 
@@ -82,11 +82,11 @@ To do that, we need the running container's name.
 You find that by running `docker-compose ps`, which will render output similar to that below in the console:
 
 [source,console]
-....
+----
               Name                 Command               State                  Ports
 -------------------------------------------------------------------------------------------------
 oc_dev_docker_oc_dev_1           apache                  Up               80/tcp
-....
+----
 
 Take note of the value in the `Name` column, i.e., `oc_dev_docker_oc_dev_1`.
 This string is a combination of three things, separated by underscores:
@@ -98,9 +98,9 @@ This string is a combination of three things, separated by underscores:
 To log in to the running container, replace `<container_name>` in the command below with the name of the container in the output from `docker-compose ps`.
 
 [source,console]
-....
+----
 docker-compose exec <container_name> /bin/bash
-....
+----
 
 After logging in, run `make`.
 When the command completes, test that you can access ownCloud in your browser by opening `http://localhost`.
