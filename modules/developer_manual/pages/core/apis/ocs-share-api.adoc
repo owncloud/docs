@@ -7,8 +7,7 @@
 The OCS Share API allows you to access the sharing API from outside over
 pre-defined OCS calls.
 
-The base URL for all calls to the share API is:
-_<owncloud_base_url>/ocs/v1.php/apps/files_sharing/api/v1_
+The base URL for all calls to the share API is: _<owncloud_base_url>/ocs/v1.php/apps/files_sharing/api/v1_
 
 == Local Shares
 
@@ -35,39 +34,51 @@ XML with all shares
 |==========================
 | Code | Description
 | 100 | Successful
-| 404 | Couldn’t fetch shares
+| 404 | Couldn't fetch shares
 | 997 | Unauthorised
 |==========================
 
 ==== Code Example
 
-Curl
+[tabs]
+====
+Curl::
++
+--
 [source,console]
 ----
 include::{examplesdir}core/scripts/curl/list-all-shares.sh[]
 ----
-
-PHP
+--
+PHP::
++
+--
 [source,php]
 ----
 include::{examplesdir}core/scripts/php/list-all-shares.php[]
 ----
-
-Ruby
+--
+Ruby::
++
+--
 [source,ruby]
 ----
 include::{examplesdir}core/scripts/ruby/list-all-shares.rb[]
 ----
-
-Go
+--
+Go::
++
+--
 [source,go]
 ----
 include::{examplesdir}core/scripts/go/list-all-shares.go[]
 ----
+--
+====
 
 ==== Example Request Response Payloads
 
-If the user that you’re connecting with is not authorized, then you will
+If the user that you're connecting with is not authorized, then you will
 see output similar to the following:
 
 [source,xml]
@@ -75,7 +86,7 @@ see output similar to the following:
 include::{examplesdir}core/scripts/responses/not-authorised-response.xml[]
 ----
 
-If the user that you’re connecting with is authorized, then you will see
+If the user that you're connecting with is authorized, then you will see
 output similar to the following:
 
 [source,xml]
@@ -114,29 +125,41 @@ XML with the shares
 
 ==== Code Example
 
-Curl
+[tabs]
+====
+Curl::
++
+--
 [source,console]
 ----
 include::{examplesdir}core/scripts/curl/list-share-details.sh[]
 ----
-
-PHP
+--
+PHP::
++
+--
 [source,php]
 ----
 include::{examplesdir}core/scripts/php/list-share-details.php[]
 ----
-
-Ruby
+--
+Ruby::
++
+--
 [source,ruby]
 ----
 include::{examplesdir}core/scripts/ruby/list-share-details.rb[]
 ----
-
-Go
+--
+Go::
++
+--
 [source,go]
 ----
 include::{examplesdir}core/scripts/go/list-share-details.go[]
 ----
+--
+====
 
 ==== Example Request Response Payloads
 
@@ -161,7 +184,7 @@ include::{examplesdir}core/scripts/responses/shares/list-share-details-success.x
 | Code | Description
 | 100 | Successful
 | 400 | Not a directory (if the `subfile' argument was used)
-| 404 | File doesn’t exist
+| 404 | File doesn't exist
 |=========================================================
 
 === Get Information About A Known Share
@@ -174,7 +197,7 @@ Get information about a given share.
 [cols=",,",options="header",]
 |====================================
 | Attribute | Type | Description
-| share_id | int | The share’s unique id
+| share_id | int | The share's unique id
 |====================================
 
 ==== Returns
@@ -187,46 +210,62 @@ XML with the share information
 |========================
 | Code | Description
 | 100 | Successful
-| 404 | Share doesn’t exist
+| 404 | Share doesn't exist
 |========================
 
 ==== Code Example
 
-Curl
+[tabs]
+====
+Curl::
++
+--
 [source,console]
 ----
 include::{examplesdir}core/scripts/curl/get-share-info.sh[]
 ----
-
-PHP
+--
+PHP::
++
+--
 [source,php]
 ----
 include::{examplesdir}core/scripts/php/get-share-info.php[]
 ----
-
-Ruby
+--
+Ruby::
++
+--
 [source,ruby]
 ----
 include::{examplesdir}core/scripts/ruby/get-share-info.rb[]
 ----
-
-Go
+--
+Go::
++
+--
 [source,go]
 ----
 include::{examplesdir}core/scripts/go/get-share-info.go[]
 ----
-
-Kotlin
+--
+Kotlin::
++
+--
 [source,kotlin]
 ----
 include::{examplesdir}core/scripts/kotlin/get-share-info.kt[]
 ----
-
-Java
+--
+Java::
++
+--
 [source,java]
 ----
 include::{examplesdir}core/scripts/java/get-share-info.java[]
 ----
+--
+====
 
 NOTE: The Java and Kotlin examples use https://github.com/square/okhttp[the square/okhttp library].
 
@@ -281,14 +320,17 @@ The type of the share. This can be one of:
 
 | password | string | The password to protect public link share with.
 
-| permissions | int a |
+| permissions | int 
+a|
 The permissions to set on the share.
 
 * 1 = read (default for public shares);
 * 2 = update;
 * 4 = create;
 * 8 = delete;
-* 15 = read/write.
+* 15 = read/write;
+* 16 = share;
+* 31 = All permissions.
 
 | expireDate | string | An expire date for public link shares. This
 argument expects a date string in the following format `'YYYY-MM-DD'`.
@@ -320,34 +362,46 @@ XML containing the share ID (int) of the newly created share
 | 100 | Successful
 | 400 | Unknown share type
 | 403 | Public upload was disabled by the admin
-| 404 | File or folder couldn’t be shared
+| 404 | File or folder couldn't be shared
 |============================================
 
 ==== Code Example
 
-Curl
+[tabs]
+====
+Curl::
++
+--
 [source,console]
 ----
 include::{examplesdir}core/scripts/curl/create-share.sh[]
 ----
-
-PHP
+--
+PHP::
++
+--
 [source,php]
 ----
 include::{examplesdir}core/scripts/php/create-share.php[]
 ----
-
-Ruby
+--
+Ruby::
++
+--
 [source,ruby]
 ----
 include::{examplesdir}core/scripts/ruby/create-share.rb[]
 ----
-
-Go
+--
+Go::
++
+--
 [source,go]
 ----
 include::{examplesdir}core/scripts/go/create-share.go[]
 ----
+--
+====
 
 ==== Example Request Response Payloads
 
@@ -370,10 +424,10 @@ include::{examplesdir}core/scripts/responses/shares/create-share-success.xml[]
 [width="100%",cols="27%,11%,62%",options="header",]
 |=======================================================================
 | Argument | Type | Description
-| id | int | The share’s unique id.
+| id | int | The share's unique id.
 
 | share_type | int a|
-The share’s type. This can be one of:
+The share's type. This can be one of:
 
 * 0 = user
 * 1 = group
@@ -455,7 +509,7 @@ Remove the given share.
 [cols=",,",options="header",]
 |====================================
 | Attribute | Type | Description
-| share_id | int | The share’s unique id
+| share_id | int | The share's unique id
 |====================================
 
 ==== Status Codes
@@ -464,34 +518,46 @@ Remove the given share.
 |==============================
 | Code | Description
 | 100 | Successful
-| 404 | Share couldn’t be deleted
+| 404 | Share couldn't be deleted
 |==============================
 
 ==== Code Example
 
-Curl
+[tabs]
+====
+Curl::
++
+--
 [source,console]
 ----
 include::{examplesdir}core/scripts/curl/delete-share.sh[]
 ----
-
-PHP
+--
+PHP::
++
+--
 [source,php]
 ----
 include::{examplesdir}core/scripts/php/delete-share.php[]
 ----
-
-Ruby
+--
+Ruby::
++
+--
 [source,ruby]
 ----
 include::{examplesdir}core/scripts/ruby/delete-share.rb[]
 ----
-
-Go
+--
+Go::
++
+--
 [source,go]
 ----
 include::{examplesdir}core/scripts/go/delete-share.go[]
 ----
+--
+====
 
 ==== Example Request Response Payloads
 
@@ -523,7 +589,7 @@ Update a given share. Only one value can be updated per request.
 | Argument | Type | Description
 | name | string | A (human-readable) name for the share, which can
 | | | be up to 64 characters in length
-| share_id | int | The share’s unique id
+| share_id | int | The share's unique id
 | permissions | int | Update permissions
 | | | (see xref:create-a-new-share[the create share section] above)
 | password | string | Updated password for public link Share
@@ -544,34 +610,46 @@ NOTE: Only one of the update parameters can be specified at once.
 | 100 | Successful
 | 400 | Wrong or no update parameter given
 | 403 | Public upload disabled by the admin
-| 404 | Couldn’t update share
+| 404 | Couldn't update share
 |========================================
 
 ==== Code Example
 
-Curl
+[tabs]
+====
+Curl::
++
+--
 [source,console]
 ----
 include::{examplesdir}core/scripts/curl/update-share.sh[]
 ----
-
-PHP
+--
+PHP::
++
+--
 [source,php]
 ----
 include::{examplesdir}core/scripts/php/update-share.php[]
 ----
-
-Ruby
+--
+Ruby::
++
+--
 [source,ruby]
 ----
 include::{examplesdir}core/scripts/ruby/update-share.rb[]
 ----
-
-Go
+--
+Go::
++
+--
 [source,go]
 ----
 include::{examplesdir}core/scripts/go/update-share.go[]
 ----
+--
+====
 
 ==== Example Request Response Payloads
 
@@ -645,7 +723,7 @@ XML with the share information
 |========================
 | Code | Description
 | 100 | Successful
-| 404 | Share doesn’t exist
+| 404 | Share doesn't exist
 |========================
 
 === Delete An Accepted Federated Cloud Share
@@ -668,7 +746,7 @@ Locally delete a received federated cloud share that was sent from a remote inst
 |========================
 | Code | Description
 | 100 | Successful
-| 404 | Share doesn’t exist
+| 404 | Share doesn't exist
 |========================
 
 === List Pending Federated Cloud Shares
@@ -688,10 +766,10 @@ XML with all pending federated cloud shares
 |========================
 | Code | Description
 | 100 | Successful
-| 404 | Share doesn’t exist
+| 404 | Share doesn't exist
 |========================
 
-=== Accept a pending Federated Cloud Share
+=== Accept a Pending Federated Cloud Share
 
 Locally accept a received federated cloud share that was sent from a remote instance.
 
@@ -711,10 +789,10 @@ Locally accept a received federated cloud share that was sent from a remote inst
 |========================
 | Code | Description
 | 100 | Successful
-| 404 | Share doesn’t exist
+| 404 | Share doesn't exist
 |========================
 
-=== Decline a pending Federated Cloud Share
+=== Decline a Pending Federated Cloud Share
 
 Locally decline a received federated cloud share that was sent from a remote instance.
 
@@ -734,5 +812,5 @@ Locally decline a received federated cloud share that was sent from a remote ins
 |========================
 | Code | Description
 | 100 | Successful
-| 404 | Share doesn’t exist
+| 404 | Share doesn't exist
 |========================
