@@ -135,24 +135,9 @@ In addition, if there are installed apps (whether compatible or incompatible wit
 If you are using third party or enterprise applications, look in your new `/var/www/owncloud/apps/` directory to see if they are present. 
 If not, copy them from your old `apps/` directory to your new one.
 
-=== Setting the Ownership for Upgrading
+=== Permissions
 
 To finalize the preparation of the upgrade, you need to set the correct ownership of the new ownCloud files and folders. 
-Here is a neat little bash-script to do this on the fly. 
-You will need to change the paths and webserver users according to your installation and/or Linux Distribution.
-
-Take your favourite editor and create the `oc_permit.sh` and copy the contents from beneath.
-
-[source,bash]
-----
-include::{examplesdir}configuration/oc_permit.sh[]
-----
-
-Save and close the file and make it executable by running `chmod +x oc_permit.sh`.
-Then, run `sh oc_permit.sh`.
-You can find a more sophisticated script right here: xref:installation/manual_installation.adoc#set-strong-directory-permissions[strong permissions].
-
-You can also use this command, if you don't want to use the script:
 
 [source,console]
 ----
@@ -223,12 +208,12 @@ If you need to rollback your upgrade, see the xref:maintenance/restore.adoc[Rest
 
 When upgrading ownCloud and you are running MySQL or MariaDB with binary logging enabled, your upgrade may fail with these errors in your MySQL/MariaDB log:
 
-....
+----
 An unhandled exception has been thrown:
 exception 'PDOException' with the message 'SQLSTATE[HY000]: General error: 1665
 Cannot execute statement: impossible to write to binary log since
 BINLOG_FORMAT = STATEMENT and at least one table uses a storage engine limited to row-based logging. InnoDB is limited to row-logging when transaction isolation level is READ COMMITTED or READ UNCOMMITTED.'
-....
+----
 
 Please refer to xref:configuration/database/linux_database_configuration.adoc#mysql-mariadb-with-binary-logging-enabled[MySQL / MariaDB with Binary Logging Enabled] on how to correctly configure your environment.
 
