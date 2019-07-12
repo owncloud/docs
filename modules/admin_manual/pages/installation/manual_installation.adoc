@@ -85,8 +85,8 @@ However, if you want or need to install it, then we suggest the following steps:
 
 ----
 wget http://download.opensuse.org/repositories/server:/php:/extensions/SLE_12_SP1/ server:php:extensions.repo -O /etc/zypp/repos.d/memcached.repo
-zypper refresh
-zypper install php5-APCu
+sudo zypper refresh
+sudo zypper install php5-APCu
 ----
 
 ===== Redis
@@ -98,8 +98,8 @@ Keep in mind that version 2.2.5 is the minimum version which ownCloud supports.
 If you want or need to install it, we suggest the following steps:
 
 ----
-zypper refresh
-zypper install -y php7-redis
+sudo zypper refresh
+sudo zypper install -y php7-redis
 ----
 
 == Install ownCloud
@@ -140,13 +140,13 @@ unzip owncloud-x.y.z.zip
   When you are running the Apache HTTP server, you may safely install ownCloud in your Apache document root:
 +
 ----
-cp -r owncloud /path/to/webserver/document-root
+sudo cp -r owncloud /path/to/webserver/document-root
 ----
 +
 where `/path/to/webserver/document-root` is replaced by the document root of your Web server:
 +
 ----
-cp -r owncloud /var/www
+sudo cp -r owncloud /var/www
 ----
 
 On other HTTP servers, it is recommended to install ownCloud outside of the document root.
@@ -179,7 +179,7 @@ Alias /owncloud "/var/www/owncloud/"
 Then create a symlink to /etc/apache2/sites-enabled:
 
 ----
-ln -s /etc/apache2/sites-available/owncloud.conf /etc/apache2/sites-enabled/owncloud.conf
+sudo ln -s /etc/apache2/sites-available/owncloud.conf /etc/apache2/sites-enabled/owncloud.conf
 ----
 
 ==== Additional Apache Configurations
@@ -214,7 +214,7 @@ Satisfy Any
 * Now restart Apache
 +
 ----
-service apache2 restart
+sudo service apache2 restart
 ----
 
 * If you’re running ownCloud in a sub-directory and want to use CalDAV or CardDAV clients make sure you have configured the correct xref:configuration/general_topics/general_troubleshooting.adoc#service-discovery[Service Discovery] URLs.
@@ -247,9 +247,9 @@ Apache installed under Ubuntu comes already set-up with a simple self-signed cer
 All you have to do is to enable the `ssl` module and the default site. Open a terminal and run:
 
 ----
-a2enmod ssl
-a2ensite default-ssl
-service apache2 reload
+sudo a2enmod ssl
+sudo a2ensite default-ssl
+sudo service apache2 reload
 ----
 
 NOTE: Self-signed certificates have their drawbacks - especially when you plan to make your ownCloud server publicly accessible. You might want to consider getting a certificate signed by a commercial signing authority. Check with your domain name registrar or hosting service for good deals on commercial certificates.
@@ -281,7 +281,7 @@ To enable this, temporarily change the ownership on your ownCloud directories to
 TIP: Refer to the xref:set-strong-directory-permissions[Set Strong Directory Permissions] section to learn how to find your HTTP user):
 
 ----
-chown -R www-data:www-data /var/www/owncloud/
+sudo chown -R www-data:www-data /var/www/owncloud/
 ----
 
 NOTE: Admins of SELinux-enabled distributions may need to write new SELinux rules to complete their ownCloud installation; see xref:installation/configuration_notes_and_tips.adoc#config-notes-and-tips-selinux[the SELinux guide] for a suggested configuration.
