@@ -97,16 +97,16 @@ Regardless of the method you use, remember to check if an smbclient.ini
 file exists in `/etc/php/<your php version>/mods-available` and contains
 the following line:
 
-....
+----
 extension="smbclient.so"
-....
+----
 ====
 
 If so, then make it available via by running the following command:
 
-....
+----
 sudo phpenmod -v ALL smbclient
-....
+----
 
 == Configuration
 
@@ -242,9 +242,9 @@ The simplest way to start the `wnd:listen` process manually, perhaps for
 initial testing, is as follows
 
 [source,console,subs="attributes+"]
-....
+----
 {occ-command-example-prefix} wnd:listen <host> <share> <username>
-....
+----
 
 The password is an optional parameter and you'll be asked for it if you
 didn't provide it, as in the example above. In order to start the
@@ -252,9 +252,9 @@ didn't provide it, as in the example above. In order to start the
 user's 4th parameter, as in the following example:
 
 [source,console,subs="attributes+"]
-....
+----
 {occ-command-example-prefix} wnd:listen <host> <share> <username> <password>
-....
+----
 
 For additional options to provide the password, check xref:password-options[Password Options]
 
@@ -279,9 +279,9 @@ you need more information, increase the verbosity by calling
 As a simple example, you can check the following:
 
 [source,console,subs="attributes+"]
-....
+----
 {occ-command-example-prefix} wnd:process-queue <host> <share>
-....
+----
 
 You can run that command, even if there are no notifications to be
 processed.
@@ -300,7 +300,7 @@ Create a service for systemd following the instructions below that checks the sh
 ** Password: Create a file readable only by the www-data and outside the directories handled by apache (let's suppose in /tmp/mypass). The file must contain only the password for the share. In this example our file is: "/tmp/mypass". The listener will read the contents of the file and use them as the password for the account. This way, only root and the apache user should have access to the password.
 ** "--password-trim" removes blank characters from the password file added by 3rdparty software or other services.
 +
-....
+----
 [Unit]
 Description=ownCloud WND Listener for SERVER SHARE
 After=syslog.target
@@ -318,7 +318,7 @@ SyslogIdentifier=%n
 KillMode=process
 RestartSec=1
 Restart=always
-....
+----
 
 * Run the following command, once for each created file:
 +
@@ -337,9 +337,9 @@ Create or add a `crontab` file in `/etc/cron.d/oc-wnd-process-queue`.
   This can be done by using `flock -n` and tuning the `-c` parameter of `occ wnd:process-queue`
 
 [source,console]
-....
+----
 * * * * *  sudo -u www-data /usr/bin/php /var/www/owncloud/occ wnd:process-queue <HOST> <SHARE>
-....
+----
 
 
 === Execution Serialization
@@ -352,9 +352,9 @@ It's recommended to force the execution serialization of the `wnd:process-queue`
 If you need to serialize the execution of the `wnd:process-queue`, check the following example with {shell-flock-intro}[flock]
 
 [source,console,subs="attributes+"]
-....
+----
 flock -n /my/lock/file {occ-command-example-prefix} wnd:process-queue <host> <share>
-....
+----
 
 In that case, flock will try get the lock of that file and won't run the command if it isn't possible. 
 For our case, and considering that file isn't being used by any other process, it will run only one `wnd:process-queue` at a time. 
@@ -370,16 +370,16 @@ First check the connection to the share by using {smbclient-manpage-url}[smbclie
 Here is an example:
 
 [source,console,subs="attributes+"]
-....
+----
 smbclient -U Username -L //Servername
-....
+----
 
 Take the example of attempting to connect to the share named `MyData` using `occ wnd:listen`. Running the following command would work:
 
 [source,console,subs="attributes+"]
-....
+----
 {occ-command-example-prefix} wnd:listen MyHost MyData svc_owncloud password
-....
+----
 
 NOTE: The command is case sensitive, and that it must match the information from the mount point configuration.
 
@@ -390,37 +390,37 @@ If your Linux distribution ships with `libsmbclient 3.x`, which is included in t
 If you have `libsmbclient 4.1.6` and higher it doesn't seem to be an issue, so you won't have to change your `HOME` variable. 
 To set up the `HOME` variable on Ubuntu, modify the `/etc/apache2/envvars` file:
 
-....
+----
 unset HOME
 export HOME=/var/www
-....
+----
 
 In Red Hat/CentOS, modify the `/etc/sysconfig/httpd` file and add the following line to set the HOME variable in Apache:
 
-....
+----
 export HOME=/usr/share/httpd
-....
+----
 
 By default, CentOS has activated SELinux, and the `httpd` process can not make outgoing network connections. 
 This will cause problems with the `curl`, `ldap` and `samba` libraries. 
 You'll need to get around this to make this work. First, check the status:
 
-....
+----
 getsebool -a | grep httpd
 httpd_can_network_connect --> off
-....
+----
 
 Then enable support for network connections:
 
-....
+----
 setsebool -P httpd_can_network_connect 1
-....
+----
 
 In openSUSE, modify the `/usr/sbin/start_apache2` file:
 
-....
+----
 export HOME=/var/lib/apache2
-....
+----
 
 Restart Apache, open your ownCloud Admin page and start creating SMB/CIFS mounts.
 
@@ -485,15 +485,15 @@ There are several ways to supply a password:
 . Interactively in response to a password prompt.
 +
 [source,console,subs="attributes+"]
-....
+----
 {occ-command-example-prefix} wnd:listen <host> <share> <username>
-....
+----
 . Sent as a parameter to the command.
 +
 [source,console,subs="attributes+"]
-....
+----
 {occ-command-example-prefix} wnd:listen <host> <share> <username> <password>
-....
+----
 . Read from a file, using the `--password-file` switch to specify the
 file to read from. Note that the password must be in plain text inside
 the file, and neither spaces nor newline characters will be removed from
@@ -501,16 +501,16 @@ the file by default, unless the `--pasword-trim` option is added. The
 password file must be readable by the apache user (or www-data)
 +
 [source,console,subs="attributes+"]
-....
+----
 {occ-command-example-prefix} wnd:listen <host> <share> <username> \
   --password-file=/my/secret/password/file
-....
+----
 +
 [source,console,subs="attributes+"]
-....
+----
 {occ-command-example-prefix} wnd:listen <host> <share> <username> \
   --password-file=/my/secret/password/file --password-trim
-....
+----
 
 NOTE: If you use the `--password-file` switch, the entire contents of the file will be used for the password, so please be careful with newlines.
 
@@ -710,7 +710,7 @@ serializer for this scenario (based on Redis or DB)
 === Basic Command Execution Examples
 
 [source,console,subs="attributes+"]
-....
+----
 {occ-command-example-prefix} `wnd:listen` host share username password
 
 {occ-command-example-prefix} `wnd:process-queue` host share
@@ -724,26 +724,26 @@ serializer for this scenario (based on Redis or DB)
 {occ-command-example-prefix} `wnd:process-queue` host2 share2 -c 500 \
     --serializer-type File \
     --serializer-params file=/opt/oc/store2
-....
+----
 
 To set it up, make sure the listener is running as a system service:
 
 [source,console,subs="attributes+"]
-....
+----
 {occ-command-example-prefix} `wnd:listen` host share username password
-....
+----
 
 Setup a Cron job or similar with something like the following two
 commands:
 
 [source,console,subs="attributes+"]
-....
+----
 {occ-command-example-prefix} wnd:process-queue host share -c 500 \
     --serializer-type file \
     --serializer-params file=/opt/oc/store1
 
 rm -f /opt/oc/store1 # With a different schedule
-....
+----
 
 The first run will create the `/opt/oc/store1` with the serialized
 storages, the rest of the executions will use that file. The second Cron

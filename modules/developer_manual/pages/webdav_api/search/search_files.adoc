@@ -25,13 +25,13 @@ An authenticated https://tools.ietf.org/html/rfc3253#section-3.6[REPORT request]
 === Example Request
 
 [source,console]
-....
+----
 curl --silent \
   -X REPORT \
   --data "@supported.xml" \
   -u admin:admin \
   'http://localhost/remote.php/dav/files/admin' | xmllint --format -
-....
+----
 
 The request must include a request body that includes the search pattern, and can also include a list of properties to return.
 
@@ -44,9 +44,9 @@ Below, are several examples of XML response bodies.
 In the `search` element, specify the search pattern to filter the list of files to return.
 
 [source,xml]
-....
+----
 include::{examplesdir}core/webdav_api/search/request/search_files/minimal_request_body.xml[indent=0]
-....
+----
 
 ==== Limiting The Number Of Results Returned
 
@@ -54,9 +54,9 @@ To limit the number of results returned, use the `limit` element of the `search`
 It will limit the maximum number of results returned to five.
 
 [source,xml]
-....
+----
 include::{examplesdir}core/webdav_api/search/request/search_files/limit_number_of_results.xml[indent=0]
-....
+----
 
 ==== Reducing The File Properties Returned
 
@@ -65,9 +65,9 @@ However, if a specific list of properties is required for each file, then a `pro
 include::{partialsdir}/webdav_api/search/file_properties.adoc[]
 
 [source,xml]
-....
+----
 include::{examplesdir}core/webdav_api/search/request/search_files/search_body_with_properties.xml[indent=0]
-....
+----
 
 NOTE: The example uses http://xmlsoft.org/xmllint.html[xmllint] to make the response more readable.
 Xmllint is available in the http://www.xmlsoft.org/[libxml2 package].
@@ -91,9 +91,9 @@ And each `response` element contains three items:
 
 .Search Response
 [source,xml]
-....
+----
 include::{examplesdir}core/webdav_api/search/response/search_files/success/search_response.xml[indent=0]
-....
+----
 
 === Failure
 
@@ -102,16 +102,16 @@ include::{examplesdir}core/webdav_api/search/response/search_files/success/searc
 If the payload file cannot be read or is invalid XML, then the following XML response is sent, along with an `HTTP/1.1 500 Internal Server Error` status code.
 
 [source,xml]
-....
+----
 include::{examplesdir}core/webdav_api/search/response/common/failure/incorrect_payload_or_parse_failure.xml[indent=0]
-....
+----
 
 ==== If a Non-Existent Property Is Requested 
 
 If a non-existent property is requested, then an additional `propstat` element is returned, as in the example below, which contains a list of the properties which were not available.
 
 [source,xml]
-....
+----
 include::{examplesdir}core/webdav_api/search/response/common/failure/request_non_existent_property.xml[indent=0,lines=19..25]
-....
+----
 
