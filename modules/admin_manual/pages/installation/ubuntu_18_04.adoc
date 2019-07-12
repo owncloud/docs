@@ -1,233 +1,204 @@
-= Manual installation of ownCloud on Ubuntu 18.04
-
+= Install ownCloud on Ubuntu 18.04
 :toc: right
+:logrotate-url: https://linux.die.net/man/8/logrotate
+:webserver-user: www-data
+:webserver-group: www-data
+:install-directory: /var/www/owncloud
 
-TIP: Copy/Paste these commands into you terminal/shell
+This is an ultra-short guide to installing ownCloud on a fresh installation of Ubuntu 18.04.
+Run the following commands in your terminal to complete the installation.
+
+== Prerequisites
+
+* A fresh install of https://www.ubuntu.com/download/server[Ubuntu 18.04] with SSH enabled.
 
 == Preparation
-First we have to prepare our server for ownCloud.
 
-=== Prerequisites
-Freshly installed https://www.ubuntu.com/download/server[Ubuntu 18.04] Server with SSH.
+First, ensure that all of the installed packages are entirely up to date.
 
-==== Update OS
+[source,console,subs="attributes+"]
+----
+sudo apt update && sudo apt upgrade -y
+----
 
-....
-apt update && apt upgrade -y
-....
+=== Create the occ Helper Script
 
-==== Create helper script
+Create a helper script to simplify running xref:configuration/server/occ_command.adoc[occ commands].
 
-....
+[source,console,subs="attributes+"]
+----
 FILE="/usr/local/bin/occ"
 /bin/cat <<EOM >$FILE
 #! /bin/bash
-cd /var/www/owncloud
-sudo -u www-data /usr/bin/php /var/www/owncloud/occ "\$@"
+
+cd {install-directory}
+sudo -u {webserver-user} /usr/bin/php {install-directory}/occ "\$@"
 EOM
+----
 
-chmod +x /usr/local/bin/occ
+Make helper script executable:
 
-....
+[source,console,subs="attributes+"]
+----
+sudo chmod +x /usr/local/bin/occ
+----
+
+=== Install the Required Packages
+
+[source,console,subs="attributes+"]
+----
+sudo apt install -y \
+  apache2 \
+  libapache2-mod-php7.2 \
+  mariadb-server \
+  openssl \
+  php-imagick php7.2-common php7.2-curl \
+  php7.2-gd php7.2-imap php7.2-intl \
+  php7.2-json php7.2-mbstring php7.2-mysql \
+  php-ssh2 php7.2-xml php7.2-zip \
+  php-apcu php-redis redis-server \
+  wget
+----
+
+=== Install the Recommended Packages
+
+[source,console,subs="attributes+"]
+----
+sudo apt install -y \
+  ssh bzip2 rsync curl jq \
+  sudo inetutils-ping \
+  smbclient php-smbclient coreutils php7.2-ldap
+----
+
+WARNING: Ubuntu 18.04 includes smbclient 4.7.6, which has a known limitation of only using version 1 of the SMB protocol.
 
 == Installation
 
-=== Install the required packages
+=== Configure Apache
 
-....
-apt install -y \
-apache2 \
-mariadb-server \
-libapache2-mod-php7.2 \
-openssl \
-php-imagick php7.2-common php7.2-curl \
-php7.2-gd php7.2-imap php7.2-intl \
-php7.2-json php7.2-mbstring php7.2-mysql \
-php-ssh2 php7.2-xml php7.2-zip \
-php-apcu php-redis redis-server \
-wget
-....
+==== Change the Document Root
 
-=== Install the recommended packages
+[source,console,subs="attributes+"]
+----
+sudo sed -i "s#html#owncloud#" /etc/apache2/sites-available/000-default.conf
 
-....
-apt install -y \
-ssh bzip2 rsync curl jq \
-sudo inetutils-ping \
-smbclient php-smbclient coreutils php7.2-ldap
-....
-WARNING: The current Ubuntu 18.04 includes smbclient 4.7.6 which has the known limitation to use only SMB V1 protocol.
+sudo service apache2 restart
+----
 
-=== Configure the web Server
+==== Create a Virtual Host Configuration
 
-==== Change the document root
-....
-sed -i  "s#html#owncloud#" /etc/apache2/sites-available/000-default.conf
+[source,console,subs="attributes+"]
+----
+include::{examplesdir}installation/ubuntu/18.04/create-vhost-config.sh[]
+----
 
-service apache2 restart
-....
+==== Enable the Virtual Host Configuration
 
-==== Create ownCloud.conf
+[source,console,subs="attributes+"]
+----
+sudo a2ensite owncloud.conf
+sudo service apache2 reload
+----
 
-....
-FILE="/etc/apache2/sites-available/owncloud.conf"
-/bin/cat <<EOM >$FILE
-Alias /owncloud "/var/www/owncloud/"
+=== Configure the Database
 
-<Directory /var/www/owncloud/>
-  Options +FollowSymlinks
-  AllowOverride All
-
- <IfModule mod_dav.c>
-  Dav off
- </IfModule>
-
- SetEnv HOME /var/www/owncloud
- SetEnv HTTP_HOME /var/www/owncloud
-
-</Directory>
-EOM
-....
-
-....
-ln -s /etc/apache2/sites-available/owncloud.conf \
-/etc/apache2/sites-enabled/owncloud.conf
-
-service apache2 restart
-....
-
-==== Configure the Database
-
-....
+[source,console,subs="attributes+"]
+----
 mysql -u root -e "CREATE DATABASE IF NOT EXISTS owncloud; \
-GRANT ALL PRIVILEGES ON owncloud.* TO owncloud@localhost IDENTIFIED BY 'password'";
-....
+GRANT ALL PRIVILEGES ON owncloud.* \
+  TO owncloud@localhost \
+  IDENTIFIED BY 'password'";
+----
 
-==== Install recommended Web Server Modules
+==== Enable the Recommended Apache Modules
 
-....
-echo "Enabling a2mod Modules"
-a2enmod rewrite
-a2enmod headers
-a2enmod env
-a2enmod dir
-a2enmod mime
-a2enmod setenvif
-service apache2 restart
-....
+[source,console,subs="attributes+"]
+----
+echo "Enabling Apache Modules"
+
+sudo a2enmod dir env headers mime rewrite setenvif
+sudo service apache2 reload
+----
+
+=== Setup ownCloud
 
 ==== Download ownCloud
 
-....
-cd /var/www
-wget https://download.owncloud.org/community/owncloud-10.2.0.tar.bz2
-tar xjf owncloud-10.2.0.tar.bz2
-chown -R www-data. /var/www/owncloud
-....
+[source,console,subs="attributes+"]
+----
+sudo -u {webserver-user} wget -P=/var/www https://download.owncloud.org/community/owncloud-10.2.0.tar.bz2 && \
+  sudo tar -xjf owncloud-10.2.0.tar.bz2 && \
+  sudo chown -R {webserver-user} {install-directory}
+----
 
 ==== Install ownCloud
 
-....
+[source,console,subs="attributes+"]
+----
 occ maintenance:install \
-    --database "mysql" --database-name "owncloud" \
-    --database-user "owncloud" --database-pass "password" \
-    --admin-user "admin" --admin-pass "admin"
-....
+    --database "mysql" \
+    --database-name "owncloud" \
+    --database-user "owncloud" \
+    --database-pass "password" \
+    --admin-user "admin" \
+    --admin-pass "admin"
+----
 
-==== Configure Trusted Domains
+==== Configure ownCloud's Trusted Domains
 
-....
+[source,console,subs="attributes+"]
+----
 myip=$(hostname -I|cut -f1 -d ' ')
 occ config:system:set trusted_domains 1 --value="$myip"
-....
+----
 
-==== Set up a Cron Job
+==== Set Up a Cron Job
 
-....
-echo "*/15  *  *  *  * /usr/bin/php -f /var/www/owncloud/cron.php" > /var/spool/cron/crontabs/www-data
-chown www-data.crontab  /var/spool/cron/crontabs/www-data
-chmod 0600  /var/spool/cron/crontabs/www-data
-....
+[source,console,subs="attributes+"]
+----
+echo "*/15  *  *  *  * /usr/bin/php -f {install-directory}/cron.php" \
+  > /var/spool/cron/crontabs/{webserver-user}
+sudo -u {webserver-user} chown {webserver-user}.crontab /var/spool/cron/crontabs/{webserver-user}
+sudo -u {webserver-user} chmod 0600 /var/spool/cron/crontabs/{webserver-user}
+----
 
-NOTE: If you haven a LDAP/Active Directory Server connected to ownCloud you need to add this additional cronjob to sync your LDAP users locally.
+[NOTE]
+====
+If you need to sync your users from an LDAP or Active Directory Server, add this additional xref:configuration/server/background_jobs_configuration.adoc[Cron job].
 
-....
-echo "*  */6  *  *  * /usr/bin/php -f /var/www/owncloud/cron.php" > /var/spool/cron/crontabs/www-data
-chown www-data.crontab  /var/spool/cron/crontabs/www-data
-chmod 0600  /var/spool/cron/crontabs/www-data
-....
+[source,console,subs="attributes+"]
+----
+echo "*  */6  *  *  * /usr/bin/php -f {install-directory}/cron.php" \
+  > /var/spool/cron/crontabs/{webserver-user}
+sudo -u {webserver-user} chown {webserver-user}.crontab /var/spool/cron/crontabs/{webserver-user}
+sudo -u {webserver-user} chmod 0600 /var/spool/cron/crontabs/{webserver-user}
+----
+====
 
 ==== Configure Caching and File Locking
 
-Add this to your config.php
+Add this to the existing xref:configuration/server/config_sample_php_parameters.adoc[configuration] in `{install-directory}/config/config.php`.
 
-....
-'memcache.local' => '\OC\Memcache\APCu',
-'memcache.locking' => '\OC\Memcache\Redis',
-'redis' => [
-      'host' => 'localhost',
-      'port' => 6379,
-       ],
-....
+[source,php]
+----
+include::{examplesdir}installation/ubuntu/18.04/memcache-configuration.php[]
+----
 
-==== Configure Log Rotation
+=== Configure Log Rotation
 
-Execute this command to set up log rotation.
+Execute this command to set up {logrotate-url}[log rotation].
 
-....
-FILE="/etc/logrotate.d/owncloud"
-/bin/cat <<EOM >$FILE
-/var/www/owncloud/data/owncloud.log {
-size 10M
-rotate 12
-copytruncate
-missingok
-compress
-compresscmd  /bin/gzip
-EOM
-....
+[source,console,subs="attributes+"]
+----
+include::{examplesdir}installation/ubuntu/18.04/configure-log-rotation.sh[]
+----
 
-==== Adjust the Permissions
+==== Finalise the Installation 
 
-....
-FILE="/usr/local/bin/ocpermissions"
-/bin/cat <<EOM >$FILE
-#!/bin/bash 
-ocpath='/var/www/owncloud' 
-datadir='/var/www/owncloud/data' 
-htuser='www-data' 
-htgroup='www-data' 
-rootuser='root' 
-printf "Creating possible missing Directories\n" 
-mkdir -p \$ocpath/assets 
-mkdir -p \$ocpath/updater 
-mkdir -p \$datadir 
-printf "chmod Files and Directories\n" 
-find \${ocpath}/ -type f -print0 | xargs -0 chmod 0640 
-find \${ocpath}/ -type d -print0 | xargs -0 chmod 0750 
-printf "chown Directories\n" 
-chown -R \${rootuser}:\${htgroup} \${ocpath}/ 
-chown -R \${htuser}:\${htgroup} \${ocpath}/apps/ 
-chown -R \${htuser}:\${htgroup} \${ocpath}/apps-external/ 
-chown -R \${htuser}:\${htgroup} \${ocpath}/assets/ 
-chown -R \${htuser}:\${htgroup} \${ocpath}/config/ 
-chown -R \${htuser}:\${htgroup} \${datadir} 
-chown -R \${htuser}:\${htgroup} \${ocpath}/updater/ 
-chmod +x \${ocpath}/occ
-printf "chmod/chown .htaccess\n"
-if [ -f \${ocpath}/.htaccess ] 
-then  
-chmod 0644 \${ocpath}/.htaccess  
-chown \${rootuser}:\${htgroup} \${ocpath}/.htaccess 
-fi 
-if [ -f \${datadir}/.htaccess ] 
-then  
-chmod 0644 \${datadir}/.htaccess  
-chown \${rootuser}:\${htgroup} \${datadir}/.htaccess
-fi 
-EOM
+[source,console,subs="attributes+"]
+----
+include::{examplesdir}installation/ubuntu/18.04/finalise-install.sh[]
+----
 
-chmod +x /usr/local/bin/ocpermissions
-
-ocpermissions
-....
+ownCloud is now installed. 
+You can confirm that it is ready to use by pointing your web browser to your ownCloud installation.

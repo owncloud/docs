@@ -116,7 +116,7 @@ sudo certbot register --agree-tos --email <your-email-address>
 
 When it executes, you’ll see a question similar to the following, which you can answer "Yes" or "No":
 
-....
+----
 Saving debug log to /var/log/letsencrypt/letsencrypt.log
 
 -------------------------------------------------------------------------------
@@ -126,18 +126,18 @@ organization that develops Certbot? We'd like to send you email about EFF and
 our work to encrypt the web, protect its users and defend digital rights.
 -------------------------------------------------------------------------------
 (Y)es/(N)o:
-....
+----
 
 When that completes, you’ll see a message similar to the following:
 
-....
+----
 IMPORTANT NOTES:
  1. Your account credentials have been saved in your Certbot
     configuration directory at /etc/letsencrypt. You should make a
     secure backup of this folder now. This configuration directory will
     also contain certificates and private keys obtained by Certbot so
     making regular backups of this folder is ideal.
-....
+----
 
 Please, *strongly*, consider following its recommendation.
 
@@ -155,7 +155,7 @@ sudo certbot register --update-registration --email <your-email-address>
 
 When that completes, you’ll see a message similar to the following:
 
-....
+----
 Saving debug log to /var/log/letsencrypt/letsencrypt.log
 
 -------------------------------------------------------------------------------
@@ -168,7 +168,7 @@ our work to encrypt the web, protect its users and defend digital rights.
 
 IMPORTANT NOTES:
  - Your e-mail address was updated to <your-email-address>
-....
+----
 
 [[create-lets-encrypts-config-files]]
 == Create Let’s Encrypt’s Config Files
@@ -201,7 +201,7 @@ according which web server you use.
 
 [source,console]
 ----
-include::example$installation/lets_encrypt/cli.ini[]
+include::{examplesdir}installation/lets_encrypt/cli.ini[]
 ----
 
 [[list.sh]]
@@ -211,7 +211,7 @@ This script lists all your issued certificates.
 
 [source,console]
 ----
-include::example$installation/lets_encrypt/list.sh[]
+include::{examplesdir}installation/lets_encrypt/list.sh[]
 ----
 
 [[renew.sh]]
@@ -225,7 +225,7 @@ the web server configuration automatically if a certificate has been renewed.
 
 [source,console]
 ----
-include::example$installation/lets_encrypt/renew.sh[]
+include::{examplesdir}installation/lets_encrypt/renew.sh[]
 ----
 
 [[renew-cron.sh]]
@@ -241,7 +241,7 @@ NOTE: This script is intended for use via Cron.
 
 [source,console]
 ----
-include::example$installation/lets_encrypt/renew-cron.sh[]
+include::{examplesdir}installation/lets_encrypt/renew-cron.sh[]
 ----
 
 [[delete.sh]]
@@ -252,7 +252,7 @@ Use the `list.sh` script to list issued certificates.
 
 [source,console]
 ----
-include::example$installation/lets_encrypt/delete.sh[]
+include::{examplesdir}installation/lets_encrypt/delete.sh[]
 ----
 
 [[your-domain-name.sh]]
@@ -271,7 +271,7 @@ You can create different certificates for different sub-domains, such as
 
 [source,console]
 ----
-include::example$installation/lets_encrypt/your-domain-name.sh[]
+include::{examplesdir}installation/lets_encrypt/your-domain-name.sh[]
 ----
 
 NOTE: You can enable the `--dry-run` option which does a test run of the client only.
@@ -289,7 +289,7 @@ sudo /etc/letsencrypt/<your-domain-name>.sh
 
 After you run the script, you will see output similar to the following:
 
-....
+----
 Saving debug log to /var/log/letsencrypt/letsencrypt.log
 Obtaining a new certificate
 Performing the following challenges:
@@ -312,7 +312,7 @@ IMPORTANT NOTES:
 
     Donating to ISRG / Let's Encrypt:   https://letsencrypt.org/donate
     Donating to EFF:                    https://eff.org/donate-le
-....
+----
 
 You can see that the SSL certificate’s been successfully created, and
 that it will expire on 2018-06-18.
@@ -331,7 +331,7 @@ sudo /etc/letsencrypt/list.sh
 Depending on the number of certificates, you can expect to see output
 similar to the following:
 
-....
+----
 -------------------------------------------------------------------------------
 Found the following certs:
   Certificate Name: your-domain-name.com
@@ -340,7 +340,7 @@ Found the following certs:
     Certificate Path: /etc/letsencrypt/live/your-domain-name.com/fullchain.pem
     Private Key Path: /etc/letsencrypt/live/your-domain-name.com/privkey.pem
 -------------------------------------------------------------------------------
-....
+----
 
 [[web-server-setup]]
 == Web Server Setup
@@ -382,7 +382,7 @@ sudo /etc/letsencrypt/renew.sh
 If the certificate is not yet due for renewal, you can expect to see
 output similar to that below:
 
-....
+----
 -------------------------------------------------------------------------------
 Processing /etc/letsencrypt/renewal/your-domain-name.com.conf
 -------------------------------------------------------------------------------
@@ -392,7 +392,7 @@ The following certs are not due for renewal yet:
   /etc/letsencrypt/live/your-domain-name.com/fullchain.pem (skipped)
 No renewals were attempted.
 No hooks were run.
-....
+----
 
 [[automatic-renewal-via-crontab]]
 === Automatic Renewal via Crontab
@@ -413,9 +413,9 @@ IMPORTANT: It is essential to use `sudo` to derive proper permissions.
 
 Then, add the following at the end of the existing configuration:
 
-....
+----
 30 03 * * 6 /etc/letsencrypt/renew-cron.sh
-....
+----
 
 After you save and exit the file, the new job will have been added to
 the Cron job scheduler.
@@ -449,21 +449,21 @@ It will start off, as below, by displaying a list of the currently
 available SSL certificate domain names, and then prompt you to supply
 the certificate that you want to delete.
 
-....
+----
 Available Certificates:
 
 1. your-domain-name.com
 
 Which certificate do you want to delete:
-....
+----
 
 Provide the SSL certificate name that you want to delete and click
 btn:[enter], and the certificate and all of its related files will be deleted.
 After that you should expect to see a confirmation, as in the example
 output below.
 
-....
+----
 -------------------------------------------------------------------------------
 Deleted all files relating to certificate your-domain-name.com.
 -------------------------------------------------------------------------------
-....
+----

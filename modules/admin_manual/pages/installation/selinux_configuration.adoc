@@ -18,7 +18,7 @@ The following settings should work for most SELinux systems that use the
 default distro profiles. Run these commands as root, and remember to
 adjust the filepaths in these examples for your installation
 
-....
+----
 semanage fcontext -a -t httpd_sys_rw_content_t '/var/www/html/owncloud/data(/.*)?'
 semanage fcontext -a -t httpd_sys_rw_content_t '/var/www/html/owncloud/config(/.*)?'
 semanage fcontext -a -t httpd_sys_rw_content_t '/var/www/html/owncloud/apps(/.*)?'
@@ -27,13 +27,13 @@ semanage fcontext -a -t httpd_sys_rw_content_t '/var/www/html/owncloud/.htaccess
 semanage fcontext -a -t httpd_sys_rw_content_t '/var/www/html/owncloud/.user.ini'
 
 restorecon -Rv '/var/www/html/owncloud/'
-....
+----
 
 If you uninstall ownCloud you need to remove the ownCloud directory
 labels. To do this execute the following commands as root after
 uninstalling ownCloud
 
-....
+----
 semanage fcontext -d '/var/www/html/owncloud/data(/.*)?'
 semanage fcontext -d '/var/www/html/owncloud/config(/.*)?'
 semanage fcontext -d '/var/www/html/owncloud/apps(/.*)?'
@@ -42,17 +42,17 @@ semanage fcontext -d '/var/www/html/owncloud/.htaccess'
 semanage fcontext -d '/var/www/html/owncloud/.user.ini'
 
 restorecon -Rv '/var/www/html/owncloud/'
-....
+----
 
 If you have customized SELinux policies and these examples do not work,
 you must give the HTTP server write access to these directories:
 
-....
+----
 /var/www/html/owncloud/data
 /var/www/html/owncloud/config
 /var/www/html/owncloud/apps
 /var/www/html/owncloud/apps-external
-....
+----
 
 [[enable-updates-via-the-web-interface]]
 == Enable updates via the web interface
@@ -60,15 +60,15 @@ you must give the HTTP server write access to these directories:
 To enable updates via the ownCloud web interface, you may need this to
 enable writing to the ownCloud directories:
 
-....
+----
 setsebool httpd_unified on
-....
+----
 
 When the update is completed, disable write access:
 
-....
+----
 setsebool -P  httpd_unified  off
-....
+----
 
 [[disallow-write-access-to-the-whole-web-directory]]
 == Disallow write access to the whole web directory
@@ -76,9 +76,9 @@ setsebool -P  httpd_unified  off
 For security reasons it’s suggested to disable write access to all
 folders in /var/www/ (default):
 
-....
+----
 setsebool -P  httpd_unified  off
-....
+----
 
 [[allow-access-to-a-remote-database]]
 == Allow access to a remote database
@@ -86,18 +86,18 @@ setsebool -P  httpd_unified  off
 An additional setting is needed if your installation is connecting to a
 remote database:
 
-....
+----
 setsebool -P httpd_can_network_connect_db on
-....
+----
 
 [[allow-access-to-ldap-server]]
 == Allow access to LDAP server
 
 Use this setting to allow LDAP connections:
 
-....
+----
 setsebool -P httpd_can_connect_ldap on
-....
+----
 
 [[allow-access-to-remote-network]]
 == Allow access to remote network
@@ -106,9 +106,9 @@ ownCloud requires access to remote networks for functions such as
 Server-to-Server sharing, external storages or the ownCloud Marketplace.
 To allow this access use the following setting:
 
-....
+----
 setsebool -P httpd_can_network_connect on
-....
+----
 
 [[allow-access-to-network-memcache]]
 == Allow access to network memcache
@@ -116,9 +116,9 @@ setsebool -P httpd_can_network_connect on
 This setting is not required if `httpd_can_network_connect` is already
 on:
 
-....
+----
 setsebool -P httpd_can_network_memcache on
-....
+----
 
 [[allow-access-to-smtpsendmail]]
 == Allow access to SMTP/sendmail
@@ -126,9 +126,9 @@ setsebool -P httpd_can_network_memcache on
 If you want to allow ownCloud to send out e-mail notifications via
 sendmail you need to use the following setting:
 
-....
+----
 setsebool -P httpd_can_sendmail on
-....
+----
 
 [[allow-access-to-cifssmb]]
 == Allow access to CIFS/SMB
@@ -136,9 +136,9 @@ setsebool -P httpd_can_sendmail on
 If you have placed your datadir on a CIFS/SMB share use the following
 setting:
 
-....
+----
 setsebool -P httpd_use_cifs on
-....
+----
 
 [[allow-access-to-fusefs]]
 == Allow access to FuseFS
@@ -146,9 +146,9 @@ setsebool -P httpd_use_cifs on
 If your owncloud data folder resides on a Fuse Filesystem (e.g. EncFS
 etc), this setting is required as well:
 
-....
+----
 setsebool -P httpd_use_fusefs on
-....
+----
 
 [[allow-access-to-gpg-for-rainloop]]
 == Allow access to GPG for Rainloop
@@ -156,9 +156,9 @@ setsebool -P httpd_use_fusefs on
 If you use a the rainloop webmail client app which supports GPG/PGP, you
 might need this:
 
-....
+----
 setsebool -P httpd_use_gpg on
-....
+----
 
 [[selinux-configuration-troubleshooting]]
 == Troubleshooting
@@ -169,19 +169,19 @@ setsebool -P httpd_use_gpg on
 For general Troubleshooting of SELinux and its profiles try to install
 the package `setroubleshoot` and run:
 
-....
+----
 sealert -a /var/log/audit/audit.log > /path/to/mylogfile.txt
-....
+----
 
 to get a report which helps you configuring your SELinux profiles.
 
 Another tool for troubleshooting is to enable a single ruleset for your
 ownCloud directory:
 
-....
+----
 semanage fcontext -a -t httpd_sys_rw_content_t '/var/www/html/owncloud(/.*)?'
 restorecon -RF /var/www/html/owncloud
-....
+----
 
 It is much stronger security to have a more fine-grained ruleset as in
 the examples at the beginning, so use this only for testing and

@@ -32,30 +32,30 @@ xref:installation/server_prep_ubuntu_18.04.adoc[the Ubuntu 18.04 preparation gui
 [[required-extensions]]
 ==== Required Extensions
 
-....
+----
 # Enable the RHEL Server 7 repository
 sudo subscription-manager repos --enable rhel-server-rhscl-7-eus-rpms
 
 # Install the required packages
 sudo yum install httpd mariadb-server php72 php72-php php72-php-opcache \
     php72-php-gd php72-php-mbstring php72-php-mysqlnd
-....
+----
 
 [[optional-extensions]]
 ==== Optional Extensions
 
-....
+----
 sudo yum install -y epel-release http://rpms.remirepo.net/enterprise/remi-release-7.rpm yum-utils \
   && sudo yum-config-manager --enable remi-php72 \
   && sudo yum update -y \
   && sudo yum install -y php72-pecl-apcu \
     redis php72-php-pecl-redis php72-php-ldap \
     mariadb-server mariadb
-....
+----
 
 === CentOS 7
 
-....
+----
 sudo yum install -y -q epel-release http://rpms.remirepo.net/enterprise/remi-release-7.rpm yum-utils \
   && sudo yum-config-manager --enable remi-php72 \
   && sudo yum update -y -q \
@@ -65,7 +65,7 @@ sudo yum install -y -q epel-release http://rpms.remirepo.net/enterprise/remi-rel
     php72-pecl-apcu redis php72-php-pecl-redis php72-php-common php72-php-opcache \
     php72-php-ldap mariadb-server mariadb \
   && sudo scl enable php72 bash
-....
+----
 
 [[sles-suse-linux-enterprise-server-12]]
 === SLES (SUSE Linux Enterprise Server) 12
@@ -73,17 +73,17 @@ sudo yum install -y -q epel-release http://rpms.remirepo.net/enterprise/remi-rel
 [[required-extensions-1]]
 ==== Required Extensions
 
-....
+----
 sudo zypper install -y apache2 apache2-mod_php7 php7-gd php7-openssl \
     php7-json php7-curl php7-intl php7-sodium php7-zip php7-zlib
-....
+----
 
 [[optional-extensions-1]]
 ==== Optional Extensions
 
-....
+----
 sudo zypper install -y php7-ldap
-....
+----
 
 [[apcu]]
 APCu
@@ -93,11 +93,11 @@ We are not aware of any officially supported APCu package for SLES 12.
 However, if you want or need to install it, then we suggest the
 following steps:
 
-....
+----
 wget http://download.opensuse.org/repositories/server:/php:/extensions/SLE_12_SP1/ server:php:extensions.repo -O /etc/zypp/repos.d/memcached.repo
 zypper refresh
 zypper install php5-APCu
-....
+----
 
 [[redis]]
 Redis
@@ -111,10 +111,10 @@ the minimum version which ownCloud supports.
 
 If you want or need to install it, we suggest the following steps:
 
-....
+----
 zypper refresh
 zypper install -y php7-redis
-....
+----
 
 
 [[install-owncloud]]
@@ -131,41 +131,41 @@ owncloud-x.y.z.zip (where x.y.z is the version number).
 owncloud-x.y.z.tar.bz2.md5, or owncloud-x.y.z.tar.bz2.sha256.
 * Verify the MD5 or SHA256 sum:
 +
-....
+----
 md5sum -c owncloud-x.y.z.tar.bz2.md5 < owncloud-x.y.z.tar.bz2
 sha256sum -c owncloud-x.y.z.tar.bz2.sha256 < owncloud-x.y.z.tar.bz2
 md5sum  -c owncloud-x.y.z.zip.md5 < owncloud-x.y.z.zip
 sha256sum  -c owncloud-x.y.z.zip.sha256 < owncloud-x.y.z.zip
-....
+----
 * You may also verify the PGP signature:
 +
-....
+----
 wget https://download.owncloud.org/community/owncloud-x.y.z.tar.bz2.asc
 wget https://owncloud.org/owncloud.asc
 gpg --import owncloud.asc
 gpg --verify owncloud-x.y.z.tar.bz2.asc owncloud-x.y.z.tar.bz2
-....
+----
 * Now you can extract the archive contents. Run the appropriate
 unpacking command for your archive type:
 +
-....
+----
 tar -xjf owncloud-x.y.z.tar.bz2
 unzip owncloud-x.y.z.zip
-....
+----
 * This unpacks to a single `owncloud` directory. Copy the ownCloud
 directory to its final destination. When you are running the Apache HTTP
 server, you may safely install ownCloud in your Apache document root:
 +
-....
+----
 cp -r owncloud /path/to/webserver/document-root
-....
+----
 +
 where `/path/to/webserver/document-root` is replaced by the document
 root of your Web server:
 +
-....
+----
 cp -r owncloud /var/www
-....
+----
 
 On other HTTP servers, it is recommended to install ownCloud outside of
 the document root.
@@ -181,7 +181,7 @@ configuration, so all you have to do is create an
 replacing the *Directory* and other file paths with your own file paths:
 
 [source,apache]
-....
+----
 Alias /owncloud "/var/www/owncloud/"
 
 <Directory /var/www/owncloud/>
@@ -196,13 +196,13 @@ Alias /owncloud "/var/www/owncloud/"
  SetEnv HTTP_HOME /var/www/owncloud
 
 </Directory>
-....
+----
 
 Then create a symlink to /etc/apache2/sites-enabled:
 
-....
+----
 ln -s /etc/apache2/sites-available/owncloud.conf /etc/apache2/sites-enabled/owncloud.conf
-....
+----
 
 [[additional-apache-configurations]]
 ==== Additional Apache Configurations
@@ -228,9 +228,9 @@ turned on authentication on a parent folder (via, e.g., an
 specifically for the ownCloud entry. Following the above example
 configuration file, add the following line in the `<Directory` section
 +
-....
+----
 Satisfy Any
-....
+----
 * When using SSL, take special note of the `ServerName`. You should
 specify one in the server configuration, as well as in the `CommonName`
 field of the certificate. If you want your ownCloud to be reachable via
@@ -238,9 +238,9 @@ the internet, then set both of these to the domain you want to reach
 your ownCloud server.
 * Now restart Apache
 +
-....
+----
 service apache2 restart
-....
+----
 * If you’re running ownCloud in a sub-directory and want to use CalDAV
 or CardDAV clients make sure you have configured the correct
 xref:configuration/general_topics/general_troubleshooting.adoc#service-discovery[Service Discovery] URLs.
@@ -261,9 +261,9 @@ Next, compare the value set for `UNIQUE_ID` in the output of `phpinfo()` with th
 In the example below, you can see an example log entry, where ownCloud is logging the unique id provided by Apache, as the value for the first key `reqId` in the record.
 
 [source,json]
-....
-include::example$installation/webservers/apache/log-entry.json[]
-....
+----
+include::{examplesdir}installation/webservers/apache/log-entry.json[]
+----
 
 [[enable-ssl]]
 === Enable SSL
@@ -275,11 +275,11 @@ Apache installed under Ubuntu comes already set-up with a simple
 self-signed certificate. All you have to do is to enable the `ssl`
 module and the default site. Open a terminal and run:
 
-....
+----
 a2enmod ssl
 a2ensite default-ssl
 service apache2 reload
-....
+----
 
 NOTE: Self-signed certificates have their drawbacks - especially when you plan to make your 
 ownCloud server publicly accessible. You might want to consider getting a certificate signed 
@@ -317,9 +317,9 @@ To enable this, temporarily change the ownership on your ownCloud directories to
 TIP: Refer to the xref:set-strong-directory-permissions[Set Strong Directory Permissions] 
 section to learn how to find your HTTP user):
 
-....
+----
 chown -R www-data:www-data /var/www/owncloud/
-....
+----
 
 NOTE: Admins of SELinux-enabled distributions may need to write new SELinux rules to complete their ownCloud installation; 
 see
@@ -346,7 +346,7 @@ After you do so, your ownCloud server will be ready to use.
 [[managing-trusted-domains]]
 == Managing Trusted Domains
 
-All URLs used to access your ownCloud server must be whitelisted in your
+All URLs used to access your ownCloud server must be white-listed in your
 `config.php` file, under the `trusted_domains` setting. Users are
 allowed to log into ownCloud only when they point their browsers to a
 URL that is listed in the `trusted_domains` setting.
