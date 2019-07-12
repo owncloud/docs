@@ -29,54 +29,54 @@ Then, you will need to install the software required to run the development envi
 ==== Install nodejs, make, unzip, and git
 
 [source,console]
-....
+----
 cd ~
 curl -sL https://deb.nodesource.com/setup_8.x -o nodesource_setup.sh
 sudo bash nodesource_setup.sh
 sudo apt-get -y -q update
 sudo apt-get -y -q upgrade
 sudo apt-get install nodejs build-essential make unzip git
-....
+----
 
 ==== Install Composer
 
 ===== Prepare the Installation
 
 [source,console]
-....
+----
 cd ~/tmp
 sudo apt-get install wget php-cli php-zip
 php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
 HASH="$(wget -q -O - https://composer.github.io/installer.sig)"
 php -r "if (hash_file('SHA384', 'composer-setup.php') === '$HASH') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
-....
+----
 
 If the hashes match, you will see the following output:
 
-....
+----
 Installer verified
-....
+----
 
 ===== Install Composer
 
 To install Composer, run the following command:
 
 [source,console]
-....
+----
 sudo php composer-setup.php \
     --install-dir=/usr/local/bin \
     --filename=composer
-....
+----
 
 Running the command will produce output similar to the following.
 
-....
+----
 All settings correct for using Composer
 Downloading...
 
 Composer (version 1.7.2) successfully installed to: /usr/local/bin/composer
 Use it: php /usr/local/bin/composer
-....
+----
 
 ===== Verify the Installation
 
@@ -84,7 +84,7 @@ To verify that Composer is properly installed, run `composer`.
 You should see output similar to that below.
 
 [source,console]
-....
+----
    ______
   / ____/___  ____ ___  ____  ____  ________  _____
  / /   / __ \/ __ `__ \/ __ \/ __ \/ ___/ _ \/ ___/
@@ -92,7 +92,7 @@ You should see output similar to that below.
 \____/\____/_/ /_/ /_/ .___/\____/____/\___/_/
                     /_/
 Composer version 1.8.4 2019-02-11 10:52:10
-....
+----
 
 Composer is fully installed, and ready to be used.
 
@@ -100,7 +100,7 @@ Composer is fully installed, and ready to be used.
 
 
 [source,console]
-....
+----
 # Enable the Yarn repository
 curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
 
@@ -110,21 +110,21 @@ echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/source
 # Update the package list and install Yarn:
 sudo apt-get update
 sudo apt-get install --no-install-recommends yarn
-....
+----
 
 ===== Verify that Yarn installed successfully:
 
 After you have installed yarn, you can run `yarn --version` to confirm that it’s fully installed. 
 If it is, then it will print output similar to the following to the console.
 
-....
+----
 yarn version v1.13.0
-....
+----
 
 [[install-dependencies-on-opensuse-leap-42.3]]
 === Install Dependencies on openSUSE Leap 42.3
 
-....
+----
 # Ensure that Zypper's cache is up to date
 sudo zypper --non-interactive --quiet \
    update --auto-agree-with-licenses --best-effort
@@ -133,7 +133,7 @@ sudo zypper --non-interactive --quiet \
 sudo zypper --quiet --non-interactive install \
     wget make nodejs6 nodejs-common unzip git
     npm6 phantomjs php7-curl php7-openssl openssl php7-phar
-....
+----
 
 [[setup-the-webserver-and-database]]
 == Setup the Webserver and Database
@@ -157,10 +157,10 @@ ownCloud. There are two ways to do so:
 For the sake of a brief example, assuming you chose to clone from
 GitHub, here’s an example of how to do so:
 
-....
+----
 # Assuming that /var/www/html is the webserver's document root
 git clone https://github.com/owncloud/core.git /var/www/html/core
-....
+----
 
 *What is the Web Server’s Root Directory?*
 
@@ -177,13 +177,13 @@ installed ownCloud: The following commands assume that `/var/www` is the
 web server’s directory and that `www-data` is the web server user and
 group. The following commands will do this:
 
-....
+----
 # Set the user and group to the webserver user and group
 sudo chown -R www-data:www-data /var/www/html/core/
 
 # Set read/write permissions on the directory
 sudo chmod o+rw /var/www/html/core/
-....
+----
 
 *What is the Web Server’s User and Group?*
 
@@ -191,13 +191,13 @@ There are a few ways to identify the user and group the webserver is
 running as. Likely the easiest are `grep` and `ps`. Here’s an example of
 using both (which assumes that the distribution is Ubuntu 16.04).
 
-....
+----
 # Find the user defined in Apache's configuration files
 grep -r 'APACHE_RUN_USER' /etc/apache2/
 
 # Find the user that's running Apache.
 ps -aux | grep apache2
-....
+----
 
 Depending on your distribution, it will likely be one of `http`, `www-data`, `apache`, or `wwwrun`.
 

@@ -131,33 +131,33 @@ The container works in the following way:
 * A request comes in and is matched against xref:app/tutorial/request.adoc[a route] (for the `AuthorController` in this case)
 * The matched route queries `AuthorController` service from the container:
 +
-....
+----
 return new AuthorController(
   $c->query('AppName'),
   $c->query('Request'),
   $c->query('AuthorService')
 );
-....
+----
 * The `AppName` is queried and returned from the baseclass
 * The `Request` is queried and returned from the server container
 * `AuthorService` is queried:
 +
-....
+----
 $container->registerService('AuthorService', function($c){
   return new AuthorService(
     $c->query('AuthorMapper')
   );
 });
-....
+----
 * `AuthorMapper` is queried:
 +
-....
+----
 $container->registerService('AuthorMappers', function($c){
   return new AuthorService(
     $c->query('ServerContainer')->getDb()
   );
 });
-....
+----
 * The `database connection` is returned from the server container
 * Now `AuthorMapper` has all of its dependencies and the object is
 returned
