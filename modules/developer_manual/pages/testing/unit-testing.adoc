@@ -34,40 +34,40 @@ If you are on any version earlier than 10.0 you have to setup PHPUnit
 [start=1]
 . Use Composer
 +
-....
+----
 composer require phpunit/phpunit
-....
+----
 
 [start=2]
 . Use your package manager (if you’re using a Linux distribution)
 +
-....
+----
 # When using a Debian-based distribution
 sudo apt-get install phpunit
-....
+----
 
 [start=3]
 . Install it manually
 +
-....
+----
 wget https://phar.phpunit.de/phpunit.phar
 chmod +x phpunit.phar
 sudo mv phpunit.phar /usr/local/bin/phpunit
-....
+----
 
 After the installation the command `phpunit` is available
 
-....
+----
 phpunit --version
-....
+----
 
 IMPORTANT: Please be aware that PHPUnit 6.0 and above require PHP 7.0.
 
 And you can update it using:
 
-....
+----
 phpunit --self-update
-....
+----
 
 This option is not supported from PHPUnit 6.0 onward. If you’re using
 this version or higher, please use either Composer or your package
@@ -88,9 +88,9 @@ Testing apps
 * To run the tests for a specific app with the provided PHPUnit version,
 change into `<webroot>/apps/<appname>` and
 
-....
+----
 make test-php-unit
-....
+----
 
 [[writing-php-unit-tests]]
 === Writing PHP Unit tests
@@ -117,7 +117,7 @@ Given the class `MyClass` in your app:
 ./srv/http/owncloud/apps/myapp/tests/lib/MyClass.php
 [source,php]
 ----
-include::example$core/unit-testing/MyClass.php[MyClass.php]
+include::{examplesdir}core/unit-testing/MyClass.php[MyClass.php]
 ----
 
 An example for a simple test would be:
@@ -125,7 +125,7 @@ An example for a simple test would be:
 ./srv/http/owncloud/apps/myapp/tests/unit/MyClassTest.php
 [source,php]
 ----
-include::example$core/unit-testing/MyClassTest.php[MyClassTest.php]
+include::{examplesdir}core/unit-testing/MyClassTest.php[MyClassTest.php]
 ----
 
 [NOTE]
@@ -137,9 +137,9 @@ This is {recommended-way-to-organise-tests-url}[the recommended way to organize 
 In `/srv/http/owncloud/apps/myapp/` you run the test with the following command:
 
 [source,console]
-....
+----
 phpunit tests/unit/MyClassTest.php
-....
+----
 
 Make sure to extend the `\Test\TestCase` class with your test and always call the parent methods, when overwriting `setUp()`,
 `setUpBeforeClass()`, `tearDown()` or `tearDownAfterClass()` method from the `TestCase`. 
@@ -157,26 +157,26 @@ running PHPUnit
 
 /srv/http/owncloud
 
-....
+----
 phpunit --bootstrap tests/bootstrap.php apps/myapp/tests/testsuite.php
-....
+----
 
 If you run the test suite as a user other than your Web server, you’ll
 have to adjust your php.ini and file rights.
 
 /etc/php/php.ini
 
-....
+----
 open_basedir = none
-....
+----
 
 /srv/http/owncloud:
 
-....
+----
 su -c "chmod a+r config/config.php"
 su -c "chmod a+rx data/"
 su -c "chmod a+w data/owncloud.log"
-....
+----
 
 [[running-unit-tests-for-owncloud-core]]
 === Running Unit Tests for ownCloud Core
@@ -192,26 +192,26 @@ privilege to create and delete the database called `oc_autotest`.
 [[mysql-setup]]
 ==== MySQL Setup
 
-....
+----
 CREATE DATABASE oc_autotest;
 CREATE USER 'oc_autotest'@'localhost' IDENTIFIED BY 'owncloud';
 GRANT ALL ON oc_autotest.* TO 'oc_autotest'@'localhost';
-....
+----
 
 [[for-parallel-executor-support-with-executor_number0]]
 For parallel executor support with EXECUTOR_NUMBER=0
 ++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-....
+----
 CREATE DATABASE oc_autotest0;
 CREATE USER 'oc_autotest0'@'localhost' IDENTIFIED BY 'owncloud';
 GRANT ALL ON oc_autotest0.* TO 'oc_autotest0'@'localhost';
-....
+----
 
 [[postgresql-setup]]
 ==== PostgreSQL Setup
 
-....
+----
 su - postgres
 
 # Use password "owncloud"
@@ -219,7 +219,7 @@ createuser -P oc_autotest
 
 # Give the user the privilege to create databases
 psql -c 'ALTER USER oc_autotest CREATEDB;'
-....
+----
 
 To enable `dropdb` add `local all all trust` to `pg_hba.conf`.
 
@@ -227,7 +227,7 @@ To enable `dropdb` add `local all all trust` to `pg_hba.conf`.
 For parallel executor support with EXECUTOR_NUMBER=0
 ++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-....
+----
 su - postgres
 
 # Use password "owncloud"
@@ -235,35 +235,35 @@ createuser -P oc_autotest0
 
 # Give the user the privilege to create databases
 psql -c 'ALTER USER oc_autotest0 CREATEDB;'
-....
+----
 
 [[run-tests]]
 ==== Run Tests
 
 To run all tests, run the following command:
 
-....
+----
 make test-php-unit
-....
+----
 
 To run tests only for MySQL, run the following command:
 
-....
+----
 make test-php-unit TEST_DATABASE=mysql
-....
+----
 
 To run a particular test suite, use the following command as a guide:
 
-....
+----
 make test-php-unit TEST_DATABASE=mysql TEST_PHP_SUITE=tests/lib/share/share.php
-....
+----
 
 By default, a code coverage report is generated after the test run. To
 avoid the time taken for that, specify `NOCOVERAGE`:
 
-....
+----
 make test-php-unit NOCOVERAGE=true TEST_DATABASE=mysql TEST_PHP_SUITE=tests/lib/share/share.php
-....
+----
 
 [[further-reading]]
 === Further Reading
@@ -293,9 +293,9 @@ automatic test script first, see next section.
 
 To run all JavaScript tests, run the following command:
 
-....
+----
 make test-js
-....
+----
 
 This will also automatically set up your test environment.
 
@@ -304,9 +304,9 @@ This will also automatically set up your test environment.
 
 To debug tests in the browser, this will run *Karma* in browser mode
 
-....
+----
 make test-js-debug
-....
+----
 
 From there, open the URL `\http://localhost:9876` in a web browser. On that
 page, click on the btn:[Debug] button. An empty page will appear, from

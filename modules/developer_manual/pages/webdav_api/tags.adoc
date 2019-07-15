@@ -8,7 +8,6 @@ The tags API provides extensive support for managing tags within ownCloud.
 In short, it provides all of the functionality available through the UI,
 from the command-line.
 
-[[list-tags]]
 == List Tags
 
 [cols=",,",options="header",]
@@ -17,21 +16,17 @@ from the command-line.
 | `remote.php/dav/systemtags` | `PROPFIND` | `text/plain`
 |=====================================================
 
-To retrieve a list of all tags, stored in your ownCloud installation,
-you need to make an authenticated `PROPFIND` request, as in the example
-below.
+To retrieve a list of all tags, stored in your ownCloud installation, you need to make an authenticated `PROPFIND` request, as in the example below.
 
-....
+----
 curl --silent -u username:password \
   -X PROPFIND \
   'http://localhost/remote.php/dav/systemtags' | xmllint --format -
-....
+----
 
-The curl examples use http://xmlsoft.org/xmllint.html[xmllint],
-available in the libxml2 package, to make the response easier to read.
+The curl examples use http://xmlsoft.org/xmllint.html[xmllint], available in the libxml2 package, to make the response easier to read.
 
-This request will return an XML response similar to this example and a
-status of: `HTTP/1.1 207 Multi-Status`.
+This request will return an XML response similar to this example and a status of: `HTTP/1.1 207 Multi-Status`.
 
 [source,xml]
 ----
@@ -49,13 +44,9 @@ status of: `HTTP/1.1 207 Multi-Status`.
 </d:multistatus>
 ----
 
-Note that it does not return very much, just the `href` and `status`
-properties. If you want to retrieve more detailed information, you need
-to supply a https://webmasters.stackexchange.com/questions/59211/what-is-http-method-propfind-used-for[PROPFIND]
-element in the request body, containing all the properties that you want
-to retrieve in the response. The sample below, which for the purposes of
-this example we’ll store in a file called `report-propfind.xml`, shows
-how to do so.
+Note that it does not return very much, just the `href` and `status` properties. 
+If you want to retrieve more detailed information, you need to supply a https://webmasters.stackexchange.com/questions/59211/what-is-http-method-propfind-used-for[PROPFIND] element in the request body, containing all the properties that you want to retrieve in the response. 
+The sample below, which for the purposes of this example we'll store in a file called `report-propfind.xml`, shows how to do so.
 
 [source,xml]
 ----
@@ -71,24 +62,20 @@ how to do so.
 </a:propfind>
 ----
 
-To use it in the request, add the `--data-binary` switch, passing in the
-name of the file containing the `PROPFIND` XML element.
+To use it in the request, add the `--data-binary` switch, passing in the name of the file containing the `PROPFIND` XML element.
 
-....
+----
 curl --silent -u username:password \
   -X PROPFIND \
   -H "Content-Type: text/xml" \
    --data-binary "@report-propfind.xml" \
   'http://localhost/remote.php/dav/systemtags' | xmllint --format -
-....
+----
 
-We encourage you to store this in a separate file and use the
-`--data-binary` switch to include it in the request, instead of
-supplying the information in the command directly. This makes the
-information more maintainable.
+We encourage you to store this in a separate file and use the `--data-binary` switch to include it in the request, instead of supplying the information in the command directly. 
+This makes the information more maintainable.
 
-Adding the `PROPFIND` XML element will cause the XML response to look
-similar to the following example.
+Adding the `PROPFIND` XML element will cause the XML response to look similar to the following example.
 
 [source,xml]
 ----
@@ -119,13 +106,9 @@ similar to the following example.
 </d:multistatus>
 ----
 
-You can see that, along with the `href` and `status` elements, each
-element now contains the `display-name`, `user-visible`, and `id`
-elements.
-
+You can see that, along with the `href` and `status` elements, each element now contains the `display-name`, `user-visible`, and `id` elements.
 To clarify, `display-name` contains the visible tag name.
 
-[[create-tags]]
 == Create Tags
 
 [cols=",,",options="header",]
@@ -134,20 +117,17 @@ To clarify, `display-name` contains the visible tag name.
 | `remote.php/dav/systemtags` | POST | `application/json`
 |=====================================================
 
-To create a tag, you need to send an authenticated `POST` request with a
-JSON body containing the details of the tag to create. The example below
-shows how to create a tag with the name `test5`, which is visible to all
-users.
+To create a tag, you need to send an authenticated `POST` request with a JSON body containing the details of the tag to create. 
+The example below shows how to create a tag with the name `test5`, which is visible to all users.
 
-....
+----
 curl -u username:password \
   -X POST \
   -H "Content-Type: application/json" \
   --data-binary '{"name":"test5","userVisible":"true","userAssignable":"true"}' \
   "http://localhost/remote.php/dav/systemtags"
-....
+----
 
-[[available-parameters]]
 === Available Parameters
 
 [cols=",,,",options="header",]
@@ -158,18 +138,13 @@ curl -u username:password \
 | userAssignable | boolean | | no
 |=================================
 
-[[response]]
 === Response
 
-Regardless of success or failure, no response body is returned. However,
-if the tag is created successfully a status of `HTTP/1.1 201 Created`
-will be sent, and the location (and id) of the new tag will be available
-in the Content-Location header. For example:
-`Content-Location: /remote.php/dav/systemtags/15`. If a tag with the
-name supplied already exists a status of `HTTP/1.1 409 Conflict` will be
-sent.
+Regardless of success or failure, no response body is returned. 
+However, if the tag is created successfully a status of `HTTP/1.1 201 Created` will be sent, and the location (and id) of the new tag will be available in the Content-Location header. 
+For example: `Content-Location: /remote.php/dav/systemtags/15`. 
+If a tag with the name supplied already exists a status of `HTTP/1.1 409 Conflict` will be sent.
 
-[[update-tags]]
 == Update Tags
 
 [cols=",,",options="header",]
@@ -178,19 +153,17 @@ sent.
 | `remote.php/dav/systemtags/<tagid>` | `PROPPATCH` | `text/xml`
 |============================================================
 
-To update an existing tag, you need to send an authenticated `PROPPATCH`
-request and provide a `PROPFIND` XML element in the body. Below is an
-example request, which will change the tag with the id of 15.
+To update an existing tag, you need to send an authenticated `PROPPATCH` request and provide a `PROPFIND` XML element in the body. 
+Below is an example request, which will change the tag with the id of 15.
 
-....
+----
 curl -u username:password -X PROPPATCH \
   -H "Content-Type: text/xml" \
   --data-binary '@update-tag.xml' \
   "http://localhost/remote.php/dav/systemtags/15" | xmllint --format -
-....
+----
 
-Below is an example `PROPPATCH` element, which changes the message text
-but leaves the rest of the message unchanged.
+Below is an example `PROPPATCH` element, which changes the message text but leaves the rest of the message unchanged.
 
 [source,xml]
 ----
@@ -204,12 +177,10 @@ but leaves the rest of the message unchanged.
 </a:propertyupdate>
 ----
 
-[[response-1]]
 === Response
 
-If the update is successful, then an XML response body will be returned,
-which looks similar to the example below. In addition an
-`HTTP/1.1 207 Multi-Status` status will also be returned.
+If the update is successful, then an XML response body will be returned, which looks similar to the example below. 
+In addition an `HTTP/1.1 207 Multi-Status` status will also be returned.
 
 [source,xml]
 ----
@@ -227,7 +198,6 @@ which looks similar to the example below. In addition an
 </d:multistatus>
 ----
 
-[[delete-tags]]
 == Delete Tags
 
 [cols=",,",options="header",]
@@ -236,17 +206,14 @@ which looks similar to the example below. In addition an
 | `remote.php/dav/systemtags/<tagid>` | DELETE | text/plain
 |=======================================================
 
-To delete a tag, send an authenticated `DELETE` request, specifying the
-path to the tag that you want to delete.
+To delete a tag, send an authenticated `DELETE` request, specifying the path to the tag that you want to delete.
 
-....
+----
 curl -u username:password -X DELETE 'http://localhost/remote.php/dav/systemtags/15'
-....
+----
 
-If the comment was successfully deleted, an `HTTP/1.1 204 No Content`
-status will be returned but with no response body. However, if the
-comment does not exist, then the following response will be returned,
-along with an `HTTP/1.1 404 Not Found` status.
+If the comment was successfully deleted, an `HTTP/1.1 204 No Content` status will be returned but with no response body. 
+However, if the comment does not exist, then the following response will be returned, along with an `HTTP/1.1 404 Not Found` status.
 
 [source,xml]
 ----
@@ -257,7 +224,6 @@ along with an `HTTP/1.1 404 Not Found` status.
 </d:error>
 ----
 
-[[retrieve-the-tag-ids-and-metadata-of-a-given-file]]
 == Retrieve the Tag IDs and Metadata of a Given File
 
 [cols=",,",options="header",]
@@ -267,16 +233,14 @@ along with an `HTTP/1.1 404 Not Found` status.
 | `text/xml`
 |=======================================================================
 
-To retrieve the tag ids and metadata of a given file, send an
-authenticated `PROPFIND` request, specifying the path to the file to
-retrieve the information from.
+To retrieve the tag ids and metadata of a given file, send an authenticated `PROPFIND` request, specifying the path to the file to retrieve the information from.
 
-....
+----
 # Retrieve the details from file with id 4
 curl -u username:password -X PROPFIND \
   -H "Content-Type: text/xml" \
   "http://localhost/remote.php/dav/systemtags-relations/files/4" | xmllint --format -
-....
+----
 
 [[response-2]]
 === Response
@@ -321,12 +285,12 @@ for each tag.
 To use it, as in previous examples, the `--data-binary` switch is
 required, as in the example below.
 
-....
+----
 curl -u username:password -X PROPFIND \
   -H "Content-Type: text/xml" \
   --data-binary '@report-propfind.xml' \
   "http://localhost/remote.php/dav/systemtags-relations/files/4" | xmllint --format -
-....
+----
 
 Below is an example of the response returned from this request:
 
@@ -362,11 +326,11 @@ To assign a tag to a file, send an authenticated `PUT` request
 specifying the path to the file to tag. Here is an example of how to do
 it using Curl.
 
-....
+----
 curl -u username:password -X PUT \
   -H "Content-Type: text/xml" \
   "http://localhost/remote.php/dav/systemtags-relations/files/4/6"
-....
+----
 
 [[response-3]]
 === Response
@@ -392,11 +356,11 @@ To un-assign or remove a tag from a file, send an authenticated `DELETE`
 request specifying the path to the file and the tag to remove. Here is
 an example of how to do it using Curl.
 
-....
+----
 curl --silent --verbose -u username:password -X DELETE \
   -H "Content-Type: text/xml" \
   "http://localhost/remote.php/dav/systemtags-relations/files/4/6"
-....
+----
 
 [[response-4]]
 === Response
@@ -424,12 +388,12 @@ JSON body containing the details of the tag to create.
 The new tag will be created and assigned, effectively, in one atomic
 operation. Here is an example of how to do it using Curl.
 
-....
+----
 curl --silent --verbose -u username:password -X POST \
   -H "Content-Type: application/json" \
   --data-binary '{"name":"variabletag","userVisible":"true","userAssignable":"true"}' \
   "http://localhost/remote.php/dav/systemtags-relations/files/4"
-....
+----
 
 If the request is successful, no response body will be returned, but an
 `HTTP/1.1 201 Created` status will be returned. If the request is not
@@ -480,12 +444,12 @@ every tag property, and will filter on tag id 17.
 
 And here is an example of how to make the request using Curl.
 
-....
+----
 curl --silent --verbose -u username:password -X REPORT \
   -H "Content-Type: text/xml" \
   --data-binary "@find-tags-by-file.xml" \
   "http://localhost/remote.php/webdav/" | xmllint --format -
-....
+----
 
 [[response-5]]
 === Response
@@ -521,10 +485,7 @@ a status of `HTTP/1.1 207 Multi-Status` will be returned.
 </d:multistatus>
 ----
 
-If the request was unsuccessful, likely because the tag specified didn’t
-exist, then an `HTTP/1.1 412 Precondition failed` status will be
-returned, along with the following XML payload in the body of the
-response.
+If the request was unsuccessful, likely because the tag specified didn't exist, then an `HTTP/1.1 412 Precondition failed` status will be returned, along with the following XML payload in the body of the response.
 
 [source,xml]
 ----

@@ -60,6 +60,8 @@ Password reset links sent to a user were invalid, if the user attempted to login
 Removing a user from a group using the user management UI resulted in an error that required the page to be refreshed to show the changes. This has been corrected.
 * **Added -y option to `occ encryption:encrypt-all` command** +
 The occ command `encryption:encrypt-all` now offers a `-y` option that can be used to automatically answer potential questions with "yes" which is particularly important for automated deployments with Ansible or similar tools.
+* **Fixed an issue with loading JS files when multiple apps folders are in use** +
+Previously ownCloud would have taken the files from the `apps/` folder even though there might be newer versions in e.g. `apps-external`. This has been changed so that ownCloud will always take the files from the most recent app version.
 
 TIP: Apart from this patch release, please consider xref:changes-in-10-2-0[the ownCloud Server 10.2.0 release notes].
 
@@ -690,16 +692,16 @@ the Auditing extension (`admin_audit`) is required.
   * Add the following at the end of each HTML template: :
 
 [source]
-....
+----
 <?php print_unescaped($this->inc('html.mail.footer', ['app' => 'core'])); ?>
-....
+----
 
   * Add the following at the end of each plain text template: :
 
 [source]
-....
+----
 <?php print_unescaped($this->inc('plain.mail.footer', ['app' => 'core'])); ?>
-....
+----
 
 * The ownCloud example theme (`theme-example`), which can be used as a solid base to create custom themes,
 is no longer bundled with ownCloud Server. It now lives in it’s own
@@ -1331,8 +1333,7 @@ We recommend setting up xref:configuration/server/background_jobs_configuration.
 == Changes in 10.0.0
 
 * PHP 7.1 support added (supported PHP versions are 5.6 and 7.0+)
-* The upgrade migration test has been removed; see migration_test_label.
-(Option `"--skip-migration-tests"` removed from update command)
+* The upgrade migration test has been removed; (Option `"--skip-migration-tests"` removed from update command)
 * Requires to use the latest desktop client version 2.3
 * Third party apps are not disabled anymore when upgrading
 * User account table has been reworked. CRON job for syncing with e.g., LDAP needs to be configured
@@ -1510,10 +1511,8 @@ installs only ownCloud. This is useful for custom LAMP stacks, and
 allows you to install your own LAMP apps and versions without packaging
 conflicts with ownCloud. See installation/linux_installation.
 
-New option for the ownCloud admin to enable or disable sharing on
-individual external mountpoints (see
-external_storage_mount_options_label). Sharing on such mountpoints is
-disabled by default.
+New option for the ownCloud admin to enable or disable sharing on individual external mountpoints (see xref:configuration/files/external_storage_configuration_gui.adoc#mount-options[External Storage GUI Mount Options]). 
+Sharing on such mount points is disabled by default.
 
 === Enterprise 9.0
 
@@ -1549,9 +1548,9 @@ Fix this by disabling the `memberof` attribute on your ownCloud server
 with the `occ` command, like this example on Ubuntu Linux:
 
 [source,console,subs="attributes+"]
-....
+----
 {occ-command-example-prefix} ldap:set-config "s01" useMemberOfToDetectMembership 0
-....
+----
 
 Run `{occ-command-example-prefix} ldap:show-config` to find the correct
 `sNN` value; if there is not one then use empty quotes, `""`. (See
@@ -1687,10 +1686,10 @@ If Multiviews are enabled in your Apache configuration, this may cause
 problems with content negotiation, so disable Multiviews by removing it
 from your Apache configuration. Look for lines like this:
 
-....
+----
 <Directory /var/www/owncloud>
 Options Indexes FollowSymLinks Multiviews
-....
+----
 
 Delete `Multiviews` and restart Apache.
 
@@ -1774,16 +1773,16 @@ This provides better performance and a better user experience.
 Substring searches can still be performed by prepending the search term
 with `*`. For example, a search for `te` will find Terri, but not Nate:
 
-....
+----
 occ ldap:search "te"
-....
+----
 
 If you want to broaden the search to include Nate, then search for
 `*te`:
 
-....
+----
 occ ldap:search "*te"
-....
+----
 
 Refine searches by adjusting the `User Search Attributes` field of the
 Advanced tab in your LDAP configuration on the Admin page. For example,

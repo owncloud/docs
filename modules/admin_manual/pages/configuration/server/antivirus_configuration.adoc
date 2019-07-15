@@ -60,9 +60,9 @@ Below you can find the instructions for installing it on Debian or Red Hat-based
 
 Install ClamAV on Debian, Ubuntu — and their many variants — with the following command:
 
-....
+----
 sudo apt install clamav clamav-daemon
-....
+----
 
 This automatically creates the default configuration files and launches the `clamd` and `freshclam` daemons. 
 You shouldn't have to do anything else, though it is a good idea to review the ClamAV documentation, as well as ClamAV's settings in `/etc/clamav/`.
@@ -73,11 +73,11 @@ On Red Hat 7 and related systems, you must install the `Extra Packages for Enter
 To do so, run the following commands:
 
 [source,console]
-....
+----
 yum install epel-release
 yum install clamav clamav-scanner clamav-scanner-systemd clamav-server
 clamav-server-systemd clamav-update
-....
+----
 
 NOTE: Regardless of the operating system, we recommend that you enable verbose logging in both `clamd.conf` and `freshclam.conf` until you get any kinks with your ClamAV installation worked out.
 
@@ -94,19 +94,18 @@ When you're finished editing the configuration files, you must enable the `clamd
 You can do so using the following commands:
 
 [source,console]
-....
+----
 systemctl enable clamav-daemon.service
 systemctl start clamav-daemon.service
-....
-
+----
 
 When successful, output similar to the following renders to the console:
 
 [source,console]
-....
+----
 Synchronizing state of clamav-daemon.service with SysV service script with /lib/systemd/systemd-sysv-install.
 Executing: /lib/systemd/systemd-sysv-install enable clamav-daemon
-....
+----
 
 === Configure the Port
 
@@ -114,17 +113,16 @@ To configure the port that ClamAV listens on, add the following line in `/etc/cl
 
 // TODO: This needs checking, as I wasn't able to get it working in my development environment
 [source,conf]
-....
+----
 TCPSocket 3310
-....
+----
 
 Then, restart the ClamAV daemon as follows:
 
 [source,console]
-....
+----
 sudo /etc/init.d/clamav-daemon restart
-....
-
+----
 
 NOTE: Enable verbose logging in `scan.conf` and `freshclam.conf` until it is running the way you want.
 
@@ -139,10 +137,10 @@ If you want to adjust freshclam's behavior, edit `/etc/clamav/freshclam.conf` an
 After that, create a https://en.wikipedia.org/wiki/Cron[cron job] to automate the process. 
 For example, to run it every hour at 47 minutes past the hour, add the following in the applicable user's crontab:
 
-....
+----
 # m   h  dom mon dow  command
 47  *  *   *    *  /usr/bin/freshclam --quiet
-....
+----
 
 NOTE: Please avoid any multiples of 10, because those are when the ClamAV servers are hit the hardest for updates.
 
@@ -170,14 +168,14 @@ All of the configuration settings for ClamAV are configurable by passing the rel
 For example:
 
 [source,console,subs="attributes+"]
-....
+----
 {occ-command-example-prefix} config:app:set \
     files_antivirus av_socket "/var/run/clamav/clamd.ctl"
-....
+----
 
 ==== Available Configuration Settings
 
-[cols=",43%,15%",options="header"]
+[cols="32%,43%,15%",options="header"]
 |===
 |Setting 
 |Description 
@@ -209,7 +207,8 @@ It can be set to one of `only_log` and `delete`.
 |`/usr/bin/clamscan`
 
 |`av_port`
-|The port number of the Antivirus server. Allowed values are 1 - 65535.
+|The port number of the Antivirus server. 
+Allowed values are 1 - 65535.
 |
 
 |`av_socket`
@@ -258,9 +257,9 @@ This is the `LocalSocket` option in `clamd.conf`.
 You can run `netstat` to verify it, as in the example below:
 
 [source,console]
-....
+----
 sudo ss -a | grep -iq clamav && echo "ClamAV is running"
-....
+----
 
 [TIP]
 ====
@@ -268,9 +267,9 @@ If you don't have `ss` installed, you may have `netstat` installed.
 If so, you can run the following to check if ClamAV is running:
  
 [source,console]
-....
+----
 netstat -a | grep -q clam && echo "ClamAV is running"
-....
+----
 ====
 
 The `Stream Length` value sets the number of bytes to read in one pass; 10485760 bytes (ten megabytes) is the default. 
@@ -351,7 +350,7 @@ Here are some points to bear in mind about rules:
 The default rule set for ClamAV is populated automatically with the following rules:
 
 [cols=",,",options="header",]
-|=======================================================================
+|===
 | Exit Status or Signature | Description | Marks File As
 | 0 | | Clean
 | 1 | | Infected
@@ -373,7 +372,7 @@ The default rule set for ClamAV is populated automatically with the following ru
 | `/.*: OK$/` | | Clean
 | `/.*: (.*) FOUND$/` | | Infected
 | `/.*: (.*) ERROR$/` | | Unchecked
-|=======================================================================
+|===
 
 The rules are always checked in the following order:
 

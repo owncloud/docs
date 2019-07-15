@@ -23,21 +23,21 @@ ownCloud provides two encryption types:
 ==== Activation
 
 [source,console]
-....
+----
 occ maintenance:singleuser --on
 occ app:enable encryption
 occ encryption:enable
 occ encryption:select-encryption-type masterkey -y
-occ encryption:encrypt-all
+occ encryption:encrypt-all --yes
 occ maintenance:singleuser --off
-....
+----
 
 ==== Status
 
 [source,console]
-....
+----
 occ encryption:status
-....
+----
 
 ==== Decryption
 
@@ -45,28 +45,28 @@ Depending on the amount of existing data, this operation can take a long time.
 
 
 [source,console]
-....
+----
 occ maintenance:singleuser --on
 occ encryption:decrypt-all
 occ maintenance:singleuser --off
-....
+----
 
 ==== Deactivation
 
 [source,console]
-....
+----
 occ encryption:disable
 # ignore the "already disabled" message
 occ app:disable encryption
-....
+----
 
 If the master key has been compromised or exposed, you can recreate it. 
 You will need the current master key for it.
 
 [source,console]
-....
+----
 occ encryption:recreate-master-key
-....
+----
 
 [[user-specific-key-encryption]]
 === User-Specific Key
@@ -74,14 +74,14 @@ occ encryption:recreate-master-key
 ==== Activation
 
 [source,console]
-....
+----
 occ maintenance:singleuser --on
 occ app:enable encryption
 occ encryption:enable
 occ encryption:select-encryption-type user-keys
-occ encryption:encrypt-all 
+occ encryption:encrypt-all --yes
 occ maintenance:singleuser --off
-....
+----
 
 After User-specific encryption is enabled, users must log out and log back in to trigger the automatic personal encryption key generation process. 
 
@@ -101,27 +101,27 @@ They need to:
 ==== Status
 
 [source,console]
-....
+----
 occ encryption:status 
-....
+----
 
 ==== Decrypt
 
 [source,console]
-....
+----
 occ maintenance:singleuser --on
 occ encryption:decrypt-all
 #enter **Recovery Key** for **each user**
 # Recovery Key is a password set by the admin
 occ maintenance:singleuser --off
-....
+----
 
 ==== Deactivation
 
 [source,console]
-....
+----
 occ encryption:disable
 # ignore the "already disabled" message
 occ app:disable encryption
-....
+----
 
