@@ -3825,6 +3825,30 @@ If you want to reset (or unset) the setting, then you can use the following comm
 sudo -u www-data php occ config:app:delete user_ldap updateAttributesInterval
 ....
 
+*Reuse Existing LDAP Accounts if Available*
+
+If you want to allow new LDAP logins to attempt to reuse existing `oc_accounts` entries that match the resolved username attribute, and have backend set to `User_Proxy`, then set the `reuse_accounts` config setting to `yes`.
+
+Below is an example of how to do so.
+
+[source,console,subs="attributes+"]
+....
+{occ-command-example-prefix} config:app:set user_ldap reuse_accounts --value=yes
+....
+
+This functionality is valuable for several reasons; these are:
+
+* It handles the situation of when admins mistakenly delete one or more user mappings, and subsequent logins then create new accounts.
+* It allows auto-provisioned users with Shibboleth to be moved over to an LDAP server, but be able to continue using ownCloud.
+
+[IMPORTANT]
+====
+This functionality will not work in the following situations:
+
+. No user or group account exists with the supplied username.
+. A user or group account exists, but it uses a different backend.
+====
+
 === Market
 
 Marketplace URL: https://marketplace.owncloud.com/apps/market[Market]
