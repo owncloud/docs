@@ -126,9 +126,10 @@ sudo service apache2 reload
 
 [source,console,subs="attributes+"]
 ----
-sudo -u {webserver-user} wget -P=/var/www https://download.owncloud.org/community/owncloud-10.2.0.tar.bz2 && \
-  sudo tar -xjf owncloud-10.2.0.tar.bz2 && \
-  sudo chown -R {webserver-user} {install-directory}
+cd /var/www/
+wget https://download.owncloud.org/community/owncloud-10.2.1.tar.bz2 && \
+sudo tar -xjf owncloud-10.2.1.tar.bz2 && \
+sudo chown -R www-data. owncloud
 ----
 
 ==== Install ownCloud
@@ -168,20 +169,30 @@ If you need to sync your users from an LDAP or Active Directory Server, add this
 
 [source,console,subs="attributes+"]
 ----
-echo "*  */6  *  *  * /usr/bin/php -f {install-directory}/cron.php" \
-  > /var/spool/cron/crontabs/{webserver-user}
-sudo -u {webserver-user} chown {webserver-user}.crontab /var/spool/cron/crontabs/{webserver-user}
-sudo -u {webserver-user} chmod 0600 /var/spool/cron/crontabs/{webserver-user}
+echo "*/15  *  *  *  * /usr/bin/php -f /var/www/owncloud/cron.php" > /var/spool/cron/crontabs/www-data
+chown www-data.crontab  /var/spool/cron/crontabs/www-data
+chmod 0600  /var/spool/cron/crontabs/www-data
 ----
 ====
 
 ==== Configure Caching and File Locking
 
-Add this to the existing xref:configuration/server/config_sample_php_parameters.adoc[configuration] in `{install-directory}/config/config.php`.
+Execute these commands:
 
 [source,php]
 ----
-include::{examplesdir}installation/ubuntu/18.04/memcache-configuration.php[]
+occ config:system:set \
+   memcache.local \
+   --value '\OC\Memcache\APCu'
+
+occ config:system:set \
+   memcache.locking \
+   --value '\OC\Memcache\Redis'
+
+occ config:system:set \
+   redis \
+   --value '{"host": "127.0.0.1", "port": "6379"}' \
+   --type json
 ----
 
 === Configure Log Rotation
@@ -200,5 +211,5 @@ include::{examplesdir}installation/ubuntu/18.04/configure-log-rotation.sh[]
 include::{examplesdir}installation/ubuntu/18.04/finalise-install.sh[]
 ----
 
-ownCloud is now installed. 
-You can confirm that it is ready to use by pointing your web browser to your ownCloud installation.
+**ownCloud is now installed. 
+You can confirm that it is ready to use by pointing your web browser to your ownCloud installation.**
