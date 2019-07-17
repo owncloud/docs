@@ -1,6 +1,5 @@
 = Manual Installation on Linux
 :toc: right
-:nginx-app-tracing-url: https://www.nginx.com/blog/application-tracing-nginx-plus/
 :mod_headers-url: https://httpd.apache.org/docs/current/mod/mod_headers.html#page-header
 :page-aliases: installation/source_installation.adoc
 
@@ -21,86 +20,6 @@ See xref:installation/manual_installation.adoc#prerequisites[the prerequisites l
 
 To prepare your Ubuntu 18.04 server for the use with ownCloud, follow xref:installation/server_prep_ubuntu_18.04.adoc[the Ubuntu 18.04 preparation guide].
 
-[[rhel-redhat-enterprise-linux-7.2]]
-=== RHEL (RedHat Enterprise Linux) 7.2
-
-==== Required Extensions
-
-....
-# Enable the RHEL Server 7 repository
-sudo subscription-manager repos --enable rhel-server-rhscl-7-eus-rpms
-
-# Install the required packages
-sudo yum install httpd mariadb-server php72 php72-php php72-php-opcache \
-    php72-php-gd php72-php-mbstring php72-php-mysqlnd
-....
-
-==== Optional Extensions
-
-....
-sudo yum install -y epel-release http://rpms.remirepo.net/enterprise/remi-release-7.rpm yum-utils \
-  && sudo yum-config-manager --enable remi-php72 \
-  && sudo yum update -y \
-  && sudo yum install -y php72-pecl-apcu \
-    redis php72-php-pecl-redis php72-php-ldap \
-    mariadb-server mariadb
-....
-
-=== CentOS 7
-
-....
-sudo yum install -y -q epel-release http://rpms.remirepo.net/enterprise/remi-release-7.rpm yum-utils \
-  && sudo yum-config-manager --enable remi-php72 \
-  && sudo yum update -y -q \
-  && sudo yum install -y -q \
-    httpd mariadb-server php72 php72-php php72-php-gd \
-    php72-php-mbstring php72-php-mysqlnd php72-php-cli \
-    php72-pecl-apcu redis php72-php-pecl-redis php72-php-common php72-php-opcache \
-    php72-php-ldap mariadb-server mariadb \
-  && sudo scl enable php72 bash
-....
-
-[[sles-suse-linux-enterprise-server-12]]
-=== SLES (SUSE Linux Enterprise Server) 12
-
-[[required-extensions-1]]
-==== Required Extensions
-
-....
-sudo zypper install -y apache2 apache2-mod_php7 php7-gd php7-openssl \
-    php7-json php7-curl php7-intl php7-sodium php7-zip php7-zlib
-....
-
-[[optional-extensions-1]]
-==== Optional Extensions
-
-....
-sudo zypper install -y php7-ldap
-....
-
-===== APCu
-
-We are not aware of any officially supported APCu package for SLES 12.
-However, if you want or need to install it, then we suggest the following steps:
-
-....
-wget http://download.opensuse.org/repositories/server:/php:/extensions/SLE_12_SP1/ server:php:extensions.repo -O /etc/zypp/repos.d/memcached.repo
-zypper refresh
-zypper install php5-APCu
-....
-
-===== Redis
-
-The latest versions of Redis servers have shown to be incompatible with SLES 12. 
-Therefore it is currently recommended to download and install version 2.2.7 or a previous release from: https://pecl.php.net/package/redis. 
-Keep in mind that version 2.2.5 is the minimum version which ownCloud supports.
-
-If you want or need to install it, we suggest the following steps:
-
-....
-zypper refresh
-zypper install -y php7-redis
-....
 
 == Install ownCloud
 
@@ -258,19 +177,6 @@ NOTE: Self-signed certificates have their drawbacks - especially when you plan t
 
 https://httpd.apache.org/docs/2.4/mod/prefork.html[Apache prefork] has to be used. 
 Don’t use a threaded `MPM` like `event` or `worker` with `mod_php`, because PHP is currently https://secure.php.net/manual/en/install.unix.apache2.php[not thread safe].
-
-=== Configure NGINX
-
-==== NGINX Unique_Id Configuration
-
-NGINX supports functionality similar to Apache’s mod_unique_id, called {nginx-app-tracing-url}[Application Tracing].
-To enable it, please add the following code to the server block of your ownCloud NGINX configuration.
-
-....
-fastcgi_param UNIQUE_ID $request_id;
-....
-
-TIP: For more details, please refer to {nginx-app-tracing-url}[Application Tracing with NGINX and NGINX Plus].
 
 [[run-the-installation-wizard]]
 == Run the Installation Wizard
