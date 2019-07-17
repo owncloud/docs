@@ -11,15 +11,16 @@ Run the following commands in your terminal to complete the installation.
 == Prerequisites
 
 * A fresh install of https://www.ubuntu.com/download/server[Ubuntu 18.04] with SSH enabled.
+* This guide assumes that you are connected as the root user.
 
 == Preparation
 
 First, ensure that all of the installed packages are entirely up to date.
 
 [source,console,subs="attributes+"]
-....
-sudo apt update && sudo apt upgrade -y
-....
+----
+apt update && apt upgrade -y
+----
 
 === Create the occ Helper Script
 
@@ -35,14 +36,18 @@ cd {install-directory}
 sudo -u {webserver-user} /usr/bin/php {install-directory}/occ "\$@"
 EOM
 
-sudo chmod +x /usr/local/bin/occ
-....
+Make helper script executable:
+
+[source,console,subs="attributes+"]
+----
+chmod +x /usr/local/bin/occ
+----
 
 === Install the Required Packages
 
 [source,console,subs="attributes+"]
-....
-sudo apt install -y \
+----
+apt install -y \
   apache2 \
   libapache2-mod-php7.2 \
   mariadb-server \
@@ -58,12 +63,12 @@ sudo apt install -y \
 === Install the Recommended Packages
 
 [source,console,subs="attributes+"]
-....
-sudo apt install -y \
+----
+apt install -y \
   ssh bzip2 rsync curl jq \
-  sudo inetutils-ping \
-  smbclient php-smbclient coreutils php7.2-ldap
-....
+  inetutils-ping smbclient\
+  php-smbclient coreutils php7.2-ldap
+----
 
 WARNING: Ubuntu 18.04 includes smbclient 4.7.6, which has a known limitation of only using version 1 of the SMB protocol.
 
@@ -74,11 +79,11 @@ WARNING: Ubuntu 18.04 includes smbclient 4.7.6, which has a known limitation of 
 ==== Change the Document Root
 
 [source,console,subs="attributes+"]
-....
-sudo sed -i "s#html#owncloud#" /etc/apache2/sites-available/000-default.conf
+----
+sed -i "s#html#owncloud#" /etc/apache2/sites-available/000-default.conf
 
-sudo service apache2 restart
-....
+service apache2 restart
+----
 
 ==== Create a Virtual Host Configuration
 
@@ -90,10 +95,10 @@ include::{examplesdir}installation/ubuntu/18.04/create-vhost-config.sh[]
 ==== Enable the Virtual Host Configuration
 
 [source,console,subs="attributes+"]
-....
-sudo a2ensite owncloud.conf
-sudo service apache2 reload
-....
+----
+a2ensite owncloud.conf
+service apache2 reload
+----
 
 === Configure the Database
 
@@ -111,20 +116,21 @@ GRANT ALL PRIVILEGES ON owncloud.* \
 ....
 echo "Enabling Apache Modules"
 
-sudo a2enmod dir env headers mime rewrite setenvif
-sudo service apache2 reload
-....
+a2enmod dir env headers mime rewrite setenvif
+service apache2 reload
+----
 
 === Setup ownCloud
 
 ==== Download ownCloud
 
 [source,console,subs="attributes+"]
-....
-sudo -u {webserver-user} wget -P=/var/www https://download.owncloud.org/community/owncloud-10.2.0.tar.bz2 && \
-  sudo tar -xjf owncloud-10.2.0.tar.bz2 && \
-  sudo chown -R {webserver-user} {install-directory}
-....
+----
+cd /var/www/
+wget https://download.owncloud.org/community/owncloud-10.2.1.tar.bz2 && \
+tar -xjf owncloud-10.2.1.tar.bz2 && \
+chown -R www-data. owncloud
+----
 
 ==== Install ownCloud
 
@@ -162,22 +168,32 @@ sudo -u {webserver-user} chmod 0600 /var/spool/cron/crontabs/{webserver-user}
 If you need to sync your users from an LDAP or Active Directory Server, add this additional xref:configuration/server/background_jobs_configuration.adoc[Cron job].
 
 [source,console,subs="attributes+"]
-....
-echo "*  */6  *  *  * /usr/bin/php -f {install-directory}/cron.php" \
-  > /var/spool/cron/crontabs/{webserver-user}
-sudo -u {webserver-user} chown {webserver-user}.crontab /var/spool/cron/crontabs/{webserver-user}
-sudo -u {webserver-user} chmod 0600 /var/spool/cron/crontabs/{webserver-user}
-....
+----
+echo "*/15  *  *  *  * /usr/bin/php -f /var/www/owncloud/cron.php" > /var/spool/cron/crontabs/www-data
+chown www-data.crontab  /var/spool/cron/crontabs/www-data
+chmod 0600  /var/spool/cron/crontabs/www-data
+----
 ====
 
 ==== Configure Caching and File Locking
 
-Add this to the existing xref:configuration/server/config_sample_php_parameters.adoc[configuration] in `{install-directory}/config/config.php`.
+Execute these commands:
 
 [source,php]
-....
-include::{examplesdir}installation/ubuntu/18.04/memcache-configuration.php[]
-....
+----
+occ config:system:set \
+   memcache.local \
+   --value '\OC\Memcache\APCu'
+
+occ config:system:set \
+   memcache.locking \
+   --value '\OC\Memcache\Redis'
+
+occ config:system:set \
+   redis \
+   --value '{"host": "127.0.0.1", "port": "6379"}' \
+   --type json
+----
 
 === Configure Log Rotation
 
@@ -195,5 +211,5 @@ include::{examplesdir}installation/ubuntu/18.04/configure-log-rotation.sh[]
 include::{examplesdir}installation/ubuntu/18.04/finalise-install.sh[]
 ....
 
-ownCloud is now installed. 
-You can confirm that it is ready to use by pointing your web browser to your ownCloud installation.
+**ownCloud is now installed. 
+You can confirm that it is ready to use by pointing your web browser to your ownCloud installation.**
