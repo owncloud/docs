@@ -15,6 +15,35 @@ NOTE: Before ownCloud 10, theming was done via the `config.php` entry `'theme' =
 This is deprecated in ownCloud 10.
 Users who have this entry in their `config.php` should remove it and use a theme app to customize their ownCloud instance instead.
 
+Here are 7 commands to get a theme quickly:
+(adjust the names and paths accordingly)
+
+----
+# 0 You need unzip
+apt install unzip
+
+# 1. Go in your apps folder
+cd /var/www/owncloud/apps
+
+# 2. Download the theme
+wget https://github.com/owncloud/theme-example/archive/master.zip
+
+# 3. Extract the theme
+unzip master.zip
+
+# 4. Rename it
+mv theme-example-master mynewtheme
+
+# 5. Change the app id in the info.xml
+sed -i "s#<id>theme-example<#<id>mynewtheme<#" "mynewtheme/appinfo/info.xml"
+
+# 6. Adjust the permissions
+chown -R www-data. mynewtheme
+
+# 7. Activate your theme
+occ app:enable mynewtheme
+----
+
 Throughout this section of the documentation, for sakes of simplicity,
 it will be assumed that your owncloud installation directory is
 `/owncloud`. If you’re following this guide to create or customise a
