@@ -98,6 +98,9 @@ sudo -u www-data php occ encryption:status
 
 === Decrypt Encrypted Files
 
+If you have an instance with a few users, you can use this example to decrypt the files.
+Note that you have to enter the password for each user manually.
+
 [source,console,subs="attributes+"]
 ....
 sudo -u www-data php occ maintenance:singleuser --on
@@ -108,6 +111,18 @@ sudo -u www-data php occ encryption:decrypt-all
 sudo -u www-data php occ maintenance:singleuser --off
 ....
 
+If you have a large instance with many users, use this to decrypt the files:
+
+* Set the variable as export `OC_RECOVERY_PASSWORD=1111`, then run this set of commands:
+(Replace "1111" with your actual Recovery Key)
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} maintenance:singleuser --on
+sudo -E -u www-data php occ encryption:decrypt-all -m recovery -c yes
+{occ-command-example-prefix} maintenance:singleuser --off
+----
+
 === Deactivate User-Specific Key-based Encryption
 
 [source,console,subs="attributes+"]
@@ -115,5 +130,26 @@ sudo -u www-data php occ maintenance:singleuser --off
 sudo -u www-data php occ encryption:disable
 
 # ignore the "already disabled" message
-sudo -u www-data php occ app:disable encryption
-....
+{occ-command-example-prefix} app:disable encryption
+----
+
+=== Cleanup your database
+
+Access your database, select ownCloud and remove the remaining entries 
+that haven't been automatically removed with this command:
+
+----
+DELETE * FROM oc_appconfig WHERE appid='encryption';
+----
+
+=== Cleanup your storage
+
+Lastly you have to delete all encryption keys on storage by running this command: 
+
+(Modify the path to your data directory according to your installation)
+
+----
+find /var/www/html/owncloud/data -type d -name "files_encryption" -exec rm -R {} +
+----
+
+At this point, keys are deleted from storage. 
