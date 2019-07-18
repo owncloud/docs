@@ -2,7 +2,7 @@
 :toc: right
 :toclevels: 1
 
-include::encryption-types.adoc[leveloffset=+1]
+include::encryption-types.adoc[leveloffset=2]
 
 include::enable-encryption.adoc[leveloffset=+1]
 
@@ -32,7 +32,7 @@ include::enable-encryption.adoc[leveloffset=+1]
 sudo -u www-data php occ encryption:status
 ....
 
-==== Decrypt Encrypted Files
+=== Decrypt Encrypted Files
 
 Depending on the amount of existing data, this operation can take a long time.
 
@@ -43,7 +43,7 @@ sudo -u www-data php occ encryption:decrypt-all
 sudo -u www-data php occ maintenance:singleuser --off
 ....
 
-==== Deactivate Master Key-based Encryption
+=== Deactivate Master Key-based Encryption
 
 [source,console,subs="attributes+"]
 ....
@@ -98,14 +98,15 @@ sudo -u www-data php occ encryption:status
 
 === Decrypt Encrypted Files
 
-If you have an instance with a few users, you can use this example to decrypt the files.
-Note that you have to enter the password for each user manually.
+If you have an instance with a few users, you can use this example to decrypt the files. Note that you have to enter the password for each user manually.
+The ownCloud admin must be certain all users already have enabled the recovery password option in their personal settings page.
 
 [source,console,subs="attributes+"]
-....
-sudo -u www-data php occ maintenance:singleuser --on
-sudo -u www-data php occ encryption:decrypt-all
-#enter **Recovery Key** for **each user**
+----
+{occ-command-example-prefix} maintenance:singleuser --on
+{occ-command-example-prefix} encryption:decrypt-all
+#Choose the "Recovery key" Option
+#Enter **Recovery Key** for **each user**
 
 # Recovery Key is a password set by the admin
 sudo -u www-data php occ maintenance:singleuser --off
@@ -118,6 +119,7 @@ If you have a large instance with many users, use this to decrypt the files:
 
 [source,console,subs="attributes+"]
 ----
+export OC_RECOVERY_PASSWORD=1111
 {occ-command-example-prefix} maintenance:singleuser --on
 sudo -E -u www-data php occ encryption:decrypt-all -m recovery -c yes
 {occ-command-example-prefix} maintenance:singleuser --off
@@ -135,7 +137,7 @@ sudo -u www-data php occ encryption:disable
 
 === Cleanup your database
 
-Access your database, select ownCloud and remove the remaining entries 
+Access your ownCloud database and remove the remaining entries 
 that haven't been automatically removed with this command:
 
 ----
