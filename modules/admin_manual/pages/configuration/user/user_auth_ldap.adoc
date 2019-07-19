@@ -721,6 +721,21 @@ Now you can modify and enable the configuration.
 
 == Performance Tips
 
+=== Filter out Deactivated Users
+
+With this filter you can filter out the deactivated users
+and show only active users.
+
+----
+!(userAccountControl:1.2.840.113556.1.4.803:=2)
+----
+
+Here is what the full filter can look like.
+
+----
+&(|(objectclass=organizationalPerson))(!(userAccountControl:1.2.840.113556.1.4.803:=2))(|(|(memberof=CN=Domain Users,CN=Users,DC=dp,DC=mosreg,DC=ru)(primaryGroupID=513))))
+----
+
 === Caching
 
 Using xref:configuration/server/caching_configuration.adoc[caching] to speed up lookups.
