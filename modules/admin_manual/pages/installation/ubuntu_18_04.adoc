@@ -27,7 +27,7 @@ apt update && apt upgrade -y
 Create a helper script to simplify running xref:configuration/server/occ_command.adoc[occ commands].
 
 [source,console,subs="attributes+"]
-....
+----
 FILE="/usr/local/bin/occ"
 /bin/cat <<EOM >$FILE
 #! /bin/bash
@@ -35,6 +35,7 @@ FILE="/usr/local/bin/occ"
 cd {install-directory}
 sudo -u {webserver-user} /usr/bin/php {install-directory}/occ "\$@"
 EOM
+----
 
 Make helper script executable:
 
@@ -58,7 +59,7 @@ apt install -y \
   php-ssh2 php7.2-xml php7.2-zip \
   php-apcu php-redis redis-server \
   wget
-....
+----
 
 === Install the Recommended Packages
 
@@ -88,9 +89,9 @@ service apache2 restart
 ==== Create a Virtual Host Configuration
 
 [source,console,subs="attributes+"]
-....
+----
 include::{examplesdir}installation/ubuntu/18.04/create-vhost-config.sh[]
-....
+----
 
 ==== Enable the Virtual Host Configuration
 
@@ -103,17 +104,17 @@ service apache2 reload
 === Configure the Database
 
 [source,console,subs="attributes+"]
-....
+----
 mysql -u root -e "CREATE DATABASE IF NOT EXISTS owncloud; \
 GRANT ALL PRIVILEGES ON owncloud.* \
   TO owncloud@localhost \
   IDENTIFIED BY 'password'";
-....
+----
 
 ==== Enable the Recommended Apache Modules
 
 [source,console,subs="attributes+"]
-....
+----
 echo "Enabling Apache Modules"
 
 a2enmod dir env headers mime rewrite setenvif
@@ -135,7 +136,7 @@ chown -R www-data. owncloud
 ==== Install ownCloud
 
 [source,console,subs="attributes+"]
-....
+----
 occ maintenance:install \
     --database "mysql" \
     --database-name "owncloud" \
@@ -143,25 +144,25 @@ occ maintenance:install \
     --database-pass "password" \
     --admin-user "admin" \
     --admin-pass "admin"
-....
+----
 
 ==== Configure ownCloud's Trusted Domains
 
 [source,console,subs="attributes+"]
-....
+----
 myip=$(hostname -I|cut -f1 -d ' ')
 occ config:system:set trusted_domains 1 --value="$myip"
-....
+----
 
 ==== Set Up a Cron Job
 
 [source,console,subs="attributes+"]
-....
+----
 echo "*/15  *  *  *  * /usr/bin/php -f {install-directory}/cron.php" \
   > /var/spool/cron/crontabs/{webserver-user}
 sudo -u {webserver-user} chown {webserver-user}.crontab /var/spool/cron/crontabs/{webserver-user}
 sudo -u {webserver-user} chmod 0600 /var/spool/cron/crontabs/{webserver-user}
-....
+----
 
 [NOTE]
 ====
@@ -200,16 +201,16 @@ occ config:system:set \
 Execute this command to set up {logrotate-url}[log rotation].
 
 [source,console,subs="attributes+"]
-....
+----
 include::{examplesdir}installation/ubuntu/18.04/configure-log-rotation.sh[]
-....
+----
 
 ==== Finalise the Installation 
 
 [source,console,subs="attributes+"]
-....
+----
 include::{examplesdir}installation/ubuntu/18.04/finalise-install.sh[]
-....
+----
 
 **ownCloud is now installed. 
 You can confirm that it is ready to use by pointing your web browser to your ownCloud installation.**
