@@ -1,236 +1,216 @@
-= Server Preparation for Ubuntu 18.04
-:keywords: ubuntu, ubuntu 18.04, apache2, nginx, php-fpm, php, libsodium, mcrypt
-:description: If your Ubuntu 18.04 server is a bare-minimum installation, follow this preparation guide to get it ready to manually install ownCloud.
+= Install ownCloud on Ubuntu 18.04
 :toc: right
-:toclevels: 1
-:hash-installation: http://php.net/manual/en/hash.installation.php
-:mcrypt-link-url: https://websiteforstudents.com/install-php-7-2-mcrypt-module-on-ubuntu-18-04-lts/
-:mcrypt-pecl-url: https://pecl.php.net/package/mcrypt
-:discover-samba-hosts: https://ubuntuforums.org/showthread.php?t=2384959
-:install-mariadb-latest: https://downloads.mariadb.org/mariadb/repositories/#
+:logrotate-url: https://linux.die.net/man/8/logrotate
+:webserver-user: www-data
+:webserver-group: www-data
+:install-directory: /var/www/owncloud
 
-== Web Server and PHP
+This is an ultra-short guide to installing ownCloud on a fresh installation of Ubuntu 18.04.
+Run the following commands in your terminal to complete the installation.
 
-Only *one* of the following web servers is required:
+== Prerequisites
 
-* xref:apache-web-server-and-php-supported[Apache Web Server and PHP (Supported)]
-* xref:apache-web-server-and-php-fpm-unsupported[Apache Web Server and PHP-FPM (Unsupported)]
-* xref:nginx-web-server-and-php-fpm-unsupported[Nginx Web Server and PHP-FPM (Unsupported)]
+* A fresh install of https://www.ubuntu.com/download/server[Ubuntu 18.04] with SSH enabled.
+* This guide assumes that you are connected as the root user.
 
-=== Apache Web Server and PHP (Supported)
+== Preparation
 
-The following command installs the Apache web server and PHP.
+First, ensure that all of the installed packages are entirely up to date.
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-sudo apt install php libapache2-mod-php apache2
+apt update && apt upgrade -y
 ----
 
-=== Apache Web Server and PHP-FPM (Unsupported)
+=== Create the occ Helper Script
 
-The following command installs and enables the Apache web server with php-fpm.
-This setup can be used in high throughput environments. 
+Create a helper script to simplify running xref:configuration/server/occ_command.adoc[occ commands].
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-# Install PHP-FPM and Apache2 
-sudo apt install php-fpm apache2
+FILE="/usr/local/bin/occ"
+/bin/cat <<EOM >$FILE
+#! /bin/bash
 
-# Disable relevant modules
-sudo a2dismod php7.2
-sudo a2dismod mpm_prefork
-sudo a2enmod proxy_fcgi
-
-# Enable the php7.2-fpm configuration
-sudo a2enconf php7.2-fpm
-
-# Enable relevant modules
-sudo a2enmod mpm_event
-sudo a2enmod http2
-
-# Start Apache2
-sudo service apache2 restart
+cd {install-directory}
+sudo -u {webserver-user} /usr/bin/php {install-directory}/occ "\$@"
+EOM
 ----
 
-TIP: For performance comparison details, please refer to https://www.cloudways.com/blog/php-fpm-on-cloud/[this guide from Cloudways].
+Make helper script executable:
 
-For examples of how to configure this setup, please refer to:
-
-* http://httpd.apache.org/docs/2.4/mod/mod_proxy.html#handler[The mod_proxy Access via Handler documentation] 
-* https://httpd.apache.org/docs/2.4/mod/mod_proxy_fcgi.html[The mod_proxy_fcgi documentation] 
-* https://wiki.apache.org/httpd/PHP-FPM[High-performance PHP on apache httpd 2.4.x using mod_proxy_fcgi and php-fpm]
-
-=== Nginx Web Server and PHP-FPM (Unsupported)
-
-To install the Nginx web server and PHP-FPM, run the following command.
-
-[source,console]
+[source,console,subs="attributes+"]
 ----
-sudo apt install php-fpm nginx
+chmod +x /usr/local/bin/occ
 ----
 
-For details of how to configure Nginx, please refer to xref:installation/nginx_configuration.adoc[the NGINX Configuration].
+=== Install the Required Packages
 
-== Common Prerequisites
-
-[source,console]
+[source,console,subs="attributes+"]
 ----
-# Applications suggested for the use with ownCloud
-sudo apt install smbclient
-sudo apt install redis-server
-
-# Applications needed for the use with ownCloud
-sudo apt install unzip
-sudo apt install openssl
-
-# PHP extensions needed to use ownCloud
-sudo apt install php-mysql php-mbstring php-gettext php-intl php-redis \
-     php-imagick php-igbinary php-gmp php-curl php-gd php-zip php-imap \
-     php-ldap php-bz2 php-phpseclib
+apt install -y \
+  apache2 \
+  libapache2-mod-php7.2 \
+  mariadb-server \
+  openssl \
+  php-imagick php7.2-common php7.2-curl \
+  php7.2-gd php7.2-imap php7.2-intl \
+  php7.2-json php7.2-mbstring php7.2-mysql \
+  php-ssh2 php7.2-xml php7.2-zip \
+  php-apcu php-redis redis-server \
+  wget
 ----
 
-If you want to retrieve a list of enabled PHP extensions run following command:
+=== Install the Recommended Packages
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-ls `php -i | grep "^extension_dir" | sed -e 's/.*=> //'`
-----
-
-== HASH Message Digest Framework
-
-This framework does not need manual intervention anymore, because
-
-* as of PHP 5.1.2, the Hash extension is bundled and compiled into PHP by default.
-* as of PHP 7.4.0, the Hash extension is a core PHP extension, so it is always enabled.
-
-For more information refer to {hash-installation}[PHP's Hash Installation documentation].
-
-== Exif Library
-
-This library _should_ be already as part of PHP 7.2. +
-However, you can check if it is by running the following command.
-
-[source,console]
-----
-grep -q -P 'EXIF Support => enabled' <(php -i) && echo "Exif is installed and enabled"
+apt install -y \
+  ssh bzip2 rsync curl jq \
+  inetutils-ping smbclient\
+  php-smbclient coreutils php7.2-ldap
 ----
 
-== PHP 7.2 Cryptography Library
+WARNING: Ubuntu 18.04 includes smbclient 4.7.6, which has a known limitation of only using version 1 of the SMB protocol.
 
-The sodium and OpenSSL PHP libraries are cryptographic libraries which are part of the PHP 7.2 core.
-Consequently, there is no need to install additional cryptographic libraries, such as `php-libsodium` or `mcrypt`.
+== Installation
 
-NOTE: The `mcrypt` library is deprecated and removed from the PHP 7.2 core. However, it is available via PECL.
+=== Configure Apache
 
-=== php-libsodium
+==== Change the Document Root
 
-If you see the message `PHP Fatal error: sodium_init() in Unknown on line 0` when invoking the command `php -v` or when running PHP programs, `php-libsodium` might be installed.
-This error does not do any harm, but it can be annoying and will fill up your logs.
-
-To prevent it, you have to uninstall `php-libsodium`.
-You can do this by running the following command.
-
-[source,console]
+[source,console,subs="attributes+"]
 ----
-sudo apt remove php-libsodium
+sed -i "s#html#owncloud#" /etc/apache2/sites-available/000-default.conf
+
+service apache2 restart
 ----
 
-You can check success by invoking the command `php -v` which should not return this error message anymore.
-You can also check the existence of `sodium` with following command:
+==== Create a Virtual Host Configuration
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-grep -P "sodium support => enabled" <( php -i )
-----
-
-=== Mcrypt PHP Library
-
-Here are the steps for installing Mcrypt — when it is explicitly necessary.
-
-NOTE: Some of the steps were borrowed from the Website for Student’s {mcrypt-link-url}[guide to installing the PHP 7.2-Mcrypt module].
-
-First, determine the Mcrypt version you want to use in {mcrypt-pecl-url}[PECL's Mcrypt documentation].
-Then, run the following commands to install it.
-
-[source,console]
-----
-sudo apt install php-dev libmcrypt-dev php-pear
-sudo pecl channel-update pecl.php.net
-sudo pecl install mcrypt-<desired mcrypt version>
+include::{examplesdir}installation/ubuntu/18.04/create-vhost-config.sh[]
 ----
 
-When the commands complete, you then have to:
+==== Enable the Virtual Host Configuration
 
-* Create `/etc/php/7.2/mods-available/mcrypt.ini` with the following content: `extension=mcrypt.so`.
-* Enable the module by running `phpenmod mcrypt`.
-* Restart php-fpm and your web server, by running the following commands:
-+
-  sudo service php7.2-fpm restart
-  sudo service nginx restart
-
-== libsmbclient-php Library
-
-`libsmbclient-php` is a PHP extension that uses Samba's libsmbclient library to provide
-Samba-related functions to PHP programs. You only need to install it, if you have
-installed `smbclient` as described above. To install it, run the following commands.
-
-[source,console]
+[source,console,subs="attributes+"]
 ----
-sudo apt install php-dev libsmbclient-dev php-pear
-sudo pecl channel-update pecl.php.net
-sudo pecl install smbclient
+a2ensite owncloud.conf
+service apache2 reload
 ----
 
-When the commands complete, you then have to:
+=== Configure the Database
 
-- Create `/etc/php/7.2/mods-available/smbclient.ini` with following content `extension=smbclient.so`.
-- Enable the module by running `phpenmod smbclient`.
-- Restart PHP and your web server by running the following command:
-+
-  sudo service php7.2-fpm restart
-  sudo service apache2 restart
+[source,console,subs="attributes+"]
+----
+mysql -u root -e "CREATE DATABASE IF NOT EXISTS owncloud; \
+GRANT ALL PRIVILEGES ON owncloud.* \
+  TO owncloud@localhost \
+  IDENTIFIED BY 'password'";
+----
+
+==== Enable the Recommended Apache Modules
+
+[source,console,subs="attributes+"]
+----
+echo "Enabling Apache Modules"
+
+a2enmod dir env headers mime rewrite setenvif
+service apache2 reload
+----
+
+=== Setup ownCloud
+
+==== Download ownCloud
+
+[source,console,subs="attributes+"]
+----
+cd /var/www/
+wget https://download.owncloud.org/community/owncloud-10.2.1.tar.bz2 && \
+tar -xjf owncloud-10.2.1.tar.bz2 && \
+chown -R www-data. owncloud
+----
+
+==== Install ownCloud
+
+[source,console,subs="attributes+"]
+----
+occ maintenance:install \
+    --database "mysql" \
+    --database-name "owncloud" \
+    --database-user "owncloud" \
+    --database-pass "password" \
+    --admin-user "admin" \
+    --admin-pass "admin"
+----
+
+==== Configure ownCloud's Trusted Domains
+
+[source,console,subs="attributes+"]
+----
+myip=$(hostname -I|cut -f1 -d ' ')
+occ config:system:set trusted_domains 1 --value="$myip"
+----
+
+==== Set Up a Cron Job
+
+[source,console,subs="attributes+"]
+----
+echo "*/15  *  *  *  * /usr/bin/php -f {install-directory}/cron.php" \
+  > /var/spool/cron/crontabs/{webserver-user}
+sudo -u {webserver-user} chown {webserver-user}.crontab /var/spool/cron/crontabs/{webserver-user}
+sudo -u {webserver-user} chmod 0600 /var/spool/cron/crontabs/{webserver-user}
+----
 
 [NOTE]
 ====
-Due to a change in the minimum protocol version used in the samba client in Ubuntu 18.04, you may not get a valid connection in ownCloud
-This error is identified by a red box at the mount definition or being unable to list directory content.
-In this case, you have to add the following to `/etc/samba/smb.cnf`, below the `workgroup =` statement:
+If you need to sync your users from an LDAP or Active Directory Server, add this additional xref:configuration/server/background_jobs_configuration.adoc[Cron job].
 
-`client max protocol = NT1`
-
-For more information see: {discover-samba-hosts}[Bionic Beaver can not discover Samba hosts]
+[source,console,subs="attributes+"]
+----
+echo "*/15  *  *  *  * /usr/bin/php -f /var/www/owncloud/cron.php" > /var/spool/cron/crontabs/www-data
+chown www-data.crontab  /var/spool/cron/crontabs/www-data
+chmod 0600  /var/spool/cron/crontabs/www-data
+----
 ====
 
-== MariaDB Database
+==== Configure Caching and File Locking
 
-For how to install the latest stable release of MariaDB, please refer to {install-mariadb-latest}[the MariaDB installation documentation].
+Execute these commands:
 
-NOTE: During the installation of the MariaDB server, you will be prompted to create a root
-password. Be sure to remember your password as you will need it during ownCloud database setup.
-
-If you want to install phpMyAdmin as a graphical interface for administrating the database, run the following command:
-
-[source,console]
+[source,php]
 ----
-sudo apt install phpmyadmin
+occ config:system:set \
+   memcache.local \
+   --value '\OC\Memcache\APCu'
+
+occ config:system:set \
+   memcache.locking \
+   --value '\OC\Memcache\Redis'
+
+occ config:system:set \
+   redis \
+   --value '{"host": "127.0.0.1", "port": "6379"}' \
+   --type json
 ----
 
-== Useful Tips
+=== Configure Log Rotation
 
-=== Start a Service after a Resource is Mounted
+Execute this command to set up {logrotate-url}[log rotation].
 
-If you have network resources, such as NFS based mounts, and you want to make sure that the database or web server only starts _after_ the resource is mounted, consider the following example to help configure your system correctly.
+[source,console,subs="attributes+"]
+----
+include::{examplesdir}installation/ubuntu/18.04/configure-log-rotation.sh[]
+----
 
-The example is based on an NFS mount which you want to be available before the service with <name.service> starts.
+==== Finalise the Installation 
 
-- Using the example below, add `_netdev` to the list of NFS mountpoint options in `/etc/fstab`.
-This option ensures that the mount will happen __after__ the network is up.
-`resource:path on local_path type nfs (<your options>,_netdev)`
-- Make sure that all mounts in `/etc/fstab` are mounted by running `sudo mount -a`.
-- Run `systemctl list-units | grep -nP "\.mount"` and look for the mount you want to be up.
-You should see the following printed to the console: `<folder.mount> loaded active mounted <local_path>`, where `folder.mount` and `local_path` are examples. 
-- In `/etc/systemd/system/<name.service>` add `folder.mount` after the directive `After=network.target`
-For example: `After=network.target folder.mount`.
-- Run `sudo systemctl daemon-reload`
-- Restart your service by invoking `sudo system <your service> restart`.
+[source,console,subs="attributes+"]
+----
+include::{examplesdir}installation/ubuntu/18.04/finalise-install.sh[]
+----
 
+**ownCloud is now installed. 
+You can confirm that it is ready to use by pointing your web browser to your ownCloud installation.**
