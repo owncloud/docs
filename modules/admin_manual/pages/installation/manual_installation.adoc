@@ -29,15 +29,15 @@ Now download the archive of the latest ownCloud version:
 * Download its corresponding checksum file, e.g., owncloud-x.y.z.tar.bz2.md5, or owncloud-x.y.z.tar.bz2.sha256.
 * Verify the MD5 or SHA256 sum:
 +
-....
+----
 md5sum -c owncloud-x.y.z.tar.bz2.md5 < owncloud-x.y.z.tar.bz2
 sha256sum -c owncloud-x.y.z.tar.bz2.sha256 < owncloud-x.y.z.tar.bz2
 md5sum  -c owncloud-x.y.z.zip.md5 < owncloud-x.y.z.zip
 sha256sum  -c owncloud-x.y.z.zip.sha256 < owncloud-x.y.z.zip
-....
+----
 * You may also verify the PGP signature:
 +
-....
+----
 wget https://download.owncloud.org/community/owncloud-x.y.z.tar.bz2.asc
 wget https://owncloud.org/owncloud.asc
 gpg --import owncloud.asc
@@ -47,7 +47,7 @@ gpg --verify owncloud-x.y.z.tar.bz2.asc owncloud-x.y.z.tar.bz2
 * Now you can extract the archive contents. 
   Run the appropriate unpacking command for your archive type:
 +
-....
+----
 tar -xjf owncloud-x.y.z.tar.bz2
 unzip owncloud-x.y.z.zip
 ----
@@ -56,15 +56,15 @@ unzip owncloud-x.y.z.zip
   Copy the ownCloud directory to its final destination. 
   When you are running the Apache HTTP server, you may safely install ownCloud in your Apache document root:
 +
-....
+----
 cp -r owncloud /path/to/webserver/document-root
-....
+----
 +
 where `/path/to/webserver/document-root` is replaced by the document root of your Web server:
 +
-....
+----
 cp -r owncloud /var/www
-....
+----
 
 On other HTTP servers, it is recommended to install ownCloud outside of the document root.
 
@@ -75,7 +75,7 @@ On other HTTP servers, it is recommended to install ownCloud outside of the docu
 On Debian, Ubuntu, and their derivatives, Apache installs with a useful configuration, so all you have to do is create an `/etc/apache2/sites-available/owncloud.conf` file with these lines in it, replacing the *Directory* and other file paths with your own file paths:
 
 [source,apache]
-....
+----
 Alias /owncloud "/var/www/owncloud/"
 
 <Directory /var/www/owncloud/>
@@ -90,13 +90,13 @@ Alias /owncloud "/var/www/owncloud/"
  SetEnv HTTP_HOME /var/www/owncloud
 
 </Directory>
-....
+----
 
 Then create a symlink to /etc/apache2/sites-enabled:
 
-....
+----
 ln -s /etc/apache2/sites-available/owncloud.conf /etc/apache2/sites-enabled/owncloud.conf
-....
+----
 
 ==== Additional Apache Configurations
 
@@ -105,13 +105,13 @@ Enable it by running: `a2enmod rewrite`.
 Additionally recommended modules are `mod_headers`, `mod_env`, `mod_dir`, `mod_mime`, and `mod_unique_id`.
 To enable them, run the following commands:
 +
-....
+----
   a2enmod headers
   a2enmod env
   a2enmod dir
   a2enmod mime
   a2enmod unique_id
-....
+----
 +
 NOTE: If you want to use https://marketplace.owncloud.com/apps/oauth2[the OAuth2 app], then http://httpd.apache.org/docs/current/mod/mod_headers.html[mod_headers] must be installed and enabled.
 
@@ -119,7 +119,7 @@ NOTE: If you want to use https://marketplace.owncloud.com/apps/oauth2[the OAuth2
   If you have turned on authentication on a parent folder (via, e.g., an `AuthType Basic` directive), you can disable the authentication specifically for the ownCloud entry. 
   Following the above example configuration file, add the following line in the `<Directory` section
 +
-....
+----
 Satisfy Any
 ----
 
@@ -129,7 +129,7 @@ Satisfy Any
 
 * Now restart Apache
 +
-....
+----
 service apache2 restart
 ----
 
@@ -151,9 +151,9 @@ Next, compare the value set for `UNIQUE_ID` in the output of `phpinfo()` with th
 In the example below, you can see an example log entry, where ownCloud is logging the unique id provided by Apache, as the value for the first key `reqId` in the record.
 
 [source,json]
-....
+----
 include::{examplesdir}installation/webservers/apache/log-entry.json[]
-....
+----
 
 === Enable SSL
 
@@ -162,11 +162,11 @@ NOTE: You can use ownCloud over plain HTTP, but we strongly encourage you to use
 Apache installed under Ubuntu comes already set-up with a simple self-signed certificate. 
 All you have to do is to enable the `ssl` module and the default site. Open a terminal and run:
 
-....
+----
 a2enmod ssl
 a2ensite default-ssl
 service apache2 reload
-....
+----
 
 NOTE: Self-signed certificates have their drawbacks - especially when you plan to make your ownCloud server publicly accessible. You might want to consider getting a certificate signed by a commercial signing authority. Check with your domain name registrar or hosting service for good deals on commercial certificates.
 
@@ -183,9 +183,9 @@ To enable this, temporarily change the ownership on your ownCloud directories to
 
 TIP: Refer to the xref:set-strong-directory-permissions[Set Strong Directory Permissions] section to learn how to find your HTTP user):
 
-....
+----
 chown -R www-data:www-data /var/www/owncloud/
-....
+----
 
 NOTE: Admins of SELinux-enabled distributions may need to write new SELinux rules to complete their ownCloud installation; see xref:installation/configuration_notes_and_tips.adoc#config-notes-and-tips-selinux[the SELinux guide] for a suggested configuration.
 
