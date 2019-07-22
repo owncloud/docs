@@ -1,0 +1,141 @@
+= OCS TOTP (Time-based One-time Password) Validation API
+:toc: right
+:toclevels: 1
+:request-base-path: ocs/v1.php/apps/twofactor_totp/api/v1/validate
+:2fa-app-url: https://marketplace.owncloud.com/apps/twofactor_totp
+:totp-url: https://en.wikipedia.org/wiki/Time-based_One-time_Password_algorithm
+
+== Introduction
+
+The OCS {totp-url}[TOTP (Time-based One-time Password)] Validation API allows administrator users to validate if a TOTP is valid.
+
+IMPORTANT: Only admin accounts can use this API.
+
+IMPORTANT: When {2fa-app-url}[2FA (Two-Factor Authentication)] is activated on an account, authorization with a username and password is not possible. 
+Requests must authenticate via xref:user_manual:session_management.adoc:app-passwords[app passwords]. 
+
+== Prerequisites
+
+This API requires {2fa-app-url}[the 2-Factor Authentication app] to be installed and enabled.
+
+== Validate TOTP
+
+* Path: `{request-base-path}/<userid>/<totp>`
+* Method: `GET`
+
+=== Request Parameters
+
+[cols="15%,15%,70%",options="header",width=100%]
+|===
+|Attribute 
+|Type 
+|Description
+
+|`userid` 
+|string 
+|The user id of the user to validate the TOTP for.
+
+|`totp` 
+|string 
+|The TOTP to validate.
+|===
+
+=== Code Example
+
+[tabs]
+====
+Curl::
++
+--
+[source,console,subs="attributes+"]
+----
+include::{examplesdir}core/scripts/curl/ocs/validate-totp.sh[]
+----
+--
+====
+
+=== Returns
+
+The request returns either an XML (the default) or a JSON response, along with an `HTTP 200 OK` status code, which show whether:
+
+. The TOTP is valid 
+. The TOTP is invalid 
+. The user was not found
+
+The status of the TOTP is located in the `ocs/data/result` element.
+If the user was not found, then:
+
+. `ocs/meta/status` will be set to `failure`.
+. `ocs/meta/statuscode` will be set to `404`.
+
+=== Example Responses
+
+==== TOTP Is Valid
+
+[tabs]
+====
+JSON::
++
+--
+[source,console,subs="attributes+"]
+----
+include::{examplesdir}core/apis/ocs/totp-validation/responses/json/totp-is-valid.json[]
+----
+--
+
+XML::
++
+--
+[source,console,subs="attributes+"]
+----
+include::{examplesdir}core/apis/ocs/totp-validation/responses/json/totp-is-valid.json[]
+----
+--
+====
+
+==== TOTP Is Not Valid
+
+[tabs]
+====
+JSON::
++
+--
+[source,console,subs="attributes+"]
+----
+include::{examplesdir}core/apis/ocs/totp-validation/responses/xml/totp-is-valid.xml[]
+----
+--
+
+XML::
++
+--
+[source,console,subs="attributes+"]
+----
+include::{examplesdir}core/apis/ocs/totp-validation/responses/xml/totp-is-valid.xml[]
+----
+--
+====
+
+==== User or Secret Not Found
+
+[tabs]
+====
+JSON::
++
+--
+[source,console,subs="attributes+"]
+----
+include::{examplesdir}core/apis/ocs/totp-validation/responses/json/totp-user-is-not-valid.json[]
+----
+--
+
+XML::
++
+--
+[source,console,subs="attributes+"]
+----
+include::{examplesdir}core/apis/ocs/totp-validation/responses/xml/totp-user-is-not-valid.xml[]
+----
+--
+====
+
