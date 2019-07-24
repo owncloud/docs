@@ -1,0 +1,220 @@
+= Full Text Search 
+:page-partial:
+
+Use these commands when you manage full text search related tasks.
+
+== Command Description
+
+[source,console]
+----
+search
+  search:index:create    Create initial Search Index for one or all users. 
+                         This command could not update the search index correctly 
+                         after the initial indexing.
+  search:index:rebuild   Rebuild the search index for a given User. 
+                         If you want to rebuild the whole index, run "search:index:reset" 
+                         and then "search:index:build --all"
+  search:index:reset     Reset the index
+  search:index:update    Update the search index by running all pending background jobs.
+----
+
+== Create the Full Text Search Index
+
+The command `search:index:create` creates the initial full text search index for one, or all, users. 
+
+[source="console",subs="attributes+"]
+----
+{occ-command-example-prefix} search:index:create <user_id> (<user_id>)...
+----
+
+=== Arguments
+
+[width="100%",cols="20%,70%",subs="attributes+"]
+|===
+| `<user_id>` 
+| The id of the user (or space-separated list of user ids) to create a full text search index for. 
+A full text search index is created for all users, if this value is omitted.
+|===
+
+=== Example 1
+
+This example creates a full text search index for the user with user id `testuser`.
+
+[source,console,subs="attributes"]
+----
+{occ-command-example-prefix} search:index:create testuser
+
+Indexing user testuser
+----
+
+=== Example 2
+
+This example creates a full text search index for the users with user ids `admin` and `testuser`.
+
+[source,console,subs="attributes"]
+----
+{occ-command-example-prefix} search:index:create admin testuser
+
+Indexing user admin
+Indexing user testuser
+----
+
+== Rebuild the Full Text Search Index
+
+The command `search:index:rebuild` rebuilds the full text search index for one, multiple, or all users. 
+
+[source="console",subs="attributes+"]
+----
+{occ-command-example-prefix} search:index:rebuild <user_id> (<user_id>)...
+----
+
+=== Arguments
+
+[width="100%",cols="20%,70%",subs="attributes+"]
+|===
+| `<user_id>` 
+| The id of the user (or space-separated list of user ids) to rebuild a full text search index for.
+| `--all` 
+| Rebuild the index for _all_ users.
+| `-f` `--force` 
+| Use this option to reset the index without further questions.
+|===
+
+=== Example 1
+
+This example rebuilds the full text search index for the user with user id `testuser`.
+
+.Rebuild the index for a single user
+[source="console",subs="attributes"]
+----
+{occ-command-example-prefix} search:index:rebuild testuser
+
+Indexing user testuser
+
+This will delete all full text search index data for testuser! Do you want to proceed?
+  [0] no
+  [1] yes
+ > 1
+Rebuilding full text search Index for testuser
+----
+
+=== Example 2
+
+This example rebuilds the full text search index for the users with user ids `admin` and `testuser`.
+
+.Rebuild the index for multiple users
+[source="console"]
+----
+docker-compose exec owncloud occ search:index:rebuild admin testuser                                                                                           
+This will delete all search index data for admin, testuser! Do you want to proceed?
+  [0] no
+  [1] yes
+ > 1
+Rebuilding Search Index for admin
+Rebuilding Search Index for testuser
+----
+
+=== Rebuild the Entire Index
+
+The entire index can be rebuilt by running the following two commands:
+
+[source="console",subs="attributes+"]
+----
+{occ-command-example-prefix} search:index:reset
+{occ-command-example-prefix} search:index:build --all
+----
+
+== Reset the Full Text Search Index
+
+The command `search:index:reset` resets (recreates and clears) the full text search index for all users.
+
+[source="console",subs="attributes+"]
+----
+{occ-command-example-prefix} search:index:reset
+----
+
+=== Arguments
+
+[width="100%",cols="20%,70%",subs="attributes+"]
+|===
+| `-f` `--force` 
+| Use this option to reset the index without further questions.
+|===
+
+=== Example
+
+[source,console,subs="attributes"]
+----
+{occ-command-example-prefix} search:index:reset
+This will delete the whole search index! Do you want to proceed?
+  [0] no
+  [1] yes
+ > 1
+Search index has been reset.
+----
+
+== Update the Full Text Search Index
+
+The command `search:index:update` updates the full text search index by running all pending background jobs.
+
+[source="console",subs="attributes+"]
+----
+{occ-command-example-prefix} search:index:update
+----
+
+=== Arguments
+
+[width="100%",cols="20%,70%",subs="attributes+"]
+|===
+| `-q` `--quiet` 
+| Suppress all output from the command.
+|===
+
+=== Example
+
+This example updates the full text search index for all users.
+
+[source,console,subs="attributes"]
+----
+{occ-command-example-prefix} search:index:update
+Start Updating the Elastic search index:
+No pending jobs found.
+
+----
+
+== Enable and Disable App Mode
+
+To do an initial full indexing without the full text search_elastic app interfering, it can be put in passive mode.
+
+[source="console",subs="attributes+"]
+----
+{occ-command-example-prefix} config:app:set search_elastic mode \
+    --value passive
+----
+
+When the search_elastic app is in passive mode:
+
+* The administrator will be able to run occ commands.
+* The search_elastic app will not index any changes by itself.
+* Search results will still be based on the core search. 
+
+Switching back to active mode can be done by running the following command:
+
+[source="console",subs="attributes+"]
+----
+{occ-command-example-prefix} config:app:set search_elastic mode \
+    --value active
+----
+
+== Configure Full Text Search to Only Index Metadata
+
+If you only want to use the search_elastic app as a more scalable filenames search, you can disable content indexing by setting `nocontent` to `true` (default is `false`), as in the example below.
+
+[source="console",subs="attributes+"]
+----
+{occ-command-example-prefix} config:app:set search_elastic nocontent --value true
+----
+
+NOTE: if this setting is reverted to false after being set to true, all files must be reindexed. 
+Setting it to `true` does _not_ require reindexing. 
+
