@@ -1,125 +1,46 @@
 = OCS Share API
 :toc: right
 :page-aliases: core/ocs-share-api.adoc
+:endpoint-uri: /ocs/v1.php/apps/files_sharing/api/v1/shares/pending
 
 == Introduction
 
-The OCS Share API allows you to access the sharing API from outside over
-pre-defined OCS calls.
-
-The base URL for all calls to the share API is: _<owncloud_base_url>/ocs/v1.php/apps/files_sharing/api/v1_
+The OCS Share API allows you to access the sharing API from outside over pre-defined OCS calls.
+The base URL for all calls to the share API is: `{endpoint-uri}`.
 
 == Local Shares
 
 === Get All Shares
 
-Get all shares from the user.
+Get all shares shared with a user.
 
-* Syntax: /shares
-* Method: GET
-
-[cols=",,",options="header",]
-|==========================
-| Attribute | Type | Description
-| `shared_with_me` | boolean | Returns all shares shared with the sharee.
-|==========================
-
-==== Returns
-
-XML with all shares
-
-==== Status Codes
-
-[cols=",",options="header",]
-|==========================
-| Code | Description
-| 100 | Successful
-| 404 | Couldn't fetch shares
-| 997 | Unauthorised
-|==========================
-
-==== Code Example
-
-[tabs]
-====
-Curl::
-+
---
-[source,console]
-----
-include::{examplesdir}core/scripts/curl/list-all-shares.sh[]
-----
---
-PHP::
-+
---
-[source,php]
-----
-include::{examplesdir}core/scripts/php/list-all-shares.php[]
-----
---
-Ruby::
-+
---
-[source,ruby]
-----
-include::{examplesdir}core/scripts/ruby/list-all-shares.rb[]
-----
---
-Go::
-+
---
-[source,go]
-----
-include::{examplesdir}core/scripts/go/list-all-shares.go[]
-----
---
-====
-
-==== Example Request Response Payloads
-
-If the user that you're connecting with is not authorized, then you will
-see output similar to the following:
-
-[source,xml]
-----
-include::{examplesdir}core/scripts/responses/not-authorised-response.xml[]
-----
-
-If the user that you're connecting with is authorized, then you will see
-output similar to the following:
-
-[source,xml]
-----
-include::{examplesdir}core/scripts/responses/shares/get-all-shares-success-no-shares.xml[]
-----
-
-=== Get Shares From A Specific File Or Folder
-
-Get all shares from a given file or folder.
-
-* Syntax: /shares
-* Method: GET
+[cols="20%,80%"]
+|===
+|*Endpoint* |`{endpoint-uri}`
+|*Method* |GET
+|===
 
 ==== Request Attributes
 
 [cols="20%,15%,65%",options="header",]
 |===
-|Attribute 
-|Type 
+|Attribute
+|Type
 |Description
 
 |`format`
 |string
-|sets the output format of the response. Default value is xml. Available options are `xml` and `json`.
+|sets the output format of the response.
+Default value is `xml`.
+Available options are `xml` and `json`.
 
-|`path` 
-|string 
-|path to file/folder
+|`path`
+|string
+|limit the shares to those in a specific path.
 
-|`reshares` 
-|boolean 
-|returns not only the shares from the current user but all shares from the given file.
+|`reshares`
+|boolean
+|returns not only the shares shared with the current user but all shares.
 
 |`shared_with_me`
 |string
@@ -127,19 +48,62 @@ Get all shares from a given file or folder.
 
 |`state`
 |string
-a|limits the returned shares to only those with the specified state. 
+a|limits the returned shares to only those with the specified state.
 Available options are `accepted`, `all`, `declined`, `pending`, and `rejected`.
 
 NOTE: This attribute is only valid when `shared_with_me` is set.
 
 NOTE: `declined` and `rejected` are interchangeable.
 
-|`subfiles` 
-|boolean 
+|`subfiles`
+|boolean
 |returns all shares within a folder, given that path defines a folder.
+This option requires the path option to be specified.
 |===
 
-Mandatory fields: path
+==== Status Codes
+
+[cols="20%,80%",options="header",]
+|===
+| Code | Description
+| 100 | Successful.
+| 400 | Not a directory (if the `subfile' argument was used).
+| 404 | Couldn't fetch shares or file doesn't exist.
+| 997 | Unauthorised.
+|===
+
+==== Example Request Response Payloads
+
+If the user that you're connecting with is not authorized, then you will see output similar to the following:
+
+[source,xml]
+----
+include::{examplesdir}core/scripts/responses/not-authorised-response.xml[]
+----
+
+If the user that you're connecting with _is_ authorized, then you will see output similar to the following:
+
+[source,xml]
+----
+include::{examplesdir}core/scripts/responses/shares/get-all-shares-success-no-shares.xml[]
+----
+
+[source,xml]
+----
+include::{examplesdir}core/scripts/responses/shares/list-share-details-failure.xml[]
+----
+
+.Files shared with the current user in XML format.
+[source,xml]
+----
+include::{examplesdir}core/scripts/responses/shares/list-share-details-success.xml[]
+----
+
+.Files shared with the current user in JSON format.
+[source,json]
+----
+include::{examplesdir}core/scripts/responses/shares/list-share-details-success.json[]
+----
 
 ==== Code Example
 
@@ -148,7 +112,7 @@ Mandatory fields: path
 Curl::
 +
 --
-[source,console]
+[source,console,subs="attributes+"]
 ----
 include::{examplesdir}core/scripts/curl/list-share-details.sh[]
 ----
@@ -156,7 +120,7 @@ include::{examplesdir}core/scripts/curl/list-share-details.sh[]
 PHP::
 +
 --
-[source,php]
+[source,php,subs="attributes+"]
 ----
 include::{examplesdir}core/scripts/php/list-share-details.php[]
 ----
@@ -164,7 +128,7 @@ include::{examplesdir}core/scripts/php/list-share-details.php[]
 Ruby::
 +
 --
-[source,ruby]
+[source,ruby,subs="attributes+"]
 ----
 include::{examplesdir}core/scripts/ruby/list-share-details.rb[]
 ----
@@ -172,73 +136,46 @@ include::{examplesdir}core/scripts/ruby/list-share-details.rb[]
 Go::
 +
 --
-[source,go]
+[source,go,subs="attributes+"]
 ----
 include::{examplesdir}core/scripts/go/list-share-details.go[]
 ----
 --
 ====
 
-==== Example Request Response Payloads
-
-Failure
-
-[source,xml]
-----
-include::{examplesdir}core/scripts/responses/shares/list-share-details-failure.xml[]
-----
-
-Success
-
-[source,xml]
-----
-include::{examplesdir}core/scripts/responses/shares/list-share-details-success.xml[]
-----
-
-==== Status Codes
-
-[cols=",",options="header",]
-|=========================================================
-| Code | Description
-| 100 | Successful
-| 400 | Not a directory (if the `subfile' argument was used)
-| 404 | File doesn't exist
-|=========================================================
-
 === Get Information About A Known Share
 
-Get information about a given share.
+[cols="20%,80%"]
+|===
+|Endpoint |`{endpoint-uri}/<share_id>`
+|Method |GET
+|===
 
-* Syntax: /shares/<share_id>
-* Method: GET
+==== Supported Attributes
 
 [cols=",,",options="header",]
-|====================================
+|===
 | Attribute | Type | Description
 | share_id | int | The share's unique id
-|====================================
+|===
 
-==== Returns
+==== Response Status Codes
 
-XML with the share information
-
-==== Status Codes
-
-[cols=",",options="header",]
-|========================
+[cols="20%,80%",options="header",]
+|===
 | Code | Description
 | 100 | Successful
 | 404 | Share doesn't exist
-|========================
+|===
 
-==== Code Example
+==== Code Examples
 
 [tabs]
 ====
 Curl::
 +
 --
-[source,console]
+[source,console,subs="attributes+"]
 ----
 include::{examplesdir}core/scripts/curl/get-share-info.sh[]
 ----
@@ -246,7 +183,7 @@ include::{examplesdir}core/scripts/curl/get-share-info.sh[]
 PHP::
 +
 --
-[source,php]
+[source,php,subs="attributes+"]
 ----
 include::{examplesdir}core/scripts/php/get-share-info.php[]
 ----
@@ -254,7 +191,7 @@ include::{examplesdir}core/scripts/php/get-share-info.php[]
 Ruby::
 +
 --
-[source,ruby]
+[source,ruby,subs="attributes+"]
 ----
 include::{examplesdir}core/scripts/ruby/get-share-info.rb[]
 ----
@@ -262,7 +199,7 @@ include::{examplesdir}core/scripts/ruby/get-share-info.rb[]
 Go::
 +
 --
-[source,go]
+[source,go,subs="attributes+"]
 ----
 include::{examplesdir}core/scripts/go/get-share-info.go[]
 ----
@@ -270,7 +207,7 @@ include::{examplesdir}core/scripts/go/get-share-info.go[]
 Kotlin::
 +
 --
-[source,kotlin]
+[source,kotlin,subs="attributes+"]
 ----
 include::{examplesdir}core/scripts/kotlin/get-share-info.kt[]
 ----
@@ -278,7 +215,7 @@ include::{examplesdir}core/scripts/kotlin/get-share-info.kt[]
 Java::
 +
 --
-[source,java]
+[source,java,subs="attributes+"]
 ----
 include::{examplesdir}core/scripts/java/get-share-info.java[]
 ----
@@ -287,37 +224,250 @@ include::{examplesdir}core/scripts/java/get-share-info.java[]
 
 NOTE: The Java and Kotlin examples use https://github.com/square/okhttp[the square/okhttp library].
 
-==== Example Request Response Payloads
+==== Example Response Payloads
 
-Failure
-
-[source,xml]
-----
-include::{examplesdir}core/scripts/responses/shares/get-share-info-failure.xml[]
-----
-
-Success
-
-[source,xml]
+[tabs]
+====
+Success::
++
+--
+[source,console,subs="attributes+"]
 ----
 include::{examplesdir}core/scripts/responses/shares/get-share-info-success.xml[]
 ----
+--
+Failure::
++
+--
+[source,console,subs="attributes+"]
+----
+include::{examplesdir}core/scripts/responses/shares/get-share-info-failure.xml[]
+----
+--
+====
 
 ==== Response Attributes
 
 For details about the elements in the XML response payload please refer to the Response Attributes section of xref:response-attributes-1[the Create a New Share section] below.
 
+=== Accept a Pending Share
+
+[cols="20%,80%"]
+|===
+|Endpoint |`{endpoint-uri}/<share_id>`
+|Method |POST
+|===
+
+==== Request Attributes
+
+[cols="20%,15%,65%",options="header",]
+|===
+|Attribute
+|Type
+|Description
+
+|share id
+|integer
+|the id of the pending share to accept.
+Pending share ids are available in xref:get-all-shares[the get all shares response].
+|===
+
+==== Status Codes
+
+[cols="20%,80%",options="header",]
+|===
+|Code
+|Description
+
+|200
+a|
+* Pending share successfully accepted.
+* Share doesn't exist.
+|===
+
+==== Example Request Response Payloads
+
+[tabs]
+====
+Success::
++
+--
+.Pending share was successfully accepted
+[source,console,subs="attributes+"]
+----
+include::{examplesdir}core/scripts/responses/shares/accept-pending-share-success.xml[]
+----
+--
+Failure::
++
+--
+.The share id does not exist.
+[source,console,subs="attributes+"]
+----
+include::{examplesdir}core/scripts/responses/shares/accept-pending-share-failure.xml[]
+----
+--
+====
+
+==== Code Example
+
+[tabs]
+====
+Curl::
++
+--
+[source,console,subs="attributes+"]
+----
+include::{examplesdir}core/scripts/curl/accept-pending-share.sh[]
+----
+--
+PHP::
++
+--
+[source,php,subs="attributes+"]
+----
+include::{examplesdir}core/scripts/php/accept-pending-share.php[]
+----
+--
+Ruby::
++
+--
+[source,ruby,subs="attributes+"]
+----
+include::{examplesdir}core/scripts/ruby/accept-pending-share.rb[]
+----
+--
+Go::
++
+--
+[source,go,subs="attributes+"]
+----
+include::{examplesdir}core/scripts/go/accept-pending-share.go[]
+----
+--
+====
+
+=== Decline a Pending Share
+
+[cols="20%,80%"]
+|===
+|Endpoint |`{endpoint-uri}/<share_id>`
+|Method |DELETE
+|===
+
+==== Request Attributes
+
+[cols="20%,15%,65%",options="header",]
+|===
+|Attribute
+|Type
+|Description
+
+|share id
+|integer
+|the id of the pending share to decline.
+Pending share ids are available in xref:get-all-shares[the get all shares response].
+|===
+
+==== Status Codes
+
+[cols=",",options="header",]
+|===
+|Code
+|Description
+
+|200
+a|
+* Pending share successfully declined (one or more times).
+* Share doesn't exist.
+|===
+
+==== Example Request Response Payloads
+
+.A pending share is successfully declined.
+[source,xml]
+----
+<?xml version="1.0"?>
+<ocs>
+ <meta>
+  <status>ok</status>
+  <statuscode>100</statuscode>
+  <message/>
+  <totalitems></totalitems>
+  <itemsperpage></itemsperpage>
+ </meta>
+ <data/>
+</ocs>
+----
+
+.The share id does not exist or the pending share has already been declined.
+[source,xml]
+----
+<?xml version="1.0"?>
+<ocs>
+ <meta>
+  <status>failure</status>
+  <statuscode>404</statuscode>
+  <message>Wrong share ID, share doesn't exist</message>
+  <totalitems></totalitems>
+  <itemsperpage></itemsperpage>
+ </meta>
+ <data/>
+</ocs>
+----
+
+==== Code Example
+
+[tabs]
+====
+Curl::
++
+--
+[source,console,subs="attributes+"]
+----
+include::{examplesdir}core/scripts/curl/decline-pending-share.sh[]
+----
+--
+PHP::
++
+--
+[source,php,subs="attributes+"]
+----
+include::{examplesdir}core/scripts/php/decline-pending-share.php[]
+----
+--
+Ruby::
++
+--
+[source,ruby,subs="attributes+"]
+----
+include::{examplesdir}core/scripts/ruby/decline-pending-share.rb[]
+----
+--
+Go::
++
+--
+[source,go,subs="attributes+"]
+----
+include::{examplesdir}core/scripts/go/decline-pending-share.go[]
+----
+--
+====
+
 === Create A New Share
 
 Share an existing file or folder with a user, a group, or as a public link.
 
-* Syntax: /shares
-* Method: POST
+[cols="20%,80%"]
+|===
+|Endpoint |`{endpoint-uri}`
+|Method |POST
+|===
 
 ==== Function Arguments
 
 [width="100%",cols="27%,11%,62%",options="header",]
-|=======================================================================
+|===
 | Argument | Type | Description
 | name | string | A (human-readable) name for the share, which can be up to
 64 characters in length.
@@ -338,7 +488,7 @@ The type of the share. This can be one of:
 
 | password | string | The password to protect the public link share with.
 
-| permissions | int 
+| permissions | int
 a|
 The permissions to set on the share.
 
@@ -352,7 +502,7 @@ The permissions to set on the share.
 
 | expireDate | string | An expire date for public link shares. This
 argument expects a date string in the following format `'YYYY-MM-DD'`.
-|=======================================================================
+|===
 
 [NOTE]
 ====
@@ -374,14 +524,14 @@ XML containing the share ID (int) of the newly created share
 
 ==== Status Codes
 
-[cols=",",options="header",]
-|============================================
+[cols="20%,80%",options="header",]
+|===
 | Code | Description
 | 100 | Successful
 | 400 | Unknown share type
 | 403 | Public upload was disabled by the admin
 | 404 | File or folder couldn't be shared
-|============================================
+|===
 
 ==== Code Example
 
@@ -390,7 +540,7 @@ XML containing the share ID (int) of the newly created share
 Curl::
 +
 --
-[source,console]
+[source,console,subs="attributes+"]
 ----
 include::{examplesdir}core/scripts/curl/create-share.sh[]
 ----
@@ -398,7 +548,7 @@ include::{examplesdir}core/scripts/curl/create-share.sh[]
 PHP::
 +
 --
-[source,php]
+[source,php,subs="attributes+"]
 ----
 include::{examplesdir}core/scripts/php/create-share.php[]
 ----
@@ -406,7 +556,7 @@ include::{examplesdir}core/scripts/php/create-share.php[]
 Ruby::
 +
 --
-[source,ruby]
+[source,ruby,subs="attributes+"]
 ----
 include::{examplesdir}core/scripts/ruby/create-share.rb[]
 ----
@@ -414,7 +564,7 @@ include::{examplesdir}core/scripts/ruby/create-share.rb[]
 Go::
 +
 --
-[source,go]
+[source,go,subs="attributes+"]
 ----
 include::{examplesdir}core/scripts/go/create-share.go[]
 ----
@@ -440,7 +590,7 @@ include::{examplesdir}core/scripts/responses/shares/create-share-success.xml[]
 ==== Response Attributes
 
 [width="100%",cols="27%,11%,62%",options="header",]
-|=======================================================================
+|===
 | Argument | Type | Description
 | id | int | The share's unique id.
 
@@ -515,29 +665,32 @@ share being shared with them.
 
 | name | string | A (human-readable) name for the share, which can be up to
 64 characters in length
-|=======================================================================
+|===
 
 === Delete A Share
 
 Remove the given share.
 
-* Syntax: /shares/<share_id>
-* Method: DELETE
+[cols="20%,80%"]
+|===
+|Endpoint |`{endpoint-uri}/<share_id>`
+|Method |DELETE
+|===
 
 [cols=",,",options="header",]
-|====================================
+|===
 | Attribute | Type | Description
 | share_id | int | The share's unique id
-|====================================
+|===
 
 ==== Status Codes
 
-[cols=",",options="header",]
-|==============================
+[cols="20%,80%",options="header",]
+|===
 | Code | Description
 | 100 | Successful
 | 404 | Share couldn't be deleted
-|==============================
+|===
 
 ==== Code Example
 
@@ -546,7 +699,7 @@ Remove the given share.
 Curl::
 +
 --
-[source,console]
+[source,console,subs="attributes+"]
 ----
 include::{examplesdir}core/scripts/curl/delete-share.sh[]
 ----
@@ -554,7 +707,7 @@ include::{examplesdir}core/scripts/curl/delete-share.sh[]
 PHP::
 +
 --
-[source,php]
+[source,php,subs="attributes+"]
 ----
 include::{examplesdir}core/scripts/php/delete-share.php[]
 ----
@@ -562,7 +715,7 @@ include::{examplesdir}core/scripts/php/delete-share.php[]
 Ruby::
 +
 --
-[source,ruby]
+[source,ruby,subs="attributes+"]
 ----
 include::{examplesdir}core/scripts/ruby/delete-share.rb[]
 ----
@@ -570,7 +723,7 @@ include::{examplesdir}core/scripts/ruby/delete-share.rb[]
 Go::
 +
 --
-[source,go]
+[source,go,subs="attributes+"]
 ----
 include::{examplesdir}core/scripts/go/delete-share.go[]
 ----
@@ -595,15 +748,19 @@ include::{examplesdir}core/scripts/responses/shares/delete-share-failure.xml[]
 
 === Update Share
 
-Update a given share. Only one value can be updated per request.
+Update a given share.
+Only one value can be updated per request.
 
-* Syntax: /shares/<share_id>
-* Method: PUT
+[cols=",,"]
+|===
+|Endpoint |`{endpoint-uri}/<share_id>`
+|Method |PUT
+|===
 
 ==== Request Arguments
 
 [cols=",,",options="header",]
-|==============================================================
+|===
 | Argument | Type | Description
 | name | string | A (human-readable) name for the share, which can
 | | | be up to 64 characters in length
@@ -616,20 +773,20 @@ Update a given share. Only one value can be updated per request.
 | expireDate | string | Set an expire date for public link shares.
 | | | This argument expects a well-formatted date string,
 | | | such as: `YYYY-MM-DD'
-|==============================================================
+|===
 
 NOTE: Only one of the update parameters can be specified at once.
 
 ==== Status Codes
 
 [cols=",",options="header",]
-|========================================
+|===
 | Code | Description
 | 100 | Successful
 | 400 | Wrong or no update parameter given
 | 403 | Public upload disabled by the admin
 | 404 | Couldn't update share
-|========================================
+|===
 
 ==== Code Example
 
@@ -638,7 +795,7 @@ NOTE: Only one of the update parameters can be specified at once.
 Curl::
 +
 --
-[source,console]
+[source,console,subs="attributes+"]
 ----
 include::{examplesdir}core/scripts/curl/update-share.sh[]
 ----
@@ -646,7 +803,7 @@ include::{examplesdir}core/scripts/curl/update-share.sh[]
 PHP::
 +
 --
-[source,php]
+[source,php,subs="attributes+"]
 ----
 include::{examplesdir}core/scripts/php/update-share.php[]
 ----
@@ -654,7 +811,7 @@ include::{examplesdir}core/scripts/php/update-share.php[]
 Ruby::
 +
 --
-[source,ruby]
+[source,ruby,subs="attributes+"]
 ----
 include::{examplesdir}core/scripts/ruby/update-share.rb[]
 ----
@@ -662,7 +819,7 @@ include::{examplesdir}core/scripts/ruby/update-share.rb[]
 Go::
 +
 --
-[source,go]
+[source,go,subs="attributes+"]
 ----
 include::{examplesdir}core/scripts/go/update-share.go[]
 ----
@@ -712,10 +869,10 @@ XML with all accepted federated cloud shares
 ==== Status Codes
 
 [cols=",",options="header",]
-|=================
+|===
 | Code | Description
 | 100 | Successful
-|=================
+|===
 
 === Get Information About A Known Federated Cloud Share
 
@@ -725,11 +882,11 @@ Get information about a given received federated cloud share that was sent from 
 * Method: GET
 
 [cols=",,",options="header",]
-|=====================================================
+|===
 | Attribute | Type | Description
 | share_id | int | The share id as listed in the id field
 | | | in the `remote_shares` list
-|=====================================================
+|===
 
 ==== Returns
 
@@ -738,11 +895,11 @@ XML with the share information
 ==== Status Codes
 
 [cols=",",options="header",]
-|========================
+|===
 | Code | Description
 | 100 | Successful
 | 404 | Share doesn't exist
-|========================
+|===
 
 === Delete An Accepted Federated Cloud Share
 
@@ -752,20 +909,20 @@ Locally delete a received federated cloud share that was sent from a remote inst
 * Method: DELETE
 
 [cols=",,",options="header",]
-|=====================================================
+|===
 | Attribute | Type | Description
 | share_id | int | The share id as listed in the id field
 | | | in the `remote_shares` list
-|=====================================================
+|===
 
 ==== Status Codes
 
 [cols=",",options="header",]
-|========================
+|===
 | Code | Description
 | 100 | Successful
 | 404 | Share doesn't exist
-|========================
+|===
 
 === List Pending Federated Cloud Shares
 
@@ -781,11 +938,11 @@ XML with all pending federated cloud shares
 ==== Status Codes
 
 [cols=",",options="header",]
-|========================
+|===
 | Code | Description
 | 100 | Successful
 | 404 | Share doesn't exist
-|========================
+|===
 
 === Accept a Pending Federated Cloud Share
 
@@ -795,20 +952,20 @@ Locally accept a received federated cloud share that was sent from a remote inst
 * Method: POST
 
 [cols=",,",options="header",]
-|=====================================================
+|===
 | Attribute | Type | Description
 | share_id | int | The share id as listed in the id field
 | | | in the `remote_shares/pending` list
-|=====================================================
+|===
 
 ==== Status Codes
 
 [cols=",",options="header",]
-|========================
+|===
 | Code | Description
 | 100 | Successful
 | 404 | Share doesn't exist
-|========================
+|===
 
 === Decline a Pending Federated Cloud Share
 
@@ -818,17 +975,17 @@ Locally decline a received federated cloud share that was sent from a remote ins
 * Method: DELETE
 
 [cols=",,",options="header",]
-|=====================================================
+|===
 | Attribute | Type | Description
 | share_id | int | The share id as listed in the id field
 | | | in the `remote_shares/pending` list
-|=====================================================
+|===
 
 ==== Status Codes
 
 [cols=",",options="header",]
-|========================
+|===
 | Code | Description
 | 100 | Successful
 | 404 | Share doesn't exist
-|========================
+|===
