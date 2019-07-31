@@ -3,38 +3,22 @@
 :toclevels: 1
 :file-sharing-configuration-url: configuration/files/file_sharing_configuration.adoc
 
-== Introduction
+== Default View
 
-On the User management page of your ownCloud Web UI you can:
+The **default view** displays basic information about your users.
 
-* Create new users
-* View all of your users in a single scrolling window
-* Filter users by group
-* See what groups they belong to
-* Edit their full names and passwords
-* See their data storage locations
-* View and set quotas
-* Create and edit their email addresses
-* Send an automatic email notification to new users
-* Delete them with a single click
+image:configuration/user/users-page.png[image]
 
-The default view displays basic information about your users.
-
-image:users-config.png[image]
-
-The Group filters on the left sidebar lets you quickly filter users by
+The **Group filter** on the left sidebar lets you quickly filter users by
 their group memberships, and create new groups.
 
-image:users-config-1.png[image]
+image:configuration/user/users-page-group-tab.png[image]
 
-Click the btn:[gear] icon on the lower left sidebar to set a default storage
-quota, and to display additional fields: *Show storage location, Show
-last log in, Show user backend, Send email to new users,* and *Show
-email address*.
+Click the btn:[gear] icon on the lower left sidebar to view the avaiable settings.
 
-image:users-config-2.png[image]
+image:configuration/user/users-page-gear.png[image]
 
-User accounts have the following properties:
+**User accounts** have the following **properties**:
 
 _Login Name (Username)_::
   The unique ID of an ownCloud user, and it cannot be changed.
@@ -45,6 +29,9 @@ _Full Name_::
 _Password_::
   The admin sets the new user’s first password. Both the user and the
   admin can change the user’s password at anytime.
+_E-Mail_::
+  The admin sets the new user’s E-Mail. The user then get's an E-Mail to set his Password.
+  Both the user and the admin can change the user’s E-Mail at anytime.
 _Groups_::
   You may create groups, and assign group memberships to users. By
   default new users are not assigned to any groups.
@@ -61,25 +48,18 @@ _Quota_::
 
 To create a user account:
 
-* Enter the new user’s *Login Name* and their initial *Password* (cannot be "0")
+* Enter the new user’s *Login Name* and their *E-Mail*
 * Optionally, assign *Groups* memberships
 * Click the btn:[Create] button
 
-image:users-create.png[image]
+image:configuration/user/users-page-new-user.png[image]
 
 Login names may contain letters (a-z, A-Z), numbers (0-9), dashes (-),
 underscores (_), periods (.) and at signs (@). After creating the user,
 you may fill in their *Full Name* if it is different than the login
 name, or leave it for the user to complete.
 
-If you have checked *Send email to new user* in the control panel on the
-lower left sidebar, you may also enter the new user’s email address, and
-ownCloud will automatically send them a notification with their new
-login information. You may edit this email using the email template
-editor on your Admin page (see xref:configuration/server/email_configuration.adoc[Email Configuration]).
-
-[[reset-a-users-password]]
-== Reset a User’s Password
+== Password Reset
 
 You cannot recover a user’s password, but you can set a new one:
 
@@ -88,12 +68,14 @@ You cannot recover a user’s password, but you can set a new one:
 * Enter the user’s new password in the password field, and remember to
 provide the user with their password
 
+image:configuration/user/users-page-new-password.png[image]
+
 If you have encryption enabled, there are special considerations for user password resets.
 
 TIP: See xref:configuration/files/encryption/encryption_configuration.adoc[Encryption Configuration].
 
 [[renaming-a-user]]
-== Renaming a User
+=== Renaming a User
 
 Each ownCloud user has two names: a unique *Login Name* used for
 authentication, and a *Full Name*, which is their display name. You can
@@ -106,21 +88,33 @@ To set or change a user’s display name:
 * Click on the btn:[pencil] icon
 * Enter the user’s new display name
 
-[[granting-administrator-privileges-to-a-user]]
-== Granting Administrator Privileges to a User
+[[deleting-users]]
+== Deleting Users
 
-ownCloud has two types of administrators: *Super Administrators* and
-*Group Administrators*. Group administrators have the rights to create,
-edit and delete users in their assigned groups. Group administrators
-cannot access system settings, or add or modify users in the groups that
-they are not *Group Administrators* for. Use the dropdown menus in the
-*Group Admin* column to assign group admin privileges.
+image:configuration/user/delete-user-confirmation.png[The ownCloud delete user confirmation dialog.]
 
-image:users-groups.png[image]
+To delete a user, hover your cursor over their name on the *Users* page, and click the trashcan icon that appears at the far right. 
+You’ll then see a confirmation dialog appear, asking if you’re sure that you want to delete the user. 
 
-*Super Administrators* have full rights on your ownCloud server, and can
-access and modify all settings. To assign the *Super Administrators*
+If you click btn:[Yes], the user is permanently deleted, including all of the files owned by the user, including all files they have shared. 
+If you need to preserve the user’s files and shares, you must first download them from your ownCloud Files page, (which compresses them into a zip file). 
+
+Alternatively, you can use a sync client to copy them to your local computer.
+If you click btn:[No], the confirmation dialog will disappear and the user is not deleted.
+
+TIP: See xref:{file-sharing-configuration-url}[File Sharing Configuration] to learn how to create persistent file shares that survive user deletions.
+
+[[granting-administrator-privileges]]
+== Granting Administrator Privileges
+
+ownCloud has two types of administrators: 
+
+* *ownCloud Administrators* have full rights on your ownCloud server, and can
+access and modify all settings. To assign the ownCloud Administrators
 role to a user, simply add them to the `admin` group.
+
+* *Group Administrators*. Group administrators have the rights to create,
+edit and delete users in their assigned groups. Use the dropdown menus in the Group Admin column to assign group admin privileges.
 
 [[managing-groups]]
 == Managing Groups
@@ -130,6 +124,30 @@ groups when you create new users. You may also use the *Add Group*
 button at the top of the left pane to create new groups. New group
 members will immediately have access to file shares that belong to their
 new groups.
+
+[[enabling-custom-groups]]
+== Enabling Custom Groups
+
+In previous versions of ownCloud, files and folders could only be shared
+with individual users or groups created by administrators. This wasn’t
+the most efficient way to work. From ownCloud 10.0, users can create
+groups on-the-fly, through a feature called "Custom Groups", enabling
+them to share content in a more flexible way.
+
+To enable Custom Groups:
+
+1.  From the ownCloud Market, which you can find in version 10.0 under 
+the Apps menu, click btn:[Market].
+2.  Click btn:[Collaboration] (1), to filter the list of available
+options and click the btn:[Custom groups] application (2).
++
+image:custom-groups/owncloud-market-custom-groups.png[The Custom Groups application in the ownCloud Market]
+3.  Click btn:[INSTALL] in the bottom right-hand corner of the Custom Groups application.
++
+image:custom-groups/owncloud-market-custom-groups-install.png[Install the Custom Groups application from the ownCloud Market]
+
+With this done, Custom Group functionality will be available in your ownCloud installation.
+
 
 [[setting-storage-quotas]]
 == Setting Storage Quotas
@@ -164,6 +182,10 @@ either a preset value or entering a custom value. When you create custom
 quotas, use the normal abbreviations for your storage values such as 500
 MB, 5 GB, 5 TB, and so on.
 
+'''
+
+=== External Storage Quota
+
 You now have a configurable option in `config.php` that controls whether
 external storage is counted against user’s quotas. This is still
 experimental, and may not work as expected. The default is to not count
@@ -173,6 +195,9 @@ include it, then change the default `false` to `true`.:
 ----
 'quota_include_external_storage' => false,
 ----
+
+'''
+=== Storage Space Considerations
 
 Metadata (such as thumbnails, temporary files, and encryption keys)
 takes up about 10% of disk space, but is not counted against user
@@ -192,52 +217,14 @@ quotas. The trash bin is set at 50% of quota. Deleted file aging is set
 at 30 days. When deleted files exceed 50% of quota then the oldest files
 are removed until the total is below 50%.
 
+'''
+=== Versions
+
 When version control is enabled, the older file versions are not counted
 against quotas.
 
+'''
+=== Public Links
+
 When a user creates a public link share via URL, and allows uploads, any
 uploaded files count against that user’s quota.
-
-[[deleting-users]]
-== Deleting Users
-
-[IMPORTANT]
-====
-Since version 10.0, this functionality has been extracted to a separate application (https://github.com/owncloud/user_management[user_management]).
-====
-
-image:configuration/user/delete-user-confirmation.png[The ownCloud delete user confirmation dialog.]
-
-To delete a user, hover your cursor over their name on the *Users* page, and click the trashcan icon that appears at the far right. 
-You’ll then see a confirmation dialog appear, asking if you’re sure that you want to delete the user. 
-
-If you click btn:[Yes], the user is permanently deleted, including all of the files owned by the user, including all files they have shared. 
-If you need to preserve the user’s files and shares, you must first download them from your ownCloud Files page, (which compresses them into a zip file). 
-
-Alternatively, you can use a sync client to copy them to your local computer.
-If you click btn:[No], the confirmation dialog will disappear and the user is not deleted.
-
-TIP: See xref:{file-sharing-configuration-url}[File Sharing Configuration] to learn how to create persistent file shares that survive user deletions.
-
-[[enabling-custom-groups]]
-== Enabling Custom Groups
-
-In previous versions of ownCloud, files and folders could only be shared
-with individual users or groups created by administrators. This wasn’t
-the most efficient way to work. From ownCloud 10.0, users can create
-groups on-the-fly, through a feature called "Custom Groups", enabling
-them to share content in a more flexible way.
-
-To enable Custom Groups:
-
-1.  From the ownCloud Market, which you can find in version 10.0 under 
-the Apps menu, click btn:[Market].
-2.  Click btn:[Collaboration] (1), to filter the list of available
-options and click the btn:[Custom groups] application (2).
-+
-image:custom-groups/owncloud-market-custom-groups.png[The Custom Groups application in the ownCloud Market]
-3.  Click btn:[INSTALL] in the bottom right-hand corner of the Custom Groups application.
-+
-image:custom-groups/owncloud-market-custom-groups-install.png[Install the Custom Groups application from the ownCloud Market]
-
-With this done, Custom Group functionality will be available in your ownCloud installation.
