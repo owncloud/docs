@@ -9,6 +9,7 @@ set -o nounset
 ACTION=
 DRY_RUN=false
 FONTS_DIRECTORY="fonts"
+MANUAL_NAME=
 RELEASE_DATE=$(date +'%B %d, %Y')
 STYLE="owncloud"
 STYLES_DIRECTORY="resources/themes"
@@ -30,7 +31,7 @@ fi
 
 function usage()
 {
-    echo "Usage: bin/cli [-c] [-h] [-m <admin|developer|user>] [-l <go|xml|json|php|kotlin|yaml>]"
+    echo "Usage: bin/cli [-c] [-d] [-h] [-m] [-n <admin|developer|user>] [-l <go|xml|json|php|kotlin|yaml>]"
 }
 
 function clean_build_dir()
@@ -126,6 +127,7 @@ function convert_antora_nav_to_asciidoc_list()
             level_offset=$(echo "$line" | awk -F"*" '{print NF-1}')
             revised_line=$(echo "$line" | sed 's/xref:/include::{module_base_path}/' | sed 's/\[.*\]//g' | sed -r 's/^\*{1,} //')
             echo "${revised_line}[leveloffset=+${level_offset}]"
+            echo
         fi
     done < "${filename}"
 }
@@ -176,17 +178,32 @@ function build_pdf_manual()
         <(cat $book_file <(convert_antora_nav_to_asciidoc_list "$nav_file"))
 }
 
-while getopts ":hcml:" o; do
+function build_manuals()
+{
+    if [ -z "${MANUAL_NAME}" ]; then
+        build_pdf_manual "admin" "$RELEASE_DATE" "$VERSION"
+        build_pdf_manual "developer" "$RELEASE_DATE" "$VERSION"
+        build_pdf_manual "user" "$RELEASE_DATE" "$VERSION"
+    else
+        validate_manual "$MANUAL_NAME" 
+        build_pdf_manual "$MANUAL_NAME" "$RELEASE_DATE" "$VERSION"
+    fi
+}
+
+while getopts ":hcdmn:l:" o; do
     case "${o}" in
         d)
             DRY_RUN=true
+            ;;
+        n)
+            MANUAL_NAME="${OPTARG}"
             ;;
         m)
             ACTION="BUILD_MANUALS"
             ;;
         l)
             ACTION="VALIDATE"
-            LANGUAGE=${OPTARG}
+            LANGUAGE="${OPTARG}"
             ;;
         c)
             ACTION="CLEAN"
@@ -200,9 +217,7 @@ shift $((OPTIND-1))
 
 case "$ACTION" in 
     BUILD_MANUALS)
-        build_pdf_manual "admin" "$RELEASE_DATE" "$VERSION"
-        build_pdf_manual "developer" "$RELEASE_DATE" "$VERSION"
-        build_pdf_manual "user" "$RELEASE_DATE" "$VERSION"
+        build_manuals
         ;;
     CLEAN)
         clean_build_dir
