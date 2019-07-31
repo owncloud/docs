@@ -7,6 +7,7 @@ set -o pipefail
 set -o nounset
 
 ACTION=
+DRY_RUN=false
 FONTS_DIRECTORY="fonts"
 RELEASE_DATE=$(date +'%B %d, %Y')
 STYLE="owncloud"
@@ -129,6 +130,17 @@ function convert_antora_nav_to_asciidoc_list()
     done < "${filename}"
 }
 
+function validate_manual()
+{
+    local manual="$1"
+
+    if [[ "$manual" != "admin" && "$manual" != "developer" && "$manual" != "user" ]]; then
+        echo "[${manual}] is not a valid manual." 
+        echo "Available manuals are admin, developer, and user."
+        exit $ERR_UNSUPPORTED_MANUAL
+    fi
+}
+
 function build_pdf_manual()
 {
     local manual="$1"
@@ -139,15 +151,17 @@ function build_pdf_manual()
     local book_file="books/ownCloud_${manual_infix}_Manual.adoc" 
     local nav_file="modules/${manual}_manual/nav.adoc"
 
-    if [[ $manual != "admin" && $manual != "developer" && $manual != "user" ]]; then
-        echo "That is not a valid manual" 
-        exit $ERR_UNSUPPORTED_MANUAL
+    validate_manual "$MANUAL_NAME" 
+
+    if [[ "$DRY_RUN" == true ]]; then
+        echo "${manual} manual would be created with the following content:"
+        echo
+        cat $book_file <(convert_antora_nav_to_asciidoc_list "$nav_file")
+        return 0
     fi
 
     echo "Generating version '${revision}' of the ${manual} manual, dated: ${release_date}"
-
     mkdir -p "$build_directory"
-
     asciidoctor-pdf -d book \
         -a pdf-stylesdir="${STYLES_DIRECTORY}/" \
         -a pdf-fontsdir="${FONTS_DIRECTORY}" \
@@ -164,6 +178,9 @@ function build_pdf_manual()
 
 while getopts ":hcml:" o; do
     case "${o}" in
+        d)
+            DRY_RUN=true
+            ;;
         m)
             ACTION="BUILD_MANUALS"
             ;;
