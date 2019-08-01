@@ -327,11 +327,11 @@ sudo system <your service name> restart
 ----
 
 === Disabling Transparent Huge Pages (THP)
-Transparent Huge Pages should be disabled for when using databases.
+Transparent Huge Pages should be disabled when using databases.
 This is not ony true when using Redis but also for MariaDB. For more information read: 
 {disabling-thp}[Why THP (Transparent Huge Pages) are not recommended for Databases].
 
-To disable Transparent Huge Pages follow these steps:
+To disable Transparent Huge Pages, follow these steps:
 
 * Create a file like `disable-thp.service` in `/etc/systemd/system` and add this content:
 +
@@ -346,21 +346,20 @@ Before=basic.target
 
 [Service]
 Type=oneshot
-ExecStart=/bin/sh -c '/usr/bin/echo never > /sys/kernel/mm/transparent_hugepage/enabled'
-ExecStart=/bin/sh -c '/usr/bin/echo never > /sys/kernel/mm/transparent_hugepage/defrag'
+ExecStart=/bin/sh -c '/bin/echo never > /sys/kernel/mm/transparent_hugepage/enabled'
+ExecStart=/bin/sh -c '/bin/echo never > /sys/kernel/mm/transparent_hugepage/defrag'
 
 [Install]
 WantedBy=basic.target
 ----
 --
 
-* Run following command to apply your changes:
+* Run following command to apply your changes and start it automatically at boot time:
 +
 --
 [source,console]
 ----
 sudo systemctl daemon-reload
+sudo systemctl enable disable-thp
 ----
-
-Transparent Huge Pages will be disabled on next reboot.
 --
