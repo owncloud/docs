@@ -9,6 +9,7 @@
 :discover-samba-hosts: https://ubuntuforums.org/showthread.php?t=2384959
 :install-mariadb-latest: https://downloads.mariadb.org/mariadb/repositories/#
 :auth-unix-socket: https://mariadb.com/kb/en/library/authentication-plugin-unix-socket/
+:overriding-vendor-settings: https://www.freedesktop.org/software/systemd/man/systemd.unit.html
 
 == Web Server and PHP
 
@@ -282,27 +283,34 @@ and look for the mount you want to be up. You should see lines printed to the co
 where `folder.mount` and `local_path` are examples !
 --
 
-* Edit your particular service in:
+* Edit the service you want to change:
 +
 --
 [source,console]
 ----
-/etc/systemd/system/<name.service>
+sudo systemctl edit <name>.service
 ----
-and add your corresponding `folder.mount` after the directive `After=network.target` For example:
+Add following directive in the editor opened using your chosen `folder.mount` from above:
 [source,console]
 ----
-After=network.target folder.mount
+[Unit]
+After=folder.mount
 ----
-Please keep following in mind regarding if the file is linked or not:
+You can add more than one dependency if needed seperated by a blank.
+This procedure keeps `<name>.service` in its original state, but makes it possible to override the current setup with new parameters.
+It automatically creates a directory in `/etc/systemd/system` named `<name>.service.d` and a file in it called `override.conf`.
+In the example above, the parameter is added to the existing list of parameters of the `After` directive.
+For more details please read section {overriding-vendor-settings}[Example 2. Overriding vendor settings]
 
-** If the file is linked from `/lib/systemd`, it is for packaged unit files.
+Please keep following in mind regarding if `<name>.service` is linked or not:
+
+** If the file is linked from `/lib/systemd/system`, it is for packaged unit files.
 They will get overwritten when systemd (or whatever package provides them) is upgraded.
-In this case you have to re-add the parameter after upgrade. 
 
-** If the file is originated in `/etc/systemd`, it is for your own and for customised unit files.
+** If the file is originated in `/etc/systemd/system`, it is for your own and for customised unit files.
 Unit files you place in here will override the package-provided file and will not be replaced on upgrade.
-If you want to keep changes made from a linked file, unlink and copy the file to this location. 
+
+It is a good advice to keep things simple and future proof by creating an override file via `systemctl edit`.
 --
 
 * Run following command to apply your changes:
