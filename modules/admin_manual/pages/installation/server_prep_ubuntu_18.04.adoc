@@ -256,17 +256,23 @@ The example is based on an NFS mount which you want to be available before the s
 As an example, the name in <name.service> could be: nginx, apache2, mysql ect.
 
 * Add `_netdev` to the list of NFS mountpoint options in `/etc/fstab`.
++
+--
 This option ensures that the mount will happen __after__ the network is up:
 [source,console]
 ----
 resource:foreign_path local_path nfs (<your options>),_netdev
 ----
+--
 
 * Make sure that all mounts in `/etc/fstab` are mounted by running:
++
+--
 [source,console]
 ----
 sudo mount -a
 ----
+--
 
 * Run following command to list mounts to be waited for to be up:
 +
@@ -314,26 +320,43 @@ Unit files you place in here will override the package-provided file and will no
 It is a good advice to keep things simple and future proof by creating an override file via `systemctl edit`.
 --
 
+* Check if `<name>.service` has been properly added:
++
+--
+[source,console]
+----
+sudo systemctl show <name>.service | grep "After="
+----
+`folder.mount` should be part of the parameter list.
+--
+
+
 * Run following command to apply your changes:
++
+--
 [source,console]
 ----
 sudo systemctl daemon-reload
 ----
+--
 
 * Restart your service by invoking:
++
+--
 [source,console]
 ----
 sudo system <your service name> restart
 ----
+--
 
 === Disabling Transparent Huge Pages (THP)
 Transparent Huge Pages should be disabled when using databases.
-This is not ony true when using Redis but also for MariaDB. For more information read: 
+This is not ony true when using Redis but also for MariaDB. For more information read:
 {disabling-thp}[Why THP (Transparent Huge Pages) are not recommended for Databases].
 
 To disable Transparent Huge Pages, follow these steps:
 
-* Create a file like `disable-thp.service` in `/etc/systemd/system` and add this content:
+* Create in `/etc/systemd/system` a file like `disable-thp.service` and add this content:
 +
 --
 [source,console]
@@ -354,12 +377,13 @@ WantedBy=basic.target
 ----
 --
 
-* Run following command to apply your changes and start it automatically at boot time:
+* Run following command to apply and activate your changes and start it automatically at boot time:
 +
 --
 [source,console]
 ----
 sudo systemctl daemon-reload
 sudo systemctl enable disable-thp
+sudo service disable-thp start
 ----
 --
