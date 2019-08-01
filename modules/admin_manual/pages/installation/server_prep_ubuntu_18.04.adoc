@@ -8,6 +8,7 @@
 :mcrypt-pecl-url: https://pecl.php.net/package/mcrypt
 :discover-samba-hosts: https://ubuntuforums.org/showthread.php?t=2384959
 :install-mariadb-latest: https://downloads.mariadb.org/mariadb/repositories/#
+:auth-unix-socket: https://mariadb.com/kb/en/library/authentication-plugin-unix-socket/
 
 == Web Server and PHP
 
@@ -125,6 +126,7 @@ NOTE: The `mcrypt` library is deprecated and removed from the PHP 7.2 core. Howe
 === php-libsodium
 
 If you see the message `PHP Fatal error: sodium_init() in Unknown on line 0` when invoking the command `php -v` or when running PHP programs, `php-libsodium` might be installed.
+From PHP 7.2 onwards, libsodium is part of php, loading the library is not longer necessary.
 This error does not do any harm, but it can be annoying and will fill up your logs.
 
 To prevent it, you have to uninstall `php-libsodium`.
@@ -205,8 +207,35 @@ For more information see: {discover-samba-hosts}[Bionic Beaver can not discover 
 
 For how to install the latest stable release of MariaDB, please refer to {install-mariadb-latest}[the MariaDB installation documentation].
 
-NOTE: During the installation of the MariaDB server, you will be prompted to create a root
+NOTE: For MariaDB server release lower than 10.4.3: you will be prompted during the installation to create a root
 password. Be sure to remember your password as you will need it during ownCloud database setup.
+
+[NOTE]
+====
+From MariaDB 10.4.3 onwards, the authentication method has changed to unix socket. For details pls see:
+{auth-unix-socket}[MariaDB: Authentication Plugin - Unix Socket].
+The unix_socket authentication plugin allows the user to use operating system credentials when connecting to MariaDB via the local Unix socket file.
+Follow this procedure to create user(s) giving owncloud access to create it´s database respectively for phpmyqdmin:
+[source,console]
+----
+sudo mysql
+MariaDB [(none)]>
+ CREATE USER IF NOT EXISTS 'newuser'@'localhost' IDENTIFIED BY 'changeme';
+ GRANT ALL PRIVILEGES ON *.* TO 'newuser'@'localhost' WITH GRANT OPTION;
+ SHOW GRANTS FOR 'newuser'@'localhost' ;
+----
+Change username (newuser) and password (changeme) according your needs.
+====
+
+[NOTE]
+====
+If you have an existing installation of MariaDB and upgrade to a higher version, do not forget to run following command
+prior creating users above, especially if upgrading to MariaDB 10.4.3:
+[source,console]
+----
+sudo mysql_upgrade 
+----
+====
 
 If you want to install phpMyAdmin as a graphical interface for administrating the database, run the following command:
 
@@ -219,18 +248,71 @@ sudo apt install phpmyadmin
 
 === Start a Service after a Resource is Mounted
 
-If you have network resources, such as NFS based mounts, and you want to make sure that the database or web server only starts _after_ the resource is mounted, consider the following example to help configure your system correctly.
+If you have network resources, such as NFS based mounts, and you want to make sure that the database or web server only starts _after_ the resource is mounted, consider the following example setup to help configure your system correctly.
 
 The example is based on an NFS mount which you want to be available before the service with <name.service> starts.
+As an example, the name in <name.service> could be: nginx, apache2, mysql ect.
 
-- Using the example below, add `_netdev` to the list of NFS mountpoint options in `/etc/fstab`.
-This option ensures that the mount will happen __after__ the network is up.
-`resource:path on local_path type nfs (<your options>,_netdev)`
-- Make sure that all mounts in `/etc/fstab` are mounted by running `sudo mount -a`.
-- Run `systemctl list-units | grep -nP "\.mount"` and look for the mount you want to be up.
-You should see the following printed to the console: `<folder.mount> loaded active mounted <local_path>`, where `folder.mount` and `local_path` are examples. 
-- In `/etc/systemd/system/<name.service>` add `folder.mount` after the directive `After=network.target`
-For example: `After=network.target folder.mount`.
-- Run `sudo systemctl daemon-reload`
-- Restart your service by invoking `sudo system <your service> restart`.
+* Add `_netdev` to the list of NFS mountpoint options in `/etc/fstab`.
+This option ensures that the mount will happen __after__ the network is up:
+[source,console]
+----
+resource:foreign_path local_path nfs (<your options>),_netdev
+----
 
+* Make sure that all mounts in `/etc/fstab` are mounted by running:
+[source,console]
+----
+sudo mount -a
+----
+
+* Run following command to list mounts to be waited for to be up:
++
+--
+[source,console]
+----
+systemctl list-units | grep -nP "\.mount"
+----
+and look for the mount you want to be up. You should see lines printed to the console:
+[source,console]
+----
+<folder.mount>
+  loaded active mounted <local_path>
+----
+where `folder.mount` and `local_path` are examples !
+--
+
+* Edit your particular service in:
++
+--
+[source,console]
+----
+/etc/systemd/system/<name.service>
+----
+and add your corresponding `folder.mount` after the directive `After=network.target` For example:
+[source,console]
+----
+After=network.target folder.mount
+----
+Please keep following in mind regarding if the file is linked or not:
+
+** If the file is linked from `/lib/systemd`, it is for packaged unit files.
+They will get overwritten when systemd (or whatever package provides them) is upgraded.
+In this case you have to re-add the parameter after upgrade. 
+
+** If the file is originated in `/etc/systemd`, it is for your own and for customised unit files.
+Unit files you place in here will override the package-provided file and will not be replaced on upgrade.
+If you want to keep changes made from a linked file, unlink and copy the file to this location. 
+--
+
+* Run following command to apply your changes:
+[source,console]
+----
+sudo systemctl daemon-reload
+----
+
+* Restart your service by invoking:
+[source,console]
+----
+sudo system <your service name> restart
+----
