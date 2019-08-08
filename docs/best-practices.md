@@ -248,7 +248,7 @@ Doing so will keep all examples of its use consistent throughout the documentati
 **Note:** when used within a source code block, as in the following example, `subs="attributes"` has to be set, otherwise it won't render properly:
 
 ```asciidoc
-[source,console,subs="attributes"]
+[source,console,subs="attributes+"]
 ....
 {occ-command-example-prefix} -h
 ....
@@ -309,8 +309,7 @@ Example:
 ```
 [TIP] 
 ====
-We strongly encourage you to put your server in single user mode
-before setting up encryption.
+We strongly encourage you to put your server in single user mode before setting up encryption.
 
 To do so, run the following command:
 
@@ -415,6 +414,23 @@ Example:
 **** level 4
 ***** level 5
 * level 1
+```
+For creating complex lists like adding code blocks ect. to a list element, use following method to keep the intend correctly aligned inside the list element:
+
+Example for correct intend alignment:
+```
+* list header
++
+--
+Your description text for the following command:
+
+[source,console]
+----
+sudo service apache2 restart
+----
+
+NOTE: You MUST run this command with sudo previleges
+--
 ```
 
 ## Headers, Titles, Sections, Anchors and Paragraph Titles
