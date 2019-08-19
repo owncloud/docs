@@ -15,7 +15,7 @@ func main() {
 
 	client := &http.Client{}
 
-	req, err := http.NewRequest("DELETE", fmt.Sprintf("%s/%s", serverUri, "shares/pending/2"), nil)
+	req, err := http.NewRequest("DELETE", fmt.Sprintf("%s/%s", serverUri, "shares/pending/<share_id>"), nil)
 	if err != nil {
 		log.Print(err)
 		os.Exit(1)

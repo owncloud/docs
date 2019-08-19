@@ -12,7 +12,7 @@ $client = new Client([
 try {
     $response = $client->request(
         'DELETE',
-        'shares/pending/1',
+        'shares/pending/<share_id>',
         [
             'auth' => ['{oc-examples-username}', '{oc-examples-password}'],
             'debug' => true,
