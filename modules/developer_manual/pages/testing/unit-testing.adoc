@@ -4,6 +4,7 @@
 :recommended-way-to-organise-tests-url: https://phpunit.readthedocs.io/en/latest/organizing-tests.html
 :phpunit-docs-url: https://phpunit.readthedocs.io/en/latest/installation.html
 :page-aliases: core/unit-testing.adoc
+:notes-app-url: https://github.com/owncloud/notes
 
 == PHP Unit Tests
 
@@ -73,19 +74,90 @@ You can find more information in {phpunit-docs-url}[the PHPUnit documentation].
 
 === Running PHP Unit tests for ownCloud >= 10.0
 
-There are existing tests provided by ownCloud which are ready to run.
+There are existing test options provided by ownCloud.
+To run them, change into the root directory of your ownCloud installation and run `grep "make test" <(make help)` to see tests and parameters available.
 
-* Change into `webroot` and run `make help` to see tests and parameters
-available.
+You should see output similar to the below example.
 
-Testing apps
+[source,console]
+----
+make test                   run all tests
+make test-php-unit          run all PHP tests
+make test-php-style         run PHP code style checks
+make test-php-phan          run PHP phan static code analyzer
+make test-php-phpstan       run PHP phpstan static code analyzer
+make test-js                run Javascript tests
+make test-js-debug          run Javascript tests in debug mode (continuous)
+make test-acceptance-api    run API acceptance tests
+make test-acceptance-cli    run CLI acceptance tests
+make test-acceptance-webui  run webUI acceptance tests
+make test-php-unit          TEST_DATABASE=mysql TEST_PHP_SUITE=path/to/testfile.php
+make test-php-style-fix     run PHP code style checks and fix any issues found
+----
 
-* To run the tests for a specific app with the provided PHPUnit version,
-change into `<webroot>/apps/<appname>` and
+==== Testing Apps
 
+To run the tests for a specific app with the provided PHPUnit version:
+
+. Change into one of the writable directories listed in the `apps_paths` array in `config/config.php`. For example:
+[source,console]
+----
+cd apps-external
+----
+
+. Clone the app from GitHub. For example:
+[source,console]
+----
+git clone https://github.com/owncloud/notes.git
+----
+
+. Enable the app. For example:
+[source,console,subs="attributes+"]
+----
+cd ..
+{occ-command-example-prefix} app:enable notes
+----
+
+. Change into the newly cloned directory. For example:
+[source,console]
+----
+cd apps-external/notes
+----
+
+. Run the following command:
++
+--
+[source,console]
 ----
 make test-php-unit
 ----
+
+Here's an example of running the command in {notes-app-url}[the notes app]:
+
+[source,console]
+----
+php -d zend.enable_gc=0  "/home/phil/git/owncloud/core/apps-external/notes/../../lib/composer/bin/phpunit" --configuration ./phpunit.xml --testsuite unit
+PHPUnit 7.5.20 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 7.3.16-1+ubuntu18.04.1+deb.sury.org+1 with Xdebug 2.9.3
+Configuration: /home/phil/git/owncloud/core/apps-external/notes/phpunit.xml
+
+..................................                                34 / 34 (100%)
+
+Time: 541 ms, Memory: 24.00 MB
+
+OK (34 tests, 107 assertions)
+
+Generating code coverage report in Clover XML format ... done
+----
+--
+
+
+[NOTE] 
+====
+Apps that are part of core *do not* have their own Makefile.
+Third party apps are all apps that are not distributed by https://marketplace.owncloud.com/publishers/owncloud[ownCloud] or not in xref:installation/apps_supported.adoc[the supported apps list].
+====
 
 === Writing PHP Unit tests
 
@@ -96,13 +168,15 @@ To get started, do the following:
 
 Then you can run the created test with `phpunit`.
 
+TIP: Alternatively, you can use link:{attachmentsdir}/core/Makefile.example[the default Makefile] to automate your unit tests.
+
 If you use ownCloud functions in your class under test (i.e:
 OC::getUser()) you’ll need to bootstrap ownCloud or use dependency
 injection.
 
 [NOTE]
 ====
-You’ll most likely run your tests under a different user than the Web server. 
+You'll most likely run your tests under a different user than the Web server. 
 This might cause problems with your PHP settings (i.e., `open_basedir`) and requires you to adjust your configuration.
 ====
 
@@ -136,7 +210,7 @@ phpunit tests/unit/MyClassTest.php
 ----
 
 Make sure to extend the `\Test\TestCase` class with your test and always call the parent methods, when overwriting `setUp()`,
-`setUpBeforeClass()`, `tearDown()` or `tearDownAfterClass()` method from the `TestCase`. 
+`setUpBeforeClass()`, `tearDown()` or `tearDownAfterClass()` methods from the `TestCase`.
 These methods set up important stuff and clean up the system after the test so that the next test can run without side effects, such as clearing files and entries from the file cache, etc.
 For more resources on writing tests for PHPUnit visit {writing-tests-url}[the writing tests section] of the PHPUnit documentation.
 
@@ -154,7 +228,7 @@ running PHPUnit
 phpunit --bootstrap tests/bootstrap.php apps/myapp/tests/testsuite.php
 ----
 
-If you run the test suite as a user other than your Web server, you’ll
+If you run the test suite as a user other than your Web server, you'll
 have to adjust your php.ini and file rights.
 
 /etc/php/php.ini
