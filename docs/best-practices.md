@@ -245,7 +245,7 @@ include::example$installation/post-installation-steps.sh[]
 When creating examples that show how to use occ, ensure that you use the `occ-command-example-prefix` attribute.
 Doing so will keep all examples of its use consistent throughout the documentation.
 
-**Note:** when used within a source code block, as in the following example, `subs="attributes"` has to be set, otherwise it won't render properly:
+**Note:** when used within a source code block, as in the following example, `subs="attributes+"` has to be set, otherwise it won't render properly:
 
 ```asciidoc
 [source,console,subs="attributes+"]
@@ -417,9 +417,9 @@ Example:
 ***** level 5
 * level 1
 ```
-For creating complex lists like adding code blocks ect. to a list element, use following method to keep the intend correctly aligned inside the list element:
+For creating complex list content, such as adding code blocks to a list element, use the following formatting to keep the content correctly linked to the list element:
 
-Example for correct intend alignment:
+.Add a source code block as part of a list element's content.
 ```
 * list header
 +
