@@ -2329,43 +2329,47 @@ You can create a new user with the `user:add` command.
 
 [source,console,subs="attributes+"]
 ----
-{occ-command-example-prefix} user:add [--password-from-env] [--display-name [DISPLAY-NAME]] [--email [EMAIL]] [-g|--group [GROUP]] [--] <uid>
+{occ-command-example-prefix} user:add \
+    [--password-from-env] \
+    [--display-name [DISPLAY-NAME]] \
+    [--email [EMAIL]] \
+    [-g|--group [GROUP]] \
+    [--] \
+    <uid>
 ----
 
 ===== Arguments
 
 [width="100%",cols="30%,70%",]
 |====
-| `uid` | User ID used to login (must only contain a-z, A-Z, 0-9, -, _ and @).
+| `uid` 
+| User ID used to login (must only contain a-z, A-Z, 0-9, -, _ and @).
+
+| `--password-from-env`
+| Read the password from the `OC_PASS` environment variable.
+A password is *not required*, _if_ an email address is provided.
+If a password is not provided, a temporary one will be generated.
+It cannot be set to `0`.
+
+| `--display-name=[DISPLAY-NAME]`
+| This corresponds to the *Full Name* on the Users page in your ownCloud Web UI.
+
+| `--email=[EMAIL]`
+| Email address for the user (optional).
+The user will be emailed a link to set their password, _if_ email is configured correctly.
+
+| `-g [GROUP]` `--group=[GROUP]`
+| The groups the user should be added to.
+The group will be created if it does not exist.
+Multiple values are allowed.
 |====
 
-===== Options
+===== Command Examples
 
-[width="100%",cols="30%,70%",]
-|====
-| `--password-from-env`           | Read the password from the OC_PASS environment variable.
-| `--display-name=[DISPLAY-NAME]` | The email-id set while creating the user, will be used to send
-link for password reset. This option will also display the link sent to user.
-| `--email=[EMAIL]`               | Email address for the user.
-| `-g [GROUP]` +
-`--group=[GROUP]`                | The groups the user should be added to. +
-The group will be created if it does not exist. +
-Multiple values allowed.
-|====
+This example adds new user, Layla Smith, and adds her to the `users` and `db-admins` groups. 
+If either group does not exist, it is created.
 
-This command lets you set the following attributes:
-
-* *uid:* The `uid` is the user's username and their login name
-* *display name:* This corresponds to the *Full Name* on the Users page
-in your ownCloud Web UI
-* *email address*
-* *group*
-* *login name*
-* *password*  (cannot be "0")
-
-This example adds new user Layla Smith, and adds her to the *users* and *db-admins* groups. 
-Any groups that do not exist are created.
-
+.Create a user with a password, email address, and display name, and add them to two groups
 [source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} user:add \
@@ -2382,7 +2386,21 @@ Any groups that do not exist are created.
   User "layla" added to group "db-admins"
 ----
 
-After the command completes, go to your Users page, and you will see your new user.
+.Create a user with a temporary password (the user will receive a link to set their password).
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:add \
+  --display-name "Layla Smith" \
+  --email "***********" \
+  --group "users" \
+  --group "db-admins" layla
+
+The user "layla" was created successfully
+Display name set to "Layla Smith"
+Email address set to "************"
+User layla added to group users
+User layla added to group db-admins
+----
 
 ==== Deleting A User
 
