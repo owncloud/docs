@@ -66,6 +66,20 @@ UPDATE oc_accounts SET home='/mnt/data/files/super-admin'
   WHERE id=1;
 ----
 
+If you already have a path like `/var/www/owncloud/` in your database and you want to adjust it to something like `/ocdata/` then you should use the `REPLACE` command:
+
+[source,sql]
+----
+UPDATE oc_accounts
+SET
+    home = REPLACE(home,
+        '/var/www/owncloud/',
+        '/ocdata/');
+----
+
+Here is the page with the complete command syntax: http://www.mysqltutorial.org/mysql-string-replace-function.aspx
+
+
 CAUTION: Please don’t copy and paste this example verbatim — nor any of the others. It, and the others, are provided only as guides to what you should or could do.
 
 [[update-the-oc_jobs-table]]
@@ -89,6 +103,8 @@ appropriate.
 UPDATE oc_jobs SET argument = '/your/new/data/path'
   WHERE id = <id of the incorrect record>;
 ----
+
+CAUTION: The old datapath will be written with `\/` and you have to add one additional backslash like this: `\\/`.
 
 [[fix-application-settings]]
 == Fix Application Settings
