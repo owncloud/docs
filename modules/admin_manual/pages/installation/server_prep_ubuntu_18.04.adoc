@@ -14,11 +14,9 @@
 :transport-huge-pages-url: https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/performance_tuning_guide/s-memory-transhuge
 :iscsi_initiator-url: https://help.ubuntu.com/lts/serverguide/iscsi-initiator.html
 
-The target audience for this document are more sophisticated admins with additional needs and setup scenarious.
+The target audience for this document is more sophisticated admins with additional needs and setup scenarios.
 
-== Web Server and PHP
-
-=== Apache Web Server and PHP
+== Apache Web Server and PHP
 
 The following command installs the Apache web server and PHP.
 
@@ -52,7 +50,7 @@ If you want to retrieve a list of enabled PHP extensions run following command:
 ls `php -i | grep "^extension_dir" | sed -e 's/.*=> //'`
 ----
 
-== HASH Message Digest Framework
+== HASH Message-Digest Framework
 
 This framework does not need manual intervention anymore because:
 
@@ -63,7 +61,7 @@ For more information refer to {hash-installation-url}[PHP's Hash Installation do
 
 == Exif Library
 
-This library _should_ be already as part of PHP 7.2. +
+This library _should_ be already as part of PHP 7.2.
 However, you can check if it is by running the following command.
 
 [source,console]
@@ -76,16 +74,18 @@ grep -q -P 'EXIF Support => enabled' <(php -i) && echo "Exif is installed and en
 The sodium and OpenSSL PHP libraries are cryptographic libraries which are part of the PHP 7.2 core.
 Consequently, there is no need to install additional cryptographic libraries, such as `php-libsodium` or `mcrypt`.
 
-NOTE: The `mcrypt` library is deprecated and removed from the PHP 7.2 core. However, it is available via PECL.
+NOTE: The `mcrypt` library is deprecated and removed from the PHP 7.2 core.
+However, it is available via PECL.
 
 === php-libsodium
 
 If you see the message `PHP Fatal error: sodium_init() in Unknown on line 0` when invoking the command `php -v` or when running PHP programs, `php-libsodium` might be installed.
-This error does not do any harm, but it can be annoying and will fill up your logs.
+This error does not do any harm, but it can be annoying and fills up your logs.
 
 NOTE: From PHP 7.2 onwards, libsodium is part of PHP, loading the library is no longer necessary.
 
-To prevent it, you have to uninstall `php-libsodium`. You can do this by running the following command:
+To prevent it, you have to uninstall `php-libsodium`. 
+You can do this by running the following command:
 
 [source,console]
 ----
@@ -149,7 +149,7 @@ When the commands complete, you then have to:
 
 [NOTE]
 ====
-Due to a change in the minimum protocol version used in the samba client in Ubuntu 18.04, you may not get a valid connection in ownCloud
+Due to a change in the minimum protocol version used in the Samba client in Ubuntu 18.04, you may not get a valid connection in ownCloud
 This error is identified by a red box at the mount definition or being unable to list directory content.
 In this case, you have to add the following to `/etc/samba/smb.cnf`, below the `workgroup =` statement:
 
@@ -171,7 +171,7 @@ Be sure to remember your password, as you will need it during the ownCloud datab
 From MariaDB 10.4.3 onwards, the authentication method has changed to UNIX socket. 
 For details, please refer to: {auth-unix-socket-url}[MariaDB: Authentication Plugin - Unix Socket].
 The `unix_socket` authentication plugin allows the user to use operating system credentials when connecting to MariaDB via a local UNIX socket.
-Follow the procedure below to create user(s), giving ownCloud access to create it's database respectively for PHPMyAdmin.
+Follow the procedure below to create a user, giving ownCloud access to create it's database respectively for phpMyAdmin.
 Don't forget to change the username and password according to your needs.
 
 [source,console]
@@ -207,20 +207,21 @@ sudo apt install phpmyadmin
 
 == Useful Tips
 
-=== Start a Service after a Resource is Mounted
+=== Start a Service After a Resource is Mounted
 
 If you have network resources, such as NFS or iSCSI based mounts and you want to make sure that the database or web server only starts _after_ the resource is mounted.
-Consider following example setup to help configuring your system correctly.
+Consider the following example setup when configuring your system.
 
 The example below is based on an NFS mount which you want to be available _before_ the service with <name.service> starts.
-The same procedure can be used for iSCSI. For details setting up an iSCSi mount see the {iscsi_initiator-url}[Ubuntu 18.04 iSCSI Initiator] guide.
+The same procedure can be used for iSCSI. 
+For details setting up an iSCSI mount see the {iscsi_initiator-url}[Ubuntu 18.04 iSCSI Initiator] guide.
  
 The name in <name.service> could be any valid service, including `apache2`, `nginx`, `mysql` or `mariadb`.
 
 * Add `_netdev` to the list of NFS mount point options in `/etc/fstab`.
 +
 --
-This option ensures that the mount will happen _after_ the network is up:
+This option ensures that the mount happens _after_ the network is up:
 
 [source,console]
 ----
@@ -282,10 +283,10 @@ For more details please read section {overriding-vendor-settings-url}[Example 2.
 Please keep the following points in mind, regarding if `<name>.service` is linked or not:
 
 ** If the file is linked from `/lib/systemd/system`, it is for packaged unit files.
-They will get overwritten when Systemd (or whatever package provides them) is upgraded.
+They are overwritten when Systemd (or whatever package provides them) is upgraded.
 
 ** If the file originates in `/etc/systemd/system`, it is for your own and customised unit files.
-Unit files you place in here will override the package-provided file and will not be replaced on upgrade.
+Unit files you place in here override the package-provided file and will not be replaced on upgrade.
 
 It is recommended to keep things simple and future proof by creating an override file via `systemctl edit`.
 --
@@ -318,7 +319,7 @@ sudo system <name> restart
 ----
 --
 
-=== Disabling Transparent Huge Pages (THP)
+=== Disable Transparent Huge Pages (THP)
 
 {transport-huge-pages-url}[Transparent Huge Pages] should be disabled when using databases.
 This is applicable when using Redis, as well as MariaDB.
