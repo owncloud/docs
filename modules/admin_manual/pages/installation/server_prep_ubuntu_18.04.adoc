@@ -18,13 +18,7 @@ The target audience for this document are more sophisticated admins with additio
 
 == Web Server and PHP
 
-Only *one* of the following web servers is required:
-
-* xref:apache-web-server-and-php-supported[Apache Web Server and PHP (Supported)]
-* xref:apache-web-server-and-php-fpm-unsupported[Apache Web Server and PHP-FPM (Unsupported)]
-* xref:nginx-web-server-and-php-fpm-unsupported[Nginx Web Server and PHP-FPM (Unsupported)]
-
-=== Apache Web Server and PHP (Supported)
+=== Apache Web Server and PHP
 
 The following command installs the Apache web server and PHP.
 
@@ -32,51 +26,6 @@ The following command installs the Apache web server and PHP.
 ----
 sudo apt install php libapache2-mod-php apache2
 ----
-
-=== Apache Web Server and PHP-FPM (Unsupported)
-
-The following command installs and enables the Apache webserver with php-fpm.
-This setup can be used in high throughput environments. 
-
-[source,console]
-----
-# Install PHP-FPM and Apache2 
-sudo apt install php-fpm apache2
-
-# Disable relevant modules
-sudo a2dismod php7.2
-sudo a2dismod mpm_prefork
-sudo a2enmod proxy_fcgi
-
-# Enable the php7.2-fpm configuration
-sudo a2enconf php7.2-fpm
-
-# Enable relevant modules
-sudo a2enmod mpm_event
-sudo a2enmod http2
-
-# Start Apache2
-sudo service apache2 restart
-----
-
-TIP: For performance comparison details, please refer to https://www.cloudways.com/blog/php-fpm-on-cloud/[this guide from Cloudways].
-
-For examples of how to configure this setup, please refer to:
-
-* http://httpd.apache.org/docs/2.4/mod/mod_proxy.html#handler[The mod_proxy Access via Handler documentation] 
-* https://httpd.apache.org/docs/2.4/mod/mod_proxy_fcgi.html[The mod_proxy_fcgi documentation] 
-* https://wiki.apache.org/httpd/PHP-FPM[High-performance PHP on apache httpd 2.4.x using mod_proxy_fcgi and php-fpm]
-
-=== Nginx Web Server and PHP-FPM (Unsupported)
-
-To install the Nginx web server and PHP-FPM, run the following command.
-
-[source,console]
-----
-sudo apt install php-fpm nginx
-----
-
-For details of how to configure Nginx, please refer to xref:installation/nginx_configuration.adoc[the NGINX Configuration].
 
 == Common Prerequisites
 
