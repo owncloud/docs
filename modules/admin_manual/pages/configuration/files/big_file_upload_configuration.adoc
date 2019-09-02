@@ -1,5 +1,6 @@
-= Big File Upload Configuration (> 512MB)
+= Big File Upload Configuration
 :toc: right
+:stem:
 :mod_reqtimeout-url: https://httpd.apache.org/docs/current/mod/mod_reqtimeout.html
 :limitrequestbody-url: https://httpd.apache.org/docs/current/en/mod/core.html#limitrequestbody
 :sslrenegbuffersize-url: https://httpd.apache.org/docs/current/mod/mod_ssl.html#sslrenegbuffersize
@@ -14,26 +15,9 @@
 :nginx-proxy_buffering-url: http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_buffering
 :nginx-proxy_max_temp_file_size-url: http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_max_temp_file_size
 
-== Introduction
-
-The default maximum file size for uploads, in ownCloud, is 512MB. 
-You can increase this limit up to the maximum file size which your filesystem, operating system, or other software allows, for example:
-
-|===
-| < 2GB | 32Bit OS-architecture
-| < 2GB | IE6 - IE8
-| < 4GB | with IE9 - IE11
-|===
-
-NOTE: 64-bit filesystems have much higher limits. 
-Please consult the documentation for your filesystem.
-
-NOTE: The ownCloud sync client itself, however, can upload files of any size, as it uploads files by transmitting them in small chunks. 
-However, it can never exceed the maximum file size limits of the remote host.
-
 == System Configuration
 
-* Make sure that the latest version of PHP (at least 5.6) is installed.
+* Make sure that the latest version of PHP, xref:installation/system_requirements.adoc[supported by ownCloud], is installed.
 * Disable user quotas, which makes them unlimited.
 * Your temp file or partition has to be big enough to hold multiple parallel uploads from multiple users; e.g. if the max upload size is 10GB and the average number of users uploading at the same time is 100: temp space has to hold at least 10 x 100GB.
 
@@ -129,7 +113,7 @@ By default, downloads will be limited to 1GB due to `proxy_buffering` and `proxy
 If you don't want to use the ownCloud `.htaccess` or `.user.ini` file, you may configure PHP instead. 
 Make sure to comment out any lines `.htaccess` about upload size, if you entered any.
 
-If you are running ownCloud on a 32-bit system, any `open_basedir` directive in your `php.ini` file needs to be commented out.
+NOTE: If you are running ownCloud on a 32-bit system, any `open_basedir` directive in your `php.ini` file needs to be commented out.
 
 Set the following two parameters inside `php.ini`, using your own desired file size values, as in the following example:
 
@@ -171,3 +155,9 @@ Examples are:
 * Some services like `Cloudflare` are also known to cause uploading issues.
 * Upload limits enforced by proxies used by your clients.
 * Other webserver modules like described in xref:configuration/general_topics/general_troubleshooting.adoc[General Troubleshooting].
+
+== Long Running Uploads
+
+For very long running uploads (those lasting longer than 1 hr) to public folders (and chunking is not in effect), 'filelocking.ttl' should be set to a significantly large value. 
+If this is not set appropriately, then large file uploads will likely fail.
+A simple way to calculate the correct value is by using the formula: `time in seconds = (maximum file size / slowest assumed connection)`.
