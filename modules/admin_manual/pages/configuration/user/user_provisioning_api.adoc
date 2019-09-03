@@ -30,18 +30,37 @@ sending a basic HTTP authentication header.
 ==== Syntax
 
 [cols=",,",options="header",]
-|==============================================
+|===
 | Request Path | Method | Content Type
 | `ocs/v1.php/cloud/users` | `POST` | `text/plain`
-|==============================================
+|===
 
-[cols=",,",options="header",]
-|========================================================
-| Argument | Type | Description
-| userid | string | The required username for the new user
-| password | string | The required password for the new user
-| groups | array | Groups to add the user to [optional]
-|========================================================
+[cols="15%,15%,70%",options="header",]
+|===
+| Argument 
+| Type 
+| Description
+
+| `email` 
+| string 
+a| The email address for the user (_optional_).
+The user will be emailed a link to set their password, _if_ email is configured correctly.
+
+| `groups` 
+| array 
+| Groups to add the user to (_optional_).
+Any group that does not already exist, will be created.
+
+| `password` 
+| string 
+| The required password for the new user.
+A password is *not required*, _if_ an email address is provided.
+If a password is not provided, a temporary one will be generated.
+
+| `userid` 
+| string 
+| The required username for the new user.
+|===
 
 ==== Status Codes
 
@@ -51,18 +70,31 @@ sending a basic HTTP authentication header.
 * 103 - unknown error occurred whilst adding the user
 * 104 - group does not exist
 
-==== Add User Example
+==== Usage Examples
 
+.Create the user "Frank" with password "frankspassword".
 [source,console]
 ----
-# Creates the user "Frank" with password "frankspassword"
 curl -X POST http://admin:secret@example.com/ocs/v1.php/cloud/users \
    -d userid="Frank" \
    -d password="frankspassword"
+----
 
-# Creates the user "Frank" with password "frankspassword" and adds him to the "finance" and "management" groups
+.Create the user "Frank" with password "frankspassword" and add him to the "finance" and "management" groups.
+[source,console]
+----
 curl -X POST http://admin:secret@example.com/ocs/v1.php/cloud/users \
    -d userid="Frank" \
+   -d password="frankspassword" \
+   -d groups[]="finance" -d groups[]="management"
+----
+
+.Create the user "Frank" with password "frankspassword", email address "frank@example.com" and add him to the "finance" and "management" groups. The user will be emailed with a link to change the password.
+[source,console]
+----
+curl -X POST http://admin:secret@example.com/ocs/v1.php/cloud/users \
+   -d userid="Frank" \
+   -d email="frank@example.com" \
    -d password="frankspassword" \
    -d groups[]="finance" -d groups[]="management"
 ----
