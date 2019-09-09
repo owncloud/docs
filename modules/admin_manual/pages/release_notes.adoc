@@ -1,8 +1,14 @@
 = Release Notes
-:server-10_2-avatar-change-url: https://github.com/owncloud/core/issues/35311
-:release-notes-known-issues-url: https://doc.owncloud.com/server/admin_manual/release_notes.html#known-issues
 :owncloud-server-changelog-url: https://owncloud.org/changelog/server/
+:php-56-deprecation: https://doc.owncloud.com/server/admin_manual/release_notes.html#php-5-6-deprecation-2
+:php-supported-versions: https://www.php.net/supported-versions.php
+:release-notes-known-issues-url: https://doc.owncloud.com/server/admin_manual/release_notes.html#known-issues
+:server-10_2-avatar-change-url: https://github.com/owncloud/core/issues/35311
+:mediaviewer-release-post-url: https://owncloud.org/news/good-bye-gallery-say-hi-to-the-new-media-viewer/
+:mediaviewer-url: https://marketplace.owncloud.com/apps/files_mediaviewer
+:redis-stuff-sessions-fix-url: https://github.com/owncloud/enterprise/issues/2509#issuecomment-519877278
 
+* xref:changes-in-10-3-0[Changes in 10.3.0]
 * xref:changes-in-10-2-1[Changes in 10.2.1]
 * xref:changes-in-10-2-0[Changes in 10.2.0]
 * xref:changes-in-10-1-1[Changes in 10.1.1]
@@ -23,6 +29,182 @@
 * xref:changes-in-8-1[Changes in 8.1]
 * xref:changes-in-8-0[Changes in 8.0]
 * xref:changes-in-7-0[Changes in 7.0]
+
+== Changes in 10.3.0
+
+* Check release ticket
+* Check missing PRs
+
+Dear ownCloud administrator, please find, below, the changes and known issues in ownCloud Server 10.3 that need your attention.
+You can also read {owncloud-server-changelog-url}[the full ownCloud Server changelog] for further details on what has changed.
+
+=== Migrations
+
+* A https://github.com/owncloud/core/pull/35721[repair step] was added that drops the deprecated `contacts_cards_properties` table.
+  This migration is not expected to increase the update duration significantly.
+* Improved OCM compliance on `providerId` and `remoteId` fields (https://github.com/owncloud/core/pull/35122[#35122]).
+=> need to check @vicdeo
+=> update duration?! => @pjahns
+
+=> int -> string
+=> columns don't have indexes
+=> we don't expect a very high impact on update duration
+
+This might take some time depending on the number of federated shares and the hard drive speed of the database server.
+
+=== Official PHP 7.3 Support
+
+ownCloud Server 10.3 officially supports PHP 7.3. 
+The Server Core and all apps maintained by ownCloud have received a full QA cycle and are proven to work reliably with PHP 7.3.
+
+If you are still using version 5.6, you have to upgrade PHP before upgrading ownCloud Server https://doc.owncloud.com/server/admin_manual/release_notes.html#php-5-6-deprecation[as it's not supported anymore since ownCloud Server 10.2]. 
+If you are still running PHP 7.0 or 7.1, please plan an upgrade soon as these versions {php-supported-versions}[are or will soon be unsupported].
+
+See the xref:installation/system_requirements.adoc#officially-recommended-supported-options[system requirements in the ownCloud documentation] for more information.
+
+=== PHP 7.0 Deprecation Note
+
+As {php-56-deprecation}[announced with ownCloud Server 10.0.8] and https://doc.owncloud.com/server/admin_manual/release_notes.html#php-5-6-deprecation[10.2], support for PHP 7.0 is discontinued. 
+The next minor version of ownCloud Server (~ End of 2019) will **not support PHP 7.0 anymore**. 
+Please make sure to upgrade to PHP >= 7.2 to stay compatible.
+
+=== Media Viewer Replaces Gallery and Videoplayer
+
+The {mediaviewer-url}[Media Viewer] app was recently released. 
+The Media Viewer is the next generation image and video file viewer for ownCloud.
+It provides a foundation based on new technologies and officially supersedes the former `gallery` and `files_videoplayer`.
+
+ownCloud Server 10.3 does not bundle `gallery` and `files_videoplayer` anymore. 
+Instead, it bundles `files_mediaviewer`. 
+With this, support and maintenance for `gallery` and `files_videoplayer` are discontinued.
+More details on the Media Viewer can be found in the {mediaviewer-release-post-url}[release blog post].
+
+* For a clean transition to Media Viewer it is necessary to **disable both deprecated apps before the upgrade** using either the admin "Apps" panel in the web interface or via occ (e.g., `occ app:disable gallery`). 
+  After the upgrade, enable the Media Viewer app via the admin panel or by running `occ app:enable files_mediaviewer`.
+* If you do not disable the apps prior to the upgrade, `occ upgrade` will pull `gallery` from the ownCloud Marketplace, but will then stop as `files_videoplayer` is not available.
+* It is not recommended to continue using deprecated apps. 
+  However, if you want to do so, you can copy over the `files_videoplayer` directory from the `apps/` folder of the previous ownCloud Server directory.
+
+IMPORTANT: Please do not enable `gallery`/`files_videoplayer` and `files_mediaviewer` simultaneously as these apps are mutually exclusive.
+
+=== Duplicated Session Tokens Issue
+
+* {redis-stuff-sessions-fix-url}[Redis stuff sessions fix]
++
+The session expired at some point, leaving some data in the DB that wasn't cleaned up properly (we don't have a chance to do so). 
+Next request required logging in again, because of missing session information, but this login request collided with the leftovers in the DB, causing, at least, that error in the logs.
+
+* Forced the desktop client & mobile apps to reauthorize with OAuth2
+* Duplicate token log entries
+
+=== Restructured User/Group Sharing Autocompletion
+
+The user/group sharing autocompletion dropdown has been restructured to cope with long user names or additional user information, and to provide a better overview for users.
+The available information is now distributed vertically to improve space usage and user experience.
+Screenshots can be found in https://github.com/owncloud/core/pull/35486[pull request #35486].
+Other ownCloud clients will align with this behavior in future releases.
+
+=== SWIFT Objectstore as Primary & Secondary Storage Removed
+
+Following the https://doc.owncloud.com/server/admin_manual/release_notes.html#swift-objectstore-deprecation[deprecation announcement] with ownCloud Server 10.0.9, support for primary and secondary storage via the OpenStack SWIFT protocol has been removed.
+
+NOTE: Please get in contact with ownCloud Support if you're still using OpenStack SWIFT and want to upgrade.
+
+=== S3 Primary and Secondary Storage
+
+* Moved S3 external integration into separate app (https://github.com/owncloud/files_external_s3[files_external_s3]) https://github.com/owncloud/core/pull/34986[#34986]
+=> removed from core, separate app => needs discussion regarding release?! (=> SURF using it?!)
+* Removed support for swift as primary / external storage https://github.com/owncloud/core/pull/35951[#35951].
+
+=== New HTTP APIs
+
+ownCloud Server is being prepared for https://owncloud.org/news/owncloud-phoenix-rebirth-of-the-owncloud-user-interface/[Phoenix], the upcoming web frontend for ownCloud. 
+Phoenix is separated from the backend and communicates via HTTP APIs.
+
+The following new HTTP APIs have been added:
+
+* https://doc.owncloud.com/server/developer_manual/webdav_api/trashbin.html[WebDAV Trash bin API]
+* Public links...
+* ?
+
+=> Link to dev docs
+
+=== Other Notable Changes
+
+* Url `/cron` in addition to `/cron.php` to execute Cron jobs via Webcron https://github.com/owncloud/core/pull/34932[#34932].
+* `system:cron` occ command for executing background tasks via system cron https://github.com/owncloud/core/pull/34932[#34932] instead of cron.php.
+* `previews_path` config option to configure thumbnail storage path https://github.com/owncloud/core/pull/35131[#35131].
+=> default: user storage => can be changed now, e.g., when different storages are used
+* Show activity when share receiver unshares a received share https://github.com/owncloud/core/pull/35193[#35193].
+=> changes needed in activity?
+* Improved mobile device experience: https://github.com/owncloud/core/pull/35919[#35919], https://github.com/owncloud/core/pull/35813[#35813], and https://github.com/owncloud/core/pull/35347[#35347].
+=> file view, login => screenshots?
+* Improved sharing autocomplete dropdown layout https://github.com/owncloud/core/pull/35397[#35397].
+* Refactored user creation in order to allow same flow for `occ` and `api` https://github.com/owncloud/core/pull/35972[#35972].
+=> Open points (prov. API should work, occ user:add need to check)
+* Issues with federation when proxy requires credentials https://github.com/owncloud/core/pull/35868[#35868].
+* Ignore case of userid in occ `files:scan` command https://github.com/owncloud/core/pull/35324[#35324]
+
+=== Solved Known Issues
+
+* A new occ command, `encryption:fix-encrypted-version`, has been introduced to address issues related to encrypted files not being accessible anymore. 
+  This issue originated from a security measure to avoid encrypted files with the same content looking identical. 
+  In some cases, users get a `Bad Signature` error when trying to access files. 
+  The new command corrects this behavior, making files accessible again. 
+  The command only needs to be run if users report the mentioned error. https://github.com/owncloud/encryption/pull/115[#115]
+
+So the idea here is the encrypted version is used for encrypting the content of the file, so while decrypting the file the same number should be used, else the file cannot be decrypted. 
+The encrypted version can be zero or a positive integer, which helps to download the file successfully or read the file successfully (if the file is readable by an app, for example, texteditor or pdfviewer). 
+There can be situations when (the reason is still unknown or not reproduced in our end), encrypted version mismatch happens. 
+When this happens, the user finds it difficult to download the file. 
+And during the decryption phase, `Bad Signature` appears. 
+The new command tries to find a way to fix the encrypted version for a file which is affected. 
+Once the right match of the encrypted version is found, the command proceeds to check for other files for the user.
+@pvince81 Sure I will check if there are docs for encrypted version and if not I will create one.
+
+* If an instance uses the `share_folder` config.php option to gather incoming user shares in a certain folder, this folder can not be deleted by users anymore. https://github.com/owncloud/core/pull/35998[#35998]
+* The `share_folder` config.php option now also respects federated shares. https://github.com/owncloud/core/pull/35396[#35396]
+* The `user.min_search_length` config.php option now also respects federated users. https://github.com/owncloud/core/pull/35977[#35977]
+* Issues with database conversions using the `db:convert-type` occ command (e.g., SQLite to MySQL) have been fixed. 
+  This is still in an experimental state and should be tested thoroughly. 
+  Please provide feedback if you encounter issues. https://github.com/owncloud/core/pull/35390[#35390]
+* File integrity checking has been improved to prevent issues: If a checksum mismatch occurs after uploading a file, the uploaded file and its checksum will now be deleted to prepare for a clean re-upload. https://github.com/owncloud/core/pull/35294[#35294]
+
+=== For Developers
+
+* WebDAV Trash bin API https://github.com/owncloud/core/pull/35716[#35716] https://github.com/owncloud/core/pull/35879[#35879]
+  - https://doc.owncloud.com/server/developer_manual/webdav_api/trashbin.html[Developer documentation]
+* Two-factor providers may now display custom challenge messages https://github.com/owncloud/core/issues/34848[#34848]
+* The theming capabilities have been improved by allowing HTML for Name and LogoClaim https://github.com/owncloud/core/pull/35273[#35273]
+
+* ROLES API https://github.com/owncloud/core/pull/36024
+* Share attributes API v2 https://github.com/owncloud/core/pull/35836
+  - v1 still supported
+
+=== Known Issues
+
+Currently, there are no known issues with ownCloud Server 10.3.0. 
+This section will be updated in the case that issues become known.
+=> Check 10.2 known issues to carry over?!
+
+==== Open
+
+* [PHOENIX] Support for redirecting private links to ownCloud Phoenix frontend (https://github.com/owncloud/core/pull/35819)[#35819]
+=> config.php option has been added `'phoenix.baseUrl' => 'http://172.17.0.1:8300'`
+* DAV endpoint for public shares [#35932](https://github.com/owncloud/core/pull/35932)
+=> as above
+=> API docs?
+* Performance improvements when loading groups of users [#35822](https://github.com/owncloud/core/pull/35822)
+=> improvements when not having read-only groups (e.g., guests not installed)
+* Usage of a domain when authenticating with SMB/WND shares [#35892](https://github.com/owncloud/core/pull/35892)
+=> check with Carlos, noteworthy?
+* Properly return StorageNotAvailable on network failures with external storages [#3369](https://github.com/owncloud/core/pull/35707)
+https://github.com/owncloud/enterprise/issues/3369
+=> check with Carlos, noteworthy?
+* Improved memory handling for trashbin expiry background job [#35708](https://github.com/owncloud/core/pull/35708)
+=> clarify with Carlos
+* Issues with recreating master keys when HSM is used [#128](https://github.com/owncloud/encryption/pull/128)
+=> clarify with @jfd if noteworthy
 
 == Changes in 10.2.1
 
@@ -1897,3 +2079,4 @@ The application Store is disabled for the Enterprise Edition.
 
 The LDAP Home Connector application requires Linux (with MySQL, MariaDB,
 or PostgreSQL) to operate correctly.
+
