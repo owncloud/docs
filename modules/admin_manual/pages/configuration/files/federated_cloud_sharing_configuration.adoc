@@ -10,6 +10,8 @@ Federated Cloud Sharing is managed by the Federation app. When you enable the Fe
 For security reasons federated sharing **strictly requires HTTPS (SSL/TLS)**.
 ====
 
+NOTE: For testing purposes you can use `HTTP` but you have to set `'sharing.federation.allowHttpFallback' => true,` in your **config.php**.
+
 == Configuration
 Follow these steps to establish a trusted connection between two servers.
 
@@ -18,8 +20,8 @@ Follow these steps to establish a trusted connection between two servers.
 . Reset your `oc_jobs` table.
 +
 ----
-mysql -u root -e "update oc_jobs set last_run=0;" owncloud;
-mysql -u root -e "update oc_jobs set last_checked=0;" owncloud;
+mysql -u root -e "update oc_jobs set last_run=0 where class='OCA\\Federation\\SyncJob';" owncloud;
+mysql -u root -e "update oc_jobs set last_checked=0 where class='OCA\\Federation\\SyncJob';" owncloud;
 ----
 . Navigate to **admin settings -> sharing -> Federation**
 . Add **server 1** to the trusted servers on **server 2**.
