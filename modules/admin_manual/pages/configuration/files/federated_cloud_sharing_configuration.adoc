@@ -15,9 +15,15 @@ NOTE: For testing purposes you can use `HTTP` but you have to set `'sharing.fede
 == Configuration
 Follow these steps to establish a trusted connection between two servers.
 
-. Verify valid SSL certificates on both servers. If you open the server URL in your Browser a lock left of the URL indicates a valid certificate.
-. Verify your `'overwrite.cli.url' => 'https://<SERVER_URL>',` is configured to the correct URL and instead of `localhost` in your **config.php**.
-. Reset the federation job in your `oc_jobs` table. This job is required to get the verification token from the other server to establish a federation connection between two servers. The resetting ensures that it will be executed when we run cron.php later.
+. Verify that both servers have SSL certificates.
+  If you open the server URL in your browser and see a lock icon on the left-hand side of the address bar, the certificate is valid.
++
+.Lock icon in the address bars in Firefox, Google Chrome, and Safari.
+image:configuration/files/browser-address-bars.png[Lock icon in Firefox, Google Chrome, and Safari]
+. Verify that the `'overwrite.cli.url'` setting is configured to the correct URL, instead of `localhost`, in **config.php**.
+. Reset the federation job in your `oc_jobs` table. 
+  This job is required to get the verification token from the other server to establish a federation connection between two servers. 
+  The resetting ensures that it will be executed when we run xref:configuration/server/background_jobs_configuration.adoc#cron[cron.php] later.
 +
 ----
 mysql -u root -e "update oc_jobs set last_run=0 where class='OCA\\Federation\\SyncJob';" owncloud;
