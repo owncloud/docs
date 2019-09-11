@@ -27,6 +27,19 @@ maximum file size limits of the remote host.
 parallel uploads from multiple users; e.g. if the max upload size is
 10GB and the average number of users uploading at the same time is 100:
 temp space has to hold at least 10x100 GB
++
+[NOTE]
+====
+In Centos and RHEL, Apache has a few more default configurations within systemd.
+You will have to set the temp directory in two places:
+
+. In php.ini, e.g., `sys_temp_dir = "/scratch/tmp"`
+. In `/usr/lib/systemd/system/httpd.service`:
++
+----
+PrivateTmp=false
+----
+====
 
 [[configuring-your-web-server]]
 == Configuring Your Web server
@@ -53,8 +66,8 @@ php_value max_execution_time 3600
 
 === mod_reqtimeout
 
-The https://httpd.apache.org/docs/current/mod/mod_reqtimeout.html[mod_reqtimeout] Apache module could also stop large uploads from completing. 
-If you’re using this module and getting failed uploads of large files, either disable it in your Apache config or raise the configured `RequestReadTimeout` timeouts.
+The https://httpd.apache.org/docs/current/mod/mod_reqtimeout.html[mod_reqtimeout] Apache module could also stop large uploads from completing.
+If you’re using this module and getting large file uploads fail, either disable the module in your Apache config or increase the `RequestReadTimeout` value.
 
 ==== Disable mod_reqtimeout On Ubuntu
 
@@ -67,7 +80,7 @@ a2dismod reqtimeout
 
 ==== Disable mod_reqtimeout On CentOS
 
-On CentOS, you have to edit `/etc/httpd/conf/httpd.conf`, and comment out the following line: 
+On CentOS, comment out the following line in `/etc/httpd/conf/httpd.conf`:
 
 [source,apache]
 ----
@@ -76,7 +89,7 @@ LoadModule reqtimeout_module modules/mod_reqtimeout.so
 
 When you have done run `asdismod` or updated `/etc/httpd/conf/httpd.conf`, restart Apache.
 
-TIP: There are also several other configuration options in your web server config which could prevent the upload of larger files. 
+TIP: There are also several other configuration options in your web server config which could prevent the upload of larger files.
 Please see your web server's manual, for how to configure those values correctly:
 
 [[apache]]
