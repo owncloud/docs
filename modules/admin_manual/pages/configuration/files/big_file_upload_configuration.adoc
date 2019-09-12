@@ -102,28 +102,7 @@ This is not a regular setting but serves as a workaround for {mod_fcgid_bug_5174
 
 Setting `FcgidMaxRequestInMem` significantly higher than usual may no longer be necessary, once bug #51747 is fixed.
 
-=== NGINX
-
-* {nginx-client_max_body_size-url}[client_max_body_size]
-* {nginx-fastcgi_read_timeout-url}[fastcgi_read_timeout]
-* {nginx-client_body_temp_path-url}[client_body_temp_path]
-
-Since NGINX 1.7.11 a new config option {nginx-fastcgi_request_buffering-url}[fastcgi_request_buffering] is available. 
-Setting this option to `fastcgi_request_buffering off;` in your NGINX config might help with timeouts during the upload.
-Furthermore, it helps if you're running out of disc space on the `/tmp` partition of your system.
-
-For more info how to configure NGINX to raise the upload limits see also {oc-upload-file-up-to-16gb-url}[this] wiki entry.
-
-TIP: Make sure that `client_body_temp_path` points to a partition with adequate space for your upload file size, and on the same partition as the `upload_tmp_dir` or `tempdirectory` (see below). 
-For optimal performance, place these on a separate hard drive that is dedicated to swap and temp storage.
-
-If your site is behind an NGINX frontend (for example, a load balancer):
-
-By default, downloads will be limited to 1GB due to `proxy_buffering` and `proxy_max_temp_file_size` on the frontend.
-
-* If you can access the frontend’s configuration, disable {nginx-proxy_buffering-url}[proxy_buffering] or increase {nginx-proxy_max_temp_file_size-url}[proxy_max_temp_file_size] from the default 1GB.
-* If you do not have access to the frontend, set the http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_buffering[X-Accel-Buffering] header to `add_header X-Accel-Buffering no;` on your backend server.
-
+[[configuring-php]]
 == Configuring PHP
 
 If you don't want to use the ownCloud `.htaccess` or `.user.ini` file, you may configure PHP instead. 
