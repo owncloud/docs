@@ -1,5 +1,5 @@
 = Server Preparation for Ubuntu 18.04
-:keywords: ubuntu, ubuntu 18.04, apache2, nginx, php-fpm, php, libsodium, mcrypt
+:keywords: ubuntu, ubuntu 18.04, apache2, php-fpm, php, libsodium, mcrypt
 :description: If your Ubuntu 18.04 server is a bare-minimum installation, follow this preparation guide to get it ready to manually install ownCloud.
 :toc: right
 :toclevels: 1
@@ -166,7 +166,7 @@ When the commands complete, you then have to:
 * Restart php-fpm and your web server, by running the following commands:
 +
   sudo service php7.2-fpm restart
-  sudo service nginx restart
+  sudo service apache2 restart
 
 == libsmbclient-php Library
 
@@ -221,7 +221,16 @@ sudo apt install phpmyadmin
 
 If you have network resources, such as NFS based mounts, and you want to make sure that the database or web server only starts _after_ the resource is mounted, consider the following example to help configure your system correctly.
 
-The example is based on an NFS mount which you want to be available before the service with <name.service> starts.
+The example below is based on an NFS mount which you want to be available _before_ the service with <name.service> starts.
+The same procedure can be used for iSCSI. 
+For details setting up an iSCSI mount see the {iscsi_initiator-url}[Ubuntu 18.04 iSCSI Initiator] guide.
+ 
+The name in <name.service> could be any valid service, including `apache2`, `mysql` or `mariadb`.
+
+* Add `_netdev` to the list of NFS mount point options in `/etc/fstab`.
++
+--
+This option ensures that the mount happens _after_ the network is up:
 
 - Using the example below, add `_netdev` to the list of NFS mountpoint options in `/etc/fstab`.
 This option ensures that the mount will happen __after__ the network is up.
@@ -233,4 +242,4 @@ You should see the following printed to the console: `<folder.mount> loaded acti
 For example: `After=network.target folder.mount`.
 - Run `sudo systemctl daemon-reload`
 - Restart your service by invoking `sudo system <your service> restart`.
-
+--
