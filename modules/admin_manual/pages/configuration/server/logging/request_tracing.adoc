@@ -1,0 +1,39 @@
+= Request Tracing
+:uuid-rfc4122-url: https://tools.ietf.org/html/rfc4122
+:traefik-loadbalancing-url: https://docs.traefik.io/basics/#load-balancing
+:big-ip-loadbalancing-url: https://www.f5.com/products/big-ip-services
+:page-aliases: configuration/server/request_tracing.adoc
+
+ownCloud logs the `X-REQUEST-ID` header from desktop and mobile clients in the ownCloud log when sent with client requests.
+
+The header helps when clients have a problem communicating with an ownCloud server, because:
+
+. The user can include the value in bug reports; and
+. System administrators can filter log files for the header value. 
+
+Storing this information makes searching more efficient, as system administrators don’t have to rely solely on normal log entry elements, such as timestamps and IP addresses.
+
+== The Header’s Value
+
+The header's value is a {uuid-rfc4122-url}[UUID (version 4)].
+These are generated from truly random (or pseudo-random) numbers by the client and do not contain _any_ sensitive information.
+As a result it will not violate the user's privacy nor allow users to be tracked.
+
+== Required Server Configuration
+
+Before the value can be stored in your web server's log files, your system administrator(s) need to configure two areas:
+
+. *The web server:* The web server's logging configuration needs to be adjusted, e.g., Apache’s access and error log format, so that the value is stored in request log entries. An example of configuring Apache’s CustomLog format xref:web-server-configuration-example[is provided below].
+. *Load balancers:* All load balancers sitting in-between clients and your ownCloud instance(s), e.g., {traefik-loadbalancing-url}[Traefik], {big-ip-loadbalancing-url}[Big-IP], need to be configured to pass the header through. 
+  This way it is possible to track ("trace") requests through larger environments.
+  Please refer to your load balancer’s configuration for details on how to adjust their configuration.
+
+== Web Server Configuration Example
+
+.Example for Apache
+[source,apache]
+----
+CustomLog /var/log/apache2/access.log "%h %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\" \"%{X-Request-ID}i\""
+----
+
+TIP: The exact log format chosen is entirely up to your system administrator(s).
