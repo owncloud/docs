@@ -121,17 +121,17 @@ mount WebDAV shares just like any other remote filesystem. Use this
 command to install it on Debian/Ubuntu:
 +
 ----
-apt-get install davfs2
+sudo apt-get install davfs2
 ----
 . Use this command to install it on CentOS, Fedora, and openSUSE:
 +
 ----
-yum install davfs2
+sudo yum install davfs2
 ----
-. Add yourself to the `davfs2` group:
+. Add yourself to the `davfs2` group (this will be effective after the next login):
 +
 ----
-usermod -aG davfs2 <username>
+sudo usermod -aG davfs2 <username>
 ----
 . Then create an `owncloud` directory in your home directory for the
 mountpoint, and `.davfs2/` for your personal configuration file:
@@ -145,11 +145,9 @@ mkdir ~/.davfs2
 ----
 sudo cat /etc/davfs2/secrets > ~/.davfs2/secrets
 ----
-. Set yourself as the owner and make the permissions read-write owner
-only:
+. Make the permissions read-write owner only:
 +
 ----
-chown <username>:<username>  ~/.davfs2/secrets
 chmod 600 ~/.davfs2/secrets
 ----
 . Add your ownCloud login credentials to the end of the `secrets`
@@ -157,12 +155,12 @@ file, using your ownCloud server URL and your ownCloud username and
 password:
 +
 ----
-example.com/owncloud/remote.php/webdav <username> <password>
+/home/<username>/owncloud <username> <password>
 ----
 . Add the mount information to `/etc/fstab`:
 +
 ----
-example.com/owncloud/remote.php/webdav /home/<username>/owncloud davfs user,rw,auto 0 0
+https://example.com/owncloud/remote.php/webdav /home/<username>/owncloud davfs user,rw,auto 0 0
 ----
 . Then test that it mounts and authenticates by running the following
 command. If you set it up correctly you won’t need root permissions:
