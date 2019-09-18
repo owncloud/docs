@@ -1,0 +1,291 @@
+= Network File System (NFS) Deployment Recommendations
+:toc: right
+:toclevels: 1
+:keywords: nfs, network file system, nfsv4, mtu, async, noasync
+:description: This guide covers the official ownCloud NFS (Network File System) deployment recommendations.
+:autofs-url: https://help.ubuntu.com/community/Autofs
+:lockd-url: https://docs.oracle.com/cd/E19455-01/806-0916/rfsrefer-9/index.html
+:mount-man-page-url: http://man7.org/linux/man-pages/man8/mount.8.html
+:netplan-docs-url: https://netplan.io/reference
+:networkmanager-url: https://help.ubuntu.com/community/NetworkManager
+:networkworld-mtu-size-issues-url: https://www.networkworld.com/article/2224654/mtu-size-issues.html
+:nfs-man-page-url: https://linux.die.net/man/5/nfs
+:nfs-read-write-delegations-url: https://tools.ietf.org/html/rfc7530#section-1.4.6
+:nfs-strong-security-architecture-url: https://tools.ietf.org/html/rfc7530#section-3 
+:nmcli-url: https://manpages.ubuntu.com/manpages/disco/man1/nmcli.1.html
+:nmtui-url: https://manpages.ubuntu.com/manpages/disco/man1/nmtui.1.html
+:rpc-statd-url: https://linux.die.net/man/8/rpc.statd
+:man-nfs-ubuntu-url: http://manpages.ubuntu.com/manpages/bionic/man5/nfs.5.html
+:innodb_flush_method-url: https://mariadb.com/kb/en/library/innodb-system-variables/#innodb_flush_method
+
+ownCloud recommends using NFS for any scenario other than local storage. 
+It has solid performance and is very stable.
+This document contains ownCloud's official deployment recommendations.
+
+There can be different scenarios where ownCloud's storage is located on an NFS mount (primary/secondary).
+In some scenarios, multiple application servers can use the same NFS mount point.
+
+NOTE: It is advised to use network storage like NFS only in un-routed, switched Gigabit or higher environments.
+
+NOTE: This guide only covers the NFS client side where ownCloud runs. Follow the storage vendors recommendations to configure the NFS server (storage backend).
+
+[discrete]
+== General Performance Considerations
+
+Please consider that a network stack runs in ranges of µs while a storage backend usually runs in ranges of ms.
+Any tuning considerations should therefore first be attempted on the backend storage layout side, especially under high loads.
+
+== NFS Version Comparison Overview
+[width="100%",cols="30%,70%",options="header",]
+|===
+
+| NFSv3
+|
+
+| Exports
+| All exports are mounted separately
+
+| Protocol
+| Numerous protocols for different aspects collected together. MOUNT, LOCK, STATUS…
+
+| Locking
+| Permanent locks in yet another protocol
+
+| Security
+| UNIX based. SecureNFS. Mode Bit Locking
+
+| Communication
+| One operation per RPC
+
+| I18N
+| All locales must match
+
+| Parallel high bandwidth access
+| None native. (Addition such as MPFS)
+|===
+
+[width="100%",cols="30%,70%",options="header",]
+|===
+
+| NFSv4
+|
+
+| Exports
+| All exports can be mounted together in a directory tree structure as part of a pseudo-filesystem
+
+| Protocol
+| A single protocol with the addition of OPEN and CLOSE for security auditing
+
+| Locking
+| Lease based locking in the same protocol
+
+| Security
+| Kerberos and ACL based
+
+| Communication
+| Multiple operations per RPC. (Improves performance)
+
+| I18N
+| UTF-8
+
+| Parallel high bandwidth access
+| pNFS
+|===
+
+== NFSv4
+
+ownCloud recommends using NFSv4 over previous versions for a number of key reasons.
+These are:
+
+* *Improved Security:* It {nfs-strong-security-architecture-url}[mandates a strong security architecture]. It does not require {rpc-statd-url}[rpc.statd] or {lockd-url}[lockd]. As a result, it only uses port 2049.
+* *Improved Reliability:* Uses TCP by default.
+* *Improved Performance:* It uses Multi-Component Messages, which reduce network traffic. It is capable of using a 32KB page size, compared to the default, 1024 bytes.
+* Use of {nfs-read-write-delegations-url}[Read/Write Delegations].
+
+== NFS Mount Options
+
+Please see the {man-nfs-ubuntu-url}[Ubuntu man pages] for a detailed description of the NFS mount options. 
+
+Dependent on the NFS version used, consider following mount options:
+
+=== _netdev
+
+Use this option to ensure that the network is enabled, before NFS attempts to mount these filesystem.
+This setting is essential when database files are located on an NFS storage.
+The database could error or not start correctly, if the mount is not ready before attempting to access its data files.
+
+TIP: You can also use {autofs-url}[autofs], to ensure that mounts are always available before attempting to access them.
+
+=== bg
+
+ownCloud recommends using this option.
+Determines how the mount command behaves if an attempt to mount an export fails.
+If the bg option is specified, a timeout or failure triggers the mount command to fork a child, which will continue to attempt mounting the export. 
+The parent immediately returns with a zero exit code. 
+This is known as a "background" mount.
+This option is useful for continuous operation without manual intervention if the network connectivity is temporarily down or the storage backend must be rebooted.
+
+=== hard
+
+Default value is _hard_.
+For business-critical NFS exports, ownCloud recommends using _hard_ mounts. 
+ownCloud strongly discourages the use of _soft_ mounts. 
+
+=== retrans
+
+Default value is 3. 
+This option can be tuned when using option _soft_.
+
+=== timeo
+
+Default value is 600 (60 seconds). 
+This option can be tuned when using option _soft_.
+
+=== sync/async
+
+With the default value of _async_, the NFS client may delay sending application writes to the NFS server.
+In other words, under normal circumstances, data written by an application may not immediately appear on the server that hosts the file.
+**sync** provides greater data cache coherence among clients, but at a **significant performance cost**.
+Having the database like MySQL or Mariadb on NFS, the default database option value for {innodb_flush_method-url}[innodb_flush_method] is _fsync_, even if it is not explicitly set.
+This database option forces the mount to immediately write to the NFS server without generally setting the mount _sync_ option and avoiding this performance penalty.
+You may consider further tuning when using clustederd server environments.
+
+=== tcp
+
+ownCloud recommends using this option.
+Force using TCP as transport protocol. 
+Alternatively you can use _proto=tcp_.
+
+=== Tune the Read and Write Block Sizes
+
+The allowed block sizes are the packet chunk sizes that NFS uses when reading and writing data.
+The smaller the size, the greater the number of packets need to be sent to send or receive a file.
+Conversely, the larger the size, the fewer the number of packets need to be sent to send or receive a file.
+With NFS Version 3 and 4, you can set the `rsize` and `wsize` values as high as 65536, when the network transport is TCP.
+The default value is 32768 and must be a multiple of 4096.
+
+NOTE: Read and write size must be identical on the NFS server and client.
+
+You can find the set values by working with the output of the `mount` command on a standard server, as in the example below.
+
+[source,console]
+----
+#root@server:~# mount | egrep -o rsize=[0-9]*
+rsize=65536
+
+#root@server:~# mount | egrep -o wsize=[0-9]*
+wsize=65536
+----
+
+The information can also be retrieved using the command set of your dedicated storage backend.
+Once you've determined the best sizes, set them permanently by passing the (`rsize` and `wsize`) options when mounting the share or in the share's mount configuration.
+
+.Specifying the read and write block sizes when calling mount
+[source, console]
+----
+mount 192.168.0.104:/data  /mnt -o rsize=65536,wsize=65536
+----
+
+.Example for a set of NFS mount options:
+[source, console]
+----
+bg,nfsvers=3,wsize=65536,rsize=65536,tcp,_netdev
+----
+
+== Ethernet Configuration Options
+ 
+=== MTU (Maximum Transmission Unit) Size
+
+The MTU size dictates the maximum amount of data that can be transferred in one Ethernet frame.
+If the MTU size is too small, then regardless of the read and write block sizes, the data must still be fragmented across multiple frames.
+Keep in mind that MTU = payload (`packetsize`) + 28.
+
+==== Get the Current Set MTU Size
+
+You can find the current MTU size for each interface using _netstat_, _ifconfig_, _ip_, and _cat_, as in the following examples:
+
+.Retrieve interface MTU size with netstat
+[source,console]
+----
+netstat -i
+
+Kernel Interface table
+Iface      MTU    RX-OK RX-ERR RX-DRP RX-OVR    TX-OK TX-ERR TX-DRP TX-OVR Flg
+lo       65536   363183      0      0 0        363183      0      0      0 LRU
+eth0      1500  3138292      0      0 0       2049155      0      0      0 BMR
+----
+
+.Retrieve interface MTU size with ifconfig
+[source,console]
+----
+ifconfig| grep -i MTU
+
+lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+----
+
+.Retrieve interface MTU size with ip
+[source,console]
+----
+ip addr | grep mtu
+
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
+----
+
+.Retrieve interface MTU size with cat
+[source,console]
+----
+cat /sys/class/net/<interface>/mtu
+----
+
+==== Check for MTU Fragmentation
+
+To check if a particular packet size will be fragmented on the way to the target, run the following command:
+
+[source, console]
+----
+ping <your-storage-backend> -c 3 -M do -s <packetsize>
+----
+
+==== Get the Optimal MTU Size
+
+To get the optimal MTU size, run following command:
+
+[source, console]
+----
+tracepath <your-storage-backend>
+----
+
+You can expect to see output like the following:
+
+[source, console]
+----
+ 1?: [LOCALHOST]                      pmtu 1500 <1>
+ 1:  <your-storage-backend>                              0.263ms reached <2>
+ 1:  <your-storage-backend>                              0.224ms reached <3>
+     Resume: pmtu 1500 hops 1 back 1
+----
+<1> The first line with localhost shows the given MTS size.
+<2> The last line shows the optimal MTU size.
+<3> If both are identical, nothing needs to be done.
+
+==== Change Your MTU Value
+
+In case you need or want to change the MTU size, under Ubuntu:
+
+* If {networkmanager-url}[NetworkManager] is managing all devices on the system, then you can use {nmtui-url}[nmtui] or {nmcli-url}[nmcli] to configure the MTU setting.
+* If NetworkManager is not managing all devices on the system, you can set the MTU to 1280 with Netplan, as in the following example.
++
+[source,yaml]
+----
+network:
+  version: 2
+  ethernets:
+    eth0:
+      mtu: 1280
+----
++
+Refer to {netplan-docs-url}[the Netplan documentation] for further information.
+
+TIP: NetworkWorld has {networkworld-mtu-size-issues-url}[an excellent overview of MTU size issues]. 

@@ -1,23 +1,22 @@
 = Server Preparation for Ubuntu 18.04
-:keywords: ubuntu, ubuntu 18.04, apache2, nginx, php-fpm, php, libsodium, mcrypt
+:keywords: ubuntu, ubuntu 18.04, apache2, php-fpm, php, libsodium, mcrypt
 :description: If your Ubuntu 18.04 server is a bare-minimum installation, follow this preparation guide to get it ready to manually install ownCloud.
 :toc: right
 :toclevels: 1
-:hash-installation: http://php.net/manual/en/hash.installation.php
+:auth-unix-socket-url: https://mariadb.com/kb/en/library/authentication-plugin-unix-socket/
+:disabling-thp-url: https://stackoverflow.com/questions/48743100/why-thp-transparent-huge-pages-are-not-recommended-for-databases-like-oracle-a
+:discover-samba-hosts-url: https://ubuntuforums.org/showthread.php?t=2384959
+:hash-installation-url: http://php.net/manual/en/hash.installation.php
+:install-mariadb-latest-url: https://downloads.mariadb.org/mariadb/repositories/#
 :mcrypt-link-url: https://websiteforstudents.com/install-php-7-2-mcrypt-module-on-ubuntu-18-04-lts/
 :mcrypt-pecl-url: https://pecl.php.net/package/mcrypt
-:discover-samba-hosts: https://ubuntuforums.org/showthread.php?t=2384959
-:install-mariadb-latest: https://downloads.mariadb.org/mariadb/repositories/#
+:overriding-vendor-settings-url: https://www.freedesktop.org/software/systemd/man/systemd.unit.html
+:transport-huge-pages-url: https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/performance_tuning_guide/s-memory-transhuge
+:iscsi_initiator-url: https://help.ubuntu.com/lts/serverguide/iscsi-initiator.html
 
-== Web Server and PHP
+The target audience for this document is more sophisticated admins with additional needs and setup scenarios.
 
-Only *one* of the following web servers is required:
-
-* xref:apache-web-server-and-php-supported[Apache Web Server and PHP (Supported)]
-* xref:apache-web-server-and-php-fpm-unsupported[Apache Web Server and PHP-FPM (Unsupported)]
-* xref:nginx-web-server-and-php-fpm-unsupported[Nginx Web Server and PHP-FPM (Unsupported)]
-
-=== Apache Web Server and PHP (Supported)
+== Apache Web Server and PHP
 
 The following command installs the Apache web server and PHP.
 
@@ -25,51 +24,6 @@ The following command installs the Apache web server and PHP.
 ----
 sudo apt install php libapache2-mod-php apache2
 ----
-
-=== Apache Web Server and PHP-FPM (Unsupported)
-
-The following command installs and enables the Apache web server with php-fpm.
-This setup can be used in high throughput environments. 
-
-[source,console]
-----
-# Install PHP-FPM and Apache2 
-sudo apt install php-fpm apache2
-
-# Disable relevant modules
-sudo a2dismod php7.2
-sudo a2dismod mpm_prefork
-sudo a2enmod proxy_fcgi
-
-# Enable the php7.2-fpm configuration
-sudo a2enconf php7.2-fpm
-
-# Enable relevant modules
-sudo a2enmod mpm_event
-sudo a2enmod http2
-
-# Start Apache2
-sudo service apache2 restart
-----
-
-TIP: For performance comparison details, please refer to https://www.cloudways.com/blog/php-fpm-on-cloud/[this guide from Cloudways].
-
-For examples of how to configure this setup, please refer to:
-
-* http://httpd.apache.org/docs/2.4/mod/mod_proxy.html#handler[The mod_proxy Access via Handler documentation] 
-* https://httpd.apache.org/docs/2.4/mod/mod_proxy_fcgi.html[The mod_proxy_fcgi documentation] 
-* https://wiki.apache.org/httpd/PHP-FPM[High-performance PHP on apache httpd 2.4.x using mod_proxy_fcgi and php-fpm]
-
-=== Nginx Web Server and PHP-FPM (Unsupported)
-
-To install the Nginx web server and PHP-FPM, run the following command.
-
-[source,console]
-----
-sudo apt install php-fpm nginx
-----
-
-For details of how to configure Nginx, please refer to xref:installation/nginx_configuration.adoc[the NGINX Configuration].
 
 == Common Prerequisites
 
@@ -96,18 +50,18 @@ If you want to retrieve a list of enabled PHP extensions run following command:
 ls `php -i | grep "^extension_dir" | sed -e 's/.*=> //'`
 ----
 
-== HASH Message Digest Framework
+== HASH Message-Digest Framework
 
-This framework does not need manual intervention anymore, because
+This framework does not need manual intervention anymore because:
 
 * as of PHP 5.1.2, the Hash extension is bundled and compiled into PHP by default.
 * as of PHP 7.4.0, the Hash extension is a core PHP extension, so it is always enabled.
 
-For more information refer to {hash-installation}[PHP's Hash Installation documentation].
+For more information refer to {hash-installation-url}[PHP's Hash Installation documentation].
 
 == Exif Library
 
-This library _should_ be already as part of PHP 7.2. +
+This library _should_ be already as part of PHP 7.2.
 However, you can check if it is by running the following command.
 
 [source,console]
@@ -120,15 +74,18 @@ grep -q -P 'EXIF Support => enabled' <(php -i) && echo "Exif is installed and en
 The sodium and OpenSSL PHP libraries are cryptographic libraries which are part of the PHP 7.2 core.
 Consequently, there is no need to install additional cryptographic libraries, such as `php-libsodium` or `mcrypt`.
 
-NOTE: The `mcrypt` library is deprecated and removed from the PHP 7.2 core. However, it is available via PECL.
+NOTE: The `mcrypt` library is deprecated and removed from the PHP 7.2 core.
+However, it is available via PECL.
 
 === php-libsodium
 
 If you see the message `PHP Fatal error: sodium_init() in Unknown on line 0` when invoking the command `php -v` or when running PHP programs, `php-libsodium` might be installed.
-This error does not do any harm, but it can be annoying and will fill up your logs.
+This error does not do any harm, but it can be annoying and fills up your logs.
 
-To prevent it, you have to uninstall `php-libsodium`.
-You can do this by running the following command.
+NOTE: From PHP 7.2 onwards, libsodium is part of PHP, loading the library is no longer necessary.
+
+To prevent it, you have to uninstall `php-libsodium`. 
+You can do this by running the following command:
 
 [source,console]
 ----
@@ -147,7 +104,7 @@ grep -P "sodium support => enabled" <( php -i )
 
 Here are the steps for installing Mcrypt — when it is explicitly necessary.
 
-NOTE: Some of the steps were borrowed from the Website for Student’s {mcrypt-link-url}[guide to installing the PHP 7.2-Mcrypt module].
+NOTE: Some of the steps were borrowed from the website for Student’s {mcrypt-link-url}[guide to installing the PHP 7.2-Mcrypt module].
 
 First, determine the Mcrypt version you want to use in {mcrypt-pecl-url}[PECL's Mcrypt documentation].
 Then, run the following commands to install it.
@@ -166,13 +123,13 @@ When the commands complete, you then have to:
 * Restart php-fpm and your web server, by running the following commands:
 +
   sudo service php7.2-fpm restart
-  sudo service nginx restart
+  sudo service apache2 restart
 
 == libsmbclient-php Library
 
-`libsmbclient-php` is a PHP extension that uses Samba's libsmbclient library to provide
-Samba-related functions to PHP programs. You only need to install it, if you have
-installed `smbclient` as described above. To install it, run the following commands.
+`libsmbclient-php` is a PHP extension that uses Samba's libsmbclient library to provide Samba-related functions to PHP programs. 
+You only need to install it if you have installed `smbclient` as described above. 
+To install it, run the following commands.
 
 [source,console]
 ----
@@ -192,23 +149,56 @@ When the commands complete, you then have to:
 
 [NOTE]
 ====
-Due to a change in the minimum protocol version used in the samba client in Ubuntu 18.04, you may not get a valid connection in ownCloud
+Due to a change in the minimum protocol version used in the Samba client in Ubuntu 18.04, you may not get a valid connection in ownCloud
 This error is identified by a red box at the mount definition or being unable to list directory content.
 In this case, you have to add the following to `/etc/samba/smb.cnf`, below the `workgroup =` statement:
 
 `client max protocol = NT1`
 
-For more information see: {discover-samba-hosts}[Bionic Beaver can not discover Samba hosts]
+For more information see: {discover-samba-hosts-url}[Bionic Beaver can not discover Samba hosts]
 ====
 
 == MariaDB Database
 
-For how to install the latest stable release of MariaDB, please refer to {install-mariadb-latest}[the MariaDB installation documentation].
+For how to install the latest stable release of MariaDB, please refer to {install-mariadb-latest-url}[the MariaDB installation documentation].
 
-NOTE: During the installation of the MariaDB server, you will be prompted to create a root
-password. Be sure to remember your password as you will need it during ownCloud database setup.
+NOTE: For MariaDB server releases lower than 10.4.3, you will be prompted during the installation to create a root
+password.
+Be sure to remember your password, as you will need it during the ownCloud database setup.
 
-If you want to install phpMyAdmin as a graphical interface for administrating the database, run the following command:
+[NOTE]
+====
+From MariaDB 10.4.3 onwards, the authentication method has changed to UNIX socket. 
+For details, please refer to: {auth-unix-socket-url}[MariaDB: Authentication Plugin - Unix Socket].
+The `unix_socket` authentication plugin allows the user to use operating system credentials when connecting to MariaDB via a local UNIX socket.
+Follow the procedure below to create a user, giving ownCloud access to create it's database respectively for phpMyAdmin.
+Don't forget to change the username and password according to your needs.
+
+[source,console]
+----
+sudo mysql
+MariaDB [(none)]>
+ CREATE USER IF NOT EXISTS 'newuser'@'localhost' IDENTIFIED BY 'changeme';
+ GRANT ALL PRIVILEGES ON *.* TO 'newuser'@'localhost' WITH GRANT OPTION;
+ SHOW GRANTS FOR 'newuser'@'localhost' ;
+----
+
+
+====
+
+[NOTE]
+====
+If you have an existing installation of MariaDB and upgrade to a higher version, do not forget to run the following command beforehand, which creates the users above — especially when upgrading to MariaDB 10.4.3:
+
+[source,console]
+----
+sudo mysql_upgrade 
+----
+====
+
+NOTE: Follow this procedure if you want to disable <<Disabling Transparent Huge Pages (THP), Transparent Huge Pages>>
+
+If you want to install phpMyAdmin as a graphical interface for administering the database, run the following command:
 
 [source,console]
 ----
@@ -217,20 +207,154 @@ sudo apt install phpmyadmin
 
 == Useful Tips
 
-=== Start a Service after a Resource is Mounted
+=== Start a Service After a Resource is Mounted
 
-If you have network resources, such as NFS based mounts, and you want to make sure that the database or web server only starts _after_ the resource is mounted, consider the following example to help configure your system correctly.
+If you have network resources, such as NFS or iSCSI based mounts and you want to make sure that the database or web server only starts _after_ the resource is mounted.
+Consider the following example setup when configuring your system.
 
-The example is based on an NFS mount which you want to be available before the service with <name.service> starts.
+The example below is based on an NFS mount which you want to be available _before_ the service with <name.service> starts.
+The same procedure can be used for iSCSI. 
+For details setting up an iSCSI mount see the {iscsi_initiator-url}[Ubuntu 18.04 iSCSI Initiator] guide.
+ 
+The name in <name.service> could be any valid service, including `apache2`, `mysql` or `mariadb`.
 
-- Using the example below, add `_netdev` to the list of NFS mountpoint options in `/etc/fstab`.
-This option ensures that the mount will happen __after__ the network is up.
-`resource:path on local_path type nfs (<your options>,_netdev)`
-- Make sure that all mounts in `/etc/fstab` are mounted by running `sudo mount -a`.
-- Run `systemctl list-units | grep -nP "\.mount"` and look for the mount you want to be up.
-You should see the following printed to the console: `<folder.mount> loaded active mounted <local_path>`, where `folder.mount` and `local_path` are examples. 
-- In `/etc/systemd/system/<name.service>` add `folder.mount` after the directive `After=network.target`
-For example: `After=network.target folder.mount`.
-- Run `sudo systemctl daemon-reload`
-- Restart your service by invoking `sudo system <your service> restart`.
+* Add `_netdev` to the list of NFS mount point options in `/etc/fstab`.
++
+--
+This option ensures that the mount happens _after_ the network is up:
 
+[source,console]
+----
+resource:foreign_path local_path nfs (<your options>),_netdev
+----
+--
+
+* Make sure that all mounts in `/etc/fstab` are mounted by running:
++
+--
+[source,console]
+----
+sudo mount -a
+----
+--
+
+* Run the following command to list mounts which must be up first:
++
+--
+[source,console]
+----
+systemctl list-units | grep -nP "\.mount"
+----
+
+You should see lines printed to the console.
+Look for the mount you want to be up in the command's output. 
+
+[source,console]
+----
+<folder.mount>
+  loaded active mounted <local_path>
+----
+where `<folder.mount>` and `<local_path>` are examples!
+--
+
+* Edit the service you want to change:
++
+--
+[source,console]
+----
+sudo systemctl edit <name>.service
+----
+
+Add the following directive in the editor opened using your chosen `folder.mount` from above:
+
+[source,console]
+----
+[Unit]
+After=folder.mount
+----
+
+You can add more than one dependency if needed by separating them with spaces.
+This procedure keeps `<name>.service` in its original state but makes it possible to override the current setup with new parameters.
+It automatically creates a directory in `/etc/systemd/system`, named `<name>.service.d`, and a file in that directory called `override.conf`.
+In the example above, the parameter is added to the existing list of parameters of the `After` directive.
+
+For more details please read section {overriding-vendor-settings-url}[Example 2. Overriding vendor settings]
+
+Please keep the following points in mind, regarding if `<name>.service` is linked or not:
+
+** If the file is linked from `/lib/systemd/system`, it is for packaged unit files.
+They are overwritten when Systemd (or whatever package provides them) is upgraded.
+
+** If the file originates in `/etc/systemd/system`, it is for your own and customised unit files.
+Unit files you place in here override the package-provided file and will not be replaced on upgrade.
+
+It is recommended to keep things simple and future proof by creating an override file via `systemctl edit`.
+--
+
+* Run the following command to apply your changes:
++
+--
+[source,console]
+----
+sudo systemctl daemon-reload
+----
+--
+
+* Check if `<name>.service` has been properly added:
++
+--
+[source,console]
+----
+sudo systemctl show <name>.service | grep "After="
+----
+`folder.mount` should be part of the parameter list.
+--
+
+* Restart your service by invoking:
++
+--
+[source,console]
+----
+sudo system <name> restart
+----
+--
+
+=== Disable Transparent Huge Pages (THP)
+
+{transport-huge-pages-url}[Transparent Huge Pages] should be disabled when using databases.
+This is applicable when using Redis, as well as MariaDB.
+For more information read: {disabling-thp-url}[Why THP (Transparent Huge Pages) are not recommended for Databases].
+
+To disable Transparent Huge Pages, follow these steps:
+
+* Create in `/etc/systemd/system` a file like `disable-thp.service` add the following content:
++
+--
+[source,console]
+----
+[Unit]
+Description=Disable Transparent Huge Pages
+DefaultDependencies=no
+After=sysinit.target local-fs.target
+Before=basic.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c '/bin/echo never > /sys/kernel/mm/transparent_hugepage/enabled'
+ExecStart=/bin/sh -c '/bin/echo never > /sys/kernel/mm/transparent_hugepage/defrag'
+
+[Install]
+WantedBy=basic.target
+----
+--
+
+* Run following command to apply and activate your changes and start it automatically at boot time:
++
+--
+[source,console]
+----
+sudo systemctl daemon-reload
+sudo systemctl enable disable-thp
+sudo service disable-thp start
+----
+--
