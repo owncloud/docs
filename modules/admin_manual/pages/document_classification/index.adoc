@@ -50,7 +50,6 @@ Specifically, it enables ownCloud providers to:
 * Prevent human mistakes when dealing with sensitive information.
 * Fulfil corporate data protection requirements.
 
-[[classification]]
 == Classification
 
 Employing document classification and respective policies in ownCloud generally involves three steps, which are outlined in detail below.
@@ -59,7 +58,6 @@ Employing document classification and respective policies in ownCloud generally 
 . xref:set-up-classification-rules[Configure rules for classification (tagging)]
 . xref:policy-enforcement[Associate policies to the classification rules]
 
-[[tags-for-classification]]
 === Tags for Classification
 
 Document classification levels in ownCloud are represented via xref:user_manual:files/webgui/tagging.adoc[Collaborative Tags].
@@ -90,7 +88,6 @@ This category is recommended when users should not be able to recognize the clas
 
 For setting up each classification rule, create a separate tag using xref:enterprise/file_management/files_tagging.adoc#tag-manager[Collaborative Tags Management], which you can later assign to classification rules and/or policies.
 
-[[automated-classification-based-on-document-metadata]]
 === Automated Classification Based on Document Metadata
 
 Automated classification based on document metadata consists of two parts:
@@ -189,7 +186,6 @@ Apart from the concrete examples above, a generalized method to employ document 
 - Note down the classification property and value.
 - Repeat the steps for all classification properties and values you want to set up classification rules for in ownCloud.
 
-[[set-up-classification-rules]]
 === Set Up Classification Rules
 
 * As an ownCloud administrator, navigate to menu:Settings[Workflows & Tags]
@@ -207,7 +203,6 @@ Apart from the concrete examples above, a generalized method to employ document 
 ** **Tag**: Choose the tag to apply to files when a match occurs.
 * Repeat the steps to create classification rules for all desired properties and values
 
-[[automated-classification-based-on-file-or-user-properties]]
 === Automated Classification Based on File or User Properties
 
 Apart from automated classification based on document metadata, uploaded files may also be classified according to criteria inherent to files or to the users uploading them, making use of the xref:enterprise/file_management/files_tagging.adoc[Workflow] extension.
@@ -236,7 +231,6 @@ xref:enterprise/file_management/files_tagging.adoc[Workflow Extension documentat
 For files classified with the _Workflow_ extension, administrators can impose feature and access policies
 as described in the next section.
 
-[[manual-classification]]
 === Manual Classification
 
 As a further measure, it is possible to supply tags for users to autonomously classify all types of files in their own or shared spaces.
@@ -249,14 +243,12 @@ As a further measure, it is possible to supply tags for users to autonomously cl
 
 For files that are classified manually, administrators can impose feature and access policies as described in the next section.
 
-[[policy-enforcement]]
 == Policy Enforcement
 
 ownCloud currently provides two types of policies that can be enforced based on classification, _Feature_ and _Access_ policies.
 These policies can be imposed independently of the classification mechanism.
 The following sections illustrate the available policies and explain how they can be applied to classified contents.
 
-[[feature-policies]]
 === Feature Policies
 
 Feature policies are restrictions that prevent users from using a feature or force them to use it in a certain way.
@@ -266,7 +258,6 @@ They are provided by the https://marketplace.owncloud.com/apps/files_classifier[
 - xref:prevent-link-sharing[Prevent Link Sharing]
 - xref:unprotected-links-expire-after-x-days[Unprotected Links Expire After X Days]
 
-[[prevent-upload]]
 === Prevent Upload
 
 To follow guidelines that prevent data of certain classification levels (e.g., "_strictly confidential_") from being used in ownCloud at all, the "_Prevent upload_" policy is the right instrument to use.
@@ -277,7 +268,6 @@ When trying to upload documents caught by the policy, users will get an error me
 NOTE: Even though the server won't accept the uploaded files, in the end, it is mandatory to configure a tag
 for the classification rule to work.
 
-[[prevent-link-sharing]]
 === Prevent Link Sharing
 
 The prevent link sharing policy is tasked to ensure that classified data of certain confidentiality levels can't be shared publicly.
@@ -292,7 +282,6 @@ Documents with the associated classification level:
 In all cases the user will see an error message containing the reasoning and the respective file(s):
 `The file(s) "**<file1>, <file2>**" can't be shared via public link (classified as <tag>)`, where `<tag>` is the tag chosen for the classification rule.
 
-[[unprotected-links-expire-after-x-days]]
 === Unprotected Links Expire After X Days
 
 The policy _Unprotected links expire after X days_ enables administrators to define public link expiration policies depending on the classification levels of the data that is shared via public links without password protection.
@@ -311,14 +300,12 @@ In contrast, the Password Policy option "_X days until link expires if password 
 NOTE: The xref:configuration/files/file_sharing_configuration.adoc[Sharing settings option] provides the means to define a general public link expiration policy. 
 This option currently is also mutually exclusive and will always override the policy discussed in this section.
 
-[[setting-up-policies-without-automated-classification-based-on-document-metadata]]
 === Setting Up Policies Without Automated Classification Based on Document Metadata
 
 All policies can also be enforced when using xref:manual-classification[Manual Classification] or xref:automated-classification-based-on-file-or-user-properties[Automated Classification based on File or User Properties].
 For this, specify the tag that determines the files that the policy should apply to and leave the fields for "_Property XPath_" and "_Property Value_" empty.
 Then choose the desired policy and click btn:[Save].
 
-[[access-policies]]
 == Access Policies
 
 Access policies are restrictions that prevent users or groups of users from accessing specific resources even though they appear in their file list, e.g., via a share from another user.
@@ -334,7 +321,6 @@ Documents with the respective classification tag can't be accessed:
 * _Request time_: within the configured time frame (or only within the configured time frame when using the `[is not]` operator)
 * _IP Range (Source network)_: from the configured IP range (or only from the configured IP range when using the `[is not]` operator)
 
-[[logging]]
 == Logging
 
 When classified documents are uploaded, log entries will be written to ownCloud's log file, (`data/owncloud.log`).
@@ -352,10 +338,8 @@ INFO: `"Alice uploaded a classified file 'confidential.xlsx' with document class
 DEBUG: `"Assigning tag 'Class: Confidential' to 'confidential.xlsx'"`
 ----
 
-[[limitations]]
 == Limitations
 
-[[automated-classification-based-on-document-metadata:-handling-classification-changes-for-existing-files]]
 === Automated Classification Based on Document Metadata: Handling Classification Changes for Existing Files
 
 - When a formerly classified document is replaced with a new version that does not contain classification metadata, the classification tag will remain assigned, and configured policies will still apply.
