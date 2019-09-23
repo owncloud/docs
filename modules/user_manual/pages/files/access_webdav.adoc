@@ -72,9 +72,9 @@ methods.
 Use the `davs://` protocol to connect the Nautilus file manager to your
 ownCloud share:
 
-....
-davs://example.com/owncloud/remote.php/dav/files/USERNAME/
-....
+----
+davs://example.com/owncloud/remote.php/webdav
+----
 
 NOTE: If your server connection is not HTTPS-secured, use `dav://` instead of `davs://`.
 
@@ -86,9 +86,9 @@ image:webdav_gnome3_nautilus.png[screenshot of configuring Nautilus file manager
 To access your ownCloud files using the Dolphin file manager in KDE, use
 the `webdav://` protocol:
 
-....
-webdav://example.com/owncloud/remote.php/dav/files/USERNAME/
-....
+----
+webdav://example.com/owncloud/remote.php/webdav
+----
 
 image:webdav_dolphin.png[screenshot of configuring Dolphin file manager to use WebDAV]
 
@@ -122,20 +122,20 @@ Linux computer.
 mount WebDAV shares just like any other remote filesystem. Use this
 command to install it on Debian/Ubuntu:
 +
-....
-apt-get install davfs2
-....
-2.  Use this command to install it on CentOS, Fedora, and openSUSE:
+----
+sudo apt-get install davfs2
+----
+. Use this command to install it on CentOS, Fedora, and openSUSE:
 +
-....
-yum install davfs2
-....
-3.  Add yourself to the `davfs2` group:
+----
+sudo yum install davfs2
+----
+. Add yourself to the `davfs2` group (this will be effective after the next login):
 +
-....
-usermod -aG davfs2 <username>
-....
-4.  Then create an `owncloud` directory in your home directory for the
+----
+sudo usermod -aG davfs2 <username>
+----
+. Then create an `owncloud` directory in your home directory for the
 mountpoint, and `.davfs2/` for your personal configuration file:
 +
 ....
@@ -144,30 +144,27 @@ mkdir ~/.davfs2
 ....
 5.  Copy `/etc/davfs2/secrets` to `~/.davfs2`:
 +
-....
-cp  /etc/davfs2/secrets ~/.davfs2/secrets
-....
-6.  Set yourself as the owner and make the permissions read-write owner
-only:
+----
+sudo cat /etc/davfs2/secrets > ~/.davfs2/secrets
+----
+. Make the permissions read-write owner only:
 +
-....
-chown <username>:<username>  ~/.davfs2/secrets
+----
 chmod 600 ~/.davfs2/secrets
 ....
 7.  Add your ownCloud login credentials to the end of the `secrets`
 file, using your ownCloud server URL and your ownCloud username and
 password:
 +
-....
-example.com/owncloud/remote.php/dav/files/USERNAME/ <username> <password>
-....
-8.  Add the mount information to `/etc/fstab`:
+----
+/home/<username>/owncloud <username> <password>
+----
+. Add the mount information to `/etc/fstab`:
 +
-....
-example.com/owncloud/remote.php/dav/files/USERNAME/ /home/<username>/owncloud
-davfs user,rw,auto 0 0
-....
-9.  Then test that it mounts and authenticates by running the following
+----
+https://example.com/owncloud/remote.php/webdav /home/<username>/owncloud davfs user,rw,auto 0 0
+----
+. Then test that it mounts and authenticates by running the following
 command. If you set it up correctly you won’t need root permissions:
 +
 ....
