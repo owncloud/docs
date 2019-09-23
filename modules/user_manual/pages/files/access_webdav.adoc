@@ -43,7 +43,7 @@ http://appworld.blackberry.com/webstore/content/46816[BlackBerry devices].
 The URL to use on these is:
 
 ----
-example.com/owncloud/remote.php/dav/files/USERNAME/
+example.com/owncloud/remote.php/webdav
 ----
 
 == WebDAV Configuration
@@ -160,8 +160,8 @@ password:
 ----
 https://example.com/owncloud/remote.php/webdav /home/<username>/owncloud davfs user,rw,auto 0 0
 ----
-. Then test that it mounts and authenticates by running the following
-command. If you set it up correctly you won’t need root permissions:
+. Then test that it mounts and authenticates by running the following command. 
+  If you set it up correctly you won’t need root permissions:
 +
 ----
 mount ~/owncloud
@@ -220,7 +220,7 @@ image:osx_webdav1.png[Screenshot of entering your ownCloud server address on Mac
 For example, the URL used to connect to the ownCloud server from the Mac OS X Finder is: +
 +
 ----
-https://example.com/owncloud/remote.php/dav/files/USERNAME/
+https://example.com/owncloud/remote.php/webdav
 ----
 +
 image:osx_webdav2.png[image]
@@ -259,12 +259,12 @@ To map the drive:
 where <drive_path> is the URL to your ownCloud server: +
 +
 ----
-net use Z: https://<drive_path>/remote.php/dav/files/USERNAME/ /user:youruser yourpassword
+net use Z: https://<drive_path>/remote.php/webdav /user:youruser yourpassword
 ----
 +
 **Example:**
 +
-`net use Z: \https://example.com/owncloud/remote.php/dav/files/USERNAME/ /user:youruser yourpassword`
+`net use Z: \https://example.com/owncloud/remote.php/webdav /user:youruser yourpassword`
 +
 ""
 The computer maps the files of your ownCloud account to the drive letter Z.
@@ -287,12 +287,12 @@ To map a drive using the Microsoft Windows Explorer:
 . Migrate to your computer in Windows Explorer.
 . Right-click on btn:[Computer] entry and select btn:[Map network drive…] from the drop-down menu.
 . Choose a local network drive to which you want to map ownCloud.
-. Specify the address to your ownCloud instance, followed by */remote.php/dav/files/USERNAME/*.
+. Specify the address to your ownCloud instance, followed by */remote.php/webdav*.
 +
 For example:
 +
 ----
-https://example.com/owncloud/remote.php/dav/files/USERNAME/
+https://example.com/owncloud/remote.php/webdav
 ----
 +
 NOTE: For SSL protected servers, check *Reconnect at logon* to ensure that the mapping is persistent upon subsequent reboots. If you want to connect to the ownCloud server as a different user, check *Connect using different credentials*.
@@ -327,7 +327,7 @@ select a different connection type if you plan to use SSL. For example:
 URL into the `Path' field. For example:
 +
 ----
-remote.php/dav/files/USERNAME/
+remote.php/webdav
 ----
 
 Now Cyberduck enables file access to the ownCloud server.
@@ -458,32 +458,32 @@ To create a folder with the current date as name:
 
 [source,bash]
 ----
-sudo curl -u user:pass -X MKCOL "https://example.com/owncloud/remote.php/dav/files/USERNAME/$(date '+%d-%b-%Y')"
+sudo curl -u user:pass -X MKCOL "https://example.com/owncloud/remote.php/webdav/$(date '+%d-%b-%Y')"
 ----
 
 To upload a file `error.log` into that directory:
 
 [source,bash]
 ----
-sudo curl -u user:pass -T error.log "https://example.com/owncloud/remote.php/dav/files/USERNAME/$(date '+%d-%b-%Y')/error.log"
+sudo curl -u user:pass -T error.log "https://example.com/owncloud/remote.php/webdav/$(date '+%d-%b-%Y')/error.log"
 ----
 
 To move a file:
 
 [source,bash]
 ----
-sudo curl -u user:pass -X MOVE --header 'Destination: https://example.com/owncloud/remote.php/dav/files/USERNAME/target.jpg' https://example.com/owncloud/remote.php/dav/files/USERNAME/source.jpg
+sudo curl -u user:pass -X MOVE --header 'Destination: https://example.com/owncloud/remote.php/webdav/target.jpg' https://example.com/owncloud/remote.php/webdav/source.jpg
 ----
 
 To get the properties of files in the root folder:
 
 [source,bash]
 ----
-sudo curl -X PROPFIND -H "Depth: 1" -u user:pass https://example.com/owncloud/remote.php/dav/files/USERNAME/ | xml_pp
+sudo curl -X PROPFIND -H "Depth: 1" -u user:pass https://example.com/owncloud/remote.php/webdav/ | xml_pp
 <?xml version="1.0" encoding="utf-8"?>
 <d:multistatus xmlns:d="DAV:" xmlns:oc="http://owncloud.org/ns" xmlns:s="http://sabredav.org/ns">
   <d:response>
-    <d:href>/owncloud/remote.php/dav/files/USERNAME/</d:href>
+    <d:href>/owncloud/remote.php/webdav/</d:href>
     <d:propstat>
       <d:prop>
         <d:getlastmodified>Tue, 13 Oct 2015 17:07:45 GMT</d:getlastmodified>
@@ -498,7 +498,7 @@ sudo curl -X PROPFIND -H "Depth: 1" -u user:pass https://example.com/owncloud/re
     </d:propstat>
   </d:response>
   <d:response>
-    <d:href>/owncloud/remote.php/dav/files/USERNAME/welcome.txt</d:href>
+    <d:href>/owncloud/remote.php/webdav/welcome.txt</d:href>
     <d:propstat>
       <d:prop>
         <d:getlastmodified>Tue, 13 Oct 2015 17:07:35 GMT</d:getlastmodified>
