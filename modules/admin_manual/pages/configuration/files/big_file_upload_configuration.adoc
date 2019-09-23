@@ -19,7 +19,7 @@
 
 * Make sure that the latest version of PHP, xref:installation/system_requirements.adoc[supported by ownCloud], is installed.
 * Disable user quotas, which makes them unlimited.
-* Your temp file or partition has to be big enough to hold multiple parallel uploads from multiple users; e.g. if the max upload size is 10GB and the average number of users uploading at the same time is 100: temp space has to hold at least 10 x 100GB.
+* Your temp file or partition has to be big enough to hold multiple parallel uploads from multiple users; e.g. if the average upload file size is *1GB* and the average number of users uploading at the same time is *100*: temp space has to hold at least *2 x 1 x 100 GB*. Twice as much space is required because the file chunks will be put together into a new file before it is finally moved into the user's folder.
 
 [NOTE]
 ====
@@ -152,6 +152,6 @@ Examples are:
 
 == Long Running Uploads
 
-For very long running uploads (those lasting longer than 1 hr) to public folders (and chunking is not in effect), 'filelocking.ttl' should be set to a significantly large value. 
-If this is not set appropriately, then large file uploads will likely fail.
-A simple way to calculate the correct value is by using the formula: `time in seconds = (maximum file size / slowest assumed connection)`.
+For very long running uploads (those lasting longer than 1 hr) to public folders (and chunking is not in effect), 'filelocking.ttl' should be set to a significantly larger value. 
+If this is not set appropriately, then large file uploads will fail with a file locking error, because the Redis garbage collection will delete the initially acquired file lock after 1 hour by default.
+To estimate a good value use this formula: `time in seconds = (maximum file size / slowest assumed connection)`.
