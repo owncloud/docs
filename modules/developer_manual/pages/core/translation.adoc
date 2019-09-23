@@ -2,7 +2,6 @@
 :toc: right
 :toclevels: 1
 
-[[make-text-translatable]]
 == Make text translatable
 
 In HTML or PHP wrap it like this
@@ -16,17 +15,14 @@ in javascript use: `t('appname','text to translate');`
 display HTML code. Otherwise, using `p()` is strongly preferred to
 escape HTML characters against XSS attacks.
 
-[[you-shall-never-split-sentences]]
 == You shall never split sentences!
 
-[[reason]]
 === Reason:
 
 
 Translators lose the context and they have no chance to possibly
 re-arrange words.
 
-[[example]]
 === Example:
 
 
@@ -35,7 +31,6 @@ re-arrange words.
 <?php p($l->t('Select file from')) . ' '; ?><a href='#' id="browselink"><?php p($l->t('local filesystem'));?></a><?php p($l->t(' or ')); ?><a href='#' id="cloudlink"><?php p($l->t('cloud'));?></a>
 ----
 
-[[translators-will-translate]]
 === Translators will translate:
 
 
@@ -50,13 +45,11 @@ while translating as well. For languages that have a different
 grammatical order it prevents the translators from reordering the
 sentence components.
 
-[[html-in-translation-strings]]
 === Html in translation strings
 
 Html tags can be kept out of translation strings like in the example
 below. Then the detail of the tags is uncoupled from the translation.
 
-[[what-about-variables-in-the-strings]]
 === What about variables in the strings?
 
 If you need to add variables to the translation strings do it like this:
@@ -70,7 +63,6 @@ When there are multiple substitutions, number them. Then the translators
 have the chance to re-order them if they need to translate the whole
 sentence in a different word order.
 
-[[automated-synchronization-of-translations]]
 == Automated synchronization of translations
 
 Multiple nightly jobs have been setup in order to synchronize
@@ -83,7 +75,6 @@ https://www.transifex.com/owncloud-org/owncloud/[Transifex] (tx pull -a).
 `perl l10n.pl write` will write the php files containing the
 translations. Finally the changes are pushed to git.
 
-[[please-follow-the-steps-below-to-add-translation-support-to-your-app]]
 === Please follow the steps below to add translation support to your app:
 
 
@@ -96,7 +87,6 @@ the changes above. After the next nightly sync job a new resource will
 appear on Transifex and from now on every night the latest translations
 will arrive.
 
-[[translation-sync-jobs]]
 === Translation sync jobs:
 
 
@@ -104,7 +94,6 @@ https://drone.owncloud.com/owncloud/translation-sync
 
 *Caution: information below is in general not needed!*
 
-[[manual-quick-translation-update]]
 == Manual quick translation update:
 
 [source,bash]
@@ -115,14 +104,13 @@ cd l10n/ && perl l10n.pl read && tx push -s && tx pull -a && perl l10n.pl write 
 The translation script requires Locale::PO, installable via
 `apt-get install liblocale-po-perl`
 
-[[configure-transifex]]
 == Configure transifex
 
 [source,bash]
 ----
 tx init
 
-for resource in calendar contacts core files media gallery settings
+for resource in calendar contacts core files media settings
 do
 tx set --auto-local -r owncloud.$resource "<lang>/$resource.po" --source-language=en \
  --source-file "templates/$resource.pot" --execute
