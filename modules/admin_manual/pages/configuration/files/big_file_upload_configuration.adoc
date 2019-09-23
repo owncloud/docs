@@ -19,7 +19,11 @@
 
 * Make sure that the latest version of PHP, xref:installation/system_requirements.adoc[supported by ownCloud], is installed.
 * Disable user quotas, which makes them unlimited.
-* Your temp file or partition has to be big enough to hold multiple parallel uploads from multiple users; e.g. if the average upload file size is *4GB* and the average number of users uploading at the same time is *25*: temp space has to hold at least *2 x 4 x 25 GB*. Twice as much space is required because the file chunks will be put together into a new file before it is finally moved into the user's folder.
+* Your temp file or partition has to be big enough to hold multiple parallel uploads from multiple users; e.g. if the average upload file size is *4GB* and the average number of users uploading at the same time is *25*:
+----
+2 x 4 GB x 25 users = 200 GB required temp space
+----
+*Twice* as much space is required because the file chunks will be put together into a new file before it is finally moved into the user's folder.
 
 [NOTE]
 ====
@@ -155,3 +159,4 @@ Examples are:
 For very long running uploads (those lasting longer than 1 hr) to public folders (and chunking is not in effect), 'filelocking.ttl' should be set to a significantly larger value. 
 If this is not set appropriately, then large file uploads will fail with a file locking error, because the Redis garbage collection will delete the initially acquired file lock after 1 hour by default.
 To estimate a good value use this formula: `time in seconds = (maximum upload file size / slowest assumed upload connection)`.
+For the slowest assumed upload connection, take the *upload* speed of the user with the slowest connection and devide it by two. E.g. the user with the slowest connection has an 8MBit/s DSL connection, which usually indicates the download speed. This type of connection would usually have 1MBit/s upload speed (but confirm with ISP), so divide this value in half to have a buffer when there is network congestion, to arrive at 512KBit/s as the final value.
