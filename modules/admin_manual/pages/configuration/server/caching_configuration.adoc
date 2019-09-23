@@ -19,7 +19,6 @@ implementation, it can be either _local_, or specific, to one server, or
 _distributed_ across multiple servers. This cache type is ideal when you
 have a scale-out installation.
 
-[[supported-caching-backends]]
 == Supported Caching Backends
 
 The caching backends supported by ownCloud are:
@@ -42,17 +41,14 @@ If you do not install and enable a local memory cache you will see a warning on 
 If you enable only a distributed cache in your `config.php` (`memcache.distributed`) and not a local cache (`memcache.local`) you will still see the cache warning.
 ====
 
-[[cache-directory-location]]
 === Cache Directory Location
 
 The cache directory defaults to `data/$user/cache` where `$user` is the
 current user. You may use the `'cache_path'` directive in `config.php`
 (See config_sample_php_parameters) to select a different location.
 
-[[cache-types]]
 == Cache Types
 
-[[apcu]]
 === APCu
 
 PHP 5.6 and up include the Zend OPcache in core, and on most Linux
@@ -60,7 +56,6 @@ distributions it is enabled by default. However, it _does not_ bundle a
 data cache. Given that, we recommend that you use APCu instead. APCu is
 a data cache _and_ is available in most Linux distributions.
 
-[[installing-apcu]]
 ==== Installing APCu
 
 [source,console]
@@ -103,7 +98,6 @@ EOF
 With that done, assuming that you don’t encounter any errors, restart
 Apache and the extension is ready to use.
 
-[[redis]]
 === Redis
 
 http://redis.io/[Redis] is an excellent modern memory cache to use for both distributed caching
@@ -115,7 +109,6 @@ If you are running a Linux distribution that does not package the supported vers
 
 TIP: Debian Jessie users, please see this https://github.com/owncloud/core/issues/20675#issuecomment-159202901[GitHub discussion] if you have problems with LDAP authentication when using Redis.
 
-[[installing-redis-on-debian-based-distributions]]
 ==== Installing Redis on Debian-based Distributions
 
 On Debian/Ubuntu/Mint run the following command:
@@ -138,7 +131,6 @@ NOTE: If you’re running ownCloud on Ubuntu 14.04, which does not package the r
 then work through https://www.techandme.se/how-to-configure-redis-cache-in-ubuntu-14-04-with-owncloud/[this guide on Tech and Me]
 to see how to install and configure it.
 
-[[installing-redis-on-redhat-centos-and-fedora]]
 ==== Installing Redis on RedHat, CentOS, and Fedora
 
 On RedHat, CentOS, and Fedora run the following commands to install
@@ -184,14 +176,12 @@ EOF
 After that, assuming that you don’t encounter any errors, restart Apache
 and the extension is ready to use.
 
-[[additional-notes-for-redis-vs.-apcu-on-memory-caching]]
 ==== Additional notes for Redis vs. APCu on Memory Caching
 
 APCu is faster at local caching than Redis. If you have enough memory,
 use APCu for memory caching and Redis for file locking. If you are low
 on memory, use Redis for both.
 
-[[installing-redis-on-other-distributions]]
 ==== Installing Redis on other distributions
 
 These instructions are adaptable for any distribution that does not
@@ -200,7 +190,6 @@ such as SUSE Linux Enterprise Server and RedHat Enterprise Linux.
 
 TIP: The https://pecl.php.net/package/redis[Redis PHP module] must be at least version 2.2.6.
 
-[[on-debianmintubuntu]]
 On Debian/Mint/Ubuntu
 +++++++++++++++++++++
 
@@ -212,7 +201,6 @@ version of your installed package:
 apt-cache policy php5-redis
 ----
 
-[[on-centos-and-fedora]]
 On CentOS and Fedora
 ++++++++++++++++++++
 
@@ -223,7 +211,6 @@ The `yum` command shows available and installed version information:
 yum search php-pecl-redis
 ----
 
-[[clearing-the-redis-cache]]
 ==== Clearing the Redis Cache
 
 The Redis cache can be flushed from the command-line using
@@ -252,14 +239,12 @@ of what to look for:
 ],
 ----
 
-[[further-reading]]
 .Further Reading
 ****
 * https://redis.io/commands/select
 * https://redis.io/commands/flushdb
 ****
 
-[[memcached]]
 === Memcached
 
 Memcached is a reliable old-timer for shared caching on distributed
@@ -324,7 +309,6 @@ extension=memcached.so
 EOF
 ----
 
-[[configuration-file-paths]]
 ==== Configuration File Paths
 
 [cols=",",options="header",]
@@ -341,7 +325,6 @@ After that, assuming that you don’t encounter any errors:
 example of below)
 3.  Refresh your ownCloud admin page
 
-[[clearing-the-memcached-cache]]
 ==== Clearing the Memcached Cache
 
 The Memcached cache can be flushed from the command-line using a range
@@ -360,7 +343,6 @@ For more information see:
 
 * https://github.com/memcached/memcached/wiki/Commands#flushall
 
-[[configuring-memory-caching]]
 == Configuring Memory Caching
 
 Memory caches must be explicitly configured in ownCloud by:
@@ -372,7 +354,6 @@ extension and/or the caching server).
 See config_sample_php_parameters for an overview of all possible config parameters.
 After installing and enabling your chosen memory cache, verify that it is active by viewing xref:configuration/general_topics/general_troubleshooting.adoc#php-version-and-information[the PHP configuration details].
 
-[[apcu-configuration]]
 === APCu Configuration
 
 To use APCu, add this line to `config.php`:
@@ -385,7 +366,6 @@ To use APCu, add this line to `config.php`:
 With that done, refresh your ownCloud admin page, and the cache warning
 should disappear.
 
-[[redis-configuration]]
 === Redis Configuration
 
 This example `config.php` configuration uses Redis for the local server
@@ -422,7 +402,6 @@ use this example configuration:
 
 Redis is very configurable; consult http://redis.io/documentation[the Redis documentation] to learn more.
 
-[[memcached-configuration]]
 === Memcached Configuration
 Redis is very configurable;
 This example uses APCu for the local cache, Memcached as the distributed
@@ -440,10 +419,8 @@ their port numbers:
  ],
 ----
 
-[[configuration-recommendations-based-on-type-of-deployment]]
 === Configuration Recommendations Based on Type of Deployment
 
-[[smallprivate-home-server]]
 ==== Small/Private Home Server
 
 [source,php]
@@ -452,7 +429,6 @@ their port numbers:
 'memcache.local' => '\OC\Memcache\APCu',
 ----
 
-[[small-organization-single-server-setup]]
 ==== Small Organization, Single-server Setup
 
 Use APCu for local caching, Redis for file locking
@@ -467,7 +443,6 @@ Use APCu for local caching, Redis for file locking
 ],
 ----
 
-[[large-organization-clustered-setup]]
 ==== Large Organization, Clustered Setup
 
 Use Redis for everything except a local memory cache. Use the server’s
@@ -485,7 +460,6 @@ IP address or hostname so that it is accessible to other hosts:
 ],
 ----
 
-[[configuring-transactional-file-locking]]
 === Configuring Transactional File Locking
 
 xref:configuration/files/files_locking_transactional.adoc[Transactional File Locking] prevents simultaneous file saving.
@@ -506,7 +480,6 @@ It is enabled by default and uses the database to store the locking data. This p
 CAUTION: For enhanced security it is recommended to configure Redis to require a password. 
 See http://redis.io/topics/security for more information.
 
-[[caching-exceptions]]
 == Caching Exceptions
 
 If ownCloud is configured to use either Memcached or Redis as a memory
