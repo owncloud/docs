@@ -19,7 +19,12 @@
 
 * Make sure that the latest version of PHP, xref:installation/system_requirements.adoc[supported by ownCloud], is installed.
 * Disable user quotas, which makes them unlimited.
-* Your temp file or partition has to be big enough to hold multiple parallel uploads from multiple users; e.g. if the max upload size is 10GB and the average number of users uploading at the same time is 100: temp space has to hold at least 10 x 100GB.
+* Your temp file or partition has to be big enough to hold multiple parallel uploads from multiple users. For example, if the average upload file size is *4GB* and the average number of users uploading at the same time is *25*, then you’ll need 200GB of temp space, as the formula below shows.
++
+----
+2 x 4 GB x 25 users = 200 GB required temp space
+----
+*Twice* as much space is required because the file chunks will be put together into a new file before it is finally moved into the user's folder.
 
 [NOTE]
 ====
@@ -150,8 +155,18 @@ Examples are:
 * Upload limits enforced by proxies used by your clients.
 * Other webserver modules like described in xref:configuration/general_topics/general_troubleshooting.adoc[General Troubleshooting].
 
-== Long Running Uploads
+== Long-Running Uploads
 
-For very long running uploads (those lasting longer than 1 hr) to public folders (and chunking is not in effect), 'filelocking.ttl' should be set to a significantly large value. 
-If this is not set appropriately, then large file uploads will likely fail.
-A simple way to calculate the correct value is by using the formula: `time in seconds = (maximum file size / slowest assumed connection)`.
+For very long-running uploads (those lasting longer than 1 hr) to public folders, _when chunking is not in effect_, 'filelocking.ttl' should be set to a significantly large value. 
+If not, large file uploads will fail with a file locking error, because the Redis garbage collection will delete the initially acquired file lock after 1 hour by default.
+
+To estimate a good value, use the following formula:
+
+----
+time in seconds = (maximum upload file size / slowest assumed upload connection).
+----
+
+For the value of "_slowest assumed upload connection_", take the *upload* speed of the user with the slowest connection and divide it by two. 
+For example, let's assume that the user with the slowest connection has an 8MBit/s DSL connection; which usually indicates the download speed. 
+This type of connection would, usually, have 1MBit/s upload speed (but confirm with the ISP). 
+Divide this value in half, to have a buffer when there is network congestion, to arrive at 512KBit/s as the final value.
