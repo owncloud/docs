@@ -1,7 +1,6 @@
 = Deployment Considerations
 :toc: right
 
-[[hardware]]
 == Hardware
 
 * Solid-state drives (SSDs) for I/O.
@@ -9,7 +8,6 @@
 * Multiple network interfaces to distribute server synchronisation and
 backend traffic across multiple subnets.
 
-[[single-machine-scale-up-deployment]]
 === Single Machine / Scale-Up Deployment
 
 The single-machine deployment is widely used in the community.
@@ -30,7 +28,6 @@ single machine will not scale; I/O performance decreases and becomes a
 bottleneck with multiple up- and downloads, even with solid-state
 drives.
 
-[[scale-out-deployment]]
 === Scale-Out Deployment
 
 Provider setup:
@@ -58,13 +55,6 @@ Cons:
 * Currently DB filecache table will grow rapidly, making migrations
 painful in case the table is altered.
 
-[[what-about-nginx-php-fpm]]
-=== What About NGINX / PHP-FPM?
-
-Could be used instead of HAproxy as the load balancer. But on uploads
-stores the whole file on disk before handing it over to PHP-FPM.
-
-[[a-single-master-db-is-single-point-of-failure-does-not-scale]]
 === A Single Master DB is Single Point of Failure, Does Not Scale
 
 When master fails another slave can become master. However, the
@@ -72,10 +62,8 @@ increased complexity carries some risks: Multi-master has the risk of
 split brain, and deadlocks. ownCloud tries to solve the problem of
 deadlocks with high-level file locking.
 
-[[software]]
 == Software
 
-[[operating-system]]
 === Operating System
 
 We are dependent on distributions that offer an easy way to install the
@@ -88,16 +76,11 @@ Red Hat Enterprise Linux clone. openSUSE is community-supported, and
 includes many of the same system administration tools as SUSE Linux
 Enterprise Server.
 
-[[deployment-considerations-web-server]]
 === Web server
 
-Taking Apache and NGINX as the contenders, Apache with mod_php is
-currently the best option, as NGINX does not support all features
-necessary for enterprise deployments. Mod_php is recommended instead of
-PHP_FPM, because in scale-out deployments separate PHP pools are simply
-not necessary.
+Apache with mod_php is currently the best option. 
+Mod_php is recommended instead of PHP_FPM, because in scale-out deployments separate PHP pools are not necessary.
 
-[[relational-database]]
 === Relational Database
 
 More often than not the customer already has an opinion on what database
@@ -119,14 +102,12 @@ deployments. It is not adequate for production systems.
 * Oracle DB is the de facto standard at large enterprises and is fully
 supported with ownCloud Enterprise Edition only.
 
-[[file-storage]]
 == File Storage
 
 While many customers are starting with NFS, sooner or later that
 requires scale-out storage. Currently the options are GPFS or GlusterFS,
 or an object store protocol like S3. S3 also allows access to Ceph Storage.
 
-[[session-storage]]
 == Session Storage
 
 * Redis is required for transactional file locking xref:configuration/files/files_locking_transactional.adoc[Transactional File Locking], provides session persistence, and graphical inspection tools available.

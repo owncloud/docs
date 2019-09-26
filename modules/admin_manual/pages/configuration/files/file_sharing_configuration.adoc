@@ -162,7 +162,6 @@ If it's not set, they show the user ID / login name, as display names are not un
 situations where you can't distinguish the proposed users. This option enables to add mail addresses or user
 ID's to make them distinguishable.
 
-[[blacklist-groups-from-receiving-shares]]
 == Blacklist Groups From Receiving Shares
 
 Sometimes it's necessary or desirable to block groups from receiving shares.
@@ -176,7 +175,6 @@ drop down list, where you can select it.
 
 image:configuration/files/sharing/blacklisting-groups.png[Blacklisting groups]
 
-[[transferring-files-to-another-user]]
 == Transferring Files to Another User
 
 You may transfer files from one user to another with `occ`. The command
@@ -213,7 +211,6 @@ and placed in a directory which follows the format:
 
 TIP: See xref:configuration/server/occ_command.adoc[the occ command], for a complete `occ` command reference.)
 
-[[creating-persistent-file-shares]]
 == Creating Persistent File Shares
 
 When a user is deleted, their files are also deleted. As you can
@@ -325,3 +322,151 @@ that the command supports.
     "applicable_groups": []
 }
 ----
+
+== Share Permissions
+
+=== Permissions Masks
+
+|===
+|**READ** | 1
+|**UPDATE** | 2 ("can update" in web UI)
+|**CREATE** | 4 ("can create" in web UI)
+|**DELETE** | 8 ("can delete" in web UI)
+|**SHARE** | 16 ("can reshare" in web UI)
+|===
+
+=== File Operations Shorthand for the Later Table
+
+[cols=2*,options="header"]
+|===
+|Operation
+|Description
+
+|**download**
+|download/read/get a file or display a folder contents
+
+|**upload**
+|a new file can be uploaded/created (file target does not exist)
+
+|**upload_overwrite**
+|a file can overwrite an existing one
+
+|**rename**
+|rename file to new name, all within the shared folder
+
+|**move_in**
+|move a file from outside the shared folder into the shared folder
+
+|**move_in_overwrite**
+a|move a file from outside the shared folder and overwrite a file inside the shared folder.
+
+NOTE: SabreDAV automatically deletes the target file first before moving, so requires DELETE permission too.
+
+|**move_in_subdir**
+|move a file already in the shared folder into a subdir within the shared folder
+
+|**move_in_subdir_overwrite**
+|move a file already in the shared folder into a subdir within the shared folder and overwrite an existing file there
+
+|**move_out**
+|move a file to outside of the shared folder
+
+|**move_out_subdir**
+|move a file out of a subdir of the shared folder into the shared folder
+
+|**copy_in**
+|copy a file from outside the shared folder into the shared folder
+
+|**copy_in_overwrite**
+a|copy a file from outside the shared folder and overwrite a file inside the shared folder 
+
+NOTE: SabreDAV automatically deletes the target file first before copying, so requires DELETE permission too.
+
+|**delete**
+|delete a file inside the shared folder
+
+|**mkdir**
+|create folder inside the shared folder
+
+|**rmdir**
+|delete folder inside the shared folder
+|===
+
+The following lists what operations are allowed for the different permission combinations (share permission is omitted as it is not relevant to file operations):
+
+[cols=2*,options="header"]
+|===
+|Operation(s)
+|Permission Combinations
+
+|READ (aka read-only)
+a|* download
+
+|READ + CREATE
+a|* download
+* upload
+* move_in
+* copy_in
+* mkdir
+
+|READ + UPDATE
+a|* download
+* upload_overwrite
+* rename
+
+|READ + DELETE
+a|* download
+* move_out
+* delete
+* rmdir
+
+|READ + CREATE + UPDATE
+a|* download
+* upload
+* upload_overwrite
+* rename
+* move_in
+* copy_in
+* mkdir
+
+|READ + CREATE + DELETE
+a|* download
+* upload
+* move_in
+* move_in_overwrite
+* move_in_subdir
+* move_in_subdir_overwrite
+* move_out
+* move_out_subdir
+* copy_in
+* copy_in_overwrite
+* delete
+* mkdir
+* rmdir
+
+|READ + UPDATE + DELETE
+a|* download
+* upload_overwrite
+* rename
+* move_out
+* delete
+* rmdir
+
+|READ + CREATE + UPDATE + DELETE (all permissions)
+a|
+* download
+* upload
+* upload_overwrite
+* rename
+* move_in
+* move_in_overwrite
+* move_in_subdir
+* move_in_subdir_overwrite
+* move_out
+* move_out_subdir
+* copy_in
+* copy_in_overwrite
+* delete
+* mkdir
+* rmdir
+|===

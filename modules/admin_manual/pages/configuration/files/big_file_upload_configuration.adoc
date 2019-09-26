@@ -1,51 +1,62 @@
-= Big File Upload Configuration (> 512MB)
+= Big File Upload Configuration
 :toc: right
+:stem:
+:mod_reqtimeout-url: https://httpd.apache.org/docs/current/mod/mod_reqtimeout.html
+:limitrequestbody-url: https://httpd.apache.org/docs/current/en/mod/core.html#limitrequestbody
+:sslrenegbuffersize-url: https://httpd.apache.org/docs/current/mod/mod_ssl.html#sslrenegbuffersize
+:fcgidmaxrequestinmem-url: https://httpd.apache.org/mod_fcgid/mod/mod_fcgid.html#fcgidmaxrequestinmem
+:fcgidmaxrequestlen-url: https://httpd.apache.org/mod_fcgid/mod/mod_fcgid.html#fcgidmaxrequestlen
+:mod_fcgid_bug_51747-url: https://bz.apache.org/bugzilla/show_bug.cgi?id=51747
+:nginx-client_max_body_size-url: http://nginx.org/en/docs/http/ngx_http_core_module.html#client_max_body_size
+:nginx-fastcgi_read_timeout-url: http://nginx.org/en/docs/http/ngx_http_fastcgi_module.html#fastcgi_read_timeout
+:nginx-client_body_temp_path-url: http://nginx.org/en/docs/http/ngx_http_core_module.html#client_body_temp_path
+:nginx-fastcgi_request_buffering-url: https://nginx.org/en/docs/http/ngx_http_fastcgi_module.html#fastcgi_request_buffering
+:oc-upload-file-up-to-16gb-url: https://github.com/owncloud/documentation/wiki/Uploading-files-up-to-16GB#configuring-nginx
+:nginx-proxy_buffering-url: http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_buffering
+:nginx-proxy_max_temp_file_size-url: http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_max_temp_file_size
 
-== Introduction
-
-The default maximum file size for uploads, in ownCloud, is 512MB. You
-can increase this limit up to the maximum file size which your
-filesystem, operating system, or other software allows, for example:
-
-* < 2GB on a 32Bit OS-architecture
-* < 2GB with IE6 - IE8
-* < 4GB with IE9 - IE11
-
-64-bit filesystems have much higher limits. Please consult the
-documentation for your filesystem.
-
-NOTE: The ownCloud sync client itself however is able to upload files of any size,
-as it uploads files by transmitting them in small chunks. But, it can never exceed the
-maximum file size limits of the remote host.
-
-[[system-configuration]]
 == System Configuration
 
-* Make sure that the latest version of PHP (at least 5.6) is installed
-* Disable user quotas, which makes them unlimited
-* Your temp file or partition has to be big enough to hold multiple
-parallel uploads from multiple users; e.g. if the max upload size is
-10GB and the average number of users uploading at the same time is 100:
-temp space has to hold at least 10x100 GB
+* Make sure that the latest version of PHP, xref:installation/system_requirements.adoc[supported by ownCloud], is installed.
+* Disable user quotas, which makes them unlimited.
+* Your temp file or partition has to be big enough to hold multiple parallel uploads from multiple users. For example, if the average upload file size is *4GB* and the average number of users uploading at the same time is *25*, then you’ll need 200GB of temp space, as the formula below shows.
++
+----
+2 x 4 GB x 25 users = 200 GB required temp space
+----
+*Twice* as much space is required because the file chunks will be put together into a new file before it is finally moved into the user's folder.
 
-[[configuring-your-web-server]]
-== Configuring Your Web server
+[NOTE]
+====
+In Centos and RHEL, Apache has a few more default configurations within systemd.
+You will have to set the temp directory in two places:
 
-NOTE: ownCloud comes with its own `owncloud/.htaccess` file. Because `php-fpm` can’t read
-PHP settings in `.htaccess` these settings must be set in the `owncloud/.user.ini` file.
+. In php.ini, e.g., `sys_temp_dir = "/scratch/tmp"`
+. In `/usr/lib/systemd/system/httpd.service`:
++
+----
+PrivateTmp=false
+----
+====
 
-Set the following two parameters inside the corresponding php.ini file
-(see the *Loaded Configuration File* section of xref:configuration/general_topics/general_troubleshooting.adoc#php-version-and-information[PHP Version and Information]
-to find your relevant php.ini files) :
 
+== Configuring Your Web Server
+
+NOTE: ownCloud comes with its own `owncloud/.htaccess` file. 
+Because `php-fpm` can’t read PHP settings in `.htaccess` these settings must be set in the `owncloud/.user.ini` file.
+
+Set the following two parameters inside the corresponding php.ini file (see the *Loaded Configuration File* section of xref:configuration/general_topics/general_troubleshooting.adoc#php-version-and-information[PHP Version and Information] to find your relevant php.ini files):
+
+[source,console]
 ----
 php_value upload_max_filesize = 16G
 php_value post_max_size = 16G
 ----
 
-Adjust these values for your needs. If you see PHP timeouts in your
-logfiles, increase the timeout values, which are in seconds:
+Adjust these values for your needs. 
+If you see PHP timeouts in your logfiles, increase the timeout values, which are in seconds, as in the example below:
 
+[source,console]
 ----
 php_value max_input_time 3600
 php_value max_execution_time 3600
@@ -53,8 +64,10 @@ php_value max_execution_time 3600
 
 === mod_reqtimeout
 
-The https://httpd.apache.org/docs/current/mod/mod_reqtimeout.html[mod_reqtimeout] Apache module could also stop large uploads from completing. 
-If you’re using this module and getting failed uploads of large files, either disable it in your Apache config or raise the configured `RequestReadTimeout` timeouts.
+1707-update-big-file-upload-docs
+The {mod_reqtimeout-url}[mod_reqtimeout] Apache module could also stop large uploads from completing. 
+If you're using this module and getting failed uploads of large files, either disable it in your Apache config or raise the configured `RequestReadTimeout` timeouts.
+
 
 ==== Disable mod_reqtimeout On Ubuntu
 
@@ -67,7 +80,7 @@ a2dismod reqtimeout
 
 ==== Disable mod_reqtimeout On CentOS
 
-On CentOS, you have to edit `/etc/httpd/conf/httpd.conf`, and comment out the following line: 
+On CentOS, comment out the following line in `/etc/httpd/conf/httpd.conf`:
 
 [source,apache]
 ----
@@ -76,75 +89,34 @@ LoadModule reqtimeout_module modules/mod_reqtimeout.so
 
 When you have done run `asdismod` or updated `/etc/httpd/conf/httpd.conf`, restart Apache.
 
-TIP: There are also several other configuration options in your web server config which could prevent the upload of larger files. 
+TIP: There are also several other configuration options in your web server config which could prevent the upload of larger files.
 Please see your web server's manual, for how to configure those values correctly:
 
-[[apache]]
 === Apache
 
-* https://httpd.apache.org/docs/current/en/mod/core.html#limitrequestbody[LimitRequestBody]
-* https://httpd.apache.org/docs/current/mod/mod_ssl.html#sslrenegbuffersize[SSLRenegBufferSize]
+* {limitrequestbody-url}[LimitRequestBody]
+* {sslrenegbuffersize-url}[SSLRenegBufferSize]
 
-[[apache-with-mod_fcgid]]
 === Apache with mod_fcgid
 
-* https://httpd.apache.org/mod_fcgid/mod/mod_fcgid.html#fcgidmaxrequestinmem[FcgidMaxRequestInMem]
-* https://httpd.apache.org/mod_fcgid/mod/mod_fcgid.html#fcgidmaxrequestlen[FcgidMaxRequestLen]
+* {fcgidmaxrequestinmem-url}[FcgidMaxRequestInMem]
+* {fcgidmaxrequestlen-url}[FcgidMaxRequestLen]
 
-WARNING: If you are using Apache/2.4 with mod_fcgid, as of February/March 2016, `FcgidMaxRequestInMem` still needs to be significantly increased from its default value to avoid the occurence of segmentation faults when uploading big files. This is not a regular setting but serves as a workaround for https://bz.apache.org/bugzilla/show_bug.cgi?id=51747[Apache with mod_fcgid bug #51747].
+WARNING: If you are using Apache/2.4 with mod_fcgid, as of February/March 2016, `FcgidMaxRequestInMem` still needs to be significantly increased from its default value to avoid the occurrence of segmentation faults when uploading big files. 
+This is not a regular setting but serves as a workaround for {mod_fcgid_bug_51747-url}[Apache with mod_fcgid bug #51747].
 
-Setting `FcgidMaxRequestInMem` significantly higher than normal may no
-longer be necessary, once bug #51747 is fixed.
+Setting `FcgidMaxRequestInMem` significantly higher than usual may no longer be necessary, once bug #51747 is fixed.
 
-[[nginx]]
-=== NGINX
-
-* http://nginx.org/en/docs/http/ngx_http_core_module.html#client_max_body_size[client_max_body_size]
-* http://nginx.org/en/docs/http/ngx_http_fastcgi_module.html#fastcgi_read_timeout[fastcgi_read_timeout]
-* http://nginx.org/en/docs/http/ngx_http_core_module.html#client_body_temp_path[client_body_temp_path]
-
-Since NGINX 1.7.11 a new config option
-https://nginx.org/en/docs/http/ngx_http_fastcgi_module.html#fastcgi_request_buffering[fastcgi_request_buffering]
-is availabe. Setting this option to `fastcgi_request_buffering off;` in
-your NGINX config might help with timeouts during the upload.
-Furthermore it helps if you’re running out of disc space on the `/tmp`
-partition of your system.
-
-For more info how to configure NGINX to raise the upload limits see also
-https://github.com/owncloud/documentation/wiki/Uploading-files-up-to-16GB#configuring-nginx[this] wiki entry.
-
-TIP: Make sure that `client_body_temp_path` points to a partition with adequate space for
-your upload file size, and on the same partition as the `upload_tmp_dir` or `tempdirectory`
-(see below). For optimal performance, place these on a separate hard drive that is dedicated
-to swap and temp storage.
-
-If your site is behind a NGINX frontend (for example a loadbalancer):
-
-By default, downloads will be limited to 1GB due to `proxy_buffering`
-and `proxy_max_temp_file_size` on the frontend.
-
-* If you can access the frontend’s configuration, disable
-http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_buffering[proxy_buffering]
-or increase
-http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_max_temp_file_size[proxy_max_temp_file_size]
-from the default 1GB.
-* If you do not have access to the frontend, set the
-http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_buffering[X-Accel-Buffering]
-header to `add_header X-Accel-Buffering no;` on your backend server.
-
-[[configuring-php]]
 == Configuring PHP
 
-If you don’t want to use the ownCloud `.htaccess` or `.user.ini` file,
-you may configure PHP instead. Make sure to comment out any lines
-`.htaccess` pertaining to upload size, if you entered any.
+If you don't want to use the ownCloud `.htaccess` or `.user.ini` file, you may configure PHP instead. 
+Make sure to comment out any lines `.htaccess` about upload size, if you entered any.
 
-If you are running ownCloud on a 32-bit system, any `open_basedir`
-directive in your `php.ini` file needs to be commented out.
+NOTE: If you are running ownCloud on a 32-bit system, any `open_basedir` directive in your `php.ini` file needs to be commented out.
 
-Set the following two parameters inside `php.ini`, using your own
-desired file size values:
+Set the following two parameters inside `php.ini`, using your own desired file size values, as in the following example:
 
+[source]
 ----
 upload_max_filesize = 16G
 post_max_size = 16G
@@ -152,30 +124,49 @@ post_max_size = 16G
 
 Tell PHP which temp file you want it to use:
 
+[source]
 ----
 upload_tmp_dir = /var/big_temp_file/
 ----
 
-*Output Buffering* must be turned off in `.htaccess` or `.user.ini` or
-`php.ini`, or PHP will return memory-related errors:
+*Output Buffering* must be turned off in `.htaccess` or `.user.ini` or `php.ini`, or PHP will return memory-related errors:
 
-* `output_buffering = 0`
+[source]
+----
+output_buffering = 0
+----
 
-[[configuring-owncloud]]
 == Configuring ownCloud
 
-As an alternative to the `upload_tmp_dir` of PHP (e.g., if you don’t have access to your `php.ini`) you can also configure a temporary location for uploaded files by using the `tempdirectory` setting in your `config.php`.
+As an alternative to the `upload_tmp_dir` of PHP (e.g., if you don't have access to your `php.ini`) you can also configure a temporary location for uploaded files by using the `tempdirectory` setting in your `config.php`.
 
-If you have configured the `session_lifetime` setting in your `config.php` (See xref:configuration/server/config_sample_php_parameters.adoc[Sample Config PHP Parameters]) file then make sure it is not too low. This setting needs to be configured to at least the time (in seconds) that the longest upload will take.
-If unsure remove this completely from your configuration to reset it to the default shown in the `config.sample.php`.
+If you have configured the `session_lifetime` setting in your `config.php`. 
+See xref:configuration/server/config_sample_php_parameters.adoc[Sample Config PHP Parameters], to make sure it is not too low. 
+This setting needs to be configured to at least the time (in seconds) that the longest upload will take.
+If unsure, remove this entirely from your configuration to reset it to the default shown in the `config.sample.php`.
 
-[[general-upload-issues]]
-== General upload issues
+== General Upload Issues
 
-Various environmental factors could cause a restriction of the upload
-size. Examples are:
+Various environmental factors could cause a restriction of the upload size. 
+Examples are:
 
-* The `LVE Manager` of `CloudLinux` which sets a `I/O limit`
-* Some services like `Cloudflare` are also known to cause uploading issues
-* Upload limits enforced by proxies used by your clients
-* Other webserver modules like described in xref:configuration/general_topics/general_troubleshooting.adoc[General Troubleshooting]
+* The `LVE Manager` of `CloudLinux` which sets an `I/O limit`.
+* Some services like `Cloudflare` are also known to cause uploading issues.
+* Upload limits enforced by proxies used by your clients.
+* Other webserver modules like described in xref:configuration/general_topics/general_troubleshooting.adoc[General Troubleshooting].
+
+== Long-Running Uploads
+
+For very long-running uploads (those lasting longer than 1 hr) to public folders, _when chunking is not in effect_, 'filelocking.ttl' should be set to a significantly large value. 
+If not, large file uploads will fail with a file locking error, because the Redis garbage collection will delete the initially acquired file lock after 1 hour by default.
+
+To estimate a good value, use the following formula:
+
+----
+time in seconds = (maximum upload file size / slowest assumed upload connection).
+----
+
+For the value of "_slowest assumed upload connection_", take the *upload* speed of the user with the slowest connection and divide it by two. 
+For example, let's assume that the user with the slowest connection has an 8MBit/s DSL connection; which usually indicates the download speed. 
+This type of connection would, usually, have 1MBit/s upload speed (but confirm with the ISP). 
+Divide this value in half, to have a buffer when there is network congestion, to arrive at 512KBit/s as the final value.

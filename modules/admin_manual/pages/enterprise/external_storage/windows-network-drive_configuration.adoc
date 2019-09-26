@@ -11,6 +11,7 @@
 :smb2-url: https://en.wikipedia.org/wiki/Server_Message_Block#SMB_2.0
 :smbclient-manpage-url: https://www.samba.org/samba/docs/man/manpages-3/smbclient.1.html
 :wannacry-ransomware-attack-url: https://en.wikipedia.org/wiki/WannaCry_ransomware_attack
+:wnd-config-path: enterprise/external_storage/windows-network-drive_configuration.adoc
 
 == Introduction
 
@@ -36,6 +37,8 @@ image:enterprise/external_storage/wnd-1.png[Windows Network Drive share on your 
 
 TIP: For more information on SMB/CIFS in ownCloud, refer to xref:configuration/files/external_storage/smb.adoc[the Samba file server configuration documentation].
 
+TIP: If you encounter errors with `NT_STATUS_REVISION_MISMATCH`, please get in touch with support@owncloud.com.
+
 Files are synchronized bi-directionally, and you can create, upload, and
 delete files and folders. ownCloud server admins can create Windows
 Network Drive mounts and optionally allow users to set up their own
@@ -48,7 +51,6 @@ shares when the users who own the mounts are not logged in. Or,
 passwords are not stored and available only for the current session,
 which adds security.
 
-[[installation]]
 == Installation
 
 Install the https://marketplace.owncloud.com/apps/windows_network_drive[External Storage: Windows Network Drives app]
@@ -63,7 +65,6 @@ You can use https://github.com/eduardok/libsmbclient-php[eduardok/libsmbclient-p
 if your distribution does not provide it.
 * `which` and `stdbuf`. These should be included in most Linux distributions.
 
-[[example]]
 === Example
 
 Assuming that your ownCloud installation is on Ubuntu, then the
@@ -115,7 +116,6 @@ sudo phpenmod -v ALL smbclient
 To enable external storage go to menu:Settings[Storage (in the admin section)], as the ownCloud administrator.
 Tick the checkbox to enable external storage.
 
-[[creating-a-new-share]]
 === Creating a New Share
 
 When you create a new WND share you need three things:
@@ -161,7 +161,6 @@ Your changes are saved automatically.
 
 NOTE: When you create a new mountpoint using Login credentials, you must log out of ownCloud and then log back in so you can access the share. You only have to do this the first time.
 
-[[personal-wnd-mounts]]
 === Personal WND Mounts
 
 NOTE: Be aware that by default changes in the file system won't be transferred to ownCloud (use case: Sync client) and a **service account with access to shares** is required for ownCloud to receive changes from the personal mounts.
@@ -175,7 +174,6 @@ for login credentials:
 * Log-in credentials, save in database
 * Global credentials
 
-[[windows-network-drive-listener]]
 === Windows Network Drive Listener
 
 [IMPORTANT]
@@ -219,7 +217,6 @@ background job updates the file metadata.
 
 
 
-[[setting-up-the-wnd-listener]]
 === Setting Up the WND Listener
 
 The WND listener for ownCloud 10 includes two different commands that need to be executed:
@@ -227,7 +224,6 @@ The WND listener for ownCloud 10 includes two different commands that need to be
 * xref:wnd-listen[wnd:listen]
 * xref:wndprocess-queue[wnd:process-queue]
 
-[[wnd-listen]]
 === wnd:listen
 
 This command listens and stores notifications in the database coming
@@ -266,7 +262,6 @@ You should be able to run any of those commands, and/or wrap them into a
 systemd service or any other startup service, so that the `wnd:listen`
 command is automatically started during boot, if you need it.
 
-[[wndprocess-queue]]
 === wnd:process-queue
 
 This command processes the stored notifications for a given host and
@@ -383,7 +378,6 @@ Take the example of attempting to connect to the share named `MyData` using `occ
 
 NOTE: The command is case sensitive, and that it must match the information from the mount point configuration.
 
-[[libsmbclient-issues]]
 === libsmbclient Issues
 
 If your Linux distribution ships with `libsmbclient 3.x`, which is included in the Samba client, you may need to set up the `HOME` variable in Apache to prevent a segmentation fault. 
@@ -424,7 +418,6 @@ export HOME=/var/lib/apache2
 
 Restart Apache, open your ownCloud Admin page and start creating SMB/CIFS mounts.
 
-[[basic-setup-for-one-owncloud-server]]
 === Basic Setup for One ownCloud Server
 
 First, go to the admin settings and set up the required WND mounts.
@@ -477,7 +470,6 @@ enough to process a large number of notifications, but not so large to
 crash the process. Between 200 and 500 should be fine, and we'll likely
 process all the notifications in one go.
 
-[[password-options]]
 === Password Options
 
 There are several ways to supply a password:
@@ -520,7 +512,6 @@ IMPORTANT: If using `--password-file` make sure that the file is only readable b
 this option, the 3rd party app needs to show the password as plaintext
 on standard output.
 
-[[rd-party-software-examples]]
 === 3rd Party Software Examples
 
 [source,console,subs="attributes+"]
@@ -559,14 +550,12 @@ to setup the keyring for whoever will fetch the password (probably root) and the
 pass the-password-name | {occ-command-example-prefix} wnd:listen <host> <share> <username> --password-file=-
 ----
 
-[[password-option-precedence]]
 === Password Option Precedence
 
 If both the argument and the option are passed, e.g.,
 `occ wnd:listen <host> <share> <username> <password> --password-file=/tmp/pass`,
 then the `--password-file` option will take precedence.
 
-[[optimizing-wndprocess-queue]]
 === Optimizing wnd:process-queue
 
 NOTE: Do not use this option if the process-queue is fast enough. The option has some drawbacks,
@@ -608,7 +597,6 @@ NOTE: It's imperative to periodically clean up the data source to fetch fresh da
 new storages and updated passwords. There isn't a generic command to do this from ownCloud,
 because it depends on the specific serializer type. Though this option could be provided at some point if requested.
 
-[[the-file-serializer]]
 === The File Serializer
 
 The file serializer is a serializer implementation that can be used with
@@ -626,10 +614,8 @@ the web server user. Other users shouldn't have access to this file. Do
 not manually edit the file. You can remove the file if it contains
 obsolete information.
 
-[[usage-recommendations]]
 === Usage Recommendations
 
-[[number-of-serializers]]
 ==== Number of Serializers
 
 Only one file serializer should be used per server and share, as the
@@ -660,7 +646,6 @@ isn't available and recreate the file again. When this happens, the
 serializer file's purpose isn't fulfilled As a result, we recommend the
 use of a different file per server and share.
 
-[[file-clean-up]]
 ==== File Clean Up
 
 The file will need to cleaned up from time to time. The easiest way to
@@ -668,7 +653,6 @@ do this is to remove the file when it is no longer needed. The file will
 be regenerated with fresh data the next execution if the serializer
 option is set.
 
-[[interaction-between-listener-serializer-and-windows-password-lockout]]
 === Interaction Between Listener and Windows Password Lockout
 
 Windows supports
@@ -684,7 +668,6 @@ the `wnd:listen` and `wnd:process-queue`, without the serializer
 options.
 
 
-[[multiple-server-setup]]
 === Multiple Server Setup
 
 Setups with several servers might have some difficulties in some
@@ -706,7 +689,6 @@ option you have to set it up is to store the target file in a common
 location for all the server. We might need to provide a specific
 serializer for this scenario (based on Redis or DB)
 
-[[basic-command-execution-examples]]
 === Basic Command Execution Examples
 
 [source,console,subs="attributes+"]
