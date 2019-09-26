@@ -43,9 +43,9 @@ https://itunes.apple.com/app/webdav-navigator/id382551345[iPhones], and
 http://appworld.blackberry.com/webstore/content/46816[BlackBerry devices].
 The URL to use on these is:
 
-....
-example.com/owncloud/remote.php/dav/files/USERNAME/
-....
+----
+example.com/owncloud/remote.php/webdav
+----
 
 [[webdav-configuration]]
 == WebDAV Configuration
@@ -94,20 +94,22 @@ image:webdav_dolphin.png[screenshot of configuring Dolphin file manager to use W
 
 You can create a permanent link to your ownCloud server:
 
-1.  Open Dolphin and click "Network" in the left hand "Places"
-column.
-2.  Click on the icon labeled *Add a Network Folder*. The resulting
-dialog should appear with WebDAV already selected.
-3.  If WebDAV is not selected, select it.
-4.  Click *Next*.
-5.  Enter the following settings:
-* Name: The name you want to see in the *Places* bookmark, for example ownCloud.
-* User: The ownCloud username you used to log in, for example admin.
-* Server: The ownCloud domain name, for example *example.com* (without **http://** before or directories afterwards).
+. Open Dolphin and click btn:[Network] in the left hand column.
 +
-* Folder – Enter the path `owncloud/remote.php/dav/files/USERNAME/`.
-6.  (Optional) Check the "Create icon checkbox" for a bookmark to appear in the Places column.
-7.  (Optional) Provide any special settings or an SSL certificate in the "Port & Encrypted" checkbox.
+image:files/access_webdav/dolphin-add-network-folder.png[Dolphin File Explorer]
+. Click on the icon labeled btn:[Add a Network Folder]. +
+The resulting dialog should appear with WebDAV already selected.
+. If WebDAV is not selected, select it.
+. Click btn:[Next].
+. Enter the following settings:
+** *Name:* The name you want to see in the *Places* bookmark, for example ownCloud.
+** *User:* The ownCloud username you used to log in, for example admin.
+** *Server:* The ownCloud domain name, for example *example.com* (without **https://** or **http://**).
+** *Folder:* Enter the path `owncloud/remote.php/webdav`.
++
+image:files/access_webdav/dolphin-network-folder-wizard.png[Dolphin Network Folder Wizard]
+. (Optional) Check the btn:[create] icon checkbox for a bookmark to appear in the menu:Places[] column.
+. (Optional) Provide any special settings or an SSL certificate in the btn:[Port & Encrypted] checkbox.
 
 [[creating-webdav-mounts-on-the-linux-command-line]]
 == Creating WebDAV Mounts on the Linux Command Line
@@ -164,8 +166,8 @@ password:
 ----
 https://example.com/owncloud/remote.php/webdav /home/<username>/owncloud davfs user,rw,auto 0 0
 ----
-. Then test that it mounts and authenticates by running the following
-command. If you set it up correctly you won’t need root permissions:
+. Then test that it mounts and authenticates by running the following command. 
+  If you set it up correctly you won’t need root permissions:
 +
 ....
 mount ~/owncloud
@@ -229,19 +231,15 @@ To access files through the Mac OS X Finder:
 1.  Choose *Go > Connect to Server*.
 
 The "Connect to Server" window opens.
-
-[start=2]
-.  Specify the address of the server in the *Server Address* field.
-
-image:osx_webdav1.png[Screenshot of entering your ownCloud server address on Mac OS X]
-
-For example, the URL used to connect to the ownCloud server from the Mac
-OS X Finder is:
-
-....
-https://example.com/owncloud/remote.php/dav/files/USERNAME/
-....
-
+. Specify the address of the server in the *Server Address* field. +
+image:osx_webdav1.png[Screenshot of entering your ownCloud server address on Mac OS X] +
++
+For example, the URL used to connect to the ownCloud server from the Mac OS X Finder is: +
++
+----
+https://example.com/owncloud/remote.php/webdav
+----
++
 image:osx_webdav2.png[image]
 
 [start=3]
@@ -280,19 +278,18 @@ and follow the Vista instructions if you run Windows 7.
 The following example shows how to map a drive using the command line.
 To map the drive:
 
-1.  Open a command prompt in Windows.
-2.  Enter the following line in the command prompt to map to the computer Z drive, 
-where <drive_path> is the URL to your ownCloud server:
-
-....
-net use Z: https://<drive_path>/remote.php/dav/files/USERNAME/ /user:youruser yourpassword
-....
-
-
-For example:
-
-`net use Z: https://example.com/owncloud/remote.php/dav/files/USERNAME/ /user:youruser yourpassword`
-
+. Open a command prompt in Windows.
+. Enter the following line in the command prompt to map to the computer Z drive, 
+where <drive_path> is the URL to your ownCloud server: +
++
+----
+net use Z: https://<drive_path>/remote.php/webdav /user:youruser yourpassword
+----
++
+**Example:**
++
+`net use Z: \https://example.com/owncloud/remote.php/webdav /user:youruser yourpassword`
++
 ""
 The computer maps the files of your ownCloud account to the drive letter Z.
 ""
@@ -312,17 +309,17 @@ net use Z: \\example.com@ssl\owncloud\remote.php\dav /user:youruser yourpassword
 
 To map a drive using the Microsoft Windows Explorer:
 
-1.  Migrate to your computer in Windows Explorer.
-2.  Right-click on *Computer* entry and select *Map network drive…* from the drop-down menu.
-3.  Choose a local network drive to which you want to map ownCloud.
-4.  Specify the address to your ownCloud instance, followed by */remote.php/dav/files/USERNAME/*.
-
+. Migrate to your computer in Windows Explorer.
+. Right-click on btn:[Computer] entry and select btn:[Map network drive…] from the drop-down menu.
+. Choose a local network drive to which you want to map ownCloud.
+. Specify the address to your ownCloud instance, followed by */remote.php/webdav*.
++
 For example:
-
-....
-https://example.com/owncloud/remote.php/dav/files/USERNAME/
-....
-
++
+----
+https://example.com/owncloud/remote.php/webdav
+----
++
 NOTE: For SSL protected servers, check *Reconnect at logon* to ensure that the mapping is persistent upon subsequent reboots. If you want to connect to the ownCloud server as a different user, check *Connect using different credentials*.
 
 image:explorer_webdav.png[image]
@@ -360,10 +357,10 @@ select a different connection type if you plan to use SSL. For example:
 [start=3]
 . Use the `More Options' drop-down menu to add the rest of your WebDAV
 URL into the `Path' field. For example:
-
-""
-`remote.php/dav/files/USERNAME/`
-""
++
+----
+remote.php/webdav
+----
 
 Now Cyberduck enables file access to the ownCloud server.
 
@@ -522,32 +519,32 @@ To create a folder with the current date as name:
 
 [source,bash]
 ----
-$ curl -u user:pass -X MKCOL "https://example.com/owncloud/remote.php/dav/files/USERNAME/$(date '+%d-%b-%Y')"
+curl -u user:pass -X MKCOL "https://example.com/owncloud/remote.php/dav/files/USERNAME/$(date '+%d-%b-%Y')"
 ----
 
 To upload a file `error.log` into that directory:
 
 [source,bash]
 ----
-$ curl -u user:pass -T error.log "https://example.com/owncloud/remote.php/dav/files/USERNAME/$(date '+%d-%b-%Y')/error.log"
+curl -u user:pass -T error.log "https://example.com/owncloud/remote.php/dav/files/USERNAME/$(date '+%d-%b-%Y')/error.log"
 ----
 
 To move a file:
 
 [source,bash]
 ----
-$ curl -u user:pass -X MOVE --header 'Destination: https://example.com/owncloud/remote.php/dav/files/USERNAME/target.jpg' https://example.com/owncloud/remote.php/dav/files/USERNAME/source.jpg
+curl -u user:pass -X MOVE --header 'Destination: https://example.com/owncloud/remote.php/dav/files/USERNAME/target.jpg' https://example.com/owncloud/remote.php/dav/files/USERNAME/source.jpg
 ----
 
 To get the properties of files in the root folder:
 
 [source,bash]
 ----
-$ curl -X PROPFIND -H "Depth: 1" -u user:pass https://example.com/owncloud/remote.php/dav/files/USERNAME/ | xml_pp
+curl -X PROPFIND -H "Depth: 1" -u user:pass https://example.com/owncloud/remote.php/dav/files/USERNAME/ | xml_pp
 <?xml version="1.0" encoding="utf-8"?>
 <d:multistatus xmlns:d="DAV:" xmlns:oc="http://owncloud.org/ns" xmlns:s="http://sabredav.org/ns">
   <d:response>
-    <d:href>/owncloud/remote.php/dav/files/USERNAME/</d:href>
+    <d:href>/owncloud/remote.php/webdav/</d:href>
     <d:propstat>
       <d:prop>
         <d:getlastmodified>Tue, 13 Oct 2015 17:07:45 GMT</d:getlastmodified>
@@ -562,7 +559,7 @@ $ curl -X PROPFIND -H "Depth: 1" -u user:pass https://example.com/owncloud/remot
     </d:propstat>
   </d:response>
   <d:response>
-    <d:href>/owncloud/remote.php/dav/files/USERNAME/welcome.txt</d:href>
+    <d:href>/owncloud/remote.php/webdav/welcome.txt</d:href>
     <d:propstat>
       <d:prop>
         <d:getlastmodified>Tue, 13 Oct 2015 17:07:35 GMT</d:getlastmodified>
