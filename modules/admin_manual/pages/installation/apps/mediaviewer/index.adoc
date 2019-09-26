@@ -1,0 +1,36 @@
+= Media Viewer App
+:media-viewer-app-url: https://marketplace.owncloud.com/apps/files_mediaviewer 
+:install-imagemagick-url: https://www.tecmint.com/install-imagemagick-on-debian-ubuntu/
+:install-imagemagick-pecl-url: https://www.php.net/manual/en/imagick.installation.php
+:gallery-link-share-redirect-url: https://github.com/owncloud/gallery#redirect-gallery-link-shares 
+
+The {media-viewer-app-url}[Media Viewer App] is a simple viewer for pictures and videos integrated into the files app, which supersedes the former Gallery and Video Player apps.
+
+[NOTE]
+====
+* Before installing the Media Viewer app, the Gallery and Video Player apps need to be removed, or at the very least disabled.
+  When removing or disabling, ensure that any {gallery-link-share-redirect-url}[gallery link shares are redirected].
+* Gallery and Video Player are no longer supported and will not receive any further security or bug fixes. 
+* Users are strongly encouraged to switch to Media Player.
+====
+
+== Add Support For More Media Types
+
+To add support for additional media types, in addition to the default set, ensure that {install-imagemagick-url}[ImageMagick] and its {install-imagemagick-pecl-url}[PECL extension] are installed and enabled. 
+Next, add new entries to the `enabledPreviewProviders` in `config/config.php`.
+Below, is an example of how to configure it.
+
+[source,php]
+----
+'enabledPreviewProviders' => [
+  'OC\\Preview\\PNG',
+  'OC\\Preview\\JPEG',
+  'OC\\Preview\\GIF',
+  'OC\\Preview\\Illustrator',
+  'OC\\Preview\\Postscript',
+  'OC\\Preview\\Photoshop',
+  'OC\\Preview\\TIFF'
+],
+----
+
+TIP: Look at the sample configuration (`config.sample.php`) in your config folder, for more information about this configuration key.
