@@ -133,7 +133,7 @@ If you're using S3 external storage mounts, you have to conduct some steps to en
 * After the upgrade to Server 10.3 has finished successfully, keep the maintenance mode activated and install/enable `files_external_s3` (either manually or via the Market app) as the app is not bundled with ownCloud Server anymore.
 * After enabling `files_external_s3` (`occ app:enable files_external_s3`) it is necessary to run `occ upgrade` again to conduct config migrations. 
   This migration step should run quickly.
-* If users were allowed to configure personal mount points before the upgrade, switch from maintenance mode into single user mode (`occ maintenance:singleuser --on`) and enable the option again by ticking the respective checkbox below "_Allow users to mount external storage_" (in Admin settings => Storage).
+* If users were allowed to configure personal mount points before the upgrade, switch from maintenance mode into single user mode (`occ maintenance:singleuser --on`) and enable the option again by ticking the respective checkbox (_Amazon S3_) below "_Allow users to mount external storage_" (in Admin settings => Storage).
 * Existing storage mount points will remain and do not have to be touched.
 * Make sure that everything works and disable maintenance/single-user mode to put the installation back into normal operations (`occ maintance:mode --off` / `occ maintenance:singleuser --off`).
 
@@ -170,7 +170,7 @@ https://github.com/owncloud/docs/issues/1869
 * A new `config.php` option (`dav.enable.tech_preview`) has been added to disable tech preview APIs by default https://github.com/owncloud/core/issues/36124[#36124]
 * [PHOENIX] Support for redirecting links to ownCloud Phoenix frontend has been added by introducing a new `config.php` option which stores the address where Phoenix is reachable (e.g., `'phoenix.baseUrl' => 'http://phoenix.example.tld:port'`) https://github.com/owncloud/core/pull/35819[#35819]
 * When loading groups, the performance of users has been improved https://github.com/owncloud/core/pull/35822[#35822]
-* Improved memory handling for the trashbin expiry background job https://github.com/owncloud/core/pull/35708[#35708]
+* Memory handling for the trashbin expiry background job has been improved  https://github.com/owncloud/core/pull/35708[#35708]
 
 === Solved known issues
 
@@ -190,7 +190,7 @@ https://github.com/owncloud/docs/issues/1869
   This is still in an experimental state and should be tested thoroughly. 
   Please provide feedback if you encounter issues. 
   https://github.com/owncloud/core/pull/35390[#35390]
-* *File integrity checking has been improved to prevent issues:* If a checksum mismatch occurs after uploading a file, the uploaded file and its checksum is deleted to prepare for a clean re-upload. 
+* *File integrity checking has been improved to prevent issues:* If a checksum mismatch occurs after uploading a file, the uploaded file and its checksum is deleted to prepare for a clean re-upload.
   https://github.com/owncloud/core/pull/35294[#35294]
 * *User/group sharing permission handling:* When a share recipient shared a resource with a group the resource owner was a member of (reshare), the resource owner was unable to increase the permissions of the initial share. 
    This has now been fixed. 
