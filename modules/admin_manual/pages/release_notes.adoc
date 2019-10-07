@@ -95,7 +95,7 @@ For more information on the Media Viewer app, visit the https://doc.owncloud.com
 === OAuth2 and session handling improvements
 
 Server 10.3 comes with improvements for session handling with Redis.
-These are designed to cope with issues encountered around duplicate session tokens, which make the ownCloud Clients lose their OAuth2 authorization from time to time, and forcing users to reauthenticate. 
+These are designed to cope with issues encountered around duplicate session tokens, which make the ownCloud Clients lose their OAuth2 authorization from time to time, and forcing users to re-authenticate. 
 The session handling stability has been generally improved, and support for Redis Session Locking has been introduced. 
 If Redis is used, it is necessary to enable Session Locking to ensure that the mentioned issues no longer occur. 
 
@@ -142,33 +142,24 @@ As Phoenix is separated from the backend and communicates only via HTTP APIs, it
 
 The following new HTTP APIs have been added with Server 10.3:
 
-* WebDAV Trash bin API (https://doc.owncloud.com/server/developer_manual/webdav_api/trashbin.html[Developer documentation])
-// TODO 
-* OCS API for public link share email notifications ([Developer documentation])
-// TODO 
-* WebDAV endpoint for public links ([Developer documentation])
-https://github.com/owncloud/docs/issues/1871
+* xref:developer_manual:webdav_api/trashbin.html[WebDAV Trash bin API].
+* xref:admin_manual:core/apis/ocs-notify-public-link-by-email.adoc[OCS API for public link share email notifications]
+* xref:admin_manual:webdav_api/public_files.adoc[WebDAV endpoint for public links].
 
 All new endpoints are currently in tech preview state and are mainly used for Phoenix development. 
 For this reason, they are disabled by default and have to be explicitly enabled using the new config.php option: `'dav.enable.tech_preview' => true,`.
 
-=> **Link to dev docs**
-
 === Other notable changes
 
 * The `previews_path` config option has been added to allow customization of the thumbnail storage path (by default those reside in the user storage). https://github.com/owncloud/core/pull/35131[#35131]
-* An Activity entry is now shown when a share receiver unshares a share https://github.com/owncloud/core/pull/35193[#35193]
-* The WebUI experience on mobile devices has been improved https://github.com/owncloud/core/pull/35919[#35919] https://github.com/owncloud/core/pull/35813[#35813] https://github.com/owncloud/core/pull/35347[#35347] https://github.com/owncloud/core/pull/34803[#34803] 
-// TODO 
-* The config.php options `proxy` and `proxyuserpwd` will now be respected to enable federation when an instance needs to go through an authenticated proxy to reach a federated instance. See `config.sample.php` and the **LINK** [ownCloud Documentation] for more information. https://github.com/owncloud/core/pull/35868[#35868]
-
-https://github.com/owncloud/docs/issues/1869
-
-* The `occ files:scan` command is now case-insensitive for the userid https://github.com/owncloud/core/pull/35324[#35324]
-* A new `config.php` option (`dav.enable.tech_preview`) has been added to disable tech preview APIs by default https://github.com/owncloud/core/issues/36124[#36124]
-* [PHOENIX] Support for redirecting links to ownCloud Phoenix frontend has been added by introducing a new `config.php` option which stores the address where Phoenix is reachable (e.g., `'phoenix.baseUrl' => 'http://phoenix.example.tld:port'`) https://github.com/owncloud/core/pull/35819[#35819]
-* The performance when loading groups of users has been improved https://github.com/owncloud/core/pull/35822[#35822]
-* Memory handling for the trashbin expiry background job has been improved  https://github.com/owncloud/core/pull/35708[#35708]
+* An Activity entry is now shown when a share receiver unshares a share. https://github.com/owncloud/core/pull/35193[#35193]
+* The WebUI experience on mobile devices has been improved. https://github.com/owncloud/core/pull/35919[#35919] https://github.com/owncloud/core/pull/35813[#35813] https://github.com/owncloud/core/pull/35347[#35347] https://github.com/owncloud/core/pull/34803[#34803] 
+* The config.php options `proxy` and `proxyuserpwd` will now be respected to enable federation when an instance needs to go through an authenticated proxy to reach a federated instance. See `config.sample.php` and the xref:configuration/files/federated_cloud_sharing_configuration.adoc#working-with-proxies[Federated Cloud Sharing Configuration documentation] for more information.
+* The `occ files:scan` command is now case-insensitive for the userid. https://github.com/owncloud/core/pull/35324[#35324]
+* A new `config.php` option (`dav.enable.tech_preview`) has been added to disable tech preview APIs by default. https://github.com/owncloud/core/issues/36124[#36124]
+* [PHOENIX] Support for redirecting links to ownCloud Phoenix frontend has been added by introducing a new `config.php` option which stores the address where Phoenix is reachable (e.g., `'phoenix.baseUrl' => 'http://phoenix.example.tld:port'`). https://github.com/owncloud/core/pull/35819[#35819]
+* The performance when loading groups of users has been improved. https://github.com/owncloud/core/pull/35822[#35822]
+* Memory handling for the trashbin expiry background job has been improved. https://github.com/owncloud/core/pull/35708[#35708]
 
 === Solved known issues
 
@@ -201,16 +192,15 @@ https://github.com/owncloud/docs/issues/1869
 
 === For developers
 
-* Tech preview for WebDAV Trash bin API (disabled by default) https://github.com/owncloud/core/pull/35716[#35716] https://github.com/owncloud/core/pull/35879[#35879]
-* Tech preview for OCS API for public link share email notifications (disabled by default)https://github.com/owncloud/core/pull/36063[#36063]
-* Tech preview DAV endpoint for public shares (disabled by default) https://github.com/owncloud/core/pull/35932[#35932]
-* Two-factor providers may now display custom challenge messages https://github.com/owncloud/core/issues/34848[#34848]
+* Tech preview for WebDAV Trash bin API (disabled by default). https://github.com/owncloud/core/pull/35716[#35716] https://github.com/owncloud/core/pull/35879[#35879]
+* Tech preview for OCS API for public link share email notifications (disabled by default). https://github.com/owncloud/core/pull/36063[#36063]
+* Tech preview DAV endpoint for public shares (disabled by default). https://github.com/owncloud/core/pull/35932[#35932]
+* Two-factor providers may now display custom challenge messages. https://github.com/owncloud/core/issues/34848[#34848]
 * The theming capabilities have been improved by allowing HTML for `Name` and `LogoClaim`. 
   Please check https://github.com/owncloud/theme-example/pull/7/files[the changes to owncloud/theme-example] if you are interested in making use of this in your theme. https://github.com/owncloud/core/pull/35273[#35273]
 * A new Roles API has been added to allow clients to query the server for available permissions/roles for user/group sharing and public links. 
-  In future client releases, this endpoint will be used to dynamically display roles/permissions depending on the server's capabilities. https://github.com/owncloud/core/pull/36024[#36024]
-Docs: https://github.com/owncloud/docs/issues/1857
-* A new, improved version of the "Advanced Sharing Permissions" JavaScript API (v2) has been added to allow ownCloud apps to register additional permissions/restrictions in user/group sharing. 
+  In future client releases, this endpoint will be used to dynamically display roles/permissions depending on the server's capabilities. You can find out more about it in xref:admin_manual:core/apis/roles-api.adoc[the Roles API documentation].
+* A new, improved version of the "_Advanced Sharing Permissions_" JavaScript API (v2) has been added to allow ownCloud apps to register additional permissions/restrictions in user/group sharing. 
   Version 1 of the API is still available in parallel. https://github.com/owncloud/core/pull/35836[#35863]
 
 === Known issues
