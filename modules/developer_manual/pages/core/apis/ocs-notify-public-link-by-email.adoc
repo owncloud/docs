@@ -1,0 +1,134 @@
+= Notify Public Link Via Email
+:toc: right
+:toclevels: 1
+:request-base-path: ocs/v1.php/apps/files_sharing/api/v1/notification/notify-public-link-by-email
+
+== Introduction
+
+The public-files API allows access to public links via WebDAV.
+
+[cols="40%,30%,30%",options="header",]
+|===
+| Request Path 
+| Method 
+| Content Type
+
+| `ocs/v1.php/apps/files_sharing/api/v1/notification/notify-public-link-by-email` 
+| `POST` 
+| `text/xml`
+|===
+
+== Request Parameters
+
+[cols=",,",options="header",]
+|===
+|Attribute 
+|Type 
+|Description
+
+|`format` 
+|string 
+|The format to return the response body in. 
+The allowed options are `json` and `xml` (default).
+|===
+
+== POST Parameters
+
+[cols=",,",options="header",]
+|===
+|Attribute 
+|Type 
+|Description
+
+|`recipients` 
+|array of string 
+|A list of email addresses to send the notification to.
+
+|`link` 
+|string 
+|The public link.
+
+|`personalNote` 
+|string 
+|A personal note to send with the email notification.
+|===
+
+== Code Example
+
+[tabs]
+====
+Curl::
++
+--
+[source,console,subs="attributes+"]
+----
+include::{examplesdir}core/scripts/curl/ocs/notify-public-link-by-email.sh[]
+----
+--
+PHP::
++
+--
+[source,console,subs="attributes+"]
+----
+include::{examplesdir}core/scripts/php/notify-public-link-by-email.php[]
+----
+--
+====
+
+== Returns
+
+=== Example Response
+
+If the notification is successful, you will see the response below, along with an HTTP 200 status code — _if you specified the format as `json`_.
+
+[source,xml]
+----
+{
+   "ocs" : {
+      "meta" : {
+         "itemsperpage" : "",
+         "totalitems" : "",
+         "status" : "ok",
+         "statuscode" : 100,
+         "message" : "OK"
+      },
+      "data" : []
+   }
+}
+----
+
+If the notification could not be sent to one or more recipients, you will see the response below, along with an HTTP 200 status code — _if you specified the format as `json`_.
+
+[source,xml]
+----
+{
+   "ocs" : {
+      "data" : [],
+      "meta" : {
+         "totalitems" : "",
+         "statuscode" : 400,
+         "itemsperpage" : "",
+         "message" : "Couldn't send mail to following recipient(s): test@email.com",
+         "status" : "error"
+      }
+   }
+}
+----
+
+If public link mail notification is not allowed, then the following response will be returned, along with an HTTP 200 status code.
+
+[source,xml]
+----
+<?xml version="1.0"?>
+<ocs>
+ <meta>
+  <status>failure</status>
+  <statuscode>403</statuscode>
+  <message>Public link mail notification is not allowed</message>
+  <totalitems></totalitems>
+  <itemsperpage></itemsperpage>
+ </meta>
+ <data/>
+</ocs>
+----
+

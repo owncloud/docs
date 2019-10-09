@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 
 set -e
+set -u
 set -o noclobber
 set -o errexit
 set -o pipefail
 set -o nounset
+IFS=$'\n\t'
 
 ACTION=
 DRY_RUN=false
@@ -139,8 +141,10 @@ function validate_manual()
     if [[ "$manual" != "admin" && "$manual" != "developer" && "$manual" != "user" ]]; then
         echo "[${manual}] is not a valid manual." 
         echo "Available manuals are admin, developer, and user."
-        exit $ERR_UNSUPPORTED_MANUAL
+        return $ERR_UNSUPPORTED_MANUAL
     fi
+
+    return 0
 }
 
 function build_pdf_manual()
@@ -153,9 +157,9 @@ function build_pdf_manual()
     local book_file="books/ownCloud_${manual_infix}_Manual.adoc" 
     local nav_file="modules/${manual}_manual/nav.adoc"
 
-    validate_manual "$MANUAL_NAME" 
-
     if [[ "$DRY_RUN" == true ]]; then
+        echo "Manual Generation - **DRY RUN**"
+        echo 
         echo "${manual} manual would be created with the following content:"
         echo
         cat $book_file <(convert_antora_nav_to_asciidoc_list "$nav_file")
@@ -180,7 +184,7 @@ function build_pdf_manual()
 
 function build_manuals()
 {
-    if [ -z "${MANUAL_NAME}" ]; then
+    if [[ -z "${MANUAL_NAME}" ]]; then
         build_pdf_manual "admin" "$RELEASE_DATE" "$VERSION"
         build_pdf_manual "developer" "$RELEASE_DATE" "$VERSION"
         build_pdf_manual "user" "$RELEASE_DATE" "$VERSION"
@@ -190,25 +194,30 @@ function build_manuals()
     fi
 }
 
-while getopts ":hcdmn:l:" o; do
-    case "${o}" in
-        d)
+while getopts ":hcdmn:l:" o
+do
+    case ${o} in
+        d )
             DRY_RUN=true
             ;;
-        n)
-            MANUAL_NAME="${OPTARG}"
+        n )
+            MANUAL_NAME=$OPTARG
             ;;
-        m)
+        m )
             ACTION="BUILD_MANUALS"
             ;;
-        l)
+        l )
             ACTION="VALIDATE"
             LANGUAGE="${OPTARG}"
             ;;
-        c)
+        c )
             ACTION="CLEAN"
             ;;
-        h|*)
+        : )
+            echo "Invalid option: $OPTARG requires an argument" 1>&2
+            exit 1
+            ;;
+        h|* )
             ACTION="HELP"
             ;;
     esac
