@@ -2,6 +2,12 @@
 :toc: right
 :toclevels: 1
 
+:ibm-elastic-storage-server-url: https://www.ibm.com/us-en/marketplace/ibm-elastic-storage-server
+:redhat-ceph-url: https://www.redhat.com/en/technologies/storage/ceph
+:netapp-hybrid-flash-array-url: https://www.netapp.com/us/products/storage-systems/hybrid-flash-array/index.aspx
+:netapp-nfs-bpg-url: https://www.netapp.com/us/media/tr-4067.pdf
+:netapp-mysql-url: https://www.netapp.com/us/media/tr-4722.pdf
+
 == Introduction
 
 What is the best way to install and maintain ownCloud?
@@ -221,8 +227,7 @@ image:installation/deprecs-2.png[Network diagram for a mid-sized enterprise.]
 * 2 to 4 application servers with four sockets and 32GB RAM.
 * 2 DB servers with four sockets and 64GB RAM.
 * 1
-https://www.digitalocean.com/community/tutorials/an-introduction-to-haproxy-and-load-balancing-concepts[HAproxy
-load balancer] with two sockets and 16GB RAM.
+https://www.digitalocean.com/community/tutorials/an-introduction-to-haproxy-and-load-balancing-concepts[HAproxy load balancer] with two sockets and 16GB RAM.
 * NFS storage server as needed.
 
 [[operating-system-1]]
@@ -301,9 +306,14 @@ for information on selecting and configuring a memory cache.
 [[storage-1]]
 ==== Storage
 
-Use an off-the-shelf NFS solution, such as
-https://www.ibm.com/us-en/marketplace/ibm-elastic-storage-server[IBM Elastic Storage] or
-https://www.redhat.com/en/technologies/storage/ceph[RedHat Ceph].
+For accessing a backend storage system via NFS, you can use a dedicated storage system like 
+{netapp-hybrid-flash-array-url}[NetApp Hybrid Flash Storage Systems], or other systems like
+{ibm-elastic-storage-server-url}[IBM Elastic Storage] based on their Power8 servers or 
+{redhat-ceph-url}[RedHat Ceph] with their NFS-Ceph gateway.
+
+You may take a look on the {netapp-nfs-bpg-url}[NetApp NFS Best Practice and Implementation Guide] for best NFS configuring practices,
+especially section _9.4 Mount Option Best Practices with NFS_ on page 111 and
+{netapp-mysql-url}[MySQL Database on NetApp ONTAP] which also includes performance measurements.
 
 [[owncloud-edition-1]]
 ==== ownCloud Edition
@@ -416,10 +426,16 @@ xref:configuration/server/caching_configuration.adoc#redis[Redis] for distribute
 [[storage-2]]
 ==== Storage
 
-An off-the-shelf NFS solution should be used.
-Some examples are https://www.ibm.com/us-en/marketplace/ibm-elastic-storage-server[IBM Elastic Storage] or
-https://www.redhat.com/en/technologies/storage/ceph[RedHat Ceph].
+
+For accessing a backend storage system via NFS, you can use a dedicated storage system like 
+{netapp-hybrid-flash-array-url}[NetApp Hybrid Flash Storage Systems], or other systems like
+{ibm-elastic-storage-server-url}[IBM Elastic Storage] based on their Power8 servers or 
+{redhat-ceph-url}[RedHat Ceph] with their NFS-Ceph gateway.
 Optionally, an S3 compatible object store can also be used.
+
+You may take a look on the {netapp-nfs-bpg-url}[NetApp NFS Best Practice and Implementation Guide] for best NFS configuring practices,
+especially section _9.4 Mount Option Best Practices with NFS_ on page 111 and
+{netapp-mysql-url}[MySQL Database on NetApp ONTAP] which also includes performance measurements.
 
 [[owncloud-edition-2]]
 ==== ownCloud Edition
