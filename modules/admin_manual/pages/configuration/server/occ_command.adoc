@@ -1,7 +1,6 @@
 = Using the occ Command
 :toc: macro
 :toclevels: 2
-:toc-title: occ Command Directory
 :page-aliases: configuration/server/occ_app_command.adoc
 :php-datetime-url: https://php.net/manual/de/datetime.formats.php
 
@@ -151,7 +150,7 @@ This output option is available on all list and list-like commands, which includ
 
 This command reference covers the ownCloud core commands.
 
-=== Apps Commands
+=== App Commands
 
 The `app` commands list, enable, and disable apps.
 
@@ -217,7 +216,7 @@ Analysing /var/www/owncloud/apps/files/foo_app.php
 You can get the full file path to an app.
 
 [source,console,subs="attributes+"]
-----
+....
 {occ-command-example-prefix} app:getpath notifications
 /var/www/owncloud/apps/notifications
 ....
@@ -238,7 +237,7 @@ background
 This example selects Ajax:
 
 [source,console,subs="attributes+"]
-----
+....
 {occ-command-example-prefix} background:ajax
   Set mode for background jobs to 'ajax'
 ....
@@ -501,6 +500,20 @@ Note: you must use json to write multi array values.
 | `--update-only`     | Only updates the value, if it is not set before, it is not being added.
 | `--output=[OUTPUT]` | The output format to use (`plain`, `json` or `json_pretty`, default is `plain`).
 |===
+
+===== Examples
+
+Adding Redis to the configuration:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} config:system:set \
+   redis \
+   --value '{"host": "{oc-examples-server-ip}", "port": "6379"}' \
+   --type json
+
+System config value redis set to json {"host": "{oc-examples-server-ip}", "port": "6379"}
+----
 
 ==== config:app:set
 
@@ -1829,11 +1842,11 @@ To create the two translation files, the command reads translation data from a s
 
 ==== A Working Example
 
-In this example, we'll create Austrian German translations for the Gallery app.
+In this example, we'll create Austrian German translations for the Comments app.
 
 NOTE: This example assumes that the ownCloud directory is `/var/www/owncloud` and that it uses ownCloud's standard apps directory, `app`.
 
-First, create a source translation file in `/var/www/owncloud/apps/gallery/l10n`, called `de_AT.php`. 
+First, create a source translation file in `/var/www/owncloud/apps/comments/l10n`, called `de_AT.php`. 
 In it, add the required translation strings, as in the following example.
 Refer to the developer documentation on xref:developer_manual:app/advanced/l10n.adoc#creating-your-own-translatable-files[creating translation files], if you're not familiar with creating them.
 
@@ -1850,20 +1863,20 @@ $PLURAL_FORMS = "nplurals=2; plural=(n != 1);";
 After that, run the following command to create the translation.
 
 [source,console,subs="attributes+"]
-....
-sudo -u www-data php occ l10n:createjs gallery de_AT
-....
+----
+{occ-command-example-prefix} l10n:createjs comments de_AT
+----
 
-This will generate two translation files, `de_AT.js` and `de_AT.json`, in `/var/www/owncloud/apps/gallery/l10n`.
+This will generate two translation files, `de_AT.js` and `de_AT.json`, in `/var/www/owncloud/apps/comments/l10n`.
 
 ===== Create Translations in Multiple Languages
 
 To create translations in multiple languages simultaneously, supply multiple languages to the command, as in the following example:
 
 [source,console,subs="attributes+"]
-....
-sudo -u www-data php occ l10n:createjs gallery de_AT de_DE hu_HU es fr
-....
+----
+{occ-command-example-prefix} l10n:createjs comments de_AT de_DE hu_HU es fr
+----
 
 === Logging Commands
 
@@ -3206,8 +3219,6 @@ Turned on maintenance mode
 Checked database schema update
 Checked database schema update for apps
 Updated database
-Updating <gallery> ...
-Updated <gallery> to 0.6.1
 Updating <activity> ...
 Updated <activity> to 2.1.0
 Update successful
@@ -3290,7 +3301,33 @@ Example:
 {occ-command-example-prefix} notifications:generate -g Office "Emergency Alert" "Rebooting in 5min"
 ....
 
-== ownCloud Maintained Application Commands
+=== Migration Steps Command
+
+You can run migration steps with the `migrations` command.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} migrations:execute <app> <version>
+----
+
+===== Arguments
+
+[width="100%",cols="20%,70%",]
+|===
+| `app`  | Name of the app this migration command shall work on.
+| `version`  | The version to execute.
+|===
+
+===== Example
+
+This example executes the migration step for the core app:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} migrations:execute core 20181220085457
+----
+
+== Apps Commands
 
 This command reference covers the ownCloud maintained apps commands.
 
@@ -3811,6 +3848,30 @@ If you want to reset (or unset) the setting, then you can use the following comm
 ....
 sudo -u www-data php occ config:app:delete user_ldap updateAttributesInterval
 ....
+
+*Reuse Existing LDAP Accounts if Available*
+
+If you want to allow new LDAP logins to attempt to reuse existing `oc_accounts` entries that match the resolved username attribute, and have backend set to `User_Proxy`, then set the `reuse_accounts` config setting to `yes`.
+
+Below is an example of how to do so.
+
+[source,console,subs="attributes+"]
+....
+{occ-command-example-prefix} config:app:set user_ldap reuse_accounts --value=yes
+....
+
+This functionality is valuable for several reasons; these are:
+
+* It handles the situation of when admins mistakenly delete one or more user mappings, and subsequent logins then create new accounts.
+* It allows auto-provisioned users with Shibboleth to be moved over to an LDAP server, but be able to continue using ownCloud.
+
+[IMPORTANT]
+====
+This functionality will not work in the following situations:
+
+. No user or group account exists with the supplied username.
+. A user or group account exists, but it uses a different backend.
+====
 
 === Market
 

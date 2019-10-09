@@ -6,6 +6,8 @@ This guide is here to help you get started with this repository, primarily if yo
 
 Even if you’re not a developer, you can contribute to the ownCloud documentation by [creating new issues](#creating-new-issues) and contributing to the discussion around them. You don’t need to be familiar with how to write or edit code, nor install any software. All that you need is a web browser, such as [Google Chrome](https://www.google.com/chrome/index.html), [Mozilla Firefox](https://www.mozilla.org/en-US/firefox/new/), [Apple Safari](https://www.apple.com/safari/), or [Microsoft Edge](https://www.microsoft.com/en-us/windows/microsoft-edge).
 
+**NOTE:** Most browsers support [live preview](#environmental-setups-depending-the-kind-of-changes).
+
 ### Initial Steps
 
 Before you can contribute to the documentation, you need to:
@@ -122,9 +124,11 @@ Depending if you are making text changes only or if you change images, inline co
 
 #### You Are Making Text Changes Only
 
-If you're making text changes only, we recommend installing the AsciiDoc Live Preview plugin:
+If you're making text changes only, we recommend installing the AsciiDoc Live Preview plugin(s):
 
-1. To your [browser](https://asciidoctor.org/docs/editing-asciidoc-with-live-preview/) (The supported browsers are: *Firefox*, *Google Chrome*, or *Opera*).
+1. To your browser:
+    - Firefox: [asciidoctorjs-live preview](https://addons.mozilla.org/en-US/firefox/addon/asciidoctorjs-live-preview)
+    - Other [browser](https://asciidoctor.org/docs/editing-asciidoc-with-live-preview/) (The supported browsers are: *FireFox*, *Google Chrome*, or *Opera*, -- if *FireFox* installation fails, try the above instead).
 2. To your [text editor or IDE](https://asciidoctor.org/docs/editing-asciidoc-with-live-preview/#using-a-modern-text-editoride), *if it has one*.
 
 Using one, or both, of these, you can quickly check if the changes you make are what you expect, and if there are any render errors. If the document renders as expected, then you can commit the changes and push them to the docs repository.
