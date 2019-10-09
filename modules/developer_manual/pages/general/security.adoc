@@ -2,7 +2,6 @@
 :toc: right
 :xss-link: https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)
 
-[[introduction]]
 == Introduction
 
 These security guidelines are for both core and application developers.
@@ -23,10 +22,8 @@ All application Framework security features depend on the call of the
 controller through `OCA\\AppFramework\\App::main`. If the controller
 method executes directly, security checks are not performed!
 
-[[general]]
 == General
 
-[[source-code-analysis]]
 === Source Code Analysis
 
 Before releasing an application and after security-related changes, the
@@ -38,10 +35,8 @@ Software:
 * All apps in core
 * All apps in the marketplace
 
-[[architecture]]
 == Architecture
 
-[[security-related-comments-in-source-code]]
 === Security Related Comments in Source Code
 
 * Security-related comments in source code are forbidden. Source code
@@ -52,7 +47,6 @@ are:
 * Before deploying your code,
 use a minifier for JavaScript and CSS files.
 
-[[http-or-https]]
 === HTTP or HTTPS
 
 * Only use HTTPS for rendering content.
@@ -60,7 +54,6 @@ use a minifier for JavaScript and CSS files.
 https://developer.mozilla.org/en-US/docs/Web/Security/Mixed_content[mixed-content
 pages].
 
-[[security-related-actions]]
 === Security Related Actions
 
 * All security-related actions must take place on the server. This
@@ -70,7 +63,6 @@ providing a better user experience.
 * Don’t hard-code passwords or encryption keys in the source code. They
 have to be in config files and should be user-generated.
 
-[[browser-plugins]]
 === Browser plugins
 
 Don’t use browser plugins such as:
@@ -79,14 +71,12 @@ Don’t use browser plugins such as:
 * Java Applets
 * Flash
 
-[[least-privilege-principle]]
 === Least Privilege Principle
 
 * Every application should only have the rights that it needs.
 * An application should not access core database tables. If it needs
 data from these tables, it should call an API endpoint to retrieve it.
 
-[[error-messages-and-error-pages]]
 === Error Messages and Error Pages
 
 * Don’t show sensitive information on error pages or in error messages.
@@ -108,13 +98,11 @@ installation.
 * Consider implementing a https://en.wikipedia.org/wiki/CAPTCHA[CAPTCHA]
 to prevent brute force attacks, after five failed login attempts.
 
-[[session-id-transport]]
 === Session ID Transport
 
 * Don’t use a session id as a GET Parameter, because these persist in
 browser history. Use cookies instead.
 
-[[new-session-id-after-a-successful-login]]
 === New Session ID After a Successful Login
 
 * After a successful login, regenerate the session id to prevent
@@ -122,7 +110,6 @@ https://www.owasp.org/index.php/Session_fixation[session fixation attacks].
 * If you have to switch between HTTPS and HTTP, you should change the
 session id, because an attacker could have already read the session id.
 
-[[access-protection-with-authorization-checks]]
 == Access Protection With Authorization Checks
 
 * Every request to the server must check if the user has the
@@ -130,16 +117,13 @@ authorization to perform this request. We do not recommend running these
 on the client-side, as they can be avoided. However, client-side checks
 can improve the user’s experience.
 
-[[best-practices]]
 == Best Practices
 
-[[use-of-the-eval-function]]
 === Use of the eval Function
 
 * Don’t use either PHP’s or JavaScript’s `eval` functions — especially
 not with user-supplied data.
 
-[[input-validation]]
 === Input Validation
 
 * All user-supplied data, `$_SERVER`, and `$_COOKIE` variables *must* be
@@ -183,7 +167,6 @@ Test-Absatz. Anderer Text
 
 Do the validation *before* all other actions.
 
-[[path-traversal-and-path-manipulation]]
 === Path Traversal and Path Manipulation
 
 * Don’t use user-supplied data to build path names, if you need to
@@ -191,7 +174,6 @@ access the file system. You have to check the input parameters for null
 bytes (`\0`), the links to the current and parent directory on
 UNIX/Linux filesystems (`.` and `..`), and empty strings.
 
-[[prevent-command-injection]]
 === Prevent Command Injection
 
 * Use http://php.net/manual/en/function.escapeshellarg.php[PHP’s escapeshellarg() function], if your input parameters are arguments for
@@ -220,7 +202,6 @@ $escaped_command = escapeshellcmd($command);
 system($escaped_command);
 ----
 
-[[output-escaping]]
 === Output Escaping
 
 * All input parameters printed out in the response should be escaped.
@@ -230,14 +211,12 @@ instead.
 * Use `$jQuery.html()`, if you want to output HTML, . A better option is
 to use a tool like http://htmlpurifier.org[HTMLPurifier].
 
-[[high-sensitive-information-in-get-request]]
 === High Sensitive Information in GET Request
 
 * You should not use sensitive information, like passwords or usernames,
 in unprotected requests.
 * All requests containing sensitive information should be protected with HTTPS.
 
-[[prevent-http-header-injection-http-response-splitting]]
 === Prevent HTTP-Header-Injection (HTTP Response Splitting)
 
 
@@ -250,7 +229,6 @@ This is because an attacker can deface your website, such as redirect
 the request to a phishing site or executing an XSS attack, by performing
 header manipulation.
 
-[[changes-on-the-document-object-model-dom]]
 === Changes on the Document Object Model (DOM)
 
 
@@ -258,7 +236,6 @@ Don’t use unvalidated user input, if your code changes the DOM.
 
 You should never trust user input.
 
-[[prevent-sql-injection]]
 === Prevent SQL-Injection
 
 * Use the escape functions for your database to prevent
@@ -266,10 +243,8 @@ https://www.owasp.org/index.php/SQL_Injection[SQL Injection attacks], if
 you have to pass parameters to a SQL query. In ownCloud you must use the
 https://github.com/owncloud/core/blob/master/lib/private/DB/QueryBuilder/QueryBuilder.php[QueryBuilder].
 
-[[data-storage]]
 == Data Storage
 
-[[persistent-storages-on-client-side]]
 === Persistent Storages on Client Side
 
 * Don’t save highly sensitive data in persistent storage on the client
@@ -279,17 +254,14 @@ side. Persistent data storage includes:
 ** https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API[HTML5 Web-Storage]
 ** https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API[HTML5 Index DB]
 
-[[release-all-resources-in-case-of-an-error]]
 === Release all Resources in Case of an Error
 
 * All resources, such as database and file locks, must be released when
 errors occur. Doing so prevents the server from being subject to
 https://en.wikipedia.org/wiki/Denial-of-service_attack[denial-of-service (DOS) attacks].
 
-[[cryptography]]
 == Cryptography
 
-[[symmetric-encryption-methods]]
 === Symmetric Encryption Methods
 
 * If you use symmetric encryption methods in your code, use the
@@ -306,13 +278,11 @@ unique and must be the same when encrypting and decrypting. Use
 http://php.net/manual/en/function.crypt.php[the PHP crypt library] with
 http://mcrypt.sourceforge.net[libmcrypt] greater 2.4.x.
 
-[[asymmetric-encryption-methods]]
 === Asymmetric Encryption Methods
 
 * If you use asymmetric encryption methods, use RSA encryption with a
 key length of 4096.
 
-[[hash-algorithms]]
 === Hash Algorithms
 
 * If you need a hash function in PHP, use the SHA512 hash algorithm.
@@ -322,55 +292,46 @@ designed to be very fast and efficient. However, with modern techniques
 and computer equipment, it has become trivial to brute force the output
 of these algorithms to discover the original input.
 
-[[cookies]]
 == Cookies
 
-[[secure-flag]]
 === Secure Flag
 
 * If you use HTTPS to protect requests, then use
 https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie[the
 secure flag] for your cookies.
 
-[[http-only]]
 === HTTP Only
 
 * If you do not have to access your cookie content in JavaScript, then
 set https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies[the HttpOnly flag] on every cookie.
 
-[[path]]
 === Path
 
 * If possible, set a path for a cookie. Doing so ensures that the cookie
 is only valid for requests using the provided path.
 
-[[passwords]]
 == Passwords
 
 The following chapter is not only for developers but also for admins and
 end-users.
 
-[[charset-of-passwords]]
 === Charset of Passwords
 
 * The charset of a password should contain _characters_, _numbers_, and
 _special characters_.
 * Characters should be both upper and lowercase.
 
-[[password-length]]
 === Password Length
 
 * All passwords should have a minimum length of eight characters and
 contain numbers and special characters. These requirements must be
 validated by the application.
 
-[[password-quality]]
 === Password Quality
 
 * If the user can choose his password for the first time, the quality of
 a password should be displayed graphically.
 
-[[password-input]]
 === Password Input
 
 * If a user can input his password into an input field, the input field
@@ -378,23 +339,19 @@ a password should be displayed graphically.
 * If an error occurs, don’t fill the password field automatically when
 displaying an error message.
 
-[[save-passwords]]
 === Save Passwords
 
 * Don’t save passwords in clear text. Use a
 https://crackstation.net/hashing-security.htm[salted hash]
 
-[[default-and-initial-passwords]]
 === Default and Initial Passwords
 
 * Avoid using both default and initial passwords. If you have to use
 either, you have to make sure that the password is changed by the user
 on the first call to the application.
 
-[[user-interface]]
 == User Interface
 
-[[input-auto-completion]]
 === Input Auto-completion
 
 * Auto-complete must be disabled for all input fields which receive
@@ -412,10 +369,8 @@ generated field name.
 <input name="pass" type="password" autocomplete="new-password" />
 ----
 
-[[attack-vectors]]
 == Attack Vectors
 
-[[auth-bypass-privilege-escalations]]
 === Auth bypass / Privilege escalations
 
 Auth bypass/privilege escalations happen when users can perform
@@ -431,7 +386,6 @@ These checks are already automatically performed, by the application
 framework, for each request. If they are not required, they have to be
 _explicitly_ turned off by using annotations above your xref:app/fundamentals/controllers.adoc[controller method]. Additionally, always check /if the user has the right to perform that action.
 
-[[clickjacking]]
 === Clickjacking
 
 http://en.wikipedia.org/wiki/Clickjacking[Clickjacking] tricks the user
@@ -445,7 +399,6 @@ This functionality is built into ownCloud when
 xref:app/fundamentals/templates.adoc[ownCloud templates] or
 https://twig.symfony.com/[Twig Templates] are used.
 
-[[code-executions-file-inclusions]]
 === Code executions / File inclusions
 
 Code execution means that an attacker can include an arbitrary PHP file.
@@ -476,7 +429,6 @@ double check to be sure that there is no other option available. If
 there is no other option, sanitize every user parameter and ask people
 to audit your sanitize functions.
 
-[[cross-site-request-forgery]]
 === Cross Site Request Forgery (CSRF)
 
 Using http://en.wikipedia.org/wiki/Cross-site_request_forgery[CSRF] one
@@ -499,7 +451,6 @@ OCP\JSON::callCheck();
 
 If you are using the application Framework, every controller method is automatically checked for CSRF unless you explicitly exclude it by setting the `@NoCSRFRequired` annotation before xref:app/fundamentals/controllers.adoc[the controller method].
 
-[[cross-site-scripting]]
 === Cross Site Scripting (XSS)
 
 http://en.wikipedia.org/wiki/Cross-site_scripting[Cross-site scripting]
@@ -517,7 +468,6 @@ To prevent XSS vulnerabilities in your application, you have to sanitize
 both the templates _and_ all JavaScript scripts which perform DOM
 manipulation.
 
-[[templates]]
 === Templates
 
 Let’s assume you use the following example in your application:
@@ -548,7 +498,6 @@ Should you ever need to print something unescaped, double check if it is
 necessary. If there is no other way (e.g., when including sub-templates)
 use print_unescaped with care.
 
-[[javascript]]
 === JavaScript
 
 Avoid manipulating HTML directly via JavaScript. Doing so often leads to
@@ -588,7 +537,6 @@ messageTd.text(username);
 It may also be wise to choose a proper JavaScript framework, like
 AngularJS, which automatically handles JavaScript escaping for you.
 
-[[directory-traversal]]
 === Directory Traversal
 
 Very often, developers forget about sanitizing the file path (such as
@@ -619,7 +567,6 @@ fopen("/data/" . $username . "/" . $file . ".txt");
 PHP also interprets the backslash (\) in paths, don’t forget to replace
 it too!
 
-[[shell-injection]]
 === Shell Injection
 
 http://en.wikipedia.org/wiki/Code_injection#Shell_injection[Shell
@@ -662,14 +609,12 @@ system('ls '.$_GET['dir']);
 system('ls '.escapeshellarg($_GET['dir']));
 ----
 
-[[sensitive-data-exposure]]
 === Sensitive data exposure
 
 Always store user data or configuration files in safe locations, e.g.,
 *owncloud/data/* and not in the web root, where they are accessible by
 anyone using a web browser.
 
-[[sql-injection]]
 === SQL Injection
 
 http://en.wikipedia.org/wiki/SQL_injection[SQL Injection] occurs when
@@ -697,7 +642,6 @@ $params = array(1);
 $result = $this->execute($sql, $params);
 ----
 
-[[unvalidated-redirects]]
 === Unvalidated redirects
 
 This is more of an annoyance than a critical security vulnerability
@@ -721,7 +665,6 @@ header('Location:'. $_GET['redirectURL']);
 header('Location: https://example.com'. $_GET['redirectURL']);
 ----
 
-[[getting-help]]
 == Getting Help
 
 If you need help to ensure that a function is secure, please ask on our
