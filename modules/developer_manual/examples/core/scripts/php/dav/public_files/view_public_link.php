@@ -13,10 +13,6 @@ $share_token = '<share_token>';
 
 try {
     $response = $client->request('PROPFIND', "public-files/${share_token}", [
-        'auth' => [
-            '{oc-examples-username}',
-            '{oc-examples-password}'
-        ],
         'headers' => [
             'Content-Type'=> 'text/xml',
         ],
