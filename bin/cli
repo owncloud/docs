@@ -1,13 +1,17 @@
 #!/usr/bin/env bash
 
 set -e
+set -u
 set -o noclobber
 set -o errexit
 set -o pipefail
 set -o nounset
+IFS=$'\n\t'
 
 ACTION=
+DRY_RUN=false
 FONTS_DIRECTORY="fonts"
+MANUAL_NAME=
 RELEASE_DATE=$(date +'%B %d, %Y')
 STYLE="owncloud"
 STYLES_DIRECTORY="resources/themes"
@@ -29,7 +33,7 @@ fi
 
 function usage()
 {
-    echo "Usage: bin/cli [-c] [-h] [-m <admin|developer|user>] [-l <go|xml|json|php|kotlin|yaml>]"
+    echo "Usage: bin/cli [-c] [-d] [-h] [-m] [-n <admin|developer|user>] [-l <go|xml|json|php|kotlin|yaml>]"
 }
 
 function clean_build_dir()
@@ -125,8 +129,22 @@ function convert_antora_nav_to_asciidoc_list()
             level_offset=$(echo "$line" | awk -F"*" '{print NF-1}')
             revised_line=$(echo "$line" | sed 's/xref:/include::{module_base_path}/' | sed 's/\[.*\]//g' | sed -r 's/^\*{1,} //')
             echo "${revised_line}[leveloffset=+${level_offset}]"
+            echo
         fi
     done < "${filename}"
+}
+
+function validate_manual()
+{
+    local manual="$1"
+
+    if [[ "$manual" != "admin" && "$manual" != "developer" && "$manual" != "user" ]]; then
+        echo "[${manual}] is not a valid manual." 
+        echo "Available manuals are admin, developer, and user."
+        return $ERR_UNSUPPORTED_MANUAL
+    fi
+
+    return 0
 }
 
 function build_pdf_manual()
@@ -139,15 +157,17 @@ function build_pdf_manual()
     local book_file="books/ownCloud_${manual_infix}_Manual.adoc" 
     local nav_file="modules/${manual}_manual/nav.adoc"
 
-    if [[ $manual != "admin" && $manual != "developer" && $manual != "user" ]]; then
-        echo "That is not a valid manual" 
-        exit $ERR_UNSUPPORTED_MANUAL
+    if [[ "$DRY_RUN" == true ]]; then
+        echo "Manual Generation - **DRY RUN**"
+        echo 
+        echo "${manual} manual would be created with the following content:"
+        echo
+        cat $book_file <(convert_antora_nav_to_asciidoc_list "$nav_file")
+        return 0
     fi
 
     echo "Generating version '${revision}' of the ${manual} manual, dated: ${release_date}"
-
     mkdir -p "$build_directory"
-
     asciidoctor-pdf -d book \
         -a pdf-stylesdir="${STYLES_DIRECTORY}/" \
         -a pdf-fontsdir="${FONTS_DIRECTORY}" \
@@ -162,19 +182,42 @@ function build_pdf_manual()
         <(cat $book_file <(convert_antora_nav_to_asciidoc_list "$nav_file"))
 }
 
-while getopts ":hcml:" o; do
-    case "${o}" in
-        m)
+function build_manuals()
+{
+    if [[ -z "${MANUAL_NAME}" ]]; then
+        build_pdf_manual "admin" "$RELEASE_DATE" "$VERSION"
+        build_pdf_manual "developer" "$RELEASE_DATE" "$VERSION"
+        build_pdf_manual "user" "$RELEASE_DATE" "$VERSION"
+    else
+        validate_manual "$MANUAL_NAME" 
+        build_pdf_manual "$MANUAL_NAME" "$RELEASE_DATE" "$VERSION"
+    fi
+}
+
+while getopts ":hcdmn:l:" o
+do
+    case ${o} in
+        d )
+            DRY_RUN=true
+            ;;
+        n )
+            MANUAL_NAME=$OPTARG
+            ;;
+        m )
             ACTION="BUILD_MANUALS"
             ;;
-        l)
+        l )
             ACTION="VALIDATE"
-            LANGUAGE=${OPTARG}
+            LANGUAGE="${OPTARG}"
             ;;
-        c)
+        c )
             ACTION="CLEAN"
             ;;
-        h|*)
+        : )
+            echo "Invalid option: $OPTARG requires an argument" 1>&2
+            exit 1
+            ;;
+        h|* )
             ACTION="HELP"
             ;;
     esac
@@ -183,9 +226,7 @@ shift $((OPTIND-1))
 
 case "$ACTION" in 
     BUILD_MANUALS)
-        build_pdf_manual "admin" "$RELEASE_DATE" "$VERSION"
-        build_pdf_manual "developer" "$RELEASE_DATE" "$VERSION"
-        build_pdf_manual "user" "$RELEASE_DATE" "$VERSION"
+        build_manuals
         ;;
     CLEAN)
         clean_build_dir

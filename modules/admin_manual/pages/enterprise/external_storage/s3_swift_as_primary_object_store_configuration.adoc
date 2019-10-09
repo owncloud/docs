@@ -31,14 +31,11 @@ NOTE: ownCloud GmbH provides consulting for migrations from `objectstore` to `fi
 
 1. Apply this configuration before the first login of any user – including the admin user; otherwise, ownCloud can no longer find the user's files.
 2. ownCloud, in "object store" mode, expects exclusive access to the object store container, because it only stores the binary data for each file. While in this mode, ownCloud stores the metadata in the local database for performance reasons.
-3. The current implementation is incompatible with any app that uses direct file I/O (input/output) as it circumvents the ownCloud virtual filesystem. Two excellent examples are:
-  A. **The Encryption app:** It fetches critical files in addition to any requested file, which results in significant overhead.
-  B. **The Gallery app:** It stores thumbnails directly in the filesystem.
+3. The current implementation is incompatible with any app that uses direct file I/O (input/output) as it circumvents the ownCloud virtual filesystem. An excellent example is the Encryption app, which fetches critical files in addition to any requested file, which results in significant overhead.
 4. When using S3 primary storage with multiple buckets, it is not recommended to use the command to transfer file ownership between users ({occ-files_transfer-ownership-link}[occ files:transfer-ownership]) as shares on the files can get lost.
 The reason for this is that file ids are changed during such cross-storage move operations.
 ====
 
-[[configuration]]
 == Configuration
 
 Look in `config.sample.php` for example configurations.
@@ -59,7 +56,6 @@ $CONFIG = [
 ]
 ----
 
-[[amazon-s3]]
 === Amazon S3
 
 The S3 backend mounts a bucket of the Amazon S3 object store into the virtual filesystem.
@@ -93,7 +89,6 @@ $CONFIG = [
 ],
 ----
 
-[[ceph-s3]]
 === Ceph S3
 
 The S3 backend can also be used to mount the bucket of a Ceph S3 object store via the Amazon S3 API into the virtual filesystem.
@@ -129,7 +124,6 @@ $CONFIG = [
 ],
 ----
 
-[[scality-s3]]
 === Scality S3
 
 The S3 backend can also be used to mount the bucket of a Scality S3 object store via the Amazon S3

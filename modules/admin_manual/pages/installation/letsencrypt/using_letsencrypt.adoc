@@ -22,12 +22,8 @@ because expired certificates need reissuing. A certificate is due for
 renewal earliest 30 days before expiring. Certbot can be forced to renew
 via options at any time as long the certificate is valid.
 
-Excellent introductions to strong SSL security measures can be found here for:
-https://raymii.org/s/tutorials/Strong_SSL_Security_On_Apache2.html[Apache]
-and
-https://raymii.org/s/tutorials/Strong_SSL_Security_On_nginx.html[NGINX].
+TIP: Raymii.org provides https://raymii.org/s/tutorials/Strong_SSL_Security_On_Apache2.html[an excellent introduction to strong SSL security measures with Apache], if you would like to know more.
 
-[[requirements-dependencies]]
 == Requirements & Dependencies
 
 You require a domain name with a valid
@@ -36,7 +32,6 @@ to your servers IP address. In case your server is behind a firewall, take
 the necessary measures to ensure that your server is accessible, worldwide,
 from the internet, by adding the required firewall and port forward rules.
 
-[[install-lets-encrypts-certbot-client]]
 == Install Let’s Encrypt’s Certbot Client
 
 The https://certbot.eff.org[Certbot] client can be installed in following ways:
@@ -44,7 +39,6 @@ The https://certbot.eff.org[Certbot] client can be installed in following ways:
 1. Installation via xref:via-apt[APT install]
 2. With the Ubuntu xref:via-ppa[PPA repository].
 
-[[via-apt]]
 === Via APT
 
 To install Certbot via APT, run the following commands.
@@ -55,7 +49,6 @@ sudo apt-get update
 sudo apt-get install certbot
 ----
 
-[[via-ppa]]
 === Via PPA
 
 To install Certbot via the PPA repository, run the following commands. +
@@ -71,7 +64,6 @@ sudo add-apt-repository ppa:certbot/certbot
 sudo apt-get install certbot
 ----
 
-[[run-certbot]]
 === Run Certbot
 
 To run Certbot use the following command:
@@ -89,7 +81,6 @@ mind, and update the examples and scripts used in this guide to reflect your Cer
 installation.
 ====
 
-[[updating-certbot]]
 == Updating Certbot
 
 If you need to update Certbot at a later date, run:
@@ -99,10 +90,8 @@ If you need to update Certbot at a later date, run:
 sudo apt-get install --only-upgrade certbot
 ----
 
-[[register-your-email-address]]
 == Register Your Email Address
 
-[[first-time-registration]]
 === First Time Registration
 
 Now that Certbot is installed, register your email address for urgent renewal
@@ -141,7 +130,6 @@ IMPORTANT NOTES:
 
 Please, *strongly*, consider following its recommendation.
 
-[[update-registration]]
 === Update Your Registration
 
 In case you want to update your registered email address use following command:
@@ -170,7 +158,6 @@ IMPORTANT NOTES:
  - Your e-mail address was updated to <your-email-address>
 ----
 
-[[create-lets-encrypts-config-files]]
 == Create Let’s Encrypt’s Config Files
 
 * Create following files in the Let’s Encrypt directory. They will help
@@ -192,7 +179,6 @@ cd /etc/letsencrypt
 touch cli.ini list.sh renew.sh renew-cron.sh delete.sh <your-domain-name>.sh
 ----
 
-[[cli.ini]]
 === cli.ini
 
 This file defines some default settings used by Certbot. Use the email address
@@ -204,7 +190,6 @@ according which web server you use.
 include::{examplesdir}installation/lets_encrypt/cli.ini[]
 ----
 
-[[list.sh]]
 === list.sh
 
 This script lists all your issued certificates.
@@ -214,7 +199,6 @@ This script lists all your issued certificates.
 include::{examplesdir}installation/lets_encrypt/list.sh[]
 ----
 
-[[renew.sh]]
 === renew.sh
 
 This script:
@@ -228,7 +212,6 @@ the web server configuration automatically if a certificate has been renewed.
 include::{examplesdir}installation/lets_encrypt/renew.sh[]
 ----
 
-[[renew-cron.sh]]
 === renew-cron.sh
 
 This script:
@@ -244,7 +227,6 @@ NOTE: This script is intended for use via Cron.
 include::{examplesdir}installation/lets_encrypt/renew-cron.sh[]
 ----
 
-[[delete.sh]]
 === delete.sh
 
 This script deletes an issued certificate. +
@@ -255,7 +237,6 @@ Use the `list.sh` script to list issued certificates.
 include::{examplesdir}installation/lets_encrypt/delete.sh[]
 ----
 
-[[your-domain-name.sh]]
 === <your-domain-name>.sh
 
 As an example, this script creates a certificate for following domain /
@@ -276,7 +257,6 @@ include::{examplesdir}installation/lets_encrypt/your-domain-name.sh[]
 
 NOTE: You can enable the `--dry-run` option which does a test run of the client only.
 
-[[create-an-ssl-certificate]]
 == Create an SSL Certificate
 
 With all the scripts created, to create an SSL certificate, run the
@@ -317,7 +297,6 @@ IMPORTANT NOTES:
 You can see that the SSL certificate’s been successfully created, and
 that it will expire on 2018-06-18.
 
-[[listing-existing-certificates]]
 == Listing Existing Certificates
 
 If you want to list (view) existing SSL certificates, use `list.sh`,
@@ -342,15 +321,10 @@ Found the following certs:
 -------------------------------------------------------------------------------
 ----
 
-[[web-server-setup]]
 == Web Server Setup
 
-Follow the links to set up your web server and issue a certificate.
+Refer to xref:installation/letsencrypt/apache.adoc[the Apache setup guide], to set up your web server and issue a certificate.
 
-* xref:installation/letsencrypt/apache.adoc[Setup Apache]
-* xref:installation/letsencrypt/nginx.adoc[Setup NGINX]
-
-[[test-the-setup]]
 == Test the Setup
 
 After you have setup and configured the web server and installed the SSL
@@ -361,7 +335,6 @@ a test run below.
 
 image:installation/ssllabs.png[ssllabs]
 
-[[renewing-ssl-certificates]]
 == Renewing SSL Certificates
 
 As Let’s Encrypts certificates expire every 90 days, you should ensure
@@ -369,7 +342,6 @@ you renew them before that time. +
 There are two ways to do so:
 xref:manual-renewal[manually] and xref:automatic-renewal-via-crontab[automatically].
 
-[[manual-renewal]]
 === Manual Renewal
 
 If you have provided your email address, you will receive reminder notifications.
@@ -394,7 +366,6 @@ No renewals were attempted.
 No hooks were run.
 ----
 
-[[automatic-renewal-via-crontab]]
 === Automatic Renewal via Crontab
 
 Certificates are only renewed if they are due, so you can schedule Cron
@@ -423,7 +394,6 @@ the Cron job scheduler.
 NOTE: If you want to use own values, you can check them eg. at
 https://crontab.guru[crontab.guru] or modify the script for other options.
 
-[[add-extra-domains-to-the-certificate]]
 == Add Extra Domains to the Certificate
 
 If you want to add an extra domain, like `subdomain.example.com`, to your
@@ -435,7 +405,6 @@ NOTE: This also implies that you need to comment the `include` directive
 (please refer to the relevant xref:web-server-setup[web server setup])
 and follow the steps afterwards.
 
-[[deleting-ssl-certificates]]
 == Deleting SSL Certificates
 
 If you want to delete an SSL certificate, use the delete.sh script, running it as follows:

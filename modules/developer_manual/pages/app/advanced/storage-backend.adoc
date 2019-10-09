@@ -1,6 +1,5 @@
 = Storage Backends
 
-[[external-storage-backends]]
 == External Storage Backends
 
 This section shows how a standard app can provide external storage
@@ -17,13 +16,11 @@ reading through the source code of the
 https://github.com/owncloud/files_external_ftp[FTP external storage
 app].
 
-[[configure-the-filesystem-type]]
 === Configure the Filesystem Type
 
 First, the /appinfo/info.xml must be adjusted to specify the `type` as:
 `filesystem`. For example:
 
-[[implement-the-storage-classes]]
 === Implement the Storage Class(es)
 
 
@@ -61,7 +58,6 @@ not perform as well as it could. In the case of the `rename` method,
 this is because it uses a combination of a stream copy plus a delete for
 renaming a file.
 
-[[statmetadata-cache]]
 ==== Stat/Metadata Cache
 
 To create a mature implementation, we need to consider stat and metadata
@@ -76,7 +72,6 @@ stat/metadata caching. To do this, the metadata of any folder entries
 which are read should be cached in a local array and returned by the
 storage class’ methods.
 
-[[writing-a-flysystem-adapter]]
 ==== Writing a Flysystem Adapter
 
 Instead of writing everything by hand, it is also possible to write an
@@ -86,17 +81,14 @@ adapter], as external storage. You can see how it was done in the
 https://github.com/owncloud/files_external_ftp/blob/master/lib/Storage/FTP.php#L27[FTP
 storage adapter].
 
-[[create-the-backend-adapter]]
 === Create the Backend Adapter
 
 After implementing the storage class, a backend adapter needs to be
 created. To do that, create a class that extends from
 `\\OCP\\Files\\External\\Backend`:
 
-[[definition-parameters]]
 ==== Definition Parameters
 
-[[flags]]
 Flags
 +++++
 
@@ -107,7 +99,6 @@ Flags
 | *DefinitionParameter::FLAG_OPTIONAL* | For optional parameters
 |=============================================================
 
-[[types]]
 Types
 +++++
 
@@ -128,7 +119,6 @@ and
 | | scripts
 |=======================================================================
 
-[[authentication-schemes]]
 === Authentication Schemes
 
 Several authentication schemes can be specified.
@@ -164,7 +154,6 @@ Several authentication schemes can be specified.
 | | `public_key`, `private_key`
 |=======================================================================
 
-[[custom-user-interface]]
 === Custom User Interface
 
 When dealing with complex field values or workflows like
@@ -181,7 +170,6 @@ This will automatically load the script /js/script.js from the app
 folder. The script itself will need to inject events into the external
 storage GUI as there is currently no proper public API to do so.
 
-[[register-the-backend-adapter]]
 === Register the Backend Adapter
 
 With the backend adapter created, it next needs to be registered. This
@@ -202,13 +190,11 @@ Then in appinfo/app.php instantiate the `Application` class:
 $app = new \OCA\MyStorageApp\AppInfo\Application();
 ----
 
-[[test-the-storage-backend]]
 === Test the Storage Backend
 
 Once the steps above are done, you should be able to mount the storage
 in the external storage section.
 
-[[create-custom-storage-backends]]
 == Create Custom Storage Backends
 
 The preferred way for applications to create new storage backends is to
@@ -221,7 +207,6 @@ taken care of. What’s more, it provides common implementations and
 fallbacks to reduce the amount of work it is to create a storage
 backend.
 
-[[required-methods]]
 === Required Methods
 
 All storage backends sub-classing the common storage backend must
@@ -252,7 +237,6 @@ files, unlike PHP’s unlink method.
 If `$mtime` is omitted the current time should be used.
 |=======================================================================
 
-[[suggested-methods]]
 === Suggested Methods
 
 The common storage backends provide fallback implementations for a
@@ -290,7 +274,6 @@ defaults to `isUpdatable($path)`.
 | `free_space($path)` | Checks the free space on the storage in bits.
 |=======================================================================
 
-[[other-useful-methods]]
 === Other Useful Methods
 
 The default implementation for the following methods are good for most
@@ -323,7 +306,6 @@ storage backend. It defaults to checking for invalid characters or names
 for the server platform.
 |=======================================================================
 
-[[copying-and-moving-between-storage-backends]]
 === Copying and Moving Between Storage Backends
 
 When copying or moving files between different storages a stream copy is
@@ -336,7 +318,6 @@ behavior by overriding the following methods:
 * `copyFromStorage(\OCP\Files\Storage $sourceStorage, $sourceInternalPath, $targetInternalPath, $preserveMtime = false);`
 * `moveFromStorage(\OCP\Files\Storage $sourceStorage, $sourceInternalPath ,$targetInternalPath);`
 
-[[working-with-streams]]
 === Working With Streams
 
 Both `fopen()` and `opendir()` require storage backends to return native
@@ -345,7 +326,6 @@ classes which make it easier for storage backends to create native PHP
 streams for backends not supported by PHP’s own
 https://secure.php.net/manual/en/class.streamwrapper.php[streamWrapper].
 
-[[iteratordirectory]]
 === IteratorDirectory
 
 `Icewind\Streams\IteratorDirectory` allows for creating a directory
@@ -357,7 +337,6 @@ $fileNames = $this->getFolderContentsSomehow();
 return IteratorDirectory::wrap($fileNames);
 ----
 
-[[callbackwrapper]]
 === CallbackWrapper
 
 `Icewind\Streams\CallbackWrapper` wraps an existing file handle, and
@@ -379,7 +358,6 @@ return CallBackWrapper::wrap($handle, null, null function() use ($path, $tempFil
 }
 ----
 
-[[storage-wrappers]]
 === Storage Wrappers
 
 Besides implementing a complete custom storage backend, ownCloud allows
@@ -402,7 +380,6 @@ specific storage, while mounting the storage from the app. Implementing
 a storage wrapper is done by sub-classing
 `\OC\Files\Storage\Wrapper\Wrapper` and overwriting any of its methods.
 
-[[global-storage-wrappers]]
 === Global Storage Wrappers
 
 For using a storage wrapper globally, you provide a callback which will
@@ -421,7 +398,6 @@ Filesystem::addStorageWrapper('fooWrapper', function($mountPoint, $storage) {
 }
 ----
 
-[[wrappers-for-a-single-storage]]
 === Wrappers for a Single Storage
 
 Sometimes an app can avoid having to create a custom storage backend by
@@ -429,7 +405,6 @@ instead modifying the behavior of an existing one. ownCloud comes with a
 few generic storage wrappers which might be useful when doing so, which
 include `PermissionsMask` and `Jail`.
 
-[[permissionsmask]]
 ==== PermissionsMask
 
 `\OC\Files\Storage\Wrapper\PermissionsMask` can be used to restrict the
@@ -445,7 +420,6 @@ return new PermissionsMask([
 ]);
 ----
 
-[[jail]]
 ==== Jail
 
 `\OC\Files\Storage\Wrapper\Jail` can be used to limit storage
@@ -460,7 +434,6 @@ return new Jail([
 ]);
 ----
 
-[[a-note-on-instanceof]]
 === A Note on instanceof()
 
 
@@ -486,7 +459,6 @@ if ($storage->instanceOfStorage('\OC\Files\Storage\DAV')) {
 `instanceOfStorage()` can also be used to check if a certain wrapper is
 applied to a storage.
 
-[[mounting-storages]]
 === Mounting Storages
 
 For an app to add its storages to the filesystem it should implement a
