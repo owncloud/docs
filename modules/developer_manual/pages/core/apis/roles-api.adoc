@@ -1,0 +1,113 @@
+= Roles API
+:toc: right
+:toclevels: 1
+:request-base-path: ocs/v1.php/cloud/roles
+:accept-language-header-url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language
+
+== Introduction
+
+The roles API allows clients to ask the server for supported roles.
+Three things are worth noting about this API:
+
+. Only roles for public links are implemented.
+. Apps can listen to the event dispatcher and add their own roles.
+. Apps cannot change existing roles.
+
+== Get Roles
+
+[cols=",,",options="header",]
+|=================================================================
+| Request Path 
+| Method 
+| Content Type
+
+| `ocs/v1.php/cloud/roles` 
+| `GET` 
+| `text/xml` or `text/json`
+|=================================================================
+
+=== Request Parameters
+
+[cols="15%,15%,70%",options="header",width=100%]
+|===
+|Attribute 
+|Type 
+|Description
+
+|`format` 
+|string 
+|The format of the response content. 
+Accepted values are `xml` and `json`.
+|===
+
+=== Code Example
+
+[tabs]
+====
+Curl::
++
+--
+[source,console,subs="attributes+"]
+----
+#!/usr/bin/env bash
+
+API_PATH="ocs/v1.php/cloud/roles?format=json"
+SERVER_URI="{oc-examples-server-url}"
+
+curl '$SERVER_URI/$API_PATH/' \
+  --user "{oc-examples-username}:{oc-examples-password}" | jq
+----
+--
+====
+
+=== Returns
+
+On success, the request returns either an XML (the default) or a JSON response body, along with an `HTTP 200 OK` status code.
+The response body lists all the available roles, along with information about each one.
+
+=== Example Responses
+
+[tabs]
+====
+JSON::
++
+--
+[source,json,subs="attributes+"]
+----
+include::{examplesdir}core/apis/ocs/roles/responses/success.json[]
+----
+--
+XML::
++
+--
+[source,xml,subs="attributes+"]
+----
+include::{examplesdir}core/apis/ocs/roles/responses/success.xml[]
+----
+--
+====
+
+=== Setting The Language of the Response Body
+
+The language of the response’s content can be set with {accept-language-header-url}[the Accept-Language header].
+By default, the response will be in English. 
+You can see an example of requesting the response in a specific language in the code example below.
+
+[tabs]
+====
+Curl::
++
+--
+[source,console,subs="attributes+"]
+----
+#!/usr/bin/env bash
+
+API_PATH="ocs/v1.php/cloud/roles?format=json"
+SERVER_URI="{oc-examples-server-url}"
+
+curl '$SERVER_URI/$API_PATH/' \
+  --user "{oc-examples-username}:{oc-examples-password}" \
+  -H 'Accept-Language: de-DE' | jq
+----
+--
+====
