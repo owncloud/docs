@@ -3,8 +3,6 @@
 ##
 ## Variable Declaration
 ##
-USERNAME={oc-examples-username}
-PASSWORD={oc-examples-password}
 API_PATH="/remote.php/dav/public-files/<share_token>"
 SERVER_URI="{oc-examples-server-url}"
 REQUEST_BODY=$(cat <<EOF                                                                
