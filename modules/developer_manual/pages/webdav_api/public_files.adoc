@@ -1,0 +1,87 @@
+= Public Files API
+:toc: right
+:toclevels: 1
+:request-base-path: remote.php/dav/public-files
+:xmlpp-url: https://linux.die.net/man/1/xml_pp
+
+
+== Introduction
+
+The public-files API allows access to public links via WebDAV.
+
+[cols="40%,30%,30%",options="header",]
+|===
+| Request Path 
+| Method 
+| Content Type
+
+| `remote.php/dav/public-files/<share_token>` 
+| `PROPFIND` 
+| `text/xml`
+|===
+
+== Request Parameters
+
+[cols=",,",options="header",]
+|===
+|Attribute 
+|Type 
+|Description
+
+|`SHARE_TOKEN` 
+|string 
+|The share token for the public link.
+|===
+
+== Code Example
+
+[tabs]
+====
+Curl::
++
+--
+[source,console,subs="attributes+"]
+----
+include::{examplesdir}core/scripts/curl/dav/public_files/view_public_link.sh[]
+----
+--
+PHP::
++
+--
+[source,console,subs="attributes+"]
+----
+include::{examplesdir}core/scripts/php/dav/public_files/view_public_link.php[]
+----
+--
+====
+
+NOTE: No user and password is required, by default. 
+In case the public link _is_ protected with a password, use `public` for the username and the share link password for the password.
+
+TIP: The curl example uses {xmlpp-url}[xml_pp] to pretty print the result. 
+
+== Returns
+
+
+=== Example Response
+
+If the public link is available, then output similar to the following will be displayed.
+
+[source,xml]
+----
+include::{examplesdir}core/webdav_api/public_files/response/public-link-is-available.xml[]
+----
+
+If the share token is missing or invalid, then you will see output similar to the following:
+
+[source,xml]
+----
+include::{examplesdir}core/webdav_api/public_files/response/listing-members-is-disabled.xml[]
+----
+
+If the user does not have read privileges on the public link, then they will see output similar to the following:
+
+[source,xml]
+----
+include::{examplesdir}core/webdav_api/public_files/response/listing-members-is-disabled.xml[]
+----
