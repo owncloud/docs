@@ -3,7 +3,8 @@
 
 == Introduction
 
-Federated Cloud Sharing is managed by the Federation app. When you enable the Federation app you can easily and securely link file shares between ownCloud servers, in effect creating a "cloud" of ownCloud installations.
+Federated Cloud Sharing is managed by the Federation app. 
+When you enable the Federation app you can easily and securely link file shares between ownCloud servers, in effect creating a "cloud" of ownCloud installations.
 
 [IMPORTANT]
 ====
@@ -13,6 +14,7 @@ For security reasons federated sharing **strictly requires HTTPS (SSL/TLS)**.
 NOTE: For testing purposes you can use `HTTP` but you have to set `'sharing.federation.allowHttpFallback' => true,` in your **config.php**.
 
 == Configuration
+
 Follow these steps to establish a trusted connection between two servers.
 
 . Verify that both servers have SSL certificates.
@@ -51,14 +53,21 @@ occ config:app:set federation auto_accept_trusted --value '0'
 occ config:app:set federatedfilesharing auto_accept_trusted --value 'yes'
 ----
 
+== Working With Proxies
 
-== Creating a new Federation Share
+There are ownCloud instances that are not connected to the internet. 
+They have no possibility to reach the public network. 
+Therefore Federation will not work without a proxy. 
 
-Follow these steps to create a new Federation share between two ownCloud
-servers. This requires no action by the user on the remote server;
-all it takes is a few steps on the originating server.
+To set the `proxy` and `proxyuserpwd` configuration variables, in `config/config.php`.
+`proxy` sets the proxy’s hostname, and `proxyuserpwd` sets the username and password credentials, in `username:password` format.
 
-.  Enable the Federation app.
+== Creating a New Federation Share
+
+Follow these steps to create a new Federation share between two ownCloud servers. 
+This requires no action by the user on the remote server; all it takes is a few steps on the originating server.
+
+. Enable the Federation app.
 
 . Then, create a federated share by entering username@serveraddress in the sharing dialog (for example `freda@https://example.com/owncloud`). When ownCloud verifies the link,
 it displays it with the *(remote)* label. Click on this label to establish the link.
