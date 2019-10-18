@@ -12,7 +12,7 @@ $client = new Client([
 $share_token = '<share_token>';
 
 try {
-    $response = $client->request('PROPFIND', "public-files/${share_token}", [
+    $response = $client->request('PROPFIND', "public-files/$\{share_token\}", [
         'headers' => [
             'Content-Type'=> 'text/xml',
         ],
