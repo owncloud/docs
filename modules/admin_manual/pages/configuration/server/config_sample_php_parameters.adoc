@@ -122,6 +122,17 @@ can be a legitimate step. Please consult the documentation before enabling this.
 'show_server_hostname' => false,
 ....
 
+=== Optionally, use the short hostname in the status.php.
+
+Defaults to use the gethostname() return value.
+
+==== Code Sample
+
+[source,php]
+....
+'use_relative_domain_name' => false,
+....
+
 === Identifies the database used with this installation. See also config option
 `supportedDatabases`
 
@@ -274,14 +285,14 @@ in seconds.
 'remember_login_cookie_lifetime' => 60*60*24*15,
 ....
 
-=== The lifetime of a session after inactivity; the default is 24 hours,
+=== The lifetime of a session after inactivity; the default is 20 minutes,
 expressed in seconds.
 
 ==== Code Sample
 
 [source,php]
 ....
-'session_lifetime' => 60 * 60 * 24,
+'session_lifetime' => 60 * 20,
 ....
 
 === Enable or disable session keep-alive when a user is logged in to the Web UI.
@@ -387,6 +398,18 @@ in the sharing dialog.
 [source,php]
 ....
 'accounts.enable_medial_search' => true,
+....
+
+=== Allow medial search on the group id. Allows finding 'test' when searching for 'es'.
+
+This is only used in the DB group backend (local groups), and won't be used against LDAP
+Shibboleth or any other group backend.
+
+==== Code Sample
+
+[source,php]
+....
+'groups.enable_medial_search' => true,
 ....
 
 === Defines the minimum characters entered before a search returns results for
@@ -611,6 +634,20 @@ user clicks an alert like this, he will be redirected to that URL and must logon
 'overwrite.cli.url' => '',
 ....
 
+=== If phoenix.baseUrl is set, public and private links will be redirected to this
+url. Phoenix will handle these links accordingly.
+
+As an example, in case 'phoenix.baseUrl' is set to 'http://phoenix.example.com',
+the shared link 'http://ocx.example.com/index.php/s/THoQjwYYMJvXMdW' will be redirected
+by ownCloud to 'http://phoenix.example.com/index.html#/s/THoQjwYYMJvXMdW'.
+
+==== Code Sample
+
+[source,php]
+....
+'phoenix.baseUrl' => '',
+....
+
 === To have clean URLs without `/index.php` this parameter needs to be configured.
 
 This parameter will be written as `RewriteBase` on update and installation of
@@ -652,6 +689,11 @@ following conditions are met ownCloud URLs won't contain `index.php`:
 === The optional authentication for the proxy to use to connect to the internet.
 
 The format is: `username:password`.
+
+The username and the password need to be urlencoded to avoid breaking the
+delimiter syntax "username:password@hostname:port
+
+Example: "usern@me" needs to be encoded as "usern%40ame"
 
 ==== Code Sample
 
@@ -998,13 +1040,13 @@ Please see the Apps Management description on how to move custom apps properly.
 ....
 'apps_paths' =>
 array (
-  0 => 
+  0 =>
   array (
     'path' => OC::$SERVERROOT.'/apps',
     'url' => '/apps',
     'writable' => false,
   ),
-  1 => 
+  1 =>
   array (
     'path' => OC::$SERVERROOT.'/apps-external',
     'url' => '/apps-external',
@@ -1032,6 +1074,21 @@ Valid values are `true`, to enable previews, or `false`, to disable previews
 [source,php]
 ....
 'enable_previews' => true,
+....
+
+=== Location of the thumbnails folder, defaults to `data/$user/thumbnails` where
+`$user` is the current user. When specified, the format will change to
+`$previews_path/$user` where `$previews_path` is the configured previews base directory
+and `$user` will be substituted with the user id automatically.
+
+For example if `previews_path` is `/var/cache/owncloud/thumbnails` then for a logged in
+user `user1` the thumbnail path will be `/var/cache/owncloud/thumbnails/user1`.
+
+==== Code Sample
+
+[source,php]
+....
+'previews_path' => '',
 ....
 
 === The maximum width, in pixels, of a preview. A value of `null` means there
@@ -1401,6 +1458,8 @@ cache directory and `$user` is the user.
 'dav.chunk_base_dir' => '',
 ....
 
+== Using Object Store with ownCloud
+
 == Sharing
 
 Global settings for Sharing
@@ -1456,7 +1515,7 @@ and MySQL can handle 4 byte characters instead of 3 byte characters.
 
 If you want to convert an existing 3-byte setup into a 4-byte setup please
 set the parameters in MySQL as mentioned below and run the migration command:
-`{occ-command-example-prefix} db:convert-mysql-charset`
+`sudo -u www-data php occ db:convert-mysql-charset`
 The config setting will be set automatically after a successful run.
 
 Consult the documentation for more details.
@@ -1882,5 +1941,14 @@ Default: `false`
 [source,php]
 ....
 'dav.enable.async' => false,
+....
+
+=== Tech preview extensions are disabled by default.
+
+==== Code Sample
+
+[source,php]
+....
+'dav.enable.tech_preview' => false,
 ....
 
