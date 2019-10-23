@@ -6,12 +6,48 @@
   system:cron             Execute background jobs as cron
 ----
 
+== Options
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} -h system:cron
+-Usage:
+  system:cron [options]
+
+Options:
+  -p, --progress        shows a progress bar - for use in manual execution. Do not use when executing from crontab
+  -h, --help            Display this help message
+  -q, --quiet           Do not output any message
+  -V, --version         Display this application version
+      --ansi            Force ANSI output
+      --no-ansi         Disable ANSI output
+  -n, --no-interaction  Do not ask any interactive question
+      --no-warnings     Skip global warnings, show command output only
+  -v|vv|vvv, --verbose  Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug
+
+Help:
+  Execute background jobs as cron
+----
+
 To execute xref:configuration/server/background_jobs_configuration.adoc[background jobs] using xref:configuration/server/background_jobs_configuration.adoc#cron[cron], you can use the `system:cron` command, as in the following example:
 
 [source,console]
 ----
 sudo -u www-data php occ system:cron
 ----
+
+If the `--progress` or `-p` argument is specified, then progress output will be displayed in the console, as in the example below.
+
+[source,console]
+----
+Executing: 12 - OCA\UpdateNotification\Notification\BackgroundJob
+  13 [------------->--------------]
+----
+
+If neither of these arguments is provided, no output will be displayed by the command.
+
+NOTE: Displaying progress information is useful when you want visual confirmation that background jobs have been executed.
+However, in a non-interactive environment, such as crontab, it should not be used.
 
 == Integrating with System Cron
 
