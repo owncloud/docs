@@ -1,0 +1,35 @@
+= System
+
+[source,console]
+----
+ system
+  system:cron             Execute background jobs as cron
+----
+
+To execute xref:configuration/server/background_jobs_configuration.adoc[background jobs] using xref:configuration/server/background_jobs_configuration.adoc#cron[cron], you can use the `system:cron` command, as in the following example:
+
+[source,console]
+----
+sudo -u www-data php occ system:cron
+----
+
+== Integrating with System Cron
+
+If you’re automating background jobs via Cron (or plan to), update the relevant `crontab` entry, using the example below as a guide. 
+
+[source,console]
+----
+# Instead of the following configuration
+/usr/bin/php -f /path/to/your/owncloud/cron.php
+
+# Use the following one instead
+/usr/bin/php -f /path/to/your/owncloud/occ system:cron
+----
+
+[NOTE]
+====
+This command does not work if:
+
+* xref:maintenance-commands[Maintenance or Admin-only (single user) modes] are enabled
+* Background jobs are disabled
+====
