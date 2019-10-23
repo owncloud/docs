@@ -1,5 +1,6 @@
 = Memory Caching
 :toc: right
+:redis-url: http://redis.io/documentation
 
 == Introduction
 
@@ -385,11 +386,9 @@ To use APCu, add this line to `config.php`:
 With that done, refresh your ownCloud admin page, and the cache warning
 should disappear.
 
-[[redis-configuration]]
 === Redis Configuration
 
-This example `config.php` configuration uses Redis for the local server
-cache:
+This example `config.php` configuration uses Redis for the local server cache:
 
 [source,php,subs="attributes+"]
 ----
@@ -400,16 +399,14 @@ cache:
 ],
 ----
 
-For best performance add the following
+For best performance add the following to `config/config.php`:
 
 [source,php]
 ----
 'memcache.locking' => '\OC\Memcache\Redis',
 ----
 
-If you want to connect to Redis configured to listen on an Unix socket,
-which is recommended if Redis is running on the same system as ownCloud,
-use this example configuration:
+If you want to connect to a Redis instance which is configured to listen on an Unix socket — which is recommended if Redis is running on the same system as ownCloud — use the following example configuration:
 
 [source,php]
 ----
@@ -420,7 +417,32 @@ use this example configuration:
 ],
 ----
 
-Redis is very configurable; consult http://redis.io/documentation[the Redis documentation] to learn more.
+==== Redis Session Locking
+
+Session handling in ownCloud 10.3 has been improved, making user and client sessions more stable.
+Consequently, we recommend using Redis Session Locking, if Redis is used for session handling. 
+
+IMPORTANT: `php-redis` must be at least version 4.1.0 or higher.
+
+Enable Redis Session Locking by setting `redis.session.locking_enabled = 1` in `php.ini`, as in the example below.
+
+[source,ini]
+----
+[Session]
+; Use Redis for saving sessions
+session.save_handler = redis
+session.save_path = "tcp://127.0.0.1:6379"
+
+; Enable Redis session locking
+redis.session.locking_enabled = 1
+redis.session.lock_wait_time = 20000
+redis.session.lock_retries = 750
+----
+
+[NOTE]
+====
+Redis is very configurable; consult {redis-url}[the Redis documentation] to learn more.
+====
 
 [[memcached-configuration]]
 === Memcached Configuration
