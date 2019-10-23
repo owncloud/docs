@@ -1,0 +1,37 @@
+= Code Standards Compliance
+:owncloud-coding-standard-url: https://github.com/owncloud/coding-standard
+:phpcsfixer-url: https://github.com/FriendsOfPhp/PHP-CS-Fixer
+
+== Fixing Code Standard Violations
+
+To ensure that your code follows the ownCloud standard, run `make test-php-style-fix` before a PR is initially submitted and before any additional changes to it are made.
+Doing so automatically corrects any standards violations.
+The command runs {phpcsfixer-url}[php-cs-fixer] over the codebase, using {owncloud-coding-standard-url}[ownCloud's coding-standard], loaded from `.php_cs.dist` in the root directory of your ownCloud installation.
+
+== Viewing Code Standard Violations
+
+TIP: For further details about the coding standard please refer to the {owncloud-coding-standard-url}[owncloud/coding-standard] repository.
+
+If you’re only interested in checking style errors, run `make test-php-style`. 
+After running it, you will see console output, similar to the example below:
+
+[source,console]
+----
+php -d zend.enable_gc=0 vendor-bin/owncloud-codestyle/vendor/bin/php-cs-fixer fix -v --diff --diff-format udiff --allow-risky yes --dry-run
+Loaded config ownCloud coding standard from "/ownCloud/core/.php_cs.dist".
+Using cache file ".php_cs.cache".
+.....................................................................................................................................................F........................................................................................
+Legend: ?-unknown, I-invalid file syntax, file ignored, S-Skipped, .-no changes, F-fixed, E-error
+   1) apps/files_sharing/tests/Iterator/WritableAppsPathsFilterIteratorTest.php (class_definition, braces)
+      ---------- begin diff ----------
+--- Original
++++ New
+@@ -23,5 +23,4 @@
+ use Test\TestCase;
+ 
+ class WritableAppsPathsFilterIteratorTest extends TestCase {
+-
+ }
+
+      ----------- end diff -----------
+----
