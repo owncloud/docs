@@ -37,7 +37,7 @@ class Application extends App {
 }
 ----
 
-and then be used in the following way:
+Once injected, it can then be used in the following way:
 
 [source,php]
 ----
@@ -82,6 +82,40 @@ DEBUG:: Information that is useful during development. Usually very chatty, and 
 INFO:: Information you will need to debug production issues.
 WARN (warning):: Someone in the team will have to investigate what happened, but it can wait until tomorrow.
 ERROR:: Oh-oh, call the fireman! This needs to be investigated *now!*
+
+== Usage Examples
+
+The following example shows how to log a simple text string, to the level of info.
+Methods are available which match the other seven log levels.
+
+[source,php]
+----
+<?php 
+
+// Log a simple, text message
+$this->logger->info('Entity has changed state.');
+----
+
+The following example shows how to log a text string that makes use of string interpolation, and additional JSON fields.
+
+[source,php]
+----
+<?php 
+
+// Log a message with string interpolation and additional content
+$this->logger->info('Entity {entityName} has changed state to {newState}', [
+    // these are used for text substitution in the above message
+    'entityName' => 'X',
+    'newState' => 'state2',
+    // these will appear as additional JSON fields in the log entries
+    'extraFields' => [
+        'entityName' => 'X',
+        'oldState' => 'state1',
+        'newState' => 'state2',
+        'entityOwner' => 'someuser',
+    ],
+]);
+----
 
 == Further Reading
 
