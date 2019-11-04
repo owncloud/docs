@@ -376,20 +376,82 @@ config
  config:system:set      Set a system config value
 ....
 
-You can list all configuration values with one command:
+==== config:list
+
+The `config:list` command lists all configuration values, both for your ownCloud setup, along with any apps.
 
 [source,console,subs="attributes+"]
 ....
 sudo -u www-data php occ config:list
 ....
 
+===== Arguments
+
+[width="100%",cols="20%,70%",]
+|===
+| `app`
+| Name of the app. You can use "_system_" to get the config.php values, or "_all_" (the default) for all apps and system.
+|===
+
+===== Options
+
+[width="100%",cols="20%,70%",]
+|===
+| `--private`
+| Use this option when you want to include sensitive configs, like passwords and salts.
+|===
+
 By default, passwords and other sensitive data are omitted from the report, so the output can be posted publicly (e.g., as part of a bug report). 
-In order to generate a full backport of all configuration values the `--private` flag needs to be set:
+You can see an sample output in the example below.
+
+[source,json]
+----
+include::{partialsdir}configuration/server/occ_command/config-list-report.json[]
+----
+
+===== Displaying Sensitive Information
+
+In order to generate a full report which includes sensitive values, such as passwords and salts, use the `--private` option, as in the follow example.
 
 [source,console,subs="attributes+"]
 ....
 sudo -u www-data php occ config:list --private
 ....
+
+===== Filtering Information Reported
+
+The output can be filtered to just the core information, core and apps, or one specific app.
+In the example below, you can see how to filter in each of these ways.
+
+[source,console,subs="attributes+"]
+----
+# List only system configuration details
+{occ-command-example-prefix} config:list -- system
+
+# List system and app configuration details
+# This is the default, so doesn’t need to be explicitly specified
+{occ-command-example-prefix} config:list -- all
+
+# List configuration details of the dav app
+{occ-command-example-prefix} config:list -- dav
+----
+
+Below is an example of listing the config details for a single app.
+
+[source,json]
+----
+{
+    "apps": {
+        "files_versions": {
+            "enabled": "yes",
+            "installed_version": "1.3.0",
+            "types": "filesystem"
+        }
+    }
+}
+----
+
+==== config:import
 
 The exported content can also be imported again to allow the fast setup of similar instances. 
 The import command will only add or update values. 
