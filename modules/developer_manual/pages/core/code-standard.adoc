@@ -1,0 +1,65 @@
+= Code Standards Compliance
+:owncloud-coding-standard-url: https://github.com/owncloud/coding-standard
+:phpcsfixer-url: https://github.com/FriendsOfPhp/PHP-CS-Fixer
+:phpcodesniffer-url: https://github.com/squizlabs/PHP_CodeSniffer
+
+== Fixing Code Standard Violations
+
+To ensure that your code follows the ownCloud standard, run `make test-php-style` before a PR is initially submitted and each time any additional changes to it are made.
+
+The command runs {phpcsfixer-url}[php-cs-fixer] over the codebase, using {owncloud-coding-standard-url}[ownCloud's coding-standard], loaded from `.php_cs.dist` in the root directory of your ownCloud installation.
+The acceptance test code is also checked by {phpcodesniffer-url}[php_codesniffer], using the rules in `phpcs.xml` in the root directory of your ownCloud installation.
+
+If any standards violations are detected by {phpcsfixer-url}[php-cs-fixer] then run `make test-php-style-fix` to automatically correct them.
+
+{phpcodesniffer-url}[php_codesniffer] cannot always fix code standards violations that it finds. You must manually fix those.
+
+== Viewing Code Standard Violations
+
+TIP: For further details about the coding standard please refer to the {owncloud-coding-standard-url}[owncloud/coding-standard] repository.
+
+To check for style errors, run `make test-php-style`.
+After running it, you will see console output from {phpcsfixer-url}[php-cs-fixer], similar to the example below:
+
+[source,console]
+----
+php -d zend.enable_gc=0 vendor-bin/owncloud-codestyle/vendor/bin/php-cs-fixer fix -v --diff --diff-format udiff --allow-risky yes --dry-run
+Loaded config ownCloud coding standard from "/ownCloud/core/.php_cs.dist".
+Using cache file ".php_cs.cache".
+.....................................................................................................................................................F........................................................................................
+Legend: ?-unknown, I-invalid file syntax, file ignored, S-Skipped, .-no changes, F-fixed, E-error
+   1) apps/files_sharing/tests/Iterator/WritableAppsPathsFilterIteratorTest.php (class_definition, braces)
+      ---------- begin diff ----------
+--- Original
++++ New
+@@ -23,5 +23,4 @@
+ use Test\TestCase;
+ 
+ class WritableAppsPathsFilterIteratorTest extends TestCase {
+-
+ }
+
+      ----------- end diff -----------
+----
+
+If {phpcodesniffer-url}[php_codesniffer] detects violations then you will see console output similar to the example below:
+
+[source,console]
+----
+vendor-bin/php_codesniffer/vendor/bin/phpcs --cache --runtime-set ignore_warnings_on_exit --standard=phpcs.xml tests/acceptance tests/TestHelpers
+...........E................................................  60 / 121 (50%)
+............................................................ 120 / 121 (99%)
+.                                                            121 / 121 (100%)
+
+
+
+FILE: /home/phil/git/owncloud/core/tests/acceptance/features/bootstrap/BasicStructure.php
+-------------------------------------------------------------------------------------------------------------
+FOUND 1 ERROR AFFECTING 1 LINE
+-------------------------------------------------------------------------------------------------------------
+ 202 | ERROR | Doc comment for parameter "$ocPath" missing
+     |       | (PEAR.Commenting.FunctionComment.MissingParamTag)
+-------------------------------------------------------------------------------------------------------------
+
+Time: 1.05 secs; Memory: 113.29MB
+----
