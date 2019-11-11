@@ -2,13 +2,11 @@
 :toc: right
 :page-aliases: go/admin-performance.adoc
 
-[[using-cron-to-perform-background-jobs]]
 == Using Cron to Perform Background Jobs
 
 See xref:configuration/server/background_jobs_configuration.adoc[Background Jobs] for a
 description and the benefits.
 
-[[enable-memory-caching]]
 == Enable Memory Caching
 
 Caching improves performance by storing data, code, and other objects in
@@ -19,7 +17,6 @@ http://php.net/manual/en/intro.apcu.php[APCu], and
 https://memcached.org[Memcached] as memory caching backends. See
 xref:configuration/server/caching_configuration.adoc[Memory Caching], for further details.
 
-[[use-redis-based-transactional-file-locking]]
 == Use Redis-based Transactional File Locking
 
 File locking is enabled by default, using the database locking backend.
@@ -27,7 +24,6 @@ However, this places a significant load on your database. See the
 section xref:configuration/files/files_locking_transactional.adoc[Transactional File Locking]
 for how to configure ownCloud to use Redis-based Transactional File Locking.
 
-[[redis-tuning]]
 == Redis Tuning
 
 Redis tuning improves both file locking (if used) and memory caching
@@ -35,7 +31,6 @@ Redis tuning improves both file locking (if used) and memory caching
 the performance of your ownCloud installation, when working with
 sizeable instances.
 
-[[tcp-backlog]]
 === TCP-Backlog
 
 If you raised the TCP-backlog setting, the following warning appears in
@@ -65,7 +60,6 @@ sudo echo sysctl -w net.core.somaxconn=65535 >> /etc/rc.local
 
 After the next reboot, 65535 connections will be allowed, instead of the default value.
 
-[[transparent-huge-pages-thp]]
 === Transparent Huge Pages (THP)
 
 
@@ -96,16 +90,13 @@ As a result, make sure to disable Transparent Huge Pages using the following com
 echo never > /sys/kernel/mm/transparent_hugepage/enabled
 ----
 
-[[redis-latency-problems]]
 === Redis Latency Problems
 
 If you are having issues with Redis latency, please refer to
 https://redis.io/topics/latency[the official Redis guide] on how to handle them.
 
-[[database-tuning]]
 == Database Tuning
 
-[[using-mariadbmysql-instead-of-sqlite]]
 === Using MariaDB/MySQL Instead of SQLite
 
 MySQL or MariaDB are preferred because of the
@@ -115,7 +106,6 @@ with highly concurrent applications], like ownCloud.
 See the section xref:configuration/database/linux_database_configuration.adoc[Linux Database Configuration] for how to configure ownCloud for MySQL or MariaDB.
 If your installation is already running on SQLite then it is possible to convert to MySQL or MariaDB using the steps provided in xref:configuration/database/db_conversion.adoc[database conversion].
 
-[[tune-mariadbmysql]]
 === Tune MariaDB/MySQL
 
 A comprehensive guide to tuning MySQL and MariaDB is outside the scope
@@ -126,7 +116,6 @@ help you find further information:
 * https://tools.percona.com/wizard[Percona Tools for MySQL]
 * https://mariadb.com/kb/en/optimization-and-tuning/[Optimizing and Tuning MariaDB].
 
-[[tune-postgresql]]
 === Tune PostgreSQL
 
 A comprehensive guide to tuning PostgreSQL is outside the scope of the
@@ -137,7 +126,6 @@ find further information:
 * http://grokbase.com/t/postgresql/pgsql-admin/103qcpdrpf/tuning-auto-vacuum-for-highly-active-tables#20100323hfs3jtjuaywwufukoqtexkpjti[Tuning
 the autovacuum proceff for tables with huge update workloads (oc_filecache)]
 
-[[ssl-encryption-app]]
 == SSL / Encryption App
 
 SSL (HTTPS) and file encryption/decryption can be offloaded to a
@@ -163,13 +151,10 @@ or coreinfo, it is maybe disabled in the BIOS.
 * If your environment runs virtualized, check the virtualization vendor
 for support.
 
-[[webserver-tuning]]
 == Webserver Tuning
 
-[[tune-apache]]
 === Tune Apache
 
-[[enable-http2-support]]
 ==== Enable HTTP/2 Support
 
 If you want to improve the speed of an ownCloud installation, while at
@@ -177,14 +162,12 @@ the same time increasing its security, you can
 https://httpd.apache.org/docs/2.4/howto/http2.html[enable HTTP/2 support for Apache].
 Please be aware that https://caniuse.com/#feat=http2[most browsers require HTTP/2 to be used with SSL enabled].
 
-[[apache-processes]]
 ==== Apache Processes
 
 An Apache process uses around 12MB of RAM. Apache should be configured
 so that the maximum number of HTTPD processes times 12MB is lower than the
 amount of RAM. Otherwise the system begins to swap and the performance goes down.
 
-[[use-keepalive]]
 ==== Use KeepAlive
 
 The https://en.wikipedia.org/wiki/HTTP_persistent_connection[KeepAlive]
@@ -200,7 +183,6 @@ KeepAliveTimeout 3
 MaxKeepAliveRequests 200
 ----
 
-[[hostname-lookups]]
 ==== Hostname Lookups
 
 ----
@@ -209,7 +191,6 @@ MaxKeepAliveRequests 200
 HostnameLookups off
 ----
 
-[[log-files]]
 ==== Log files
 
 Log files should be switched off for maximum performance. 
