@@ -19,7 +19,6 @@ If you need to migrate from User Key-based to Master Key-based encryption, there
 . xref:remove-the-files_encryption-directory[Remove the `files_encryption` directory]
 . xref:encrypt-the-filesystem-using-master-key-based-encryption[Encrypt the filesystem using Master Key-based encryption]
 
-[[disable-user-key-based-encryption]]
 == Disable User Key-based Encryption
 
 The first part of the migration process is to decrypt all files and to disable encryption in ownCloud, which requires three commands to be executed.
@@ -37,7 +36,6 @@ You can see an example of calling the commands listed below, configured to requi
 NOTE: The decryption of the files by the ownCloud administrator requires the current passwords of all users!
 This only works when users have enabled password recovery and if an admin recovery password is available.
 
-[[remove-the-encryption-records-from-the-owncloud-database]]
 == Remove the Encryption Records from the ownCloud Database
 
 Once your ownCloud files are unencrypted, and encryption has been disabled, you need to remove the encryption records from the database.
@@ -63,7 +61,6 @@ Same for mysql:
 SELECT * FROM `oc_appconfig` WHERE `appid` LIKE 'encryption'
 ----
 
-[[remove-the-files_encryption-directory]]
 == Remove the `files_encryption` Directory
 
 With the database updated, next, the `files_encryption` directory needs to be removed.
@@ -74,7 +71,6 @@ Below is an example of how to do so, to save you time.
 find ./data* -name files_encryption -exec rm -rvf {} \;
 ----
 
-[[encrypt-the-filesystem-using-master-key-based-encryption]]
 == Encrypt the Filesystem Using Master Key-based Encryption
 
 Now, your ownCloud files can be encrypted using Master Key-based encryption.
@@ -95,7 +91,6 @@ The following example shows how to do this.
   {occ-command-example-prefix} encryption:encrypt-all --yes
 ----
 
-[[verify-the-encrypted-files]]
 == Verify the Encrypted Files
 
 With the files encrypted using Master Key-based encryption, you should now verify that everything worked properly.
