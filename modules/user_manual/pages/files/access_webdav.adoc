@@ -173,9 +173,29 @@ mount ~/owncloud
 umount ~/owncloud
 ----
 
-Now every time you login to your Linux system your ownCloud share should
-automatically mount via WebDAV in your `~/owncloud` directory. If you
-prefer to mount it manually, change `auto` to `noauto` in `/etc/fstab`.
+Now, every time you boot your Linux system your ownCloud share will automatically mount, via WebDAV, in your `~/owncloud` directory. 
+
+[IMPORTANT]
+====
+If the share is set to mount automatically and, for whatever reason, ownCloud fails to start your server will fail to properly boot.
+When this happens, you may see boot-time errors, such as the following:
+
+[source,console]
+----
+[FAILED] Failed to mount /home/[my username]/owncloud
+[DEPEND] Dependency failed for Local File System
+[  OK  ] Started Emergency Shell.
+[  OK  ] Stopped Dispatch Password Request to Console Directory Watch
+[  OK  ] Reached target Emergency Mode.
+[FAILED] Failed to start Dispatch Password Request to Console Directory Watch
+...
+
+Cannot open access to console, the root account is locked.
+Press Enter to continue.
+----
+
+For that reason, it may be better to instead always set the partition to `noauto` and use a late in the boot process init script to mount the partition instead.
+====
 
 == Known Issues
 
