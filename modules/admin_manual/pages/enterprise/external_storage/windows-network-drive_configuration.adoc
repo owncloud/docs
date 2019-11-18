@@ -12,6 +12,7 @@
 :smbclient-manpage-url: https://www.samba.org/samba/docs/man/manpages-3/smbclient.1.html
 :wannacry-ransomware-attack-url: https://en.wikipedia.org/wiki/WannaCry_ransomware_attack
 :wnd-config-path: enterprise/external_storage/windows-network-drive_configuration.adoc
+:ldap-app-url: https://marketplace.owncloud.com/apps/user_ldap
 
 == Introduction
 
@@ -165,14 +166,48 @@ NOTE: When you create a new mountpoint using Login credentials, you must log out
 
 NOTE: Be aware that by default changes in the file system won't be transferred to ownCloud (use case: Sync client) and a **service account with access to shares** is required for ownCloud to receive changes from the personal mounts.
 
-Users create their own WND mounts on their Personal pages. These are
-created the same way as Admin-created shares. Users have four options
-for login credentials:
+Users create their own WND mounts on their Personal pages. 
+These are created the same way as Admin-created shares. 
+Users have five options for login credentials:
 
 * Username and password
 * Log-in credentials, save in session
 * Log-in credentials, save in database
 * Global credentials
+* Config-based credentials
+
+==== Config-based Credentials
+
+Config-based credentials provides a universal account for accessing an ownCloud instance.
+The username is the same as the user id of the ownCloud session. 
+For example, the ownCloud user "Alice" with the password `mysecret` (or even without a password) uses `Alice` as their username to obtain access to the WND storage. 
+
+The password is fetched from a key inside a `config.php.` file.
+Even if the account doesn't have a password (`oAuth`, `OpenIDConnect`, or another authentication mechanism), the connection with the storage swill use the password from the configuration file.
+ 
+NOTE: The password is the same for all users.
+
+Once this authentication mechanism is selected, a new field is available in the mount configuration, in order to set the configuration key which we want to use. 
+You can create a new configuration key for this, or you can reuse any other configuration key that could be in the `config.php.*` file in the `config` directory.
+For complex cases where the key is inside several nested arrays, you can use something like `<key1>#<key2>#<key3>` to get the value from that nested array. 
+
+TIP: Numeric values as keys might be treated as strings.
+
+[source,php]
+.Example of configuring global credentials in a config.php. file.
+----
+'customApp.config' => [
+    'server1' => [
+        'host' => 'myhost',
+        'password' => 'mypassword',
+    ],
+    'server2' => [
+        ....
+    ]
+]
+----
+
+Using the example above, you would use `customApp.config#server1#password` to retrieve the password for `server1` of the `customApp` to use as the password to connect to the Samba server.
 
 === Windows Network Drive Listener
 
