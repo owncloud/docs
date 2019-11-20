@@ -882,7 +882,15 @@ List configured mounts.
 
 [source,console]
 ----
-files_external:list [--show-password] [--full] [-a|--all] [-s|--short] [--] [<user_id>]
+files_external:list
+	[--show-password]
+	[--mount-options]
+	[--full]
+	[-a|--all]
+	[-s|--short]
+	[--output=[OUTPUT]]
+	[--]
+	[<user_id>]
 ----
 
 ===== Arguments
@@ -896,12 +904,11 @@ files_external:list [--show-password] [--full] [-a|--all] [-s|--short] [--] [<us
 
 [width="100%",cols="20%,70%",]
 |===
-| `--show-password`   | User to add the mount configurations for, if not set the mount will
-be added as system mount.
+| `--show-password`   | Show passwords and secrets
 | `--mount-options`   | Show all mount options independent if they are set to their default value or not.
-| `--full`            | Don't save the imported mounts, only list the new mounts.
-| `-a, --all`         | Show both system-wide mounts and all personal mounts.
-| `-s, --short`       | Show only a reduced mount info.
+| `--full`            | Don't truncate long values in table output
+| `-a, --all`         | Show mounts for all users. All has precedence over user_id
+| `-s, --short`       | Show only a reduced mount info
 | `--output=[OUTPUT]` | The output format to use (`plain`, `json` or `json_pretty`, default is `plain`).
 |===
 
@@ -922,7 +929,9 @@ be added as system mount.
 
 [source,console,subs="attributes+"]
 ----
-{occ-command-example-prefix} files_external:list  --mount-options --output=json_pretty
+{occ-command-example-prefix} files_external:list \
+	--mount-options \
+	--output=json_pretty
 [
     {
         "mount_id": 2,
