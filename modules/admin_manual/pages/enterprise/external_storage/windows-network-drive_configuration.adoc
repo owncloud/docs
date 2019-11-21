@@ -1,5 +1,5 @@
 = Installing and Configuring the External Storage: Windows Network Drives App
-:toc: macro
+:toc: right
 :toclevels: 1
 :anacron-examples: http://www.thegeekstuff.com/2011/05/anacron-examples
 :flock-docs-url: https://linux.die.net/man/2/flock
@@ -13,6 +13,7 @@
 :wannacry-ransomware-attack-url: https://en.wikipedia.org/wiki/WannaCry_ransomware_attack
 :wnd-config-path: enterprise/external_storage/windows-network-drive_configuration.adoc
 :ldap-app-url: https://marketplace.owncloud.com/apps/user_ldap
+:acl-url: https://en.wikipedia.org/wiki/Access-control_list
 
 == Introduction
 
@@ -162,52 +163,51 @@ Your changes are saved automatically.
 
 NOTE: When you create a new mountpoint using Login credentials, you must log out of ownCloud and then log back in so you can access the share. You only have to do this the first time.
 
-=== Personal WND Mounts
+==== Access Control Lists 
 
-NOTE: Be aware that by default changes in the file system won't be transferred to ownCloud (use case: Sync client) and a **service account with access to shares** is required for ownCloud to receive changes from the personal mounts.
+From version 1.0.1 the Windows Network Drives App supports {acl-url}[Access Control Lists (ACLs)].
+To obtain ACL information, it supports two ACL providers:
 
-Users create their own WND mounts on their Personal pages. 
-These are created the same way as Admin-created shares. 
-Users have five options for login credentials:
+- xref:the-null-permission-manager[The Null Permission Manager]
+- xref:the-owncloud-ldap-permission-manager[The ownCloud LDAP Permission Manager] 
 
-* Username and password
-* Log-in credentials, save in session
-* Log-in credentials, save in database
-* Global credentials
-* Config-based credentials
+image::enterprise/external_storage/windows_network_drive/acl-permissions-manager.png[Configuring ACL retrieval in the ownCloud Windows Network Drive app.]
 
-==== Config-based Password
+Regardless of which provider you choose, an ownCloud administrator should run a xref:configuration/server/occ_command.adoc#file-operations[files:scan], manually, after changing the configuration, to update the permissions correctly. 
+Otherwise, the permissions shown by ownCloud might be incorrect.
 
-Config-based credentials provides the ability to store a password in a configuration file for accessing WND storages.
-The username is the same as the user id of the ownCloud session. 
-For example, the ownCloud user "Alice" with the password `mysecret` (or even without a password) uses `Alice` as their username to obtain access to the WND storage. 
+NOTE: Permissions are only auto-updated if there has been a change in the files.
 
-The password is fetched from a key inside a `config.php.` file.
-Even if the account doesn't have a password (`oAuth`, `OpenIDConnect`, or another authentication mechanism), the connection with the storage will use the password from the configuration file.
- 
-NOTE: The password is the same for all users.
+===== The Null Permission Manager
 
-Once this authentication mechanism is selected, a new field is available in the mount configuration, in order to set the configuration key which we want to use. 
-You can create a new configuration key for this, or you can reuse any other configuration key that could be in the `config.php.*` file in the `config` directory.
-For complex cases where the key is inside several nested arrays, you can use something like `<key1>#<key2>#<key3>` to get the value from that nested array. 
+The Null Permission Manager is the default permission manager and is used if no other ACL manager is specified.
+If you want to retain ownCloud's current behaviour, then use this permission manager. 
+When in effect, the Windows Network Drive app uses a file's attributes (e.g., read-only, and hidden), to determine how the user can interact with the file.
+There are no usage restrictions.
 
-TIP: Numeric values as keys might be treated as strings.
+The value to use for this provider is: `nullPermissionManager`.
 
-[source,php]
-.Example of configuring global credentials in a config.php. file.
-----
-'customApp.config' => [
-    'server1' => [
-        'host' => 'myhost',
-        'password' => 'mypassword',
-    ],
-    'server2' => [
-        ....
-    ]
-]
-----
+===== The ownCloud LDAP Permission Manager
 
-Using the example above, you would use `customApp.config#server1#password` to retrieve the password for `server1` of the `customApp` to use as the password to connect to the Samba server.
+The ownCloud LDAP Permission Manager evaluates ACLs in files along with file attributes to determine the permissions. 
+In order to evaluate the ACLs, it needs access to the user and group membership information of the target Windows or Samba server, so it uses the ownCloud's {ldap-app-url}[user_ldap app] for this.
+
+IMPORTANT: Both the Windows (or Samba) server and ownCloud's user_ldap app must connect to the same Active Directory server so that ownCloud can retrieve the same user and group information.
+
+To use this provider requires two key things:
+
+- An Active Directory server which contains the standard user and group information that can be used by {ldap-app-url}[ownCloud's LDAP app].
+- ownCloud's LDAP app to be correctly configured to retrieve user and group information from the same Active Directory server as the one that the Windows (or Samba) server uses.
+
+IMPORTANT: The ownCloud LDAP apps must configure the `sAMAccountName` to be the ownCloud server's username.
+
+[TIP]
+====
+Some groups, such as "everyone" might not be handled properly. 
+This is because such groups don't exist in the LDAP server, or might not be found if the domain is different, such as `nt authority\system` or `builtin\domain-users`.
+====
+
+The value to use for this provider is: `ocLdapPermissionManager`.
 
 === Windows Network Drive Listener
 
