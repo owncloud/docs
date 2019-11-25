@@ -224,6 +224,30 @@ NOTE: When using custom filetype icons in a custom theme, it is necessary to run
 `occ maintenance:mimetype:update-js` to activate them.  For more information please refer to
 xref:admin_manual:configuration/mimetypes/index.adoc[mimetypes management].
 
+=== How to Override Settings Page Icons
+
+ownCloud provides the ability to override Personal and Admin settings page icons.
+To do so requires two things:
+
+. A custom (SVG) icon; and
+. Refactoring `SettingsManager.php`
+
+For example, say that you wanted to override the Admin Encryption settings icon.
+To do that, first add a custom icon to an app's `img` directory (ideally one that makes sense) e.g., `</path/to/owncloud>/apps/encryption/img/gnu.svg`.
+
+Then, update the `getBuiltInSections` function of `lib/private/Settings/SettingsManager.php`.
+There, you need to change the final argument to the relevant call to `new Section`, for the settings section that you want to change, as in the example below.
+
+[source,php]
+----
+new Section('encryption', $this->l->t('Encryption'), 85, 'gnu'),
+----
+
+In the example above, I've changed the encryption section's icon, by changing the final argument to be the custom icon's name — _minus the file extension_.
+
+TIP: Icons *must* be in SVG format.
+No other file formats are supported.
+
 == How to Override the Default Colors
 
 To override the default style sheet, create a new CSS style sheet in
