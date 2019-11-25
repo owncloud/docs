@@ -882,7 +882,15 @@ List configured mounts.
 
 [source,console]
 ----
-files_external:list [--show-password] [--full] [-a|--all] [-s|--short] [--] [<user_id>]
+files_external:list
+	[--show-password]
+	[--mount-options]
+	[--full]
+	[-a|--all]
+	[-s|--short]
+	[--output=[OUTPUT]]
+	[--]
+	[<user_id>]
 ----
 
 ===== Arguments
@@ -896,15 +904,15 @@ files_external:list [--show-password] [--full] [-a|--all] [-s|--short] [--] [<us
 
 [width="100%",cols="20%,70%",]
 |===
-| `--show-password`   | User to add the mount configurations for, if not set the mount will
-be added as system mount.
-| `--full`            | Don't save the imported mounts, only list the new mounts.
-| `-a, --all`         | Show both system-wide mounts and all personal mounts.
-| `-s, --short`       | Show only a reduced mount info.
+| `--show-password`   | Show passwords and secrets
+| `--mount-options`   | Show all mount options independent if they are set to their default value or not.
+| `--full`            | Don't truncate long values in table output
+| `-a, --all`         | Show mounts for all users. All has precedence over user_id
+| `-s, --short`       | Show only a reduced mount info
 | `--output=[OUTPUT]` | The output format to use (`plain`, `json` or `json_pretty`, default is `plain`).
 |===
 
-===== Example
+===== Example 1
 
 [source,console,subs="attributes+"]
 ----
@@ -915,6 +923,27 @@ be added as system mount.
 | 1        | /mount_1         | Personal |
 | 2        | /mount_2         | Personal |
 +----------+------------------+----------+
+----
+
+===== Example 2
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} files_external:list \
+	--mount-options \
+	--output=json_pretty
+[
+    {
+        "mount_id": 2,
+        "mount_point": "\/mount_3",
+        "storage": "SMB \/ CIFS",
+        "authentication_type": "Username and password",
+        "configuration": "host: \"NAS\", share: \"public\", root: \"\", domain: \"mydomain\", user: \"myuser\", password: \"***\"",
+        "options": "encrypt: true, previews: true, filesystem_check_changes: 1, enable_sharing: false, encoding_compatibility: false",
+        "applicable_users": "All",
+        "applicable_groups": ""
+    }
+]
 ----
 
 ==== files_external:applicable
