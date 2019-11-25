@@ -1,5 +1,5 @@
 = Installing and Configuring the External Storage: Windows Network Drives App
-:toc: macro
+:toc: right
 :toclevels: 1
 :anacron-examples: http://www.thegeekstuff.com/2011/05/anacron-examples
 :flock-docs-url: https://linux.die.net/man/2/flock
@@ -12,6 +12,8 @@
 :smbclient-manpage-url: https://www.samba.org/samba/docs/man/manpages-3/smbclient.1.html
 :wannacry-ransomware-attack-url: https://en.wikipedia.org/wiki/WannaCry_ransomware_attack
 :wnd-config-path: enterprise/external_storage/windows-network-drive_configuration.adoc
+:ldap-app-url: https://marketplace.owncloud.com/apps/user_ldap
+:acl-url: https://en.wikipedia.org/wiki/Access-control_list
 
 == Introduction
 
@@ -51,7 +53,6 @@ shares when the users who own the mounts are not logged in. Or,
 passwords are not stored and available only for the current session,
 which adds security.
 
-[[installation]]
 == Installation
 
 Install the https://marketplace.owncloud.com/apps/windows_network_drive[External Storage: Windows Network Drives app]
@@ -66,7 +67,6 @@ You can use https://github.com/eduardok/libsmbclient-php[eduardok/libsmbclient-p
 if your distribution does not provide it.
 * `which` and `stdbuf`. These should be included in most Linux distributions.
 
-[[example]]
 === Example
 
 Assuming that your ownCloud installation is on Ubuntu, then the
@@ -118,7 +118,6 @@ sudo phpenmod -v ALL smbclient
 To enable external storage go to menu:Settings[Storage (in the admin section)], as the ownCloud administrator.
 Tick the checkbox to enable external storage.
 
-[[creating-a-new-share]]
 === Creating a New Share
 
 When you create a new WND share you need three things:
@@ -164,21 +163,52 @@ Your changes are saved automatically.
 
 NOTE: When you create a new mountpoint using Login credentials, you must log out of ownCloud and then log back in so you can access the share. You only have to do this the first time.
 
-[[personal-wnd-mounts]]
-=== Personal WND Mounts
+==== Access Control Lists 
 
-NOTE: Be aware that by default changes in the file system won't be transferred to ownCloud (use case: Sync client) and a **service account with access to shares** is required for ownCloud to receive changes from the personal mounts.
+From version 1.0.1 the Windows Network Drives App supports {acl-url}[Access Control Lists (ACLs)].
+To obtain ACL information, it supports two ACL providers:
 
-Users create their own WND mounts on their Personal pages. These are
-created the same way as Admin-created shares. Users have four options
-for login credentials:
+- xref:the-null-permission-manager[The Null Permission Manager]
+- xref:the-owncloud-ldap-permission-manager[The ownCloud LDAP Permission Manager] 
 
-* Username and password
-* Log-in credentials, save in session
-* Log-in credentials, save in database
-* Global credentials
+image::enterprise/external_storage/windows_network_drive/acl-permissions-manager.png[Configuring ACL retrieval in the ownCloud Windows Network Drive app.]
 
-[[windows-network-drive-listener]]
+Regardless of which provider you choose, an ownCloud administrator should run a xref:configuration/server/occ_command.adoc#file-operations[files:scan], manually, after changing the configuration, to update the permissions correctly. 
+Otherwise, the permissions shown by ownCloud might be incorrect.
+
+NOTE: Permissions are only auto-updated if there has been a change in the files.
+
+===== The Null Permission Manager
+
+The Null Permission Manager is the default permission manager and is used if no other ACL manager is specified.
+If you want to retain ownCloud's current behaviour, then use this permission manager. 
+When in effect, the Windows Network Drive app uses a file's attributes (e.g., read-only, and hidden), to determine how the user can interact with the file.
+There are no usage restrictions.
+
+The value to use for this provider is: `nullPermissionManager`.
+
+===== The ownCloud LDAP Permission Manager
+
+The ownCloud LDAP Permission Manager evaluates ACLs in files along with file attributes to determine the permissions. 
+In order to evaluate the ACLs, it needs access to the user and group membership information of the target Windows or Samba server, so it uses the ownCloud's {ldap-app-url}[user_ldap app] for this.
+
+IMPORTANT: Both the Windows (or Samba) server and ownCloud's user_ldap app must connect to the same Active Directory server so that ownCloud can retrieve the same user and group information.
+
+To use this provider requires two key things:
+
+- An Active Directory server which contains the standard user and group information that can be used by {ldap-app-url}[ownCloud's LDAP app].
+- ownCloud's LDAP app to be correctly configured to retrieve user and group information from the same Active Directory server as the one that the Windows (or Samba) server uses.
+
+IMPORTANT: The ownCloud LDAP apps must configure the `sAMAccountName` to be the ownCloud server's username.
+
+[TIP]
+====
+Some groups, such as "everyone" might not be handled properly. 
+This is because such groups don't exist in the LDAP server, or might not be found if the domain is different, such as `nt authority\system` or `builtin\domain-users`.
+====
+
+The value to use for this provider is: `ocLdapPermissionManager`.
+
 === Windows Network Drive Listener
 
 [IMPORTANT]
@@ -222,7 +252,6 @@ background job updates the file metadata.
 
 
 
-[[setting-up-the-wnd-listener]]
 === Setting Up the WND Listener
 
 The WND listener for ownCloud 10 includes two different commands that need to be executed:
@@ -230,7 +259,6 @@ The WND listener for ownCloud 10 includes two different commands that need to be
 * xref:wnd-listen[wnd:listen]
 * xref:wndprocess-queue[wnd:process-queue]
 
-[[wnd-listen]]
 === wnd:listen
 
 This command listens and stores notifications in the database coming
@@ -269,7 +297,6 @@ You should be able to run any of those commands, and/or wrap them into a
 systemd service or any other startup service, so that the `wnd:listen`
 command is automatically started during boot, if you need it.
 
-[[wndprocess-queue]]
 === wnd:process-queue
 
 This command processes the stored notifications for a given host and
@@ -386,7 +413,6 @@ Take the example of attempting to connect to the share named `MyData` using `occ
 
 NOTE: The command is case sensitive, and that it must match the information from the mount point configuration.
 
-[[libsmbclient-issues]]
 === libsmbclient Issues
 
 If your Linux distribution ships with `libsmbclient 3.x`, which is included in the Samba client, you may need to set up the `HOME` variable in Apache to prevent a segmentation fault. 
@@ -427,7 +453,6 @@ export HOME=/var/lib/apache2
 
 Restart Apache, open your ownCloud Admin page and start creating SMB/CIFS mounts.
 
-[[basic-setup-for-one-owncloud-server]]
 === Basic Setup for One ownCloud Server
 
 First, go to the admin settings and set up the required WND mounts.
@@ -480,7 +505,6 @@ enough to process a large number of notifications, but not so large to
 crash the process. Between 200 and 500 should be fine, and we'll likely
 process all the notifications in one go.
 
-[[password-options]]
 === Password Options
 
 There are several ways to supply a password:
@@ -523,7 +547,6 @@ IMPORTANT: If using `--password-file` make sure that the file is only readable b
 this option, the 3rd party app needs to show the password as plaintext
 on standard output.
 
-[[rd-party-software-examples]]
 === 3rd Party Software Examples
 
 [source,console,subs="attributes+"]
@@ -562,14 +585,12 @@ to setup the keyring for whoever will fetch the password (probably root) and the
 pass the-password-name | {occ-command-example-prefix} wnd:listen <host> <share> <username> --password-file=-
 ----
 
-[[password-option-precedence]]
 === Password Option Precedence
 
 If both the argument and the option are passed, e.g.,
 `occ wnd:listen <host> <share> <username> <password> --password-file=/tmp/pass`,
 then the `--password-file` option will take precedence.
 
-[[optimizing-wndprocess-queue]]
 === Optimizing wnd:process-queue
 
 NOTE: Do not use this option if the process-queue is fast enough. The option has some drawbacks,
@@ -611,7 +632,6 @@ NOTE: It's imperative to periodically clean up the data source to fetch fresh da
 new storages and updated passwords. There isn't a generic command to do this from ownCloud,
 because it depends on the specific serializer type. Though this option could be provided at some point if requested.
 
-[[the-file-serializer]]
 === The File Serializer
 
 The file serializer is a serializer implementation that can be used with
@@ -629,10 +649,8 @@ the web server user. Other users shouldn't have access to this file. Do
 not manually edit the file. You can remove the file if it contains
 obsolete information.
 
-[[usage-recommendations]]
 === Usage Recommendations
 
-[[number-of-serializers]]
 ==== Number of Serializers
 
 Only one file serializer should be used per server and share, as the
@@ -663,7 +681,6 @@ isn't available and recreate the file again. When this happens, the
 serializer file's purpose isn't fulfilled As a result, we recommend the
 use of a different file per server and share.
 
-[[file-clean-up]]
 ==== File Clean Up
 
 The file will need to cleaned up from time to time. The easiest way to
@@ -671,7 +688,6 @@ do this is to remove the file when it is no longer needed. The file will
 be regenerated with fresh data the next execution if the serializer
 option is set.
 
-[[interaction-between-listener-serializer-and-windows-password-lockout]]
 === Interaction Between Listener and Windows Password Lockout
 
 Windows supports
@@ -687,7 +703,6 @@ the `wnd:listen` and `wnd:process-queue`, without the serializer
 options.
 
 
-[[multiple-server-setup]]
 === Multiple Server Setup
 
 Setups with several servers might have some difficulties in some
@@ -709,7 +724,6 @@ option you have to set it up is to store the target file in a common
 location for all the server. We might need to provide a specific
 serializer for this scenario (based on Redis or DB)
 
-[[basic-command-execution-examples]]
 === Basic Command Execution Examples
 
 [source,console,subs="attributes+"]

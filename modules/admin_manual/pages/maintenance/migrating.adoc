@@ -29,7 +29,6 @@ IMPORTANT: During the migration, do not make any changes to the original system,
 maintenance mode. This ensures, should anything unforeseen happen, that you can go back to your existing
 installation and resume availability of your installation while debugging the problem.
 
-[[how-to-migrate]]
 == How to Migrate
 
 Firstly, set up the new machine with your desired Linux distribution.
@@ -68,7 +67,6 @@ At this point, change the DNS `CNAME` entry to point your users to the
 new location. And with the `CNAME` entry updated, you now need to update
 the trusted domains.
 
-[[managing-trusted-domains]]
 == Managing Trusted Domains
 
 All URLs used to access your ownCloud server must be white-listed in your
@@ -94,7 +92,6 @@ long as you have access to the physical server you can always log in. In
 the event that a load-balancer is in place, there will be no issues as
 long as it sends the correct `X-Forwarded-Host` header.
 
-[[example-migration]]
 == Example Migration
 
 The following is an example migration with assumptions to make
@@ -104,7 +101,6 @@ this migration work:
 * SSH with `PermitRootLogin` set to `yes`
 * Database used is MySQL / MariaDB
 
-[[preparation]]
 === Preparation
 
 If not already available on the new server, make sure SSH is installed:
@@ -131,10 +127,8 @@ sudo service ssh restart
 
 Lastly, install ownCloud on the new server.
 
-[[migration]]
 === Migration
 
-[[enable-maintenance-mode]]
 ==== Enable Maintenance Mode
 
 The first step is to enable maintenance mode. To do that, use the
@@ -153,7 +147,6 @@ After that’s done, then wait a few minutes and stop your web server, in this c
 sudo service apache2 stop
 ----
 
-[[transfer-the-database]]
 ==== Transfer the Database
 
 Now, you have to transfer the database from the old server to the new
@@ -195,7 +188,6 @@ Rather than lock the entire database, this will let `mysqldump` read the databas
 Either dumping your MyISAM tables separately from InnoDB tables or use `–lock-tables` instead of `–single-transaction` to guarantee the database is in a consistent state when using `mysqldump`.
 ====
 
-[[transfer-data-and-configure-the-new-server]]
 ==== Transfer Data and Configure the New Server
 
 The following ownCloud directories will be synced to the target instance:
@@ -213,7 +205,6 @@ IMPORTANT: If you want to move your data directory to another location on the ta
 it is advised to do this as a second step. Please see
 xref:maintenance/manually-moving-data-folders.adoc[the data directory migration document] for more details.
 
-[[finish-the-migration]]
 ==== Finish the Migration
 
 Now it’s time to finish the migration. To do that, on the new server,
@@ -246,7 +237,6 @@ And finally, log in as admin and confirm normal function of ownCloud. If
 you have a domain name, and you want an SSL certificate, we recommend
 https://certbot.eff.org/[certbot].
 
-[[reverse-the-changes-to-ssh-config]]
 ==== Reverse the Changes to ssh-config
 
 Now you need to reverse the change to ssh-config. Specifically, set `PermitRootLogin`
@@ -259,7 +249,6 @@ NOTE: This is a security measure and improves SSH security.
 sudo service ssh restart
 ----
 
-[[update-dns-and-trusted-domains]]
 ==== Update DNS and Trusted Domains
 
 Finally, update the DNS’ `CNAME` entry to point to your new server.

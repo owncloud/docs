@@ -360,350 +360,7 @@ This example lists the queue status:
 +----+---------------------------------------------------+---------------------------+---------------+
 ----
 
-=== Config Commands
-
-The `config` commands are used to configure the ownCloud server.
-
-----
-config
- config:app:delete      Delete an app config value
- config:app:get         Get an app config value
- config:app:set         Set an app config value
- config:import          Import a list of configuration settings
- config:list            List all configuration settings
- config:system:delete   Delete a system config value
- config:system:get      Get a system config value
- config:system:set      Set a system config value
-----
-
-You can list all configuration values with one command:
-
-[source,console,subs="attributes+"]
-----
-{occ-command-example-prefix} config:list
-----
-
-By default, passwords and other sensitive data are omitted from the report, so the output can be posted publicly (e.g., as part of a bug report). 
-In order to generate a full backport of all configuration values the `--private` flag needs to be set:
-
-[source,console,subs="attributes+"]
-----
-{occ-command-example-prefix} config:list --private
-----
-
-The exported content can also be imported again to allow the fast setup of similar instances. 
-The import command will only add or update values. 
-Values that exist in the current configuration, but not in the one that is being imported are left untouched.
-
-[source,console,subs="attributes+"]
-----
-{occ-command-example-prefix} config:import filename.json
-----
-
-It is also possible to import remote files, by piping the input:
-
-[source,console,subs="attributes+"]
-----
-{occ-command-example-prefix} config:import < local-backup.json
-----
-
-NOTE: While it is possible to update/set/delete the versions and installation statuses of apps and ownCloud itself, it is *not* recommended to do this directly. 
-Use the `occ app:enable`, `occ app:disable` and `occ update` commands instead.
-
-==== Getting a Single Configuration Value
-
-These commands get the value of a single app or system configuration:
-
-==== config:system:get
-
-[source,console,subs="attributes+"]
-----
-{occ-command-example-prefix} config:system:get [options] [--] <name> (<name>)...
-----
-
-===== Arguments
-
-[width="100%",cols="20%,70%",]
-|===
-| `name` | Name of the config to get. Specify multiple for array parameter.
-|===
-
-===== Options
-
-[width="100%",cols="33%,70%",]
-|===
-| `--default-value[=DEFAULT-VALUE]` | If no default value is set and the config does not exist,
-the command will exit with 1.
-| `--output=[OUTPUT]`               | The output format to use (`plain`, `json` or `json_pretty`, default is `plain`).
-|===
-
-==== config:app:get
-
-[source,console,subs="attributes+"]
-----
-{occ-command-example-prefix} config:app:set [options] [--] <app> <name>
-----
-
-===== Arguments
-
-[width="100%",cols="20%,70%",]
-|===
-| `app`  |  Name of the app.
-| `name` |  Name of the config to get.
-|===
-
-===== Options
-
-[width="100%",cols="33%,70%",]
-|===
-| `--default-value[=DEFAULT-VALUE]` | If no default value is set and the config does not exist,
-the command will exit with 1.
-| `--output=[OUTPUT]` | The output format to use (`plain`, `json` or `json_pretty`, default is `plain`).
-|===
-
-===== Examples
-
-[source,console,subs="attributes+"]
-----
-{occ-command-example-prefix} config:system:get version
-10.0.8.5
-
-{occ-command-example-prefix} config:app:get activity installed_version
-2.2.1
-----
-
-==== Setting a Single Configuration Value
-
-These commands set the value of a single app or system configuration.
-
-==== config:system:set
-
-[source,console,subs="attributes+"]
-----
-{occ-command-example-prefix} config:system:set [options] [--] <name> (<name>)...
-----
-
-===== Arguments
-
-[width="100%",cols="20%,70%",]
-|===
-| `name` |  Name of the config parameter, specify multiple for array parameter.
-|===
-
-===== Options
-
-[width="100%",cols="20%,70%",]
-|===
-| `--type=[TYPE]`     | Value type to use (`string`, `integer`, `double`, `boolean`, `json`, default is `string`). +
-Note: you must use json to write multi array values.
-| `--value=[VALUE]`   | The new value of the config.
-| `--update-only`     | Only updates the value, if it is not set before, it is not being added.
-| `--output=[OUTPUT]` | The output format to use (`plain`, `json` or `json_pretty`, default is `plain`).
-|===
-
-===== Examples
-
-Adding Redis to the configuration:
-
-[source,console,subs="attributes+"]
-----
-{occ-command-example-prefix} config:system:set \
-   redis \
-   --value '{"host": "{oc-examples-server-ip}", "port": "6379"}' \
-   --type json
-
-System config value redis set to json {"host": "{oc-examples-server-ip}", "port": "6379"}
-----
-
-==== config:app:set
-
-[source,console,subs="attributes+"]
-----
-{occ-command-example-prefix} config:app:set [options] [--] <app> <name>
-----
-
-===== Arguments
-
-[width="100%",cols="20%,70%",]
-|===
-| `app`  |  Name of the app.
-| `name` |  Name of the config to set.
-|===
-
-===== Options
-
-[width="100%",cols="20%,70%",]
-|===
-| `--value=[VALUE]`   | The new value of the config.
-| `--update-only`     | Only updates the value, if it is not set before, it is not being added.
-| `--output=[OUTPUT]` | The output format to use (`plain`, `json` or `json_pretty`, default is `plain`).
-|===
-
-===== Examples
-
-[source,console,subs="attributes+"]
-----
-{occ-command-example-prefix} config:system:set \
-   logtimezone \
-   --value="Europe/Berlin"
-System config value logtimezone set to Europe/Berlin
-----
-
-[source,console,subs="attributes+"]
-----
-{occ-command-example-prefix} config:app:set \
-   files_sharing \
-   incoming_server2server_share_enabled \
-   --value=true \
-   --type=boolean
-Config value incoming_server2server_share_enabled for app files_sharing set to yes
-----
-
-The `config:system:set` command creates the value, if it does not
-already exist. To update an existing value, set `--update-only`:
-
-[source,console,subs="attributes+"]
-----
-{occ-command-example-prefix} config:system:set \
-   doesnotexist \
-   --value=true \
-   --type=boolean \
-   --update-only
-Value not updated, as it has not been set before.
-----
-
-NOTE: In order to write a boolean, float, JSON, or integer value to the configuration file, you need to specify the type on your command. 
-This applies only to the `config:system:set` command. 
-Please see table above for available types.
-
-===== Examples
-
-Disable the maintenance mode:
-
-[source,console,subs="attributes+"]
-----
-{occ-command-example-prefix} config:system:set maintenance \
-   --value=false \
-   --type=boolean
-
-ownCloud is in maintenance mode - no app have been loaded
-System config value maintenance set to boolean false
-----
-
-Create the `app_paths` config setting (using a JSON payload because of multi array values):
-
-[source,console,subs="attributes+"]
-----
-{occ-command-example-prefix} config:system:set apps_paths \
-      --type=json \
-      --value='[
-        {
-            "path":"/var/www/owncloud/apps",
-            "url":"/apps",
-            "writable": false
-        },
-        {
-            "path":"/var/www/owncloud/apps-external",
-            "url":"/apps-external",
-            "writable": true
-        }
-    ]'
-----
-
-==== Setting an Array of Configuration Values
-
-Some configurations (e.g., the trusted domain setting) are an array of data. 
-The array starts counting with 0. In order to set (and also get) the value of one key, you can specify multiple `config` names separated by spaces:
-
-[source,console,subs="attributes+"]
-----
-{occ-command-example-prefix} config:system:get trusted_domains
-localhost
-owncloud.local
-sample.tld
-----
-
-To replace `sample.tld` with `example.com` trusted_domains => 2 needs to be set:
-
-[source,console,subs="attributes+"]
-----
-{occ-command-example-prefix} config:system:set trusted_domains 2 --value=example.com
-System config value trusted_domains => 2 set to string example.com
-
-{occ-command-example-prefix} config:system:get trusted_domains
-localhost
-owncloud.local
-example.com
-----
-
-==== Deleting a Single Configuration Value
-
-These commands delete the configuration of an app or system configuration:
-
-==== config:system:delete
-
-[source,console,subs="attributes+"]
-----
-{occ-command-example-prefix} config:system:delete [options] [--] <name> (<name>)...
-----
-
-===== Arguments
-
-[width="100%",cols="20%,70%",]
-|===
-| `name` |  Name of the config to delete, specify multiple for array parameter.
-|===
-
-===== Options
-
-[width="100%",cols="20%,70%",]
-|===
-| `--error-if-not-exists` | Checks whether the config exists before deleting it.
-| `--output=[OUTPUT]`     | The output format to use (`plain`, `json` or `json_pretty`, default is `plain`).
-|===
-
-==== config:app:delete
-
-[source,console,subs="attributes+"]
-----
-{occ-command-example-prefix} config:app:delete [options] [--] <app> <name>
-----
-
-===== Arguments
-
-[width="100%",cols="20%,70%",]
-|===
-| `app`  |  Name of the app.
-| `name` |  Name of the config to delete.
-|===
-
-===== Options
-
-[width="100%",cols="20%,70%",]
-|===
-| `--error-if-not-exists` | Checks whether the config exists before deleting it.
-| `--output=[OUTPUT]`     | The output format to use (`plain`, `json` or `json_pretty`, default is `plain`).
-|===
-
-===== Examples:
-
-[source,console,subs="attributes+"]
-----
-{occ-command-example-prefix} config:system:delete maintenance:mode
-System config value maintenance:mode deleted
-
-{occ-command-example-prefix} config:app:delete myappname provisioning_api
-Config value provisioning_api of app myappname deleted
-----
-
-The delete command will by default not complain if the configuration was not set before. 
-If you want to be notified in that case, set the `--error-if-not-exists` flag.
-
-[source,console,subs="attributes+"]
-----
-{occ-command-example-prefix} config:system:delete doesnotexist --error-if-not-exists
-Config provisioning_api of app appname could not be deleted because it did not exist
-----
+include::./occ_command/config.adoc[leveloffset=+2]
 
 === DAV Commands
 
@@ -954,7 +611,6 @@ You must first put your ownCloud server into xref:maintenance-commands[single-us
 You may optionally specify individual users in a space-delimited list.
 See xref:configuration/files/encryption/encryption_configuration.adoc[encryption configuration] to learn more.
 
-[[recreate-master-key]]
 `encryption:recreate-master-key` decrypts the ownCloud file system, replaces the existing master key with a new one, and encrypts the entire ownCloud file system with the new master key. 
 Given the size of your ownCloud filesystem, this may take some time to complete. 
 However, if your filesystem is quite small, then it will complete quite quickly. 
@@ -1226,7 +882,15 @@ List configured mounts.
 
 [source,console]
 ----
-files_external:list [--show-password] [--full] [-a|--all] [-s|--short] [--] [<user_id>]
+files_external:list
+	[--show-password]
+	[--mount-options]
+	[--full]
+	[-a|--all]
+	[-s|--short]
+	[--output=[OUTPUT]]
+	[--]
+	[<user_id>]
 ----
 
 ===== Arguments
@@ -1240,15 +904,15 @@ files_external:list [--show-password] [--full] [-a|--all] [-s|--short] [--] [<us
 
 [width="100%",cols="20%,70%",]
 |===
-| `--show-password`   | User to add the mount configurations for, if not set the mount will
-be added as system mount.
-| `--full`            | Don't save the imported mounts, only list the new mounts.
-| `-a, --all`         | Show both system-wide mounts and all personal mounts.
-| `-s, --short`       | Show only a reduced mount info.
+| `--show-password`   | Show passwords and secrets
+| `--mount-options`   | Show all mount options independent if they are set to their default value or not.
+| `--full`            | Don't truncate long values in table output
+| `-a, --all`         | Show mounts for all users. All has precedence over user_id
+| `-s, --short`       | Show only a reduced mount info
 | `--output=[OUTPUT]` | The output format to use (`plain`, `json` or `json_pretty`, default is `plain`).
 |===
 
-===== Example
+===== Example 1
 
 [source,console,subs="attributes+"]
 ----
@@ -1259,6 +923,27 @@ be added as system mount.
 | 1        | /mount_1         | Personal |
 | 2        | /mount_2         | Personal |
 +----------+------------------+----------+
+----
+
+===== Example 2
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} files_external:list \
+	--mount-options \
+	--output=json_pretty
+[
+    {
+        "mount_id": 2,
+        "mount_point": "\/mount_3",
+        "storage": "SMB \/ CIFS",
+        "authentication_type": "Username and password",
+        "configuration": "host: \"NAS\", share: \"public\", root: \"\", domain: \"mydomain\", user: \"myuser\", password: \"***\"",
+        "options": "encrypt: true, previews: true, filesystem_check_changes: 1, enable_sharing: false, encoding_compatibility: false",
+        "applicable_users": "All",
+        "applicable_groups": ""
+    }
+]
 ----
 
 ==== files_external:applicable
@@ -1412,7 +1097,6 @@ The default is `plain`.
 | Amazon S3                | `amazons3`
 | Dropbox                  | `dropbox`
 | Google Drive             | `googledrive`
-| OpenStack Object Storage | `swift`
 | SMB / CIFS               | `smb`
 |===
 
@@ -1566,66 +1250,6 @@ files_external:verify [options] [--] <mount_id>
 required for certain auth backends such as login credentials (multiple values allowed).
 | `--output=[OUTPUT]`     | The output format to use (_plain_, _json_ or _json_pretty_, default is plain).
 |===
-
-==== files_external:create
-
-You can create general (for all users) and personal (user-specific) shares by passing share configuration information on the command line, with the `files_external:create` command.
-The syntax is:
-
-[source,console]
-----
-files_external:create [options] [--] <mount_point> <storage_backend> <authentication_backend>
-----
-
-===== Arguments
-
-[width="100%",cols="20%,70%",]
-|===
-| mount point            | Path of the mount point within the file system.
-| storage_backend        | Storage backend identifier.
-| authentication_backend | Authentication backend authentifier.
-|===
-
-===== Storage Backend Details
-
-[width="80%",cols="40%,60%",options="header"]
-|===
-| Storage Backend         | Identifier
-| Windows Network Drive   | `windows_network_drive`
-| WebDav                  | `dav`
-| Local                   | `local`
-| ownCloud                | `owncloud`
-| SFTP                    | `sftp`
-| Amazon S3               | `amazons3`
-| Dropbox                 | `dropbox`
-| Google Drive            | `googledrive`
-| OpenStack Object Storage| `swift`
-| SMB / CIFS              | `smb`
-|===
-
-===== Authentication Details
-
-[width="80%",cols="40%,60%",options="header"]
-|===
-| Authentication method                | Identifier, name, configuration
-| Log-in credentials, save in session  | `password::sessioncredentials`
-| Log-in credentials, save in database | `password::logincredentials`
-| User entered, store in database      | `password::userprovided` (*)
-| Global Credentials                   | `password::global`
-| None                                 | `null::null`
-| Builtin                              | `builtin::builtin`
-| Username and password                | `password::password`
-| OAuth1                               | `oauth1::oauth1` (*)
-| OAuth2                               | `oauth2::oauth2` (*)
-| RSA public key                       | `publickey::rsa` (*)
-| OpenStack                            | `openstack::openstack` (*)
-| Rackspace                            | `openstack::rackspace` (*)
-| Access key (Amazon S3)               | `amazons3::accesskey` (*)
-|===
-
-(*****) - Authentication methods require additional configuration.
-
-NOTE: Each Storage Backend needs its corresponding authentication methods.
 
 === Group Commands
 
@@ -2688,6 +2312,8 @@ There are no arguments and no options beside the default once to parametrize the
 ----
 {occ-command-example-prefix} user:resetpassword [options] [--] <user>
 ----
+
+include::{partialsdir}configuration/user/update-password-note.adoc[]
 
 ===== Arguments
 
@@ -4127,7 +3753,6 @@ Please be aware of the following implications of enabling or changing the passwo
 * Password expiration dates of users where the administrator has run the `occ user:expire-password` command *won't* automatically update to reflect the policy change. 
   In these cases, Administrators need to run the `occ user:expire-password` command again and supply a new expiry date.
 
-[[ransomware-protection]]
 === Ransomware Protection (Enterprise Edition only)
 
 Marketplace URL: https://marketplace.owncloud.com/apps/ransomware_protection[Ransomware Protection]
