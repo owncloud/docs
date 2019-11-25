@@ -1,0 +1,168 @@
+= What is OpenID Connect (OIDC)
+:toc: right
+:panva-node-oidc-provider-url: https://github.com/panva/node-oidc-provider
+:openid-connect-frontchannel-logout-url: https://openid.net/specs/openid-connect-frontchannel-1_0.html
+:openid-connect-url: https://openid.net/connect/
+:openid-config-url: http://localhost:3000/.well-known/openid-configuration
+
+== Introduction
+
+So, what is OpenID Connect (OIDC)? 
+According to {openid-connect-url}[openid.net/connect]:
+
+"OpenID Connect 1.0 is a simple identity layer on top of the OAuth 2.0 protocol. It allows Clients to verify the identity of the End-User based on the authentication performed by an Authorization Server, as well as to obtain basic profile information about the End-User in an interoperable and REST-like manner.
+OpenID Connect allows clients of all types, including Web-based, mobile, and JavaScript clients, to request and receive information about authenticated sessions and end-users. The specification suite is extensible, allowing participants to use optional features such as encryption of identity data, discovery of OpenID Providers, and session management, when it makes sense for them."
+-- {openid-connect-url}, "What is OpenID Connect?"
+
+== Flows within ownCloud 10 server
+
+== Setup (Installation and Configuration)
+
+* xref:configure-owncloud[Configure ownCloud]
+* xref:setup-within-the-openid-provider[Setup Within the OpenID Provider]
+* xref:setup-service-discovery[Setup Service Discovery]
+* xref:how-to-setup-an-idp-for-development-and-test-purposes[How to Setup an IdP for Development and Test Purposes]
+* xref:integration-with-different-idps[Integration with different IdPs]
+
+=== Configure ownCloud
+
+The OpenID integration is configured by adding the below parameters to ownCloud’s configuration file.
+
+NOTE: `provider-url`, `client-id` and `client-secret` are to be taken from the OpenID Provider’s setup.
+`loginButtonName` can be freely chosen, depending on the installation.
+
+[source,php]
+----
+<?php
+$CONFIG = [
+    // ... existing config
+    'openid-connect' => [
+        'client-id'       => 'fc9b5c78-ec73-47bf-befc-59d4fe780f6f',
+        'client-secret'   => 'e3e5b04a-3c3c-4f4d-b16c-2a6e9fdd3cd1',
+        'loginButtonName' => 'OpenId Connect',
+        'provider-url'    => 'https://idp.example.net'
+    ]
+];
+----
+
+The above configuration assumes that the OpenID Provider supports service discovery.
+If not, the endpoint configuration has to be done manually, as follows:
+
+[source,php]
+----
+<?php
+$CONFIG = [
+    'openid-connect' => [
+        'client-id' => 'fc9b5c78-ec73-47bf-befc-59d4fe780f6f',
+        'client-secret' => 'e3e5b04a-3c3c-4f4d-b16c-2a6e9fdd3cd1',
+        'loginButtonName' => 'OpenId Connect',
+        'provider-params' => [
+            'authorization_endpoint' => '...',
+            'end_session_endpoint' => '...',
+            'jwks_uri' => '...',
+            'registration_endpoint' => '...',
+            'token_endpoint' => '...',
+            'token_endpoint_auth_methods_supported' => '...',
+            'userinfo_endpoint' => '...'
+        ],
+        'provider-url' => 'https://idp.example.net',
+    ]
+];
+----
+
+=== Setup Within the OpenID Provider
+
+When registering ownCloud as OpenID Client use `https://cloud.example.net/index.php/apps/openidconnect/redirect` as the redirect URL.
+
+In case {openid-connect-frontchannel-logout-url}[OpenID Connect Front-Channel Logout 1.0] is supported please enter `https://cloud.example.net/index.php/apps/openidconnect/logout` as the logout URL within the client registration of the OpenID Provider.
+We require `frontchannel_logout_session_required` to be true.
+
+=== Setup Service Discovery
+
+To allow other clients to use OpenID Connect when talking to ownCloud, please set up a redirect on the webserver to point `.well-known/openid-configuration` to `/index.php/apps/openidconnect/config`.
+Here is an .htaccess example
+
+[source]
+----
+RewriteRule ^\.well-known/openid-configuration /index.php/apps/openidconnect/config [R=301,L]
+----
+
+TIP: Service discovery is not mandatory at the moment as no client, currently, supports it.
+
+=== How to Setup an Identity Provider (IdP) for Development and Test Purposes
+
+There are various Open Source IdPs out there. 
+The one with the most implemented features seems to be {panva-node-oidc-provider-url}[panva/node-oidc-provider].
+
+To set it up locally do the following:
+
+. Clone {panva-node-oidc-provider-url}[panva/node-oidc-provider]
+. Run `yarn install`
+. cd example
+. Add the client config into https://github.com/panva/node-oidc-provider/blob/master/example/support/configuration.js#L14
++
+[source,php]
+----
+module.exports.clients = [
+    {
+        client_id: 'ownCloud',
+        client_secret: 'ownCloud',
+        frontchannel_logout_uri: 'http://localhost:8080/index.php/apps/openidconnect/logout',
+        grant_types: ['refresh_token', 'authorization_code'],
+        redirect_uris: ['http://localhost:8080/index.php/apps/openidconnect/redirect'],
+    }
+];
+----
+. Start the IdP via: `node standalone.js`
+. Open {openid-config-url} in your browser.
+  Your ownCloud configuration should look as follows:
++
+[source,php]
+----
+$CONFIG = [
+    'openid-connect' => [
+        'client-id' => 'ownCloud',
+        'client-secret' => 'ownCloud',
+        'loginButtonName' => 'node-oidc-provider',
+        'mode' => 'userid',
+        'provider-url' => 'http://localhost:3000',
+        'search-attribute' => 'sub',
+        'use-token-introspection-endpoint' => true
+    ],
+];
+----
+
+. Clients can now use `{openid-config-url}` to obtain all information which is necessary to initiate the OpenID Connect Flow. 
+  Use the granted access token in any request to ownCloud within a bearer authentication header.
+. You can log in with any credentials, but you need to make sure that the user with the given user id exists. In a real-world deployment, the users will come from LDAP.
+Keep in mind that, by default, the OpenID Connector app will search for the `email` attribute - which is hardcoded to `johndoe@example.com` https://github.com/panva/node-oidc-provider/blob/master/example/support/account.js#L32[ref].
+If you wish to map the login name on the oidc-provider with ownCloud user ids, configure it as follows:
+
+[source,php]
+----
+$CONFIG = [
+    'openid-connect' => [
+        'search-attribute' => 'sub',
+        'mode' => 'userid',
+    ]
+]
+----
+
+== Integration with different IdPs
+// (e.g., Ping Identity / Kopano Konnect / Keycloak)
+
+How to integrate OIDC with ownCloud clients
+// Current iOS on appstore can be used for testing
+// Desktop client daily builds can be used for testing
+
+== Supported Cyphers - Technical Detail on Integration With Different IdPs
+
+== Integration 
+// Recommend consulting
+
+== SAML migration
+// Recommend consulting
+
+== OAuth2 and OIDC are mutually exclusive
+
+== Deployment, Configuration and Test Setup
