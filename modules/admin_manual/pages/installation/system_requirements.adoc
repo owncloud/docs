@@ -7,7 +7,7 @@
 == Officially Recommended Environment
 
 For _best performance_, _stability_, _support_, and _full functionality_
-we officially recommend:
+we officially recommend and support:
 
 [cols="1,2a",options="header"]
 |===
@@ -26,9 +26,8 @@ MariaDB 10+
 | Apache 2.4 with xref:installation/manual_installation.adoc#multi-processing-module-mpm[`prefork and mod_php`]
 
 | PHP Runtime
-| 7.2
+| 7.3
 |===
-
 
 == Officially Supported Environments
 
@@ -47,16 +46,16 @@ we officially support:
 * Ubuntu 16.04 and 18.04
 * Debian 8 and 9
 * SUSE Linux Enterprise Server 12 with SP4 and 15
-* Red Hat Enterprise Linux/Centos 7.5 and 8
+* Red Hat Enterprise Linux/Centos 7.5 and 8 (64-bit only)
 * Fedora 28 and 29
 * openSUSE Leap 42.3 and 15
 
 | Database
 |
-* MySQL or MariaDB 5.5+
-* Oracle 11g
+* MySQL 8+ or MariaDB 10+ (RECOMMENDED)
+* Oracle 11 and 12
 * PostgreSQL 9 (versions 10 and above are not _yet_ supported)
-* SQLite
+* SQLite (NOT FOR PRODUCTION)
 
 | Web server
 | * Apache 2.4 with xref:installation/manual_installation.adoc#multi-processing-module-mpm[`prefork` and `mod_php`]
@@ -67,27 +66,35 @@ we officially support:
 
 [NOTE]
 ====
-If you use Ubuntu 16.04 and want to use PHP 7.x:
-
-* PHP 7.1 and 7.2 are only available via PPA. 
-  To add {ppa-guide-url}[a PPA (Personal Package Archive)] to your system, use this command: `sudo add-apt-repository ppa:user/ppa-name`.
-* PHP 7.2 standard installable, but you have to install some mandatory modules yourself, such as 
-{php-intl-ext-url}[intl].
+For Linux distributions, we support, if technically feasible, the latest two versions per platform and the previous https://wiki.ubuntu.com/LTS[LTS].
 ====
 
-[NOTE]
-====
-It is recommended to use *PHP {recommended-php-version}* as older versions have reached {php-supported-versions-url}[EOL] and will be deprecated for use with ownCloud Server in a future release.
-====
+== Database Requirements
 
-[NOTE]
-====
-* Red Hat Enterprise Linux & Centos 7 are 64-bit only.
-* Oracle 11g is only supported for the Enterprise edition.
-* SQLite is not encouraged for production use.
-====
+The following database settings are currently required if you’re running ownCloud together
+with a MySQL or MariaDB database:
 
-=== Mobile
+* Disabled or `BINLOG_FORMAT = MIXED` or `BINLOG_FORMAT = ROW` configured Binary Logging (See: xref:configuration/database/linux_database_configuration.adoc#mysql-mariadb-with-binary-logging-enabled[MySQL / MariaDB with Binary Logging Enabled])
+* InnoDB storage engine (The MyISAM storage engine is not supported, see:
+xref:configuration/database/linux_database_configuration.adoc#mysql-mariadb-storage-engine[MySQL / MariaDB storage engine])
+* `READ COMMITED` transaction isolation level (See: 
+xref:configuration/database/linux_database_configuration.adoc#mysql-mariadb-read-commited-transaction-isolation-level[MySQL / MariaDB `READ COMMITED` transaction isolation level])
+
+== Memory Requirements
+
+Memory requirements for running an ownCloud server are greatly variable,
+depending on the numbers of users and files, and volume of server
+activity. ownCloud officially requires a minimum of 128MB RAM. But, we
+recommend a minimum of 512MB.
+
+=== Hypervisors
+
+* Hyper-V
+* VMware ESX
+* Xen
+* KVM
+
+=== Mobile OS
 
 * iOS 9.0+
 * Android 4.0+
@@ -100,14 +107,7 @@ It is recommended to use *PHP {recommended-php-version}* as older versions have 
 * Chrome 66+
 * Safari 10+
 
-=== Hypervisors
-
-* Hyper-V
-* VMware ESX
-* Xen
-* KVM
-
-=== Desktop
+=== Client Operating System
 
 [cols="25%,75%",options="header,footer",]
 |===
@@ -122,32 +122,11 @@ It is recommended to use *PHP {recommended-php-version}* as older versions have 
 2+|Releases that should be deprecated are listed in parenthesis.
 |===
 
-NOTE: For Linux distributions, we support, if technically feasible, the latest two versions per platform and the previous https://wiki.ubuntu.com/LTS[LTS].
+=== Sync Clients and Mobile Apps 
 
-Client Versions
-~~~~~~~~~~~~~~~
-
-Here are the oldest versions of the Desktop Client, Android app and iOS app supported with the latest server release:
-
-* Desktop Client 2.3.3
-* Android App
-* iOS App
-
-== Alternative (But Unsupported) Options
-
-If you are not able to use one or more of the above tools, the following
-options are also available.
-
-=== Web Server
-
-* NGINX with PHP-FPM
-
-== Memory Requirements
-
-Memory requirements for running an ownCloud server are greatly variable,
-depending on the numbers of users and files, and volume of server
-activity. ownCloud officially requires a minimum of 128MB RAM. But, we
-recommend a minimum of 512MB.
+We always recommend to use the newest clients and mobile apps with the latest server release.
+You can find out more here:
+https://owncloud.org/changelog
 
 [NOTE]
 .Consideration for low memory environments
@@ -155,14 +134,3 @@ recommend a minimum of 512MB.
 Scanning of files is committed internally in 10k files chunks.
 Based on tests, server memory usage for scanning greater than 10k files uses about 75MB of additional memory.
 ====
-
-== Database Requirements
-
-The following are currently required if you’re running ownCloud together
-with a MySQL or MariaDB database:
-
-* Disabled or `BINLOG_FORMAT = MIXED` or `BINLOG_FORMAT = ROW` configured Binary Logging (See: xref:configuration/database/linux_database_configuration.adoc#mysql-mariadb-with-binary-logging-enabled[MySQL / MariaDB with Binary Logging Enabled])
-* InnoDB storage engine (The MyISAM storage engine is not supported, see:
-xref:configuration/database/linux_database_configuration.adoc#mysql-mariadb-storage-engine[MySQL / MariaDB storage engine])
-* `READ COMMITED` transaction isolation level (See: 
-xref:configuration/database/linux_database_configuration.adoc#mysql-mariadb-read-commited-transaction-isolation-level[MySQL / MariaDB `READ COMMITED` transaction isolation level])
