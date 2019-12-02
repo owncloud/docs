@@ -7,7 +7,7 @@
 == Officially Recommended Environment
 
 For _best performance_, _stability_, _support_, and _full functionality_
-we officially recommend:
+we officially recommend and support:
 
 [cols="1,2a",options="header"]
 |===
@@ -29,7 +29,6 @@ MariaDB 10+
 | {recommended-php-version}
 |===
 
-
 == Officially Supported Environments
 
 For _best performance_, _stability_, _support_, and _full functionality_
@@ -47,14 +46,14 @@ we officially support:
 * Ubuntu 16.04 and 18.04
 * Debian 8 and 9
 * SUSE Linux Enterprise Server 12 with SP4 and 15
-* Red Hat Enterprise Linux/Centos 7.5 and 8
+* Red Hat Enterprise Linux/Centos 7.5 and 8 (64-bit only)
 * Fedora 28 and 29
 * openSUSE Leap 42.3 and 15
 
 | Database
 |
 * MySQL 8+ or MariaDB 10+ (RECOMMENDED)
-* Oracle 12g
+* Oracle 11 and 12
 * PostgreSQL 9 (versions 10 and above are not _yet_ supported)
 * SQLite (NOT FOR PRODUCTION)
 
@@ -67,28 +66,11 @@ we officially support:
 
 [NOTE]
 ====
-If you use Ubuntu 16.04 and want to use PHP 7.x:
-
-* PHP 7.2 is only available via PPA. 
-  To add {ppa-guide-url}[a PPA (Personal Package Archive)] to your system, use this command: `sudo add-apt-repository ppa:user/ppa-name`.
-* PHP 7.2 standard installable, but you have to install some mandatory modules yourself, such as 
-{php-intl-ext-url}[intl].
+For Linux distributions, we support, if technically feasible, the latest two versions per platform and the previous LTS Version.
 ====
 
-[NOTE]
-====
-It is recommended to use *PHP {recommended-php-version}* as older versions have reached {php-supported-versions-url}[EOL] and will be deprecated for use with ownCloud Server in a future release.
-====
+== Database Requirements
 
-[NOTE]
-====
-* Red Hat Enterprise Linux & Centos 7 are 64-bit only.
-* Oracle 11g is only supported for the Enterprise edition.
-* SQLite is NOT FOR PRODUCTION.
-====
-
-[NOTE]
-====
 The following database settings are currently required if you’re running ownCloud together
 with a MySQL or MariaDB database:
 
@@ -97,21 +79,13 @@ with a MySQL or MariaDB database:
 xref:configuration/database/linux_database_configuration.adoc#mysql-mariadb-storage-engine[MySQL / MariaDB storage engine])
 * `READ COMMITED` transaction isolation level (See: 
 xref:configuration/database/linux_database_configuration.adoc#mysql-mariadb-read-commited-transaction-isolation-level[MySQL / MariaDB `READ COMMITED` transaction isolation level])
-====
 
+== Memory Requirements
 
-=== Mobile
-
-* iOS 9.0+
-* Android 4.4+
-
-=== Web Browser
-
-* Edge (current version on Windows 10)
-* IE11 or newer (except Compatibility Mode)
-* Firefox 60 ESR or newer 
-* Chrome 66 or newer
-* Safari 10 or newer
+Memory requirements for running an ownCloud server are greatly variable,
+depending on the numbers of users and files, and volume of server
+activity. ownCloud officially requires a minimum of 128MB RAM. But, we
+recommend a minimum of 512MB.
 
 === Hypervisors
 
@@ -120,21 +94,43 @@ xref:configuration/database/linux_database_configuration.adoc#mysql-mariadb-read
 * Xen
 * KVM
 
-=== Desktop
+=== Mobile OS
 
-* Windows 7+
-* Mac OS X 10.10+ (*64-bit only*)
-* CentOS 7 (64-bit only)
-* Debian 8.0 & 9.0
-* Fedora 29 & 30
-* Ubuntu 16.04 & 18.04
-* openSUSE Leap 42.3 & openSUSE 15
+* iOS 9.0+
+* Android 4.4+
 
-NOTE: For Linux distributions, we support, if technically feasible, the latest 2 versions per platform and the 
-previous https://wiki.ubuntu.com/LTS[LTS].
+=== Web Browser
 
-=== Clients and Mobile Apps 
+* Edge (current version on Windows 10)
+* IE11 or newer (except Compatibility Mode)
+* Firefox 60 ESR+
+* Chrome 66+
+* Safari 10+
+
+=== Client Operating System
+
+[cols="25%,75%",options="header,footer",]
+|===
+|Operation System |Version(s)
+|Windows |7+
+|macOS X |(10.7+ &) 10.10+ & 10.12+ (*64-bit only*)
+|CentOS |6 & 7 (64-bit only)
+|Debian |(8.0 &) 9.0 & 10.0
+|Fedora |(27 & 28 &) 29 & 30
+|Ubuntu |16.04 & 18.04 & 19.04
+|openSUSE Leap |(42.2 &) 42.3 & 15.0 & 15.1
+2+|Releases that should be deprecated are listed in parenthesis.
+|===
+
+=== Sync Clients and Mobile Apps 
 
 We always recommend to use the newest clients and mobile apps with the latest server release.
 You can find out more here:
 https://owncloud.org/changelog
+
+[NOTE]
+.Consideration for low memory environments
+====
+Scanning of files is committed internally in 10k files chunks.
+Based on tests, server memory usage for scanning greater than 10k files uses about 75MB of additional memory.
+====
