@@ -73,36 +73,32 @@ module.exports.clients = [
 ----
 . Start the IdP via: `node standalone.js`
 . Open {openid-config-url} in your browser.
-  Your ownCloud configuration should look as follows:
+  Your ownCloud configuration (`config/config.*.php`) should contain configuration similar to the following (_adjusted for your requirements_):
 +
 [source,php]
 ----
-$CONFIG = [
-    'openid-connect' => [
-        'client-id' => 'ownCloud',
-        'client-secret' => 'ownCloud',
-        'loginButtonName' => 'node-oidc-provider',
-        'mode' => 'userid',
-        'provider-url' => 'http://localhost:3000',
-        'search-attribute' => 'sub',
-        'use-token-introspection-endpoint' => true
-    ],
-];
+'openid-connect' => [
+    'client-id' => 'ownCloud',
+    'client-secret' => 'ownCloud',
+    'loginButtonName' => 'node-oidc-provider',
+    'mode' => 'userid',
+    'provider-url' => 'http://localhost:3000',
+    'search-attribute' => 'sub',
+    'use-token-introspection-endpoint' => true
+],
 ----
 
 . Clients can now use `{openid-config-url}` to obtain all information which is necessary to initiate the OpenID Connect Flow. 
   Use the granted access token in any request to ownCloud within a bearer authentication header.
 . You can log in with any credentials, but you need to make sure that the user with the given user id exists. In a real-world deployment, the users will come from LDAP.
 Keep in mind that, by default, the OpenID Connector app will search for the `email` attribute - which is hardcoded to `johndoe@example.com` https://github.com/panva/node-oidc-provider/blob/master/example/support/account.js#L32[ref].
-If you wish to map the login name on the oidc-provider with ownCloud user ids, configure it as follows:
+If you wish to map the login name on the oidc-provider with ownCloud user ids, use the following configuration:
 
 [source,php]
 ----
-$CONFIG = [
-    'openid-connect' => [
-        'search-attribute' => 'sub',
-        'mode' => 'userid',
-    ]
+'openid-connect' => [
+    'search-attribute' => 'sub',
+    'mode' => 'userid',
 ]
 ----
 
