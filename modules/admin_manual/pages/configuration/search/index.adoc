@@ -1,0 +1,49 @@
+= Full Text Search 
+:toc: right
+:ingest-attachment-processor-url: https://www.elastic.co/guide/en/elasticsearch/plugins/5.6/ingest-attachment.html
+:search_elastic-app-url: https://marketplace.owncloud.com/apps/search_elastic 
+
+== Introduction
+
+The {search_elastic-app-url}[search_elastic app] integrates full text search into ownCloud, powered by Elasticsearch.
+
+== Prerequisites
+
+There is only one pre-requisite for the search_elastic app, and that’s a fully functioning Elasticsearch server with the {ingest-attachment-processor-url}[ingest-attachment processor] to be present.
+The ingest-attachment processor lets Elasticsearch extract file attachments in common formats, such as PPT, XLS, and PDF.
+
+To install the processor, from your Elasticsearch installation directory, run the following command:
+
+[source=console]
+----
+bin/elasticsearch-plugin install ingest-attachment
+service elasticsearch restart
+----
+
+NOTE: Only Elasticsearch version 5.6 is fully supported. 
+Versions 6 and 7 are yet to be supported.
+
+== Install and Configure the search_elastic App
+
+To install the search_elastic app:
+
+. Download and extract the tarball of {search_elastic-app-url}[the latest release] of the search_elastic app to the apps directory (or xref:installation/apps_management_installation.adoc#using-custom-app-directories[custom apps directory]) of your ownCloud instance.
+. Use xref:configuration/server/occ_command.adoc#apps-commands[the occ app:enable command] to enable the search_elastic application.
+. Go to menu:Settings[Search (admin)] and set the hostname (or IP address) and port of the Elasticsearch server and click btn:["Reset Index"].
+
+.Configuring Elasticsearch in ownCloud
+image:apps/search_elastic/configuration_successful.png[Configuring Elasticsearch in ownCloud]
+
+TIP: The index can also be managed from the command-line, via xref:configuration/server/occ_command.adoc#search[the occ search:index commands]. 
+The commands let administrators _create_, _rebuild_, _reset_, and _update_ the search index.
+
+== Known Limitations
+
+Currently, there are several known limitations to the app; these are:
+
+* Files are shown twice in search results when searching by filename.
+* If a shared file is renamed by the sharee (share receiver), the sharee cannot find the file using the new filename.
+* If the search query doesn't match the _start_ of at least one word in an available file's name, no results are returned.
+* Search results are not updated when a text file is rolled back to an earlier version.
+* The app does not return results for federated share files.
+* The app only works with the default encryption module "_Master Key_".
