@@ -12,8 +12,8 @@ Cron jobs are commands or shell-based scripts that are scheduled to periodically
 
 To run Cron jobs with ownCloud, we recommend that you can use the occ `system:cron` command.
 
-include::{partialsdir}configuration/server/system_command.adoc[]
- 
+include::{partialsdir}configuration/server/occ_command/system_command.adoc[]
+
 == Cron Jobs
 
 You can schedule Cron jobs in three ways: 
@@ -48,16 +48,18 @@ This method enables the execution of scheduled jobs without the inherent limitat
 
 For example, to run a Cron job on a *nix system every minute, under the default web server user (often, `www-data` or `wwwrun`) you must set up the following Cron job to call the `occ system:cron` command, as in the following example:
 
+[source,console,subs="attributes+"]
 ----
 # crontab -u www-data -e
-*  *  *  *  * /usr/bin/php -f /path/to/your/owncloud/occ system:cron
+*  *  *  *  * {occ-command-example-prefix-no-sudo} system:cron
 ----
 
 You can verify if the cron job has been added and scheduled by executing:
 
+[source,console,subs="attributes+"]
 ----
 # crontab -u www-data -l
-*  *  *  *  * /usr/bin/php -f /path/to/your/owncloud/occ system:cron
+*  *  *  *  * {occ-command-example-prefix-no-sudo} system:cron
 ----
 
 NOTE: You have to make sure that PHP is found by Cron; hence why we’ve deliberately added the full path.
