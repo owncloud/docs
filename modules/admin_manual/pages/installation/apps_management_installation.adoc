@@ -5,29 +5,31 @@
 
 After installing ownCloud, you may provide added functionality by installing applications.
 
-== Supported Apps
+== Installing and Managing Apps
 
-See xref:installation/apps_supported.adoc[supported apps] for a list of supported Enterprise edition apps.
-
-== Viewing Enabled Apps
+=== Managing Apps
 
 Some apps are installed and enabled during ownCloud installation. 
 Other apps can be installed and enabled later on. 
-To see the status of your installation's applications, go to your Apps page.
+To see the status of your installation's applications, go to your Apps page, via menu:Settings[Admin > Settings].
 
 image:oc_admin_apps.png[Apps page for enabling and disabling apps.]
 
 There, you will see which apps are currently: _enabled_, _not enabled_, and _recommended_. 
 You'll also see additional filters, such as _Multimedia_, _Productivity_, and _Tool_ for finding more apps quickly.
 
-== Managing Apps
+[NOTE]
+====
+*Supported Enterprise Apps*
+See xref:installation/apps_supported.adoc[supported apps] for a list of supported Enterprise edition apps.
+====
 
-On the Apps page (menu:[Settings > Admin > Apps]), you can enable or disable applications. 
+On the Apps page (menu:Settings[Admin > Apps]), you can enable or disable applications. 
 Some apps have configurable options on the Apps page, such as *Enable only for specific groups*. 
 However, this is the exception.
 Apps are mainly configured from your ownCloud Personal or Admin settings page, or in `config.php`.
 
-== Installing Apps
+=== Installing Apps Via the ownCloud Marketplace
 
 To add an app, use the Market app, which is accessible from the top-level navigation bar on the left-hand side of the page. 
 Once in the Market, click an app's name to view more details about it.
@@ -39,6 +41,28 @@ When `appcodechecker` is enabled, it checks if third-party apps are using the pr
 If they are, they are not installed.
 
 NOTE: If you would like to create or add (your own) ownCloud app, please refer to the xref:developer_manual:app/introduction.adoc[developer manual].
+
+To install an app manually instead of by using {marketplace-url}[the ownCloud Marketplace], copy the app either into ownCloud’s default app folder (`</path/to/owncloud>/apps`) or xref:using-custom-app-directories[a custom app folder].
+
+Be aware that the name of the app and its folder name *must be identical*! 
+You can find these details in the application's metadata file, located in `<app directory>/appinfo/info.xml`.
+
+Using the example below, both the app's name and directory name would be `yourappname`.
+
+[source,xml]
+----
+include::{examplesdir}installation/appinfo.xml[]
+----
+
+=== Installing Apps Manually
+
+In addition to the using the ownCloud Marketplace, apps can be installed manually.
+To do so, place the app in one of your ownCloud’s app directories, ideally a custom app directory and then follow the instructions below:
+
+. Run `composer install` inside the app’s directory.
+. Enable the app via either:
+** Navigating to menu:Settings[Admin > Apps] and clicking btn:[Enable]; or 
+** Using xref:configuration/server/occ_command.adoc#app-command[the occ app command].
 
 == Using Custom App Directories
 
@@ -56,11 +80,11 @@ If you want to store apps in a custom directory, instead of ownCloud's default (
 There, you need to add a new associative array that contains three elements. 
 These are:
 
-* `path`: The absolute file system path to the custom app folder.
-* `url`: The request path to that folder relative to the ownCloud webroot, prefixed with `/`.
-* `writable`: Whether users can install apps in that folder. 
-After adding the configuration, ownCloud only installs apps in directories where `writable` is set to `true`.
+`path`:: The absolute file system path to the custom app folder.
+`url`:: The request path to that folder relative to the ownCloud webroot, prefixed with `/`.
+`writable`:: Whether users can install apps in that folder. 
 
+After adding the configuration, ownCloud only installs apps in directories where `writable` is set to `true`.
 The configuration example below shows how to add a second directory, called `apps-external`.
 
 [source,php]
@@ -77,19 +101,5 @@ To do so, follow these steps:
 . Move the apps from the old apps directory to the new apps directory.
 . Add a new app directory in `config/config.php`.
 . If you’re using a cache, such as xref:configuration/server/caching_configuration.adoc#clearing-the-redis-cache[Redis] or xref:configuration/server/caching_configuration.adoc#clearing-the-memcached-cache[Memcached], ensure that you clear the cache.
-. Re-enable the apps.
-. Disable maintenance mode.
-
-== Manually Installing Apps
-
-To install an app manually instead of by using https://marketplace.owncloud.com[the Marketplace], copy the app either into ownCloud’s default app folder (`</path/to/owncloud>/apps`) or xref:using-custom-app-directories[a custom app folder].
-
-Be aware that the name of the app and its folder name *must be identical*! 
-You can find these details in the application's metadata file, located in `<app directory>/appinfo/info.xml`.
-
-Using the example below, both the app's name and directory name would be `yourappname`.
-
-[source,xml]
-----
-include::{examplesdir}installation/appinfo.xml[]
-----
+. xref:configuration/server/occ_command.adoc#apps-commands[Re-enable the apps].
+. xref:configuration/server/occ_command.adoc#maintenance-commands[Disable maintenance mode].
