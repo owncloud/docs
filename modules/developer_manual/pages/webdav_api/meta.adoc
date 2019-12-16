@@ -1,0 +1,66 @@
+= Meta API
+:toc: right
+// Attributes for the core details include
+:request_path: remote.php/dav/meta/<fileid> 
+:method: PROPFIND
+:content_type: text/xml
+:report-request-uri: https://tools.ietf.org/html/rfc3253#section-3.6
+:libxml-url: http://www.xmlsoft.org
+:http207-url: https://httpstatuses.com/207
+:http404-url: https://httpstatuses.com/404
+
+== Introduction
+
+An authenticated `PROPFIND` request to `{request_path}` returns the path to a file/folder for the logged in user.
+
+include::{partialsdir}/webdav_api/core_request_details.adoc[leveloffset=+1]
+
+== Example Request
+
+[source,console,subs="attributes+"]
+----
+curl -u {oc-examples-username}:{oc-examples-password} \
+  -X PROPFIND \
+  -H "Content-Type: text/xml" \
+  '{oc-examples-server-url}/remote.php/dav/meta/15' | xmllint --format -
+----
+
+TIP: The example above uses xmllint, available in {libxml-url}[the libxml2 package] to make the response easier to read.
+
+If you want to filter the information returned, use the `--data` switch, passing in the name of the file containing an appropriately configured PROPFIND XML element, as in the example below.
+
+[source,console,subs="attributes+"]
+----
+curl -u {oc-examples-username}:{oc-examples-password} \
+  -X PROPFIND \
+  -H "Content-Type: text/xml" \
+  --data "@report-propfind.xml" \
+  '{oc-examples-server-url}/remote.php/dav/meta/15' | xmllint --format -
+----
+
+Here is an example of a PROPFIND XML file:
+
+[source,xml]
+----
+include::{examplesdir}/core/webdav_api/meta/report-propfind.xml[]
+----
+
+== Responses
+
+=== Success
+
+If the file of folder is found, then a response similar to the following will be returned with an {http207-url}[HTTP/1.1 207 Multi-Status] status:
+
+[source,xml]
+----
+include::{examplesdir}/core/webdav_api/meta/response-success.xml[]
+----
+
+=== Failure
+
+If the file is not found, then the following response will be returned with an {http404-url}[HTTP/1.1 404 Not Found] status:
+
+[source,xml]
+----
+include::{examplesdir}/core/webdav_api/meta/response-failure.xml[]
+----
