@@ -100,6 +100,22 @@ The SQLite database is also stored here, when you use SQLite.
 'datadirectory' => '/var/www/owncloud/data',
 ....
 
+=== Define the directory where the crash logs will be stored.
+
+By default, this will be the same as the one configured as "datadirectory".
+The directory MUST EXIST and be WRITABLE by the web server.
+Note that crashes are extremely rare (although they can come in burst due to
+multiple requests), so the default location is usually fine.
+Also note that the log can contain sensitive information, but it should be useful
+to pinpoint where is the problem.
+
+==== Code Sample
+
+[source,php]
+....
+'crashdirectory' => '/var/www/owncloud/data',
+....
+
 === Current version number of your ownCloud installation
 This is set up during installation and update, so you shouldn't need to change it.
 
@@ -391,7 +407,7 @@ IMAP (OC_User_IMAP), SMB (OC_User_SMB), and FTP (OC_User_FTP).
 'user_backends' => [
 	[
 		'class' => 'OC_User_IMAP',
-		'arguments' => ['{imap.gmail.com:993/imap/ssl}INBOX')]
+		'arguments' => ['{imap.gmail.com:993/imap/ssl}INBOX']
 	]
   ],
 ....
@@ -1696,9 +1712,25 @@ WARNING: USE THIS ONLY IF YOU KNOW WHAT YOU ARE DOING.
   ],
 ....
 
-=== Define excluded files
+=== Define blacklisted files regular expression(s)
+Blacklist files that match any of the given regular expressions and disallow
+the upload of those files. The matching is case-insensitive.
+
+WARNING: USE THIS ONLY IF YOU KNOW WHAT YOU ARE DOING.
+
+==== Code Sample
+
+[source,php]
+....
+'blacklisted_files_regex' => [
+	'.*\.ext',
+	'^somefilename.*'
+  ],
+....
+
+=== Define excluded directories
 Exclude specific directory names and disallow scanning, creating and renaming
-using these names. Case insensitive.
+using these names. The matching is case insensitive.
 
 Excluded directory names are queried at any path part like at the beginning,
 in the middle or at the end and will not be further processed if found.
@@ -1714,6 +1746,28 @@ WARNING: USE THIS ONLY IF YOU KNOW WHAT YOU ARE DOING.
 'excluded_directories' => [
 	'.snapshot',
 	'~snapshot',
+  ],
+....
+
+=== Define excluded directories regular expression(s)
+Exclude directory names that match any of the given regular expressions and
+disallow scanning, creating and renaming using these names. The matching is
+case insensitive.
+
+Excluded directory names are queried at any path part like at the beginning,
+in the middle or at the end and will not be further processed if found.
+Please see the documentation for details and examples.
+Use when the storage backend supports, e.g. snapshot directories to be excluded.
+
+WARNING: USE THIS ONLY IF YOU KNOW WHAT YOU ARE DOING.
+
+==== Code Sample
+
+[source,php]
+....
+'excluded_directories_regex' => [
+	'^backup.*',
+	'.*backup$',
   ],
 ....
 
@@ -1735,12 +1789,12 @@ Exclude files from the integrity checker command
 ....
 
 === Define apps or themes that are excluded from integrity checking
-The list of apps that are allowed to have no signature.json. Besides
-ownCloud apps, this is particularly useful when creating ownCloud themes,
-because themes are treated as apps. The app is identified with it´s app-id.
+The list of apps that are allowed and must not have a signature.json file present.
 
+Besides ownCloud apps, this is particularly useful when creating ownCloud themes,
+because themes are treated as apps. The app is identified with it´s app-id.
 The app-id can be identified by the foldername of the app in your apps directory.
-The following example allows app-1 and theme-2 to have no signature.
+The following example allows app-1 and theme-2 to have no signature.json file.
 
 ==== Code Sample
 
