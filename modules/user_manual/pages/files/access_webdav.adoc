@@ -148,7 +148,7 @@ mkdir ~/.davfs2
 ----
 sudo cat /etc/davfs2/secrets > ~/.davfs2/secrets
 ----
-. Make the permissions read-write owner only:
+. Make the permissions read/write for the owner only:
 +
 ----
 chmod 600 ~/.davfs2/secrets
@@ -158,6 +158,8 @@ chmod 600 ~/.davfs2/secrets
 ----
 /home/<username>/owncloud <username> <password>
 ----
++ 
+TIP: For more information about the file and it’s supported options, run `man 5 davfs2.conf` to access the file's man page.
 . Add the mount information to `/etc/fstab`:
 +
 ----
@@ -179,7 +181,7 @@ Now, every time you boot your Linux system your ownCloud share will automaticall
 
 [IMPORTANT]
 ====
-If the share is set to mount automatically and (_for whatever reason_) your ownCloud server fails to start, your server will fail to properly boot.
+If the share is configured to mount automatically and (_for whatever reason_) the remote WebDAV share cannot be mounted, your server will fail to properly boot, likely leading to it entering some form of recovery mode.
 When this happens, you may see boot-time errors, such as the following:
 
 [source,console]
@@ -196,7 +198,7 @@ Cannot open access to console, the root account is locked.
 Press Enter to continue.
 ----
 
-For that reason, it may be better to instead always set the partition to `noauto` and mount the partition toward the end of the boot process.
+For that reason, it may be better to instead always set the partition to `noauto` and mount the partition toward the end of the boot process or at login time.
 To find out more information about mounting partitions toward the end of the boot process in either SysVInit or systemd, please refer to the links below:
 
 - https://fedoramagazine.org/systemd-unit-dependencies-and-order/[systemd: Unit dependencies and order]
