@@ -1,28 +1,48 @@
 = Migrating User Key Encryption to Master Key Encryption
 :toc: right
+:experimental:
+:announcementcenter_url: https://marketplace.owncloud.com/apps/announcementcenter
 
-== Why Should I Move Away From User Key-based Encryption?
+== Why Should You Move Away From User Key-based Encryption?
 
-NOTE: User key-based encryption is planned to be removed from ownCloud in the next generation: ownCloud Infinite Scale.
+NOTE: User key-based encryption is planned to be removed from ownCloud in the near future.
 As an existing customer, you will be able to continue to use this solution as long as ownCloud 10.x is supported.
 
 While it is a bit more secure than a central encryption approach, User key-based encryption has some disadvantages. 
 It blocks some additional functions such as the integration of an online editor like LibreOffice or OnlyOffice into ownCloud and can cause problems when sharing files with groups. 
+See xref:configuration/files/encryption/encryption_configuration.adoc#limitations-of-user-key-based-encryption[Limitations of User-Key Based Encryption] for more details.
 Therefore Master-key-based encryption is now the recommended setup for all new installations.
 
-The decryption workflow described here works for both MySQL and SQLite based databases. It will only work when users have enabled the password recovery. Moreover, an admin recovery password needs to be activated and available for the ownCloud administrator.
+== Pre-Conditions
 
-If you need to migrate from User Key-based to Master Key-based encryption, there are several steps that you need to follow to ensure a smooth and complete transition:
+The decryption workflow described here will only work with the following pre-conditions:
+
+* The admin recovery key password is activated and available to the ownCloud administrator
+* Users have opted-in to enable the admin recovery key password
+* The recovery key password has been supplied by the admin on the users page
+
+Please see xref:configuration/files/encryption/encryption_configuration.adoc#how-to-enable-users-file-recovery-keys[How To Enable Users File Recovery Keys] for more details.
+
+NOTE: A notification to the users (e.g. through the {announcementcenter_url}[announcement app]) prior to the migration process is recommended,
+as the instance will not be available during task.
+
+== Steps to Migrate from User Key-based to Master Key-based Encryption
+
+There are several steps that you need to follow to ensure a smooth and complete transition:
 
 . xref:disable-user-key-based-encryption[Disable User Key-based encryption]
 . xref:remove-the-encryption-records-from-the-owncloud-database[Remove the encryption records from the ownCloud database]
 . xref:remove-the-files_encryption-directory[Remove the `files_encryption` directory]
 . xref:encrypt-the-filesystem-using-master-key-based-encryption[Encrypt the filesystem using Master Key-based encryption]
 
-== Disable User Key-based Encryption
+=== Disable User Key-based Encryption
 
 The first part of the migration process is to decrypt all files and to disable encryption in ownCloud, which requires three commands to be executed.
-These commands are: xref:configuration/server/occ_command.adoc#encryption[`occ encryption:decrypt-all` and `occ encryption:disable`], and xref::configuration/server/occ_command.adoc#apps-commands[`occ app:disable`].
+These commands are:
+
+. xref:configuration/server/occ_command.adoc#encryption[`occ encryption:decrypt-all`],
+. xref:configuration/server/occ_command.adoc#encryption[`occ encryption:disable`] and
+. xref::configuration/server/occ_command.adoc#apps-commands[`occ app:disable`].
 
 You can see an example of calling the commands listed below, configured to require no user interaction.
 
@@ -36,52 +56,42 @@ You can see an example of calling the commands listed below, configured to requi
 NOTE: The decryption of the files by the ownCloud administrator requires the current passwords of all users!
 This only works when users have enabled password recovery and if an admin recovery password is available.
 
-== Remove the Encryption Records from the ownCloud Database
+=== Remove the Encryption Records from the ownCloud Database
 
 Once your ownCloud files are unencrypted, and encryption has been disabled, you need to remove the encryption records from the database.
 There is, currently, no `occ` command to handle this, so it has to be done manually.
 Specifically, you need to remove all records from the `oc_appconfig` table where the `appid` column is set to `encryption`.
 
-In the examples below you can see how to do this using the SQLite database.
-If you are not using SQLite, please use the commands specific to your database vendor.
+In the examples below you can see how to do this using MySQL.
+If you are not using MySQL, please use the commands specific to your database vendor.
 
-NOTE: The example code assumes that the path to the SQLite database is
-`<YOUR/OWNCLOUD/ROOT/DIRECTORY>data/owncloud.database`.
-
-[source,console]
-----
-sudo sqlite3 data/owncloud.database
-sqlite> delete from oc_appconfig where appid='encryption';
-sqlite> select * from oc_appconfig where appid='encryption';
-----
-
-Same for mysql:
-
+[source,sql]
 ----
 SELECT * FROM `oc_appconfig` WHERE `appid` LIKE 'encryption'
 ----
 
-== Remove the `files_encryption` Directory
+=== Remove the `files_encryption` Directory
 
 With the database updated, next, the `files_encryption` directory needs to be removed.
 Below is an example of how to do so, to save you time.
 
 [source,console]
 ----
+cd <your owncloud root directory>
 find ./data* -name files_encryption -exec rm -rvf {} \;
 ----
 
-== Encrypt the Filesystem Using Master Key-based Encryption
+=== Encrypt the Filesystem Using Master Key-based Encryption
 
 Now, your ownCloud files can be encrypted using Master Key-based encryption.
 This requires the following steps:
 
 . The encryption app needs to be enabled
 . Encryption needs to be enabled
-. The encryption type needs to be set to master key
+. The encryption type needs to be set to btn:[Master Key]
 . The ownCloud filesystem can be re-encrypted.
 
-The following example shows how to do this.
+The following example shows how to do this on the command line.
 
 [source,console,subs="attributes+"]
 ----
@@ -97,10 +107,9 @@ With the files encrypted using Master Key-based encryption, you should now verif
 To do so, run a `SELECT` query in your database which returns all files from the `oc_appconfig` table where the `appid` column is set to `encryption`.
 You should see a number of records, as in the output of the example below.
 
-[source,console]
+[source,sql]
 ----
-sudo sqlite3 data/owncloud.database
-sqlite> select * from oc_appconfig where appid='encryption';
+select * from `oc_appconfig` where appid='encryption';
 encryption|recoveryKeyId|recoveryKey_73facda6
 encryption|publicShareKeyId|pubShare_73facda6
 encryption|masterKeyId|master_73facda6
@@ -111,3 +120,7 @@ encryption|useMasterKey|1
 ----
 
 include::{partialsdir}/configuration/server/disable-single-user-mode.adoc[leveloffset=+1]
+
+== Post Note
+
+NOTE: It is possible, that after migration, some or all users see a re-synchronisation of their data from the server to the desktop client - especially for shared folders.
