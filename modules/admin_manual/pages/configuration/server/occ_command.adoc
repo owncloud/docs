@@ -2784,24 +2784,49 @@ Usage:
 
 [source,console]
 ----
-maintenance:install [--database=["..."]] [--database-name=["..."]] \
-                    [--database-host=["..."]] [--database-user=["..."]] \
-                    [--database-pass=["..."]] [--database-table-prefix=["..."]] \
-                    [--admin-user=["..."]] [--admin-pass=["..."]] [--data-dir=["..."]]
+maintenance:install [--database=["..."]] [--database-connection-string=["..."]] \
+                    [--database-name=["..."]] [--database-host=["..."]] \
+                    [--database-user=["..."]] [--database-pass=["..."]] \ 
+                    [--database-table-prefix=["..."]] [--admin-user=["..."]] \
+                    [--admin-pass=["..."]] [--data-dir=["..."]]
 ----
 
 ===== Options
 
 [width="100%",cols="22%,70%",]
 |===
-| `--database`               | Supported database type (default: `sqlite`).
-| `--database-name`          | Name of the database.
-| `--database-host`          | Hostname of the database (default: `localhost`).
-| `--database-user`          | User name to connect to the database.
-| `--database-pass`          | Password of the database user.
-| `--database-table-prefix`  | Prefix for all tables (default: `oc_` ).
-| `--admin-user`             | Password of the admin account.
-| `--data-dir`               | Path to data directory (default: `/var/www/owncloud/data`).
+| `--database`                   
+| Supported database type (default: `sqlite`).
+| `--database-connection-string` 
+a| An Oracle-specific connection string. 
+
+NOTE: As soon as this parameter is provided, other parameters like database-host and database-name are not used and do not need to be provided.
+For example:
+
+*Example*
+
+[source,console]
+----
+sales=
+ (DESCRIPTION= 
+  (ADDRESS= (PROTOCOL=tcp)(HOST=sales-server)(PORT=1521))
+  (CONNECT_DATA= 
+     (SERVICE_NAME=sales.us.acme.com)))
+----
+| `--database-name`          
+| Name of the database.
+| `--database-host`          
+| Hostname of the database (default: `localhost`).
+| `--database-user`          
+| User name to connect to the database.
+| `--database-pass`          
+| Password of the database user.
+| `--database-table-prefix`  
+| Prefix for all tables (default: `oc_` ).
+| `--admin-user`             
+| Password of the admin account.
+| `--data-dir`               
+| Path to data directory (default: `/var/www/owncloud/data`).
 |===
 
 This example completes the installation:
