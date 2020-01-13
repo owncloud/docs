@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<info>
+    <!-- Mandatory fields -->
+    <id>yourapp</id>
+    <name>Your App</name>
+    <description>A description of your application</description>
+    <version>1.0</version>
+    <licence>AGPL</licence>
+    <screenshot small-thumbnail="https://raw.githubusercontent.com/foo/yourapp/master/screenshots/thumb.png"
+        >https://raw.githubusercontent.com/foo/yourapp/master/screenshots/big.png</screenshot>
+    <!-- Category values available at: https://marketplace.owncloud.com/ajax/categories -->
+    <category>A category for the application. </category>
+    <summary>A summary of your application's purpose (max 90 chars)</summary>
+
+    <types>
+        <filesystem/>
+    </types>
+
+    <documentation>
+        <user>https://doc.owncloud.com/server/latest/user_manual/pim/contacts.html</user>
+        <admin>https://doc.owncloud.com/server/latest/admin_manual/configuration_server/occ_command.html?highlight=contact#dav-commands</admin>
+        <developer>https://github.com/owncloud/contacts/blob/master/README.md</developer>
+    </documentation>
+
+    <author>Your Name</author>
+    <namespace>YourAppNamespace</namespace>
+    <website>https://owncloud.org</website>
+    <bugs>https://github.com/owncloud/yourapp/issues</bugs>
+    <repository type="git">https://github.com/owncloud/yourapp.git</repository>
+
+    <dependencies>
+        <php min-version="5.4" max-version="5.5"/>
+        <database>sqlite</database>
+        <database>mysql</database>
+        <command os="linux">grep</command>
+        <command os="windows">notepad.exe</command>
+        <lib min-version="1.2">xml</lib>
+        <lib max-version="2.0">intl</lib>
+        <lib>curl</lib>
+        <os>Linux</os>
+        <owncloud min-version="6.0.4" max-version="8"/>
+    </dependencies>
+
+	<repair-steps>
+		<install>
+			<step>OCA\YourAppNamespace\FilesEncryption\Migration\Install</step>
+		</install>
+		<pre-migration>
+			<step>OCA\YourAppNamespace\FilesEncryption\Migration\PreMigration</step>
+		</pre-migration>
+		<post-migration>
+			<step>OCA\YourAppNamespace\FilesEncryption\Migration\PostMigration</step>
+		</post-migration>
+		<live-migration>
+			<step>OCA\YourAppNamespace\FilesEncryption\Migration\LiveMigration</step>
+		</live-migration>
+		<uninstall>
+			<step>OCA\YourAppNamespace\FilesEncryption\Migration\Uninstall</step>
+		</uninstall>
+	</repair-steps>
+
+    <!-- For registering panels -->
+    <settings>
+        <admin>OCA\YourAppNamespace\Settings\Admin</admin>
+        <personal>OCA\YourAppNamespace\Settings\Personal</personal>
+    </settings>
+
+    <!-- For registering settings sections -->
+    <settings-sections>
+        <admin>OCA\YourAppNamespace\Settings\AdminSection</admin>
+        <personal>OCA\YourAppNamespace\Settings\PersonalSection</personal>
+    </settings-sections>
+
+    <!-- deprecated, but kept for reference -->
+    <public>
+        <file id="caldav">appinfo/caldav.php</file>
+    </public>
+    <remote>
+        <file id="caldav">appinfo/caldav.php</file>
+    </remote>
+    <standalone />
+    <default_enable />
+    <shipped>true</shipped>
+    <!-- end deprecated -->
+</info>
