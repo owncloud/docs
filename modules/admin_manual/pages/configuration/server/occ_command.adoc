@@ -3,6 +3,8 @@
 :toclevels: 2
 :page-aliases: configuration/server/occ_app_command.adoc,go/admin-cli-upgrade.adoc
 :php-datetime-url: https://php.net/manual/de/datetime.formats.php
+:hsm-overview-url: https://www.cryptomathic.com/news-events/blog/understanding-hardware-security-modules-hsms
+:owncloud-support-url: https://owncloud.com/licenses/owncloud-support-maintenance/
 
 ownCloud's `occ` command (ownCloud console) is ownCloud's command-line interface. 
 You can perform many common server operations with `occ`, such as installing and upgrading ownCloud, managing users and groups, encryption, passwords, LDAP setting, and more.
@@ -483,6 +485,7 @@ encryption
  encryption:enable                   Enable encryption
  encryption:encrypt-all              Encrypt all files for all users
  encryption:fix-encrypted-version    Fix the encrypted version if the encrypted file(s) are not downloadable.
+ encryption:hsmdaemon                hsmdaemon tool
  encryption:list-modules             List all available encryption modules
  encryption:migrate                  initial migration to encryption 2.0
  encryption:recreate-master-key      Replace existing master key with new one. Encrypt the file system with
@@ -617,6 +620,32 @@ See xref:configuration/files/encryption/encryption_configuration.adoc[encryption
 Given the size of your ownCloud filesystem, this may take some time to complete. 
 However, if your filesystem is quite small, then it will complete quite quickly. 
 The `-y` switch can be supplied to automate acceptance of user input.
+
+==== hsmdaemon
+
+`encryption:hsmdaemon` provides the ability to interact with an {hsm-overview-url}[hsm (Hardware Security Module)] which is integrated with ownCloud.
+
+NOTE: This command requires ownCloud to be integrated with xref:configuration/server/security/hsmdaemon/index.adoc[hsmdaemon], which requires ownCloud Enterprise Edition >= 10.2.
+For more information about hsmdaemon, please contact {owncloud-support-url}[ownCloud support].
+
+===== Usage
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} encryption:hsmdaemon [options]
+----
+
+===== Options
+
+[width="100%",cols="40%,60%",]
+|===
+| `--export-masterkey` 
+a| This command exports the base64-encoded representation of the private key in the ownCloud instance (not the one in the HSM). 
+
+NOTE: The private key has the id of the private key in the HSM device. 
+| `--decrypt <value to decrypt>` 
+| Decrypt a base64-encoded value.
+|===
 
 === Federation Sync
 
