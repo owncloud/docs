@@ -1,0 +1,31 @@
+= Config Reports
+
+If you're working with ownCloud support and need to send them a configuration summary, you can generate it using the `configreport:generate` command.
+This command generates the same JSON-based report as the Admin Config Report, which you can access under `admin -> Settings -> Admin -> General -> Generate Config Report -> Download ownCloud config report`.
+
+From the command-line in the root directory of your ownCloud installation, run it as your webserver user as follows, (assuming your webserver user is `www-data`):
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} configreport:generate
+----
+
+This will generate the report and send it to `STDOUT`. 
+You can optionally pipe the output to a file and then attach it to an email to ownCloud support, by running the following command:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} configreport:generate > generated-config-report.txt
+----
+
+Alternatively, you could generate the report and email it all in one command, by running:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} configreport:generate | mail \
+    -s "configuration report" \
+    -r <the email address to send from> \
+    support@owncloud.com
+----
+
+NOTE: These commands are not available in xref:maintenance-commands[single-user (maintenance) mode].

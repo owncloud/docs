@@ -1,0 +1,100 @@
+= App Commands
+
+The `app` commands list, enable, and disable apps.
+
+[source,console]
+----
+app
+ app:check-code   check code to be compliant
+ app:disable      disable an app
+ app:enable       enable an app
+ app:getpath      Get an absolute path to the app directory
+ app:list         List all available apps
+----
+
+== List Available Apps
+
+List all of your installed apps or optionally provide a search pattern to restrict the list of apps to those whose name matches the given regular expression. 
+The output shows whether they are enabled or disabled.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} app:list [--] [<search-pattern>]
+----
+
+=== Arguments
+
+[width="100%",cols="20%,70%",]
+|===
+| `search-pattern` 
+| Show only those apps whose names match the given search pattern (regular expression).
+|===
+
+=== Options
+
+[width="100%",cols="20%,70%",]
+|===
+| --disabled
+| Only display disabled apps. If the app was previously enabled, the app version is also displayed.
+When used, the output will contain the app's version number as well, _if_ it was previously enabled.
+| --enabled
+| Only display enabled apps.
+When used, the output will contain the app's version number as well.
+| --output[=OUTPUT]
+| The output format to use (`plain`, `json` or `json_pretty`). [default: "plain"]
+| --shipped=<SHIPPED>
+| If `SHIPPED` is set to `true`, only shipped apps will be listed.
+If `SHIPPED` is set to `false`, only non-shipped apps will be listed.
+|===
+
+== Enable an App
+
+Enable an app, for example the Market app.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} app:enable market
+market enabled
+----
+
+== Disable an App
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} app:disable market
+market disabled
+----
+
+NOTE: Be aware that the following apps cannot be disabled: _DAV_, _FederatedFileSharing_, _Files_ and _Files_External_.
+
+`app:check-code` has multiple checks: it checks if an app uses ownCloud's public API (`OCP`) or private API (`OC_`), and it also checks for deprecated methods and the validity of the `info.xml` file. 
+By default all checks are enabled. 
+The Activity app is an example of a correctly-formatted app.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} app:check-code notifications
+App is compliant - awesome job!
+----
+
+If your app has issues, you'll see output like this.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} app:check-code foo_app
+Analysing /var/www/owncloud/apps/files/foo_app.php
+4 errors
+   line   45: OCP\Response - Static method of deprecated class must not be called
+   line   46: OCP\Response - Static method of deprecated class must not be called
+   line   47: OCP\Response - Static method of deprecated class must not be called
+   line   49: OC_Util - Static method of private class must not be called
+----
+
+You can get the full file path to an app.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} app:getpath notifications
+/var/www/owncloud/apps/notifications
+----
+
