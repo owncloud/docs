@@ -1,0 +1,29 @@
+= Troubleshooting
+
+If you have encountered an issue, here is what customer support needs in order to provide a rapid resolution to your issue:
+
+. The appliance’s log file located (`/var/lib/univention-appcenter/apps/owncloud/data/files/owncloud.log`)
+. A config report. 
+. The status of your docker containers.
+. The status of your appliance.
+. Docker log files.
+
+Here is how to retrieve all of the information above:
+
+[source,console]
+----
+# Generate a config report. 
+# Log in to the container with: univention-app shell owncloud
+occ configreport:generate > config_report.json
+
+# Obtain the status of your docker containers 
+docker ps > docker.txt 
+
+# Obtain the status of your appliance 
+univention-app info > univention.txt
+
+# Obtain the Docker log files 
+docker logs <containerID or container name> 
+----
+
+IMPORTANT: Restore a snapshot to get your appliance to a functional state again.
