@@ -3,6 +3,8 @@
 :toclevels: 2
 :page-aliases: configuration/server/occ_app_command.adoc,go/admin-cli-upgrade.adoc
 :php-datetime-url: https://php.net/manual/de/datetime.formats.php
+:hsm-overview-url: https://www.cryptomathic.com/news-events/blog/understanding-hardware-security-modules-hsms
+:owncloud-support-url: https://owncloud.com/licenses/owncloud-support-maintenance/
 
 ownCloud's `occ` command (ownCloud console) is ownCloud's command-line interface. 
 You can perform many common server operations with `occ`, such as installing and upgrading ownCloud, managing users and groups, encryption, passwords, LDAP setting, and more.
@@ -164,13 +166,42 @@ app
  app:list         List all available apps
 ----
 
+==== List Available Apps
+
 List all of your installed apps or optionally provide a search pattern to restrict the list of apps to those whose name matches the given regular expression. 
 The output shows whether they are enabled or disabled.
 
 [source,console,subs="attributes+"]
 ----
-{occ-command-example-prefix} app:list [<search-pattern>]
+{occ-command-example-prefix} app:list [--] [<search-pattern>]
 ----
+
+===== Arguments
+
+[width="100%",cols="20%,70%",]
+|===
+| `search-pattern` 
+| Show only those apps whose names match the given search pattern (regular expression).
+|===
+
+===== Options
+
+[width="100%",cols="20%,70%",]
+|===
+| --disabled
+| Only display disabled apps. If the app was previously enabled, the app version is also displayed.
+When used, the output will contain the app's version number as well, _if_ it was previously enabled.
+| --enabled
+| Only display enabled apps.
+When used, the output will contain the app's version number as well.
+| --output[=OUTPUT]
+| The output format to use (`plain`, `json` or `json_pretty`). [default: "plain"]
+| --shipped=<SHIPPED>
+| If `SHIPPED` is set to `true`, only shipped apps will be listed.
+If `SHIPPED` is set to `false`, only non-shipped apps will be listed.
+|===
+
+==== Enable an App
 
 Enable an app, for example the Market app.
 
@@ -180,7 +211,7 @@ Enable an app, for example the Market app.
 market enabled
 ----
 
-Disable an app.
+==== Disable an App
 
 [source,console,subs="attributes+"]
 ----
@@ -483,6 +514,7 @@ encryption
  encryption:enable                   Enable encryption
  encryption:encrypt-all              Encrypt all files for all users
  encryption:fix-encrypted-version    Fix the encrypted version if the encrypted file(s) are not downloadable.
+ encryption:hsmdaemon                hsmdaemon tool
  encryption:list-modules             List all available encryption modules
  encryption:migrate                  initial migration to encryption 2.0
  encryption:recreate-master-key      Replace existing master key with new one. Encrypt the file system with
@@ -617,6 +649,32 @@ See xref:configuration/files/encryption/encryption_configuration.adoc[encryption
 Given the size of your ownCloud filesystem, this may take some time to complete. 
 However, if your filesystem is quite small, then it will complete quite quickly. 
 The `-y` switch can be supplied to automate acceptance of user input.
+
+==== hsmdaemon
+
+`encryption:hsmdaemon` provides the ability to interact with an {hsm-overview-url}[hsm (Hardware Security Module)] which is integrated with ownCloud.
+
+NOTE: This command requires ownCloud to be integrated with xref:configuration/server/security/hsmdaemon/index.adoc[hsmdaemon], which requires ownCloud Enterprise Edition >= 10.2.
+For more information about hsmdaemon, please contact {owncloud-support-url}[ownCloud support].
+
+===== Usage
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} encryption:hsmdaemon [options]
+----
+
+===== Options
+
+[width="100%",cols="40%,60%",]
+|===
+| `--export-masterkey` 
+a| This command exports the base64-encoded representation of the private key in the ownCloud instance (not the one in the HSM). 
+
+NOTE: The private key has the id of the private key in the HSM device. 
+| `--decrypt <value to decrypt>` 
+| Decrypt a base64-encoded value.
+|===
 
 === Federation Sync
 
@@ -2784,24 +2842,49 @@ Usage:
 
 [source,console]
 ----
-maintenance:install [--database=["..."]] [--database-name=["..."]] \
-                    [--database-host=["..."]] [--database-user=["..."]] \
-                    [--database-pass=["..."]] [--database-table-prefix=["..."]] \
-                    [--admin-user=["..."]] [--admin-pass=["..."]] [--data-dir=["..."]]
+maintenance:install [--database=["..."]] [--database-connection-string=["..."]] \
+                    [--database-name=["..."]] [--database-host=["..."]] \
+                    [--database-user=["..."]] [--database-pass=["..."]] \ 
+                    [--database-table-prefix=["..."]] [--admin-user=["..."]] \
+                    [--admin-pass=["..."]] [--data-dir=["..."]]
 ----
 
 ===== Options
 
 [width="100%",cols="22%,70%",]
 |===
-| `--database`               | Supported database type (default: `sqlite`).
-| `--database-name`          | Name of the database.
-| `--database-host`          | Hostname of the database (default: `localhost`).
-| `--database-user`          | User name to connect to the database.
-| `--database-pass`          | Password of the database user.
-| `--database-table-prefix`  | Prefix for all tables (default: `oc_` ).
-| `--admin-user`             | Password of the admin account.
-| `--data-dir`               | Path to data directory (default: `/var/www/owncloud/data`).
+| `--database`                   
+| Supported database type (default: `sqlite`).
+| `--database-connection-string` 
+a| An Oracle-specific connection string. 
+
+NOTE: As soon as this parameter is provided, other parameters like database-host and database-name are not used and do not need to be provided.
+For example:
+
+*Example*
+
+[source,console]
+----
+sales=
+ (DESCRIPTION= 
+  (ADDRESS= (PROTOCOL=tcp)(HOST=sales-server)(PORT=1521))
+  (CONNECT_DATA= 
+     (SERVICE_NAME=sales.us.acme.com)))
+----
+| `--database-name`          
+| Name of the database.
+| `--database-host`          
+| Hostname of the database (default: `localhost`).
+| `--database-user`          
+| User name to connect to the database.
+| `--database-pass`          
+| Password of the database user.
+| `--database-table-prefix`  
+| Prefix for all tables (default: `oc_` ).
+| `--admin-user`             
+| Password of the admin account.
+| `--data-dir`               
+| Path to data directory (default: `/var/www/owncloud/data`).
 |===
 
 This example completes the installation:
