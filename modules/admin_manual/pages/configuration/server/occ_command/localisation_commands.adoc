@@ -1,0 +1,57 @@
+= l10n, Create Javascript Translation Files for Apps
+
+This command creates JavaScript and JSON translation files for ownCloud applications.
+
+NOTE: The command does not update existing translations if the source translation file has been updated. 
+It only creates translation files when none are present for a given language.
+
+[source,console]
+----
+l10n
+  l10n:createjs                Create Javascript translation files for a given app
+----
+
+The command takes two parameters; these are:
+
+* `app`: the name of the application.
+* `lang`: the output language of the translation files; more than one can be supplied.
+
+To create the two translation files, the command reads translation data from a source PHP translation file.
+
+== A Working Example
+
+In this example, we'll create Austrian German translations for the Comments app.
+
+NOTE: This example assumes that the ownCloud directory is `/var/www/owncloud` and that it uses ownCloud's standard apps directory, `app`.
+
+First, create a source translation file in `/var/www/owncloud/apps/comments/l10n`, called `de_AT.php`. 
+In it, add the required translation strings, as in the following example.
+Refer to the developer documentation on xref:developer_manual:app/advanced/l10n.adoc#creating-your-own-translatable-files[creating translation files], if you're not familiar with creating them.
+
+[source,php]
+----
+<?php
+// The source string is the key, the translated string is the value.
+$TRANSLATIONS = [
+  "Share" => "Freigeben"
+];
+$PLURAL_FORMS = "nplurals=2; plural=(n != 1);";
+----
+
+After that, run the following command to create the translation.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} l10n:createjs comments de_AT
+----
+
+This will generate two translation files, `de_AT.js` and `de_AT.json`, in `/var/www/owncloud/apps/comments/l10n`.
+
+=== Create Translations in Multiple Languages
+
+To create translations in multiple languages simultaneously, supply multiple languages to the command, as in the following example:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} l10n:createjs comments de_AT de_DE hu_HU es fr
+----
