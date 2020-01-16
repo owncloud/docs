@@ -1,0 +1,71 @@
+= Command Line Upgrade
+
+These commands are available only after you have downloaded upgraded packages or tar archives, and before you complete the upgrade. 
+List all options, like this example on CentOS Linux:
+
+== Command Description
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} upgrade --help
+Usage:
+upgrade [options]
+----
+
+=== Options
+
+[width="100%",cols="20%,70%",]
+|===
+| `--major`          | Automatically update apps to new major versions during minor updates of ownCloud Server.
+| `--no-app-disable` | Skip disabling of third party apps.
+|===
+
+When you are performing an update or upgrade on your ownCloud server (see the Maintenance section of this manual), it is better to use `occ` to perform the database upgrade step, rather than the Web GUI, in order to avoid timeouts. 
+PHP scripts invoked from the Web interface are limited to 3600 seconds. 
+In larger environments this may not be enough, leaving the system in an inconsistent state.
+After performing all the preliminary steps (see xref:maintenance/upgrade.adoc[the maintenance upgrade documentation]) use this command to upgrade your databases, like this example on CentOS Linux:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} upgrade
+ownCloud or one of the apps require upgrade - only a limited number of
+commands are available
+Turned on maintenance mode
+Checked database schema update
+Checked database schema update for apps
+Updated database
+Updating <activity> ...
+Updated <activity> to 2.1.0
+Update successful
+Turned off maintenance mode
+----
+
+Note how it details the steps. Enabling verbosity displays timestamps:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} upgrade -v
+ownCloud or one of the apps require upgrade - only a limited number of commands are available
+2017-06-23T09:06:15+0000 Turned on maintenance mode
+2017-06-23T09:06:15+0000 Checked database schema update
+2017-06-23T09:06:15+0000 Checked database schema update for apps
+2017-06-23T09:06:15+0000 Updated database
+2017-06-23T09:06:15+0000 Updated <files_sharing> to 0.6.6
+2017-06-23T09:06:15+0000 Update successful
+2017-06-23T09:06:15+0000 Turned off maintenance mode
+----
+
+If there is an error it throws an exception, and the error is detailed in your ownCloud logfile, so you can use the log output to figure out what went wrong, or to use in a bug report.
+
+----
+Turned on maintenance mode
+Checked database schema update
+Checked database schema update for apps
+Updated database
+Updating <files_sharing> ...
+Exception
+ServerNotAvailableException: LDAP server is not available
+Update failed
+Turned off maintenance mode
+----
+
