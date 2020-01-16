@@ -1,0 +1,190 @@
+= File Operations
+
+`occ` has three commands for managing files in ownCloud.
+
+[source,console]
+----
+
+files
+ files:checksums:verify     Get all checksums in filecache and compares them by
+                            recalculating the checksum of the file.
+ files:cleanup              Deletes orphaned file cache entries.
+ files:scan                 Rescans the filesystem.
+ files:transfer-ownership   All files and folders are moved to another user
+                            - outgoing shares are moved as well (incoming shares are
+                            not moved as the sharing user holds the ownership of the respective files).
+----
+
+NOTE: These commands are not available in xref:maintenance-commands[single-user (maintenance) mode].
+
+== The files:checksums:verify command
+
+ownCloud supports file integrity checking, by computing and matching checksums. 
+Doing so ensures that transferred files arrive at their target in the exact state as they left their origin.
+
+In some rare cases, wrong checksums are written to the database which leads to synchronization issues, such as with the Desktop Client. 
+To mitigate such problems a new command is available: `occ files:checksums:verify`.
+
+Executing the command recalculates checksums, either for all files of a user or within a specified filesystem path on the designated storage. 
+It then compares them with the values in the database. 
+The command also offers an option to repair incorrect checksum values (`-r, --repair`).
+
+CAUTION: Executing this command might take some time depending on the file count.
+
+Below is sample output that you can expect to see when using the command.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} files:checksums:verify
+This operation might take very long.
+Mismatch for files/welcome.txt:
+ Filecache:   SHA1:eeb2c08011374d8ad4e483a4938e1aa1007c089d MD5:368e3a6cb99f88c3543123931d786e21 ADLER32:c5ad3a63
+ Actual:  SHA1:da39a3ee5e6b4b0d3255bfef95601890afd80709 MD5:d41d8cd98f00b204e9800998ecf8427e ADLER32:00000001
+Mismatch for thumbnails/9/2048-2048-max.png:
+ Filecache:   SHA1:2634fed078d1978f24f71892bf4ee0e4bd0c3c99 MD5:dd249372f7a68c551f7e6b2615d49463 ADLER32:821230d4
+ Actual:  SHA1:da39a3ee5e6b4b0d3255bfef95601890afd80709 MD5:d41d8cd98f00b204e9800998ecf8427e ADLER32:00000001
+----
+
+== The files:cleanup command
+
+`files:cleanup` tidies up the server's file cache by deleting all file entries that have no matching entries in the storage table.
+
+== The files:scan command
+
+The `files:scan` command
+
+* Scans for new files.
+* Scans not fully scanned files.
+* Repairs file cache holes.
+* Updates the file cache.
+
+File scans can be performed per-user, for a space-delimited list of users, for groups of users, and for all users.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} files:scan --help
+ Usage:
+   files:scan [options] [--] [<user_id>]...
+----
+
+=== Arguments
+
+[width="100%",cols="20%,70%",]
+|===
+| `user_id` | Will rescan all files of the given user(s).
+|===
+
+=== Options
+
+[width="100%",cols="20%,70%",]
+|===
+| `--output=[OUTPUT]`    | The output format to use (`plain`, `json` or `json_pretty`, default is `plain`).
+| `-p --path=[PATH]`     | Limit rescan to this path, eg. --path="/alice/files/Music",
+the user_id is determined by the path and the user_id parameter and --all are ignored.
+| `--group=[GROUP]`      | Scan user(s) under the group(s).
+ This option can be used as --group=foo --group=bar to scan groups foo and bar (multiple values allowed)
+| `-g --groups=[GROUP]`  | Scan user(s) under the group(s).
+ This option can be used as --groups=foo,bar to scan groups foo and bar (multiple values allowed separated by commas)
+| `-q --quiet`           | Do not output any message.
+| `--all`                | Will rescan all files of all known users.
+| `--repair`             | Will repair detached filecache entries (slow).
+| `--unscanned`          | Only scan files which are marked as not fully scanned.
+|===
+
+TIP: If not using `--quiet`, statistics will be shown at the end of the scan.
+
+=== The `--path` Option
+
+When using the `--path` option, the path must be in one of the following formats:
+
+----
+"user_id/files/path"
+"user_id/files/mount_name"
+"user_id/files/mount_name/path"
+----
+
+For example:
+
+----
+--path="/alice/files/Music"
+----
+
+In the example above, the user_id `alice` is determined implicitly from the path component given.
+To get a list of scannable mounts for a given user, use the following command:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} files_external:list user_id
+----
+
+TIP: Mounts are only scannable at the point of origin. 
+Scanning of shares including federated shares is not necessary on the receiver side and therefore not possible.
+
+NOTE: Mounts based on session credentials can not be scanned as the users credentials are not available to the occ command set.
+
+
+The `--path`, `--all`, `--group`, `--groups` and `[user_id]` parameters are exclusive - only one must be specified.
+
+=== The `--repair` Option
+
+As noted above, repairs can be performed for individual users, groups of users, and for all users in an ownCloud installation. 
+What's more, repair scans can be run even if no files are known to need repairing and if one or more files are known to be in need of repair. 
+Two examples of when files need repairing are:
+
+* If folders have the same entry twice in the web UI (known as a '__ghost folder__'), this can also lead to strange error messages in the desktop client.
+* If entering a folder doesn't seem to lead into that folder.
+
+CAUTION: We strongly suggest that you backup the database before running this command.
+
+The `--repair` option can be run within two different scenarios:
+
+* Requiring a downtime when used on all affected storages at once.
+* Without downtime, filtering by a specified User Id.
+
+The following commands show how to enable single user mode, run a repair file scan in bulk on all storages, and then disable single user mode. 
+This way is much faster than running the command for every user separately, but it requires single user mode.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} maintenance:singleuser --on
+{occ-command-example-prefix} files:scan --all --repair
+{occ-command-example-prefix} maintenance:singleuser --off
+----
+
+The following command filters by the storage of the specified user.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} files:scan USERID --repair
+----
+
+TIP: If many users are affected, it could be convenient to create a shell script, which iterates over a list of User ID's.
+
+== The files:transfer-ownership command
+
+You may transfer all files and shares from one user to another. 
+This is useful before removing a user. 
+For example, to move all files from `<source-user>` to `<destination-user>`, use the following command:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} files:transfer-ownership <source-user> <destination-user>
+----
+
+You can also move a limited set of files from `<source-user>` to `<destination-user>` by making use of the `--path` switch, as in the example below. 
+In it, `folder/to/move`, and any file and folder inside it will be moved to `<destination-user>`.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} files:transfer-ownership --path="folder/to/move" <source-user> <destination-user>
+----
+
+When using this command, please keep in mind:
+
+. The directory provided to the `--path` switch *must* exist inside `data/<source-user>/files`.
+. The directory (and its contents) won't be moved as is between the users. 
+  It'll be moved inside the destination user's `files` directory, and placed in a directory which follows the format: `transferred from <source-user> on <timestamp>`. 
+  Using the example above, it will be stored under: `data/<destination-user>/files/transferred from <source-user> on 20170426_124510/`
+. Currently file versions can't be transferred. 
+  Only the latest version of moved files will appear in the destination user's account.
+
