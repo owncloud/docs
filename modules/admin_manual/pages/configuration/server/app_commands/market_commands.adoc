@@ -1,0 +1,120 @@
+= Market
+
+Marketplace URL: https://marketplace.owncloud.com/apps/market[Market]
+
+The `market` commands _install_, _uninstall_, _list_, and _upgrade_ applications from the ownCloud Marketplace.
+
+[source,console]
+----
+market
+  market:install    Install apps from the marketplace. If already installed and
+                    an update is available the update will be installed.
+  market:uninstall  Uninstall apps from the marketplace.
+  market:list       Lists apps as available on the marketplace.
+  market:upgrade    Installs new app versions if available on the marketplace
+----
+
+NOTE: The user running the update command, which will likely be your webserver user, requires write permission for the `/apps` respectively `apps-external` folder.
+
+NOTE: If they don’t have write permission, the command may report that the update was successful, but it may silently fail.
+
+These commands are not available in single-user (maintenance) mode.
+For more details please see the Maintenance Commands section in the occ core command set.
+
+== Install an Application
+
+Applications can be installed both from https://marketplace.owncloud.com/[the ownCloud Marketplace] and from a local file archive.
+
+== Install Apps From The Marketplace
+
+To install an application from the Marketplace, you need to supply the app’s id, which can be found in the app’s Marketplace URL.
+For example, the URL for _Two factor backup codes_ is https://marketplace.owncloud.com/apps/twofactor_backup_codes.
+So its app id is `twofactor_backup_codes`.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} market:install <ids> [option]
+----
+
+=== Arguments
+
+[width="80%",cols="30%,70%",]
+|===
+| `ids` |  Ids of the apps
+|===
+
+=== Options
+[width="80%",cols="30%,70%",]
+|===
+| `-l [LOCAL]` +
+`--local=[LOCAL]`  | Optional path to a local app package.
+|===
+
+== Install Apps From a File Archive
+
+To install an application from a local file archive, you need to supply the path to the archive, and that you pass the `-l` switch.
+Only `zip`, `gzip`, and `bzip2` archives are supported.
+
+== Usage Example
+
+[source,console,subs="attributes+"]
+----
+# Install an app from the marketplace.
+{occ-command-example-prefix} market:install twofactor_backup_codes
+
+# Install an app from a local archive.
+{occ-command-example-prefix} market:install -l /mnt/data/richdocuments-2.0.0.tar.gz
+----
+
+NOTE: The target directory has to be *accessable to the webserver user* and you have to *enable* the app afterwards with the `occ app:enable` command.
+
+== Uninstall an Application
+
+To uninstall an application use the following commands:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} market:uninstall <ids>
+----
+
+=== Arguments
+
+[width="80%",cols="30%,70%",]
+|===
+| `ids` |  Ids of the apps
+|===
+
+== List Apps From The Marketplace
+
+This command lists apps available on the marketplace.
+It returns the ids if the apps.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} market:list
+----
+
+== Upgrade an Application
+
+Install new app versions if available on the marketplace by using following commands:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} market:upgrade <ids> [options]
+----
+
+=== Arguments
+
+[width="80%",cols="30%,70%",]
+|===
+| `ids` |  Ids of the apps
+|===
+
+=== Options
+
+[width="80%",cols="30%,70%",]
+|===
+| `-l [LOCAL]` +
+`--local=[LOCAL]`  | Optional path to a local app package.
+| `--major`        | Allow update to a new major version.
+|===

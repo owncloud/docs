@@ -1,0 +1,375 @@
+= Files External
+
+These commands replace the `data/mount.json` configuration file used in ownCloud releases before 9.0.
+Commands for managing external storage.
+
+[source,console]
+----
+files_external
+ files_external:applicable  Manage applicable users and groups for a mount
+ files_external:backends    Show available authentication and storage backends
+ files_external:config      Manage backend configuration for a mount
+ files_external:create      Create a new mount configuration
+ files_external:delete      Delete an external mount
+ files_external:export      Export mount configurations
+ files_external:import      Import mount configurations
+ files_external:list        List configured mounts
+ files_external:option      Manage mount options for a mount
+ files_external:verify      Verify mount configuration
+----
+
+These commands replicate the functionality in the ownCloud Web GUI, plus two new features: `files_external:export` and `files_external:import`.
+
+Use `files_external:export` to export all admin mounts to stdout, and `files_external:export [user_id]` to export the mounts of the specified ownCloud user.
+
+NOTE: These commands are only available when the "External storage support" app (`files_external`) is enabled. 
+It is not available in xref:maintenance-commands[single-user (maintenance) mode].
+
+== files_external:list
+
+List configured mounts.
+
+=== Usage
+
+[source,console]
+----
+files_external:list [--show-password] [--full] [-a|--all] [-s|--short] [--] [<user_id>]
+----
+
+=== Arguments
+
+[width="100%",cols="20%,70%",]
+|===
+| `user_id` | User ID to list the personal mounts for, if no user is provided admin mounts will be listed.
+|===
+
+=== Options
+
+[width="100%",cols="20%,70%",]
+|===
+| `--show-password`   | User to add the mount configurations for, if not set the mount will
+be added as system mount.
+| `--full`            | Don't save the imported mounts, only list the new mounts.
+| `-a, --all`         | Show both system-wide mounts and all personal mounts.
+| `-s, --short`       | Show only a reduced mount info.
+| `--output=[OUTPUT]` | The output format to use (`plain`, `json` or `json_pretty`, default is `plain`).
+|===
+
+=== Example
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} files_external:list user_1 --short
++----------+------------------+----------+
+| Mount ID | Mount Point      | Type     |
++----------+------------------+----------+
+| 1        | /mount_1         | Personal |
+| 2        | /mount_2         | Personal |
++----------+------------------+----------+
+----
+
+== files_external:applicable
+
+Manage applicable users and groups for a mount.
+
+=== Usage
+
+[source,console]
+----
+files_external:applicable
+    [--add-user     ADD-USER]
+    [--remove-user  REMOVE-USER]
+    [--add-group    ADD-GROUP]
+    [--remove-group REMOVE-GROUP]
+    [--remove-all]
+    [--output       [OUTPUT]]
+    [--]
+    <mount_id>
+----
+
+=== Arguments
+
+[width="100%",cols="20%,70%",]
+|===
+| `mount_id` | Can be obtained using `occ files_external:list`.
+|===
+
+
+=== Options
+
+[width="100%",cols="20%,70%",]
+|===
+| `--add-user`        | user to add as applicable (multiple values allowed).
+| `--remove-user`     | user to remove as applicable (multiple values allowed).
+| `--add-group`       | group to add as applicable (multiple values allowed).
+| `--remove-group`    | group to remove as applicable (multiple values allowed).
+| `--remove-all`      | Set the mount to be globally applicable.
+| `--output=[OUTPUT]` | The output format to use (plain, json or json_pretty, default is plain).
+|===
+
+== files_external:backends
+
+Show available authentication and storage backends.
+
+=== Usage
+
+[source,console]
+----
+files_external:backends [options]
+    [--]
+    [<type>]
+    [<backend>]
+----
+
+=== Arguments
+
+[width="100%",cols="20%,70%",]
+|===
+| `type`    | Only show backends of a certain type. Possible values are `authentication` or `storage`.
+| `backend` | Only show information of a specific backend.
+|===
+
+=== Options
+
+[width="100%",cols="20%,70%",]
+|===
+| `--output=[OUTPUT]` | The output format to use (plain, json or json_pretty, default is plain.
+|===
+
+== files_external:config
+
+Manage backend configuration for a mount.
+
+=== Usage
+
+[source,console]
+----
+files_external:config [options]
+    [--]
+    <mount_id>
+    <key>
+    [<value>]
+----
+
+=== Arguments
+
+[width="100%",cols="20%,70%",]
+|===
+| `mount_id` | The ID of the mount to edit.
+| `key`      | Key of the config option to set/get.
+| `value`    | Value to set the config option to, when no value is provided the
+existing value will be printed.
+|===
+
+=== Options
+
+[width="100%",cols="20%,70%",]
+|===
+| `--output=[OUTPUT]` | The output format to use (_plain_, _json_ or _json_pretty_. The default is plain).
+|===
+
+== files_external:create
+
+Create a new mount configuration.
+
+=== Usage
+
+[source,console]
+----
+files_external:create [options]
+    [--]
+    <mount_point>
+    <storage_backend>
+    <authentication_backend>
+----
+
+=== Arguments
+
+[width="100%",cols="20%,70%",]
+|===
+| `mount_point`            | Mount point for the new mount.
+| `storage_backend`        | Storage backend identifier for the new mount, see
+`occ files_external:backends` for possible values.
+| `authentication_backend` | Authentication backend identifier for the new mount, see
+`occ files_external:backends` for possible values.
+|===
+
+==== Options
+
+[width="100%",cols="20%,70%",]
+|===
+| `--user=[USER]`         | User to add the mount configurations for,
+if not set the mount will be added as system mount.
+| `-c, --config=[CONFIG]` | Mount configuration option in `key=value` format (multiple values allowed).
+| `--dry`                 | Don't save the imported mounts, only list the new mounts.
+| `--output=[OUTPUT]`     | The output format to use (`plain`, `json` or `json`pretty`).
+The default is `plain`.
+|===
+
+=== Storage Backend Details
+
+[width="80%",cols="40%,60%",options="header"]
+|===
+| Storage Backend          | Identifier
+| Windows Network Drive    | `windows_network_drive`
+| WebDav                   | `dav`
+| Local                    | `local`
+| ownCloud                 | `owncloud`
+| SFTP                     | `sftp`
+| Amazon S3                | `amazons3`
+| Dropbox                  | `dropbox`
+| Google Drive             | `googledrive`
+| SMB / CIFS               | `smb`
+|===
+
+=== Authentication Details
+
+[width="80%",cols="40%,60%",options="header"]
+|===
+| Authentication method | Identifier, name, configuration
+
+| Log-in credentials, save in session  | `password::sessioncredentials`
+| Log-in credentials, save in database | `password::logincredentials`
+| User entered, store in database      | `password::userprovided` (*)
+| Global Credentials                   | `password::global`
+| None                                 | `null::null`
+| Builtin                              | `builtin::builtin`
+| Username and password                | `password::password`
+| OAuth1                               | `oauth1::oauth1` (*)
+| OAuth2                               | `oauth2::oauth2` (*)
+| RSA public key                       | `publickey::rsa` (*)
+| OpenStack                            | `openstack::openstack` (*)
+| Rackspace                            | `openstack::rackspace` (*)
+| Access key (Amazon S3)               | `amazons3::accesskey` (*)
+|===
+
+(*) - Authentication methods require additional configuration.
+
+NOTE: Each Storage Backend needs its corresponding authentication methods.
+
+== files_external:delete
+
+Delete an external mount.
+
+=== Usage
+
+[source,console]
+----
+files_external:delete [options] [--] <mount_id>
+----
+
+=== Arguments
+
+[width="100%",cols="20%,70%",]
+|===
+| `mount_id` | The ID of the mount to edit.
+|===
+
+=== Options
+
+[width="100%",cols="20%,70%",]
+|===
+| `-y, --yes`         | Skip confirmation.
+| `--output=[OUTPUT]` | The output format to use (plain, json or json_pretty, default is plain).
+|===
+
+== files_external:export
+
+=== Usage
+
+[source,console]
+----
+files_external:export [options] [--] [<user_id>]
+----
+
+=== Arguments
+
+[width="100%",cols="20%,70%",]
+|===
+| `user_id` | User ID to export the personal mounts for, if no user is provided admin
+mounts will be exported.
+|===
+
+==== Options
+
+[width="100%",cols="20%,70%",]
+|===
+| `-a, --all` | Show both system wide mounts and all personal mounts.
+|===
+
+== files_external:import
+
+Import mount configurations.
+
+=== Usage
+
+[source,console]
+----
+files_external:import [options] [--] <path>
+----
+
+=== Arguments
+
+[width="100%",cols="20%,70%",]
+|===
+| `path` | Path to a json file containing the mounts to import, use `-` to read from stdin.
+|===
+
+==== Options
+
+[width="100%",cols="20%,70%",]
+|===
+| `--user=[USER]`     | User to add the mount configurations for, if not set the mount will be
+added as system mount.
+| `--dry`             | Don't save the imported mounts, only list the new mounts.
+| `--output=[OUTPUT]` | The output format to use (_plain_, _json_ or _json_pretty_, default is _plain_).
+|===
+
+== files_external:option
+
+Manage mount options for a mount.
+
+=== Usage
+
+[source,console]
+----
+files_external:option <mount_id> <key> [<value>]
+----
+
+=== Arguments
+
+[width="100%",cols="20%,70%",]
+|===
+| `mount_id` | The ID of the mount to edit.
+| `key`      | Key of the mount option to set/get.
+| `value`    | Value to set the mount option to, when no value is provided the existing
+value will be printed.
+|===
+
+== files_external:verify
+
+Verify mount configuration.
+
+=== Usage
+
+[source,console]
+----
+files_external:verify [options] [--] <mount_id>
+----
+
+=== Arguments
+
+[width="100%",cols="20%,70%",]
+|===
+| `mount_id` | The ID of the mount to check.
+|===
+
+=== Options
+
+[width="100%",cols="20%,70%",]
+|===
+| `-c, --config=[CONFIG]` | Additional config option to set before checking in `key=value` pairs,
+required for certain auth backends such as login credentials (multiple values allowed).
+| `--output=[OUTPUT]`     | The output format to use (_plain_, _json_ or _json_pretty_, default is plain).
+|===
+

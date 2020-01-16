@@ -1,0 +1,147 @@
+= Encryption
+
+`occ` includes a complete set of commands for managing encryption.
+
+[source,console]
+----
+encryption
+ encryption:change-key-storage-root  Change key storage root
+ encryption:decrypt-all              Disable server-side encryption and decrypt all files
+ encryption:disable                  Disable encryption
+ encryption:enable                   Enable encryption
+ encryption:encrypt-all              Encrypt all files for all users
+ encryption:fix-encrypted-version    Fix the encrypted version if the encrypted file(s) are not downloadable.
+ encryption:list-modules             List all available encryption modules
+ encryption:migrate                  initial migration to encryption 2.0
+ encryption:recreate-master-key      Replace existing master key with new one. Encrypt the file system with
+                                     newly created master key
+ encryption:select-encryption-type   Select the encryption type. The encryption types available are: masterkey and
+                                     user-keys. There is also no way to disable it again.
+ encryption:set-default-module       Set the encryption default module
+ encryption:show-key-storage-root    Show current key storage root
+ encryption:status                   Lists the current status of encryption
+----
+
+== Status
+
+`encryption:status` shows whether you have active encryption, and your default encryption module. 
+To enable encryption you must first enable the Encryption app, and then run `encryption:enable`:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} app:enable encryption
+{occ-command-example-prefix} encryption:enable
+{occ-command-example-prefix} encryption:status
+ - enabled: true
+ - defaultModule: OC_DEFAULT_MODULE
+----
+
+== Change Key Storage Root
+
+`encryption:change-key-storage-root` is for moving your encryption keys to a different folder. 
+It takes one argument, `newRoot`, which defines your new root folder. 
+The folder must exist, and the path is relative to your root ownCloud directory.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} encryption:change-key-storage-root ../../etc/oc-keys
+----
+
+You can see the current location of your keys folder:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} encryption:show-key-storage-root
+Current key storage root:  default storage location (data/)
+----
+
+== List Modules
+
+`encryption:list-modules` displays your available encryption modules.
+You will see a list of modules only if you have enabled the Encryption app. 
+Use `encryption:set-default-module [module name]` to set your desired module.
+
+== Encrypt All
+
+`encryption:encrypt-all` encrypts all data files for all users.
+You must first put your ownCloud server into xref:maintenance-commands[single-user mode] to prevent any user activity until encryption is completed.
+
+=== Arguments
+
+[width="100%",cols="20%,70%",]
+|===
+| `-y` or `--yes` 
+| Answer yes to all questions. This argument automatically answers, potential, questions with "yes", which is particularly important for automated deployments with Ansible or similar tools.
+|===
+
+== Decrypt All
+
+`encryption:decrypt-all` decrypts all user data files, or optionally a single user:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} encryption:decrypt freda
+----
+
+Users must have enabled recovery keys on their Personal pages. 
+You must first put your ownCloud server into single-user mode, using xref:maintenance-commands[the maintenance commands], to prevent any user activity until decryption is completed.
+
+=== Arguments
+
+[width="100%",cols="20%,70%",]
+|===
+| `-m=[METHOD]` | Accepts the methods: +
+`recovery` or `password` +
+If the _recovery_ method is chosen, then the recovery password will be used to decrypt files. +
+If the _password_ method is chosen, then individual user passwords will be used to decrypt files.
+| `-c=[COMMAND]` | Accepts  the commands: +
+`yes` or `no` +
+
+This lets the command know whether to ask for permission to continue or not.
+|===
+
+== Fix Encrypted Version
+
+`encryption:fix-encrypted-version` fixes the encrypted version of files, if the encrypted file(s) are not downloadable, for a given user.
+
+=== Arguments
+
+[width="100%",cols="20%,70%",]
+|===
+| `user` | The id of the user whose files need fixing.
+|===
+
+== Method Descriptions
+
+=== Recovery method
+
+This method reads the value from the environment variable `OC_RECOVERY_PASSWORD`. 
+This variable bounds the value of recovery password set in the encryption page. 
+If this variable is not set the recovery process will be halted. 
+This has to be used for decrypting all users. 
+While opting recovery method user should not forget to set `OC_RECOVERY_PASSWORD` in the shell.
+
+=== Password method
+
+This method reads the value from the environment variable `OC_PASSWORD`. 
+This variable bounds the value of user password. 
+The password which user uses to login to oC account. 
+When password method is opted the user needs to set this variable in the shell.
+
+== Continue Option Description
+
+The continue option can be used to by pass the permissions asked like `yes` or `no` while decrypting the file system. 
+If the user is sure about what he/she is doing with the command and would like to proceed, then `-c yes` when provided to the command would not ask permissions. 
+If `-c no` is passed to the command, then permissions would be asked to the user. It becomes interactive.
+
+Use `encryption:disable` to disable your encryption module.
+You must first put your ownCloud server into xref:maintenance-commands[single-user mode] to prevent any user activity.
+
+`encryption:migrate` migrates encryption keys after a major ownCloud version upgrade.
+You may optionally specify individual users in a space-delimited list.
+See xref:configuration/files/encryption/encryption_configuration.adoc[encryption configuration] to learn more.
+
+`encryption:recreate-master-key` decrypts the ownCloud file system, replaces the existing master key with a new one, and encrypts the entire ownCloud file system with the new master key. 
+Given the size of your ownCloud filesystem, this may take some time to complete. 
+However, if your filesystem is quite small, then it will complete quite quickly. 
+The `-y` switch can be supplied to automate acceptance of user input.
