@@ -1,0 +1,80 @@
+= DAV Commands
+
+A set of commands to create address books, calendars, and to migrate
+address books:
+
+[source,console]
+----
+dav
+ dav:cleanup-chunks            Cleanup outdated chunks
+ dav:create-addressbook        Create a dav address book
+ dav:create-calendar           Create a dav calendar
+ dav:sync-birthday-calendar    Synchronizes the birthday calendar
+ dav:sync-system-addressbook   Synchronizes users to the system address book
+----
+
+NOTE: These commands are not available in xref:maintenance-commands[single-user (maintenance) mode].
+
+`dav:cleanup-chunks` cleans up outdated chunks (uploaded files) more than a certain number of days old. 
+By default, the command cleans up chunks more than 2 days old. 
+However, by supplying the number of days to the command, the range can be increased. 
+For example, in the example below, chunks older than 10 days will be removed.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} dav:cleanup-chunks 10
+
+# example output
+Cleaning chunks older than 10 days(2017-11-08T13:13:45+00:00)
+Cleaning chunks for admin
+   0 [>---------------------------]
+----
+
+The syntax for `dav:create-addressbook` and `dav:create-calendar` is `dav:create-addressbook [user] [name]`. 
+This example creates the addressbook `mollybook` for the user molly:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} dav:create-addressbook molly mollybook
+----
+
+This example creates a new calendar for molly:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} dav:create-calendar molly mollycal
+----
+
+Molly will immediately see these on her Calendar and Contacts pages.
+Your existing calendars and contacts should migrate automatically when you upgrade. 
+If something goes wrong you can try a manual migration.
+First delete any partially-migrated calendars or address books. 
+Then run this command to migrate user's contacts:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} dav:migrate-addressbooks [user]
+----
+
+Run this command to migrate calendars:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} dav:migrate-calendars [user]
+----
+
+`dav:sync-birthday-calendar` adds all birthdays to your calendar from address books shared with you. 
+This example syncs to your calendar from user `bernie`:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} dav:sync-birthday-calendar bernie
+----
+
+`dav:sync-system-addressbook` synchronizes all users to the system addressbook.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} dav:sync-system-addressbook
+----
+

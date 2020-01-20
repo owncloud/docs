@@ -1,0 +1,38 @@
+= Trashbin
+
+NOTE: These commands are only available when the 'Deleted files' app (`files_trashbin`) is enabled.
+These commands are not available in xref:maintenance-commands[single-user (maintenance) mode].
+
+[source,console]
+----
+trashbin
+ trashbin:cleanup   Remove deleted files
+ trashbin:expire    Expires the users trash bin
+----
+
+The `trashbin:cleanup` command removes the deleted files of the specified users in a space-delimited list, or all users if none are specified. 
+This example removes all the deleted files of all users:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} trashbin:cleanup
+Remove all deleted files
+Remove deleted files for users on backend Database
+ freda
+ molly
+ stash
+ rosa
+ edward
+----
+
+This example removes the deleted files of users `molly` and `freda`:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} trashbin:cleanup molly freda
+Remove deleted files of   molly
+Remove deleted files of   freda
+----
+
+`trashbin:expire` deletes only expired files according to the `trashbin_retention_obligation` setting in `config.php` (see xref:configuration/server/config_sample_php_parameters.adoc[the "Deleted Files" section documentation]).
+The default is to delete expired files for all users, or you may list users in a space-delimited list.
