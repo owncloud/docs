@@ -1,0 +1,55 @@
+= Logging Commands
+
+These commands view and configure your ownCloud logging preferences.
+
+[source,console]
+----
+log
+ log:manage     Manage logging configuration
+ log:owncloud   Manipulate ownCloud logging backend
+----
+
+== Command Description
+
+Run `log:owncloud` to see your current logging status:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} log:owncloud
+Log backend ownCloud: enabled
+Log file: /opt/owncloud/data/owncloud.log
+Rotate at: disabled
+----
+
+=== Options
+
+[width="100%",cols="20%,50%",]
+|====
+| `--enable`                    | Enable this logging backend.
+| `--file=[FILE]`               | Set the log file path.
+| `--rotate-size=[ROTATE-SIZE]` | Set the file size for log rotation, 0 = disabled.
+|====
+
+Use the `--enable` option to turn on logging. Use `--file` to set a different log file path. 
+Set your rotation by log file size in bytes with `--rotate-size`; 0 disables rotation.
+Run `log:manage` to set your logging backend, log level, and timezone:
+The defaults are `owncloud`, `Warning`, and `UTC`.
+
+Options for `log:manage`:
+
+[width="100%",cols="20%,50%",]
+|====
+| `--backend=[BACKEND]` | Set the logging backend [owncloud, syslog, errorlog].
+| `--level=[LEVEL]`     | Set the log level [debug, info, warning, error, fatal].
+|====
+
+Log level can be adjusted by entering the number or the name:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} log:manage --level 4
+{occ-command-example-prefix} log:manage --level error
+----
+
+TIP: Setting the log level to debug ( 0 ) can be used for finding the cause of an error, but should not be the standard as it increases the log file size.
+

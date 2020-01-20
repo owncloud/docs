@@ -1,0 +1,766 @@
+= User Commands
+
+The `user` commands provide a range of functionality for managing ownCloud users. 
+This includes: creating and removing users, resetting user passwords, displaying a report which shows how many users you have, and when a user was last logged in.
+The full list, of commands is:
+
+[source,console]
+----
+user
+ user:add                            Adds a user
+ user:delete                         Deletes the specified user
+ user:disable                        Disables the specified user
+ user:enable                         Enables the specified user
+ user:inactive                       Reports users who are known to owncloud,
+                                     but have not logged in for a certain number of days
+ user:lastseen                       Shows when the user was logged in last time
+ user:list                           List users
+ user:list-groups                    List groups for a user
+ user:modify                         Modify user details
+ user:report                         Shows how many users have access
+ user:resetpassword                  Resets the password of the named user
+ user:setting                        Read and modify user application settings
+ user:sync                           Sync local users with an external backend service
+----
+
+== Creating Users
+
+You can create a new user with the `user:add` command.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:add \
+    [--password-from-env] \
+    [--display-name [DISPLAY-NAME]] \
+    [--email [EMAIL]] \
+    [-g|--group [GROUP]] \
+    [--] \
+    <uid>
+----
+
+=== Arguments
+
+[width="100%",cols="30%,70%",]
+|====
+| `uid` 
+| User ID used to login (must only contain a-z, A-Z, 0-9, -, _ and @).
+
+| `--password-from-env`
+| Read the password from the `OC_PASS` environment variable.
+A password is *not required*, _if_ an email address is provided.
+If a password is not provided, a temporary one will be generated.
+It cannot be set to `0`.
+
+| `--display-name=[DISPLAY-NAME]`
+| This corresponds to the *Full Name* on the Users page in your ownCloud Web UI.
+
+| `--email=[EMAIL]`
+| Email address for the user (optional).
+The user will be emailed a link to set their password, _if_ email is configured correctly.
+
+| `-g [GROUP]` `--group=[GROUP]`
+| The groups the user should be added to.
+The group will be created if it does not exist.
+Multiple values are allowed.
+|====
+
+=== Command Examples
+
+This example adds new user, Layla Smith, and adds her to the `users` and `db-admins` groups. 
+If either group does not exist, it is created.
+
+.Create a user with a password, email address, and display name, and add them to two groups
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:add \
+  --display-name="Layla Smith" \
+  --group="users" \
+  --group="db-admins" \
+  --email=layla.smith@example.com layla
+  Enter password:
+  Confirm password:
+  The user "layla" was created successfully
+  Display name set to "Layla Smith"
+  Email address set to "layla.smith@example.com"
+  User "layla" added to group "users"
+  User "layla" added to group "db-admins"
+----
+
+.Create a user with a temporary password (the user will receive a link to set their password).
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:add \
+  --display-name "Layla Smith" \
+  --email "***********" \
+  --group "users" \
+  --group "db-admins" layla
+
+The user "layla" was created successfully
+Display name set to "Layla Smith"
+Email address set to "************"
+User layla added to group users
+User layla added to group db-admins
+----
+
+== Deleting A User
+
+To delete a user, you use the `user:delete` command.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:delete <uid>
+----
+
+=== Arguments
+
+[width="100%",cols="20%,70%",]
+|====
+| `uid` | The username.
+|====
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:delete fred
+----
+
+== Disable Users
+
+Admins can disable users via the occ command too:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:disable <username>
+----
+
+NOTE: Once users are disabled, their connected browsers will be disconnected.
+Use the following command to enable the user again:
+
+== Enable Users
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:enable <username>
+----
+
+== Finding Inactive Users
+
+To view a list of users who've not logged in for a given number of days, use the `user:inactive` command.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:inactive [options] [--] <days>
+----
+
+=== Arguments
+
+[width="100%",cols="20%,70%",]
+|===
+| `<days>`  | The number of days (integer) that the user has not logged in since.
+|===
+
+=== Options
+
+[width="100%",cols="20%,70%",]
+|===
+| `--output=[OUTPUT]`  | Output format (plain, json or json_pretty, default is plain) [default: "plain"].
+|===
+
+The example below searches for users inactive for five days, or more.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:inactive 5
+----
+
+By default, this will generate output in the following format:
+
+----
+- 0:
+  - uid: admin
+  - displayName: admin
+  - inactiveSinceDays: 5
+----
+
+You can see a counting number starting with `0`, the user's user id, display name, and the number of days they've been inactive. 
+If you're passing or piping this information to another application for further processing, you can also use the `--output` switch to change its format.
+Using the output option `json` will render the output formatted as follows.
+
+[source,json]
+----
+[{"uid":"admin","displayName":"admin","inactiveSinceDays":5}]
+----
+
+Using the output option `json_pretty` will render the output formatted as follows.
+
+[source,json]
+----
+[
+    {
+        "uid": "admin",
+        "displayName": "admin",
+        "inactiveSinceDays": 5
+    }
+]
+----
+
+== Finding the User's Last Login
+
+To view a user's most recent login, use the `user:lastseen` command:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:lastseen <uid>
+----
+
+=== Arguments
+
+[width="100%",cols="20%,70%",]
+|====
+| `uid`   | The username.
+|====
+
+Example
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:lastseen layla
+  layla's last login: 09.01.2015 18:46
+----
+
+== Listing Users
+
+You can list existing users with the `user:list` command.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:list [options] [<search-pattern>]
+----
+
+User IDs containing the `search-pattern` string are listed. 
+Matching is not case-sensitive. 
+If you do not provide a search-pattern then all users are listed.
+
+=== Options
+
+[width="90%",cols="40%,80%",]
+|====
+| `--output=[OUTPUT]`       | Output format (plain, json or json-pretty, default is plain).
+| `-a [ATTRIBUTES] +
+--attributes=[ATTRIBUTES]` | Adds more details to the output. +
+Allowed attributes, multiple values possible: +
+`uid`, `displayName`, `email`, `quota`, `enabled`, `lastLogin`, `home`, +
+`backend`, `cloudId`, `searchTerms` [default: [`displayName`]]
+|====
+
+This example lists user IDs containing the string `ron`
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:list ron
+ - aaron: Aaron Smith
+----
+
+The output can be formatted in JSON with the output option `json` or `json_pretty`.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:list --output=json_pretty
+ {
+   "aaron": "Aaron Smith",
+   "herbert": "Herbert Smith",
+   "julie": "Julie Jones"
+ }
+----
+
+This example lists all users including the attribute `enabled`.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:list -a enabled
+ - admin: true
+ - foo: true
+----
+
+== Listing Group Membership of a User
+
+You can list the group membership of a user with the `user:list-groups` command.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:list-groups [options] [--] <uid>
+----
+
+=== Arguments
+
+[width="100%",cols="20%,70%",]
+|====
+| `uid` | User ID.
+|====
+
+=== Options
+
+[width="100%",cols="20%,70%",]
+|====
+| `--output=[OUTPUT]` | Output format (plain, json or json-pretty, default is plain).
+|====
+
+=== Examples
+
+This example lists group membership of user `julie`:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:list-groups julie
+ - Executive
+ - Finance
+----
+
+The output can be formatted in JSON with the output option `json` or `json_pretty`:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:list-groups --output=json_pretty julie
+ [
+   "Executive",
+   "Finance"
+ ]
+----
+
+== Modify User Details
+
+This command modifies either the users username or email address.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:modify [options] [--] <uid> <key> <value>
+----
+
+=== Arguments
+
+[width="100%",cols="20%,70%",]
+|====
+| `uid`   | User ID used to login.
+| `key`   | Key to be changed. Valid keys are: `displayname` and `email`.
+| `value` | The new value of the key.
+|====
+
+All three arguments are mandatory and can not be empty.
+Example to set the email address:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:modify carla email foobar@foo.com
+----
+
+The email address of `carla` is updated to `foobar@foo.com`.
+
+== Generating a User Count Report
+
+Generate a simple report that counts all users, including users on external user authentication servers such as LDAP.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:report
+----
+
+There are no arguments and no options beside the default once to parametrize the output.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:report
++------------------+----+
+| User Report      |    |
++------------------+----+
+| Database         | 12 |
+| LDAP             | 86 |
+|                  |    |
+| total users      | 98 |
+|                  |    |
+| user directories | 2  |
++------------------+----+
+----
+
+== Setting a User's Password
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:resetpassword [options] [--] <user>
+----
+
+include::{partialsdir}configuration/user/update-password-note.adoc[]
+
+=== Arguments
+
+[width="100%",cols="25%,70%",]
+|====
+| `uid` | The user's name.
+|====
+
+=== Options
+
+[width="100%",cols="25%,70%",]
+|====
+| `--password-from-env` | Read the password from the OC_PASS environment variable.
+| `--send-email`        | The email-id set while creating the user, will be used to send
+link for password reset. This option will also display the link sent to user.
+| `--output-link`       | The link to reset the password will be displayed.
+|====
+
+`password-from-env` allows you to set the user's password from an environment variable. 
+This prevents the password from being exposed to all users via the process list, and will only be visible in the history of the user (root) running the command. 
+This also permits creating scripts for adding multiple new users.
+
+NOTE: To use `password-from-env` you must run as "real" root, rather than `sudo`, because `sudo` strips environment variables.
+
+NOTE: To use `send-email`, the ownCloud instance must have email access fully configured.
+
+=== Examples
+
+Add a new user, called Fred Jones:
+
+----
+export OC_PASS=newpassword
+su -s /bin/sh www-data -c 'php occ user:add --password-from-env
+  --display-name="Fred Jones" --group="users" fred'
+The user "fred" was created successfully
+Display name set to "Fred Jones"
+User "fred" added to group "users"
+----
+
+You can reset any user's password, including administrators (see xref:configuration/user/reset_admin_password.adoc[Reset Admin Password]):
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:resetpassword layla
+  Enter a new password:
+  Confirm the new password:
+Successfully reset password for layla
+----
+
+You may also use `password-from-env` to reset passwords:
+
+----
+export OC_PASS=newpassword
+su -s /bin/sh www-data -c 'php occ user:resetpassword \
+  --password-from-env \
+  layla'
+Successfully reset password for layla
+----
+
+This example emails a password reset link to the user.
+Additionally, when the command completes, it outputs the password reset link to the console:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:resetpassword \
+  --send-email \
+  --output-link \
+  layla
+The password reset link is: http://localhost:{std-port-http}/index.php/lostpassword/reset/form/rQAlCjNeQf3aphA6Hraq2/layla
+----
+
+
+If the specified user does not have a valid email address set, then the following error will be output to the console, and the email will not be sent:
+
+----
+Email address is not set for the user layla
+----
+
+== User Application Settings
+
+To manage application settings for a user, use the `user:setting` command. 
+This command provides the ability to:
+
+* Retrieve all settings for an application
+* Retrieve a single setting
+* Set a setting value
+* Delete a setting
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:setting [options] [--] <uid> [<app>] [<key>]
+----
+
+If you're new to the `user:setting` command, the descriptions for the `app` and `key` arguments may not be completely transparent. 
+So, here's a lengthier description of both.
+
+[width="100%",cols="20%,70%",options="header",]
+|====
+| Argument | Description
+| `app` 
+| When an value is supplied, `user:setting` limits the settings displayed, to those for that, specific, application - assuming that the application is installed, and that there are settings available for it. 
+Some example applications are `core`, `files_trashbin`, and `user_ldap`. 
+A complete list, unfortunately, cannot be supplied, as it is impossible to know the entire list of applications which a user could, potentially, install.
+| `key` 
+| This value specifies the setting key to be manipulated (set, retrieved, or deleted) by the `user:setting` command.
+|====
+
+=== Retrieving User Settings
+
+To retrieve all settings for a user, you need to call the `user:setting` command and supply at least the user's username.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:setting <uid> [<app>] [<key>]
+----
+
+=== Arguments
+
+[width="100%",cols="20%,70%",]
+|====
+| `uid`   | User ID used to login.
+| `app`   | Restrict listing the settings for a given app. [default: ""].
+| `key`   | Setting key to set, get or delete [default: ""].
+|====
+
+Example for all settings set for a given user
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:setting layla
+  - core:
+    - lang: en
+  - login:
+    - lastLogin: 1465910968
+  - settings:
+    - email: layla@example.tld
+----
+
+Here we see that the user has settings for the application `core`, when they last logged in, and what their email address is.
+Example for all settings set restricted to application `core` for a given user
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:setting layla core
+ - core:
+    - lang: en
+----
+
+In the output, you can see that one setting is in effect, `lang`, which is set to `en`.
+Example for all settings set restricted to application `core`, key `lang` for a given user
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:setting layla core lang en
+----
+
+This will display the value for that setting, such as `en`.
+
+=== Setting and Deleting a Setting
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:setting [options] [--] <uid> [<app>] [<key>]
+----
+
+=== Arguments
+
+[width="100%",cols="20%,70%",]
+|====
+| `uid`   | User ID used to login.
+| `app`   | Restrict the settings to a given app. [default: ""].
+| `key`   | Setting key to set, get or delete [default: ""].
+|====
+
+=== Options
+
+[width="100%",cols="20%,40%",]
+|====
+| `--output=[OUTPUT]`               | Output format (plain, json or json-pretty, default is plain).
+| `--ignore-missing-user`           | Use this option to ignore errors when the user does not exist.
+| `--default-value=[DEFAULT-VALUE]` | If no default value is set and the config does not exist, the command +
+will exit with 1. Only applicable on get.
+| `--value=[VALUE]`                 | The new value of the setting.
+| `--update-only`                   | Only updates the value, if it is not set before, it is not being added.
+| `--delete`                        | Specify this option to delete the config.
+| `--error-if-not-exists`           | Checks whether the setting exists before deleting it.
+|====
+
+IMPORTANT: In case you want to change the email address, use xref:modify-user-details[the `user:modify` command].
+
+Here's an example of how you would set the language of the user `layla`.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:setting layla core lang --value=en
+----
+
+Deleting a setting is quite similar to setting a setting. 
+In this case, you supply the username, application (or setting category) and key as above. 
+Then, in addition, you supply the `--delete` flag.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:setting layla core lang --delete
+----
+
+== Syncing User Accounts
+
+This command syncs users stored in external backend services, such as _LDAP_, _Shibboleth_, and _Samba_, with ownCloud's, internal user database.
+However, it's not essential to run it regularly, unless you have a large number of users whose account properties have changed in a backend outside of ownCloud.
+When run, it will pick up changes from alternative user backends, such as LDAP, where properties like `cn` or `display name` have changed, and sync them with ownCloud's user database.
+If accounts are found that no longer exist in the external backend, you are given the choice of either removing or disabling the
+accounts.
+
+NOTE: It's also xref:configuration/server/background_jobs_configuration.adoc#available-background-jobs[one of the commands] that you should run on a regular basis to ensure that your ownCloud installation is running optimally.
+
+NOTE: This command replaces the old `show-remnants` functionality, and brings the LDAP feature more in line with the rest of ownCloud's functionality.
+
+=== Usage
+
+----
+user:sync [options] [--] [<backend-class>]
+----
+
+Synchronize users from a given backend to the accounts table.
+
+=== Arguments:
+
+[width="90%",cols="40%,80%",]
+|===
+| `backend-class` | The quoted PHP class name for the backend, e.g., +
+- LDAP:        `"OCA\User_LDAP\User_Proxy"` +
+- Samba:       `"OCA\User\SMB"` +
+- Shibboleth:  `"OCA\User_Shibboleth\UserBackend"` +
+|===
+
+=== Options
+
+[width="90%",cols="40%,80%",]
+|===
+| `-l, --list`      | List all enabled backend classes.
+| `-u [UID]` +
+`--uid=[UID]` | Sync only the user with the given user id.
+| `-s, --seenOnly`  | Sync only seen users.
+| `-c, --showCount` | Calculate user count before syncing.
+| `-m [MISSING-ACCOUNT-ACTION]` +
+ +
+`--missing-account-action[=MISSING-ACCOUNT-ACTION]` | Action to take if the account isn't
+connected to a backend any longer. +
+Options are `disable` and `remove`. +
+Note that removing the account will also remove the stored data and files for that account
+| `-r, --re-enable` | When syncing multiple accounts re-enable accounts that are disabled in ownCloud
+but available in the synced backend.
+|===
+
+Below are examples of how to use the command with an _LDAP_, _Samba_,
+and _Shibboleth_ backend.
+
+=== LDAP
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:sync "OCA\User_LDAP\User_Proxy"
+----
+
+=== Samba
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:sync "OCA\User\SMB" -vvv
+----
+
+=== Shibboleth
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:sync "OCA\User_Shibboleth\UserBackend"
+----
+
+Below are examples of how to use the command with the *LDAP* backend along with example console output.
+
+=== Example 1
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:sync "OCA\User_LDAP\User_Proxy" -m disable -r
+  Analysing all users ...
+      6 [============================]
+
+  No removed users have been detected.
+
+  No existing accounts to re-enable.
+
+  Insert new and update existing users ...
+      4 [============================]
+----
+
+=== Example 2
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:sync "OCA\User_LDAP\User_Proxy" -m disable -r
+  Analysing all users ...
+      6 [============================]
+
+  Following users are no longer known with the connected backend.
+  Disabling accounts:
+  9F625F70-08DD-4838-AD52-7DE1F72DBE30, Bobbie, bobbie@example.org disabled
+  53CDB5AC-B02E-4A49-8FEF-001A13725777, David, dave@example.org disabled
+  34C3F461-90FE-417C-ADC5-CE97FE5B8E72, Carol, carol@example.org disabled
+
+  No existing accounts to re-enable.
+
+  Insert new and update existing users ...
+      1 [============================]
+----
+
+=== Example 3
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:sync "OCA\User_LDAP\User_Proxy" -m disable -r
+  Analysing all users ...
+      6 [============================]
+
+  Following users are no longer known with the connected backend.
+  Disabling accounts:
+  53CDB5AC-B02E-4A49-8FEF-001A13725777, David, dave@example.org skipped, already disabled
+  34C3F461-90FE-417C-ADC5-CE97FE5B8E72, Carol, carol@example.org skipped, already disabled
+  B5275C13-6466-43FD-A129-A12A6D3D9A0D, Alicia3, alicia3@example.org disabled
+
+  Re-enabling accounts:
+  9F625F70-08DD-4838-AD52-7DE1F72DBE30, Bobbie, bobbie@example.org enabled
+
+  Insert new and update existing users ...
+      1 [============================]
+----
+
+=== Example 4
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:sync "OCA\User_LDAP\User_Proxy" -m disable -r
+  Analysing all users ...
+      6 [============================]
+
+  No removed users have been detected.
+
+  Re-enabling accounts:
+  53CDB5AC-B02E-4A49-8FEF-001A13725777, David, dave@example.org enabled
+  34C3F461-90FE-417C-ADC5-CE97FE5B8E72, Carol, carol@example.org enabled
+  B5275C13-6466-43FD-A129-A12A6D3D9A0D, Alicia3, alicia3@example.org enabled
+
+  Insert new and update existing users ...
+      4 [============================]
+----
+
+=== Example 5
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:sync "OCA\User_LDAP\User_Proxy" -m remove
+
+----
+
+=== Syncing via cron job
+
+Here is an example for syncing with LDAP four times a day on Ubuntu:
+
+----
+crontab -e -u www-data
+
+* */6 * * * /usr/bin/php /var/www/owncloud/occ user:sync -vvv \
+    --missing-account-action="disable" \
+    -n "OCA\User_LDAP\User_Proxy"
+----
