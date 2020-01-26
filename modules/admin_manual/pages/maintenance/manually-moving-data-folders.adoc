@@ -12,7 +12,7 @@ to make it happen.
 This example assumes that:
 
 * The current folder is: `/var/www/owncloud/data`
-* The new folder is: `/mnt/owncloud`
+* The new folder is: `/mnt/owncloud/data`
 * You’re using Apache as your webserver
 ====
 
@@ -43,7 +43,7 @@ Run the SQL below:
 
 [source,sql]
 ----
-UPDATE oc_storages SET id='local::/mnt/owncloud'
+UPDATE oc_storages SET id='local::/mnt/owncloud/data/'
   WHERE id='local::/var/www/owncloud/data/';
 ----
 
@@ -51,17 +51,17 @@ UPDATE oc_storages SET id='local::/mnt/owncloud'
 
 You next need to update the `home` column in the `oc_accounts` table.
 This column contains the absolute path for user folders, e.g.,
-`/mnt/data/files/admin`. Assuming that the new home directory is:
-`/mnt/data/files/super-admin`, and that the user’s id is 1, you could
+`/mnt/owncloud/data/files/admin`. Assuming that the new home directory is:
+`/mnt/owncloud/data/files/super-admin`, and that the user’s id is 1, you could
 change it using the following SQL statement:
 
 [source,sql]
 ----
-UPDATE oc_accounts SET home='/mnt/data/files/super-admin'
+UPDATE oc_accounts SET home='/mnt/owncloud/data/files/super-admin'
   WHERE id=1;
 ----
 
-If you already have a path like `/var/www/owncloud/` in your database and you want to adjust it to something like `/ocdata/` then you should use the `REPLACE` command:
+If you already have a path like `/var/www/owncloud/` in your database and you want to adjust it to something like `/mnt/owncloud/data` then you should use the `REPLACE` command:
 
 [source,sql]
 ----
@@ -69,7 +69,7 @@ UPDATE oc_accounts
 SET
     home = REPLACE(home,
         '/var/www/owncloud/',
-        '/ocdata/');
+        '/mnt/owncloud/data/');
 ----
 
 Here is the page with the complete command syntax: http://www.mysqltutorial.org/mysql-string-replace-function.aspx
@@ -130,5 +130,5 @@ would update the setting:
 
 [source,console,subs="attributes+"]
 ----
-{occ-command-example-prefix} config:app:set --value /mnt/owncloud fictitious datadir
+{occ-command-example-prefix} config:app:set --value /mnt/owncloud/data fictitious datadir
 ----
