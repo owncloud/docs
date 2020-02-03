@@ -2,6 +2,9 @@
 :toc: right
 :toclevels: 1
 :leveloffset: +1
+:splunk-cloud-url: https://www.splunk.com/en_us/software/splunk-cloud.html
+:splunk-docs-url-system-reqs: https://docs.splunk.com/Documentation/Splunk/latest/Installation/Systemrequirements
+:splunk-universal-forwarder-url: https://www.splunk.com/en_us/download/universal-forwarder.html
 
 == Introduction
 
@@ -9,22 +12,21 @@ The Admin Audit app is an auditing module for ownCloud to trace the actions of u
 
 == Configuration
 
-Configuration is needed to redirect the messages into a separate file.
-
-Add these lines to "config.php" and adjust the target path accordingly:
+The following configuration is required, in "config.php", to redirect audit messages into a log file.
 
 [source,console]
 ----
 'log.conditions' => [
   [
     'apps' => ['admin_audit'],
+    // Adjust the path below, to match your setup
     'logfile' => '/var/www/owncloud/data/admin_audit.log'
   ]
 ]
 ----
 
-Please note that the target path must be writeable for the web server user.
-All messages regardless of log level will be logged there.
+Please note that the target path must be writeable for the webserver user.
+All messages, regardless of log level, will be logged there.
 To ignore all CLI triggered events (not the default), you can set the following option:
 
 [source,console]
@@ -34,7 +36,7 @@ occ config:app:set admin_audit ignore_cli_events --value='yes'
 
 === Grouped Logging
 
-With each log message, a number of users are calculated to be the 'audit context'.
+With each log message, several users are calculated to be the 'audit context'.
 This is the list of users which are related to the log message.
 Additionally, each log message includes a list of groups that the users are a member of, to enable filtering and splitting of the log messages at a later date.
 In cases when users are members of many groups, to reduce the data output, the group list can be filtered using the following config option:
@@ -51,21 +53,28 @@ When the filter is configured, only the filtered list of groups will be output i
 
 === Connect with Splunk Cloud
 
-To connect ownCloud with Splunk Cloud, you need to carry out the steps below:
+[quote,https://en.wikipedia.org/wiki/Splunk,Wikipedia]
+Splunk captures, indexes, and correlates real-time data in a searchable repository from which it can generate graphs, reports, alerts, dashboards, and visualizations.
 
-. Install the Universal Forwarder
-. Connect to the deployment server. 
+To connect ownCloud with {splunk-cloud-url}[Splunk Cloud], you need to carry out the steps below:
+
+. Install {splunk-universal-forwarder-url}[the _Splunk Universal Forwarder_]
++
+TIP: You can find the system requirements for installing Splunk in {splunk-docs-url-system-reqs}[the Splunk documentation].
+. Connect the forwarder to your deployment server. 
 You can do this by running the following command:
 + 
 [source,console]
 ----
+# Change the URL to match your setup
 splunk set deploy-poll input-prd-your-server-here.cloud.splunk.com:8089
 ----
-. Install the Splunk Cloud credentials
+. Install the _Splunk Cloud_ credentials
 You can do this by running the following command:
 + 
 [source,console]
 ----
+# Change the path to match your setup
 splunk install app path/to/splunkclouduf.spl -auth admin:changeme
 ----
 
@@ -90,6 +99,8 @@ You can do this by adding the following configuration to `inputs.conf`:
  TIMESTAMP_FIELDS = [Time]
  category = Structured
 ----
+
+TIP: For more details on configuring the Splunk Universal Forwarder, please refer to {splunk-universal-forwarder-docs-url}[Splunk’s online documentation].
 
 == Output
 
