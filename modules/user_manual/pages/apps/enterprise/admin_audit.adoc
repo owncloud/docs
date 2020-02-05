@@ -1,0 +1,210 @@
+= The Admin Audit App
+:toc: right
+:toclevels: 1
+:leveloffset: +1
+:splunk-cloud-url: https://www.splunk.com/en_us/software/splunk-cloud.html
+:splunk-docs-url-system-reqs: https://docs.splunk.com/Documentation/Splunk/latest/Installation/Systemrequirements
+:splunk-universal-forwarder-url: https://www.splunk.com/en_us/download/universal-forwarder.html
+
+== Introduction
+
+The Admin Audit app is an auditing module for ownCloud to trace the actions of users and administrators.
+
+== Configuration
+
+The following configuration is required, in "config.php", to redirect audit messages into a log file.
+
+[source,console]
+----
+'log.conditions' => [
+  [
+    'apps' => ['admin_audit'],
+    // Adjust the path below, to match your setup
+    'logfile' => '/var/www/owncloud/data/admin_audit.log'
+  ]
+]
+----
+
+Please note that the target path must be writeable for the webserver user.
+All messages, regardless of log level, will be logged there.
+To ignore all CLI triggered events (not the default), you can set the following option:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix}  config:app:set admin_audit ignore_cli_events --value='yes'
+----
+
+=== Grouped Logging
+
+With each log message, several users are calculated to be the 'audit context'.
+This is the list of users which are related to the log message.
+Additionally, each log message includes a list of groups that the users are a member of, to enable filtering and splitting of the log messages at a later date.
+In cases when users are members of many groups, to reduce the data output, the group list can be filtered using the following config option:
+
+[source,console]
+----
+'admin_audit.groups' => [
+  'group1',
+  'group2'
+]
+----
+
+When the filter is configured, only the filtered list of groups will be output in `auditGroups`, else, all groups that the `auditUsers` are a member of are output.
+
+=== Connect with Splunk Cloud
+
+[quote,https://en.wikipedia.org/wiki/Splunk,Wikipedia]
+Splunk captures, indexes, and correlates real-time data in a searchable repository from which it can generate graphs, reports, alerts, dashboards, and visualizations.
+
+To connect ownCloud with {splunk-cloud-url}[Splunk Cloud], you need to carry out the steps below:
+
+. Install {splunk-universal-forwarder-url}[the _Splunk Universal Forwarder_]
++
+TIP: You can find the system requirements for installing Splunk in {splunk-docs-url-system-reqs}[the Splunk documentation].
+. Connect your local forwarder to your Splunk Cloud instance
+You can do this by running the following command:
++ 
+[source,console]
+----
+# Change the URL to match your setup
+splunk set deploy-poll input-prd-your-server-here.cloud.splunk.com:8089
+----
+. Install the _Splunk Cloud_ credentials
+You can do this by running the following command:
++ 
+[source,console]
+----
+# Change the path and admin setting to match your setup
+splunk install app path/to/splunkclouduf.spl -auth admin:changeme
+----
+
+. Set the ownCloud audit log to be monitored by Splunk 
+You can do this by adding the following configuration to `inputs.conf`:
++
+[source,console]
+----
+# The file, including the path, must match the 'log.conditions' setting above
+[monitor://var/www/owncloud/data/admin_audit.log]
+ disabled = false
+ sourcetype = _json
+ index = main
+----
+
+. Configure `props.conf`, as in the following configuration example, to ensure that the time field is correctly used and that the fields are extracted
++
+[source,console]
+----
+[_json]
+ INDEXED_EXTRACTIONS = json
+ KV_MODE = json
+ TIMESTAMP_FIELDS = [Time]
+ category = Structured
+----
+
+TIP: For more details on configuring the Splunk Universal Forwarder, please refer to {splunk-universal-forwarder-docs-url}[Splunk’s online documentation].
+
+== Output
+
+The audit app listens for internal ownCloud events and hooks and produces a rich set of audit entries useful for reporting on the usage of your ownCloud server.
+Log entries are based upon the internal ownCloud logging system but contain extra fields that hold relevant data fields related to the specific event.
+
+Each event will contain, at a minimum, the data in the following table:
+
+[cols="15%,15%,70%", options="header",]
+|===
+|Setting
+|Type
+|Description
+
+|`remoteAddr` 
+|string 
+|The remote client IP 
+
+|`user` 
+|string 
+|The UID of the user performing the action. Or "IP x.x.x.x.", "cron", "CLI", "unknown" 
+
+|`url` 
+|string 
+|The process request URI 
+
+|`method` 
+|string 
+|The HTTP request method 
+
+|`userAgent` 
+|string 
+|The HTTP request user agent 
+
+|`time` 
+|string 
+|The time of the event e.g.,: 2018-05-08T08:26:00+00:00 
+
+|`app` 
+|string 
+|Always 'admin_audit' 
+
+|`message` 
+|string 
+|Sentence explaining the action 
+
+|`action` 
+|string 
+|Unique action identifier e.g.,: file_delete or public_link_created 
+
+|`CLI` 
+|boolean 
+|If the action was performed from the CLI 
+
+|`level` 
+|integer 
+|The log level of the entry (usually 1 for audit events)
+|===
+
+Please refer to the follow-on sections to see the event- and hook-specific data that is returned.
+
+* xref:apps[Apps]
+* xref:auth[Auth]
+* xref:comments[Comments]
+* xref:config[Config]
+* xref:console[Console]
+* xref:custom-groups[Custom Groups]
+* xref:file-lifecycle[File Lifecycle]
+* xref:files[Files]
+* xref:holding-period[Holding Period]
+* xref:impersonate[Impersonate]
+* xref:smb-acl[SMB ACL]
+* xref:sharing[Sharing]
+* xref:tags[Tags]
+* xref:user-preference[User Preference]
+* xref:users[Users]
+
+include::admin_audit/apps.adoc[]
+
+include::admin_audit/auth.adoc[]
+
+include::admin_audit/comments.adoc[]
+
+include::admin_audit/config.adoc[]
+
+include::admin_audit/console.adoc[]
+
+include::admin_audit/custom_groups.adoc[]
+
+include::admin_audit/file_lifecycle.adoc[]
+
+include::admin_audit/files.adoc[]
+
+include::admin_audit/holding_period.adoc[]
+
+include::admin_audit/impersonate.adoc[]
+
+include::admin_audit/sharing.adoc[]
+
+include::admin_audit/smb_acl.adoc[]
+
+include::admin_audit/tags.adoc[]
+
+include::admin_audit/user_preference.adoc[]
+
+include::admin_audit/users.adoc[]
