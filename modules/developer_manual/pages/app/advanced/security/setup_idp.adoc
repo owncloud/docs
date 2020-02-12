@@ -1,0 +1,40 @@
+= How to Setup an Identity Provider (IdP) for Development and Test Purposes
+:keywords: idp, identity provider, security, development, ownCloud
+:description: 
+:node-oidc-provider-configuration-url: https://github.com/panva/node-oidc-provider/blob/master/example/support/configuration.js
+:node-oidc-provider-url: https://github.com/panva/node-oidc-provider
+:openid-config-url: http://localhost:3000/.well-known/openid-configuration
+:openid-connector-app-url: https://github.com/owncloud/openidconnect
+
+There are various open-source IdPs available.
+In this guide, you’ll learn how to setup {node-oidc-provider-url}[panva/node-oidc-provider]
+To set it up locally, do the following:
+
+. Clone {panva-node-oidc-provider-url}[panva/node-oidc-provider]
+. Run `yarn install`
+. Then `cd example`
+. Add the client config into {node-oidc-provider-configuration-url}[the configuration file]
++
+[source,javascript]
+----
+include::{partialsdir}app/advanced/security/idp_setup/node-oidc-provider-config.js[]
+----
+. Start the IdP by running `node standalone.js`
+. Open {openid-config-url} in your browser.
+  Your ownCloud configuration (`config/config.*.php`) should contain configuration similar to the following (_adjusted for your requirements_):
++
+[source,php]
+----
+include::{partialsdir}app/advanced/security/idp_setup/example_config.php[]
+----
+. Clients can now use `{openid-config-url}` to obtain all the information necessary to initiate the xref:admin_manual:enterprise/security/oidc/index.adoc[OpenID Connect Flow]. 
+  Use the granted access token in any request to ownCloud within a bearer authentication header.
+. You can now log in with any credentials, but you need to make sure that the user with the given user id exists. 
+  In a real-world deployment, users will come from LDAP.
+  Keep in mind that, by default, {openid-connector-app-url}[the OpenID Connector app] searches for the `email` attribute, which is hard-coded to `johndoe@example.com`.
+  If you wish to map the login name in the OIDC provider with ownCloud user ids, use the following configuration:
++
+[source,php]
+----
+include::{partialsdir}app/advanced/security/idp_setup/map_user_example.php[]
+----
