@@ -3,6 +3,7 @@
 :release-notes-known-issues-url: https://doc.owncloud.com/server/admin_manual/release_notes.html#known-issues
 :owncloud-server-changelog-url: https://owncloud.org/changelog/server/
 
+* xref:changes-in-10-4-0[Changes in 10.4.0]
 * xref:changes-in-10-3-2[Changes in 10.3.2]
 * xref:changes-in-10-3-1[Changes in 10.3.1]
 * xref:changes-in-10-3-0[Changes in 10.3.0]
@@ -26,6 +27,90 @@
 * xref:changes-in-8-1[Changes in 8.1]
 * xref:changes-in-8-0[Changes in 8.0]
 * xref:changes-in-7-0[Changes in 7.0]
+
+== Changes in 10.4.0
+
+Dear ownCloud administrator, please find below the changes and known issues in ownCloud Server 10.4 that need your attention.
+You can also read {owncloud-changelog-url}[the full ownCloud Server changelog] for further details on what has changed.
+
+=== Migrations
+
+Upgrading from ownCloud Server 10.3.x to 10.4.0 does not involve database migrations. 
+The upgrade duration is, therefore, expected to be short.
+
+=== PHP 7.0 Support Discontinued
+
+As xref:release_notes.html#php-7-0-deprecation-note[announced], in the previous release of ownCloud Server, from version 10.4 onward, ownCloud **no longer supports PHP 7.0**. 
+If you're running on PHP 7.0, it is necessary to upgrade PHP **prior** to conducting the upgrade to Server 10.4. 
+We strongly recommend upgrading to PHP 7.2 or 7.3. 
+See the xref:installation/system_requirements.adoc[system requirements] for more information.
+
+NOTE: If you're using the official Docker containers or the Univention appliance, this has been taken care of already.
+
+=== Expiration Date for User and Group Shares
+
+To give users and administrators more control of access to resources, Server 10.4 introduces an expiration date for user and group shares, just like in public links. 
+With this new feature, users can control the lifetime of shares with other users or groups. 
+Administrators can choose to set a default maximum lifetime and to enforce it. 
+To integrate this change, the UI in the user/group sharing tab of the sidebar has been adapted. 
+When a resource is shared, the user and group entries are expandable and collapsible using the cogwheel next to the trash bin icon to show/hide the permissions and the expiration date field to maintain an overview. 
+Additionally, to allow users to recognize expiring shares at a glance, a new clock indicator will be shown next to the cogwheel.
+
+Administrators can configure the feature in the '_Sharing_' section of the admin settings.
+
+=== Sharing Information in Subfolders
+
+ownCloud Server 10.4 puts the focus on user awareness for shared areas to prevent accidentally sharing data or changing other users' data, as well as to make it easier for users to recognize who has access to shared areas. 
+Practically, users are better able to recognize shared resources using a new share overlay indicator on file and folder icons. 
+The indicators are also applied to resources that are not directly shared but are part of a share (when working in a shared folder).
+
+Apart from that, the sharing sidebar panels have been improved to also show users/groups and public links accessible through shares on parent folders. 
+These will be shown as static entries with a "_via_" indicator that allows users to jump to the parent folder and to change the share properties, if desired.
+
+This sharing information is only shown to share owners (users that created shares) as other share recipients are not entitled to get detailed information about who else has access.
+
+=== MariaDB 10.4 and PostgreSQL 10 Support
+
+The discontinuation of PHP 7.0 enables support for MariaDB up to version 10.4 and PostgreSQL 10. 
+Server 10.4 is thoroughly tested against these database versions and proven to work stable.
+
+=== Other Notable Changes
+
+* External storages can now be mounted in read-only mode. https://github.com/owncloud/core/pull/36397[#36397]
+* Filter options (`--enabled` and `--disabled`) have been added to the `occ app:list` command to only show enabled or disabled apps, respectively. https://github.com/owncloud/core/pull/36520[#36520]
+* Support for Oracle DB connection strings has been added to be able to use Oracle-specific configuration settings like failover. https://github.com/owncloud/core/pull/36489[#36489]
+* Two new config.php options (`blacklisted_files_regex` and `excluded_directories_regex`) have been added to allow excluding files and folders from ownCloud using regular expressions (e.g., to prevent creating/renaming/scanning certain file types like ".pst"). See config.sample.php for more information. https://github.com/owncloud/core/pull/36360[#36360]
+* Previously, when a settings section did not have any panels to display, an "Error" was shown. This has been changed to be more user-friendly. https://github.com/owncloud/core/pull/36776[#36776]
+* The memory consumption of the `occ files:checksums:verify` command has been optimized, and the command will now show progress information. https://github.com/owncloud/core/pull/36787[#36787]
+* The memory consumption of the trash bin expiration background job has been optimized. https://github.com/owncloud/core/pull/36565[#36565]
+
+=== Solved Known Issues
+
+* Folder download via the web interface now works in macOS Catalina. https://github.com/owncloud/core/pull/36722[#36722]
+* User creation now allows "+" characters in the user id (e.g., to invite guests with mail addresses containing "+"). 
+  For the change to take effect, you also need to upgrade the `guests` and/or `user_ldap` apps to the latest version. https://github.com/owncloud/core/pull/36613[#36613]
+* File locking actions are not available for public link endpoints anymore. https://github.com/owncloud/core/pull/36402[#36402]
+* `occ files:transfer-ownership` now works in S3 multi-bucket setups. https://github.com/owncloud/core/pull/36464[#36464]
+* The "_Notify by email_" button in users/groups sharing now also works when the initiator does not have an email address set. https://github.com/owncloud/core/pull/36505[#36505]
+* Remaining `.part` files from unfinished uploads via public links will now be cleaned up. https://github.com/owncloud/core/pull/36761[#36761]
+* The quota usage calculation of the trash bin retention has been fixed. 
+  Previously, it mistakenly counted the space usage of incoming shares toward the user's quota usage leading to undesired behavior, e.g., when `trashbin_retention_obligation` was set to `auto`, the user had a quota set and incoming shares exceeded 50% of this quota. https://github.com/owncloud/core/pull/36494[#36494]
+* The command to sync single users from external user backends like LDAP (`occ user:sync -u 'username'`) does not abort anymore if multiple users matching the search term are returned (e.g., 'alice' could return 'alice' and 'alice1'). 
+  It will only abort if none of the results matches the search term (e.g., 'alice' returns 'alice1' and 'alice2'). https://github.com/owncloud/core/pull/36576[#36576]
+* When sharing with both a user and a group with the same name, adjusting the permissions of the second entry works again. https://github.com/owncloud/core/issues/36813[#36813]
+
+=== For Developers
+
+* The https://doc.owncloud.com/server/admin_manual/release_notes.html#developer_manual:webdav_api/trashbin.html[WebDAV Trash bin API] and the https://doc.owncloud.com/server/developer_manual/webdav_api/public_files.html[WebDAV endpoint for public links] (introduced with 10.3.0) have left the tech preview state. 
+  They are considered stable and are enabled by default.
+* The config.php option to enable/disable tech preview APIs (`'dav.enable.tech_preview' => true`) has been removed as it's obsolete. https://github.com/owncloud/core/pull/36815[#36815]
+* A new https://doc.owncloud.com/server/latest/developer_manual/core/apis/ocs/user-sync-api.html[OCS User Sync API] to trigger user sync from external user backends has been added. 
+  This allows external user provisioning systems to push new users to ownCloud on demand and removes the necessity to do full user sync. https://github.com/owncloud/core/pull/36428[#36428]
+
+=== Known Issues
+
+Currently, there are no known issues with ownCloud Server 10.4. 
+This section will be updated if problems are discovered.
 
 == Changes in 10.3.2
 
