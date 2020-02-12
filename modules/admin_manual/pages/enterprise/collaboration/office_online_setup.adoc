@@ -1,0 +1,175 @@
+= Office Online Setup
+:toc:
+:toclevel: 2
+:microsoft-enable-tls-in-office-online-server-url: https://docs.microsoft.com/en-us/officeonlineserver/enable-tls-1-1-and-tls-1-2-support-in-office-online-server
+
+[options="header",cols="2"]
+|===
+|Host IP
+| 172.16.109.13
+|Login
+| `Test\Administrator` `PWD4oc123!`
+|Local Login
+| `Administrator` `PWD4oc123!`
+|===
+
+First, check if the Office Online server is available by running the following command.
+
+[source,powershell]
+----
+PS Get-OfficeWebAppsFarm
+----
+
+Next, run the following PowerShell command to create the Office Online Server
+
+[source,powershell]
+----
+PS +New-OfficeWebAppsFarm `
+  -InternalUrl "https://officeonline.test.owncloud.com" `
+  -ExternalUrl "https://officeonline.test.owncloud.com" `
+  -CertificateName "OOS Certificat" `
+  -EditingEnabled+
+----
+
+Then, enable edit after the creation if error with license is there, by running the following PowerShell command.
+
+[source,powershell]
+----
+PS Set-OfficeWebAppsFarm -EditingEnabled:$true
+----
+
+== Rollback - Login - Error "Trust.."
+
+[source,powershell]
+----
+PS Reset-ComputerMachinePassword [-Credential ] [-Server ]
+----
+
+TIP: The command can be executed without options.
+
+== Certificate Renewal
+
+To review the SSL certificates, you need to:
+
+. xref:get-the-certificate[Get the new certificate]
+. xref:install-the-certificate-on-the-server[Install the certificate on the server]
+
+=== Get The Certificate
+
+To obtain the certificate, run the following commands:
+
+[source,bash]
+----
+include::{examplesdir}enterprise/collaboration/office_online/certificate_retrieval_script.sh[]
+----
+
+Alternatively, you can step through the following commands to obtain the certificate.
+//https://cloud.owncloud.com/index.php/f/4662007
+
+[source,console]
+----
+ssh root@s1 
+cd /etc/dehydrated 
+vi domains.txt 
+# comment out all except officeonline 
+
+./dehydrated --cron 
+cd certs/officeonline.test.owncloud.com 
+openssl pkcs12 -export -out cert.pfx -inkey privkey.pem -in cert.pem 
+# asks for Export Password.
+Pressing Enter works.
+
+-rw------- 1 testy testy 4421 Jan  9 14:24 cert.pfx 
+zip -r /tmp/ootest.zip certs/officeonline.test.owncloud.com 
+
+# download cert.pfx
+----
+
+=== Install the Certificate on the Server
+
+image::enterprise/collaboration/office_online/install_the_certificate.png[]
+
+[source]
+----
+Click open    
+  ServerManager -> Tools +     
+ -> Internet information (IIS) Manager +    
+ -> Select Officeonline + 
+ -> Click Icon "Server Certificates" (IIS)(Middle Bottom) +
+    Import (top right) needs a .pfx file.
+
+Double-click Sites (left hand side)   
+  -> HTTP80     
+  -> click Bindings ...(right hand side)     
+  -> Edit, select one of the many SSL Certificates         
+     All named 'officeonline.test.owncloud.com'     
+  -> click view and find the new one.
+  -> Select
+
+Search -> certlm.msc +
+  Personal +
+    -> Certificates +
+    -> officeonline.test.owncloud.com +
+    -> Action +
+    -> Properties +
+    -> Friendly Name +
+       OOS Certificat +
+    -> OK
+----
+
+==== Force the Web Farm to Use the New Certificate
+
+[source,powershell]
+----
+PS C:\Users\Administrator.TEST>  New-OfficeWebAppsFarm `
+  -InternalUrl "https://officeonline.test.owncloud.com" `
+  -ExternalUrl "https://officeonline.test.owncloud.com" `
+  -CertificateName "OOS Certificat" `
+  -EditingEnabled:$true
+----
+
+The web server certificate is generated on s1. 
+See https://cloud.owncloud.com/index.php/f/4662007.
+Import a new certificate into the IIS Site "_Host80_" and register the new certificate using the above PowerShell command.
+
+
+=== ownCloud Demo Instance for Office Online
+
+WOPI Test URL: https://officeonline.test.owncloud.com/hosting/discovery
+
+[options="header",cols="2"]
+|===
+|URL
+|https://office.owncloud.team 
+|Test login
+|`demo`/`demo` 
+|Admin login
+|`oc-admin`/`Cl0ud1sgr3at!`
+|===
+
+== How to Open Documents in Office Online
+
+image::enterprise/collaboration/office_online/open_documents_in_officeonline.png[]
+
+== Troubleshooting
+
+=== Error: The trust relationship between this workstation and the primary domain failed.
+
+If this error is displayed, execute the following command in PowerShell.
+
+[source, powershell]
+----
+PS Reset-ComputerMachinePassword [-Credential] [-Server]
+----
+
+=== Office Online Server is Not Working or Not Accessible
+
+Please refer to Microsoft’s documentation on {microsoft-enable-tls-in-office-online-server-url}[enabling TLS 1.1 and TLS 1.2 support in Office Online Server].
+
+== Helpful Links:
+
+* http://pdhewaju.com.np/2017/02/08/solvederror-sorry-dont-license-edit-documents-word-online-please-contact-administrator/
+* http://pdhewaju.com.np/2017/02/13/step-step-installing-configuring-office-online-server-windows-server-2016-exchange-2016/
+* https://docs.microsoft.com/de-de/officeonlineserver/deploy-office-online-server
+* https://docs.microsoft.com/de-de/officeonlineserver/plan-office-online-server
+* https://github.com/owncloud/administration-internal/blob/master/docs/ADFS_LDAP_Testenvironment.md
