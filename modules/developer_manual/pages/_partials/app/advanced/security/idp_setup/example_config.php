@@ -5,9 +5,9 @@ $CONFIG = array (
     'openid-connect' => [
         'client-id' => 'ownCloud',
         'client-secret' => 'ownCloud',
-        'loginButtonName' => 'node-oidc-provider',
+        'loginButtonName' => 'login',
         'mode' => 'userid',
-        'provider-url' => 'http://localhost:3000',
+        'provider-url' => 'http://idp.example.com:3000',
         'search-attribute' => 'sub',
         'use-token-introspection-endpoint' => true
     ],
