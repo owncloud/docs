@@ -7,6 +7,8 @@
 :netapp-hybrid-flash-array-url: https://www.netapp.com/us/products/storage-systems/hybrid-flash-array/index.aspx
 :netapp-nfs-bpg-url: https://www.netapp.com/us/media/tr-4067.pdf
 :netapp-mysql-url: https://www.netapp.com/us/media/tr-4722.pdf
+:setting-up-replication-url: https://mariadb.com/kb/en/setting-up-replication/
+:mariadb-monitor-url: https://mariadb.com/kb/en/mariadb-maxscale-22-automatic-failover-with-mariadb-monitor
 
 == Introduction
 
@@ -34,7 +36,7 @@ based on our experience, as well as that of one of our customers.
 * Web server: Apache 2.4.
 * Database: MySQL/MariaDB with InnoDB storage engine (MyISAM is not supported, see:
 xref:configuration/database/linux_database_configuration.adoc#mysql-mariadb-storage-engine[MySQL / MariaDB storage engine])
-* PHP 5.6+.
+* And a recent PHP Version. See xref:installation/system_requirements.adoc[System Requirements]
 * Consider setting up a scale-out deployment, or using
 xref:user_manual:files/federated_cloud_sharing.adoc[Federated Cloud Sharing]
 to keep individual ownCloud instances to a manageable size.
@@ -150,7 +152,7 @@ for information on configuring ownCloud to use LDAP and AD.
 Local session management on the application server. PHP sessions are
 stored in a temporary filesystem, mounted at the operating
 system-specific session storage location. You can find out where that is
-by running `grep -R 'session.save_path' /etc/php5` and then add it to
+by running `grep -R 'session.save_path' /etc/php*` and then add it to
 the `/etc/fstab` file, for example:
 
 [source,console]
@@ -234,10 +236,11 @@ management on the application servers.
 ==== Database
 
 MySQL/MariaDB Galera cluster with
-https://mariadb.com/kb/en/setting-up-replication/[master-slave replication].
+{setting-up-replication-url}[master-slave replication].
 InnoDB storage engine, MyISAM is not supported, see:
 xref:configuration/database/linux_database_configuration.adoc#mysql-mariadb-storage-engine[MySQL / MariaDB storage engine].
-For mariadb consider: https://mariadb.com/kb/en/mariadb-maxscale-22-automatic-failover-with-mariadb-monitor[MariaDB Monitor] to configure your setup for a failover Scenario.
+For mariadb consider:
+{mariadb-monitor-url}[MariaDB Monitor] to configure your setup for a failover Scenario.
 
 ==== Backup
 
@@ -350,7 +353,8 @@ in front of the application servers.
 MySQL/MariaDB Galera Cluster with Master-Slave replication. InnoDB
 storage engine, MyISAM is not supported, see:
 xref:configuration/database/linux_database_configuration.adoc#mysql-mariadb-storage-engine[MySQL / MariaDB storage engine].
-For mariadb consider: https://mariadb.com/kb/en/mariadb-maxscale-22-automatic-failover-with-mariadb-monitor[MariaDB Monitor] to configure your setup for a failover Scenario.
+For mariadb consider:
+{mariadb-monitor-url}[MariaDB Monitor] to configure your setup for a failover Scenario.
 
 ==== Backup
 
@@ -460,4 +464,4 @@ See http://galeracluster.com/documentation-webpages/[the Galera Cluster WSREP do
 
 * http://www.severalnines.com/blog/become-mysql-dba-blog-series-database-high-availability[Database High Availability]
 * http://blog.bitnami.com/2014/06/performance-enhacements-for-apache-and.html[Performance enhancements for Apache and PHP]
-* https://www.digitalocean.com/community/tutorials/how-to-set-up-a-redis-server-as-a-session-handler-for-php-on-ubuntu-14-04[How to Set Up a Redis Server as a Session Handler for PHP on Ubuntu 14.04]
+* https://ubuntuhowtoo.blogspot.com/2019/10/linux-ubuntu-1804-use-redis-for-cache.html[How to Set Up a Redis Server as a Session Handler for PHP on Ubuntu 14.04]
