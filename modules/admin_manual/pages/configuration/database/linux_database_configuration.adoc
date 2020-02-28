@@ -7,6 +7,12 @@
 :mysql-set-transaction-url: https://dev.mysql.com/doc/refman/5.7/en/set-transaction.html
 :mariadb-binary-log-overview-url: https://mariadb.com/kb/en/mariadb/overview-of-the-binary-log/
 :mysql-binary-log-overview-url: https://dev.mysql.com/doc/refman/5.6/en/binary-log.html
+:mariadb-docs-url: https://mariadb.com/kb/en/
+:mysql-docs-url: https://dev.mysql.com/doc/
+:oracle-docs-url: https://docs.oracle.com/en/database/oracle/oracle-database/index.html
+:postgresql-docs-url: https://www.postgresql.org/docs/manuals/
+:php-postgresql-extension-url: https://www.php.net/manual/en/book.pgsql.php
+:php-pdo-postgresql-extension-url: https://www.php.net/manual/en/ref.pdo-pgsql.php
 
 == Introduction
 
@@ -15,18 +21,23 @@ The following databases are currently supported:
 
 * xref:mysql-mariadb-with-binary-logging-enabled[MySQL / MariaDB]
 * xref:postgresql-database[PostgreSQL]
-* xref:enterprise/server_branding/enterprise_server_branding.adoc[Oracle (ownCloud Enterprise edition only)]
+* xref:enterprise/server_branding/enterprise_server_branding.adoc[Oracle (_ownCloud Enterprise edition only_)]
 
-The MySQL or MariaDB databases are the recommended database engines.
+NOTE: The MySQL or MariaDB databases are the recommended database engines.
 
 == Requirements
 
-Choosing to use MySQL / MariaDB, PostgreSQL, or Oracle (ownCloud Enterprise edition only) as your database requires that you install and set up the server software first.  
+Choosing to use MySQL / MariaDB, PostgreSQL, or Oracle as your database requires that you install and set up the server software first.  
 
 TIP: Oracle users, see xref:enterprise/installation/oracle_db_configuration.adoc[the Oracle Database Configuration guide].
 
 The steps for configuring a third party database are beyond the scope of this document. 
-Please refer to the documentation for your specific database choice for instructions.
+Please refer to the documentation below, for your database vendor.
+
+* {mariadb-docs-url}[The MariaDB Knowledge Base]
+* {mysql-docs-url}[The MySQL documentation]
+* {oracle-docs-url}[The Oracle Database documentation]
+* {postgresql-docs-url}[The PostgreSQL documentation]
 
 === MySQL / MariaDB
 
@@ -101,11 +112,11 @@ mysql.trace_mode=Off
 
 Now you need to create a database user and the database itself by using the MySQL command-line interface.
 The database tables will be created by ownCloud when you log in for the first time.
-To start the MySQL command line mode use:
+To start the MySQL command-line mode use:
 
 [source,console]
 ----
-mysql -uroot -p
+mysql -uroot -p;
 ----
 
 Then a `mysql>` or `MariaDB [root]>` prompt will appear.
@@ -123,7 +134,7 @@ You can quit the prompt by entering:
 
 [source,mysql]
 ----
-quit
+quit;
 ----
 
 An ownCloud instance configured with MySQL would contain the hostname on which the database is running, a valid username and password to access it, and the name of the database.
@@ -185,7 +196,7 @@ For more information, please either refer to xref:configuration/server/config_sa
 
 === PostgreSQL
 
-If you decide to use a PostgreSQL database, make sure that you have installed and enabled the PostgreSQL extension in PHP.
+If you decide to use a PostgreSQL database, make sure that you have installed and enabled {php-postgresql-extension-url}[the PostgreSQL extension] and {php-pdo-postgresql-extension-url}[the PostgreSQL PDO extension] in PHP.
 The PHP configuration in `/etc/php/{recommended-php-version}/apache2/conf.d/20-pgsql.ini` could look like this:
 
 [source,console]
@@ -203,22 +214,26 @@ pgsql.ignore_notice = 0
 pgsql.log_notice = 0
 ----
 
+[TIP]
+====
 The default configuration for PostgreSQL (at least in Ubuntu 14.04) is to use the peer authentication method.
 Check `/etc/postgresql/9.3/main/pg_hba.conf` to find out which authentication method is used in your setup.
-To start the PostgreSQL command line mode use:
+====
+
+To start the PostgreSQL command-line mode use:
 
 [source,console]
 ----
 sudo -u postgres psql -d template1
 ----
 
-Then a *template1=\#* prompt will appear.
-Now enter the following lines and confirm them with the enter key:
+Then a `template1=\#` prompt will appear.
+Now enter the following lines - _changing `<username>` to something appropriate_ - and confirm them with the enter key:
 
 [source,psql]
 ----
-CREATE USER username CREATEDB;
-CREATE DATABASE owncloud OWNER username;
+CREATE USER <username> CREATEDB;
+CREATE DATABASE owncloud OWNER <username>;
 ----
 
 You can quit the prompt by entering:
@@ -228,7 +243,13 @@ You can quit the prompt by entering:
 \q
 ----
 
-An ownCloud instance configured with PostgreSQL would contain the path to the socket on which the database is running as the hostname, the system username the PHP process is using, and an empty password to access it, and the name of the database.
+An ownCloud instance configured with PostgreSQL contains:
+
+* The path to the socket on which the database is running as the hostname
+* The system username the PHP process is using
+* An empty password to access it 
+* The name of the database
+
 The `config/config.php` as created by xref:installation/installation_wizard.adoc[the Installation Wizard] would therefore contain entries like this:
 
 [source,php]
@@ -244,13 +265,13 @@ The `config/config.php` as created by xref:installation/installation_wizard.adoc
 ----
 
 The host points to the socket that is used to connect to the database.
-Using localhost here will not work if PostgreSQL is configured to use peer authentication.
+Using `localhost` here will not work if PostgreSQL is configured to use peer authentication.
 Also note, that no password is specified, because this authentication method doesn’t use a password.
 
-If you use another authentication method (not peer), you’ll need to use the following steps to get the database setup: Now, you need to create a database user and the database itself by using the PostgreSQL command-line interface.
+If you use another authentication method (not peer), you’ll need to use the following steps to get the database setup. 
+First, you need to create a database user and the database itself by using the PostgreSQL command-line interface.
 The database tables will be created by ownCloud when you log in for the first time.
-
-To start the PostgreSQL command line mode use:
+To start the PostgreSQL command-line mode use:
 
 [source,psql]
 ----
@@ -262,10 +283,10 @@ Now enter the following lines and confirm them with the enter key:
 
 [source,psql]
 ----
-CREATE USER username WITH PASSWORD 'password';
+CREATE USER <username> WITH PASSWORD 'password';
 CREATE DATABASE owncloud TEMPLATE template0 ENCODING 'UNICODE';
-ALTER DATABASE owncloud OWNER TO username;
-GRANT ALL PRIVILEGES ON DATABASE owncloud TO username;
+ALTER DATABASE owncloud OWNER TO <username>;
+GRANT ALL PRIVILEGES ON DATABASE owncloud TO <username>;
 ----
 
 You can quit the prompt by entering:
@@ -276,7 +297,7 @@ You can quit the prompt by entering:
 ----
 
 An ownCloud instance configured with PostgreSQL would contain the hostname on which the database is running, a valid username and password to access it, and the name of the database.
-The `config/config.php` as created by xref:installation/installation_wizard.adoc[the Installation Wizard] would therefore contain entries like this:
+The `config/config.php` as created by xref:installation/installation_wizard.adoc[the Installation Wizard] would contain entries like this:
 
 [source,php]
 ----
@@ -320,7 +341,7 @@ For a more detailed check whether the access to the database server software its
 
 === How Can I Find Out If a Created User Can Access a Database?
 
-The easiest way to test if a database can be accessed is by starting the command line interface:
+The easiest way to test if a database can be accessed is by starting the command-line interface:
 
 ==== MySQL
 
@@ -359,7 +380,7 @@ Assuming the database server is installed on the same system you’re running th
 psql -Uusername -downcloud
 ----
 
-To access a MySQL installation on a different machine, add the `-h` option with the respective hostname:
+To access a PostgreSQL installation on a different machine, add the `-h` option with the applicable hostname:
 
 [source,console]
 ----
