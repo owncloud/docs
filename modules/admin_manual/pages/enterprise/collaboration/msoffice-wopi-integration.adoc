@@ -3,6 +3,8 @@
 :msoffice-online-server-url: https://www.microsoft.com/en-us/microsoft-365/blog/2016/05/04/office-online-server-now-available/
 :office365-url: https://products.office.com/en-us/business/office 
 :wopi-protocol-url: https://wopi.readthedocs.io/en/latest/
+:office-online-server-url: https://docs.microsoft.com/de-de/officeonlineserver/deploy-office-online-server
+:wopi-timeout-documentation-url: https://wopi.readthedocs.io/projects/wopirest/en/latest/concepts.html#term-lock
 
 == About
 
@@ -21,6 +23,11 @@ Please bear in mind:
 ====
 
 TIP: If you want to integrate the {office365-url}[Office 365 (cloud)] version of Microsoft Office Online, you need to {oc-contact-url}[get in touch with us].
+
+== Preparing the Environment
+You need an {office-online-server-url}[Office Online Server] installed.
+
+All involved servers (OfficeOnline Server and the ownCloud server) need to be accessible by HTTPS with valid certificates.
 
 == Configuring the WOPI App in ownCloud
 
@@ -44,3 +51,19 @@ Microsoft Office Online access can be restricted to users in a specific group, b
 In the example above, only users in the `admin` group would be able to access Microsoft Office Online.
 
 NOTE: If the key is not defined, then all users have access to WOPI.
+
+== Locking the Document
+
+If you open a document with Microsoft Office Online in ownCloud, it makes use of the WebDAV file locking functionality, available in ownCloud server. 
+The idea is to lock the file so other users, who have access, can't make changes to the document while you're editing it. 
+
+In other words: the feature ensures that you are the "master editor", your changes will always be the "master state". 
+Other users can make changes, e.g., with the desktop client, but those will create conflict files for them, which can be resolved afterward.
+When you close the document, Microsoft Office Online also has a feature to unlock the file again, so others can edit it after you are finished editing it.
+
+You can always click on the lock icon next to your file name and unlock it manually using the button in the sidebar.
+
+=== Lock Timeout
+
+If a user is editing a file and loses their internet connection the lock will timeout, freeing the lock, after 30 minutes. 
+Please refer to {wopi-timeout-documentation-url}[the WOPI documentation] for further information.

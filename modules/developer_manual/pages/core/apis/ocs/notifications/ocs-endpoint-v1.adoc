@@ -1,0 +1,329 @@
+= OCS Notifications API (v1)
+:toc: right
+:toclevels: 1
+:request-base-path: ocs/v2.php
+:2fa-app-url: https://github.com/owncloud/twofactor_totp
+
+== Prerequisites
+
+This API requires {2fa-app-url}[the 2-Factor Authentication app] to be installed and enabled.
+
+== Check Server Capabilities
+
+In order to find out if notifications is installed and enabled on the server, you can run a request against the capabilities endpoint.
+
+* Path: `{request-base-path}/cloud/capabilities`
+* Method: `GET`
+
+=== Request Parameters
+
+[cols="15%,15%,70%",options="header",width=100%]
+|===
+|Attribute 
+|Type 
+|Description
+
+|`format` 
+|string 
+|The format to return the response in. 
+It can be either `XML` or `JSON`.
+|===
+
+=== Returns
+
+On success, the request returns either an XML (the default) or a JSON response, along with an `HTTP 200 OK` status code, which shows the server’s notifications capabilities.
+
+=== Example Responses
+
+ifeval::["{format}" == "html"]
+[tabs]
+====
+JSON::
++
+--
+[source,json]
+----
+include::{examplesdir}core/apis/ocs/notifications/get-server-capabilities-response.json[]
+----
+--
+
+XML::
++
+--
+[source,xml]
+----
+include::{examplesdir}core/apis/ocs/notifications/get-server-capabilities-response.xml[]
+----
+--
+====
+endif::[]
+
+ifeval::["{format}" == "pdf"]
+==== JSON
+
+[source,json]
+----
+include::{examplesdir}core/apis/ocs/notifications/get-server-capabilities-response.json[]
+----
+
+==== XML
+
+[source,xml]
+----
+include::{examplesdir}core/apis/ocs/notifications/get-server-capabilities-response.xml[]
+----
+endif::[]
+
+=== Code Example
+
+ifeval::["{format}" == "html"]
+[tabs]
+====
+Curl::
++
+--
+[source,bash]
+----
+include::{examplesdir}core/scripts/curl/ocs/notifications/get-server-capabilities.sh[]
+----
+--
+====
+endif::[]
+
+ifeval::["{format}" == "pdf"]
+==== Curl
+
+[source,bash]
+----
+include::{examplesdir}core/scripts/curl/ocs/notifications/get-server-capabilities.sh[]
+----
+endif::[]
+
+== Get User Notifications
+
+This endpoint supports retrieving a list of notifications for a user. 
+
+* Path: `{request-base-path}/apps/notifications/api/v1/notifications`
+* Method: `GET`
+
+[TIP]
+====
+In order to get a single notification, you can send a `GET` request against the endpoint below. 
+Note the {id} property at the end of the endpoint.
+
+[source,console]
+----
+{request-base-path}/apps/notifications/api/v1/notifications/{id}
+----
+====
+
+=== Request Parameters
+
+[cols="15%,15%,70%",options="header",width=100%]
+|===
+|Attribute 
+|Type 
+|Description
+
+|`format` 
+|string 
+|The format to return the response in. 
+It can be either `XML` or `JSON`.
+|===
+
+=== Returns
+
+On success, the request returns either an XML (the default) or a JSON response, along with an `HTTP 200 OK` status code, which shows the server’s notifications capabilities.
+
+=== Example Responses
+
+==== Response With Notifications
+
+ifeval::["{format}" == "html"]
+[tabs]
+====
+JSON::
++
+--
+[source,json]
+----
+include::{examplesdir}core/apis/ocs/notifications/get-user-notifications-response.json[]
+----
+--
+====
+endif::[]
+
+ifeval::["{format}" == "pdf"]
+===== JSON
+
+[source,json]
+----
+include::{examplesdir}core/apis/ocs/notifications/get-user-notifications-response.json[]
+----
+endif::[]
+
+==== Response Without Notifications
+
+ifeval::["{format}" == "html"]
+[tabs]
+====
+JSON::
++
+--
+[source,json]
+----
+include::{examplesdir}core/apis/ocs/notifications/get-user-notifications-no-notifications-response.json[]
+----
+--
+====
+endif::[]
+
+ifeval::["{format}" == "pdf"]
+===== JSON
+
+[source,json]
+----
+include::{examplesdir}core/apis/ocs/notifications/get-user-notifications-no-notifications-response.json[]
+----
+endif::[]
+
+=== Specification
+
+Optional elements are still set in the array, the value is just empty:
+
+[options="header"]
+|===
+|Type | Empty value 
+|array | `[]`
+|string | `""` 
+|===
+
+==== Notification Element
+
+[cols="20%,10%,70%",options="header"]
+|===
+|Field name 
+|Type 
+|Value description 
+
+|`actions` 
+|array 
+|(Optional) An array of action elements.
+
+|`app` 
+|string 
+|The name of the app that triggered the notification.
+
+|`datetime` 
+|string 
+|The ISO 8601 date and time of when the notification was published.
+
+|`link` 
+|string 
+|(Optional) A link that should be followed when the subject/message is clicked.
+
+|`message` 
+|string 
+|(Optional) The translated, potentially longer, message that should be presented to the user.
+
+|`notification_id` 
+|int 
+|The unique notification identifier. 
+It can be used to dismiss a notification.
+
+|`object_id` 
+|string 
+|The ID of the object which the notification is about. 
+The id can be used in PHP to mark a notification as resolved.
+
+|`object_type` 
+|string 
+|The type of the object which the notification is about. 
+It can be used in PHP to mark a notification as resolved.
+
+|`subject` 
+|string 
+|The translated short subject that should be presented to the user.
+
+|`user` 
+|string 
+|The user id of the user that receives the notification.
+|===
+
+==== Action Element
+
+[cols="20%,10%,70%",options="header"]
+|===
+|Field name 
+|Type 
+|Value description 
+
+|`label` 
+|string 
+|The translated short label of the action/button that should be presented to the user.
+
+|`link` 
+|string 
+|A link that should be followed when the action is performed/clicked.
+
+|`primary` 
+|bool 
+|If the action is the primary action for the notification or not.
+
+|`type` 
+|string 
+|The HTTP method that should be used for the request against the link.
+It can be one of `GET`, `POST`, or `DELETE`.
+|===
+
+=== Code Example
+
+ifeval::["{format}" == "html"]
+[tabs]
+====
+Curl::
++
+--
+[source,bash]
+----
+include::{examplesdir}core/scripts/curl/ocs/notifications/get-user-notifications.sh[]
+----
+--
+====
+endif::[]
+
+ifeval::["{format}" == "pdf"]
+==== Curl
+
+[source,bash]
+----
+include::{examplesdir}core/scripts/curl/ocs/notifications/get-user-notifications.sh[]
+----
+endif::[]
+
+NOTE: If the HTTP status code is `204` (No Content), you can slow down the polling to once per hour.
+This status code means that there is no app that can generate notifications.
+
+== Delete a User Notification
+
+To delete a notification, send a `DELETE` request against `{request-base-path}/apps/notifications/api/v1/notifications/{id}`
+
+* Path: `{request-base-path}/apps/notifications/api/v1/notifications/{id}`
+* Method: `DELETE`
+
+=== Request Parameters
+
+[cols="15%,15%,70%",options="header",width=100%]
+|===
+|Attribute 
+|Type 
+|Description
+
+|`id` 
+|integer 
+|The id of the notification to delete.
+|===
+
+=== Returns
+
+On success, the request returns either an {http-status-codes-base-url}/100[HTTP 100 Continue] status code, and no response body.
