@@ -9,6 +9,19 @@
 :netapp-mysql-url: https://www.netapp.com/us/media/tr-4722.pdf
 :setting-up-replication-url: https://mariadb.com/kb/en/setting-up-replication/
 :mariadb-monitor-url: https://mariadb.com/kb/en/mariadb-maxscale-22-automatic-failover-with-mariadb-monitor
+:btrfs-url: https://en.wikipedia.org/wiki/Btrfs
+:jira-mxs-220-url: https://jira.mariadb.org/browse/MXS-220
+:apache-ssl-howto-url: https://httpd.apache.org/docs/2.4/ssl/ssl_howto.html
+:owncloud-server-ee-url: https://owncloud.com/owncloud-server-or-enterprise-edition/
+:bigip-f5-url: https://f5.com/products/big-ip
+:cloud-warm-hot-server-url: http://searchwindowsserver.techtarget.com/definition/cold-warm-hot-server
+:mariadb-galera-cluster-url: http://galeracluster.com
+:oc-core-issue-14757-url: https://github.com/owncloud/core/issues/14757#issuecomment-223492913
+:avoiding-deadlocks-in-galera-cluster-url: http://severalnines.com/blog/avoiding-deadlocks-galera-set-haproxy-single-node-writes-and-multi-node-reads
+:galera-cluster-wsrep-docs-url: http://galeracluster.com/documentation-webpages/
+:db-high-availability-url: http://www.severalnines.com/blog/become-mysql-dba-blog-series-database-high-availability
+:bitnami-perf-enhancements-url: http://blog.bitnami.com/2014/06/performance-enhacements-for-apache-and.html
+:redis-as-cache-url: https://ubuntuhowtoo.blogspot.com/2019/10/linux-ubuntu-1804-use-redis-for-cache.html
 
 == Introduction
 
@@ -89,7 +102,7 @@ We recommend both RedHat Enterprise Linux and SUSE Linux Enterprise Server 12.
 ==== SSL Configuration
 
 The SSL termination is done in Apache. 
-A standard SSL certificate is required to be installed according to https://httpd.apache.org/docs/2.4/ssl/ssl_howto.html[the official Apache documentation].
+A standard SSL certificate is required to be installed according to {apache-ssl-howto-url}[the official Apache documentation].
 
 ==== Load Balancer
 
@@ -105,11 +118,12 @@ xref:configuration/database/linux_database_configuration.adoc#mysql-mariadb-stor
 
 IMPORTANT: If you are using MaxScale/Galera, then you need to use at least version 1.3.0. 
 In earlier versions, there is a bug where the value of `last_insert_id` is not routed to the master node. 
-This bug can cause loops within ownCloud and corrupt database rows. You can find out more information https://jira.mariadb.org/browse/MXS-220[in the issue documentation].
+This bug can cause loops within ownCloud and corrupt database rows. 
+You can find out more information {jira-mxs-220-url}[in the issue documentation].
 
 ==== Backup
 
-Install ownCloud, the ownCloud data directory, and database on https://en.wikipedia.org/wiki/Btrfs[a Btrfs filesystem]. 
+Install ownCloud, the ownCloud data directory, and database on {btrfs-url}[a Btrfs filesystem]. 
 Make regular snapshots at desired intervals for zero downtime backups. 
 Mount DB partitions with the "nodatacow" option to prevent fragmentation.
 
@@ -251,7 +265,7 @@ You may take a look on the {netapp-nfs-bpg-url}[NetApp NFS Best Practice and Imp
 ==== ownCloud Edition
 
 Enterprise Edition. 
-See https://owncloud.com/owncloud-server-or-enterprise-edition/[ownCloud Server or Enterprise Edition] for comparisons of the ownCloud editions.
+See {owncloud-server-ee-url}[ownCloud Server or Enterprise Edition] for comparisons of the ownCloud editions.
 
 == Scenario 3: Large Enterprises and Service Providers
 
@@ -283,7 +297,7 @@ image:installation/deprecs-3.png[image]
 
 * 4 to 20 application servers with four sockets and 64GB RAM.
 * 4 DB servers with four sockets and 128GB RAM.
-* 2 Hardware load balancer, for example, https://f5.com/products/big-ip[BIG IP from F5].
+ 2 Hardware load balancer, for example, {bigip-f5-url}[BIG IP from F5].
 * NFS storage server as needed.
 
 ==== Operating system
@@ -297,7 +311,7 @@ A standard SSL certificate is needed, installed according to the load balancer d
 
 ==== Load Balancer
 
-A redundant hardware load-balancer with heartbeat, for example, https://f5.com/products/big-ip/[F5 Big-IP]. 
+A redundant hardware load-balancer with heartbeat, for example, {bigip-f5-url}[F5 Big-IP]. 
 This runs two load balancers in front of the application servers.
 
 ==== Database
@@ -347,11 +361,11 @@ You may take a look on the {netapp-nfs-bpg-url}[NetApp NFS Best Practice and Imp
 ==== ownCloud Edition
 
 Enterprise Edition.
-See https://owncloud.com/owncloud-server-or-enterprise-edition/[ownCloud Server or Enterprise Edition] for comparisons of the ownCloud editions.
+See {owncloud-server-ee-url}[ownCloud Server or Enterprise Edition] for comparisons of the ownCloud editions.
 
 ==== Redis Configuration
 
-Redis in a master-slave configuration is http://searchwindowsserver.techtarget.com/definition/cold-warm-hot-server[a hot failover setup], and is usually sufficient. 
+Redis in a master-slave configuration is {cloud-warm-hot-server-url}[a hot failover setup], and is usually sufficient. 
 A slave can be omitted if high availability is provided via other means. 
 And when it is, in the event of a failure, restarting Redis typically occurs quickly enough.
 Regarding Redis cluster, we don’t, usually, recommend it, as it requires a greater level of both maintenance and management in the case of failure. 
@@ -361,15 +375,15 @@ A single Redis server, however, just needs to be rebooted, in the event of failu
 
 === Deadlocks When Using MariaDB Galera Cluster
 
-If you’re using http://galeracluster.com[MariaDB Galera Cluster] with your ownCloud installation, you may encounter deadlocks when you attempt to sync a large number of files. You may also encounter database errors, such as this one:
+If you’re using {mariadb-galera-cluster-url}[MariaDB Galera Cluster] with your ownCloud installation, you may encounter deadlocks when you attempt to sync a large number of files. You may also encounter database errors, such as this one:
 
 [source,console]
 ----
 SQLSTATE[40001]: Serialization failure: 1213 Deadlock found when trying to get lock; try restarting transaction
 ----
 
-The issue, https://github.com/owncloud/core/issues/14757#issuecomment-223492913[identified by Michael Roth],
-is caused when MariaDB Galera cluster sends write requests to all servers in the cluster; http://severalnines.com/blog/avoiding-deadlocks-galera-set-haproxy-single-node-writes-and-multi-node-reads[here is a detailed explanation]. 
+The issue, {oc-core-issue-14757-url}[identified by Michael Roth],
+is caused when MariaDB Galera cluster sends write requests to all servers in the cluster; {avoiding-deadlocks-in-galera-cluster-url}[here is a detailed explanation]. 
 The solution is to send all write requests to a single server, instead of all of them.
 
 === Set wsrep_sync_wait to 1 on all Galera Cluster nodes
@@ -386,10 +400,10 @@ A Galera Cluster write operation is sent to the master while reads are retrieved
 Since Galera Cluster replication is, by default, not strictly synchronous it could happen that items are requested before the replication has actually taken place.
 
 NOTE: This setting is disabled by default.
-See http://galeracluster.com/documentation-webpages/[the Galera Cluster WSREP documentation] for more details.
+See {galera-cluster-wsrep-docs-url}[the Galera Cluster WSREP documentation] for more details.
 
 == References
 
-* http://www.severalnines.com/blog/become-mysql-dba-blog-series-database-high-availability[Database High Availability]
-* http://blog.bitnami.com/2014/06/performance-enhacements-for-apache-and.html[Performance enhancements for Apache and PHP]
-* https://ubuntuhowtoo.blogspot.com/2019/10/linux-ubuntu-1804-use-redis-for-cache.html[How to Set Up a Redis Server as a Session Handler for PHP on Ubuntu 18.04]
+* {db-high-availability-url}[Database High Availability]
+* {bitnami-perf-enhancements-url}[Performance enhancements for Apache and PHP]
+* {redis-as-cache-url}[How to Set Up a Redis Server as a Session Handler for PHP on Ubuntu 18.04]
