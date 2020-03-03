@@ -47,6 +47,30 @@ The cache directory defaults to `data/$user/cache` where `$user` is the
 current user. You may use the `'cache_path'` directive in `config.php`
 (See config_sample_php_parameters) to select a different location.
 
+== Quick Configuration Example
+
+Install APCu and Redis:
+
+[source,console]
+----
+apt install php-apcu php-redis redis-server
+----
+
+Enable them by adding this to your config.php:
+
+[source,php]
+----
+'memcache.local' => '\OC\Memcache\APCu',
+'memcache.locking' => '\OC\Memcache\Redis',
+'redis' => [
+    'host' => 'localhost',
+    'port' => 6379,
+],
+----
+
+Restart your web server and you are ready to go.
+
+
 == Cache Types
 
 === APCu
@@ -60,39 +84,9 @@ a data cache _and_ is available in most Linux distributions.
 
 [source,console]
 ----
-# On RedHat/CentOS/Fedora systems running PHP 5.6
-yum install rh-php56-php-devel
-pecl install apcu
+# On Ubuntu/Debian/Mint systems
+apt install php-apcu
 
-# On RedHat/CentOS/Fedora systems running PHP 7.0
-yum install rh-php70-php-devel
-pecl install apcu
-
-# On Debian/Ubuntu/Mint systems
-apt-get install php-apcu
-----
-
-[NOTE]
-====
-On Ubuntu 14.04 LTS, the APCu version is 4.0.2. This is too old to use
-with ownCloud, which requires ownCloud 4.0.6+. You can install 4.0.7
-from Ubuntu backports with the following command:
-
-[source,console]
-----
-apt-get install php5-apcu/trusty-backports
-----
-====
-
-After APCu’s installed, enable the extension by creating a configuration
-file for it, using the following commands.
-
-[source,console]
-----
-cat << EOF > /etc/opt/rh/rh-php70/php.d/20-apcu.ini
-; APCu php extension
-extension=apcu.so
-EOF
 ----
 
 With that done, assuming that you don’t encounter any errors, restart
@@ -107,16 +101,7 @@ because it guarantees that cached objects are available for as long as they are 
 The Redis PHP module must be at least version 2.2.6 or higher.
 If you are running a Linux distribution that does not package the supported versions of this module — or does not package Redis at all — see xref:installing-redis-on-other-distributions[Installing Redis on other distributions].
 
-TIP: Debian Jessie users, please see this https://github.com/owncloud/core/issues/20675#issuecomment-159202901[GitHub discussion] if you have problems with LDAP authentication when using Redis.
-
-==== Installing Redis on Debian-based Distributions
-
-On Debian/Ubuntu/Mint run the following command:
-
-[source,console]
-----
-apt-get install redis-server php5-redis
-----
+==== Installing Redis
 
 If you have Ubuntu 16.04 or higher:
 
@@ -127,52 +112,6 @@ apt install redis-server php-redis
 
 The installer will automatically launch Redis and configure it to launch at startup.
 
-NOTE: If you’re running ownCloud on Ubuntu 14.04, which does not package the required version of `php5-redis`, 
-then work through https://www.techandme.se/how-to-configure-redis-cache-in-ubuntu-14-04-with-owncloud/[this guide on Tech and Me]
-to see how to install and configure it.
-
-==== Installing Redis on RedHat, CentOS, and Fedora
-
-On RedHat, CentOS, and Fedora run the following commands to install
-Redis:
-
-[source,console]
-----
-yum install rh-php70-php-devel rh-redis32-redis
-pecl install redis
-----
-
-Unlike on Debian-based distributions, Redis will not start automatically
-on _RedHat_, _Centos_, and _Fedora_. Given that, you must use your
-service manager to both start Redis, and to launch it at boot time as a
-daemon. To do so, run the following commands:
-
-[source,console]
-----
-systemctl start rh-redis32-redis
-systemctl enable rh-redis32-redis
-----
-
-You can verify that the Redis daemon is running using either of the
-following two commands:
-
-[source,console]
-----
-ps ax | grep redis
-netstat -tlnp | grep redis
-----
-
-When it’s running, enable the Redis extension by creating a
-configuration file for it, using the following commands.
-
-[source,console]
-----
-cat << EOF > /etc/opt/rh/rh-php70/php.d/20-redis.ini
-; Redis php extension
-extension=redis.so
-EOF
-----
-
 After that, assuming that you don’t encounter any errors, restart Apache
 and the extension is ready to use.
 
@@ -182,34 +121,6 @@ APCu is faster at local caching than Redis. If you have enough memory,
 use APCu for memory caching and Redis for file locking. If you are low
 on memory, use Redis for both.
 
-==== Installing Redis on other distributions
-
-These instructions are adaptable for any distribution that does not
-package the supported version, or that does not package Redis at all,
-such as SUSE Linux Enterprise Server and RedHat Enterprise Linux.
-
-TIP: The https://pecl.php.net/package/redis[Redis PHP module] must be at least version 2.2.6.
-
-On Debian/Mint/Ubuntu
-+++++++++++++++++++++
-
-Use `apt-cache` to see the available `php5-redis` version, or the
-version of your installed package:
-
-[source,console]
-----
-apt-cache policy php5-redis
-----
-
-On CentOS and Fedora
-++++++++++++++++++++
-
-The `yum` command shows available and installed version information:
-
-[source,console]
-----
-yum search php-pecl-redis
-----
 
 ==== Clearing the Redis Cache
 
@@ -258,9 +169,9 @@ ownCloud supports only the *memcached* PHP module.
 
 ==== Installing Memcached
 
-===== On Debian/Ubuntu/Mint
+===== On Ubuntu/Debian//Mint
 
-On Debian/Ubuntu/Mint run the following command:
+On Ubuntu/Debian/Mint run the following command:
 
 [source,console]
 ----
@@ -268,46 +179,6 @@ apt-get install memcached php5-memcached
 ----
 
 NOTE: The installer will automatically start `memcached` and configure it to launch at startup.
-
-===== On RedHat/CentOS/Fedora
-
-On RedHat/CentOS/Fedora run the following command:
-
-[source,console]
-----
-yum install memcached php-pecl-memcache
-----
-
-It will not start Memcached automatically after the installation or on
-subsequent reboots as a daemon, so you must do so yourself . To do so,
-run the following command:
-
-[source,console]
-----
-systemctl enable memcached
-systemctl start memcached
-----
-
-You can verify that the Memcached daemon is running using one of the
-following commands:
-
-[source,console]
-----
-ps ax | grep memcached
-netstat -tlnp | grep memcached
-----
-
-With the extension installed, you now need to configure it, by creating
-a configuration file for it. You can do so using the command below,
-substituting `FILE_PATH` with one from the list below the command.
-
-[source,console]
-----
-cat << EOF > FILE_PATH
-; Memcached PHP extension
-extension=memcached.so
-EOF
-----
 
 ==== Configuration File Paths
 
@@ -504,3 +375,4 @@ be usable. But any file operation will return a "500 Redis went away" exception
 class is missing                                   | There will be a white page and an exception written to
 the logs, This is because autoloading needs the missing class. So there is no way to show a page
 |===
+
