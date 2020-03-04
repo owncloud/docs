@@ -62,9 +62,9 @@ Automatic Tagging is especially useful with the Retention module.
 
 == Retention
 
-The Retention module is your housecleaning power tool, because it automatically deletes files after a time period that you specify. 
+The Retention module is your housecleaning power tool because it automatically deletes files after a period that you specify. 
 Select which tag to set a time limit on, and then set your time limit. 
-File age is calculated using a file's mtime (modification time).
+File age is calculated using a file's modification time (mtime), the default, or its upload time.
 
 IMPORTANT: ownCloud does not preserve directory mtimes (modification time), though it does update file mtimes.
 
@@ -75,21 +75,55 @@ If subfolders have the same tags as their parent folders, their tags must also b
 
 == Retention Engines
 
-There are two retention engines that further allow for fine-tuning the retention settings, these are: *TagBasedRetention* (_the default_) and *UserBasedRetention*.
+Two retention engines further allow for fine-tuning the retention settings: Tag-based, and User-based.
 
-TagBasedRetention:: 
+=== Tag-based Retention 
+
 Tag-based retention checks files that have a particular tag assigned. 
 Then it checks (depth-first) the children of the tagged item, before continuing with the other tagged items. 
 Children that have already been checked will not be checked a second time.
-This is optimised for processing smaller numbers of files that have multiple retention tags.
+This is optimized for processing smaller numbers of files that have multiple retention tags.
 
-UserBasedRetention:: 
+[source,php]
+----
+'workflow.retention_engine' => tagbased,
+----
+
+=== User-based Retention 
+
 User-based retention examines files per user. 
 It first iterates over all files and folders (siblings first), then examines the tags for those items and checks their respective retention periods. 
-This is optimised for many files with few retention tags.
+This is optimized for many files with few retention tags.
 To use UserBasedRetention, add the following line to your `ee.config.php`:
-+
+
 [source,php]
 ----
 'workflow.retention_engine' => userbased,
 ----
+
+=== Calculate File Age Using Upload Time 
+
+An administrator can configure the Workflow app to use a file's upload time, instead of its mtime, to calculate the file's age.
+This can be done in a `config.php` file or by using the occ `config:system:set` command.
+
+==== Configure Using a config.php File
+
+To use file upload times in a config.php file, add the configuration value in the example below.
+
+[source,php]
+----
+workflow.tag-based-retention.use-upload-time
+----
+
+==== Configure using OCC Commands
+
+To use file upload times using the occ `config:system:set` command, run the command in the example below.
+
+[source,console]
+----
+{occ-command-example-prefix} config:system:set workflow.tag-based-retention.use-upload-time \
+  --type boolean \
+  --value true
+----
+
+TIP: Setting `workflow.tag-based-retention.use-upload-time` to true will use mtimes instead of upload times.
