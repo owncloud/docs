@@ -274,7 +274,7 @@ There are 3 types of test steps:
 
 - `Given` steps that get the system into the desired state to start the test (e.g. create users and groups, share some files)
 - `When` steps that perform the action under test (e.g. upload a file to a share)
-- `Then` steps that verify that the action was successful (e.g. check the HTTTP status code, check that other users can access the uploaded file)
+- `Then` steps that verify that the action was successful (e.g. check the HTTP status code, check that other users can access the uploaded file)
 
 A single scenario should test a single action or logical sequence of actions.
 So the `Given`, `When` and `Then` steps should come in that order.
@@ -581,9 +581,13 @@ Use tag formats like the following to skip on a particular major, minor or patch
 |===
 |Annotation
 |Description
-|`@skipOnLDAP` 
+|`@skipOnDockerContainerTesting`
+|skip the scenario if the test is running against the ownCloud docker container. Some settings are preset in the docker container and the tests cannot change those, so the related test scenarios must be skipped.
+|`@skipOnLDAP`
 |skip the scenario if the test is running with the LDAP backend. For example, some user provisioning features may not be relevant when LDAP is the backend for authentication.
-|`@skipOnStorage:ceph` 
+|`@skipOnOcis`
+|skip the scenario if the test is running against an OCIS system.
+|`@skipOnStorage:ceph`
 |skip the scenario if the test is running with `ceph` backend storage.
 |`@skipOnStorage:scality` 
 |skip the scenario if the test is running with `scality` backend storage.
@@ -607,6 +611,8 @@ Use tag formats like the following to skip on a particular major, minor or patch
 |this scenario is selected as part of a base set of tests to run when a special user backend is in place (e.g., LDAP).
 |`@local_storage` 
 |this scenario requires and tests the local storage feature.
+|`@mailhog`
+|this scenario requires an email server running
 |===
 
 === Special Tags for UI Tests
