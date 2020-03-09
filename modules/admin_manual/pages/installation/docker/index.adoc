@@ -81,18 +81,24 @@ below:
 
 [source,console,subs="attributes+"]
 ----
-Name                Command                       State             Ports
+Name                              Command                     State   Ports
 __________________________________________________________________________________________
-server_db_1         /usr/bin/entrypoint/bin/s …   Up                {std-port-mysql}/tcp
-server_owncloud_1   /usr/local/bin/entrypoint …   Up                0.0.0.0:{std-port-http}->{std-port-http}/tcp
-server_redis_1      /bin/s6-svscan /etc/s6        Up                {std-port-redis}/tcp
+ownclouddockerserver_db_1         … /bin/s6-svscan /etc/s6    Up      {std-port-mysql}/tcp
+ownclouddockerserver_owncloud_1   … /usr/bin/owncloud server  Up      0.0.0.0:{std-port-http}->{std-port-http}/tcp
+ownclouddockerserver_redis_1      … /bin/s6-svscan /etc/s6    Up      {std-port-redis}/tcp
 ----
 
 In it, you can see that the database, ownCloud, and Redis containers are
-running, and that ownCloud is accessible via port {std-port-http} on the host machine.
+running, and that only ownCloud is accessible via port {std-port-http} on the host machine.
 
-NOTE: Just because all the containers are running, it takes a few minutes for ownCloud to be fully functional. If you run
-`docker-compose logs --follow owncloud` and see a significant amount of information logging to the console, then please wait until it slows down to attempt to access the web UI.
+NOTE: All files stored in this setup are contained in docker volumes, rather than a physical filesystem tree. It is the admins responsibility to persist the files. +
+Use e.g. `docker image ls | grep ownclouddockerserver` to inspect the volumes. +
+Use e.g. `docker run -v ownclouddockerserver_files:/mnt ubuntu tar cf - -C /mnt . > files.tar` to export the files as a tar archive.
+
+NOTE: Although the containers are up and running, it may still take a few minutes until ownCloud is fully functional. +
+Run e.g. `docker-compose logs --follow owncloud` and inspect the log output. Wait until the output slows down before you access the web UI.
+
+NOTE: Although all important data is retained after `docker-compose down; docker-compose up -d`, there are certain details that get lost. E.g. default apps may re-appear after they were uninstalled.
 
 === Logging In
 
