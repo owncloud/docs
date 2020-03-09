@@ -1,89 +1,126 @@
 = How To Manually Move a Data Directory
 :toc: right
+:mysql-string-replace-function-url: http://www.mysqltutorial.org/mysql-string-replace-function.aspx
 
 == Introduction
 
-If you need to move your ownCloud data directory from its current
-location to somewhere else, here is a manual process that you can take
-to make it happen.
+If you need to move your ownCloud data directory from its current location to another location — **without** using a symbolic link — this section steps through how to do so.
 
-[NOTE]
-====
-This example assumes that:
+== Assumptions
+
+This guide assumes that:
 
 * The current folder is: `/var/www/owncloud/data`
-* The new folder is: `/mnt/owncloud`
+* The new folder is: `/mnt/owncloud/data`
 * You’re using Apache as your webserver
-====
+* The ownCloud database name is `owncloud`
 
-1.  Stop Apache
-2.  Use rsync to sync the files from the current folder to the new one
-3.  Create a symbolic link from the new directory to the old one
-4.  Double-check xref:installation/installation_wizard.adoc#post-installation-steps[the directory permissions] on the new directory
-5.  Restart Apache
+Please change the paths above to reflect your environment.
 
-To save time, here’s the commands which you can copy and use:
+== Description of Steps
+
+The following steps are necessary to move the data directory.
+
+. Stop Apache
+. Enable maintenance mode for your instance
+. Use Rsync to sync the files from the current to the new directory
+. Double-check the xref:installation/installation_wizard.adoc#post-installation-steps[directory permissions] on the new directory
+. Change the ownCloud configuration to point to the new data directory
+. Disable maintenance mode for your instance
+. Restart Apache
+
+Look at each section below for a detailed description.
+
+== Apache and Rsync
+
+To save time, here are the commands which you can copy/paste for Apache and rsync:
 
 [source,console]
 ----
-apachectl -k stop
-rsync -avz /var/www/owncloud/data /mnt/owncloud
-ln -s /mnt/owncloud /var/www/owncloud/data
-apachectl -k graceful
+sudo service apache2 stop
+
+sudo service apache2 start
+
+sudo rsync -avz /var/www/owncloud/data /mnt/owncloud
 ----
 
-NOTE: If you’re on CentOS/Fedora, try `systemctl restart httpd`. If you’re on Debian/Ubuntu try
-`sudo systemctl restart apache2` To learn more about the systemctl command, please refer to
-https://www.digitalocean.com/community/tutorials/systemd-essentials-working-with-services-units-and-the-journal[the systemd essentials guide].
+NOTE: Check your commands for how to start or stop your webserver if you are not on Ubuntu/Debian.
 
-== Fix Hardcoded Database Path Variables
+== Enable and Disable Maintenance Mode
 
-=== Update the oc_storages table
+It is necessary to enable maintenance mode to avoid running cron jobs.
+To enable maintenance mode, run the following command.
 
-If you want to manually change the location of the data folder in the
-database, run the SQL below:
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} maintenance:mode --on
+----
+
+To disable maintenance mode of your instance run the following command:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} maintenance:mode --off
+----
+
+== Fix Hard-coded Database Path Variables
+
+Open a database command line client to enter database commands and activate your ownCloud database.
 
 [source,sql]
 ----
-UPDATE oc_storages SET id='local::/mnt/owncloud'
+use owncloud;
+----
+
+=== Update the oc_storages Table
+
+Run the SQL below:
+
+[source,sql]
+----
+UPDATE oc_storages 
+  SET id='local::/mnt/owncloud/data/'
   WHERE id='local::/var/www/owncloud/data/';
 ----
 
-=== Update the oc_accounts table
+=== Update the oc_accounts Table
 
 You next need to update the `home` column in the `oc_accounts` table.
-This column contains the absolute path for user folders, e.g.,
-`/mnt/data/files/admin`. Assuming that the new home directory is:
-`/mnt/data/files/super-admin`, and that the user’s id is 1, you could
-change it using the following SQL statement:
+This column contains the absolute path for user folders, e.g., `/mnt/owncloud/data/my_user/files`.
+
+If a user does not have the path already set, you have to identify the users `id` and set the path with the following command, user by user.
+This example assumes the user name is `my_user` and their id is `1`.
+
+Run the SQL below:
 
 [source,sql]
 ----
-UPDATE oc_accounts SET home='/mnt/data/files/super-admin'
+UPDATE oc_accounts SET home='/mnt/owncloud/data/my_user/files'
   WHERE id=1;
 ----
 
-If you already have a path like `/var/www/owncloud/` in your database and you want to adjust it to something like `/ocdata/` then you should use the `REPLACE` command:
+For all users who already have a path like `/var/www/owncloud/data/` in your database, you can use the `REPLACE` command:
 
 [source,sql]
 ----
-UPDATE oc_accounts
-SET
-    home = REPLACE(home,
-        '/var/www/owncloud/',
-        '/ocdata/');
+UPDATE oc_accounts 
+  SET home = REPLACE(
+    home,
+    '/var/www/owncloud/data/',
+    '/mnt/owncloud/data/'
+  );
 ----
 
-Here is the page with the complete command syntax: http://www.mysqltutorial.org/mysql-string-replace-function.aspx
+For more information follow the complete MySQL {mysql-string-replace-function-url}[REPLACE] command syntax.
 
+CAUTION: Please don’t copy and paste this example verbatim — nor any of the others.
+They are examples only.
 
-CAUTION: Please don’t copy and paste this example verbatim — nor any of the others. It, and the others, are provided only as guides to what you should or could do.
+=== Update the oc_jobs Table
 
-=== Update the oc_jobs table
-
-The next area to check is the oc_jobs table. The logrotate process may
-have hard-coded a non-standard (or old) value for the data path. To
-check it, run the SQL below and see if any results are returned:
+The next area to check is the `oc_jobs` table. 
+The logrotate process may have hard-coded a non-standard (or old) value for the data path. 
+To check it, run the SQL below and see if any results are returned:
 
 [source,sql]
 ----
@@ -91,25 +128,34 @@ SELECT * FROM oc_jobs
   WHERE class = 'OC\Log\Rotate';
 ----
 
-If any are, run the SQL below to update them, changing the value as
-appropriate.
+If results are returned, run the SQL below to update them, changing the id value as appropriate.
 
 [source,sql]
 ----
-UPDATE oc_jobs SET argument = '/your/new/data/path'
+UPDATE oc_jobs 
+  SET argument = REPLACE(
+    argument,
+    '\\/var\\/www\\/owncloud\\/data\\/',
+    '\\/mnt\\/owncloud/data\\/'
+  )
   WHERE id = <id of the incorrect record>;
 ----
 
-CAUTION: The old datapath will be written with `\/` and you have to add one additional backslash like this: `\\/`.
+CAUTION: The old data path will be written with `\/`.
+Therefore you must add one, additional, backslash, like this: `\\/`.
 
-== Fix Application Settings
+== Fix the Application Settings
 
-One thing worth noting is that individual apps may reference the data
-directory separate from the core system configuration. If so, then you
-will need to find which applications do this, and change them as needed.
+Individual apps may reference the data directory separately from the core system configuration. 
+For those apps, you have to change the configured path.
+Run the following command to list app configs.
 
-For example, if you listed the application configuration by running occ
-config:list, then you might see output similar to that below:
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} config:list
+----
+
+Here is an example of the output which you may see:
 
 [source,json]
 ----
@@ -119,18 +165,27 @@ config:list, then you might see output similar to that below:
             "enabled": "yes",
             "installed_version": "2.3.2",
             "types": "filesystem",
-            "datadir": "var/www/owncloud/data"
+            "datadir": "/var/www/owncloud/data"
         }
     }
 }
 ----
 
-Here, the "fictitious" application references the data directory as
-being set to var/www/owncloud/data. So you would have to change the
-value by using the config:app:set option. Here’s an example of how you
-would update the setting:
+In the example above, the app "fictitious" sets the data directory to `/var/www/owncloud/data`.
+Change this value by using the following command:
 
 [source,console,subs="attributes+"]
 ----
-{occ-command-example-prefix} config:app:set --value /mnt/owncloud fictitious datadir
+{occ-command-example-prefix} config:app:set --value /mnt/owncloud/data fictitious datadir
 ----
+
+NOTE: You have to repeat this for all apps found defining the data directory as key.
+
+== Fix the config.php Settings
+
+To fix the config.php settings:
+
+. Change the `datadirectory` key in your `config.php` to the new path.
+  To do so, start an editor of your choice and open `/var/www/owncloud/config/config.php`
+
+. Change the value of the key from `'datadirectory' => '/var/www/owncloud/data',` to `'datadirectory' => '/mnt/owncloud/data',`.

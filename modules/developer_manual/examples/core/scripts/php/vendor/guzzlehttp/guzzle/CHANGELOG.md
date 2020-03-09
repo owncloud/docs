@@ -65,7 +65,7 @@
   https://github.com/guzzle/guzzle/pull/1237
 * Bug fix: Now correctly parsing `=` inside of quotes in Cookies.
   https://github.com/guzzle/guzzle/pull/1232
-* Bug fix: Cusotm cURL options now correctly override curl options of the
+* Bug fix: Custom cURL options now correctly override curl options of the
   same name. https://github.com/guzzle/guzzle/pull/1221
 * Bug fix: Content-Type header is now added when using an explicitly provided
   multipart body. https://github.com/guzzle/guzzle/pull/1218

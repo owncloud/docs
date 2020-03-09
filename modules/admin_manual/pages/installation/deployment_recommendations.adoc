@@ -7,25 +7,24 @@
 :netapp-hybrid-flash-array-url: https://www.netapp.com/us/products/storage-systems/hybrid-flash-array/index.aspx
 :netapp-nfs-bpg-url: https://www.netapp.com/us/media/tr-4067.pdf
 :netapp-mysql-url: https://www.netapp.com/us/media/tr-4722.pdf
+:setting-up-replication-url: https://mariadb.com/kb/en/setting-up-replication/
+:mariadb-monitor-url: https://mariadb.com/kb/en/mariadb-maxscale-22-automatic-failover-with-mariadb-monitor
 
 == Introduction
 
 What is the best way to install and maintain ownCloud?
 The answer to that is, as always: _'it depends'_.
 
-This is because every ownCloud customer has their own particular needs
-and IT infrastructure. However, both ownCloud and the LAMP stack are
-highly-configurable. Given that, in this document we present a set of
-general recommendations, followed by three typical scenarios, and finish
-up with making best-practice recommendations for both software and
-hardware.
+This is because every ownCloud customer has their own particular needs and IT infrastructure. 
+However, both ownCloud and the LAMP stack are highly-configurable. 
+Given that, in this document we present a set of general recommendations, followed by three typical scenarios, and finish up with making best-practice recommendations for both software and hardware.
 
 [NOTE]
 ====
 The recommendations presented here are based on a standard ownCloud installation, one without any particular
 _apps_, _themes_, or _code changes_. But, server load is dependent upon the number of _clients_, _files_, and
-_user activity_, as well as other usage patterns. Given that, these recommendations are only a rule of thumb
-based on our experience, as well as that of one of our customers.
+_user activity_, as well as other usage patterns. 
+Given that, these recommendations are only a rule of thumb based on our experience, as well as that of one of our customers.
 ====
 
 == General Recommendations
@@ -34,27 +33,22 @@ based on our experience, as well as that of one of our customers.
 * Web server: Apache 2.4.
 * Database: MySQL/MariaDB with InnoDB storage engine (MyISAM is not supported, see:
 xref:configuration/database/linux_database_configuration.adoc#mysql-mariadb-storage-engine[MySQL / MariaDB storage engine])
-* PHP 5.6+.
-* Consider setting up a scale-out deployment, or using
-xref:user_manual:files/federated_cloud_sharing.adoc[Federated Cloud Sharing]
-to keep individual ownCloud instances to a manageable size.
+* And a recent PHP Version. See xref:installation/system_requirements.adoc[System Requirements]
+* Consider setting up a scale-out deployment, or using xref:user_manual:files/federated_cloud_sharing.adoc[Federated Cloud Sharing] to keep individual ownCloud instances to a manageable size.
 
-NOTE: Whatever the size of your organization, always keep one thing in mind:
-_The amount of data stored in ownCloud will only grow. So plan ahead._
+NOTE: Whatever the size of your organization, always keep one thing in mind: _The amount of data stored in ownCloud will only grow. So plan ahead._
 
 == ownCloud Administrators Must Have Command Line or Cron Access
 
-We only recommend using hosts that provide command-line or Cron access
-(ideally both) _to ownCloud administrators_, for three key reasons:
+We only recommend using hosts that provide command-line or Cron access (ideally both) _to ownCloud administrators_, for three key reasons:
 
-1.  Without command-line access, xref:configuration/server/occ_command.adoc[OCC commands], required for
-administrative tasks such as repairs and upgrades, are not available.
-2.  Without Crontab access, you cannot run background jobs reliably.
+1. Without command-line access, xref:configuration/server/occ_command.adoc[OCC commands], required for administrative tasks such as repairs and upgrades, are not available.
+2. Without Crontab access, you cannot run background jobs reliably.
 xref:configuration/server/background_jobs_configuration.adoc#ajax[ajax/cron.php]
 is available, but it is not reliable enough, because it only runs when people are using the web UI.
 Additionally, ownCloud relies heavily on xref:developer_manual:app/fundamentals/backgroundjobs.adoc[background jobs] especially for long-running operations, which will likely cause PHP timeouts.
-3.  PHP timeout values are often low. Having low timeout settings can break long-running operations,
-such as moving a huge folder.
+3. PHP timeout values are often low. 
+Having low timeout settings can break long-running operations, such as moving a huge folder.
 
 == Scenario 1: Small Workgroups and Departments
 
@@ -78,28 +72,24 @@ This recommendation applies if you meet the following criteria:
 
 === Recommended System Requirements
 
-One machine running the application, web, and database server, as well
-as local storage. Authentication via an existing LDAP or Active
-Directory server.
+One machine running the application, web, and database server, as well as local storage. 
+Authentication via an existing LDAP or Active Directory server.
 
 image:installation/deprecs-1.png[Network diagram for small enterprises.]
 
 ==== Components
 
-One server with at least 2 CPU cores, 16GB RAM, and local storage as
-needed.
+One server with at least 2 CPU cores, 16GB RAM, and local storage as needed.
 
 ==== Operating system
 
-Enterprise-grade Linux distribution with full support from an operating
-system vendor. We recommend both RedHat Enterprise Linux and SUSE Linux
-Enterprise Server 12.
+Enterprise-grade Linux distribution with full support from an operating system vendor. 
+We recommend both RedHat Enterprise Linux and SUSE Linux Enterprise Server 12.
 
 ==== SSL Configuration
 
-The SSL termination is done in Apache. A standard SSL certificate is
-required to be installed according to
-https://httpd.apache.org/docs/2.4/ssl/ssl_howto.html[the official Apache documentation].
+The SSL termination is done in Apache. 
+A standard SSL certificate is required to be installed according to https://httpd.apache.org/docs/2.4/ssl/ssl_howto.html[the official Apache documentation].
 
 ==== Load Balancer
 
@@ -107,26 +97,23 @@ None.
 
 ==== Database
 
-MySQL, MariaDB, or PostgreSQL. We currently recommend MySQL / MariaDB,
-as our customers have had good experiences when moving to a Galera
-cluster to scale the DB. If using either MySQL or MariaDB, you must use
-the InnoDB storage engine as MyISAM is not supported, see:
+MySQL, MariaDB, or PostgreSQL. 
+We currently recommend MySQL / MariaDB,
+as our customers have had good experiences when moving to a Galera cluster to scale the DB. 
+If using either MySQL or MariaDB, you must use the InnoDB storage engine as MyISAM is not supported, see:
 xref:configuration/database/linux_database_configuration.adoc#mysql-mariadb-storage-engine[MySQL / MariaDB storage engine]
 
-IMPORTANT: If you are using MaxScale/Galera, then you need to use at least version 1.3.0. In earlier versions,
-there is a bug where the value of `last_insert_id` is not routed to the master node. This bug can cause loops
-within ownCloud and corrupt database rows. You can find out more information
-https://jira.mariadb.org/browse/MXS-220[in the issue documentation].
+IMPORTANT: If you are using MaxScale/Galera, then you need to use at least version 1.3.0. 
+In earlier versions, there is a bug where the value of `last_insert_id` is not routed to the master node. 
+This bug can cause loops within ownCloud and corrupt database rows. You can find out more information https://jira.mariadb.org/browse/MXS-220[in the issue documentation].
 
 ==== Backup
 
-Install ownCloud, the ownCloud data directory, and database on
-https://en.wikipedia.org/wiki/Btrfs[a Btrfs filesystem]. Make regular
-snapshots at desired intervals for zero downtime backups. Mount DB
-partitions with the "nodatacow" option to prevent fragmentation.
+Install ownCloud, the ownCloud data directory, and database on https://en.wikipedia.org/wiki/Btrfs[a Btrfs filesystem]. 
+Make regular snapshots at desired intervals for zero downtime backups. 
+Mount DB partitions with the "nodatacow" option to prevent fragmentation.
 
-Alternatively, you can make nightly backups — with service interruption
-— as follows:
+Alternatively, you can make nightly backups — with service interruption — as follows:
 
 1.  Shut down Apache.
 2.  Create database dump.
@@ -134,36 +121,29 @@ Alternatively, you can make nightly backups — with service interruption
 4.  Push database dump to backup.
 5.  Start Apache.
 
-After these steps have been completed, then, optionally, rsync the
-backup to either an external backup storage or tape backup.
+After these steps have been completed, then, optionally, rsync the backup to either an external backup storage or tape backup.
 See xref:maintenance/index.adoc[the Maintenance section] of the Administration manual for tips on backups and restores.
 
 ==== Authentication
 
-User authentication via one or several LDAP or Active Directory (AD)
-servers. See
-xref:admin_manual:configuration/user/user_auth_ldap.adoc[User Authentication with LDAP]
-for information on configuring ownCloud to use LDAP and AD.
+User authentication via one or several LDAP or Active Directory (AD) servers. 
+See xref:admin_manual:configuration/user/user_auth_ldap.adoc[User Authentication with LDAP] for information on configuring ownCloud to use LDAP and AD.
 
 ==== Session Management
 
-Local session management on the application server. PHP sessions are
-stored in a temporary filesystem, mounted at the operating
-system-specific session storage location. You can find out where that is
-by running `grep -R 'session.save_path' /etc/php5` and then add it to
-the `/etc/fstab` file, for example:
+Local session management on the application server. 
+PHP sessions are stored in a temporary filesystem, mounted at the operating system-specific session storage location. 
+You can find out where that is by running `grep -R 'session.save_path' /etc/php*` and then add it to the `/etc/fstab` file, for example:
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-echo "tmpfs /var/lib/php5/pool-www tmpfs defaults,noatime,mode=1777 0 0" >> /etc/fstab`.
+include::{examplesdir}installation/deployment_recommendations/set_session_path.sh[]
 ----
 
 ==== Memory Caching
 
-A memory cache speeds up server performance, and ownCloud supports four
-of them. Refer to
-xref:admin_manual:configuration/server/caching_configuration.adoc[Configuring Memory Caching]
-for information on selecting and configuring a memory cache.
+A memory cache speeds up server performance, and ownCloud supports four of them. 
+Refer to xref:admin_manual:configuration/server/caching_configuration.adoc[Configuring Memory Caching] for information on selecting and configuring a memory cache.
 
 ==== Storage
 
@@ -171,9 +151,8 @@ Local storage.
 
 ==== ownCloud Edition
 
-Standard Edition. See
-https://owncloud.com/owncloud-server-or-enterprise-edition/[ownCloud Server or Enterprise Edition]
-for comparisons of the ownCloud editions.
+Standard Edition. 
+See https://owncloud.com/owncloud-server-or-enterprise-edition/[ownCloud Server or Enterprise Edition] for comparisons of the ownCloud editions.
 
 == Scenario 2: Mid-Sized Enterprises
 
@@ -186,8 +165,7 @@ These recommendations apply if you meet the following criteria:
 
 | Storage size | Up to 200TB.
 
-| High availability level | Every component is fully redundant and can
-fail
+| High availability level | Every component is fully redundant and can fail
 
 | | without service interruption. Backups without
 
@@ -208,40 +186,32 @@ image:installation/deprecs-2.png[Network diagram for a mid-sized enterprise.]
 
 * 2 to 4 application servers with four sockets and 32GB RAM.
 * 2 DB servers with four sockets and 64GB RAM.
-* 1
-https://www.digitalocean.com/community/tutorials/an-introduction-to-haproxy-and-load-balancing-concepts[HAproxy load balancer] with two sockets and 16GB RAM.
+* 1 https://www.digitalocean.com/community/tutorials/an-introduction-to-haproxy-and-load-balancing-concepts[HAproxy load balancer] with two sockets and 16GB RAM.
 * NFS storage server as needed.
 
 ==== Operating System
 
-Enterprise grade Linux distribution with full support from an operating
-system vendor. We recommend both RedHat Enterprise Linux and SUSE Linux
-Enterprise Server 12.
+Enterprise grade Linux distribution with full support from an operating system vendor. We recommend both RedHat Enterprise Linux and SUSE Linux Enterprise Server 12.
 
 ==== SSL Configuration
 
-The SSL termination is done in the
-https://www.digitalocean.com/community/tutorials/an-introduction-to-haproxy-and-load-balancing-concepts[HAProxy
-load balancer]. A standard SSL certificate is needed, installed
-according to the http://www.haproxy.org/#docs[HAProxy documentation].
+The SSL termination is done in the https://www.digitalocean.com/community/tutorials/an-introduction-to-haproxy-and-load-balancing-concepts[HAProxy load balancer]. A standard SSL certificate is needed, installed according to the http://www.haproxy.org/#docs[HAProxy documentation].
 
 ==== Load Balancer
 
-HAProxy running on a dedicated server in front of the application
-servers. Sticky session needs to be used because of local session
-management on the application servers.
+HAProxy running on a dedicated server in front of the application servers. Sticky session needs to be used because of local session management on the application servers.
 
 ==== Database
 
 MySQL/MariaDB Galera cluster with
-https://mariadb.com/kb/en/mariadb/replication-cluster-multi-master/[master-master replication].
-InnoDB storage engine, MyISAM is not supported, see:
-xref:configuration/database/linux_database_configuration.adoc#mysql-mariadb-storage-engine[MySQL / MariaDB storage engine].
+{setting-up-replication-url}[master-slave replication].
+InnoDB storage engine, MyISAM is not supported, see: xref:configuration/database/linux_database_configuration.adoc#mysql-mariadb-storage-engine[MySQL / MariaDB storage engine].
+For mariadb consider: {mariadb-monitor-url}[MariaDB Monitor] to configure your setup for a failover Scenario.
 
 ==== Backup
 
-Minimum daily backup without downtime. All MySQL/MariaDB statements
-should be replicated to a backup MySQL/MariaDB slave instance.
+Minimum daily backup without downtime. 
+All MySQL/MariaDB statements should be replicated to a backup MySQL/MariaDB slave instance.
 
 * Create a snapshot on the NFS storage server.
 * At the same time stop the MySQL replication.
@@ -254,45 +224,34 @@ should be replicated to a backup MySQL/MariaDB slave instance.
 ==== Authentication
 
 User authentication via one or several LDAP or Active Directory servers.
-See xref:admin_manual:configuration/user/user_auth_ldap.adoc[User Authentication with LDAP]
-for information on configuring ownCloud to use LDAP and AD.
+See xref:admin_manual:configuration/user/user_auth_ldap.adoc[User Authentication with LDAP] for information on configuring ownCloud to use LDAP and AD.
 
 ==== Session Management
 
-Session management on the application server. PHP sessions are stored in
-a temporary filesystem, mounted at the operating system-specific session
-storage location. You can find out where that is by running
-`grep -R 'session.save_path' /etc/php5` and then add it to the
-`/etc/fstab` file, for example:
+Session management on the application server. 
+PHP sessions are stored in a temporary filesystem, mounted at the operating system-specific session storage location. 
+You can find out where that is by running `grep -R 'session.save_path' /etc/php*` and then add it to the `/etc/fstab` file, for example:
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-echo "tmpfs /var/lib/php5/pool-www tmpfs defaults,noatime,mode=1777 0 0" >> /etc/fstab
+include::{examplesdir}installation/deployment_recommendations/set_session_path.sh[]
 ----
 
 ==== Memory Caching
 
-A memory cache speeds up server performance, and ownCloud supports four
-memory cache types. Refer to
-xref:admin_manual:configuration/server/caching_configuration.adoc[Configuring Memory Caching]
-for information on selecting and configuring a memory cache.
+A memory cache speeds up server performance, and ownCloud supports four memory cache types. 
+Refer to xref:admin_manual:configuration/server/caching_configuration.adoc[Configuring Memory Caching] for information on selecting and configuring a memory cache.
 
 ==== Storage
 
-For accessing a backend storage system via NFS, you can use a dedicated storage system like 
-{netapp-hybrid-flash-array-url}[NetApp Hybrid Flash Storage Systems], or other systems like
-{ibm-elastic-storage-server-url}[IBM Elastic Storage] based on their Power8 servers or 
-{redhat-ceph-url}[RedHat Ceph] with their NFS-Ceph gateway.
+For accessing a backend storage system via NFS, you can use a dedicated storage system like {netapp-hybrid-flash-array-url}[NetApp Hybrid Flash Storage Systems], or other systems like {ibm-elastic-storage-server-url}[IBM Elastic Storage] based on their Power8 servers or {redhat-ceph-url}[RedHat Ceph] with their NFS-Ceph gateway.
 
-You may take a look on the {netapp-nfs-bpg-url}[NetApp NFS Best Practice and Implementation Guide] for best NFS configuring practices,
-especially section _9.4 Mount Option Best Practices with NFS_ on page 111 and
-{netapp-mysql-url}[MySQL Database on NetApp ONTAP] which also includes performance measurements.
+You may take a look on the {netapp-nfs-bpg-url}[NetApp NFS Best Practice and Implementation Guide] for best NFS configuring practices, especially section _9.4 Mount Option Best Practices with NFS_ on page 111 and {netapp-mysql-url}[MySQL Database on NetApp ONTAP] which also includes performance measurements.
 
 ==== ownCloud Edition
 
-Enterprise Edition. See
-https://owncloud.com/owncloud-server-or-enterprise-edition/[ownCloud Server or Enterprise Edition]
-for comparisons of the ownCloud editions.
+Enterprise Edition. 
+See https://owncloud.com/owncloud-server-or-enterprise-edition/[ownCloud Server or Enterprise Edition] for comparisons of the ownCloud editions.
 
 == Scenario 3: Large Enterprises and Service Providers
 
@@ -303,8 +262,7 @@ for comparisons of the ownCloud editions.
 
 | Storage size | Up to 1 petabyte.
 
-| High availability level | Every component is fully redundant and can
-fail
+| High availability level | Every component is fully redundant and can fail
 
 | | without service interruption. Backups without
 
@@ -334,42 +292,37 @@ RHEL 7 with latest service packs.
 
 ==== SSL Configuration
 
-The SSL termination is done in the load balancer. A standard SSL
-certificate is needed, installed according to the load balancer
-documentation.
+The SSL termination is done in the load balancer. 
+A standard SSL certificate is needed, installed according to the load balancer documentation.
 
 ==== Load Balancer
 
-A redundant hardware load-balancer with heartbeat, for example,
-https://f5.com/products/big-ip/[F5 Big-IP]. This runs two load balancers
-in front of the application servers.
+A redundant hardware load-balancer with heartbeat, for example, https://f5.com/products/big-ip/[F5 Big-IP]. 
+This runs two load balancers in front of the application servers.
 
 ==== Database
 
-MySQL/MariaDB Galera Cluster with 4x master-master replication. InnoDB
-storage engine, MyISAM is not supported, see:
-xref:configuration/database/linux_database_configuration.adoc#mysql-mariadb-storage-engine[MySQL / MariaDB storage engine].
+MySQL/MariaDB Galera Cluster with Master-Slave replication. InnoDB storage engine, MyISAM is not supported, see: xref:configuration/database/linux_database_configuration.adoc#mysql-mariadb-storage-engine[MySQL / MariaDB storage engine].
+For mariadb consider: {mariadb-monitor-url}[MariaDB Monitor] to configure your setup for a failover Scenario.
 
 ==== Backup
 
-Minimum daily backup without downtime. All MySQL/MariaDB statements
-should be replicated to a backup MySQL/MariaDB slave instance. To do
-this, follow these steps:
+Minimum daily backup without downtime. 
+All MySQL/MariaDB statements should be replicated to a backup MySQL/MariaDB slave instance. 
+To do this, follow these steps:
 
-1.  Create a snapshot on the NFS storage server.
-2.  At the same time stop the MySQL replication.
-3.  Create a MySQL dump of the backup slave.
-4.  Push the NFS snapshot to the backup.
-5.  Push the MySQL dump to the backup.
-6.  Delete the NFS snapshot.
-7.  Restart MySQL replication.
+. Create a snapshot on the NFS storage server.
+. At the same time stop the MySQL replication.
+. Create a MySQL dump of the backup slave.
+. Push the NFS snapshot to the backup.
+. Push the MySQL dump to the backup.
+. Delete the NFS snapshot.
+. Restart MySQL replication.
 
 ==== Authentication
 
-User authentication via one or several LDAP or Active Directory servers,
-or SAML/Shibboleth. See
-xref:configuration/user/user_auth_ldap.adoc[User Authentication with LDAP] and
-xref:enterprise/user_management/user_auth_shibboleth.adoc[Shibboleth Integration].
+User authentication via one or several LDAP or Active Directory servers, or SAML/Shibboleth. 
+See xref:configuration/user/user_auth_ldap.adoc[User Authentication with LDAP] and xref:enterprise/user_management/user_auth_shibboleth.adoc[Shibboleth Integration].
 
 ==== LDAP
 
@@ -386,70 +339,51 @@ xref:configuration/server/caching_configuration.adoc#redis[Redis] for distribute
 ==== Storage
 
 
-For accessing a backend storage system via NFS, you can use a dedicated storage system like 
-{netapp-hybrid-flash-array-url}[NetApp Hybrid Flash Storage Systems], or other systems like
-{ibm-elastic-storage-server-url}[IBM Elastic Storage] based on their Power8 servers or 
-{redhat-ceph-url}[RedHat Ceph] with their NFS-Ceph gateway.
+For accessing a backend storage system via NFS, you can use a dedicated storage system like {netapp-hybrid-flash-array-url}[NetApp Hybrid Flash Storage Systems], or other systems like {ibm-elastic-storage-server-url}[IBM Elastic Storage] based on their Power8 servers or {redhat-ceph-url}[RedHat Ceph] with their NFS-Ceph gateway.
 Optionally, an S3 compatible object store can also be used.
 
-You may take a look on the {netapp-nfs-bpg-url}[NetApp NFS Best Practice and Implementation Guide] for best NFS configuring practices,
-especially section _9.4 Mount Option Best Practices with NFS_ on page 111 and
-{netapp-mysql-url}[MySQL Database on NetApp ONTAP] which also includes performance measurements.
+You may take a look on the {netapp-nfs-bpg-url}[NetApp NFS Best Practice and Implementation Guide] for best NFS configuring practices, especially section _9.4 Mount Option Best Practices with NFS_ on page 111 and {netapp-mysql-url}[MySQL Database on NetApp ONTAP] which also includes performance measurements.
 
 ==== ownCloud Edition
 
 Enterprise Edition.
-See https://owncloud.com/owncloud-server-or-enterprise-edition/[ownCloud Server or Enterprise Edition]
-for comparisons of the ownCloud editions.
+See https://owncloud.com/owncloud-server-or-enterprise-edition/[ownCloud Server or Enterprise Edition] for comparisons of the ownCloud editions.
 
 ==== Redis Configuration
 
-Redis in a master-slave configuration is
-http://searchwindowsserver.techtarget.com/definition/cold-warm-hot-server[a hot failover setup],
-and is usually sufficient. A slave can be omitted
-if high availability is provided via other means. And when it is, in the
-event of a failure, restarting Redis typically occurs quickly enough.
-Regarding Redis cluster, we don’t, usually, recommend it, as it requires
-a greater level of both maintenance and management in the case of
-failure. A single Redis server, however, just needs to be rebooted, in
-the event of failure.
+Redis in a master-slave configuration is http://searchwindowsserver.techtarget.com/definition/cold-warm-hot-server[a hot failover setup], and is usually sufficient. 
+A slave can be omitted if high availability is provided via other means. 
+And when it is, in the event of a failure, restarting Redis typically occurs quickly enough.
+Regarding Redis cluster, we don’t, usually, recommend it, as it requires a greater level of both maintenance and management in the case of failure. 
+A single Redis server, however, just needs to be rebooted, in the event of failure.
 
 == Known Issues
 
 === Deadlocks When Using MariaDB Galera Cluster
 
-If you’re using http://galeracluster.com[MariaDB Galera Cluster] with
-your ownCloud installation, you may encounter deadlocks when you attempt
-to sync a large number of files. You may also encounter database errors,
-such as this one:
+If you’re using http://galeracluster.com[MariaDB Galera Cluster] with your ownCloud installation, you may encounter deadlocks when you attempt to sync a large number of files. You may also encounter database errors, such as this one:
 
 [source,console]
 ----
 SQLSTATE[40001]: Serialization failure: 1213 Deadlock found when trying to get lock; try restarting transaction
 ----
 
-The issue,
-https://github.com/owncloud/core/issues/14757#issuecomment-223492913[identified by Michael Roth],
-is caused when MariaDB Galera cluster sends write requests to all servers in the cluster;
-http://severalnines.com/blog/avoiding-deadlocks-galera-set-haproxy-single-node-writes-and-multi-node-reads[here
-is a detailed explanation]. The solution is to send all write requests to a single server, instead of all of them.
+The issue, https://github.com/owncloud/core/issues/14757#issuecomment-223492913[identified by Michael Roth],
+is caused when MariaDB Galera cluster sends write requests to all servers in the cluster; http://severalnines.com/blog/avoiding-deadlocks-galera-set-haproxy-single-node-writes-and-multi-node-reads[here is a detailed explanation]. 
+The solution is to send all write requests to a single server, instead of all of them.
 
 === Set wsrep_sync_wait to 1 on all Galera Cluster nodes
 
 ==== What the parameter does
 
-When enabled, the node triggers causality checks in response to certain
-types of queries. During the check, the node blocks new queries while
-the database server catches up with all updates made in the cluster to
-the point where the check begun. Once it reaches this point, the node
-executes the original query.
+When enabled, the node triggers causality checks in response to certain types of queries. 
+During the check, the node blocks new queries while the database server catches up with all updates made in the cluster to the point where the check begun. 
+Once it reaches this point, the node executes the original query.
 
 ==== Why enable it
 
-A Galera Cluster write operation is sent to the master while reads are
-retrieved from the slaves. Since Galera Cluster replication is, by
-default, not strictly synchronous it could happen that items are
-requested before the replication has actually taken place.
+A Galera Cluster write operation is sent to the master while reads are retrieved from the slaves. 
+Since Galera Cluster replication is, by default, not strictly synchronous it could happen that items are requested before the replication has actually taken place.
 
 NOTE: This setting is disabled by default.
 See http://galeracluster.com/documentation-webpages/[the Galera Cluster WSREP documentation] for more details.
@@ -458,4 +392,4 @@ See http://galeracluster.com/documentation-webpages/[the Galera Cluster WSREP do
 
 * http://www.severalnines.com/blog/become-mysql-dba-blog-series-database-high-availability[Database High Availability]
 * http://blog.bitnami.com/2014/06/performance-enhacements-for-apache-and.html[Performance enhancements for Apache and PHP]
-* https://www.digitalocean.com/community/tutorials/how-to-set-up-a-redis-server-as-a-session-handler-for-php-on-ubuntu-14-04[How to Set Up a Redis Server as a Session Handler for PHP on Ubuntu 14.04]
+* https://ubuntuhowtoo.blogspot.com/2019/10/linux-ubuntu-1804-use-redis-for-cache.html[How to Set Up a Redis Server as a Session Handler for PHP on Ubuntu 18.04]
