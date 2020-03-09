@@ -44,7 +44,7 @@ class PumpStreamTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals([1, 9, 3], $called);
     }
 
-    public function testInifiniteStreamWrappedInLimitStream()
+    public function testInfiniteStreamWrappedInLimitStream()
     {
         $p = Psr7\stream_for(function () { return 'a'; });
         $s = new LimitStream($p, 5);
