@@ -47,7 +47,7 @@ class LimitStreamTest extends \PHPUnit_Framework_TestCase
      * @expectedException \RuntimeException
      * @expectedExceptionMessage Unable to seek to stream position 10 with whence 0
      */
-    public function testEnsuresPositionCanBeekSeekedTo()
+    public function testEnsuresPositionCanBeSeekedTo()
     {
         new LimitStream(Psr7\stream_for(''), 0, 10);
     }
