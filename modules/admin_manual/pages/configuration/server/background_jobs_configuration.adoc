@@ -40,12 +40,12 @@ NOTE: It's for this reason that we encourage you to use Cron — if at all possi
 Using the operating system Cron feature is the preferred method for executing regular tasks. 
 This method enables the execution of scheduled jobs without the inherent limitations which the web server might have.
 
-For example, to run a Cron job on a *nix system every minute, under the default web server user (often, `www-data` or `wwwrun`) you must set up the following Cron job to call the `cron.php` script:
+For example, to run a Cron job on a *nix system every minute, under the default web server user (often, `www-data` or `wwwrun`) you must set up the following Cron job to call the occ `system:cron` command:
 
 [source,console]
 ----
 # crontab -u www-data -e
-*  *  *  *  * /usr/bin/php -f /path/to/your/owncloud/occ system:cron
+*  *  *  *  * /usr/bin/php /path/to/your/owncloud/occ system:cron
 ----
 
 You can verify if the cron job has been added and scheduled by executing:
@@ -53,7 +53,7 @@ You can verify if the cron job has been added and scheduled by executing:
 [source,console]
 ----
 # crontab -u www-data -l
-*  *  *  *  * /usr/bin/php -f /path/to/your/owncloud/occ system:cron
+*  *  *  *  * /usr/bin/php /path/to/your/owncloud/occ system:cron
 ----
 
 NOTE: You have to make sure that PHP is found by Cron; hence why we've deliberately added the full path.
@@ -84,12 +84,12 @@ NOTE: Especially when using the Activity App or external storages, where new fil
 === Parallel Task Execution
 
 Regardless of the approach which you take, since ownCloud 9.1, Cron jobs can be run in parallel. 
-This is done by running `cron.php` multiple times. 
+This is done by running `system:cron` multiple times. 
 Depending on the process which you're automating, this may not be necessary. 
 However, for longer-running tasks, such as those which are LDAP related, it may be very beneficial.
 
 There is no way to do so via the ownCloud UI. 
-But, the most direct way to do so, is by opening three console tabs and in each one run `php cron.php`. 
+But, the most direct way to do so, is by opening three console tabs and in each one run `/usr/bin/php /path/to/your/owncloud/occ system:cron`. 
 Each of these processes would acquire their own list of jobs to process without overlapping any other.
 
 === Available Background Jobs
