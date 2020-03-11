@@ -38,7 +38,6 @@ The LDAP application supports:
 * Versioning, external Storage and all other ownCloud features
 * Seamless connectivity to Active Directory, with no extra configuration required
 * Support for primary groups in Active Directory
-* Auto-detection of LDAP attributes such as base DN, email, and the LDAP server port number
 * Only read access to your LDAP (edit or delete of users on your LDAP is not supported)
 
 CAUTION: The LDAP app is not compatible with the `User backend using remote HTTP servers` app. You cannot use both of them at the same time.
@@ -61,10 +60,10 @@ Start with the Server tab.
 You may configure multiple servers if you have them. 
 At a minimum, you must supply the LDAP server's hostname. 
 If your server requires authentication, enter your credentials on this tab.
-ownCloud will then attempt to auto-detect the server's port and base DN.
-The base DN and port are mandatory, so if ownCloud cannot detect them you must enter them manually.
 
-image:ldap-wizard-1-server.png[LDAP wizard, server tab]
+IMPORTANT: The base DN and port are mandatory.
+
+image:apps/user_ldap/ldap-wizard/server-tab.png[LDAP Wizard, Server Tab]
 
 Server configuration::
   Configure one or more LDAP servers.
@@ -89,14 +88,14 @@ Port::
 --
 The port on which to connect to the LDAP server. 
 The field is disabled in the beginning of a new configuration. 
-If the LDAP server is running on a standard port, the port will be detected automatically. 
-If you are using a non-standard port, ownCloud will attempt to detect it. 
-If this fails, you must enter the port number manually.
 
 Example:
 
 * `389`
 --
+
+Use StartTLS support::
+Check this option to use Transport Layer Security (TLS) when interacting with the LDAP server.
 
 User DN::
 +
@@ -120,8 +119,7 @@ Base DN::
 The base DN of LDAP, from where all users and groups can be reached.
 You may enter multiple base DNs, one per line. 
 Base DNs for users and groups can be set in the Advanced tab. 
-This field is mandatory. 
-ownCloud attempts to determine the Base DN according to the provided User DN or the provided Host, and you must enter it manually if ownCloud does not detect it.
+You can either enter this value manually, or click btn:[Detect Base DN] to have ownCloud attempt to determine the value.
 
 Example:
 
