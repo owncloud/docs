@@ -142,12 +142,12 @@ of what to look for:
 [source,php,subs="attributes+"]
 ----
 'redis' => [
-    'host' => 'localhost',  // Can also be a unix domain socket => '/tmp/redis.sock'
-    'port' => {std-port-redis},
+    'host' => 'localhost',       // For a unix domain socket => '/var/run/redis/redis.sock'
+    'port' => {std-port-redis},  // Set to 0 in case of a socket
     'timeout' => 0,
-    'password' => '',       // Optional, if not defined no password will be used.
-    'dbindex' => 0          // Optional, if undefined SELECT will not run and will
-                            // use Redis Server's default DB Index.
+    'password' => '',            // Optional, if not defined no password will be used.
+    'dbindex' => 0               // Optional, if undefined SELECT will not run and will
+                                 // use Redis Server's default DB Index.
 ],
 ----
 
@@ -240,7 +240,16 @@ should disappear.
 
 === Redis Configuration
 
-This example `config.php` configuration uses Redis for the local server cache:
+If you have setup Redis with either TCP or Unix socket we recommend to add the following for best performance:
+
+[source,php]
+----
+'memcache.locking' => '\OC\Memcache\Redis',
+----
+
+==== Redis Configuration with TCP
+
+This example `config.php` configuration uses Redis caching connected with TCP:
 
 [source,php,subs="attributes+"]
 ----
@@ -251,14 +260,11 @@ This example `config.php` configuration uses Redis for the local server cache:
 ],
 ----
 
-For best performance add the following to `config/config.php`:
+==== Redis Configuration with Unix Socket
 
-[source,php]
-----
-'memcache.locking' => '\OC\Memcache\Redis',
-----
-
-If you want to connect to a Redis instance which is configured to listen on an Unix socket — which is recommended if Redis is running on the same system as ownCloud — use the following example configuration:
+If Redis is running on the same system as ownCloud, it is recommended to configure
+Redis and ownCloud to listen to a Unix socket. This is for this scenario the recommended
+configuration. You can use the following example configuration:
 
 [source,php]
 ----
@@ -269,32 +275,21 @@ If you want to connect to a Redis instance which is configured to listen on an U
 ],
 ----
 
-==== Redis Session Locking
+For setting up Redis to be accessed via a socket from from webserver user, consider the following settings:
 
-Session handling in ownCloud 10.3 has been improved, making user and client sessions more stable.
-Consequently, we recommend using Redis Session Locking, if Redis is used for session handling. 
+. Make the webserver user `www-data` member of the group `redis` in `/etc/group`: `redis:x:110:www-data`
+. Set in your Redis configuration `/etc/redis/redis.conf` the `unixsocketperm` to `770`
 
-IMPORTANT: `php-redis` must be at least version 4.1.0 or higher.
 
-Enable Redis Session Locking by setting `redis.session.locking_enabled = 1` in `php.ini`, as in the example below.
+For a comparison benachmark to see the differences run:
 
-[source,ini]
+[source,console]
 ----
-[Session]
-; Use Redis for saving sessions
-session.save_handler = redis
-session.save_path = "tcp://127.0.0.1:6379"
-
-; Enable Redis session locking
-redis.session.locking_enabled = 1
-redis.session.lock_wait_time = 20000
-redis.session.lock_retries = 750
+sudo redis-benchmark -q -n 100000
+sudo redis-benchmark -s /var/run/redis/redis-server.sock -q -n 100000
 ----
 
-[NOTE]
-====
-Redis is very configurable; consult {redis-url}[the Redis documentation] to learn more.
-====
+Redis is very configurable; consult http://redis.io/documentation[the Redis documentation] to learn more.
 
 === Memcached Configuration
 Redis is very configurable;
