@@ -141,12 +141,12 @@ of what to look for:
 [source,php,subs="attributes+"]
 ----
 'redis' => [
-    'host' => 'localhost',  // Can also be a unix domain socket => '/tmp/redis.sock'
-    'port' => {std-port-redis},
+    'host' => 'localhost',       // For a unix domain socket => '/var/run/redis/redis.sock'
+    'port' => {std-port-redis},  // Set to 0 in case of a socket
     'timeout' => 0,
-    'password' => '',       // Optional, if not defined no password will be used.
-    'dbindex' => 0          // Optional, if undefined SELECT will not run and will
-                            // use Redis Server's default DB Index.
+    'password' => '',            // Optional, if not defined no password will be used.
+    'dbindex' => 0               // Optional, if undefined SELECT will not run and will
+                                 // use Redis Server's default DB Index.
 ],
 ----
 
@@ -239,8 +239,16 @@ should disappear.
 
 === Redis Configuration
 
-This example `config.php` configuration uses Redis for the local server
-cache:
+If you have setup Redis with either TCP or Unix socket we recommend to add the following for best performance:
+
+[source,php]
+----
+'memcache.locking' => '\OC\Memcache\Redis',
+----
+
+==== Redis Configuration with TCP
+
+This example `config.php` configuration uses Redis caching connected with TCP:
 
 [source,php,subs="attributes+"]
 ----
@@ -251,16 +259,11 @@ cache:
 ],
 ----
 
-For best performance add the following
+==== Redis Configuration with Unix Socket
 
-[source,php]
-----
-'memcache.locking' => '\OC\Memcache\Redis',
-----
-
-If you want to connect to Redis configured to listen on an Unix socket,
-which is recommended if Redis is running on the same system as ownCloud,
-use this example configuration:
+If Redis is running on the same system as ownCloud, it is recommended to configure
+Redis and ownCloud to listen to a Unix socket. This is for this scenario the recommended
+configuration. You can use the following example configuration:
 
 [source,php]
 ----
@@ -269,6 +272,20 @@ use this example configuration:
      'host' => '/var/run/redis/redis.sock',
      'port' => 0,
 ],
+----
+
+For setting up Redis to be accessed via a socket from from webserver user, consider the following settings:
+
+. Make the webserver user `www-data` member of the group `redis` in `/etc/group`: `redis:x:110:www-data`
+. Set in your Redis configuration `/etc/redis/redis.conf` the `unixsocketperm` to `770`
+
+
+For a comparison benachmark to see the differences run:
+
+[source,console]
+----
+sudo redis-benchmark -q -n 100000
+sudo redis-benchmark -s /var/run/redis/redis-server.sock -q -n 100000
 ----
 
 Redis is very configurable; consult http://redis.io/documentation[the Redis documentation] to learn more.
