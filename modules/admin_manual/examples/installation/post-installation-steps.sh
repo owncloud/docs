@@ -37,15 +37,17 @@ rootuser='root'
 
 # Because the data directory can be huge or on external storage, an automatic chmod/chown can take a while.
 # Therefore this directory can be treated differently.
-# If you have already created an external data and apps-external directory which you want to link,
+# If you have already created an external "data" and "apps-external" directory which you want to link,
 # set the paths above accordingly. This script can link and set the proper rights and permissions
 # depending what you enter when running the script.
-# You have to run this script twice, one time to prepare installation and one time post installation
 
-# In case you upgrade an existing installation, your original directory will be renamed including a timestamp 
+# When the instance is setup, either post a fresh install or, after an upgrade, run this script again - but
+# only for securing ".htaccess files". This sets the appropriate ownership and permissions for them.
 
-# Example input
-# New install using mkdir:     n/n/n/n (create missing directories, setup permissions and ownership)
+# In case you upgrade an existing installation, your original directory will be renamed, including a timestamp.
+
+# Example input (without securing your .htaccess files)
+# New install using mkdir:     n/n/n/n (create possible missing directories, setup permissions and ownership)
 # Upgrade using mkdir:         y/n/n/n (you move/replace data, apps-external and config.php manually, set setup permissions and ownership)
 # New install using links:     n/y/y/n (link existing directories, setup permissions and ownership)
 # Upgrade using links:         y/y/n/y (link existing directories, copy config.php, permissions and ownership are already ok)
@@ -53,6 +55,24 @@ rootuser='root'
 # Reset all perm & own:        either n/n/n/n or n/y/y/n
 
 echo
+read -p "Do you want to secure your .htaccess files post installing/upgrade (y/N)? " -r -e answer
+(echo "$answer" | grep -iq "^y") && do_secure="y" || do_secure="n"
+
+if [ "$do_secure" = "y" ]; then
+  printf "\nSecuring .htaccess files with chmod/chown\n"
+  if [ -f ${ocpath}/.htaccess ]; then
+    chmod 0644 ${ocpath}/.htaccess
+    chown ${rootuser}:${htgroup} ${ocpath}/.htaccess
+  fi
+  if [ -f ${ocdata}/.htaccess ];then
+    chmod 0644 ${ocdata}/.htaccess
+    chown ${rootuser}:${htgroup} ${ocdata}/.htaccess
+  fi
+  echo
+  exit
+fi
+
+
 read -p "Do you want to upgrade an existing installation (y/N)? " -r -e answer
 (echo "$answer" | grep -iq "^y") && do_upgrade="y" || do_upgrade="n"
 
@@ -66,6 +86,7 @@ if [ "$do_upgrade" = "y" ]; then
   read -p "Do you want to copy an existing config.php file (y/N)? " -r -e answer
   (echo "$answer" | grep -iq "^y") && upgrdcfg="y" || upgrdcfg="n"
 fi
+
 
 # check if upgrading an existing installation
 if [ "$do_upgrade" = "y" ]; then
@@ -229,21 +250,12 @@ if [ -f ${ocpath}/occ ]; then
   chmod +x ${ocpath}/occ
 fi
 
-printf "chmod/chown .htaccess \n"
-if [ -f ${ocpath}/.htaccess ]; then
-  chmod 0644 ${ocpath}/.htaccess
-  chown ${rootuser}:${htgroup} ${ocpath}/.htaccess
-fi
-if [ -f ${ocdata}/.htaccess ];then
-  chmod 0644 ${ocdata}/.htaccess
-  chown ${rootuser}:${htgroup} ${ocdata}/.htaccess
-fi
-echo
 
-# tell to remove the old instance, do upgrade and end maintenance mode if all is fine
+# Tell the user to remove the old instance, do an upgrade, and to end maintenance mode etc., if all is fine.
 if [ "$do_upgrade" = "y" ]; then
   echo "Please manually remove the directory of the old instance: $oldocpath"
   echo "Please manually run: sudo -uwww-data ./occ upgrade"
   echo "Please manually run: sudo -uwww-data ./occ maintenance:mode --off"
+  echo "When all is done successfully, re-run this script and secure your .htaccess files"
   echo
 fi
