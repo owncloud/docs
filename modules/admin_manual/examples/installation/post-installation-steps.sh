@@ -41,10 +41,10 @@ rootuser='root'
 # set the paths above accordingly. This script can link and set the proper rights and permissions
 # depending what you enter when running the script.
 
-# When the instance is setup either post a fresh install or after an upgrade, run this script again but
-# only for securing ".htaccess files". This sets the appropriate ownership and permission for them.
+# When the instance is setup, either post a fresh install or, after an upgrade, run this script again - but
+# only for securing ".htaccess files". This sets the appropriate ownership and permissions for them.
 
-# In case you upgrade an existing installation, your original directory will be renamed including a timestamp
+# In case you upgrade an existing installation, your original directory will be renamed, including a timestamp.
 
 # Example input (without securing your .htaccess files)
 # New install using mkdir:     n/n/n/n (create possible missing directories, setup permissions and ownership)
@@ -251,7 +251,7 @@ if [ -f ${ocpath}/occ ]; then
 fi
 
 
-# tell to remove the old instance, do upgrade and end maintenance mode ect. if all is fine
+# Tell the user to remove the old instance, do an upgrade, and to end maintenance mode etc., if all is fine.
 if [ "$do_upgrade" = "y" ]; then
   echo "Please manually remove the directory of the old instance: $oldocpath"
   echo "Please manually run: sudo -uwww-data ./occ upgrade"
