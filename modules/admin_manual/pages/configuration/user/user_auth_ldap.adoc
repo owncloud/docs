@@ -1,4 +1,5 @@
 = User Authentication with LDAP
+:experimental:
 :toc: right
 :toclevels: 1
 :page-aliases: go/admin-ldap.adoc
@@ -166,7 +167,10 @@ Edit raw filter instead::
 Clicking on this text toggles the filter mode, and you can enter the raw LDAP filter directly. 
 Example:
 
-  (&(objectClass=inetOrgPerson)(memberOf=cn=owncloudusers,ou=groups,dc=example,dc=com))
+[source]
+----
+(&(objectClass=inetOrgPerson)(memberOf=cn=owncloudusers,ou=groups,dc=example,dc=com))
+----
 --
 
 x users found::
@@ -179,6 +183,7 @@ Active Directory offers "_Recursive retrieval of all AD group memberships of a u
 This means that you would be able to search the group you enter and all the other child groups from this group for users.
 Enter this filter to access this feature for a single group:
 
+[source]
 ----
 (&(objectClass=user)(memberof:1.2.840.113556.1.4.1941:=CN=<groupname>,DC=example,DC=com))
 ----
@@ -246,15 +251,27 @@ user upon login.
 *Examples:*
 
 * Only username:
-
++
+[source,ldap]
 ----
-(&(objectClass=inetOrgPerson)(memberOf=cn=owncloudusers,ou=groups,dc=example,dc=com)(uid=%uid)
+(&
+  (objectClass=inetOrgPerson)
+  (memberOf=cn=owncloudusers,ou=groups,dc=example,dc=com)
+  (uid=%uid)
+)
 ----
 
 * Username or email address:
-
++
+[source]
 ----
-((&(objectClass=inetOrgPerson)(memberOf=cn=owncloudusers,ou=groups,dc=example,dc=com)(|(uid=%uid)(mail=%uid)))
+(
+  (&
+    (objectClass=inetOrgPerson)
+    (memberOf=cn=owncloudusers,ou=groups,dc=example,dc=com)
+    (|(uid=%uid)(mail=%uid)
+  )
+)
 ----
 --
 
@@ -728,8 +745,12 @@ and show only active users.
 
 Here is what the full filter can look like.
 
+[source]
 ----
-&(|(objectclass=organizationalPerson))(!(userAccountControl:1.2.840.113556.1.4.803:=2))(|(|(memberof=CN=Domain Users,CN=Users,DC=dp,DC=mosreg,DC=ru)(primaryGroupID=513))))
+&(|(objectclass=organizationalPerson))
+  (!(userAccountControl:1.2.840.113556.1.4.803:=2))
+  (|(|(memberof=CN=Domain Users,CN=Users,DC=dp,DC=mosreg,DC=ru)(primaryGroupID=513)))
+)
 ----
 
 === Caching
