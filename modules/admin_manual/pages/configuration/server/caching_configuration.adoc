@@ -141,8 +141,8 @@ of what to look for:
 [source,php,subs="attributes+"]
 ----
 'redis' => [
-    'host' => 'localhost',       // For a unix domain socket 'host ' => '/var/run/redis/redis.sock'
-    'port' => {std-port-redis},  // Set to 0 in case of a socket
+    'host' => 'localhost',       // For a Unix domain socket, use '/var/run/redis/redis.sock'
+    'port' => {std-port-redis},  // Set to 0 when using a Unix socket
     'timeout' => 0,
     'password' => '',            // Optional, if not defined no password will be used.
     'dbindex' => 0               // Optional, if undefined SELECT will not run and will
@@ -199,7 +199,7 @@ example of below)
 ==== Clearing the Memcached Cache
 
 The Memcached cache can be flushed from the command-line using a range
-of common Linux/UNIX tools, including `netcat` and `telnet`.
+of common Linux/Unix tools, including `netcat` and `telnet`.
 The following example uses telnet to login, run 
 https://github.com/memcached/memcached/wiki/Commands#flushall[the flush_all command], and logout:
 
@@ -239,16 +239,16 @@ should disappear.
 
 === Redis Configuration
 
-If you have setup Redis with either TCP or Unix socket we recommend to add the following for best performance:
+Regardless of whether you have setup Redis to use TCP or a Unix socket, we recommend adding the following for best performance:
 
 [source,php]
 ----
 'memcache.locking' => '\OC\Memcache\Redis',
 ----
 
-==== Redis Configuration with TCP
+==== Redis Configuration Using TCP
 
-This example `config.php` configuration uses Redis caching connected with TCP:
+The following example `config.php` configuration connects to a Redis cache via TCP:
 
 [source,php,subs="attributes+"]
 ----
@@ -259,14 +259,14 @@ This example `config.php` configuration uses Redis caching connected with TCP:
 ],
 ----
 
-==== Redis Configuration with Unix Socket
+==== Redis Configuration Using Unix Sockets
 
-If Redis is running on the same system as ownCloud, it is recommended to configure
-Redis and ownCloud to listen to a Unix socket. This is for this scenario the recommended
-configuration. You can use the following example configuration:
+If Redis is running on the same server as ownCloud, it is recommended to configure it to use Unix sockets. 
+Then, configure ownCloud to communicate with Redis, as in the following example. 
 
 [source,php]
 ----
+# Change the host value, based on the socket's location in your distribution
 'memcache.local' => '\OC\Memcache\Redis',
 'redis' => [
      'host' => '/var/run/redis/redis.sock',
@@ -274,13 +274,12 @@ configuration. You can use the following example configuration:
 ],
 ----
 
-If setting up Redis to be accessed via a socket from from webserver user, then consider the following settings:
+If setting up Redis to be accessed via a Unix socket from a webserver user, then consider the following:
 
-. Make the webserver user `www-data` member of the group `redis` in `/etc/group`: `redis:x:110:www-data`
-. Set in your Redis configuration `/etc/redis/redis.conf` the `unixsocketperm` to `770`
+. Make the webserver user `www-data` member of the group `redis` in `/etc/group`, e.g., `redis:x:110:www-data`
+. In your Redis configuration (`/etc/redis/redis.conf`) set `unixsocketperm` to `770`
 
-
-For a comparison benchmark to see the differences run:
+To see a benchmark comparison, run:
 
 [source,console]
 ----
