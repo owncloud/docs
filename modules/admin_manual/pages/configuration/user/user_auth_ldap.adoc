@@ -169,7 +169,7 @@ Example:
 
 [source]
 ----
-(&(objectClass=inetOrgPerson)(memberOf=cn=owncloudusers,ou=groups,dc=example,dc=com))
+include::{examplesdir}configuration/user/user_auth_ldap/group_filter.ldif[]
 ----
 --
 
@@ -185,7 +185,7 @@ Enter this filter to access this feature for a single group:
 
 [source]
 ----
-(&(objectClass=user)(memberof:1.2.840.113556.1.4.1941:=CN=<groupname>,DC=example,DC=com))
+include::{examplesdir}configuration/user/user_auth_ldap/single_group_search.ldif[]
 ----
 
 Enter your group name instead of the `<groupname>` placeholder.
@@ -193,13 +193,7 @@ If you want to search multiple groups with this feature, adjust your filter like
 
 [source]
 ----
-(&
-  (objectClass=user)
-    (|
-      (memberOf:1.2.840.113556.1.4.1941:=CN=<groupname1>,CN=Users,DC=example,DC=com)
-      (memberOf:1.2.840.113556.1.4.1941:=CN=<groupname2>,CN=Users,DC=example,DC=com)
-    )
-)
+include::{examplesdir}configuration/user/user_auth_ldap/multi_group_search.ldif[]
 ----
 
 You can add as many groups to recurse by using the format: `(|(m1)(m2)(m3).....)`.
@@ -255,24 +249,14 @@ user upon login.
 +
 [source,ldap]
 ----
-(&
-  (objectClass=inetOrgPerson)
-  (memberOf=cn=owncloudusers,ou=groups,dc=example,dc=com)
-  (uid=%uid)
-)
+include::{examplesdir}configuration/user/user_auth_ldap/only_username.ldif[]
 ----
 
 * Username or email address:
 +
 [source]
 ----
-(
-  (&
-    (objectClass=inetOrgPerson)
-    (memberOf=cn=owncloudusers,ou=groups,dc=example,dc=com)
-    (|(uid=%uid)(mail=%uid)
-  )
-)
+include::{examplesdir}configuration/user/user_auth_ldap/username_email.ldif[]
 ----
 --
 
