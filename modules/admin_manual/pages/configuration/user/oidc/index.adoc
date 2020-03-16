@@ -3,6 +3,9 @@
 :toclevel: 2
 :openid-connect-frontchannel-logout-url: https://openid.net/specs/openid-connect-frontchannel-1_0.html
 :openid-connect-url: https://openid.net/connect/
+:openid-app-marketplace-url: https://marketplace.owncloud.com/apps/openidconnect
+:openid-app-github-url: https://github.com/owncloud/openidconnect
+:examplesdir: ../../../../examples/
 
 == Introduction
 
@@ -10,49 +13,205 @@
 OpenID Connect allows clients of all types, including Web-based, mobile, and JavaScript clients, to request and receive information about authenticated sessions and end-users. The specification suite is extensible, allowing participants to use optional features such as encryption of identity data, discovery of OpenID Providers, and session management, when it makes sense for them."
 -- {openid-connect-url}, "What is OpenID Connect?"
 
+//ownCloud-specific OIDC description and benefits
+== OIDC Benefits
+
+== OIDC App Marketplace Link
+
+// Not currently available
+* https://marketplace.owncloud.com/apps/openidconnect
+
 == Prerequisites
 
-A distributed Memcache setup is required to operate this app - such as Redis or Memcached properly.
-Please follow xref:configuration/server/caching_configuration.adoc[the documentation] on how to set up caching.
+The OpenID Connect app has several mandatory requirements, these are:
 
-== Code Flow
+* A minimum PHP version of 7.0, with the CURL and JSON extensions.
+* xref:configuration/server/caching_configuration.adoc[A distributed memory cache setup], such as _Redis_ or _Memcached_.
+This is because information about tokens need to be cached to prevent roundtrips to the identity provider. 
+Additionally, in clustered setups this information needs to be available for all nodes, which necessitates a distributed cache.
++
+NOTE: If a memory cache is not available, then you will be prevented from using the ownCloud UI, and see the following message: "_A real distributed mem cache setup is required_" in the ownCloud UI.
 
-image::configuration/user/oidc/OAuth-code-flow-sequence-diagram.png[OAuth Code Flow Sequence Diagram]
+== Recommended Options & Extensions
 
-== Configure ownCloud
+The following PHP extensions are recommended by phpseclib, which the app is based on. 
+They are not mandatory.
 
-Please refer to xref:configuration/server/config_sample_php_parameters.adoc#oidc-configuration[the OIDC configuration example] in the sample configuration documentation for how to configure ownCloud to work with OIDC.
+[cols="20%,80%"]
+|===
+|**ext-gmp:** 
+|The GMP GNU Multiple Precision (GMP) extension speeds up arbitrary precision integer arithmetic operations
+|**ext-libsodium**
+|SSH2 can make use of some algorithms provided by the libsodium-php extension
+|**ext-mcrypt:**
+|The Mcrypt extension speeds up some cryptographic operations
+|===
 
-== Setup Within the OpenID Provider
+== Limitations
 
-When registering ownCloud as and OpenID Client, use `https://cloud.example.net/index.php/apps/openidconnect/redirect` as the redirect URL.
-In case {openid-connect-frontchannel-logout-url}[OpenID Connect Front-Channel Logout 1.0] is supported, please enter `https://cloud.example.net/index.php/apps/openidconnect/logout` as the logout URL within the client registration of the OpenID Provider.
+=== LDAP Users
 
-== Setup Service Discovery
+LDAP users can log in via OIDC.
+However, this only works with users from LDAP that are available in the ownCloud database, as well as in the Identity Provider.
+For this to work, xref:configuration/server/occ_command.adoc#syncing-user-accounts[user sync] is mandatory.
+
+=== Local/Guest Users
+
+A solution to authenticate local/guest users via OIDC will be available soon.
+
+== Installation
+
+=== Configure ownCloud
+
+The first thing to do is to install {openid-app-marketplace-url}[the OIDC app].
+After it is installed, add the configuration below in either `config/config.php` or a custom config.php file.
+
+[source,php]
+----
+include::{examplesdir}configuration/user/oidc/config-with-service-discovery.php[]
+----
+
+In the example above, the values for `provider-url`, `client-id` and `client-secret` need to be taken from the OpenId Provider setup, which we will cover shortly.
+The value for `loginButtonName` can be chosen at your discretion.
+
+The above configuration assumes that the OpenId Provider is supporting xef:setup-service-discovery[service discovery].
+If the OpenId Provider _does not_ support service discovery, the endpoint configuration has to be done manually, as in the following example.
+
+[source,php]
+----
+include::{examplesdir}configuration/user/oidc/config-without-service-discovery.php[]
+----
+
+TIP: Please refer to xref:configuration/server/config_sample_php_parameters.adoc#oidc-configuration[the OIDC configuration example] in the sample configuration documentation for more informatio on how to configure ownCloud to work with OIDC.
+
+=== Setup Within the OpenID Provider
+
+When registering ownCloud as an OpenID client, use the following URLs:
+
+[cols="2"]
+|===
+|**The redirect URL**
+|`https://cloud.example.net/index.php/apps/openidconnect/redirect`
+|**The logout URL** +
+//(within the client registration of the OpenID Provider).
+Only use this if {openid-connect-frontchannel-logout-url}[OpenID Connect Front-Channel Logout 1.0] is supported.
+|`https://cloud.example.net/index.php/apps/openidconnect/logout` 
+|===
+
+=== Setup Service Discovery
 
 To allow other clients to use OpenID Connect when talking to ownCloud, please set up a redirect on the webserver to point `.well-known/openid-configuration` to `/index.php/apps/openidconnect/config`.
-Here is an .htaccess example
+Here is an example of how to do so in .htaccess.
 
 [source]
 ----
 RewriteRule ^\.well-known/openid-configuration /index.php/apps/openidconnect/config [R=301,L]
 ----
 
-//== Integration with different IdPs
-// (e.g., Ping Identity / Kopano Konnect / Keycloak)
+TIP: Please refer to https://httpd.apache.org/docs/current/mod/mod_rewrite.html[the mod_rewrite manual] for further details on creating rewrite rules.
 
-//How to integrate OIDC with ownCloud clients
+=== Integrating with Different Identity Providers (IdPs)
+
+There are a number of different IdPs available; some open source, and some commercial.
+Below, you can find sample configurations for working with three of them: xref:kopano-konnect[Kopano Konnect], xref:keycloak[Keycloak], and xref:ping-identity[Ping Identity].
+
+==== Kopano Konnect
+
+[source,php]
+----
+"system": {
+    "openid-connect": {
+        "provider-url": "https://$KOPANO_KONNECT_DOMAIN",
+        "client-id": "ownCloud",
+        "client-secret": "ownCloud",
+        "loginButtonName": "Kopano",
+        "autoRedirectOnLoginPage": false,
+        "redirect-url": "https://$OWNCLOUD_DOMAIN/index.php/apps/openidconnect/redirect",
+        "mode": "userid",
+        "search-attribute": "preferred_username",
+        "use-token-introspection-endpoint": false
+    },
+    "debug": true
+}
+----
+
+TIP: If you're interested, the https://github.com/owncloud-docker/compose-playground/tree/master/kopano/konnect[ownCloud Composer Playground repository] shows how to setup Kopano Konnect and configure it with the Caddy webserver and ownCloud. 
+
+==== Keycloak
+
+==== Ping Identity
+
+== Integrate OIDC Connect with ownCloud Clients
 // Current iOS on AppStore is usable for testing
 // Desktop client daily builds can be used for testing
 
 //== Supported Cyphers - Technical Detail on Integration With Different IdPs
 
 //== Integration 
-// Recommend consulting
 
-//== SAML migration
-// Recommend consulting
+If you need assistance integrating with OpenID Connect, please contact ownCloud consulting for assistance.
+
+//== SAML Migration
+
+If you need to migrate from SAML, please contact ownCloud consulting for assistance.
 
 //== The OAuth2 and OIDC apps are mutually exclusive before version 0.4.4 of the OAuth2 app 
 
 //== Deployment, Configuration and Test Setup
+
+////
+What configuration do clients require?
+
+???
+
+Which authentication mechanisms can be used in parallel?
+
+Structure
+
+- Check Dracoon docs for reference https://support.dracoon.com/hc/en-us/articles/360001372679-OpenID-Connect-Keycloak
+
+2. Prerequisites
+
+3. Components
+- Component diagram (oC Server / IdP / OIDC App)
+
+4. Code flow
+
+6. Using OpenID Connect with the ownCloud clients
+
+- Classic frontend (basic auth + OIDC) => button on login for OIDC auth
+- Classic frontend (OIDC-only) => direct redirect to IdP
+
+Which client versions support OIDC?
+- Desktop: 2.7.0 (grab daily builds)
+- Android (next 2.15 version in Play Store)
+- iOS (1.2+ available in App Store)
+
+Platform-specific configuration
+- Desktop
+- Android
+- iOS
+
+=> Keycloak-specific: IdP-generated secrets need to be available in the client
+
+7. Migration
+
+How to authenticate local users via OIDC?
+=> GraphAPI app + ocis-glauth service
+How to migrate from OAuth2 to OIDC?
+- OAuth2 and OIDC can run in parallel
+
+How to migrate from SAML to OIDC?
+- Migration needs to be conducted in the Identity Provider
+- Consulting available
+
+@msetter seems this link/anchor isn't working:
+https://doc.owncloud.com/server/10.4/admin_manual/configuration/server/config_sample_php_parameters.html#oidc-configuration
+
+```
+% curl https://doc.owncloud.com/server/10.4/admin_manual/configuration/server/config_sample_php_parameters.html | grep oidc-configuration
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100  203k  100  203k    0     0   467k      0 --:--:-- --:--:-- --:--:--  466k
+```
+////
