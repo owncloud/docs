@@ -6,15 +6,23 @@
 :auth-unix-socket-url: https://mariadb.com/kb/en/library/authentication-plugin-unix-socket/
 :disabling-thp-url: https://stackoverflow.com/questions/48743100/why-thp-transparent-huge-pages-are-not-recommended-for-databases-like-oracle-a
 :discover-samba-hosts-url: https://ubuntuforums.org/showthread.php?t=2384959
-:hash-installation-url: http://php.net/manual/en/hash.installation.php
 :install-mariadb-latest-url: https://downloads.mariadb.org/mariadb/repositories/#
 :mcrypt-link-url: https://websiteforstudents.com/install-php-7-2-mcrypt-module-on-ubuntu-18-04-lts/
 :mcrypt-pecl-url: https://pecl.php.net/package/mcrypt
 :overriding-vendor-settings-url: https://www.freedesktop.org/software/systemd/man/systemd.unit.html
 :transport-huge-pages-url: https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/performance_tuning_guide/s-memory-transhuge
 :iscsi_initiator-url: https://help.ubuntu.com/lts/serverguide/iscsi-initiator.html
+:ondrej-php-url: https://launchpad.net/~ondrej/+archive/ubuntu/php
 
-The target audience for this document is more sophisticated admins with additional needs and setup scenarios.
+== Introduction
+
+The target audience for this document are more sophisticated admins with additional needs and setup scenarios.
+Please consider that Ubuntu 18.04, by design, only provides PHP 7.2. 
+Because PHP 7.2 security support ends on November 2020, you may want to to consider using PHP 7.3. 
+If you want to install the PHP 7.3 package and other required PHP extensions for PHP 7.3 for Ubuntu 18.04,
+you need to use the well known, custom, PPA {ondrej-php-url}[ondrej/php].
+Independent of the PHP version used, all other items, such as installing extensions or comments, and notes,
+remain the same.
 
 == Apache Web Server and PHP
 
@@ -39,10 +47,14 @@ sudo apt install openssl
 
 # PHP extensions needed to use ownCloud
 sudo apt install php-mysql php-mbstring php-gettext php-intl php-redis \
-     php-imagick php-igbinary php-gmp php-curl php-gd php-zip php-imap \
-     php-ldap php-bz2 php-phpseclib
+     php-imagick php-igbinary php-gmp php-bcmath php-curl php-gd php-zip \
+     php-imap php-ldap php-bz2 php-phpseclib
 ----
 
+== Useful Commands For Managing PHP Extensions 
+
+=== List Enabled PHP Extensions
+ 
 If you want to retrieve a list of enabled PHP extensions run following command:
 
 [source,console]
@@ -50,18 +62,21 @@ If you want to retrieve a list of enabled PHP extensions run following command:
 ls `php -i | grep "^extension_dir" | sed -e 's/.*=> //'`
 ----
 
-== HASH Message-Digest Framework
+=== Enabling and Disabling PHP Extensions
 
-This framework does not need manual intervention anymore because:
+To enable or disable a PHP extension, use the commands `phpenmod` or `phpdismod`.
 
-* as of PHP 5.1.2, the Hash extension is bundled and compiled into PHP by default.
-* as of PHP 7.4.0, the Hash extension is a core PHP extension, so it is always enabled.
-
-For more information refer to {hash-installation-url}[PHP's Hash Installation documentation].
+Example:
+[source,console]
+----
+sudo phpenmod php-ldap
+# or
+sudo phpdismod php-ldap
+----
 
 == Exif Library
 
-This library _should_ be already as part of PHP 7.2.
+This library _should_ be already part of PHP 7.2.
 However, you can check if it is by running the following command.
 
 [source,console]
@@ -69,44 +84,36 @@ However, you can check if it is by running the following command.
 grep -q -P 'EXIF Support => enabled' <(php -i) && echo "Exif is installed and enabled"
 ----
 
-== PHP 7.2 Cryptography Library
+== Notes for PHP Library phpseclib
 
-The sodium and OpenSSL PHP libraries are cryptographic libraries which are part of the PHP 7.2 core.
+phpseclib's BigInteger uses the `php-gmp` (GNU Multiple Precision Arithmetic Library), `php-bcmath` and `OpenSSL` extensions if they're available, for speed, but doesn't require them to maintain maximum compatibility. 
+The GMP library uses an internal "resource" type while the BCMath library just uses strings as datatype. 
+The most salient difference is, that GMP works on [arbitrary precision] integer values, whereas BCMath allows [arbitrary precision] decimal / float-like values.
+
+== Cryptography Library
+
+The sodium and OpenSSL PHP libraries are cryptographic libraries which are part of the PHP core from PHP 7.2 onwards.
 Consequently, there is no need to install additional cryptographic libraries, such as `php-libsodium` or `mcrypt`.
 
-NOTE: The `mcrypt` library is deprecated and removed from the PHP 7.2 core.
-However, it is available via PECL.
-
-=== php-libsodium
-
-If you see the message `PHP Fatal error: sodium_init() in Unknown on line 0` when invoking the command `php -v` or when running PHP programs, `php-libsodium` might be installed.
-This error does not do any harm, but it can be annoying and fills up your logs.
-
-NOTE: From PHP 7.2 onwards, libsodium is part of PHP, loading the library is no longer necessary.
-
-To prevent it, you have to uninstall `php-libsodium`. 
-You can do this by running the following command:
-
-[source,console]
-----
-sudo apt remove php-libsodium
-----
-
-You can check success by invoking the command `php -v` which should not return this error message anymore.
-You can also check the existence of `sodium` with following command:
-
-[source,console]
-----
-grep -P "sodium support => enabled" <( php -i )
-----
+[NOTE]
+====
+`mcrypt` was deprecated in PHP 7.2.
+If you need it, it is still available via PECL.
+`mcrypt` is only used if it's available.
+If `mcrypt` is not available, either a `pure-PHP` implementation or `OpenSSL` is used instead.
+The prioritization is as follows: `OpenSSL` > `mcrypt` > `pure-PHP`. 
+`mcrypt` and `OpenSSL` load faster than the `pure-PHP` implementation. 
+`mcrypt` offers a 45x speedup over `pure-PHP`.
+`OpenSSL` offers a +6.5x speedup over `mcrypt`.
+====
 
 === Mcrypt PHP Library
 
-Here are the steps for installing Mcrypt — when it is explicitly necessary.
+Here are the steps for installing `mcrypt` when it is explicitly required.
 
-NOTE: Some of the steps were borrowed from the website for Student’s {mcrypt-link-url}[guide to installing the PHP 7.2-Mcrypt module].
+NOTE: Some of the steps were borrowed from the website for student’s {mcrypt-link-url}[guide to installing the PHP 7.2-Mcrypt module].
 
-First, determine the Mcrypt version you want to use in {mcrypt-pecl-url}[PECL's Mcrypt documentation].
+First, determine the `mcrypt` version you want to use in {mcrypt-pecl-url}[PECL's mcrypt documentation].
 Then, run the following commands to install it.
 
 [source,console]
@@ -120,10 +127,32 @@ When the commands complete, you then have to:
 
 * Create `/etc/php/7.2/mods-available/mcrypt.ini` with the following content: `extension=mcrypt.so`.
 * Enable the module by running `phpenmod mcrypt`.
-* Restart php-fpm and your web server, by running the following commands:
+* Restart your web server, by running the following commands:
 +
-  sudo service php7.2-fpm restart
   sudo service apache2 restart
+
+=== php-libsodium
+
+NOTE: From PHP 7.2 onward, libsodium is part of PHP, loading this PHP library is no longer necessary.
+
+If you see the message `PHP Fatal error: sodium_init() in Unknown on line 0` when invoking the command
+`php -v` or when running PHP programs, `php-libsodium` might be additionally installed.
+This error does not do any harm, but it can be annoying and it fills up your logs.
+To prevent this, you can uninstall `php-libsodium`. 
+This can be done by invoking following command:
+
+[source,console]
+----
+sudo apt remove php-libsodium
+----
+
+You can check success by invoking the command `php -v`, which should no longer return the error message.
+You can also check the existence of `sodium` with following command:
+
+[source,console]
+----
+grep -P "sodium support => enabled" <( php -i )
+----
 
 == libsmbclient-php Library
 
@@ -144,14 +173,14 @@ When the commands complete, you then have to:
 - Enable the module by running `phpenmod smbclient`.
 - Restart PHP and your web server by running the following command:
 +
-  sudo service php7.2-fpm restart
   sudo service apache2 restart
 
-[NOTE]
+[IMPORTANT]
 ====
-Due to a change in the minimum protocol version used in the Samba client in Ubuntu 18.04, you may not get a valid connection in ownCloud
-This error is identified by a red box at the mount definition or being unable to list directory content.
-In this case, you have to add the following to `/etc/samba/smb.cnf`, below the `workgroup =` statement:
+Due to a change in the minimum protocol version used in the Samba client in Ubuntu 18.04, you may not get a
+valid connection in ownCloud. This error is identified by a red box at the mount definition or being unable to
+list directory content. In this case, you have to add the following to `/etc/samba/smb.cnf`, below the
+`workgroup =` statement:
 
 `client max protocol = NT1`
 
@@ -162,33 +191,16 @@ For more information see: {discover-samba-hosts-url}[Bionic Beaver can not disco
 
 For how to install the latest stable release of MariaDB, please refer to {install-mariadb-latest-url}[the MariaDB installation documentation].
 
-NOTE: For MariaDB server releases lower than 10.4.3, you will be prompted during the installation to create a root
-password.
-Be sure to remember your password, as you will need it during the ownCloud database setup.
-
 [NOTE]
 ====
-From MariaDB 10.4.3 onwards, the authentication method has changed to UNIX socket. 
-For details, please refer to: {auth-unix-socket-url}[MariaDB: Authentication Plugin - Unix Socket].
-The `unix_socket` authentication plugin allows the user to use operating system credentials when connecting to MariaDB via a local UNIX socket.
-Follow the procedure below to create a user, giving ownCloud access to create it's database respectively for phpMyAdmin.
-Don't forget to change the username and password according to your needs.
-
-[source,console]
-----
-sudo mysql
-MariaDB [(none)]>
- CREATE USER IF NOT EXISTS 'newuser'@'localhost' IDENTIFIED BY 'changeme';
- GRANT ALL PRIVILEGES ON *.* TO 'newuser'@'localhost' WITH GRANT OPTION;
- SHOW GRANTS FOR 'newuser'@'localhost' ;
-----
-
-
+For MariaDB server releases lower than 10.4.3, you will be prompted during the installation to create a root
+password. Be sure to remember your password, as you will need it during the ownCloud database setup.
 ====
 
 [NOTE]
 ====
-If you have an existing installation of MariaDB and upgrade to a higher version, do not forget to run the following command beforehand, which creates the users above — especially when upgrading to MariaDB 10.4.3:
+If you have an existing installation of MariaDB and upgrade to a higher version, do not forget to run the following
+command, to handle the new setup for admin users — especially when upgrading to MariaDB 10.4.3 upwards:
 
 [source,console]
 ----
@@ -196,7 +208,27 @@ sudo mysql_upgrade
 ----
 ====
 
-NOTE: Follow this procedure if you want to disable <<Disabling Transparent Huge Pages (THP), Transparent Huge Pages>>
+[NOTE]
+====
+From MariaDB 10.4.3 onwards, the authentication method has changed to UNIX socket. 
+For details, please refer to: {auth-unix-socket-url}[MariaDB: Authentication Plugin - Unix Socket].
+The `unix_socket` authentication plugin allows the user to use operating system credentials when connecting to MariaDB via a local UNIX socket.
+Follow the procedure below to create an admin user for non-socket login, giving ownCloud access to create it's database
+respectively for phpMyAdmin. _This is not the ownCloud user!_
+_Don't forget to change the username and password according to your needs_.
+
+[source,console]
+----
+sudo mysql
+MariaDB [(none)]>
+ CREATE USER IF NOT EXISTS 'newuser'@'localhost' IDENTIFIED BY 'changeme';
+ GRANT ALL PRIVILEGES ON *.* TO 'newuser'@'localhost' WITH GRANT OPTION;
+ FLUSH PRIVILEGES;
+ SHOW GRANTS FOR 'newuser'@'localhost' ;
+----
+====
+
+NOTE: Follow this procedure if you want to disable <<Disabling Transparent Huge Pages (THP),Transparent Huge Pages>>
 
 If you want to install phpMyAdmin as a graphical interface for administering the database, run the following command:
 
