@@ -1,0 +1,24 @@
+= Semantic Versioning Guidelines
+:semver_url: https://semver.org/
+:owncloud_10-1-0_release_url: https://central.owncloud.org/t/owncloud-10-1-0-beta-released/17410
+
+Since {owncloud_10-1-0_release_url}[ownCloud 10.1.0], ownCloud core uses {semver_url}[Semantic Versioning (SemVer) 2.0.0]. 
+As a result, both ownCloud core and all ownCloud applications should follow the Semantic Versioning principles.
+In particular, they should apply the following guidelines:
+
+. `Major.Minor.Patch / Breaking.Feature.Fix`.
+. Version numbers indicate the contents and upgrade procedures of new releases.
+. If an app only has bugfixes, only increase the _patch_ version.
+. If bigger changes were made, such as the addition of new minor features, database changes, or database migrations are required, the _minor_ version component must be increased.
+. Breaking changes will be released as a new _major_ version.
+
+As ownCloud now follows the Semantic Versioning guidelines, there are three key things to keep in mind:
+
+. Any apps that do not currently comply with Semantic Versioning *must* be re-released after setting the `max-version` field to `10` instead of `10.0` in `appinfo/info.xml`. They *must* also increase the app's version. This ensures ownCloud picks up the change. 
+If this is not done, ownCloud 10.1 will consider the app as incompatible and refuse to update or enable it.
+
+. Migrations no longer run for patch-level releases starting with ownCloud core platform 10.1. 
+This makes it possible for administrators to anticipate whether an update can be applied with minimal downtime for a patch release or whether it could take much longer.
+
+. Version suffixes for apps will not be supported in ownCloud 10.1 nor in the Marketplace. These will only be fully supported from ownCloud 11 onward, as it requires bigger changes to underlying APIs.
+There will be upcoming work on the Marketplace to make room for update channels which will pave the way for fully supporting version suffixes there.

@@ -1,0 +1,220 @@
+= Notifications
+
+:toc: right
+
+== Introduction
+
+This document is about how to manage notifications in ownCloud
+
+== Create a New Notification
+
+To create a new notification requires the following steps:
+
+. xref:retrieve-new-notification-object[Retrieve a new notification object from the notification manager]
+. xref:set-the-necessary-information-for-the-notification[Set the necessary notification information]
+. xref:send-the-notification-back-to-the-manager[Send the notification back to the manager]
+
+[[retrieve-new-notification-object]]
+=== Retrieve a New Notification Object From the Notification Manager
+
+Grab a new notification object (`\OCP\Notification\INotification`) from the manager (`\OCP\Notification\IManager`). 
+
+[source,php]
+----
+<?php
+
+$manager = \OC::$server->getNotificationManager();
+$notification = $manager->createNotification();
+----
+
+=== Set the Necessary Information for the Notification
+
+[source,php]
+----
+<?php
+
+$acceptAction = $notification\->createAction();
+$acceptAction
+  ->setLabel('accept')
+  ->setLink('/apps/files_sharing/api/v1/remote_shares/1337', 'POST');
+
+$declineAction = $notification->createAction();
+$declineAction->setLabel('decline')
+    ->setLink('/apps/files_sharing/api/v1/remote_shares/1337', 'DELETE');
+
+$notification->setApp('files_sharing')
+    ->setUser('recipient1')
+    ->setDateTime(new DateTime())
+    ->setObject('remote', '1337') // $type and $id
+    ->setSubject('remote_share', ['/fancyFolder']) // $subject and $parameters
+    ->addAction($acceptAction)
+    ->addAction($declineAction)
+;
+----
+
+TIP: Setting _app_, _user_, _timestamp_, _object_ and _subject_ are mandatory.
+
+You should not use a translated _subject_, _message_ or _action label_.
+Use something like a "_language key_", to avoid length problems with translations in the storage of a notification app.
+Translation is done via invocation of your notifier by the manager when the notification is prepared for display.
+
+=== Send the Notification Back to the Manager
+
+[source,php]
+----
+<?php
+
+$manager->notify($notification);
+
+----
+== Mark a Notification
+
+If the user accepted the share or the share was removed/unshared, we want to remove the notification, because no user action is needed anymore.
+To do this, we simply have to call the `markProcessed()` method on the manager with the necessary information on a notification object:
+
+[source,php]
+----
+<?php
+
+$manager = \OC::$server->getNotificationManager();
+$notification
+  ->setApp('files_sharing')
+  ->setObject('remote', 1337)
+  ->setUser('recipient1');
+$manager->markProcessed($notification);
+----
+
+Only the app name is mandatory, so if you don't set the user, the notification will be marked as processed for all users that have it.
+
+The following example shows how to mark all notifications for the `files_sharing` app on the object "_remote #1337_" as processed.
+
+[source,php]
+----
+<?php
+
+$manager = \OC::$server->getNotificationManager();
+$notification
+  ->setApp('files_sharing')
+  ->setObject('remote', 1337);
+$manager->markProcessed($notification);
+----
+
+Notifications can be marked as _read_, _deleted_, _processed_, or _obsoleted_.
+To 
+
+
+== Prepare a Notification for Display
+
+To prepare a notification for display, in `app.php`, register your Notifier (`\OCP\Notification\INotifier`) interface to the manager,  using a `\Closure`.
+
+[source,php]
+----
+<?php
+
+$manager = \OC::$server->getNotificationManager();
+$manager->registerNotifier(function() {    
+  return new \OCA\Files_Sharing\Notifier(\OC::$server->getL10NFactory());
+});
+----
+
+The manager will execute the closure and then call the `prepare()` method on your notifier.
+If the notification is not known by your app, throw an `\InvalidArgumentException`. 
+However, if it is actually from your app, you must set the parsed _subject_, _message_, and _action_ labels.
+
+[source,php]
+----
+<?php
+
+protected $factory;
+
+public function __construct(\OCP\L10N\IFactory $factory) {
+    $this->factory = $factory;
+}
+
+/**
+ * @param INotification $notification
+ * @param string $languageCode The code of the language that should be used to prepare the notification
+ */
+public function prepare(INotification $notification, $languageCode) {
+    if ($notification->getApp() !== 'files_sharing') {
+        // Not my app => throw
+        throw new \InvalidArgumentException();
+    }
+
+    // Read the language from the notification
+    $l = $this->factory->get('myapp', $languageCode);
+
+    switch ($notification->getSubject()) {
+        // Deal with known subjects
+        case 'remote_share':
+            $notification->setParsedSubject(
+                (string) $l->t(
+                  'You received the remote share "%s"', 
+                  $notification->getSubjectParameters()
+                )
+            );
+
+            // Deal with the actions for a known subject
+            foreach ($notification->getActions() as $action) {
+                switch ($action->getLabel()) {
+                    case 'accept':
+                        $action->setParsedLabel(
+                            (string) $l->t('Accept')
+                        );
+                    break;
+
+                    case 'decline':
+                        $action->setParsedLabel(
+                            (string) $l->t('Decline')
+                        );
+                    break;
+                }
+
+                $notification->addParsedAction($action);
+            }
+            return $notification;
+        break;
+
+        default:
+            // Unknown subject => Unknown notification => throw
+            throw new \InvalidArgumentException();
+    }
+}
+----
+
+NOTE: Currently, no markup is allowed.
+
+== Send Notifications
+
+To send notifications from your app, requires four steps, these are:
+
+. Fetch the notification manager from the server.
+. Use the notification manager to create a notification object.
+. Set the notification's information
+. Send the notification.
+
+You can see an example of how to perform all of these steps in the example below.
+The notification has a number of properties set that help identify the app that should receive it, along with information for the receiving app to use, once the notification has been received.
+
+[source,php]
+----
+include::{examplesdir}app/advanced/notifications/intro-notification.php[]
+----
+
+TIP: Make sure the app set in the notification matches the one you're expecting, because other notifications for other apps might reach your notifier. 
+Throw an `InvalidArgumentException` if this isn't the case.
+
+TIP: The notification's subject and message should be set using translated strings.
+
+In case you need to add some actions to the notification (e.g., to accept or reject shares, or other kind of actions): 
+
+. Create the action from the notification
+. Fill the action data
+. Add the action in the notification
+
+You can see an example of how to perform all of these steps in the example below.
+
+[source,php]
+----
+include::{examplesdir}app/advanced/notifications/notification-with-object.php[]
+----

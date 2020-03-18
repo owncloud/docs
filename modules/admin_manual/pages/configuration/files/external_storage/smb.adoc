@@ -1,0 +1,60 @@
+= Samba File Server Configuration (SMB/CIFS)
+// URLs
+:libsmbclientphp-url: https://github.com/eduardok/libsmbclient-php
+:smbclient-url: https://www.samba.org/samba/docs/man/manpages-3/smbclient.1.html
+:smbcifs-url: https://docs.microsoft.com/en-us/windows/desktop/FileIO/microsoft-smb-protocol-and-cifs-protocol-overview
+:samba-url: https://www.samba.org
+:wnd-config-path: enterprise/external_storage/windows-network-drive_configuration.adoc
+
+ownCloud can connect to Windows file servers, and other SMB-compatible servers (e.g., {samba-url}[Samba]), by using the {smbcifs-url}[SMB/CIFS] backend.
+
+== Dependencies
+
+There are two dependencies to connect to your ownCloud installation to Windows file servers, 
+
+. xref:libsmbclient-php-or-smbclient[libsmbclient-php or smbclient]
+. xref:the-samba-client[The Samba Client]
+
+=== libsmbclient-php or smbclient
+
+ownCloud's SMB/CIFS backend requires either {libsmbclientphp-url}[the libsmbclient-php module] (version 0.8.0+) or {smbclient-url}[the smbclient command] (and its dependencies) to be installed on the ownCloud server. 
+We highly recommend `libsmbclient-php`, but it isn't required. 
+If it is installed smbclient won't be needed. 
+Most Linux distributions provide `libsmbclient-php` and typically name it `php-smbclient`.
+
+=== The Samba Client
+
+The Samba client must be installed on your Linux system. 
+It is included in all Linux distributions; on _Debian_, _Ubuntu_, and other Debian
+derivatives this is `smbclient`. 
+On _SUSE_, _Red Hat_, _CentOS_, and other Red Hat derivatives it is `samba-client`. 
+You also need `which` and `stdbuf`, which should be included in most Linux distributions.
+
+== Configuration
+
+When configuring it, you will need the following information:
+
+* The folder name, which will be your local mount point.
+* The URL of the Samba server.
+* The username or domain/username used to login to the Samba server.
+* The password to login to the Samba server.
+* The share name to mount on the remote Samba server.
+* The remote subfolder inside the remote Samba share to mount. This is optional, as it defaults to `/`.
++
+TIP: To assign the ownCloud logon username automatically to the subfolder, use `$user` instead of a subfolder name.
+* The ownCloud users and groups who get access to the share.
+
+[TIP]
+====
+Optionally, you can specify a `Domain`. 
+This is useful in cases where the SMB server requires a domain and a username, and an advanced authentication mechanism like Active Directory (AD), or when using session credentials where the username cannot be modified. 
+This is concatenated with the username, so the backend gets `domain\username`
+====
+
+image:configuration/files/external_storage/smb.png[Samba external storage configuration.]
+
+== Further Information
+
+* xref:configuration/files/external_storage_configuration_gui.adoc[The External Storage Configuration GUI] for additional mount options and information.
+* xref:configuration/files/external_storage/auth_mechanisms.adoc[External Storage Authentication Mechanisms] for more information on authentication schemes.
+

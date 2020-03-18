@@ -1,0 +1,44 @@
+= Amazon S3
+:files_external_s3-url: https://github.com/owncloud/files_external_s3
+
+ifdef::current-version[]
+ifeval::[{current-version} >= 10.3]
+[IMPORTANT]
+====
+If your installation uses S3 as an external storage in any version before 10.3, you have to install and enable {files_external_s3-url}[files_external_s3]. 
+Otherwise, files stored on existing S3 external storages will *not* be fully accessible.
+====
+endif::[]
+endif::current-version[]
+
+To connect your Amazon S3 buckets to ownCloud, you will need:
+
+* S3 access key
+* S3 secret key
+* Bucket name
+
+In the *Folder name* field enter a local folder name for your S3
+mountpoint. If this does not exist it will be created.
+
+In the *Available for* field enter the users or groups who have
+permission to access your S3 mount.
+
+The `Enable SSL` checkbox enables HTTPS connections; using HTTPS is
+always highly-recommended.
+
+image:configuration/files/external_storage/amazons3.png[image]
+
+Optionally, you can override the hostname, port and region of your S3
+server, which is required for non-Amazon servers such as Ceph Object Gateway.
+
+*Enable path style* is usually not required (and is, in fact,
+incompatible with newer Amazon datacenters), but can be used with
+non-Amazon servers where the DNS infrastructure cannot be controlled.
+Ordinarily, requests will be made with
+`\http://bucket.hostname.domain/`, but with path style enabled, requests are made with
+`\http://hostname.domain/bucket` instead.
+
+See xref:configuration/files/external_storage_configuration_gui.adoc[External Storage Configuration]
+for additional mount options and information.
+
+See auth_mechanisms for more information on authentication schemes.

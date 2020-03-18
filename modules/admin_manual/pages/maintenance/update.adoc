@@ -1,0 +1,228 @@
+= Upgrading ownCloud with the Updater App
+:toc: right
+
+== Introduction
+
+The Updater app automates many of the steps of upgrading an ownCloud
+installation. It is useful for installations that do not have root
+access, such as shared hosting, for installations with a smaller number
+of users and data, and it automates xref:installation/manual_installation.adoc[manual installations].
+
+IMPORTANT: When upgrading from oC 9.0 to 9.1 with existing Calendars or Adressbooks please have a look at the 
+xref:release_notes.adoc[release notes] of oC 9.0 for important info about this migration.
+
+[CAUTION]
+====
+* The Updater app is not enabled and not supported in ownCloud Enterprise edition.
+* The Updater app is not included in the 
+https://download.owncloud.org/download/repositories/stable/owncloud/[Linux packages on our Open Build Service],
+but only in the https://owncloud.org/install/#instructions-server[tar and zip archives].
+* When you install ownCloud from packages you should keep it updated with your package manager.
+====
+
+*Downgrading* is not supported and risks corrupting your data! If you
+want to revert to an older ownCloud version, install it from scratch and
+then restore your data from backup. Before doing this, file a support
+ticket (if you have paid support) or ask for help in the ownCloud forums
+to see if your issue can be resolved without downgrading.
+
+We strongly recommend that you make xref:maintenance/backup.adoc[regular backups], as well as a fresh backup before every upgrade. 
+
+NOTE: The Updater app _does not_ backup your database or data directory.
+
+We also recommend that you review any installed xref:maintenance/manual_upgrade.adoc#review-third-party-apps[third-party apps] for compatibility with the new ownCloud release. 
+Ensure that they are all disabled before beginning the upgrade. 
+After the upgrade is complete, re-enable any which are compatible with the new release.
+
+CAUTION: Unsupported apps may disrupt your upgrade.
+
+The Updater app performs these operations:
+
+* Creates an `updater_backup` directory under your ownCloud data
+directory
+* Downloads and extracts updated package content into the
+`updater_backup/packageVersion` directory
+* Makes a copy of your current ownCloud instance, except for your data
+directory, to `updater_backup/currentVersion-randomstring`
+* Moves all directories except `data` and `config` from the current
+instance to `updater_backup/tmp`
+* Moves all directories from `updater_backup/packageVersion` to the current version
+* Copies your old `config.php` to the new `config/` directory
+
+Using the Updater app to update your ownCloud installation is just a few steps:
+
+1.  You should see a notification at the top of any ownCloud page when
+there is a new update available.
+2.  Even though the Updater app backs up important directories, you
+should always have your own current backups (See xref:maintenance/backup.adoc[Backing up ownCloud] for details.)
+3.  Verify that the HTTP user on your system can write to your whole
+ownCloud directory; see the xref:setting-permissions-for-updating[Setting Permissions for Updating] section
+below.
+4.  Navigate to your Admin page and click the btn:[Update Center] button
+under Updater. This takes you to the Updater control panel.
+5.  Click btn:[Update], and carefully read the messages. If there are any
+problems it will tell you. The most common issue is directory
+permissions; your HTTP user needs write permissions to your whole
+ownCloud directory. (See xref:installation/manual_installation.adoc#set-strong-directory-permissions[Set Strong Directory Permissions].) Another common issue is
+SELinux rules (see xref:installation/selinux_configuration.adoc[SELinux Configuration].) Otherwise you will see
+messages about checking your installation and making backups.
+6.  Click Proceed, and then it performs the remaining steps, which takes a few minutes.
+7.  If your directory permissions are correct, a backup was made, and
+downloading the new ownCloud archive succeeded you will see the
+following screen. Click the btn:[Start Update] button to complete your update:
+
+image:maintenance/upgrade-2.png[image]
+
+NOTE: If you have a large ownCloud installation and have shell access, you should use the `occ upgrade` command, 
+running it as your HTTP user, instead of clicking the btn:[Start Update] button, in order to avoid PHP timeouts.
+
+This example is for Ubuntu Linux:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} upgrade
+----
+
+The optional parameter to skip migration tests during this step was
+removed in ownCloud 10.0. See xref:maintenance/manual_upgrade.adoc#test-the-upgrade[Testing a Migration] for more information.
+
+1.  It runs for a few minutes, and when it is finished displays a
+success message, which disappears after a short time.
+
+Refresh your Admin page to verify your new version number. In the
+Updater section of your Admin page you can see the current status and
+backups. These are backups of your old and new ownCloud installations,
+and do not contain your data files. If your update works and there are
+no problems you can delete the backups from this screen.
+
+If the update fails, then you must xref:maintenance/manual_upgrade.adoc[update manually].
+
+== Setting Permissions for Updating
+
+For hardened security, we highly recommend setting the permissions on
+your ownCloud directory as strictly as possible, immediately after the
+initial installation. However, these strict permissions will prevent the
+Updater app from working, as it needs your whole ownCloud directory to
+be owned by the HTTP user.
+
+So to set the appropriate permissions for updating, run the code below.
+Replace the `ocpath` variable with the path to your ownCloud directory,
+and replace the `htuser` and `htgroup` variables with your HTTP user and
+group.
+
+----
+#!/bin/bash
+# Sets permissions of the owncloud instance for updating
+
+ocpath='/var/www/owncloud'
+htuser='www-data'
+htgroup='www-data'
+
+chown -R ${htuser}:${htgroup} ${ocpath}
+----
+
+You can find your HTTP user in your HTTP server configuration files. Or
+you can use xref:configuration/general_topics/general_troubleshooting.adoc#php-version-and-information[PHP Version and Information].
+Look for the `User/Group` line.
+
+* The HTTP user and group in Debian/Ubuntu is `www-data`.
+* The HTTP user and group in Fedora/CentOS is `apache`.
+* The HTTP user and group in Arch Linux is `http`.
+* The HTTP user in openSUSE is `wwwrun`, and the HTTP group is `www`.
+
+After the update is completed, re-apply 
+xref:installation/manual_installation.adoc#set-strong-directory-permissions[the strong directory permissions] 
+immediately.
+
+== Command Line Options
+
+The Updater app includes command-line options to automate updates, to
+create checkpoints and to roll back to older checkpoints. You must run
+it as your HTTP user. This example on Ubuntu Linux displays command
+options:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} updater/application.php list
+----
+
+See usage for commands, like this example for the `upgrade:checkpoint` command:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} updater/application.php upgrade:checkpoint -h
+----
+
+You can display a help summary:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} updater/application.php --help
+----
+
+When you run it without options it runs a system check:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} owncloud/updater/application.php
+ownCloud updater 1.0 - CLI based ownCloud server upgrades
+Checking system health.
+- file permissions are ok.
+Current version is 9.0.0.12
+No updates found online.
+Done
+----
+
+Create a checkpoint:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} updater/application.php upgrade:checkpoint --create
+Created checkpoint 9.0.0.12-56d5e4e004964
+----
+
+List checkpoints:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} updater/application.php upgrade:checkpoint --list
+[source,console]
+----
+
+Restore an earlier checkpoint:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} updater/application.php \
+    upgrade:checkpoint --restore=9.0.0.12-56d5e4e004964
+----
+
+Add a line like this to your crontab to automatically create daily checkpoints:
+
+[source,console,subs="attributes+"]
+----
+2 15 * * * {occ-command-example-prefix} /path/to/owncloud/updater/application.php
+upgrade:checkpoint --create > /dev/null 2>&1
+----
+
+== updater.secret value in config.php
+
+When running the updater, you will be prompted to add a hashed secret
+into your config.php file. On the updater web interface, you then need
+to enter the unhashed secret into the web form.
+
+In case you forgot your password/secret, you can re-create it by
+changing config.php. You can run this on your shell:
+
+[source,console]
+----
+php -r 'echo password_hash("Enter a random password here", PASSWORD_DEFAULT)."\n";'
+----
+
+Please replace `Enter a random password here` with your own.
+Then add this into your config.php:
+
+[source,php]
+----
+'updater.secret' => 'The value you got from the above hash command',
+----

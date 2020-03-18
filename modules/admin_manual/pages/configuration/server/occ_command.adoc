@@ -1,0 +1,239 @@
+= Using the occ Command
+:toc: macro
+:toclevels: 2
+:page-aliases: configuration/server/occ_app_command.adoc,go/admin-cli-upgrade.adoc,configuration/files/external_storage_configuration.adoc
+:php-datetime-url: https://php.net/manual/de/datetime.formats.php
+:hsm-overview-url: https://www.cryptomathic.com/news-events/blog/understanding-hardware-security-modules-hsms
+:owncloud-support-url: https://owncloud.com/licenses/owncloud-support-maintenance/
+
+ownCloud's `occ` command (ownCloud console) is ownCloud's command-line interface. 
+You can perform many common server operations with `occ`, such as installing and upgrading ownCloud, managing users and groups, encryption, passwords, LDAP setting, and more.
+
+`occ` is in the `owncloud/` directory; for example `/var/www/owncloud` on Ubuntu Linux. `occ` is a PHP script. 
+*You must run it as your HTTP user* to ensure that the correct permissions are maintained on your ownCloud files and directories.
+
+toc::[]
+
+== Run occ As Your HTTP User
+
+The HTTP user is different on the various Linux distributions. 
+
+* The HTTP user and group in Debian/Ubuntu is `www-data`.
+* The HTTP user and group in Fedora/CentOS is `apache`.
+* The HTTP user and group in Arch Linux is `http`.
+* The HTTP user in openSUSE is `wwwrun`, and the HTTP group is `www`.
+
+TIP: See xref:installation/manual_installation.adoc#set-strong-directory-permissions[Setting Strong Permissions] to learn how to find your HTTP user.
+
+If your HTTP server is configured to use a different PHP version than the default (/usr/bin/php), `occ` should be run with the same version.
+For example, in CentOS 6.5 with SCL-PHP54 installed, the command looks like this:
+
+----
+sudo -u apache /opt/rh/php54/root/usr/bin/php /var/www/html/owncloud/occ
+----
+
+=== Example Commands
+
+Running `occ` with no options lists all commands and options, like this example on Ubuntu:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix}
+ownCloud version 10.0.8
+
+Usage:
+ command [options] [arguments]
+
+==== Options
+ -h, --help            Display this help message
+ -q, --quiet           Do not output any message
+ -V, --version         Display this application version
+     --ansi            Force ANSI output
+     --no-ansi         Disable ANSI output
+ -n, --no-interaction  Do not ask any interactive question
+     --no-warnings     Skip global warnings, show command output only
+ -v|vv|vvv, --verbose  Increase the verbosity of messages: 1 for normal output,
+                       2 for more verbose output and 3 for debug
+
+Available commands:
+ check                 Check dependencies of the server environment
+ help                  Displays help for a command
+ list                  Lists commands
+ status                Show some status information
+ upgrade               Run upgrade routines after installation of
+                       a new release. The release has to be installed before
+----
+
+This is the same as `{occ-command-example-prefix} list`. 
+Run it with the `-h` option for syntax help:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} -h
+----
+
+Display your ownCloud version:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} -V
+  ownCloud version 10.0.8
+----
+
+Query your ownCloud server status:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} status
+  - installed: true
+  - version: 10.0.8.5
+  - versionstring: 10.0.8
+  - edition: Community
+----
+
+`occ` has _options_, _commands_, and _arguments_. 
+Commands are required.
+Options are optional. 
+Arguments can be required _or_ optional. 
+The, generic, syntax is:
+
+----
+occ [options] command [arguments]
+----
+
+Get detailed information on individual commands with the `help` command, like this example for the `maintenance:mode` command.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} help maintenance:mode
+Usage:
+ maintenance:mode [options]
+
+Options
+     --on              Enable maintenance mode
+     --off             Disable maintenance mode
+     --output[=OUTPUT] Output format (plain, json or json_pretty, default is plain) [default: "plain"]
+ -h, --help            Display this help message
+ -q, --quiet           Do not output any message
+ -V, --version         Display this application version
+     --ansi            Force ANSI output
+     --no-ansi         Disable ANSI output
+ -n, --no-interaction  Do not ask any interactive question
+     --no-warnings     Skip global warnings, show command output only
+ -v|vv|vvv, --verbose  Increase the verbosity of messages: 1 for normal output,
+                       2 for more verbose output and 3 for debug
+----
+
+The `status` command from above has an option to define the output format. 
+The default is plain text, but it can also be `json`
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} status --output=json
+{"installed":true,"version":"9.0.0.19","versionstring":"9.0.0","edition":""}
+----
+
+or `json_pretty`
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} status --output=json_pretty
+{
+   "installed": true,
+   "version": "10.0.8.5",
+   "versionstring": "10.0.8",
+   "edition": "Community"
+}
+----
+
+This output option is available on all list and list-like commands, which include `status`, `check`, `app:list`, `config:list`, `encryption:status` and `encryption:list-modules`.
+
+== Core Commands
+
+This command reference covers the ownCloud core commands.
+
+include::./occ_command/app_commands.adoc[leveloffset=+2]
+
+include::./occ_command/background_jobs_selector.adoc[leveloffset=+2]
+
+include::./occ_command/config_commands.adoc[leveloffset=+2]
+
+include::./occ_command/config_reports_commands.adoc[leveloffset=+2]
+
+include::./occ_command/command_line_installation_commands.adoc[leveloffset=+2]
+
+include::./occ_command/command_line_upgrade_commands.adoc[leveloffset=+2]
+
+include::./occ_command/dav_commands.adoc[leveloffset=+2]
+
+include::./occ_command/database_conversion_commands.adoc[leveloffset=+2]
+
+include::./occ_command/encryption_commands.adoc[leveloffset=+2]
+
+include::./occ_command/federation_sync_commands.adoc[leveloffset=+2]
+
+include::./occ_command/file_commands.adoc[leveloffset=+2]
+
+include::./occ_command/files_external_commands.adoc[leveloffset=+2]
+
+include::./occ_command/full_text_search_commands.adoc[leveloffset=+2]
+
+include::./occ_command/group_commands.adoc[leveloffset=+2]
+
+include::./occ_command/integrity_check_commands.adoc[leveloffset=+2]
+
+include::./occ_command/localisation_commands.adoc[leveloffset=+2]
+
+include::./occ_command/logging_commands.adoc[leveloffset=+2]
+
+include::./occ_command/managing_background_jobs.adoc[leveloffset=+2]
+
+include::./occ_command/maintenance_commands.adoc[leveloffset=+2]
+
+include::./occ_command/migration_steps_commands.adoc[leveloffset=+2]
+
+include::./occ_command/mimetype_update_commands.adoc[leveloffset=+2]
+
+include::./occ_command/notifications_commands.adoc[leveloffset=+2]
+
+include::./occ_command/incoming_shares_commands.adoc[leveloffset=+2]
+
+include::./occ_command/security_commands.adoc[leveloffset=+2]
+
+include::./occ_command/sharing_commands.adoc[leveloffset=+2]
+
+include::./occ_command/trashbin_commands.adoc[leveloffset=+2]
+
+include::./occ_command/user_commands.adoc[leveloffset=+2]
+
+include::./occ_command/versions_commands.adoc[leveloffset=+2]
+
+== Apps Commands
+
+This command reference covers the ownCloud maintained apps commands.
+
+include::./app_commands/activity_commands.adoc[leveloffset=+2]
+
+include::./app_commands/antivirus_commands.adoc[leveloffset=+2]
+
+include::./app_commands/brute_force_protection_commands.adoc[leveloffset=+2]
+
+include::./app_commands/calendar_commands.adoc[leveloffset=+2]
+
+include::./app_commands/contacts_commands.adoc[leveloffset=+2]
+
+include::./app_commands/data_explorer_commands.adoc[leveloffset=+2]
+
+include::./app_commands/ldap_integration_commands.adoc[leveloffset=+2]
+
+include::./app_commands/market_commands.adoc[leveloffset=+2]
+
+include::./app_commands/password_policy_commands.adoc[leveloffset=+2]
+
+include::./app_commands/ransomware_protection_commands.adoc[leveloffset=+2]
+
+include::./app_commands/s3objectstore_commands.adoc[leveloffset=+2]
+
+include::./app_commands/saml_sso_shibboleth_integration_commands.adoc[leveloffset=+2]
+
+include::./app_commands/2fa_commands.adoc[leveloffset=+2]

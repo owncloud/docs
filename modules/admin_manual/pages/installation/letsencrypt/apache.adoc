@@ -1,0 +1,209 @@
+= Configure Apache with Let's Encrypt
+:toc: right
+:toclevels: 1
+:description: Learn how to configure Apache with Let's Encrypt, using Ubuntu Linux 18.04, for use with ownCloud.
+:keywords: LetsEncrypt, Apache, SSL, OpenSSL
+:diffie-hellman-url: https://en.wikipedia.org/wiki/Diffie–Hellman_key_exchange
+:sslopensslconfcmd-url: https://httpd.apache.org/docs/trunk/mod/mod_ssl.html#sslopensslconfcmd
+:forward-secrecy-url: https://scotthelme.co.uk/perfect-forward-secrecy/
+:sslusestapling-url: https://httpd.apache.org/docs/trunk/mod/mod_ssl.html#sslusestapling
+:sslstaplingcache-url: https://httpd.apache.org/docs/trunk/mod/mod_ssl.html#sslstaplingcache
+:virtual-host-url: https://httpd.apache.org/docs/2.4/vhosts/examples.html
+:letsencrypt-url: https://letsencrypt.org/getting-started/
+
+== Introduction
+
+This guide shows how to configure Apache with Let's Encrypt.
+
+== Dependencies
+
+To follow this guide, your server needs to have the following dependencies installed:
+
+- Apache 2.4.8 or later 
+- OpenSSL 1.0.2 or later
+- {letsencrypt-url}[Let's Encrypt]
+
+== Assumptions
+
+This guide assumes two things:
+
+. That you are using Ubuntu Linux 18.04. 
+  If you are not using Ubuntu 18.04, please adjust the instructions to suit your distribution or operating system.
+. That your ownCloud installation is configured using a {virtual-host-url}[VirtualHost (vhost)] configuration instead of being configured in the main Apache configuration, and 
+. That the vhost configuration file is stored under `/etc/apache2/sites-available/`. 
+  Not all distributions use this location, however. Please refer to your distribution's Apache documentation, to know where to store yours. 
+
+== Create and Configure a Diffie-Hellman Params File
+
+When using Apache 2.4.8 or later and OpenSSL 1.0.2 or later you can generate and specify a
+{diffie-hellman-url}[Diffie-Hellman] (DH) params file. 
+If not already present in your VirtualHost (vhost) file, add an
+{sslopensslconfcmd-url}[SSLOpenSSLConfCmd] directive and a new certificate with stronger
+keys, which improves {forward-secrecy-url}[forward secrecy]. 
+
+TIP: The OpenSSL command may take a quite a while to complete, so please be patient.
+
+You can place the generated SSL certificate into any directory of your choice, by running the following command, and changing the value supplied to the `-out` option. 
+We recommend storing it in  `/etc/apache2/` in this guide, solely for sakes of simplicity.
+
+[source,console]
+----
+sudo openssl dhparam -out /etc/apache2/dh4096.pem 4096
+----
+
+Once the command completes, add the following directive to your common SSL configuration:
+
+[source,apache]
+----
+SSLOpenSSLConfCmd DHParameters /etc/apache2/dh4096.pem
+----
+
+== Let's Encrypt ACME-Challenge
+
+After that, add an Alias directive for the `/.well-known/acme-challenge` location in your HTTP VirtualHost configuration, as in line four in the following example.
+
+[source,apache]
+----
+<virtualHost *.80>
+  ServerName mydom.tld
+
+  Alias /.well-known/acme-challenge/ /var/www/letsencrypt/.well-known/acme-challenge/
+  <Directory "/var/www/letsencrypt/.well-known/acme-challenge/">
+      Options None
+      AllowOverride None
+      ForceType text/plain
+      RedirectMatch 404 "^(?!/\.well-known/acme-challenge/[\w-]{43}$)"
+  </Directory>
+
+  # ... remaining configuration
+</virtualHost>
+----
+
+== Create an SSL VirtualHost Configuration
+
+We recommend creating a separate file for storing the `SSL` directives.
+If these directives already exist in this Virtual Host,
+delete them and include the file instead.
+This is because, when the certificate has been created, you can use this file in any 
+SSL-enabled VirtualHost configuration for which the certificate is valid, without reissuing
+the SSL certificate.
+
+[source,console]
+----
+cd /etc/apache2/
+sudo mkdir ssl_rules
+touch ssl_rules/ssl_mydom.tld
+----
+
+./etc/apache2/ssl_rules/ssl_mydom.tld
+[source,apache]
+----
+# Eases letsencrypt initial cert issuing
+
+SSLEngine on
+SSLCertificateChainFile  /etc/letsencrypt/live/mydom.tld/fullchain.pem
+SSLCertificateKeyFile    /etc/letsencrypt/live/mydom.tld/privkey.pem
+SSLCertificateFile       /etc/letsencrypt/live/mydom.tld/cert.pem
+----
+
+[TIP]
+====
+To improve SSL performance, we recommend that you use the {sslusestapling-url}[SSLUseStapling] and {sslstaplingcache-url}[SSLStaplingCache] directives. 
+Here's an example configuration:
+
+[source,apache]
+----
+SSLUseStapling on
+SSLStaplingCache         shmcb:/tmp/stapling_cache(2097152)
+----
+====
+
+With the files created and filled-out, update your HTTPS VirtualHost configuration:
+
+[source,apache]
+----
+<virtualHost *:443>
+  ServerName mydom.tld
+
+  # ssl letsencrypt
+  # Include /etc/apache2/ssl_rules/ssl_mydom.tld
+
+  #...
+</virtualHost>
+----
+
+IMPORTANT: For the moment, comment out the `Include` directive, as the certificate files do not, currently, exist.
+
+== Test and Enable the Apache Configuration
+
+With the configuration created, test it by running one of the following two commands:
+
+[source,console]
+----
+sudo apache2ctl configtest
+sudo apache2ctl -t 
+----
+
+It should not display any errors. 
+If it doesn't, load your new Apache configuration by running the following command:
+
+[source,console]
+----
+sudo apache2ctl graceful
+----
+
+=== Create the SSL Certificates
+
+To create the SSL certificates, run the following command:
+
+[source,console]
+----
+sudo /etc/letsencrypt/<your-domain-name>.sh
+----
+
+Next, double check that the certificates have been issued by running the `list.sh` script.
+
+[source,console]
+----
+sudo /etc/letsencrypt/list.sh
+----
+
+If successful, you will see output similar to that below when the command completes:
+
+----
+Saving debug log to /var/log/letsencrypt/letsencrypt.log
+
+-------------------------------------------------------------------------------
+Found the following certs:
+  Certificate Name: mydom.tld
+    Domains: mydom.tld
+    Expiry Date: 2018-06-18 10:57:18+00:00 (VALID: 89 days)
+    Certificate Path: /etc/letsencrypt/live/mydom.tld/fullchain.pem
+    Private Key Path: /etc/letsencrypt/live/mydom.tld/privkey.pem
+-------------------------------------------------------------------------------
+----
+
+As the certificate files exist, you can uncomment the `Include` directive in your HTTPS VirtualHost configuration to use them.
+
+[source,apache]
+----
+<virtualHost *:443>
+  ServerName mydom.tld
+
+  # ssl letsencrypt
+  Include /etc/apache2/ssl_rules/ssl_mydom.tld
+
+  #...
+</virtualHost>
+----
+
+== Reload the Apache Configuration
+
+Finally, reload (or restart) Apache.
+
+It is now ready to serve HTTPS request for the given domain using the issued certificates.
+
+[source,console]
+----
+sudo service apache2 reload
+----

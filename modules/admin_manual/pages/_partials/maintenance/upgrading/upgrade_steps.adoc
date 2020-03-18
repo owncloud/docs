@@ -1,0 +1,76 @@
+= Upgrade PHP to Version {to-version}
+:redhat-software-collections-overview-url: https://developers.redhat.com/products/softwarecollections/overview
+
+To upgrade to PHP {to-version} you first need to subscribe to {redhat-software-collections-overview-url}[the Red Hat Software Collections] channel repository to download and install the PHP {to-version} package in RHEL 7 (if you've not done this already). 
+This documentation uses the same command as you will find there.
+
+[IMPORTANT]
+====
+Ensure that you have `subscription-manager` installed.
+If you don't, yet, have it installed, do so with the following command:
+
+[source,console]
+----
+# Install subscription manager
+yum install --assumeyes subscription-manager
+
+# Add the required repositories for the PHP packages
+subscription-manager repos --enable rhel-server-rhscl-7-rpms
+----
+====
+
+== Install the Required Packages
+
+Then, proceed by installing the required PHP {to-version} packages. 
+You can use the command below to save you time.
+
+[source,console,subs="attributes+"]
+----
+yum install \
+  rh-php{to-pkg-version} \
+  rh-php{to-pkg-version}-php \
+  rh-php{to-pkg-version}-php-cli \ 
+  rh-php{to-pkg-version}-php-curl \
+  rh-php{to-pkg-version}-php-devel \
+  rh-php{to-pkg-version}-php-gd \ 
+  rh-php{to-pkg-version}-php-intl \
+  rh-php{to-pkg-version}-php-ldap \
+  rh-php{to-pkg-version}-php-mbstring \ 
+  rh-php{to-pkg-version}-php-mysqlnd \ 
+  rh-php{to-pkg-version}-php-opcache
+  rh-php{to-pkg-version}-php-pdo \
+  rh-php{to-pkg-version}-php-pear \
+  rh-php{to-pkg-version}-php-xml \
+  rh-php{to-pkg-version}-php-xmlrpc \
+  rh-php{to-pkg-version}-php-zip
+----
+
+== Enable PHP {to-version} and Disable PHP {from-version}
+
+Next, you need to enable PHP {to-version} and disable PHP {from-version} system-wide. 
+To enable PHP {to-version} system-wide, run the following command:
+
+[source,console,subs="attributes+"]
+----
+cp /opt/rh/rh-php{to-pkg-version}/enable /etc/profile.d/rh-php{to-pkg-version}.sh source /opt/rh/rh-php{to-pkg-version}/enable
+----
+
+Then, you need to disable loading of the PHP {from-version} Apache modules. 
+You can do this either by changing their names, as in the example below, or deleting the files.
+
+[source,console,subs="attributes+"]
+----
+mv /etc/httpd/conf.d/php.conf /etc/httpd/conf.d/php56.off
+mv /etc/httpd/conf.modules.d/10-php.conf /etc/httpd/conf.modules.d/10-php56.off
+----
+
+== Update the Apache Configuration Files
+
+With that done, you next need to copy the PHP {to-version} Apache modules into place; that being the two Apache configuration files and the shared object file.
+
+[source,console,subs="attributes+"]
+----
+cp /opt/rh/httpd24/root/etc/httpd/conf.d/rh-php{to-pkg-version}-php.conf /etc/httpd/conf.d/
+cp /opt/rh/httpd24/root/etc/httpd/conf.modules.d/15-rh-php{to-pkg-version}-php.conf /etc/httpd/conf.modules.d/
+cp /opt/rh/httpd24/root/etc/httpd/modules/librh-php{to-pkg-version}-php7.so /etc/httpd/modules/
+----

@@ -1,0 +1,76 @@
+= Retrieve Log Files and Configuration Settings
+:toc: right
+:owncloud-central-url: https://central.owncloud.org/latest
+:owncloud-support-url: https://owncloud.com/licenses/owncloud-support-maintenance/
+:page-aliases: configuration/server/logging/providing_logs_and_config_files.adoc
+
+== Introduction
+
+When you report a problem to {owncloud-support-url}[ownCloud Support] or our {owncloud-central-url}[Forum (ownCloud Central)] you will be asked to provide certain log files or configurations for our engineers (or other users). 
+These are essential in better understanding your issue, your specific configuration, and the cause of the problem.
+
+Here are instructions for how to collect them.
+
+== Generate a Config Report
+
+You can use the webUI or the command line to generate a config report.
+Please note that you have to have the configreport app enabled. 
+Check if it's already enabled by going to the apps section of the admin settings.
+You can enable this app using the following commands:
+
+[source,console,subs="attributes+"]
+----
+# Install it, if it’s not already installed
+{occ-command-example-prefix} market:install configreport
+
+# Or enable it, if it’s already installed
+{occ-command-example-prefix}:app enable configreport
+----
+
+=== Generate via webUI
+
+To generate a config report using the webUI, navigate to: +
+menu:Settings[Admin > General > "Generate Config report" > "Download ownCloud config report"].
+
+=== Generate via Command Line
+
+To generate a config report from the command line, run the following command from the root directory of your ownCloud installation:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} configreport:generate > config_report.txt
+----
+
+== ownCloud Server Log File
+
+=== Generate via webUI
+
+You can use the webUI to download your ownCloud Server log file. To do so, navigate to: + 
+menu:Settings[Admin > General > Log > "Download logfile"].
+
+=== Generate via Command Line
+
+If the log file is too big, you will need to transfer it from the command line. 
+The location of the log file can be found in your config.php. It's in your data directory. 
+
+....
+ 'datadirectory' => '/var/www/owncloud/data',
+....
+
+You also can specify a different location of the log file.
+
+....
+'logfile' => '/home/www-data/owncloud.log',
+....
+
+Note that the web server user has to have rights to write in that directory.
+
+== LDAP Config
+
+Assuming that LDAP is used, viewing the LDAP configuration is important when checking for errors between your ownCloud instance and your LDAP server.
+To get the output file, execute this command:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} ldap:show-config > ldap_config.txt
+----

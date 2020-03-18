@@ -1,0 +1,62 @@
+= Versions
+
+NOTE: These commands are only available when the "Versions" app (`files_versions`) is enabled.
+These commands are not available in xref:maintenance-commands[single-user (maintenance) mode].
+
+== versions:cleanup
+
+`versions:cleanup` can delete all versioned files, as well as the
+`files_versions` folder, for either specific users, or for all users.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} versions:cleanup [<user_id>]...
+----
+
+Options
+
+[width="100%",cols="22%,70%",]
+|===
+| `user_id` | Delete versions of the given user(s), if no user is given all versions will be deleted.
+|===
+
+The example below deletes all versioned files for all users:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} versions:cleanup
+Delete all versions
+Delete versions for users on backend Database
+  freda
+  molly
+  stash
+  rosa
+  edward
+----
+
+You can delete versions for specific users in a space-delimited list:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} versions:cleanup freda molly
+Delete versions of   freda
+Delete versions of   molly
+----
+
+== versions:expire
+
+`versions:expire` deletes only expired files according to the `versions_retention_obligation` setting in `config.php` (see the File versions section in config_sample_php_parameters). 
+The default is to delete expired files for all users, or you may list users in a space-delimited list.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} versions:expire [<user_id>]...
+----
+
+Options
+
+[width="100%",cols="22%,70%",]
+|===
+| `user_id` | Expire file versions of the given user(s), if no user is given file versions
+for all users will be expired.
+|===
