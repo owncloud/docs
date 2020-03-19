@@ -86,9 +86,11 @@ grep -q -P 'EXIF Support => enabled' <(php -i) && echo "Exif is installed and en
 
 == Notes for PHP Library phpseclib
 
-phpseclib's BigInteger uses the `php-gmp` (GNU Multiple Precision Arithmetic Library), `php-bcmath` and `OpenSSL` extensions, if they're available, for speed, but doesn't require them to maintain maximum compatibility. 
+phpseclib's BigInteger uses the php-gmp (GNU Multiple Precision Arithmetic Library), php-bcmath and OpenSSL extensions,
+if they're available, for speed, but doesn't require them to maintain maximum compatibility. 
 The GMP library uses an internal resource type, while the BCMath library uses strings as datatype.
-The most salient difference is, that GMP works on [arbitrary precision] integer values, whereas BCMath allows [arbitrary precision] decimal / float-like values.
+The most salient difference is, that GMP works on [arbitrary precision] integer values, whereas BCMath
+allows [arbitrary precision] decimal / float-like values.
 
 == Cryptography Library
 
@@ -106,14 +108,15 @@ If mcrypt is not available, either a pure-PHP implementation or OpenSSL is used 
 The prioritization is as follows: OpenSSL > mcrypt > pure-PHP. 
 mcrypt and OpenSSL load faster than the pure-PHP implementation. 
 mcrypt offers a 45x speedup over pure-PHP.
-OpenSSL offers a 6.5x speedup over mcrypt.
+OpenSSL offers a greater than 6.5x speedup over mcrypt.
 ====
 
 === Mcrypt PHP Library
 
 Here are the steps for installing mcrypt, when it is explicitly required.
 
-NOTE: Some of the steps were borrowed from the website for student’s {mcrypt-link-url}[guide to installing the PHP 7.2-Mcrypt module].
+NOTE: Some of the steps were borrowed from the website for student’s
+{mcrypt-link-url}[guide to installing the PHP 7.2-Mcrypt module].
 
 First, determine the mcrypt version you want to use in {mcrypt-pecl-url}[PECL's mcrypt documentation].
 Then, run the following commands to install it.
@@ -135,9 +138,10 @@ When the commands complete, you then have to:
 
 === php-libsodium
 
-NOTE: From PHP 7.2 onward, libsodium is part of PHP, so installing this extension is no longer necessary.
+NOTE: From PHP 7.2 onwards, libsodium is part of PHP, so installing this extension is no longer necessary.
 
-If you see the message "_PHP Fatal error: sodium_init() in Unknown on line 0_" when invoking the command `php -v` or when running PHP programs, php-libsodium might be additionally installed.
+If you see the message "_PHP Fatal error: sodium_init() in Unknown on line 0_" when invoking the command
+`php -v` or when running PHP programs, php-libsodium may have been installed unnecessarily.
 This error does not do any harm, but it can be annoying and it fills up your logs.
 To prevent this, you can uninstall php-libsodium. 
 This can be done by invoking the following command:
@@ -148,7 +152,7 @@ sudo apt remove php-libsodium
 ----
 
 You can check success by invoking the command `php -v`, which should no longer return the error message.
-You can also check the existence of `sodium` with following command:
+You can also check the existence of sodium with the following command:
 
 [source,console]
 ----
@@ -157,8 +161,8 @@ grep -P "sodium support => enabled" <( php -i )
 
 == libsmbclient-php Library
 
-`libsmbclient-php` is a PHP extension that uses Samba's libsmbclient library to provide Samba-related functions to PHP programs. 
-You only need to install it if you have installed `smbclient` as described above. 
+libsmbclient-php is a PHP extension that uses Samba's libsmbclient library to provide Samba-related functions
+to PHP programs. You only need to install it if you have installed smbclient as described above. 
 To install it, run the following commands.
 
 [source,console]
@@ -190,7 +194,8 @@ For more information see: {discover-samba-hosts-url}[Bionic Beaver can not disco
 
 == MariaDB Database
 
-For how to install the latest stable release of MariaDB, please refer to {install-mariadb-latest-url}[the MariaDB installation documentation].
+For how to install the latest stable release of MariaDB, please refer to
+{install-mariadb-latest-url}[the MariaDB installation documentation].
 
 [NOTE]
 ====
@@ -213,8 +218,9 @@ sudo mysql_upgrade
 ====
 From MariaDB 10.4.3 onwards, the authentication method has changed to UNIX sockets. 
 For details, please refer to: {auth-unix-socket-url}[MariaDB: Authentication Plugin - Unix Socket].
-The unix_socket authentication plugin allows the user to use operating system credentials when connecting to MariaDB via a local UNIX socket.
-Follow the procedure below to create an admin user for non-socket login, giving ownCloud access to create it's database respectively for phpMyAdmin. 
+The unix_socket authentication plugin allows the user to use operating system credentials when
+connecting to MariaDB via a local UNIX socket. Follow the procedure below to create an admin user
+for non-socket login, giving ownCloud access to create it's database respectively for phpMyAdmin. 
 _This is not the ownCloud user!_
 _Don't forget to change the username and password according to your needs_.
 
@@ -225,11 +231,11 @@ MariaDB [(none)]>
  CREATE USER IF NOT EXISTS 'newuser'@'localhost' IDENTIFIED BY 'changeme';
  GRANT ALL PRIVILEGES ON *.* TO 'newuser'@'localhost' WITH GRANT OPTION;
  FLUSH PRIVILEGES;
- SHOW GRANTS FOR 'newuser'@'localhost' ;
+ SHOW GRANTS FOR 'newuser'@'localhost';
 ----
 ====
 
-NOTE: Follow this procedure, if you want to disable <<Disabling Transparent Huge Pages (THP),Transparent Huge Pages>>
+NOTE: Follow this procedure, if you want to disable <<Disable Transparent Huge Pages (THP),Transparent Huge Pages>>
 
 If you want to install phpMyAdmin as a graphical interface for administering the database, run the following command:
 
@@ -242,8 +248,9 @@ sudo apt install phpmyadmin
 
 === Start a Service After a Resource is Mounted
 
-If you have network resources, such as NFS or iSCSI based mounts and you want to make sure that the database or web server only starts _after_ the resource is mounted.
-Consider the following example setup when configuring your system.
+If you have network resources, such as NFS or iSCSI based mounts and you want to make
+sure that the database or web server only starts _after_ the resource is mounted,
+then consider the following example setup when configuring your system.
 
 The example below is based on an NFS mount which you want to be available _before_ the service with <name.service> starts.
 The same procedure can be used for iSCSI. 
@@ -307,8 +314,9 @@ After=folder.mount
 ----
 
 You can add more than one dependency if needed by separating them with spaces.
-This procedure keeps `<name>.service` in its original state but makes it possible to override the current setup with new parameters.
-It automatically creates a directory in `/etc/systemd/system`, named `<name>.service.d`, and a file in that directory called `override.conf`.
+This procedure keeps `<name>.service` in its original state but makes it possible to override the
+current setup with new parameters. It automatically creates a directory in `/etc/systemd/system`,
+named `<name>.service.d`, and a file in that directory called `override.conf`.
 In the example above, the parameter is added to the existing list of parameters of the `After` directive.
 
 For more details please read section {overriding-vendor-settings-url}[Example 2. Overriding vendor settings]
