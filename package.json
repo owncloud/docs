@@ -1,43 +1,61 @@
 {
-  "author": "Matthew Setter <matthew@matthewsetter.com>",
+  "private": true,
+  "name": "owncloud-docs",
+  "description": "The ownCloud Core documentation",
+  "version": "1.0.0",
+  "license": "AGPL-3.0",
+  "author": "The ownCloud Team <docs@owncloud.com>",
+  "homepage": "https://github.com/owncloud/docs#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/owncloud/docs.git"
+  },
   "bugs": {
     "url": "https://github.com/owncloud/docs/issues"
   },
   "contributors": [
     {
       "name": "Matthew Setter",
-      "email": "matthew@matthewsetter.com",
-      "url": "https://matthewsetter.com"
+      "email": "matthew@matthewsetter.com"
     },
     {
       "name": "Martin Mattel",
       "email": "github@diemattels.at"
+    },
+    {
+      "name": "Thomas Boerger",
+      "email": "tboerger@owncloud.com"
     }
   ],
+  "scripts": {
+    "prose": "write-good --parse **/*.adoc",
+    "serve": "http-server public/ -d -i",
+    "antora": "antora --stacktrace generate --cache-dir cache --redirect-facility static --generator ./generator/generate-site.js --clean site.yml",
+    "validate": "antora --stacktrace generate --cache-dir cache --redirect-facility disabled --generator ./generator/xref-validator.js --clean site.yml",
+    "linkcheck": "broken-link-checker --filter-level 3 --recursive --verbose"
+  },
   "dependencies": {
+<<<<<<< HEAD
     "@antora/cli": "^1.1.1",
     "@antora/site-generator-default": "^2.0.0"
+=======
+    "@antora/cli": "^2.1",
+    "@antora/site-generator-default": "^2.1",
+    "cheerio": "^1.0.0-rc.3",
+    "elasticsearch": "^16.6.0",
+    "html-entities": "^1.2.1",
+    "lodash": "^4.17.15"
+>>>>>>> c0862f92a677d47355423e81defee7c5ec49b937
   },
-  "description": "The ownCloud core documentation (created with Antora and AsciiDoc)",
-  "devDependencies": {},
-  "directories": {
-    "doc": "docs"
+  "devDependencies": {
+    "broken-link-checker": "^0.7.8",
+    "http-server": "^0.12.1",
+    "write-good": "^1.0"
   },
-  "homepage": "https://github.com/owncloud/docs#readme",
   "keywords": [
     "antora",
     "asciidoc",
     "documentation",
     "owncloud"
-  ],
-  "license": "AGPL-3.0",
-  "name": "owncloud-docs",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/owncloud/docs.git"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "version": "10.0.10"
+  ]
 }

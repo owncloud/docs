@@ -1,0 +1,82 @@
+= Migration guide from user-key to master-key encryption 
+:toc:
+
+== Preparation
+
+* Verify the current state of encryption
+
+Currently ownCloud user-key encryption is enabled. This can be verified by running the command:
+
+----
+occ encryption:status
+----
+
+* Verify recovery passwords
+
+Before starting with the decrypt process, the ownCloud admin must be sure all users already enabled the recovery password option in their personal settings page. This can be verified by
+running the following DB query:
+
+----
+SELECT DISTINCT pr.userid FROM oc_preferences pr WHERE pr.userid NOT IN (SELECT userid
+FROM oc_preferences WHERE configkey='recoveryEnabled' and configvalue=1); 
+----
+
+Should any user exist who did not yet enable this option, it may be required for those users to log in and activate the recovery key option in their personal settings page.
+
+
+== Decryption
+
+Assuming all users enabled this option, we could now start the decrypt process. Starting with ownCloud 10.0.10 there is the possibility the read the admin-defined recovery password (**RECOVERY KEY**) from an environment variable. This will allow to decrypt all users’ files in bulk.
+
+So we may need to first export the admin recovery password to an environment variable (needs to be done as the Apache user on Ubuntu typically `www-data`; replace `1111` with the admin-defined recovery password):
+
+----
+#Set the variable as 
+export OC_RECOVERY_PASSWORD=1111
+#Start the decryption with: 
+occ maintenance:singleuser –on
+sudo -E -u www-data php occ encryption:decrypt-all -m recovery -c yes
+----
+
+== Cleanup
+
+At this point, all users files are unencrypted on storage. Before enabling master-key encryption, in order to not have leftovers of user-key encryption some steps are still required. 
+
+* Disable encryption
+
+First run the following commands to disable the encryption app and module:
+
+----
+occ encryption:disable
+occ app:disable encryption
+----
+
+* Cleanup the Database
+
+Then access the DB and delete all entries related to user-key encryption by running:
+
+----
+DELETE * FROM oc_appconfig WHERE appid='encryption';
+----
+
+* Cleanup the Storage
+
+Delete all encryption keys on storage by running:
+("/var/www/html/owncloud/data" refers to the path to the ownCloud data directory so please modify this path accordingly):
+
+----
+find /var/www/html/owncloud/data -type d -name "files_encryption" -exec rm -R {} +
+----
+
+At this point, keys are deleted from storage. We can then start the encrypt process with master key.
+
+== Master Key Encryption
+After those steps, all files will be re-encrypted with master-key encryption.
+
+----
+occ app:enable encryption
+occ encryption:enable
+occ encryption:select-encryption-type masterkey -y
+occ encryption:encrypt-all
+occ maintenance:singleuser --off
+----

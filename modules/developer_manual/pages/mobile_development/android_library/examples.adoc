@@ -1,12 +1,10 @@
 = Examples
 
-[[init-the-library]]
 == Init the library
 
 Start using the library; it is needed to init the object mClient that
 will be in charge of keeping the communication with the server.
 
-[[code-example]]
 === Code example
 
 [source,java]
@@ -34,7 +32,6 @@ mClient = OwnCloudClientFactory.createOwnCloudClient(
             true);
 ----
 
-[[set-credentials]]
 == Set credentials
 
 Authentication on the app is possible by 3 different methods:
@@ -43,7 +40,6 @@ Authentication on the app is possible by 3 different methods:
 * Bearer access token (oAuth2)
 * Cookie (SAML-based single-sign-on)
 
-[[code-example-1]]
 === Code example
 
 [source,java]
@@ -67,20 +63,14 @@ public class OwnCloudClient extends HttpClient {
 }
 ----
 
-[[create-a-folder]]
 == Create a folder
 
 Create a new folder on the cloud server, the info needed to be sent is
 the path of the new folder.
 
-[[code-example-2]]
 === Code example
 
-_
- 
-_
-
-....
+----
 private void startFolderCreation(String newFolderPath) {
   CreateRemoteFolderOperation createOperation = new CreateRemoteFolderOperation(newFolderPath, false);
   createOperation.execute( mClient , this , mHandler);
@@ -95,9 +85,8 @@ public void onRemoteOperationFinish(RemoteOperation operation, RemoteOperationRe
   }
   …
 }
-....
+----
 
-[[read-folder]]
 == Read folder
 
 Get the content of an existing folder on the cloud server, the info
@@ -106,10 +95,9 @@ been asked the content of the root folder. As answer of this method, it
 will be received an array with all the files and folders stored in the
 selected folder.
 
-[[code-example-3]]
 === Code example
 
-....
+----
 private void startReadRootFolder() {
   ReadRemoteFolderOperation refreshOperation = new ReadRemoteFolderOperation(FileUtils.PATH_SEPARATOR); 
   // root folder
@@ -127,18 +115,16 @@ public void onRemoteOperationFinish(RemoteOperation operation, RemoteOperationRe
   }
   …
 }
-....
+----
 
-[[read-file]]
 == Read file
 
 Get information related to a certain file or folder, information
 obtained is: `filePath`, `filename`, `isDirectory`, `size` and `date`.
 
-[[code-example-4]]
 === Code example
 
-....
+----
 private void startReadFileProperties(String filePath) {
   ReadRemoteFileOperation readOperation = new ReadRemoteFileOperation(filePath);
   readOperation.execute(mClient, this, mHandler);
@@ -154,18 +140,16 @@ public void onRemoteOperationFinish(RemoteOperation operation, RemoteOperationRe
   }
   …
 }
-....
+----
 
-[[delete-file-or-folder]]
 == Delete file or folder
 
 Delete a file or folder on the cloud server. The info needed is the path
 of folder/file to be deleted.
 
-[[code-example-5]]
 === Code example
 
-....
+----
 private void startRemoveFile(String filePath) {
   RemoveRemoteFileOperation removeOperation = new RemoveRemoteFileOperation(remotePath);
   removeOperation.execute( mClient , this , mHandler);
@@ -180,16 +164,14 @@ public void onRemoteOperationFinish(RemoteOperation operation, RemoteOperationRe
   }
   …
 }
-....
+----
 
-[[download-a-file]]
 == Download a file
 
 Download an existing file on the cloud server. The info needed is path
 of the file on the server and targetDirectory, path where the file will
 be stored on the device.
 
-[[code-example-6]]
 === Code example
 
 [source,java]
@@ -220,14 +202,12 @@ mHandler.post( new Runnable() {
 }
 ----
 
-[[upload-a-file]]
 == Upload a file
 
 Upload a new file to the cloud server. The info needed is fileToUpload,
 path where the file is stored on the device, remotePath, path where the
 file will be stored on the server and mimeType.
 
-[[code-example-7]]
 === Code example
 
 [source,java]
@@ -258,10 +238,9 @@ public void onTransferProgress(long progressRate, long totalTransferredSoFar, lo
 }
 ----
 
-[[move-a-file-or-folder]]
 == Move a file or folder
 
-Move an exisintg file or folder to a different location in the ownCloud
+Move an existing file or folder to a different location in the ownCloud
 server. Parameters needed are the path to the file or folder to move,
 and the new path desired for it. The parent folder of the new path must
 exist in the server.
@@ -270,7 +249,6 @@ When the parameter `overwrite' is set to `true', the file or folder is
 moved even if the new path is already used by a different file or
 folder. This one will be replaced by the former.
 
-[[code-example-8]]
 === Code example
 
 [source,java]
@@ -291,14 +269,12 @@ public void onRemoteOperationFinish(RemoteOperation operation, RemoteOperationRe
 }
 ----
 
-[[read-shared-items-by-link]]
 == Read shared items by link
 
 Get information about what files and folder are shared by link (the
 object mClient contains the information about the server url and
 account)
 
-[[code-example-9]]
 === Code example
 
 [source,java]
@@ -322,7 +298,6 @@ public void onRemoteOperationFinish( RemoteOperation operation, RemoteOperationR
 }
 ----
 
-[[get-the-share-resources-for-a-given-file-or-folder]]
 == Get the share resources for a given file or folder
 
 Get information about what files and folder are shared by link on a
@@ -331,7 +306,6 @@ the server, the Boolean variable, getReshares, come from the Sharing
 api, from the moment it is not in use within the ownCloud Android
 library.
 
-[[code-example-10]]
 === Code example
 
 [source,java]
@@ -360,7 +334,6 @@ public void onRemoteOperationFinish( RemoteOperation operation, RemoteOperationR
 }
 ----
 
-[[share-link-of-file-or-folder]]
 == Share link of file or folder
 
 Share a file or a folder from your cloud server by link.
@@ -369,7 +342,6 @@ The info needed is filePath, the path of the item that you want to share
 and Password, this comes from the Sharing api, from the moment it is not
 in use within the ownCloud Android library.
 
-[[code-example-11]]
 === Code example
 
 [source,java]
@@ -400,7 +372,6 @@ public void onRemoteOperationFinish( RemoteOperation operation, RemoteOperationR
 }
 ----
 
-[[delete-a-share-resource]]
 == Delete a share resource
 
 Stop sharing by link a file or a folder from your cloud server.
@@ -408,7 +379,6 @@ Stop sharing by link a file or a folder from your cloud server.
 The info needed is the object OCShare that you want to stop sharing by
 link.
 
-[[code-example-12]]
 === Code example
 
 [source,java]
@@ -428,17 +398,12 @@ public void onRemoteOperationFinish( RemoteOperation operation, RemoteOperationR
 }
 ----
 
-[[tips]]
 == Tips
 
 * Credentials must be set before calling any method
 * Paths must not be on URL Encoding
-* Correct path: `https://example.com/owncloud/remote.php/dav/PopMusic`
-* Wrong path: `https://example.com/owncloud/remote.php/dav/Pop%20Music/`
-* There are some forbidden characters to be used in folder and files
-names on the server, same on the ownCloud Android Library
-``",`/``,`<``,`>``,`:``,```",`|``,`?``,`*"
-* Upload and download actions may be cancelled thanks to the objects
-uploadOperation.cancel(), downloadOperation.cancel()
-* Unit tests, before launching unit tests you have to enter your account
-information (server url, user and password) on TestActivity.java
+* Correct path: `\https://example.com/owncloud/remote.php/dav/PopMusic`
+* Wrong path: `\https://example.com/owncloud/remote.php/dav/Pop%20Music/`
+* There are some forbidden characters to be used in folder and files names on the server, same on the ownCloud Android Library: `/`,`<`,`>`,`:`,`"`,`\``,`?`,`*`.
+* Upload and download actions may be cancelled thanks to the objects `uploadOperation.cancel()`, `downloadOperation.cancel()`
+* Unit tests, before launching unit tests you have to enter your account information (server url, user and password) on `TestActivity.java`.

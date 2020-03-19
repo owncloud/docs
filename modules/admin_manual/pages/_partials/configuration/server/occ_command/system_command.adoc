@@ -1,0 +1,68 @@
+= System
+
+[source,console]
+----
+ system
+  system:cron             Execute background jobs as cron
+----
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} -h system:cron
+-Usage:
+  system:cron [options]
+----
+
+== Options
+
+[width="100%",cols="20%,70%",]
+|===
+| -p, --progress        
+| Shows a progress bar - for use in manual execution. 
+Do not use when executing from crontab
+|===
+
+To execute xref:configuration/server/background_jobs_configuration.adoc[background jobs] using xref:configuration/server/background_jobs_configuration.adoc#cron[cron], you can use the `system:cron` command, as in the following example:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} system:cron
+----
+
+If the `--progress` or `-p` argument is specified, then progress output will be displayed in the console, as in the example below.
+
+[source,console]
+----
+Executing: 12 - OCA\UpdateNotification\Notification\BackgroundJob
+  13 [------------->--------------]
+----
+
+If neither of these arguments is provided, no output will be displayed by the command.
+
+NOTE: Displaying progress information is useful when you want visual confirmation that background jobs have been executed.
+However, in a non-interactive environment, such as crontab, it should not be used.
+
+== Updating an Existing System Cron Configuration
+
+[NOTE]
+====
+If you have already automated background jobs via Cron, you must update the relevant `crontab` entry
+using the example below as a guide.
+
+[source,console,subs="attributes+"]
+----
+# Instead of the following configuration
+/usr/bin/php -f /path/to/your/owncloud/cron.php
+
+# Use the following one instead
+{occ-command-example-prefix} system:cron
+----
+====
+
+[NOTE]
+====
+This command does not work if:
+
+* xref:maintenance-commands[Maintenance or Admin-only (single user) modes] are enabled
+* Background jobs are disabled
+====

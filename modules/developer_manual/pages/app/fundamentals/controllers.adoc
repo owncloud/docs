@@ -24,7 +24,6 @@ class AuthorController extends Controller {
 }
 ----
 
-[[connecting-a-controller-and-a-route]]
 == Connecting a Controller and a Route
 
 To connect a controller and a route the controller has to be registered
@@ -38,7 +37,7 @@ namespace OCA\MyApp\AppInfo;
 use OCP\AppFramework\App;
 use OCA\MyApp\Controller\AuthorApiController;
 
-class Application extends application {
+class Application extends App {
 
     public function __construct(array $urlParams=[]) {
         parent::__construct('myapp', $urlParams);
@@ -69,36 +68,35 @@ passed in as the first parameter of the `registerService` method.
 The other part is the route name. An example route name would look like
 this:
 
-....
+----
 author_api#some_method
-....
+----
 
 This name is processed in the following way:
 
 1.  Remove the underscore and uppercase the next character:
 +
-....
+----
 authorApi#someMethod
-....
+----
 2.  Then split the name at the # and uppercase the first letter of the
 left part:
 +
-....
+----
 AuthorApi
 someMethod
-....
+----
 3.  Then append Controller to the first part:
 +
-....
+----
 AuthorApiController
 someMethod
-....
+----
 4.  Finally, retrieve the service listed under `AuthorApiController`
 from the container, look up the parameters of the `someMethod` method in
 the request, cast them if there are PHPDoc type annotations, and execute
 the `someMethod` method on the controller with those parameters.
 
-[[getting-request-parameters]]
 == Getting Request Parameters
 
 Parameters can be passed in many ways, including:
@@ -153,7 +151,6 @@ class PageController extends Controller {
 }
 ----
 
-[[casting-parameters]]
 === Casting Parameters
 
 `URL`, `GET` and `application/x-www-form-urlencoded` have the problem
@@ -191,7 +188,6 @@ The following types will be cast:
 * `float`
 * `int` or `integer`
 
-[[json-parameters]]
 === JSON Parameters
 
 It is possible to pass JSON data using a `POST`, `PUT` or `PATCH`
@@ -199,7 +195,7 @@ request. To do that the `Content-Type` header has to be set to
 `application/json`. The JSON will be parsed as an array. The first level
 keys will be used to pass in the arguments, e.g.:
 
-....
+----
 POST /index.php/apps/myapp/authors
 Content-Type: application/json
 {
@@ -211,7 +207,7 @@ Content-Type: application/json
         "address": "Somewhere"
     }
 }
-....
+----
 
 [source,php]
 ----
@@ -230,7 +226,6 @@ class PageController extends Controller {
 }
 ----
 
-[[reading-headers-files-cookies-and-environment-variables]]
 === Reading Headers, Files, Cookies and Environment Variables
 
 Headers, files, cookies, and environment variables can be accessed
@@ -259,7 +254,6 @@ the global array like `$_FILES`? Simple:
 http://c2.com/cgi/wiki?GlobalVariablesAreBad[because it’s bad practice]
 and will make testing harder.
 
-[[reading-and-writing-session-variables]]
 === Reading and Writing Session Variables
 
 To set, get or modify session variables, the `ISession` object has to be
@@ -301,7 +295,6 @@ class PageController extends Controller {
 }
 ----
 
-[[setting-cookies]]
 === Setting Cookies
 
 Cookies can be set or modified directly on the response class:
@@ -343,7 +336,6 @@ class BakeryController extends Controller {
 ----
 
 
-[[responses]]
 == Responses
 
 Similar to how every controller receives a request object, every
@@ -351,7 +343,6 @@ controller method has to to return a Response. This can be in the form
 of a `Response` subclass or in the form of a value that can be handled
 by a registered responder.
 
-[[json]]
 === JSON
 
 Returning JSON is simple, just pass an array to a `JSONResponse`:
@@ -393,7 +384,6 @@ Why does this work? Because the dispatcher sees that the controller did
 not return a subclass of a `Response` and asks the controller to turn
 the value into a `Response`. That’s where responders come in.
 
-[[responders]]
 === Responders
 
 Responders are short functions that take a value and return a response.
@@ -401,38 +391,38 @@ They are used to return different kinds of responses based on a `format`
 parameter which is supplied by the client. Think of an API that is able
 to return both XML and JSON depending on if you call the URL with:
 
-....
+----
 ?format=xml
-....
+----
 
 or:
 
-....
+----
 ?format=json
-....
+----
 
 The appropriate responder is being chosen by the following criteria:
 
 * First the dispatcher checks the Request if there is a `format`
 parameter, e.g.:
 +
-....
+----
 ?format=xml
-....
+----
 
 or:
 
-....
+----
 /index.php/apps/myapp/authors.{format}
-....
+----
 
 * If there is none, take the `Accept` header, use the first mimetype and
 cut off `application/`. In the following example the format would be
 XML:
 +
-....
+----
 Accept: application/xml, application/json
-....
+----
 * If there is no Accept header or the responder does not exist, format
 defaults to `json`.
 
@@ -501,7 +491,6 @@ class PageController extends Controller {
 }
 ----
 
-[[templates]]
 === Templates
 
 A template <templates> can be rendered by returning a
@@ -514,15 +503,15 @@ without the .php extension
 * `parameters`: optional array parameters that are available in the
 template through $_, e.g.:
 +
-....
+----
 ['key' => 'something']
-....
+----
 
 can be accessed through:
 
-....
+----
 $_['key']
-....
+----
 
 * `renderAs`: defaults to `user`, tells ownCloud if it should include it
 in the web interface, or in case blank is passed solely render the
@@ -545,7 +534,6 @@ class PageController extends Controller {
 }
 ----
 
-[[redirects]]
 === Redirects
 
 A redirect can be achieved by returning a `RedirectResponse`:
@@ -565,7 +553,6 @@ class PageController extends Controller {
 }
 ----
 
-[[downloads]]
 === Downloads
 
 A file download can be triggered by returning a `DownloadResponse`:
@@ -588,7 +575,6 @@ class PageController extends Controller {
 }
 ----
 
-[[creating-custom-responses]]
 === Creating Custom Responses
 
 If no premade `Response` object fits the needed use case, its possible
@@ -621,7 +607,6 @@ class XMLResponse extends Response {
 }
 ----
 
-[[streamed-and-lazily-rendered-responses]]
 === Streamed and Lazily Rendered Responses
 
 By default all responses are rendered at once and sent as a string
@@ -667,7 +652,6 @@ class LazyResponse extends Response implements ICallbackResponse {
 Because this code is rendered after several usually built in helpers,
 you need to take care of errors and proper HTTP caching by yourself.
 
-[[modifying-the-content-security-policy]]
 === Modifying the Content Security Policy
 
 By default ownCloud disables all resources which are not served on the
@@ -728,7 +712,6 @@ class PageController extends Controller {
 }
 ----
 
-[[ocs]]
 OCS
 ~~~
 
@@ -770,7 +753,6 @@ class ShareController extends OCSController {
 
 The format parameter works out of the box, no intervention is required.
 
-[[handling-errors]]
 === Handling Errors
 
 Sometimes a request should fail, for instance if an author with id 1 is
@@ -803,7 +785,6 @@ class AuthorController extends Controller {
 }
 ----
 
-[[authentication]]
 == Authentication
 
 By default every controller method enforces the maximum security, which
@@ -848,3 +829,12 @@ class PageController extends Controller {
     }
 }
 ----
+
+=== Using the CSRF Token in the DOM
+
+The CSRF token is passed into the DOM automatically, and available in JavaScript via a global variable called `oc_requesttoken`.
+You can use this token in your Ajax requests via jQuery, as it is attached to your requests automatically.
+To debug it, open ownCloud in your browser, login, open the JavaScript console, and look at the value of `oc_requesttoken`.
+
+.Display the ownCloud CSRF token loaded into the DOM.
+image:app/fundamentals/controllers/display-the-csrf-token.jpg[Display the ownCloud CSRF token loaded into the DOM in Firefox’s Developers Tools JavaScript Console.]

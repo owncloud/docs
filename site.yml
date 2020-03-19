@@ -1,28 +1,76 @@
 site:
   title: ownCloud Documentation
+  url: https://doc.owncloud.com
 
 content:
   sources:
   - url: .
-    branches: HEAD
+    branches:
+    - HEAD
+  - url: https://github.com/owncloud/docs.git
+    branches:
+    - '10.4'
+    - '10.3'
+    - '10.2'
+    - '10.1'
   - url: https://github.com/owncloud/android.git
     branches:
-    - master-antora
+    - master
+    start_path: docs/
+  - url: https://github.com/owncloud/ios-app.git
+    branches:
+    - master
     start_path: docs/
   - url: https://github.com/owncloud/ios.git
     branches:
-    - master-antora
+    - master
     start_path: docs/
   - url: https://github.com/owncloud/client.git
     branches:
-    - master-antora
+    - master
+    - '2.6'
     start_path: docs/
+  - url: https://github.com/owncloud/branded_clients.git
+    branches:
+    - master
 
 ui:
-  bundle:
-    url: ui-bundle.zip
+  supplemental_files: overlay
   output_dir: assets
+  bundle:
+    snapshot: true
+    url: https://minio.owncloud.com/documentation/ui-bundle.zip
 
 output:
   clean: true
   dir: public
+
+asciidoc:
+  attributes:
+    idprefix: ''
+    idseparator: '-'
+    experimental: ''
+    latest-version: 10.4
+    previous-version: 10.3
+    current-version: 10.4
+    oc-contact-url: https://owncloud.com/contact/
+    oc-examples-server-url: 'https://owncloud.install.com/owncloud'
+    oc-examples-server-ip: '127.0.0.1'
+    oc-examples-username: username
+    oc-examples-password: password
+    occ-command-example-prefix: 'sudo -u www-data php occ'
+    occ-command-example-prefix-no-sudo: 'php occ'
+    owncloud-changelog-url: https://owncloud.org/changelog/server/
+    php-supported-versions-url: https://secure.php.net/supported-versions.php
+    http-status-codes-base-url: https://developer.mozilla.org/en-US/docs/Web/Status
+    minimum-php-version: 7.1
+    minimum-php-version-short-code: 71
+    recommended-php-version: 7.3
+    recommended-php-version-short-code: 73
+    std-port-http: 8080
+    std-port-memcache: 11211
+    std-port-mysql: 3306
+    std-port-redis: 6379
+    supported-php-versions: '7.1, 7.2, and 7.3'
+  extensions:
+    - ./lib/extensions/tabs.js

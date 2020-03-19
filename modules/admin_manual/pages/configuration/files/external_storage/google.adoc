@@ -1,0 +1,131 @@
+= Google Drive
+
+ownCloud uses OAuth 2.0 to connect to Google Drive. This requires
+configuration through Google to get an app ID and app secret, as
+ownCloud registers itself as an app.
+
+All applications that access a Google API must be registered through the
+https://console.developers.google.com/[Google Cloud Console]. Follow
+along carefully because the Google interface is a bit of a maze and it’s
+easy to get lost.
+
+If you already have a Google account, such as Groups, Drive, or Mail,
+you can use your existing login to log into the Google Cloud Console.
+After logging in click the btn:[Create Project] button.
+
+image:configuration/files/external_storage/google_drive/001.png[Google Cloud Console]
+
+image:configuration/files/external_storage/google_drive/002.png[Create Project]
+
+Give your project a name, and either accept the default *Project ID* or
+create your own, then click the btn:[Create] button. 
+For this example a random name was chosen, "owncloud-04-27". 
+However, feel free to choose your own name.
+
+image:configuration/files/external_storage/google_drive/003.png[Choose a name]
+
+After your project is created, click on the btn:[notifications bell] and select your project.
+
+image:configuration/files/external_storage/google_drive/004.png[Notification bell]
+
+Go to Api overview to select google’s API.
+
+image:configuration/files/external_storage/google_drive/005.png[API]
+
+image:configuration/files/external_storage/google_drive/006.png[Google API]
+
+image:configuration/files/external_storage/google_drive/007.png[Enable]
+
+Now you must create your credentials.
+
+image:configuration/files/external_storage/google_drive/008.png[Create Credentials]
+
+First, select btn:[Web Browser] and btn:[User data].
+
+image:configuration/files/external_storage/google_drive/009.png[Access type and Data]
+
+The next screen that opens is *Create OAuth 2.0 Client ID*. Enter your app name.
+
+image:configuration/files/external_storage/google_drive/010.png[Access type and Data]
+
+*Authorized JavaScript Origins* is your root domain, for example
+`\https://example.com`, without a trailing slash. Examples:
+
+----
+https://example.com
+http://example.com
+IP/owncloud  
+----
+
+You need to configure *Authorized Redirect URIs*, and they must be in this form:
+
+----
+https://example.com/owncloud/index.php/settings/admin?sectionid=storage
+https://example.com/owncloud/index.php/settings/personal?sectionid=storage
+----
+
+If you are configuring storage as an Administrator - choose the admin
+URI, if you are a user and configuring a storage - pick the personal URI.
+
+If you are not sure what your exact URIs are - here is a quick guide to figure it out.
+
+*Authorized JavaScript Origins*
+
+This is just the address you access your ownCloud server at, where you
+see the login screen.
+
+image:configuration/files/external_storage/google_drive/011.png[Login in ownCloud]
+
+*Authorized Redirect URIs*
+
+If you have not already enabled the Google Drive storage, here is how you do it:
+
+image:configuration/files/external_storage/google_drive/011.png[Login in ownCloud]
+
+image:configuration/files/external_storage/google_drive/012.png[Go to Storage in the Settings]
+
+image:configuration/files/external_storage/google_drive/013.png[Enable external Storage]
+
+image:configuration/files/external_storage/google_drive/014.png[Select Google Drive from dropdown menu]
+
+image:configuration/files/external_storage/google_drive/015.png[Now you have your Google Drive App enabled]
+
+image:configuration/files/external_storage/google_drive/016.png[The URL from this page is the one you have to enter in the **Authorized Redirect URIs**]
+
+Here is the correct result:
+
+image:configuration/files/external_storage/google_drive/017.png[Client ID]
+
+Now we have to create a consent screen. This is the information in the screen Google
+shows you when you connect your new Google app to ownCloud the first time.
+
+image:configuration/files/external_storage/google_drive/018.png[Choose a Project Name]
+
+Now you can download the credentials as a JSON file.
+
+image:configuration/files/external_storage/google_drive/019.png[Download your Credentials]
+
+You can see either open this file with the editor of your choice
+(SublimeText for example), or you can put in in your web browser. 
+This is when you do the later:
+
+image:configuration/files/external_storage/google_drive/020.png[Credentials]
+
+Enter the Client ID and Client Secret in the app and click btn:[Grant Access].
+
+Now you have everything you need to mount your Google Drive in ownCloud.
+
+Your consent page appears when ownCloud makes a successful connection.
+
+Click btn:[Allow].
+
+image:configuration/files/external_storage/google_drive/021.png[Grant Access]
+
+When you see the green light confirming a successful connection you’re finished.
+
+image:configuration/files/external_storage/google_drive/022.png[All Green]
+
+image:configuration/files/external_storage/google_drive/023.png[Your Google Drive Folder]
+
+See the xref:configuration/files/external_storage_configuration_gui.adoc[Configuring External Storage (GUI)]
+for additional mount options and information.

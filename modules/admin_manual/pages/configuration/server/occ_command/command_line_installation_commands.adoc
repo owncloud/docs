@@ -1,0 +1,126 @@
+= Command Line Installation
+
+ownCloud can be installed entirely from the command line.
+After downloading the tarball and copying ownCloud into the appropriate directories, or after installing ownCloud packages (See xref:installation/linux_installation.adoc[Linux Package Manager Installation] and xref:installation/manual_installation.adoc[Manual Installation on Linux]) you can use `occ` commands in place of running the graphical Installation Wizard.
+
+NOTE: These instructions assume that you have a fully working and configured webserver.
+If not, please refer to the documentation on configuring xref:installation/manual_installation.adoc[configure-web-server] for detailed instructions.
+
+Apply correct permissions to your ownCloud directories; see xref:installation/command_line_installation.adoc[strong_permissions].
+Then choose your `occ` options. This lists your available options:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} occ
+ownCloud is not installed - only a limited number of commands are available
+ownCloud version 10.0.8
+
+Usage:
+ [options] command [arguments]
+
+== Options
+ --help (-h)           Display this help message
+ --quiet (-q)          Do not output any message
+ --verbose (-v|vv|vvv) Increase the verbosity of messages: 1 for normal output,
+                       2 for more verbose output and 3 for debug
+ --version (-V)        Display this application version
+ --ansi                Force ANSI output
+ --no-ansi             Disable ANSI output
+ --no-interaction (-n) Do not ask any interactive question
+
+Available commands:
+ check                 Check dependencies of the server environment
+ help                  Displays help for a command
+ list                  Lists commands
+ status                Show some status information
+ app
+  app:check-code       Check code to be compliant
+ l10n
+  l10n:createjs        Create javascript translation files for a given app
+ maintenance
+  maintenance:install  Install ownCloud
+----
+
+
+== Command Description
+
+Display your `maintenance:install` options.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} help maintenance:install
+ownCloud is not installed - only a limited number of commands are available
+Usage:
+----
+
+[source,console]
+----
+maintenance:install [--database=["..."]] [--database-connection-string=["..."]] \
+                    [--database-name=["..."]] [--database-host=["..."]] \
+                    [--database-user=["..."]] [--database-pass=["..."]] \ 
+                    [--database-table-prefix=["..."]] [--admin-user=["..."]] \
+                    [--admin-pass=["..."]] [--data-dir=["..."]]
+----
+
+=== Options
+
+[width="100%",cols="22%,70%",]
+|===
+| `--database`                   
+a| Supported database type (default: `sqlite`).
+The supported values are: 
+
+* `mysql`: MySQL/MariaDB
+* `oci`: Oracle (_ownCloud Enterprise edition only_)
+* `pgsql`:  PostgreSQL
+* `sqlite`: SQLite3 (_ownCloud Community edition only_)
+
+| `--database-connection-string` 
+a| An Oracle-specific connection string. 
+
+NOTE: As soon as this parameter is provided, other parameters like database-host and database-name are not used and do not need to be provided.
+For example:
+
+*Example*
+
+[source,console]
+----
+sales=
+ (DESCRIPTION= 
+  (ADDRESS= (PROTOCOL=tcp)(HOST=sales-server)(PORT=1521))
+  (CONNECT_DATA= 
+     (SERVICE_NAME=sales.us.acme.com)))
+----
+| `--database-name`          
+| Name of the database.
+| `--database-host`          
+| Hostname of the database (default: `localhost`).
+| `--database-user`          
+| User name to connect to the database.
+| `--database-pass`          
+| Password of the database user.
+| `--database-table-prefix`  
+| Prefix for all tables (default: `oc_` ).
+| `--admin-user`             
+| Password of the admin account.
+| `--data-dir`               
+| Path to data directory (default: `/var/www/owncloud/data`).
+|===
+
+=== Example
+
+This example completes the installation:
+
+[source,console,subs="attributes+"]
+----
+cd /var/www/owncloud/
+{occ-command-example-prefix} maintenance:install \
+   --database "mysql" \
+   --database-name "owncloud"  \
+   --database-user "root" \
+   --database-pass "password" \
+   --admin-user "admin" \
+   --admin-pass "password"
+ownCloud is not installed - only a limited number of commands are available
+ownCloud was successfully installed
+----

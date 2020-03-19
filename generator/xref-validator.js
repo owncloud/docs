@@ -11,7 +11,7 @@
  *
  * Usage (from root of playbook repository):
  *
- *  $ antora --pull --generator=./generator/xref-validator.js antora-production-playbook.yml
+ *  $ NODE_PATH=netlify/node_modules antora --pull --generator=./generator/xref-validator.js antora-playbook.yml
  */
 const aggregateContent = require('@antora/content-aggregator')
 const buildPlaybook = require('@antora/playbook-builder')
@@ -41,7 +41,7 @@ module.exports = async (args, env) => {
           // Q: should we report the while xref or just the target?
           brokenXrefs.add(pageSpec)
         }
-        docsWithBrokenXrefs.set(doc, [ ...brokenXrefs ])
+        if (brokenXrefs.size) docsWithBrokenXrefs.set(doc, [ ...brokenXrefs ])
       }
     })
   unsilenceStderr()
@@ -90,3 +90,4 @@ function silenceStderr () {
   process.stderr.write = () => {}
   return () => { process.stderr.write = stderrWriter }
 }
+

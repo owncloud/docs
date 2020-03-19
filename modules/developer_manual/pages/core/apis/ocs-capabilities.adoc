@@ -1,0 +1,90 @@
+= OCS Rest API
+:toc: right
+:page-aliases: core/ocs-capabilities.adoc
+
+== Available Capabilities
+
+[cols=",,",options="header",]
+|=================================================================
+| Request Path | Method | Content Type
+| `/ocs/v1.php/cloud/capabilities?format=json` | `GET` | `text/plain`
+|=================================================================
+
+To retrieve a list of your ownCloud server’s available capabilities, you
+need to make an authenticated `GET` request, as in the example below.
+
+----
+curl --silent -u admin:admin \
+  'http://localhost/ocs/v1.php/cloud/capabilities?format=json' | json_pp
+----
+
+The example uses http://search.cpan.org/~makamaka/JSON-PP-2.27103/bin/json_pp[json_pp]
+to make the response easier to read, and omits some content for the sake of brevity.
+
+This will return a JSON response, similar to the example below, along with a status of: `HTTP/1.1 200 OK`.
+
+[source,json]
+----
+include::{examplesdir}core/apis/ocs-capabilities/list-capabilities-response.json[]
+----
+
+In the example, in the `capabilities` element, you can see that the
+server lists six capabilities, along with their settings, sub-settings,
+and their values.
+
+== Core
+
+Stored under the `core` capabilities element, this returns the server’s
+core status settings, the interval to poll for server side changes, and
+it’s WebDAV API root.
+
+== Checksums
+
+Stored under the `checksums` capabilities element, this returns the
+server’s supported checksum types, and preferred upload checksum type.
+
+== Files
+
+Stored under the `files` capabilities element, this returns the server's support for the following capabilities:
+
+[cols=",",options="header"]
+|===
+|Capability
+|Response Key
+
+|Big file chunking
+|`bigfilechunking`
+
+|File versioning
+|`versioning`
+
+|Can provide a private link to a file or folder in a DAV response
+|`privateLinks`
+
+|Its ability to undelete files; and 
+|`undelete`
+
+|The list of files that are currently blacklisted.
+|`blacklisted_files`
+|===
+
+== Files Sharing
+
+Stored under the `files_sharing` capabilities element, this returns the
+server’s support for file sharing, re-sharing (by users and groups),
+federated file support, and public link shares (as well as whether
+passwords and expiry dates are enforced), and also whether the sharing
+API is enabled.
+
+== Notifications
+
+Stored under the `notifications` capabilities element, this returns what
+the server sends notifications for.
+
+== WebDAV
+
+Stored under the `dav` capabilities element, this returns the server’s
+WebDAV API support.
+
+Other apps add detail information to the capabilities, to indicate the
+availability of certain features, for example notifications.
