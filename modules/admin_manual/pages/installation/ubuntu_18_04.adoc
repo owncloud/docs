@@ -24,6 +24,37 @@ apt update && \
   apt upgrade -y
 ----
 
+=== Ultra Short Guide
+
+If you are short on time and just need the essential instructions for installing ownCloud on Ubuntu {ubuntu-version}, then run the commands below.
+However, if you want an annotated guide, then please refer to the remainder of this guide.
+
+[source,console,subs="attributes+"]
+----
+# Add ownCloud’s repository to the list of available Apt repositories
+curl https://download.owncloud.org/download/repositories/production/Ubuntu_{ubuntu-version}/Release.key \
+  | apt-key add -
+echo 'deb http://download.owncloud.org/download/repositories/production/Ubuntu_{ubuntu-version}/ /' \
+  > /etc/apt/sources.list.d/owncloud-files.list
+
+# Install the required packages
+apt update
+apt install -y libapache2-mod-php owncloud-files php-bz2 php-curl \
+  php-gd php-imagick php-intl php-mbstring php-mysql php-sqlite3 \
+  php-xml php-zip
+
+# Configure Apache for ownCloud
+cp /usr/share/doc/owncloud-files/owncloud-config-apache.conf.default /etc/apache2/conf-available/owncloud-config-apache.conf
+a2enconf owncloud-config-apache
+a2enmod php7.2
+
+# Restart Apache
+systemctl reload apache2
+
+# View the new site in Firefox
+firefox http://localhost/owncloud
+----
+
 === Create the occ Helper Script
 
 Create a helper script to simplify running xref:configuration/server/occ_command.adoc[occ commands].
