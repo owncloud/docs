@@ -187,19 +187,20 @@ For example, to move all files from `<source-user>` to `<destination-user>`, use
 ----
 
 You can also move a limited set of files from `<source-user>` to `<destination-user>` by making use of the `--path` switch, as in the example below. 
-In it, `folder/to/move`, and any file and folder inside it will be moved to `<destination-user>`.
+Ownership of `folder/to/move` and all files and folders which it contains will be transferred to `<destination-user>`.
 
 [source,console,subs="attributes+"]
 ----
-{occ-command-example-prefix} files:transfer-ownership --path="folder/to/move" <source-user> <destination-user>
+{occ-command-example-prefix} files:transfer-ownership --path="folder/to/move" \
+    <source-user> \
+    <destination-user>
 ----
 
-When using this command, please keep in mind:
+When using this command, please keep the following in mind:
 
 . The directory provided to the `--path` switch *must* exist inside `data/<source-user>/files`.
-. The directory (and its contents) won't be moved as is between the users. 
-  It'll be moved inside the destination user's `files` directory, and placed in a directory which follows the format: `transferred from <source-user> on <timestamp>`. 
+. The directory and its contents won't be moved as-is between the users. 
+  It will be moved into the destination user's `files` directory, into a directory name which follows the format: `transferred from <source-user> on <timestamp>`. 
   Using the example above, it will be stored under: `data/<destination-user>/files/transferred from <source-user> on 20170426_124510/`
 . Currently file versions can't be transferred. 
   Only the latest version of moved files will appear in the destination user's account.
-
