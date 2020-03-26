@@ -1,4 +1,11 @@
 apt install -y \
-  ssh bzip2 rsync curl jq \
-  inetutils-ping smbclient\
-  php-smbclient coreutils php-ldap
+  bzip2 \
+  coreutils \
+  curl \
+  inetutils-ping \
+  jq \
+  php-ldap \
+  php-smbclient \
+  rsync \
+  smbclient \
+  ssh

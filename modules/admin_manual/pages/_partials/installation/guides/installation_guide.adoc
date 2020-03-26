@@ -38,13 +38,7 @@ Create a helper script to simplify running xref:configuration/server/occ_command
 
 [source,console,subs="attributes+"]
 ----
-FILE="/usr/local/bin/occ"
-/bin/cat <<EOM >$FILE
-#! /bin/bash
-
-cd {install-directory}
-sudo -u {webserver-user} /usr/bin/php {install-directory}/occ "\$@"
-EOM
+include::{examplesdir}installation/guides/occ-helper-script.sh[]
 ----
 
 Make helper script executable:
@@ -78,29 +72,29 @@ endif::[]
 
 === Configure Apache
 
-==== Change the Document Root
-
-[source,console,subs="attributes+"]
-----
-sed -i "s#html#owncloud#" /etc/apache2/sites-available/000-default.conf
-
-service apache2 restart
-----
-
 ==== Create a Virtual Host Configuration
 
 [source,console,subs="attributes+"]
 ----
-include::{examplesdir}installation/ubuntu/{distribution-version}/create-vhost-config.sh[]
+include::{examplesdir}installation/{distribution-name}/{distribution-version}/create-vhost-config.sh[]
 ----
 
 ==== Enable the Virtual Host Configuration
 
+ifeval::[{distribution-name} == Ubuntu]
 [source,console,subs="attributes+"]
 ----
 a2ensite owncloud.conf
 service apache2 reload
 ----
+endif::[]
+
+ifeval::[{distribution-name} != Ubuntu]
+[source,console,subs="attributes+"]
+----
+apache2ctl -k restart
+----
+endif::[]
 
 === Configure the Database
 
@@ -116,10 +110,7 @@ GRANT ALL PRIVILEGES ON owncloud.* \
 
 [source,console,subs="attributes+"]
 ----
-echo "Enabling Apache Modules"
-
-a2enmod dir env headers mime rewrite setenvif
-service apache2 reload
+include::{examplesdir}installation/{distribution-name}/{distribution-version}/create-vhost-config.sh[]
 ----
 
 === Setup ownCloud
@@ -181,20 +172,9 @@ chmod 0600  /var/spool/cron/crontabs/www-data
 
 Execute these commands:
 
-[source,php]
+[source,php,subs="attributes+"]
 ----
-occ config:system:set \
-   memcache.local \
-   --value '\OC\Memcache\APCu'
-
-occ config:system:set \
-   memcache.locking \
-   --value '\OC\Memcache\Redis'
-
-occ config:system:set \
-   redis \
-   --value '{"host": "127.0.0.1", "port": "6379"}' \
-   --type json
+include::{examplesdir}installation/guides/configure-caching-and-file-locking.sh[]
 ----
 
 === Configure Log Rotation
@@ -203,14 +183,14 @@ Execute this command to set up {logrotate-url}[log rotation].
 
 [source,console,subs="attributes+"]
 ----
-include::{examplesdir}installation/ubuntu/{distribution-version}/configure-log-rotation.sh[]
+include::{examplesdir}installation/configure-log-rotation.sh[]
 ----
 
 ==== Finalise the Installation 
 
 [source,console]
 ----
-include::{examplesdir}installation/ubuntu/{distribution-version}/finalise-install.sh[]
+include::{examplesdir}installation/finalise-install.sh[]
 ----
 
 ownCloud is now installed. 
