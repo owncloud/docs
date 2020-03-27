@@ -1,11 +1,12 @@
 = File Operations
 
-`occ` has three commands for managing files in ownCloud.
+`occ` has five commands for managing files in ownCloud.
 
 [source,console]
 ----
 
 files
+ files:check-cache          Check if the target file exists in the primary storage
  files:checksums:verify     Get all checksums in filecache and compares them by
                             recalculating the checksum of the file.
  files:cleanup              Deletes orphaned file cache entries.
@@ -16,6 +17,59 @@ files
 ----
 
 NOTE: These commands are not available in xref:maintenance-commands[single-user (maintenance) mode].
+
+== The files:check-cache command
+
+Main purpose for this command is to clean the cache for objectstores (objectstore and files_primary_S3 apps) as
+primary storage, but it is not limited to. It can be used for any other storage type as long it is the primare storage.
+
+Files in the primary storage could be deleted outside of ownCloud, leaving information in the ownCloud's file cache.
+This command intends to check if the target file can be read from the primary backend storage and if not, allows you
+to remove the information cached.
+
+[NOTE]
+====
+Removing files directly from the primary storage is not supported and should not happen. As such, the cases
+where you need to run this command should be extremely rare. This is why this command is provided only to check for
+one file instead of scanning the whole ownCloud's filesystem.
+====
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} files:check-cache --help
+ Usage:
+   files:check-cache [options] [--] <uid> <target-file>
+----
+
+=== Arguments
+
+[width="100%",cols="20%,70%",]
+|===
+| `uid`         | The user (user id) who owns the file
+| `target-file` | The file we want to check
+|===
+
+=== Options
+
+[width="100%",cols="20%,70%",]
+|===
+| `--remove`    | Remove the file from the cache if it's missing in the backend
+|===
+
+Examples checking files for user maria:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} files:check-cache maria welcome.txt
+welcome.txt has been accessed properly
+----
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} files:check-cache maria maria@smbhome/myfile.txt
+Ignoring maria@smbhome/myfile.txt because it is shared or not inside the primary storage
+
+----
 
 == The files:checksums:verify command
 
