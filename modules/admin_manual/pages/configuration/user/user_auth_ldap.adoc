@@ -38,7 +38,6 @@ The LDAP application supports:
 * Versioning, external Storage and all other ownCloud features
 * Seamless connectivity to Active Directory, with no extra configuration required
 * Support for primary groups in Active Directory
-* Auto-detection of LDAP attributes such as base DN, email, and the LDAP server port number
 * Only read access to your LDAP (edit or delete of users on your LDAP is not supported)
 
 CAUTION: The LDAP app is not compatible with the `User backend using remote HTTP servers` app. You cannot use both of them at the same time.
@@ -61,14 +60,14 @@ Start with the Server tab.
 You may configure multiple servers if you have them. 
 At a minimum, you must supply the LDAP server's hostname. 
 If your server requires authentication, enter your credentials on this tab.
-ownCloud will then attempt to auto-detect the server's port and base DN.
-The base DN and port are mandatory, so if ownCloud cannot detect them you must enter them manually.
 
-image:ldap-wizard-1-server.png[LDAP wizard, server tab]
+IMPORTANT: The base DN and port are mandatory.
+
+image:apps/user_ldap/ldap-wizard/server-tab.png[LDAP Wizard, Server Tab]
 
 Server configuration::
   Configure one or more LDAP servers.
-  Click the "**Delete Configuration**" button to remove the active configuration.
+  Click btn:[Delete Configuration] to remove the active configuration.
 
 Host::
 +
@@ -89,14 +88,20 @@ Port::
 --
 The port on which to connect to the LDAP server. 
 The field is disabled in the beginning of a new configuration. 
-If the LDAP server is running on a standard port, the port will be detected automatically. 
-If you are using a non-standard port, ownCloud will attempt to detect it. 
-If this fails, you must enter the port number manually.
 
 Example:
 
 * `389`
 --
+
+Use StartTLS support::
+Check this option to use Transport Layer Security (TLS) when interacting with the LDAP server.
+
+[TIP]
+====
+When using this option, ownCloud assumes that the CA certificates are properly setup.
+The connection will be encrypted, if the server supports it.
+====
 
 User DN::
 +
@@ -120,8 +125,7 @@ Base DN::
 The base DN of LDAP, from where all users and groups can be reached.
 You may enter multiple base DNs, one per line. 
 Base DNs for users and groups can be set in the Advanced tab. 
-This field is mandatory. 
-ownCloud attempts to determine the Base DN according to the provided User DN or the provided Host, and you must enter it manually if ownCloud does not detect it.
+You can either enter this value manually, or click btn:[Detect Base DN] to have ownCloud attempt to determine the value.
 
 Example:
 
@@ -134,7 +138,7 @@ Use this to control which LDAP users are listed as ownCloud users on your ownClo
 In order to control which LDAP users can log in to your ownCloud server, use the Login filter. 
 You may bypass the form fields and enter a raw LDAP filter if you prefer.
 
-image:ldap-wizard-2-user.png[User filter]
+image:apps/user_ldap/ldap-wizard/users-tab.png[LDAP Wizard, Users Tab]
 
 Only those object classes::
   ownCloud determines the object classes that are typically available for user objects in your LDAP. 
@@ -168,7 +172,10 @@ Edit raw filter instead::
 Clicking on this text toggles the filter mode, and you can enter the raw LDAP filter directly. 
 Example:
 
-  (&(objectClass=inetOrgPerson)(memberOf=cn=owncloudusers,ou=groups,dc=example,dc=com))
+[source]
+----
+include::{examplesdir}configuration/user/user_auth_ldap/group_filter.ldif[]
+----
 --
 
 x users found::
@@ -181,8 +188,9 @@ Active Directory offers "_Recursive retrieval of all AD group memberships of a u
 This means that you would be able to search the group you enter and all the other child groups from this group for users.
 Enter this filter to access this feature for a single group:
 
+[source]
 ----
-(&(objectClass=user)(memberof:1.2.840.113556.1.4.1941:=CN=<groupname>,DC=example,DC=com))
+include::{examplesdir}configuration/user/user_auth_ldap/single_group_search.ldif[]
 ----
 
 Enter your group name instead of the `<groupname>` placeholder.
@@ -190,13 +198,7 @@ If you want to search multiple groups with this feature, adjust your filter like
 
 [source]
 ----
-(&
-  (objectClass=user)
-    (|
-      (memberOf:1.2.840.113556.1.4.1941:=CN=<groupname1>,CN=Users,DC=example,DC=com)
-      (memberOf:1.2.840.113556.1.4.1941:=CN=<groupname2>,CN=Users,DC=example,DC=com)
-    )
-)
+include::{examplesdir}configuration/user/user_auth_ldap/multi_group_search.ldif[]
 ----
 
 You can add as many groups to recurse by using the format: `(|(m1)(m2)(m3).....)`.
@@ -224,7 +226,7 @@ You may bypass the form fields and enter a raw LDAP filter if you prefer.
 
 You may override your User Filter settings on the User Filter tab by using a raw LDAP filter.
 
-image:ldap-wizard-3-login.png[Login filter]
+image:apps/user_ldap/ldap-wizard/login-attributes-tab.png[LDAP Wizard, Login Attributes Tab]
 
 LDAP Username::
   If this value is checked, the login value will be compared to the username in the LDAP directory. 
@@ -249,15 +251,17 @@ user upon login.
 *Examples:*
 
 * Only username:
-
++
+[source,ldap]
 ----
-(&(objectClass=inetOrgPerson)(memberOf=cn=owncloudusers,ou=groups,dc=example,dc=com)(uid=%uid)
+include::{examplesdir}configuration/user/user_auth_ldap/only_username.ldif[]
 ----
 
 * Username or email address:
-
++
+[source]
 ----
-((&(objectClass=inetOrgPerson)(memberOf=cn=owncloudusers,ou=groups,dc=example,dc=com)(|(uid=%uid)(mail=%uid)))
+include::{examplesdir}configuration/user/user_auth_ldap/username_email.ldif[]
 ----
 --
 
@@ -267,7 +271,7 @@ By default, no LDAP groups will be available in ownCloud.
 The settings in the group filter tab determine which groups will be available in ownCloud. 
 You may also elect to enter a raw LDAP filter instead.
 
-image:ldap-wizard-4-group.png[Group filter]
+image:apps/user_ldap/ldap-wizard/groups-tab.png[LDAP Wizard, Groups Tab]
 
 Only those object classes::
   ownCloud will determine the object classes that are typically available for group objects in your LDAP server. 
@@ -307,7 +311,7 @@ The Advanced Settings are structured into three parts:
 
 ==== Connection Settings
 
-image:ldap-advanced-1-connection.png[Advanced settings]
+image:apps/user_ldap/ldap-wizard/advanced-tab-connection-settings.png[LDAP Wizard, Advanced Tab, Connection Settings]
 
 Configuration Active::
   Enables or Disables the current configuration. 
@@ -371,7 +375,7 @@ See xref:caching[the Caching section below] for detailed information on how the 
 
 ==== Directory Settings
 
-image:ldap-advanced-2-directory.png[Directory settings.]
+image:apps/user_ldap/ldap-wizard/advanced-tab-directory-settings.png[LDAP Wizard, Advanced Tab, Directory Settings]
 
 User Display Name Field::
 +
@@ -503,7 +507,7 @@ Paging Chunk Size::
 
 ==== Special Attributes
 
-image:ldap-advanced-3-attributes.png[Special Attributes.]
+image:apps/user_ldap/ldap-wizard/advanced-tab-special-attributes.png[LDAP Wizard, Advanced Tab, Special Attributes]
 
 Quota Field::
   The name of the LDAP attribute to retrieve the user quota limit from,
@@ -557,7 +561,7 @@ This prevents data loss due to re-provisioning the users home folder in case of 
 
 === Expert Settings
 
-image:ldap-expert.png[Expert settings.]
+image:apps/user_ldap/ldap-wizard/expert-tab.png[LDAP Wizard, Expert Tab]
 
 In "*Expert Settings*", fundamental behavior can be adjusted to your needs.
 The configuration should be well-tested before starting production use.
@@ -637,6 +641,8 @@ If the binding fails you'll see a yellow banner with the error message:
 
 When the configuration test reports success, save your settings and check if the users and groups are fetched correctly on the Users page.
 
+image:configuration/user/user-page.png[Users Page]
+
 == Syncing Users
 
 While users who match the login and user filters can log in, only synced users will be found in the sharing dialog. 
@@ -644,7 +650,9 @@ Whenever users log in, their display name, email, quota, avatar and search attri
 If you want to keep the metadata up to date you can set up a cron job, using xref:configuration/server/occ_command.adoc#syncing-user-accounts[the occ user:sync command].
 Versions of ownCloud before 10.0 imported all users when the users page was loaded, but this is no longer the case.
 
-TIP: We recommend xref:configuration/server/background_jobs_configuration.adoc#cron-jobs[creating a Cron job], to automate regularly syncing LDAP users with your ownCloud database.
+TIP: We recommend xref:configuration/server/background_jobs_configuration.adoc#cron-jobs[creating a Cron job], to automate regularly syncing LDAP users with your ownCloud database. 
+If you have many users, you do not have to sync all of them to update a small number of users. 
+You can use xref:developer_manual:core/apis/ocs/user-sync-api.adoc[the OCS User Sync API] to sync individual users. It provides a way to trigger user sync from outside of ownCloud.
 
 === How Often Should the Job Run?
 
@@ -714,7 +722,7 @@ In case you have a working configuration and want to create a similar one or "sn
 . On "**Server Configuration**" choose "**Add Server Configuration**"
 . Answer the question "**Take over settings from recent server configuration?**" with "**yes**".
 . (optional) Switch to "**Advanced**" tab and uncheck "**Configuration Active**" in the "**Connection Settings**", so the new configuration is not used on Save
-. Click on "**Save**"
+. Click btn:[Save]
 
 Now you can modify and enable the configuration.
 
@@ -731,8 +739,12 @@ and show only active users.
 
 Here is what the full filter can look like.
 
+[source]
 ----
-&(|(objectclass=organizationalPerson))(!(userAccountControl:1.2.840.113556.1.4.803:=2))(|(|(memberof=CN=Domain Users,CN=Users,DC=dp,DC=mosreg,DC=ru)(primaryGroupID=513))))
+&(|(objectclass=organizationalPerson))
+  (!(userAccountControl:1.2.840.113556.1.4.803:=2))
+  (|(|(memberof=CN=Domain Users,CN=Users,DC=dp,DC=mosreg,DC=ru)(primaryGroupID=513)))
+)
 ----
 
 === Caching
@@ -753,6 +765,8 @@ There is one trigger which is automatically triggered by a certain background jo
 Under normal circumstances, all users are never loaded at the same time.
 Typically the loading of users happens while page results are generated, in steps of 30 until the limit is reached or no results are left. 
 For this to work on an oC-Server and LDAP-Server, "**Paged Results**" must be supported, which assumes PHP >= 5.6.
+
+TIP: Please ensure that you're using the minimum supported PHP version ({minimum-php-version}).
 
 ownCloud remembers which user belongs to which LDAP-configuration. 
 That means each request will always be directed to the right server unless a user is defunct, for example due to a server migration or unreachable server. 

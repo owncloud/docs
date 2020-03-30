@@ -1,0 +1,96 @@
+= OCS User Sync API
+:toc: right
+:toclevels: 1
+:request-base-path: ocs/v2.php
+
+== Introduction
+
+This endpoint triggers user-sync for a specific user.
+
+* Path: `{request-base-path}/cloud/user-sync/{userid}`
+* Method: `POST`
+
+== Requirements
+
+This endpoint can only be executed by a user with admin privileges. 
+We suggest creating a technical user who is in the admin group to run this command with.
+
+== Request Parameters
+
+[cols="15%,15%,70%",options="header",width=100%]
+|===
+|Attribute 
+|Type 
+|Description
+
+|`userid` 
+|string 
+|The id of the user to trigger a sync for.
+|===
+
+== Returns
+
+The request returns the following status codes.
+
+[cols="30%,70%",options="header"]
+|===
+|Status Code
+|When...
+
+|`HTTP 200 OK`
+|The user sync was executed.
+
+|`HTTP 404 Not Found`
+|The supplied user id is unknown.
+
+|`HTTP 409 Conflict`
+|Multiple users have been found for the given user id.
+|===
+
+== Example Responses
+
+[source,xml]
+----
+include::{examplesdir}core/apis/ocs/user-sync/successful-response.xml[]
+----
+
+== Code Example
+
+ifeval::["{format}" == "html"]
+[tabs]
+====
+Curl::
++
+--
+[source,console,subs="attributes+"]
+----
+include::{examplesdir}core/scripts/curl/ocs/user-sync.sh[]
+----
+--
+
+PHP::
++
+--
+[source,console,subs="attributes+"]
+----
+include::{examplesdir}core/scripts/php/ocs/user-sync.php[]
+----
+--
+====
+endif::[]
+
+ifeval::["{format}" == "pdf"]
+=== Curl
+
+[source,console,subs="attributes+"]
+----
+include::{examplesdir}core/scripts/curl/ocs/user-sync.sh[]
+----
+
+=== PHP
+
+[source,console,subs="attributes+"]
+----
+include::{examplesdir}core/scripts/php/ocs/user-sync.php[]
+----
+endif::[]

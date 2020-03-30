@@ -1,0 +1,58 @@
+= OpenID Connect (OIDC)
+:toc: right
+:toclevel: 2
+:openid-connect-frontchannel-logout-url: https://openid.net/specs/openid-connect-frontchannel-1_0.html
+:openid-connect-url: https://openid.net/connect/
+
+== Introduction
+
+"OpenID Connect 1.0 is a simple identity layer on top of the OAuth 2.0 protocol. It allows Clients to verify the identity of the End-User based on the authentication performed by an Authorization Server, as well as to obtain basic profile information about the End-User in an interoperable and REST-like manner.
+OpenID Connect allows clients of all types, including Web-based, mobile, and JavaScript clients, to request and receive information about authenticated sessions and end-users. The specification suite is extensible, allowing participants to use optional features such as encryption of identity data, discovery of OpenID Providers, and session management, when it makes sense for them."
+-- {openid-connect-url}, "What is OpenID Connect?"
+
+== Prerequisites
+
+A distributed Memcache setup is required to operate this app - such as Redis or Memcached properly.
+Please follow xref:configuration/server/caching_configuration.adoc[the documentation] on how to set up caching.
+
+== Code Flow
+
+image::configuration/user/oidc/OAuth-code-flow-sequence-diagram.png[OAuth Code Flow Sequence Diagram]
+
+== Configure ownCloud
+
+Please refer to xref:configuration/server/config_sample_php_parameters.adoc#oidc-configuration[the OIDC configuration example] in the sample configuration documentation for how to configure ownCloud to work with OIDC.
+
+== Setup Within the OpenID Provider
+
+When registering ownCloud as and OpenID Client, use `https://cloud.example.net/index.php/apps/openidconnect/redirect` as the redirect URL.
+In case {openid-connect-frontchannel-logout-url}[OpenID Connect Front-Channel Logout 1.0] is supported, please enter `https://cloud.example.net/index.php/apps/openidconnect/logout` as the logout URL within the client registration of the OpenID Provider.
+
+== Setup Service Discovery
+
+To allow other clients to use OpenID Connect when talking to ownCloud, please set up a redirect on the webserver to point `.well-known/openid-configuration` to `/index.php/apps/openidconnect/config`.
+Here is an .htaccess example
+
+[source]
+----
+RewriteRule ^\.well-known/openid-configuration /index.php/apps/openidconnect/config [R=301,L]
+----
+
+//== Integration with different IdPs
+// (e.g., Ping Identity / Kopano Konnect / Keycloak)
+
+//How to integrate OIDC with ownCloud clients
+// Current iOS on AppStore is usable for testing
+// Desktop client daily builds can be used for testing
+
+//== Supported Cyphers - Technical Detail on Integration With Different IdPs
+
+//== Integration 
+// Recommend consulting
+
+//== SAML migration
+// Recommend consulting
+
+//== The OAuth2 and OIDC apps are mutually exclusive before version 0.4.4 of the OAuth2 app 
+
+//== Deployment, Configuration and Test Setup

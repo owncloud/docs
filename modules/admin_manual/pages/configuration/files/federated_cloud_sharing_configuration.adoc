@@ -26,7 +26,7 @@ image:configuration/files/browser-address-bars.png[Lock icon in Firefox, Google 
 . Verify that the `'overwrite.cli.url' => 'https://<SERVER_URL>' setting is configured to the correct URL, instead of `localhost`, in **config.php**.
 . Reset the federation job in your `oc_jobs` table. 
   This job is required to get the verification token from the other server to establish a federation connection between two servers. 
-  The resetting ensures that it will be executed when we run xref:configuration/server/background_jobs_configuration.adoc#cron[cron.php] later.
+  The resetting ensures that it will be executed when we run xref:configuration/server/background_jobs_configuration.adoc#cron[system:cron] later.
 +
 ----
 mysql -u root -e "update oc_jobs set last_run=0 where class='OCA\\Federation\\SyncJob';" owncloud;
@@ -38,7 +38,7 @@ mysql -u root -e "update oc_jobs set last_checked=0 where class='OCA\\Federation
 . Now run the cron job in your ownCloud directory (for example `/var/www/owncloud/`).
 +
 ----
-sudo -u www-data php cron.php
+{occ-command-example-prefix} system cron
 ----
 . Now the check should be green
 . Sync now your users with
