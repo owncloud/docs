@@ -66,27 +66,72 @@ NOTE: The logfile of ownCloud is located in the data directory `owncloud/data/ow
 
 === PHP Version and Information
 
-You will need to know your PHP version and configurations. To do this,
-create a plain-text file named *phpinfo.php* and place it in your Web
-root, for example `/var/www/html/phpinfo.php`. (Your Web root may be in
-a different location; your Linux distribution documentation will tell
-you where.) This file contains just this line:
+You will need to know your PHP version and configuration details. 
+There are two ways to retrieve this information: using PHP's phpinfo function and using a set of options to PHP on the command-line.
+
+==== Using PHP's phpinfo Function
+
+Create a plain-text file named "_phpinfo.php_" and place it in your webserver's root directory, for example `/var/www/html/phpinfo.php`. 
+
+TIP: Your webserver's root directory may be in a different location; your Linux distribution's documentation will tell you where it is located. 
+
+This file contains the following line:
 
 [source,php]
 ----
 <?php phpinfo(); ?>
 ----
 
-Open this file in a Web browser by pointing your browser to
-`localhost/phpinfo.php`:
+Open this file in a web browser, by pointing your browser to `localhost/phpinfo.php`:
 
 image:phpinfo.png[image]
 
-Your PHP version is at the top, and the rest of the page contains
-abundant system information such as active modules, active `.ini` files,
-and much more. When you are finished reviewing your information you must
-delete `phpinfo.php`, or move it outside of your Web directory, because
-it is a security risk to expose such sensitive data.
+Your PHP version is at the top, and the rest of the page contains abundant system information such as active modules, active `.ini` files, and much more. 
+When you are finished reviewing your information you must delete `phpinfo.php`, or move it outside of your Web directory, because it is a security risk to expose such sensitive data.
+
+==== Using the Command-Line
+
+To retrieve your PHP version, run the following command:
+
+[source,console]
+----
+php -v
+----
+
+You will see output similar to the following displayed in the terminal.
+You can see the version number, 7.3.15-3+ubuntu18.04.1+deb.sury.org+1, displayed near the start of the output's first line.
+
+[source,console]
+----
+PHP 7.3.15-3+ubuntu18.04.1+deb.sury.org+1 (cli) (built: Feb 23 2020 07:23:33) ( NTS )
+Copyright (c) 1997-2018 The PHP Group
+Zend Engine v3.3.15, Copyright (c) 1998-2018 Zend Technologies
+    with Zend OPcache v7.3.15-3+ubuntu18.04.1+deb.sury.org+1, Copyright (c) 1999-2018, by Zend Technologies
+    with Xdebug v2.9.2, Copyright (c) 2002-2020, by Derick Rethans
+----
+
+To retrieve a list of PHP's active modules, run the following command.
+
+[source,console]
+----
+php -m
+----
+
+You will see output similar to the following displayed in the terminal.
+----
+[PHP Modules]
+ast
+calendar
+Core
+ctype
+curl
+date
+dom
+exif
+fileinfo
+----
+
+To obtain information about PHP's configuration, you can either retrieve it all at once, by running `php -i` or retrieve information about individual modules, by running `php --ri` followed by the module's name, such as `php --ri curl`.
 
 === Debugging Sync Issues
 
