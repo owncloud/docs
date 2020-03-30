@@ -66,6 +66,9 @@ If the file _is not_ found, then the following response is returned with an `HTT
 
 == Code Example
 
+This example retrieves versions with only the essential properties.
+If you want to see all properties, don’t use the `--data-binary` option.
+
 [tabs]
 ====
 Curl::
@@ -76,7 +79,23 @@ Curl::
 curl --silent -v -u {oc-examples-username}:{oc-examples-password} \
   -X PROPFIND \
   -H "Content-Type: text/xml" \
+  --data-binary "@search-files-with-filters.xml" \
   '{oc-examples-server-url}/remote.php/dav/meta/44/v' | xmllint --format -
 ----
 --
 ====
+
+=== search-files-with-filters.xml
+
+[source,xml]
+----
+<?xml version="1.0" encoding="utf-8" ?>
+<a:propfind xmlns:a="DAV:" xmlns:oc="http://owncloud.org/ns">
+  <a:prop>
+    <oc:getcontentlength/>
+    <oc:getcontenttype/>
+    <oc:getetag/>
+    <oc:getlastmodified/>
+  </a:prop>
+</a:propfind>
+----
