@@ -1,0 +1,222 @@
+= LDAP Integration
+
+Marketplace URL: https://marketplace.owncloud.com/apps/user_ldap[LDAP Integration]
+
+[source,console]
+----
+ldap
+ ldap:check-user               Checks whether a user exists on LDAP.
+ ldap:create-empty-config      Creates an empty LDAP configuration
+ ldap:delete-config            Deletes an existing LDAP configuration
+ ldap:search                   Executes a user or group search
+ ldap:set-config               Modifies an LDAP configuration
+ ldap:show-config              Shows the LDAP configuration
+ ldap:test-config              Tests an LDAP configuration
+----
+
+Search for an LDAP user, using this syntax:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} ldap:search [--group] [--offset="..."] [--limit="..."] search
+----
+
+Searches match at the beginning of the attribute value only.
+This example searches for `givenNames` that start with 'rob':
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} ldap:search "rob"
+----
+
+This will find "robbie", "roberta", and "robin".
+Broaden the search to find, for example, `jeroboam` with the asterisk wildcard:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} ldap:search "*rob"
+----
+
+User search attributes are set with `ldap:set-config` (below).
+For example, if your search attributes are `givenName` and `sn` you can find users by first name + last name very quickly.
+For example, you’ll find 'Terri Hanson' by searching for `te ha`.
+Trailing whitespace is ignored.
+
+Check if an LDAP user exists.
+This works only if the ownCloud server is connected to an LDAP server.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} ldap:check-user robert
+----
+
+`ldap:check-user` will not run a check when it finds a disabled LDAP connection.
+This prevents users that exist on disabled LDAP connections from being marked as deleted.
+If you know for sure that the user you are searching for is not in one of the disabled connections, and exists on an active connection, use the `--force` option to force it to check all active LDAP connections.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} ldap:check-user --force robert
+----
+
+`ldap:create-empty-config` creates an empty LDAP configuration.
+The first one you create has no `configID`, like this example:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} ldap:create-empty-config
+  Created new configuration with configID ''
+----
+
+This is a holdover from the early days, when there was no option to create additional configurations.
+The second, and all subsequent, configurations that you create are automatically assigned IDs.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} ldap:create-empty-config
+   Created new configuration with configID 's01'
+----
+
+Then you can list and view your configurations:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} ldap:show-config
+----
+
+And view the configuration for a single `configID`:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} ldap:show-config s01
+----
+
+`ldap:delete-config [configID]` deletes an existing LDAP configuration.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} ldap:delete  s01
+Deleted configuration with configID 's01'
+----
+
+The `ldap:set-config` command is for manipulating configurations, like this example that sets search attributes:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} ldap:set-config s01 ldapAttributesForUserSearch
+"cn;givenname;sn;displayname;mail"
+----
+
+The command takes the following format:
+
+----
+ldap:set-config <configID> <configKey> <configValue>
+----
+
+All of the available keys, along with default values for configValue, are listed in the table below.
+
+[width="70%",cols=",",options="header",]
+|===
+| Configuration            | Setting
+| hasMemberOfFilterSupport |
+| hasPagedResultSupport    |
+| homeFolderNamingRule     |
+| lastJpegPhotoLookup      | 0
+| ldapAgentName            | cn=admin,dc=owncloudqa,dc=com
+| ldapAgentPassword        | _*_
+| ldapAttributesForGroupSearch |
+| ldapAttributesForUserSearch  |
+| ldapBackupHost           |
+| ldapBackupPort           |
+| ldapBase                 | dc=owncloudqa,dc=com
+| ldapBaseGroups           | dc=owncloudqa,dc=com
+| ldapBaseUsers            | dc=owncloudqa,dc=com
+| ldapCacheTTL             | 600
+| ldapConfigurationActive  | 1
+| ldapDynamicGroupMemberURL |
+| ldapEmailAttribute       |
+| ldapExperiencedAdmin     | 0
+| ldapExpertUUIDGroupAttr  |
+| ldapExpertUUIDUserAttr   |
+| ldapExpertUsernameAttr   | ldapGroupDisplayName cn
+| ldapGroupFilter          | ldapGroupFilterGroups
+| ldapGroupFilterMode      | 0
+| ldapGroupFilterObjectclass |
+| ldapGroupMemberAssocAttr | uniqueMember
+| ldapHost                 | ldap://host
+| ldapIgnoreNamingRules    |
+| ldapLoginFilter          | (&((objectclass=inetOrgPerson))(uid=%uid))
+| ldapLoginFilterAttributes |
+| ldapLoginFilterEmail     | 0
+| ldapLoginFilterMode      | 0
+| ldapLoginFilterUsername  | 1
+| ldapNestedGroups         | 0
+| ldapOverrideMainServer   |
+| ldapPagingSize           | 500
+| ldapPort                 | 389
+| ldapQuotaAttribute       |
+| ldapQuotaDefault         |
+| ldapTLS                  | 0
+| ldapUserDisplayName      | displayName
+| ldapUserDisplayName2     |
+| ldapUserFilter           | ((objectclass=inetOrgPerson))
+| ldapUserFilterGroups     |
+| ldapUserFilterMode       | 0
+| ldapUserFilterObjectclass | inetOrgPerson
+| ldapUuidGroupAttribute   | auto
+| ldapUuidUserAttribute    | auto
+| turnOffCertCheck         | 0
+| useMemberOfToDetectMembership | 1
+|===
+
+`ldap:test-config` tests whether your configuration is correct and can bind to the server.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} ldap:test-config s01
+The configuration is valid and the connection could be established!
+----
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} config:app:set user_ldap updateAttributesInterval --value=7200
+----
+
+In the example above, the interval is being set to 7200 seconds.
+Assuming the above example was used, the command would output the following:
+
+[source,console]
+----
+Config value updateAttributesInterval for app user_ldap set to 7200
+----
+
+If you want to reset (or unset) the setting, then you can use the following command:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} config:app:delete user_ldap updateAttributesInterval
+----
+
+*Reuse Existing LDAP Accounts if Available*
+
+If you want to allow new LDAP logins to attempt to reuse existing `oc_accounts` entries that match the resolved username attribute, and have backend set to `User_Proxy`, then set the `reuse_accounts` config setting to `yes`.
+
+Below is an example of how to do so.
+
+[source,console,subs="attributes+"]
+....
+{occ-command-example-prefix} config:app:set user_ldap reuse_accounts --value=yes
+....
+
+This functionality is valuable for several reasons; these are:
+
+* It handles the situation of when admins mistakenly delete one or more user mappings, and subsequent logins then create new accounts.
+* It allows auto-provisioned users with Shibboleth to be moved over to an LDAP server, but be able to continue using ownCloud.
+
+[IMPORTANT]
+==
+This functionality will not work in the following situations:
+
+. No user or group account exists with the supplied username.
+. A user or group account exists, but it uses a different backend.
+==

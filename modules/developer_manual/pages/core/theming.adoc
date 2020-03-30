@@ -2,6 +2,7 @@
 :toc: right
 :toclevels: 1
 :page-aliases: go/developer-theming.adoc
+:css-gradient-url: https://cssgradient.io/
 
 == Introduction
 
@@ -223,6 +224,148 @@ future updates to favicon handling.
 NOTE: When using custom filetype icons in a custom theme, it is necessary to run
 `occ maintenance:mimetype:update-js` to activate them.  For more information please refer to
 xref:admin_manual:configuration/mimetypes/index.adoc[mimetypes management].
+
+=== How to Change the Background Image
+
+image::core/theming/2_ow_login.png[Change the background login image in ownCloud]
+
+NOTE: This guide assumes that you are in the folder of your custom theme, for example: `/var/www/owncloud/apps/my_custom_theme/`.
+
+==== How to Change the Login Background Image
+
+. Put the new background image in `core/img/background.jpg`.
+. Change the owner and group permissions of the file to your web server user and group.
+. Update `background-image` in `core/css/styles.css`.
+
+[source,css]
+....
+#body-login {
+     background-image: url("../img/background.jpg"); /* path to image /*
+     background-position: 50% 50%; /* ensure optimal scalability /*
+     background-repeat: no-repeat; /* prevent tiled background /*
+     background-size: cover; /* ensure screen coverage /*
+     text-align: center; /* Center Entitlement text, copyright /*
+     background-color: #000000 !important; /* Fallback for old browsers */
+}
+....
+
+If your image size is 1920px x 1680px, you don't need the lines below the path. 
+However, they ensure optimal positioning and scaling.
+
+image::core/theming/3_cu_login.png[Set a custom login background image in ownCloud]
+
+TIP: You can also change the background color, logo, and slogan.
+
+==== How to Change the Login Background Image to a Color
+
+In `core/css/styles.css`, search for the following CSS code:
+
+[source,css]
+....
+#body-login {
+    background: #745bca; /* Old browsers */
+    background: -moz-linear-gradient(top, #947bea 0%, #745bca 100%);
+}
+....
+
+Then, replace it with the following:
+
+[source,css]
+....
+#body-login {
+    background: rgb(31,9,121);
+    background: linear-gradient(90deg, rgba(31,9,121,1) 38%, rgba(2,0,36,1) 58%);
+}
+....
+
+If you only want one color, replace the existing CSS code with this:
+
+[source,css]
+....
+#body-login {
+    background: rgb(31,9,121);
+}
+....
+
+TIP: If you are not sure what color to pick, {css-gradient-url}[CSS Gradient] may be able to help.
+
+To change the icon, replace the files in `core/img` (`logo.png`, and `logo.svg`) with your icons. 
+The reason for the PNG files is to have a fallback option for older browsers.
+
+If you keep the names - you don't need to change the path in `core/css/styles.css`. 
+If you change the names, adjust `styles.css` file accordingly, as in the following example:
+
+[source,css]
+....
+#header .logo {
+    background-image: url('../img/logo.svg');
+    width: 250px;
+    height: 121px;
+}
+....
+
+=== How to Change the Header
+
+image::core/theming/4_oc_header.png[The default ownCloud header]
+
+The image above is the default ownCloud header.
+
+image::core/theming/5_cu_header.png[Set a custom ownCloud header image]
+
+You can change it to a custom color with a custom logo. 
+Search for `#body-public #header` in `core/css/styles.css`.
+
+[source,css]
+....
+#body-public #header {
+    background-color: #745bca;
+}
+....
+
+You can also write your own, like the one from the login page, for example:
+
+[source,css]
+....
+#body-public #header {
+    background: rgb(31,9,121);
+    background: linear-gradient(90deg, rgba(31,9,121,1) 38%, rgba(2,0,36,1) 58%);
+}
+....
+
+Change the logo by replacing `logo-icon.png` and `logo-icon.svg` with your logos, in `core/img`. 
+If you change the names of the logos, adjust the path accordingly in `core/css/styles.css`.
+
+[source,css]
+....
+#header .logo-icon {
+    background-image: url('../img/logo-icon.svg');
+    height: 34px;
+}
+....
+
+=== How to Override Settings Page Icons
+
+ownCloud provides the ability to override Personal and Admin settings page icons.
+To do so requires two things:
+
+. A custom (SVG) icon; and
+. Refactoring `SettingsManager.php`
+
+For example, say that you wanted to override the Admin Encryption settings icon.
+To do that, first add a custom icon to an app's `img` directory (ideally one that makes sense) e.g., `</path/to/owncloud>/apps/encryption/img/gnu.svg`.
+
+Then, update the `getBuiltInSections` function of `lib/private/Settings/SettingsManager.php`.
+There, you need to change the final argument to the relevant call to `new Section`, for the settings section that you want to change, as in the example below.
+
+[source,php]
+----
+new Section('encryption', $this->l->t('Encryption'), 85, 'gnu'),
+----
+
+In the example above, I've changed the encryption section's icon, by changing the final argument to be the custom icon's name — _minus the file extension_.
+
+TIP: Icons *must* be in SVG format.
+No other file formats are supported.
 
 == How to Override the Default Colors
 

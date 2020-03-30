@@ -15,11 +15,13 @@ Run the following commands in your terminal to complete the installation.
 
 == Preparation
 
-First, ensure that all of the installed packages are entirely up to date.
+First, ensure that all of the installed packages are entirely up to date, and that PHP is available in the APT repository.
+To do so, follow the instructions below:
 
 [source,console,subs="attributes+"]
 ----
-apt update && apt upgrade -y
+apt update && \
+  apt upgrade -y
 ----
 
 === Create the occ Helper Script
@@ -50,13 +52,13 @@ chmod +x /usr/local/bin/occ
 ----
 apt install -y \
   apache2 \
-  libapache2-mod-php7.2 \
+  libapache2-mod-php \
   mariadb-server \
   openssl \
-  php-imagick php7.2-common php7.2-curl \
-  php7.2-gd php7.2-imap php7.2-intl \
-  php7.2-json php7.2-mbstring php7.2-mysql \
-  php-ssh2 php7.2-xml php7.2-zip \
+  php-imagick php-common php-curl \
+  php-gd php-imap php-intl \
+  php-json php-mbstring php-mysql \
+  php-ssh2 php-xml php-zip \
   php-apcu php-redis redis-server \
   wget
 ----
@@ -68,7 +70,7 @@ apt install -y \
 apt install -y \
   ssh bzip2 rsync curl jq \
   inetutils-ping smbclient\
-  php-smbclient coreutils php7.2-ldap
+  php-smbclient coreutils php-ldap
 ----
 
 WARNING: Ubuntu 18.04 includes smbclient 4.7.6, which has a known limitation of only using version 1 of the SMB protocol.
@@ -158,7 +160,7 @@ occ config:system:set trusted_domains 1 --value="$myip"
 
 [source,console,subs="attributes+"]
 ----
-echo "*/15  *  *  *  * /usr/bin/php -f {install-directory}/cron.php" \
+echo "*/15  *  *  *  * /usr/bin/php /path/to/your/owncloud/occ system:cron" \
   > /var/spool/cron/crontabs/{webserver-user}
 chown {webserver-user}.crontab /var/spool/cron/crontabs/{webserver-user}
 chmod 0600 /var/spool/cron/crontabs/{webserver-user}
@@ -170,7 +172,7 @@ If you need to sync your users from an LDAP or Active Directory Server, add this
 
 [source,console,subs="attributes+"]
 ----
-echo "*/15  *  *  *  * /usr/bin/php -f /var/www/owncloud/cron.php" > /var/spool/cron/crontabs/www-data
+echo "*/15  *  *  *  * /usr/bin/php /path/to/your/owncloud/occ system:cron" > /var/spool/cron/crontabs/www-data
 chown www-data.crontab  /var/spool/cron/crontabs/www-data
 chmod 0600  /var/spool/cron/crontabs/www-data
 ----

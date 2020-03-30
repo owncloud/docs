@@ -42,6 +42,7 @@ Accepted values are `xml` and `json`.
 
 === Code Example
 
+ifeval::["{format}" == "html"]
 [tabs]
 ====
 Curl::
@@ -59,6 +60,22 @@ curl '$SERVER_URI/$API_PATH/' \
 ----
 --
 ====
+endif::[]
+
+ifeval::["{format}" == "pdf"]
+==== Curl
+
+[source,console,subs="attributes+"]
+----
+#!/usr/bin/env bash
+
+API_PATH="ocs/v1.php/cloud/roles?format=json"
+SERVER_URI="{oc-examples-server-url}"
+
+curl '$SERVER_URI/$API_PATH/' \
+  --user "{oc-examples-username}:{oc-examples-password}" | jq
+----
+endif::[]
 
 === Returns
 
@@ -67,6 +84,7 @@ The response body lists all the available roles, along with information about ea
 
 === Example Responses
 
+ifeval::["{format}" == "html"]
 [tabs]
 ====
 JSON::
@@ -86,6 +104,23 @@ include::{examplesdir}core/apis/ocs/roles/responses/success.xml[]
 ----
 --
 ====
+endif::[]
+
+ifeval::["{format}" == "pdf"]
+=== JSON
+
+[source,json,subs="attributes+"]
+----
+include::{examplesdir}core/apis/ocs/roles/responses/success.json[]
+----
+
+=== XML
+
+[source,xml,subs="attributes+"]
+----
+include::{examplesdir}core/apis/ocs/roles/responses/success.xml[]
+----
+endif::[]
 
 === Setting The Language of the Response Body
 
@@ -93,6 +128,7 @@ The language of the response’s content can be set with {accept-language-header
 By default, the response will be in English. 
 You can see an example of requesting the response in a specific language in the code example below.
 
+ifeval::["{format}" == "html"]
 [tabs]
 ====
 Curl::
@@ -111,3 +147,20 @@ curl '$SERVER_URI/$API_PATH/' \
 ----
 --
 ====
+endif::[]
+
+ifeval::["{format}" == "pdf"]
+==== Curl
+
+[source,console,subs="attributes+"]
+----
+#!/usr/bin/env bash
+
+API_PATH="ocs/v1.php/cloud/roles?format=json"
+SERVER_URI="{oc-examples-server-url}"
+
+curl '$SERVER_URI/$API_PATH/' \
+  --user "{oc-examples-username}:{oc-examples-password}" \
+  -H 'Accept-Language: de-DE' | jq
+----
+endif::[]

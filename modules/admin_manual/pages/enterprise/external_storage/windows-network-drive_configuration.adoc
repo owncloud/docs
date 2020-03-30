@@ -1,5 +1,5 @@
 = Installing and Configuring the External Storage: Windows Network Drives App
-:toc: macro
+:toc: right
 :toclevels: 1
 :anacron-examples: http://www.thegeekstuff.com/2011/05/anacron-examples
 :flock-docs-url: https://linux.die.net/man/2/flock
@@ -12,6 +12,8 @@
 :smbclient-manpage-url: https://www.samba.org/samba/docs/man/manpages-3/smbclient.1.html
 :wannacry-ransomware-attack-url: https://en.wikipedia.org/wiki/WannaCry_ransomware_attack
 :wnd-config-path: enterprise/external_storage/windows-network-drive_configuration.adoc
+:ldap-app-url: https://marketplace.owncloud.com/apps/user_ldap
+:acl-url: https://en.wikipedia.org/wiki/Access-control_list
 
 == Introduction
 
@@ -161,18 +163,51 @@ Your changes are saved automatically.
 
 NOTE: When you create a new mountpoint using Login credentials, you must log out of ownCloud and then log back in so you can access the share. You only have to do this the first time.
 
-=== Personal WND Mounts
+==== Access Control Lists 
 
-NOTE: Be aware that by default changes in the file system won't be transferred to ownCloud (use case: Sync client) and a **service account with access to shares** is required for ownCloud to receive changes from the personal mounts.
+From version 1.0.1 the Windows Network Drives App supports {acl-url}[Access Control Lists (ACLs)].
+To obtain ACL information, it supports two ACL providers:
 
-Users create their own WND mounts on their Personal pages. These are
-created the same way as Admin-created shares. Users have four options
-for login credentials:
+- xref:the-null-permission-manager[The Null Permission Manager]
+- xref:the-owncloud-ldap-permission-manager[The ownCloud LDAP Permission Manager] 
 
-* Username and password
-* Log-in credentials, save in session
-* Log-in credentials, save in database
-* Global credentials
+image::enterprise/external_storage/windows_network_drive/acl-permissions-manager.png[Configuring ACL retrieval in the ownCloud Windows Network Drive app.]
+
+Regardless of which provider you choose, an ownCloud administrator should run a xref:configuration/server/occ_command.adoc#file-operations[files:scan], manually, after changing the configuration, to update the permissions correctly. 
+Otherwise, the permissions shown by ownCloud might be incorrect.
+
+NOTE: Permissions are only auto-updated if there has been a change in the files.
+
+===== The Null Permission Manager
+
+The Null Permission Manager is the default permission manager and is used if no other ACL manager is specified.
+If you want to retain ownCloud's current behaviour, then use this permission manager. 
+When in effect, the Windows Network Drive app uses a file's attributes (e.g., read-only, and hidden), to determine how the user can interact with the file.
+There are no usage restrictions.
+
+The value to use for this provider is: `nullPermissionManager`.
+
+===== The ownCloud LDAP Permission Manager
+
+The ownCloud LDAP Permission Manager evaluates ACLs in files along with file attributes to determine the permissions. 
+In order to evaluate the ACLs, it needs access to the user and group membership information of the target Windows or Samba server, so it uses the ownCloud's {ldap-app-url}[user_ldap app] for this.
+
+IMPORTANT: Both the Windows (or Samba) server and ownCloud's user_ldap app must connect to the same Active Directory server so that ownCloud can retrieve the same user and group information.
+
+To use this provider requires two key things:
+
+- An Active Directory server which contains the standard user and group information that can be used by {ldap-app-url}[ownCloud's LDAP app].
+- ownCloud's LDAP app to be correctly configured to retrieve user and group information from the same Active Directory server as the one that the Windows (or Samba) server uses.
+
+IMPORTANT: The ownCloud LDAP apps must configure the `sAMAccountName` to be the ownCloud server's username.
+
+[TIP]
+====
+Some groups, such as "everyone" might not be handled properly. 
+This is because such groups don't exist in the LDAP server, or might not be found if the domain is different, such as `nt authority\system` or `builtin\domain-users`.
+====
+
+The value to use for this provider is: `ocLdapPermissionManager`.
 
 === Windows Network Drive Listener
 
@@ -511,6 +546,20 @@ IMPORTANT: If using `--password-file` make sure that the file is only readable b
 . Using 3rd party software to store and fetch the password. When using
 this option, the 3rd party app needs to show the password as plaintext
 on standard output.
+
+=== Reduce WND Notifier Memory Usage
+
+The WND in-memory notifier for password changes provides the ability to notify all _affected_ WND storages to reset their passwords. 
+This feature is intended to prevent a password lockout for the user in the backend.
+However, this functionality _can_ consume a significant amount of memory.
+To disable it, in one of the `config/config.php.` files, add the following configuration:
+
+[source,php]
+----
+'wnd.in_memory_notifier.enable' => false,
+----
+
+NOTE: The password will be reset on the next request, regardless of the flag setting.
 
 === 3rd Party Software Examples
 
