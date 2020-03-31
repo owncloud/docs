@@ -5,6 +5,9 @@
 :openid-connect-url: https://openid.net/connect/
 :openid-app-marketplace-url: https://marketplace.owncloud.com/apps/openidconnect
 :openid-app-github-url: https://github.com/owncloud/openidconnect
+:mod_rewrite-docs-url: https://httpd.apache.org/docs/current/mod/mod_rewrite.html
+:install-libsodium-url: https://www.php.net/manual/en/sodium.installation.php 
+:oc-composer-playground-repo-url: https://github.com/owncloud-docker/compose-playground/tree/master/kopano/konnect
 :examplesdir: ../../../../examples/
 
 == Introduction
@@ -25,9 +28,9 @@ OpenID Connect allows clients of all types, including Web-based, mobile, and Jav
 
 The OpenID Connect app has several mandatory requirements, these are:
 
-* A minimum PHP version of 7.0, with the CURL and JSON extensions.
+* A minimum PHP version of {minimum-php-version}, with the CURL and JSON extensions.
 * xref:configuration/server/caching_configuration.adoc[A distributed memory cache setup], such as _Redis_ or _Memcached_.
-This is because information about tokens need to be cached to prevent roundtrips to the identity provider. 
+This is because information about tokens need to be cached to prevent round trips to the identity provider. 
 Additionally, in clustered setups this information needs to be available for all nodes, which necessitates a distributed cache.
 +
 NOTE: If a memory cache is not available, then you will be prevented from using the ownCloud UI, and see the following message: "_A real distributed mem cache setup is required_" in the ownCloud UI.
@@ -40,7 +43,9 @@ They are not mandatory.
 [cols="20%,80%"]
 |===
 |**ext-libsodium**
-|SSH2 can make use of some algorithms provided by the libsodium-php extension
+|SSH2 can make use of some algorithms provided by the libsodium-php extension.
+This extension is already available from PHP 7.2. 
+If you are running {minimum-php-version}, {install-libsodium-url}[it is available via PECL].
 |===
 
 == Limitations
@@ -104,7 +109,7 @@ Here is an example of how to do so in .htaccess.
 RewriteRule ^\.well-known/openid-configuration /index.php/apps/openidconnect/config [R=301,L]
 ----
 
-TIP: Please refer to https://httpd.apache.org/docs/current/mod/mod_rewrite.html[the mod_rewrite manual] for further details on creating rewrite rules.
+TIP: Please refer to {mod_rewrite-docs-url}[the mod_rewrite manual] for further details on creating rewrite rules.
 
 === Integrating with Different Identity Providers (IdPs)
 
@@ -131,7 +136,7 @@ Below, you can find sample configurations for working with three of them: xref:k
 }
 ----
 
-TIP: If you're interested, the https://github.com/owncloud-docker/compose-playground/tree/master/kopano/konnect[ownCloud Composer Playground repository] shows how to setup Kopano Konnect and configure it with the Caddy webserver and ownCloud. 
+TIP: If you're interested, the {oc-composer-playground-repo-url}[ownCloud Composer Playground repository] shows how to setup Kopano Konnect and configure it with the Caddy webserver and ownCloud. 
 
 ==== Keycloak
 
