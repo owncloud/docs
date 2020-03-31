@@ -1,11 +1,12 @@
 = File Operations
 
-`occ` has three commands for managing files in ownCloud.
+`occ` has five commands for managing files in ownCloud.
 
 [source,console]
 ----
 
 files
+ files:check-cache          Check if the target file exists in the primary storage
  files:checksums:verify     Get all checksums in filecache and compares them by
                             recalculating the checksum of the file.
  files:cleanup              Deletes orphaned file cache entries.
@@ -16,6 +17,58 @@ files
 ----
 
 NOTE: These commands are not available in xref:maintenance-commands[single-user (maintenance) mode].
+
+== The files:check-cache command
+
+The main purpose for this command is to clean the cache for objectstores (objectstore and files_primary_S3 apps) as primary storage, but it is not limited to only those. 
+It can be used for any other storage type as long it is the primary storage.
+
+Files in the primary storage could be deleted outside of ownCloud, leaving information in ownCloud's file cache.
+This command intends to check if the target file can be read from the primary backend storage and if not, allows you to remove the information cached.
+
+[NOTE]
+====
+Removing files directly from the primary storage is not supported and should not happen. 
+As such, the cases where you need to run this command should be extremely rare. 
+This is why this command is only provided to check for one file instead of scanning the whole of ownCloud's filesystem.
+====
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} files:check-cache --help
+ Usage:
+   files:check-cache [options] [--] <uid> <target-file>
+----
+
+=== Arguments
+
+[width="100%",cols="20%,70%",]
+|===
+| `uid`         | The user (user id) who owns the file
+| `target-file` | The file we want to check
+|===
+
+=== Options
+
+[width="100%",cols="20%,70%",]
+|===
+| `--remove`    | Remove the file from the cache if it's missing in the backend
+|===
+
+Examples of checking files for user maria:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} files:check-cache maria welcome.txt
+welcome.txt has been accessed properly
+----
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} files:check-cache maria maria@smbhome/myfile.txt
+Ignoring maria@smbhome/myfile.txt because it is shared or not inside the primary storage
+
+----
 
 == The files:checksums:verify command
 
@@ -44,6 +97,21 @@ Mismatch for thumbnails/9/2048-2048-max.png:
  Filecache:   SHA1:2634fed078d1978f24f71892bf4ee0e4bd0c3c99 MD5:dd249372f7a68c551f7e6b2615d49463 ADLER32:821230d4
  Actual:  SHA1:da39a3ee5e6b4b0d3255bfef95601890afd80709 MD5:d41d8cd98f00b204e9800998ecf8427e ADLER32:00000001
 ----
+
+=== Options
+
+[width="100%",cols="20%,70%",]
+|===
+|`-r, --repair`         
+|Repair filecache-entry with mismatched checksums.
+
+|`-u, --user=USER`       
+|Specific user to check.
+
+|`-p, --path=PATH`       
+|Path to check relative to user folder. [default: ""].
+For example, if the user's id was "john" and the `--path` value was "tree/apple", the command would check the ownCloud directory `/john/files/tree/apple`.
+|===
 
 == The files:cleanup command
 
@@ -172,19 +240,20 @@ For example, to move all files from `<source-user>` to `<destination-user>`, use
 ----
 
 You can also move a limited set of files from `<source-user>` to `<destination-user>` by making use of the `--path` switch, as in the example below. 
-In it, `folder/to/move`, and any file and folder inside it will be moved to `<destination-user>`.
+Ownership of `folder/to/move` and all files and folders which it contains will be transferred to `<destination-user>`.
 
 [source,console,subs="attributes+"]
 ----
-{occ-command-example-prefix} files:transfer-ownership --path="folder/to/move" <source-user> <destination-user>
+{occ-command-example-prefix} files:transfer-ownership --path="folder/to/move" \
+    <source-user> \
+    <destination-user>
 ----
 
-When using this command, please keep in mind:
+When using this command, please keep the following in mind:
 
 . The directory provided to the `--path` switch *must* exist inside `data/<source-user>/files`.
-. The directory (and its contents) won't be moved as is between the users. 
-  It'll be moved inside the destination user's `files` directory, and placed in a directory which follows the format: `transferred from <source-user> on <timestamp>`. 
+. The directory and its contents won't be moved as-is between the users. 
+  It will be moved into the destination user's `files` directory, into a directory name which follows the format: `transferred from <source-user> on <timestamp>`. 
   Using the example above, it will be stored under: `data/<destination-user>/files/transferred from <source-user> on 20170426_124510/`
 . Currently file versions can't be transferred. 
   Only the latest version of moved files will appear in the destination user's account.
-
