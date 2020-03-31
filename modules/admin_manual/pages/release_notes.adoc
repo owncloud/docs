@@ -566,17 +566,6 @@ This is the first time ownCloud implements foreign keys.
 
 ==== How Does This Affect Each Database
 
-===== SQLite
-
-Foreign keys are, by default, disabled in SQLite. You must ensure that foreign keys are enabled in your SQLite installation.
-Here is what https://sqlite.org/foreignkeys.html[the current documentation] says about enabling foreign key support:
-
-[quote,Enabling Foreign Key Support]
-To enable foreign key support, the library must be compiled with neither `SQLITE_OMIT_FOREIGN_KEY` or `SQLITE_OMIT_TRIGGER` defined.
-If `SQLITE_OMIT_TRIGGER` is defined but `SQLITE_OMIT_FOREIGN_KEY` is not, then SQLite behaves as it did prior to version 3.6.19 (2009-10-14) - foreign key definitions are parsed and may be queried using PRAGMA foreign_key_list, but foreign key constraints are not enforced.
-The PRAGMA foreign_keys command is a no-op in this configuration.
-If `SQLITE_OMIT_FOREIGN_KEY` is defined, then foreign key definitions cannot even be parsed (attempting to specify a foreign key definition is a syntax error).
-
 ===== MySQL
 
 MySQL supports foreign keys. 
@@ -591,6 +580,20 @@ They are enabled by default.
 
 PostgreSQL supports foreign keys. 
 They are enabled by default.
+
+===== SQLite
+
+Foreign keys are, by default, disabled in SQLite. 
+You must ensure that foreign keys are enabled in your SQLite installation.
+Here is what https://sqlite.org/foreignkeys.html[the current documentation] says about enabling foreign key support:
+
+[quote,Enabling Foreign Key Support]
+To enable foreign key support, the library must be compiled with neither `SQLITE_OMIT_FOREIGN_KEY` or `SQLITE_OMIT_TRIGGER` defined.
+If `SQLITE_OMIT_TRIGGER` is defined but `SQLITE_OMIT_FOREIGN_KEY` is not, then SQLite behaves as it did prior to version 3.6.19 (2009-10-14) - foreign key definitions are parsed and may be queried using PRAGMA foreign_key_list, but foreign key constraints are not enforced.
+The PRAGMA foreign_keys command is a no-op in this configuration.
+If `SQLITE_OMIT_FOREIGN_KEY` is defined, then foreign key definitions cannot even be parsed (attempting to specify a foreign key definition is a syntax error).
+
+IMPORTANT: SQLite is not recommended for production deployments.
 
 ===== Oracle
 
