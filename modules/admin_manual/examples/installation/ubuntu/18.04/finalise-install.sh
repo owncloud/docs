@@ -3,16 +3,17 @@ FILE="/usr/local/bin/ocpermissions"
 /bin/cat <<EOM >$FILE
 #!/bin/bash 
 
-ocpath="{install-directory}" 
-datadir="{install-directory}/data" 
-htuser="{webserver-user}" 
-htgroup="{webserver-group}" 
+#settings for ubuntu
+ocpath="/var/www/owncloud"
+datadir="${ocpath}/data"
+htuser="www-data"
+htgroup="www-data"
 rootuser="root" 
 
 printf "Creating any missing directories" 
-sudo -u "${htuser}" mkdir -p "$ocpath/assets" 
-sudo -u "${htuser}" mkdir -p "$ocpath/updater" 
-sudo -u "${htuser}" mkdir -p "$datadir" 
+sudo -u "${htuser}" mkdir -p "${ocpath}/assets" 
+sudo -u "${htuser}" mkdir -p "${ocpath}/updater" 
+sudo -u "${htuser}" mkdir -p "${datadir}" 
 
 printf "Update file and directory permissions" 
 sudo find "${ocpath}/" -type f -print0 | xargs -0 chmod 0640 
@@ -42,6 +43,6 @@ fi
 EOM
 
 # Make the script executable
-sudo chmod +x /usr/local/bin/ocpermissions
+sudo chmod +x $FILE
 
-ocpermissions
+$FILE
