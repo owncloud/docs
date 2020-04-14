@@ -63,9 +63,12 @@ To use the OAuth2 app, your ownCloud installation will need to meet the followin
 * *Apache:* If you are hosting your ownCloud installation using the Apache web server, then {mod_rewrite-url}[mod_rewrite] and {mod_headers-url}[mod_headers] modules must be installed and enabled.
 . *Redis:* You will need to have a Redis server available, ideally the latest, stable, version
 . *PHP:* You PHP installation must have {predis-extension-url}[the phpredis extension] (>= 4.2) installed and enabled. 
-In addition, it must be configured to xref:configuration/server/caching_configuration.adoc#redis[use Redis as a memory cache].
-Here is an example configuration. 
 +
+[TIP]
+====
+We strongly recommend that you configured PHP to store sessions in Redis.
+Here is an example configuration. 
+
 [source,ini]
 ----
 ; Redis configuration
@@ -75,10 +78,6 @@ REDIS_SESSION_LOCKING_ENABLED=1
 REDIS_SESSION_LOCK_RETRIES=750
 REDIS_SESSION_LOCK_WAIT_TIME=20000
 ----
-+
-[NOTE]
-====
-Why These Configuration Parameters?
 
 The configuration parameters above are taken from {predis-extension-session-locking-config-url}[the available ones].
 According to {phpredis-issue-url}[an issue in the phpredis repository], the default values are too small for common usage. 
