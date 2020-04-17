@@ -4,7 +4,7 @@ FILE="/usr/local/bin/ocpermissions"
 #!/bin/bash 
 
 ocpath="{install-directory}" 
-datadir="{install-directory}/data" 
+datadir="${ocpath}/data" 
 htuser="{webserver-user}" 
 htgroup="{webserver-group}" 
 rootuser="root" 
@@ -42,6 +42,6 @@ fi
 EOM
 
 # Make the script executable
-sudo chmod +x /usr/local/bin/ocpermissions
+sudo chmod +x ${FILE}
 
-ocpermissions
+${FILE}
