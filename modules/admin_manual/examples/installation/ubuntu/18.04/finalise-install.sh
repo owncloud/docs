@@ -28,15 +28,15 @@ sudo chown -R "${htuser}:${htgroup}" "${datadir}"
 sudo chown -R "${htuser}:${htgroup}" "${ocpath}/updater/" 
 sudo chmod +x "${ocpath}/occ"
 
-printf "Set web server user and group as .htaccess user and group" 
+printf "Set web server user and group as .htaccess owner and group" 
 if [ -f "${ocpath}/.htaccess" ]; then  
-  sudo chmod 0644 "${ocpath}/.htaccess"  
-  sudo chown "${rootuser}:${htgroup}" "${ocpath}/.htaccess" 
+  sudo chmod 0664 "${ocpath}/.htaccess"  
+  sudo chown "${htuser}:${htgroup}" "${ocpath}/.htaccess" 
 fi 
 
 if [ -f "${datadir}/.htaccess" ]; then  
-  sudo chmod 0644 "${datadir}/.htaccess"  
-  sudo chown "${rootuser}:${htgroup}" "${datadir}/.htaccess"
+  sudo chmod 0664 "${datadir}/.htaccess"  
+  sudo chown "${htuser}:${htgroup}" "${datadir}/.htaccess"
 fi 
 
 EOM
