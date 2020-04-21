@@ -3,11 +3,10 @@ FILE="/usr/local/bin/ocpermissions"
 /bin/cat <<EOM >$FILE
 #!/bin/bash 
 
-#settings for ubuntu
-ocpath="/var/www/owncloud"
-datadir="${ocpath}/data"
-htuser="www-data"
-htgroup="www-data"
+ocpath="{install-directory}" 
+datadir="${ocpath}/data" 
+htuser="{webserver-user}" 
+htgroup="{webserver-group}" 
 rootuser="root" 
 
 printf "Creating any missing directories" 
@@ -29,20 +28,19 @@ sudo chown -R "${htuser}:${htgroup}" "${datadir}"
 sudo chown -R "${htuser}:${htgroup}" "${ocpath}/updater/" 
 sudo chmod +x "${ocpath}/occ"
 
-printf "Set web server user and group as .htaccess user and group" 
+printf "Set web server user and group as .htaccess owner and group" 
 if [ -f "${ocpath}/.htaccess" ]; then  
-  sudo chmod 0644 "${ocpath}/.htaccess"  
-  sudo chown "${rootuser}:${htgroup}" "${ocpath}/.htaccess" 
+  sudo chmod 0664 "${ocpath}/.htaccess"  
+  sudo chown "${htuser}:${htgroup}" "${ocpath}/.htaccess" 
 fi 
 
 if [ -f "${datadir}/.htaccess" ]; then  
-  sudo chmod 0644 "${datadir}/.htaccess"  
-  sudo chown "${rootuser}:${htgroup}" "${datadir}/.htaccess"
+  sudo chmod 0664 "${datadir}/.htaccess"  
+  sudo chown "${htuser}:${htgroup}" "${datadir}/.htaccess"
 fi 
-
 EOM
 
 # Make the script executable
-sudo chmod +x $FILE
+sudo chmod +x ${FILE}
 
-$FILE
+${FILE}
