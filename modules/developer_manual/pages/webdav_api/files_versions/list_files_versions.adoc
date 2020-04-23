@@ -1,0 +1,101 @@
+= List File Versions
+:toc: right
+:toclevels: 1
+:content_type: text/xml
+:method: PROPFIND
+:request-base-path: remote.php/dav/meta/$fileid/v
+
+== Introduction
+
+This endpoint lists all versions of a file.
+
+* Path: `{request-base-path}/`
+* Method: `{method}`
+
+TIP: To retrieve a list of available files, use xref:webdav_api/search.adoc#limiting-returned-file-properties[the Filter Files endpoint], and ensure that returned properties includes `fileid`.
+
+== Request Parameters
+
+[cols=",,",options="header",]
+|===
+|Attribute 
+|Type 
+|Description
+
+|`fileid` 
+|integer 
+|The file's id.
+|===
+
+== Returns
+
+If the file _is_ found, then a response similar to the following is returned.
+
+=== Example Response
+
+==== File Is Found and Has Only One Version
+
+If the file _is_ found but has only one version, then a response, similar to the following, is returned, with an `HTTP 207 Multi-Status` status.
+
+[source,xml]
+----
+include::{examplesdir}core/webdav_api/files_versions/successful-response-which-contains-one-version.xml[]
+----
+
+==== File Is Found and Has Multiple Versions
+
+If the file _is_ found and has multiple versions, then a response, similar to the following, is returned, with an `HTTP 207 Multi-Status` status.
+
+[source,xml]
+----
+include::{examplesdir}core/webdav_api/files_versions/successful-response-which-contains-multiple-versions.xml[]
+----
+
+==== File Is Not Found
+
+If the file _is not_ found, then the following response is returned with an `HTTP/1.1 404 Not Found` status.
+
+[source,xml]
+----
+<?xml version="1.0" encoding="utf-8"?>
+<d:error xmlns:d="DAV:" xmlns:s="http://sabredav.org/ns">
+  <s:exception>Sabre\DAV\Exception\NotFound</s:exception>
+  <s:message/>
+</d:error>
+----
+
+== Code Example
+
+This example retrieves versions with only the essential properties.
+If you want to see all properties, don’t use the `--data-binary` option.
+
+[tabs]
+====
+Curl::
++
+--
+[source,console,subs="attributes+"]
+----
+curl --silent -v -u {oc-examples-username}:{oc-examples-password} \
+  -X PROPFIND \
+  -H "Content-Type: text/xml" \
+  --data-binary "@search-files-with-filters.xml" \
+  '{oc-examples-server-url}/remote.php/dav/meta/44/v' | xmllint --format -
+----
+--
+====
+
+=== search-files-with-filters.xml
+
+[source,xml]
+----
+<?xml version="1.0" encoding="utf-8" ?>
+<a:propfind xmlns:a="DAV:" xmlns:oc="http://owncloud.org/ns">
+  <a:prop>
+    <oc:getcontentlength/>
+    <oc:getcontenttype/>
+    <oc:getetag/>
+    <oc:getlastmodified/>
+  </a:prop>
+</a:propfind>
+----
