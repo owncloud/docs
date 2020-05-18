@@ -291,10 +291,10 @@ They specify things that "have been done". For example:
 [source,gherkin]
 ----
   Scenario: delete files in a sub-folder
-    Given user "user0" has been created
-    And user "user0" has moved file "/welcome.txt" to "/FOLDER/welcome.txt"
-    And user "user0" has created a folder "/FOLDER/SUBFOLDER"
-    And user "user0" has copied file "/textfile0.txt" to "/FOLDER/SUBFOLDER/testfile0.txt"
+    Given user "Alice" has been created
+    And user "Alice" has moved file "/welcome.txt" to "/FOLDER/welcome.txt"
+    And user "Alice" has created a folder "/FOLDER/SUBFOLDER"
+    And user "Alice" has copied file "/textfile0.txt" to "/FOLDER/SUBFOLDER/testfile0.txt"
 ----
 
 `Given` steps do not mention how the action is done.
@@ -316,11 +316,11 @@ They specify the action that is being tested. Continuing the example above:
 [source,gherkin]
 ----
   Scenario: delete all files in a sub-folder
-    Given user "user0" has been created
-    And user "user0" has moved file "/welcome.txt" to "/FOLDER/welcome.txt"
-    And user "user0" has created a folder "/FOLDER/SUBFOLDER"
-    And user "user0" has copied file "/textfile0.txt" to "/FOLDER/SUBFOLDER/testfile0.txt"
-    When user "user0" deletes everything from folder "/FOLDER/" using the WebDAV API
+    Given user "Alice" has been created
+    And user "Alice" has moved file "/welcome.txt" to "/FOLDER/welcome.txt"
+    And user "Alice" has created a folder "/FOLDER/SUBFOLDER"
+    And user "Alice" has copied file "/textfile0.txt" to "/FOLDER/SUBFOLDER/testfile0.txt"
+    When user "Alice" deletes everything from folder "/FOLDER/" using the WebDAV API
 ----
 
 In ownCloud there are usually 2 or 3 interfaces that can implement an action.
@@ -343,12 +343,12 @@ They should contain the word `should` somewhere in the step text.
 [source,gherkin]
 ----
   Scenario: delete all files in a sub-folder
-    Given user "user0" has been created
-    And user "user0" has moved file "/welcome.txt" to "/FOLDER/welcome.txt"
-    And user "user0" has created a folder "/FOLDER/SUBFOLDER"
-    And user "user0" has copied file "/textfile0.txt" to "/FOLDER/SUBFOLDER/testfile0.txt"
-    When user "user0" deletes everything from folder "/FOLDER/" using the WebDAV API
-    Then user "user0" should see the following elements
+    Given user "Alice" has been created
+    And user "Alice" has moved file "/welcome.txt" to "/FOLDER/welcome.txt"
+    And user "Alice" has created a folder "/FOLDER/SUBFOLDER"
+    And user "Alice" has copied file "/textfile0.txt" to "/FOLDER/SUBFOLDER/testfile0.txt"
+    When user "Alice" deletes everything from folder "/FOLDER/" using the WebDAV API
+    Then user "Alice" should see the following elements
       | /FOLDER/           |
       | /PARENT/           |
       | /PARENT/parent.txt |
@@ -357,7 +357,7 @@ They should contain the word `should` somewhere in the step text.
       | /textfile2.txt     |
       | /textfile3.txt     |
       | /textfile4.txt     |
-    But user "user0" should not see the following elements
+    But user "Alice" should not see the following elements
       | /FOLDER/SUBFOLDER/              |
       | /FOLDER/welcome.txt             |
       | /FOLDER/SUBFOLDER/testfile0.txt |
@@ -395,11 +395,48 @@ So we also check that the user can do something, in this case that they can acce
 Test steps often need to specify the actor that does the action or check.
 For example, the user.
 
+Use realistic user names, display names and email addresses when writing scenarios.
+This helps real humans to more easily understand scenarios.
+There are five user names that are typically used in the test scenarios.
+Use those usernames unless there is some special reason not to.
+That helps to be able to automatically replace user names and run all the test scenarios with different unusual user names.
+The acceptance test code has defaults for the display name and email address of these "known" users.
+So you can just create these users in `Given` steps and they get the corresponding display name and email address.
+
+[cols="20,20,20,40",options="header"]
+|===
+|User Name
+|Display Name
+|Email Address
+|Description
+|Alice
+|Alice Hansen
+|alice@example.org
+|The primary actor in a scenario, e.g. the one doing the sharing
+|Brian
+|Brian Murphy
+|brian@example.org
+|The second actor, e.g. the one receiving a share
+|Carol
+|Carol King
+|carol@example.org
+|The third actor, e.g. might be a member of a group
+|David
+|David Lopez
+|david@example.org
+|Another actor, when needed
+|Emily
+|Emily Wagner
+|emily@example.org
+|Another actor, when needed
+|===
+
+
 The acceptance test code can remember the "current" user with a step like:
 
 [source,gherkin]
 ----
-    Given as user "user0"
+    Given as user "Alice"
     And the user has uploaded file "abc.txt"
     When the user deletes file "abc.txt"
     ...
@@ -411,8 +448,8 @@ Or you can mention the user in each step:
 
 [source,gherkin]
 ----
-    Given user "user0" has uploaded file "abc.txt"
-    When user "user0" deletes file "abc.txt"
+    Given user "Alice" has uploaded file "abc.txt"
+    When user "Alice" deletes file "abc.txt"
     ...
 ----
 
@@ -431,10 +468,10 @@ then do not put the word `the` in front, but do put the name of the entity. For 
 
 [source,gherkin]
 ----
-    Given user "user0" has been added to group "grp1"
-    And user "user0" has uploaded file "abc.txt" into folder "folder1"
-    And user "user0" has added tag "aTag" to file "folder1/abc.txt"
-    When user "user0" shares folder "folder1" with user "user1"
+    Given user "Alice" has been added to group "grp1"
+    And user "Alice" has uploaded file "abc.txt" into folder "folder1"
+    And user "Alice" has added tag "aTag" to file "folder1/abc.txt"
+    When user "Alice" shares folder "folder1" with user "Brian"
     ...
 ----
 
@@ -443,7 +480,7 @@ For example:
 
 [source,gherkin]
 ----
-    And "user0" has uploaded "abc.txt" into "folder1"
+    And "Alice" has uploaded "abc.txt" into "folder1"
     ...
 ----
 
@@ -457,21 +494,21 @@ then put them into a `Background:` section. For example:
 [source,gherkin]
 ----
   Background:
-    Given user "user0" has been created
-    And user "user1" has been created
-    And user "user0" has uploaded file "abc.txt"
+    Given user "Alice" has been created
+    And user "Brian" has been created
+    And user "Alice" has uploaded file "abc.txt"
 
   Scenario: share a file with another user
-    When user "user0" shares file "abc.txt" with user "user1" using the sharing API
+    When user "Alice" shares file "abc.txt" with user "Brian" using the sharing API
     Then the HTTP status code should be "200"
-    And user "user1" should be able to download file "abc.txt"
+    And user "Brian" should be able to download file "abc.txt"
 
   Scenario: share a file with a group
     Given group "grp1" has been created
-    And "user1" has been added to group "grp1"
-    When user "user0" shares file "abc.txt" with user "user1" using the sharing API
+    And "Brian" has been added to group "grp1"
+    When user "Alice" shares file "abc.txt" with user "Brian" using the sharing API
     Then the HTTP status code should be "200"
-    And user "user1" should be able to download file "abc.txt"
+    And user "Brian" should be able to download file "abc.txt"
 ----
 
 This reduces some duplication in feature files.
@@ -657,7 +694,7 @@ If the bug is not easy to fix, then:
     # When the issue is fixed, remove the following step and replace with the commented-out step
     Then the email address "new-address@owncloud.com" should not have received an email
     #And the user follows the email change confirmation link received by "new-address@owncloud.com" using the webUI
-    Then the attributes of user "user1" returned by the API should include
+    Then the attributes of user "Brian" returned by the API should include
       | email | new-address@owncloud.com |
 ----
 
