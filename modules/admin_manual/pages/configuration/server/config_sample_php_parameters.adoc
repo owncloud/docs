@@ -760,12 +760,30 @@ for when files and folders in the trash bin will be permanently deleted.
 
 The app allows for two settings, a minimum time for trash bin retention,
 and a maximum time for trash bin retention.
-Minimum time is the number of days a file will be kept, after which it may be deleted.
+Minimum time is the number of days a file will be kept and protected from deletion, after which it may be deleted if the size of the trash bin exeeds the user's quota.
 Maximum time is the number of days at which it is guaranteed to be deleted.
 Both minimum and maximum times can be set together to explicitly define
 file and folder deletion. For migration purposes, this setting is installed
 initially set to `auto`, which is equivalent to the default setting in
 ownCloud 8.1 and before.
+
+Files in the trash bin are deleted if they exeed **50% of user's quota** except if they are protected by the retention rules.
+
+Example:
+
+`'trashbin_retention_obligation' => '7, 14'`
+
+user `test` has a quota of **2 GB**
+
+user `test's` trash bin is currently **1.5 GB**
+
+1. If the user `test` deletes files, they will be kept for 7 days and not deleted.
+2. After the file is in the trash bin for 7 days, this file will be deleted as long the trash bin's size is bigger than 1 GB 
+(50% of user's quota) because in this case user test has a quota of 2 GB.
+3. The order or deletion: oldest files get deleted first.
+4. If the trash bin size is smaller than 1 GB (50% of user's quota) then they will be kept for 14 days, and then deleted.
+
+The job responsible for checking and deleting the files is the `OCA\Files_Trashbin\BackgroundJob\ExpireTrash` job which runs in a 30 min interval. At what time the job is executed at our instance depends what interval you set on your cron job execution. 
 
 Available values:
 
