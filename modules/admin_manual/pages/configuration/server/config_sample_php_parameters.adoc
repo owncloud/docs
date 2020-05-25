@@ -760,28 +760,32 @@ for when files and folders in the trash bin will be permanently deleted.
 
 The app allows for two settings, a minimum time for trash bin retention,
 and a maximum time for trash bin retention.
-Minimum time is the number of days a file will be kept and protected from deletion, after which it may be deleted if the size of the trash bin exeeds the user's quota.
+Minimum time is the number of days a file will be kept, after which it may be deleted.
 Maximum time is the number of days at which it is guaranteed to be deleted.
 Both minimum and maximum times can be set together to explicitly define
 file and folder deletion. For migration purposes, this setting is installed
 initially set to `auto`, which is equivalent to the default setting in
 ownCloud 8.1 and before.
 
-Files in the trash bin are deleted if they exeed **50% of user's quota** except if they are protected by the retention rules.
-
 Example:
+
+In our example we want to keep files in trash bin for at least 7 days, and delete them after 14 days.
 
 `'trashbin_retention_obligation' => '7, 14'`
 
-user `test` has a quota of **2 GB**
+user `test` has a quota of **4 GB**
 
-user `test's` trash bin is currently **1.5 GB**
+user `test` has **1 GB** of files in his storage
 
-1. If the user `test` deletes files, they will be kept for 7 days and not deleted.
-2. After the file is in the trash bin for 7 days, this file will be deleted as long the trash bin's size is bigger than 1 GB 
-(50% of user's quota) because in this case user test has a quota of 2 GB.
-3. The order or deletion: oldest files get deleted first.
-4. If the trash bin size is smaller than 1 GB (50% of user's quota) then they will be kept for 14 days, and then deleted.
+user `test` has **1.5** of files in his trash bin
+
+The 50% rule calculation: if (trash bin + storage) > 50% of user's quota => delete files until enough storage is freed.
+
+1. If the user `test` deletes files, they will be kept for 7 days and not deleted because they are protected by the `minAge` of 7 Days.
+
+2. When the cron job is executed, all files that are older than 7 days will be deleted because the 50% rule.
+
+3. If the user's used quota is less than 50% then the deleted files will be kept for 14 days, and then deleted.
 
 The job responsible for checking and deleting the files is the `OCA\Files_Trashbin\BackgroundJob\ExpireTrash` job which runs in a 30 min interval. At what time the job is executed at our instance depends what interval you set on your cron job execution. 
 
