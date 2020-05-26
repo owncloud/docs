@@ -15,9 +15,9 @@ def main(ctx):
     # This must not be changed in version branches
     deployment_branch = "master"
 
-    return [pipeline(ctx, latest_version, deployment_branch)]
+    return [pipeline(ctx, latest_version, deployment_branch, base_branch)]
 
-def pipeline(ctx, latest_version, deployment_branch):
+def pipeline(ctx, latest_version, deployment_branch, base_branch):
     return {
         "kind": "pipeline",
         "type": "docker",
@@ -146,7 +146,7 @@ def pipeline(ctx, latest_version, deployment_branch):
                     ],
                     "branch": [
                         deployment_branch,
-                    ]
+                    ],
                 },
             },
             {
@@ -170,7 +170,29 @@ def pipeline(ctx, latest_version, deployment_branch):
                     ],
                     "branch": [
                         deployment_branch,
-                    ]
+                    ],
+                },
+            },
+            {
+                "name": "trigger-deployment",
+                "pull": "always",
+                "settings": {
+                    "server": "https://drone.owncloud.com",
+                    "token": from_secret("drone_token"),
+                    "fork": "true",
+                    "repositories": [
+                        "owncloud/docs@" + deployment_branch,
+                    ],
+                },
+                "when": {
+                    "branch": {
+                        "include": [
+                            base_branch,
+                        ],
+                        "exclude": [
+                            deployment_branch,
+                        ],
+                    },
                 },
             },
             {
