@@ -206,7 +206,7 @@ def build(ctx, latest_version, deployment_branch, base_branch):
                     "refs/heads/**",
                 ],
                 "exclude": [
-                    base_branch,
+                    "refs/heads/" + base_branch,
                 ],
             },
         },
