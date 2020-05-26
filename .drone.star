@@ -224,6 +224,7 @@ def trigger(ctx, latest_version, deployment_branch, base_branch):
             {
                 "name": "trigger-" + deployment_branch,
                 "pull": "always",
+                "image": "plugins/downstream",
                 "settings": {
                     "server": "https://drone.owncloud.com",
                     "token": from_secret("drone_token"),
