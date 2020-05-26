@@ -220,6 +220,9 @@ def trigger(ctx, latest_version, deployment_branch, base_branch):
             "os": "linux",
             "arch": "amd64",
         },
+        "clone": {
+            "disable": True,
+        },
         "steps": [
             {
                 "name": "trigger-" + deployment_branch,
