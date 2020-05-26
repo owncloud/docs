@@ -200,10 +200,9 @@ def build(ctx, latest_version, deployment_branch, base_branch):
         "trigger": {
             "ref": {
                 "include": [
-                    "refs/tags/**",
                     "refs/pull/**",
                     "refs/pull-requests/**",
-                    "refs/heads/**",
+                    "refs/heads/" + deployment_branch,
                 ],
                 "exclude": [
                     "refs/heads/" + base_branch,
