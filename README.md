@@ -25,3 +25,13 @@ Please read how to test un-merged [docs-ui](./docs/test-ui-bundle.md) changes wi
 ## Best Practices and Tips
 
 Please refer to [Best Practices and Tips](./docs/best-practices.md) for more information.
+
+## Version branches in this repo
+
+When doing a `10.x` release of ownCloud Server a version branch should be created from `master` by doing the following steps:
+
+1. Set `latest_version` in `.drone.star` to `10.x` on `master`
+2. Create new `10.x` branch based on `master`
+3. Afterwards adjust values in `site.yml` on `master`:
+* in `asciidoc.attributes` make relevant attributes point to `10.x` and where needed to its predecessor
+* in `content.sources` add `10.x` branch where the url points to this repo
