@@ -30,8 +30,13 @@ Please refer to [Best Practices and Tips](./docs/best-practices.md) for more inf
 
 When doing a `10.x` release of ownCloud Server a version branch should be created from `master` by doing the following steps:
 
-1. Set `latest_version` in `.drone.star` to `10.x` on `master`
-2. Create new `10.x` branch based on `master`
-3. Afterwards adjust values in `site.yml` on `master`:
-* in `asciidoc.attributes` make relevant attributes point to `10.x` and where needed to its predecessor
-* in `content.sources` add `10.x` branch where the url points to this repo
+1. Create new `10.x` branch based on `origin/master`
+2. Set `latest_version` in `.drone.star` to `10.x`
+3. Adjust `asciidoc.attributes` in `site.yml` (increment `-version` values usually)
+4. Commit changes to `10.x` branch
+5. Create `add-10.x` branch based on `10.x` branch
+6. Add `10.x` branch to `content.sources` in `site.yml` where the url points to this repo on `add-10.x` branch
+7. Push `add-10.x` branch
+8. Set `version` in `antora.yml` on `10.x` branch
+9. Push `10.x` branch
+10. Send PR `add-10.x` -> `master`
