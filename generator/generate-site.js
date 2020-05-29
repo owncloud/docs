@@ -36,7 +36,7 @@ async function generateSite (args, env) {
 }
 
 function generateIndex (playbook, pages) {
-  if (!process.env.ELASTICSEARCH_HOST || !process.env.ELASTICSEARCH_INDEX) {
+  if (process.env.UPDATE_SEARCH_INDEX !== 'true' || !process.env.ELASTICSEARCH_HOST || !process.env.ELASTICSEARCH_INDEX) {
     return
   }
 
