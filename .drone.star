@@ -148,8 +148,9 @@ def build(ctx, latest_version, deployment_branch, base_branch):
                     "event": [
                         "push",
                     ],
-                    "branch": [
-                        deployment_branch,
+                    "ref": [
+                        "refs/heads/" + base_branch,
+                        "refs/heads/" + deployment_branch,
                     ],
                 },
             },
@@ -202,10 +203,8 @@ def build(ctx, latest_version, deployment_branch, base_branch):
                 "include": [
                     "refs/pull/**",
                     "refs/pull-requests/**",
-                    "refs/heads/" + deployment_branch,
-                ],
-                "exclude": [
                     "refs/heads/" + base_branch,
+                    "refs/heads/" + deployment_branch,
                 ],
             },
         },
