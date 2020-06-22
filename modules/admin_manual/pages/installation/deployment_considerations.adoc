@@ -36,7 +36,7 @@ Provider setup:
 resources)
 * Least load to Apache servers (2-n)
 * Memcached/Redis for shared session storage (2-n)
-* Database cluster with single Master, multiple slaves and proxy to
+* Database cluster with single primary, multiple replicas and proxy to
 split requests accordingly (2-n)
 * GPFS or Ceph via phprados (2-n, 3 to be safe, Ceph 10+ nodes to see
 speed benefits under load)
@@ -55,10 +55,10 @@ Cons:
 * Currently DB filecache table will grow rapidly, making migrations
 painful in case the table is altered.
 
-=== A Single Master DB is Single Point of Failure, Does Not Scale
+=== A Single primary DB is Single Point of Failure, Does Not Scale
 
-When master fails another slave can become master. However, the
-increased complexity carries some risks: Multi-master has the risk of
+When primary fails another replica can become primary. However, the
+increased complexity carries some risks: Multi-primary has the risk of
 split brain, and deadlocks. ownCloud tries to solve the problem of
 deadlocks with high-level file locking.
 
@@ -87,12 +87,12 @@ More often than not the customer already has an opinion on what database
 to use. In general, the recommendation is to use what their database
 administrator is most familiar with. Taking into account what we are
 seeing at customer deployments, we recommend MySQL/MariaDB in a
-master-slave deployment with a MySQL proxy in front of them to send
-updates to master, and selects to the slave(s).
+primary-replica deployment with a MySQL proxy in front of them to send
+updates to primary, and selects to the replica(s).
 
 The second best option is PostgreSQL (alter table does not lock table,
 which makes migration less painful) although we have yet to find a
-customer who uses a master-slave setup.
+customer who uses a primary-replica setup.
 
 What about the other DBMS?
 
