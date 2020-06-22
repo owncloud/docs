@@ -114,7 +114,7 @@ the InnoDB storage engine as MyISAM is not supported, see:
 xref:configuration/database/linux_database_configuration.adoc#mysql-mariadb-storage-engine[MySQL / MariaDB storage engine]
 
 IMPORTANT: If you are using MaxScale/Galera, then you need to use at least version 1.3.0. In earlier versions,
-there is a bug where the value of `last_insert_id` is not routed to the master node. This bug can cause loops
+there is a bug where the value of `last_insert_id` is not routed to the primary node. This bug can cause loops
 within ownCloud and corrupt database rows. You can find out more information
 https://jira.mariadb.org/browse/MXS-220[in the issue documentation].
 
@@ -241,11 +241,11 @@ xref:configuration/database/linux_database_configuration.adoc#mysql-mariadb-stor
 ==== Backup
 
 Minimum daily backup without downtime. All MySQL/MariaDB statements
-should be replicated to a backup MySQL/MariaDB slave instance.
+should be replicated to a backup MySQL/MariaDB replica instance.
 
 * Create a snapshot on the NFS storage server.
 * At the same time stop the MySQL replication.
-* Create a MySQL dump of the backup slave.
+* Create a MySQL dump of the backup replica.
 * Push the NFS snapshot to the backup.
 * Push the MySQL dump to the backup.
 * Delete the NFS snapshot.
@@ -353,12 +353,12 @@ xref:configuration/database/linux_database_configuration.adoc#mysql-mariadb-stor
 ==== Backup
 
 Minimum daily backup without downtime. All MySQL/MariaDB statements
-should be replicated to a backup MySQL/MariaDB slave instance. To do
+should be replicated to a backup MySQL/MariaDB replica instance. To do
 this, follow these steps:
 
 1.  Create a snapshot on the NFS storage server.
 2.  At the same time stop the MySQL replication.
-3.  Create a MySQL dump of the backup slave.
+3.  Create a MySQL dump of the backup replica.
 4.  Push the NFS snapshot to the backup.
 5.  Push the MySQL dump to the backup.
 6.  Delete the NFS snapshot.
@@ -373,7 +373,7 @@ xref:enterprise/user_management/user_auth_shibboleth.adoc[Shibboleth Integration
 
 ==== LDAP
 
-Read-only slaves should be deployed on every application server for optimal scalability.
+Read-only replicas should be deployed on every application server for optimal scalability.
 
 ==== Session Management
 
@@ -404,9 +404,9 @@ for comparisons of the ownCloud editions.
 
 ==== Redis Configuration
 
-Redis in a master-slave configuration is
+Redis in a primary-replica configuration is
 http://searchwindowsserver.techtarget.com/definition/cold-warm-hot-server[a hot failover setup],
-and is usually sufficient. A slave can be omitted
+and is usually sufficient. A replica can be omitted
 if high availability is provided via other means. And when it is, in the
 event of a failure, restarting Redis typically occurs quickly enough.
 Regarding Redis cluster, we don’t, usually, recommend it, as it requires
@@ -446,8 +446,8 @@ executes the original query.
 
 ==== Why enable it
 
-A Galera Cluster write operation is sent to the master while reads are
-retrieved from the slaves. Since Galera Cluster replication is, by
+A Galera Cluster write operation is sent to the primary while reads are
+retrieved from the replicas. Since Galera Cluster replication is, by
 default, not strictly synchronous it could happen that items are
 requested before the replication has actually taken place.
 
