@@ -117,7 +117,7 @@ If using either MySQL or MariaDB, you must use the InnoDB storage engine as MyIS
 xref:configuration/database/linux_database_configuration.adoc#mysql-mariadb-storage-engine[MySQL / MariaDB storage engine]
 
 IMPORTANT: If you are using MaxScale/Galera, then you need to use at least version 1.3.0. 
-In earlier versions, there is a bug where the value of `last_insert_id` is not routed to the master node. 
+In earlier versions, there is a bug where the value of `last_insert_id` is not routed to the primary node. 
 This bug can cause loops within ownCloud and corrupt database rows. 
 You can find out more information {jira-mxs-220-url}[in the issue documentation].
 
@@ -218,18 +218,18 @@ HAProxy running on a dedicated server in front of the application servers. Stick
 ==== Database
 
 MySQL/MariaDB Galera cluster with
-{setting-up-replication-url}[master-slave replication].
+{setting-up-replication-url}[primary-replica replication].
 InnoDB storage engine, MyISAM is not supported, see: xref:configuration/database/linux_database_configuration.adoc#mysql-mariadb-storage-engine[MySQL / MariaDB storage engine].
 For mariadb consider: {mariadb-monitor-url}[MariaDB Monitor] to configure your setup for a failover Scenario.
 
 ==== Backup
 
 Minimum daily backup without downtime. 
-All MySQL/MariaDB statements should be replicated to a backup MySQL/MariaDB slave instance.
+All MySQL/MariaDB statements should be replicated to a backup MySQL/MariaDB replica instance.
 
 * Create a snapshot on the NFS storage server.
 * At the same time stop the MySQL replication.
-* Create a MySQL dump of the backup slave.
+* Create a MySQL dump of the backup replica.
 * Push the NFS snapshot to the backup.
 * Push the MySQL dump to the backup.
 * Delete the NFS snapshot.
@@ -316,18 +316,18 @@ This runs two load balancers in front of the application servers.
 
 ==== Database
 
-MySQL/MariaDB Galera Cluster with Master-Slave replication. InnoDB storage engine, MyISAM is not supported, see: xref:configuration/database/linux_database_configuration.adoc#mysql-mariadb-storage-engine[MySQL / MariaDB storage engine].
+MySQL/MariaDB Galera Cluster with primary-replica replication. InnoDB storage engine, MyISAM is not supported, see: xref:configuration/database/linux_database_configuration.adoc#mysql-mariadb-storage-engine[MySQL / MariaDB storage engine].
 For mariadb consider: {mariadb-monitor-url}[MariaDB Monitor] to configure your setup for a failover Scenario.
 
 ==== Backup
 
 Minimum daily backup without downtime. 
-All MySQL/MariaDB statements should be replicated to a backup MySQL/MariaDB slave instance. 
+All MySQL/MariaDB statements should be replicated to a backup MySQL/MariaDB replica instance. 
 To do this, follow these steps:
 
 . Create a snapshot on the NFS storage server.
 . At the same time stop the MySQL replication.
-. Create a MySQL dump of the backup slave.
+. Create a MySQL dump of the backup replica.
 . Push the NFS snapshot to the backup.
 . Push the MySQL dump to the backup.
 . Delete the NFS snapshot.
@@ -340,7 +340,7 @@ See xref:configuration/user/user_auth_ldap.adoc[User Authentication with LDAP] a
 
 ==== LDAP
 
-Read-only slaves should be deployed on every application server for optimal scalability.
+Read-only replicas should be deployed on every application server for optimal scalability.
 
 ==== Session Management
 
@@ -365,8 +365,8 @@ See {owncloud-server-ee-url}[ownCloud Server or Enterprise Edition] for comparis
 
 ==== Redis Configuration
 
-Redis in a master-slave configuration is {cloud-warm-hot-server-url}[a hot failover setup], and is usually sufficient. 
-A slave can be omitted if high availability is provided via other means. 
+Redis in a primary-replica configuration is {cloud-warm-hot-server-url}[a hot failover setup], and is usually sufficient. 
+A replica can be omitted if high availability is provided via other means. 
 And when it is, in the event of a failure, restarting Redis typically occurs quickly enough.
 Regarding Redis cluster, we don’t, usually, recommend it, as it requires a greater level of both maintenance and management in the case of failure. 
 A single Redis server, however, just needs to be rebooted, in the event of failure.
@@ -396,7 +396,7 @@ Once it reaches this point, the node executes the original query.
 
 ==== Why enable it
 
-A Galera Cluster write operation is sent to the master while reads are retrieved from the slaves. 
+A Galera Cluster write operation is sent to the primary while reads are retrieved from the replicas. 
 Since Galera Cluster replication is, by default, not strictly synchronous it could happen that items are requested before the replication has actually taken place.
 
 NOTE: This setting is disabled by default.
