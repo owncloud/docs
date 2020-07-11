@@ -578,6 +578,20 @@ This example shows that columns can also be written underneath:
 |===
 ```
 
+If you want to use block-level content in cells, such as a block image, you need to set the
+cell type to `a`, short for "asciidoc", which treats it as a standalone AsciiDoc document.
+```
+[cols=",,",options="header"]
+|===
+|Classic theme
+|Dark theme
+|Light theme
+a|image:themes/classic.png[ownCloud iOS App - Classic theme]
+a|image:themes/dark.png[ownCloud iOS App - Dark theme]
+a|image:themes/light.png[ownCloud iOS App - Light theme]
+|===
+```
+
 ## Comments
 
 Reference: [`Comments`](https://asciidoctor.org/docs/user-manual/#comments)
