@@ -42,21 +42,14 @@ sending a basic HTTP authentication header.
 | Type 
 | Description
 
-| `email` 
-| string 
-a| The email address for the user (_optional_).
-The user will be emailed a link to set their password, _if_ email is configured correctly.
-
-| `groups` 
+| `groups`
 | array 
 | Groups to add the user to (_optional_).
-Any group that does not already exist, will be created.
+Groups must already exist.
 
 | `password` 
 | string 
 | The required password for the new user.
-A password is *not required*, _if_ an email address is provided.
-If a password is not provided, a temporary one will be generated.
 
 | `userid` 
 | string 
@@ -86,16 +79,6 @@ curl -X POST http://admin:secret@example.com/ocs/v1.php/cloud/users \
 ----
 curl -X POST http://admin:secret@example.com/ocs/v1.php/cloud/users \
    -d userid="Frank" \
-   -d password="frankspassword" \
-   -d groups[]="finance" -d groups[]="management"
-----
-
-.Create the user "Frank" with password "frankspassword", email address "frank@example.com" and add him to the "finance" and "management" groups. The user will be emailed with a link to change the password.
-[source,console]
-----
-curl -X POST http://admin:secret@example.com/ocs/v1.php/cloud/users \
-   -d userid="Frank" \
-   -d email="frank@example.com" \
    -d password="frankspassword" \
    -d groups[]="finance" -d groups[]="management"
 ----
@@ -223,7 +206,9 @@ curl http://admin:secret@example.com/ocs/v1.php/cloud/users/Frank
 === Edit User
 
 Edits attributes related to a user. Users are able to edit _email_,
-_displayname_ and _password_; admins can also edit the quota value.
+_displayname_ and _password_; admins can also edit the _quota_ value.
+Exactly one attribute can be set or modified at a time.
+To set or modify multiple attributes then multiple calls must be made.
 
 IMPORTANT: The Basic Authorization HTTP header must be used to authenticate this request, using the credentials of a user who has sufficient access rights to make the request.
 
