@@ -12,6 +12,7 @@ Run the following commands in your terminal to complete the installation.
 
 * A fresh install of https://www.ubuntu.com/download/server[Ubuntu 18.04] with SSH enabled.
 * This guide assumes that you are connected as the root user.
+* This guide assumes your ownCloud directory is located in `/var/www/owncloud/`
 
 == Preparation
 
@@ -123,9 +124,7 @@ a2enmod dir env headers mime rewrite setenvif
 service apache2 reload
 ----
 
-=== Setup ownCloud
-
-==== Download ownCloud
+=== Download ownCloud
 
 [source,console,subs="attributes+"]
 ----
@@ -135,7 +134,7 @@ tar -xjf owncloud-10.4.1.tar.bz2 && \
 chown -R www-data. owncloud
 ----
 
-==== Install ownCloud
+=== Install ownCloud
 
 [source,console,subs="attributes+"]
 ----
@@ -148,7 +147,7 @@ occ maintenance:install \
     --admin-pass "admin"
 ----
 
-==== Configure ownCloud's Trusted Domains
+=== Configure ownCloud's Trusted Domains
 
 [source,console,subs="attributes+"]
 ----
@@ -156,11 +155,11 @@ myip=$(hostname -I|cut -f1 -d ' ')
 occ config:system:set trusted_domains 1 --value="$myip"
 ----
 
-==== Set Up a Cron Job
+=== Set Up a Cron Job
 
 [source,console,subs="attributes+"]
 ----
-echo "*/15  *  *  *  * /usr/bin/php /path/to/your/owncloud/occ system:cron" \
+echo "*/15  *  *  *  * /var/www/owncloud/occ system:cron" \
   > /var/spool/cron/crontabs/{webserver-user}
 chown {webserver-user}.crontab /var/spool/cron/crontabs/{webserver-user}
 chmod 0600 /var/spool/cron/crontabs/{webserver-user}
@@ -168,17 +167,20 @@ chmod 0600 /var/spool/cron/crontabs/{webserver-user}
 
 [NOTE]
 ====
-If you need to sync your users from an LDAP or Active Directory Server, add this additional xref:configuration/server/background_jobs_configuration.adoc[Cron job].
+If you need to sync your users from an LDAP or Active Directory Server, add this additional xref:configuration/server/background_jobs_configuration.adoc[Cron job]. Every 15 minutes this cron job will sync LDAP users in ownCloud and disable the ones who are not available for ownCloud. Additionally you get a log file in `/var/log/ldap-sync/user-sync.log` for debugging.
+====
 
 [source,console,subs="attributes+"]
 ----
-echo "*/15  *  *  *  * /usr/bin/php /path/to/your/owncloud/occ system:cron" > /var/spool/cron/crontabs/www-data
+echo "*/15 * * * * /var/www/owncloud/occ user:sync 'OCA\User_LDAP\User_Proxy' -m disable -vvv >> /var/log/ldap-sync/user-sync.log 2>&1" > /var/spool/cron/crontabs/www-data
 chown www-data.crontab  /var/spool/cron/crontabs/www-data
 chmod 0600  /var/spool/cron/crontabs/www-data
+mkdir -p /var/log/ldap-sync
+touch /var/log/ldap-sync/user-sync.log
+chown www-data. /var/log/ldap-sync/user-sync.log
 ----
-====
 
-==== Configure Caching and File Locking
+=== Configure Caching and File Locking
 
 Execute these commands:
 
