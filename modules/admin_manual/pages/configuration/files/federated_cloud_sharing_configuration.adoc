@@ -1,5 +1,6 @@
 = Configuring Federation Sharing
 :toc: right
+:toclevels: 1
 :page-aliases: go/admin-sharing-federated.adoc
 
 == Introduction
@@ -38,21 +39,24 @@ mysql -u root -e "update oc_jobs set last_checked=0 where class='OCA\\Federation
 . Add **server 2** to the trusted servers on **server 1**.
 . Now run the cron job in your ownCloud directory (for example `/var/www/owncloud/`).
 +
+[source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} system cron
 ----
 . Now the check should be green
 . Sync now your users with
 +
+[source,console,subs="attributes+"]
 ----
-occ dav:sync-system-addressbook
-occ federation:sync-addressbook
+{occ-command-example-prefix} dav:sync-system-addressbook
+{occ-command-example-prefix} federation:sync-addressbook
 ----
 . Configure automatic acceptance of new federated shares.
 +
+[source,console,subs="attributes+"]
 ----
-occ config:app:set federation auto_accept_trusted --value '0'
-occ config:app:set federatedfilesharing auto_accept_trusted --value 'yes'
+{occ-command-example-prefix} config:app:set federation auto_accept_trusted --value '0'
+{occ-command-example-prefix} config:app:set federatedfilesharing auto_accept_trusted --value 'yes'
 ----
 
 == Working With Proxies
@@ -104,7 +108,7 @@ image:configuration/files/sharing/federated-cloud-sharing/scan-cronjob.png[Check
 
 Alternatively you can use the command line:
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} config:app:set files_sharing cronjob_scan_external_enabled --value 'yes'
 ----
@@ -113,28 +117,28 @@ You can also configure these settings of the cronjob:
 
 . the minimum amount of time since last login of a user so that a scan is triggered (ensures only active users get fed shares synced)
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} config:app:set files_sharing cronjob_scan_external_min_login --value <integer-seconds>
 ----
 
 . the minimum amount of time since last scanned so that the next scan is triggered (avoid frequent scan when active collaboration)
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} config:app:set files_sharing cronjob_scan_external_min_scan --value <integer-seconds>
 ----
 
 . the maximum number of federated share scans per 10 minutes (scan performed only if fed share files got updated)
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} config:app:set files_sharing cronjob_scan_external_batch --value <integer-number>
 ----
 
 Use the following command to force a run of the scanner cronjob:
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} background:queue:execute --force --accept-warning <id-of-fed-scanner-job>
 ----
