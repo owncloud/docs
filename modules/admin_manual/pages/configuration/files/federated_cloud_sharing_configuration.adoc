@@ -82,6 +82,63 @@ image:configuration/files/federation-3.png[image]
 +
 You may disconnect the share at any time by clicking the btn:[trash can] icon.
 
+== Federated Sharing Scanner CronJob Configuration
+
+[IMPORTANT]
+====
+As part of the migration step to 10.5, before enabling the cronjob described below, make sure to remove the system cron job from your crontab that executes legacy **occ incoming-shares:poll**
+====
+
+The Federated Sharing Scanner is a background job used to scan the federated shares to ensure the integrity of the file cache.
+
+On each run the scanner will select federated shares that satisfy these requirements:
+
+. ensure that within a single cron run, at max [cronjob_scan_external_batch] scans will be performed out of all accepted external shares (default 100)
+. a scan of that external share has not been performed within the last [cronjob_scan_external_min_scan] seconds (default 3 hours)
+. the user still exists, and has been active recently, meaning logged in within the last [cronjob_scan_external_min_login] seconds (default 24 hours)
+. there has been a change in the federated remote share root etag or mtime, signaling a mandatory rescan
+
+To enable the cronjob, go to menu:Settings[Admin Settings > Federated Cloud Sharing] and enable the checkbox
+
+image:configuration/files/sharing/federated-cloud-sharing/scan-cronjob.png[Checkbox]
+
+Alternatively you can use the command line:
+
+[source,console]
+----
+{occ-command-example-prefix} config:app:set files_sharing cronjob_scan_external_enabled --value 'yes'
+----
+
+You can also configure these settings of the cronjob:
+
+. the minimum amount of time since last login of a user so that a scan is triggered (ensures only active users get fed shares synced)
+
+[source,console]
+----
+{occ-command-example-prefix} config:app:set files_sharing cronjob_scan_external_min_login --value <integer-seconds>
+----
+
+. the minimum amount of time since last scanned so that the next scan is triggered (avoid frequent scan when active collaboration)
+
+[source,console]
+----
+{occ-command-example-prefix} config:app:set files_sharing cronjob_scan_external_min_scan --value <integer-seconds>
+----
+
+. the maximum number of federated share scans per 10 minutes (scan performed only if fed share files got updated)
+
+[source,console]
+----
+{occ-command-example-prefix} config:app:set files_sharing cronjob_scan_external_batch --value <integer-number>
+----
+
+Use the following command to force a run of the scanner cronjob:
+
+[source,console]
+----
+{occ-command-example-prefix} background:queue:execute --force --accept-warning <id-of-fed-scanner-job>
+----
+
 == Known Issues
 
 === Persistent Locks Are Not Guaranteed
