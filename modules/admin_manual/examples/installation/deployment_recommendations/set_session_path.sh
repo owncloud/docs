@@ -6,4 +6,4 @@ session_path=$(\
     | uniq )
 
 # Set the session save path in /etc/fstab
-echo "tmpfs ${session_path} tmpfs defaults,noatime,mode=1777 0 0" >> /etc/fstab
+echo "tmpfs $session_path tmpfs defaults,noatime,mode=1777 0 0" >> /etc/fstab
