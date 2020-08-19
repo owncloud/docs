@@ -21,9 +21,9 @@ REQUEST_BODY=$(cat <<EOF
 EOF
 )
 
-curl '$SERVER_URI/$API_PATH/' \
+curl "$SERVER_URI/$API_PATH/" \
   -H 'Content-Type: application/xml; charset=UTF-8' \
   -H 'Depth: 1' \
   -X PROPFIND \
-  --data-binary "${REQUEST_BODY}" \
-  --user "${USERNAME}:${PASSWORD}"
+  --data-binary "$REQUEST_BODY" \
+  --user "$USERNAME:$PASSWORD"
