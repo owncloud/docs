@@ -107,6 +107,7 @@ def build(ctx, latest_version, deployment_branch, base_branch):
                 "when": {
                     "event": [
                         "push",
+                        "cron",
                     ],
                 },
             },
@@ -126,6 +127,7 @@ def build(ctx, latest_version, deployment_branch, base_branch):
                 "when": {
                     "event": [
                         "push",
+                        "cron",
                     ],
                 },
             },
@@ -147,6 +149,7 @@ def build(ctx, latest_version, deployment_branch, base_branch):
                 "when": {
                     "event": [
                         "push",
+                        "cron",
                     ],
                     "branch": [
                         deployment_branch,
@@ -171,6 +174,7 @@ def build(ctx, latest_version, deployment_branch, base_branch):
                 "when": {
                     "event": [
                         "push",
+                        "cron",
                     ],
                     "branch": [
                         deployment_branch,
@@ -190,6 +194,7 @@ def build(ctx, latest_version, deployment_branch, base_branch):
                 "when": {
                     "event": [
                         "push",
+                        "cron",
                     ],
                     "status": [
                         "failure",
