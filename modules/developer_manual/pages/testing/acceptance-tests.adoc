@@ -77,8 +77,8 @@ These contain Behat's test cases, called scenarios, which use the Gherkin langua
 
 === `feature/bootstrap`
 
-This folder contains all the Behat contexts. 
-Contexts contain the PHP code required to run Behat's scenarios. 
+This folder contains all the Behat contexts.
+Contexts contain the PHP code required to run Behat's scenarios.
 Every suite has to have one or more contexts associated with it.
 The contexts define the test steps used by the scenarios in the feature files of the test suite.
 
@@ -179,7 +179,7 @@ make test-acceptance-cli BEHAT_FEATURE=tests/acceptance/features/cliProvisioning
 === Running Acceptance Tests for a Tag
 
 
-Some test scenarios are tagged. 
+Some test scenarios are tagged.
 For example, tests that are known to fail and are awaiting fixes are tagged `@skip`.
 To run test scenarios with a particular tag:
 
@@ -254,6 +254,29 @@ To do that, specify `SHOW_OC_LOGS=true`:
 ----
 make test-acceptance-api BEHAT_SUITE=apiTags SHOW_OC_LOGS=true
 ----
+
+=== Get Detailed Information About API Requests
+
+If you set any of these environment variables, then the test runner will display information about the details of each request to and response from the API.
+This generates a large amount of output, but can be useful to understand exactly what a test is doing and why it fails.
+
+[cols="20,80",options="header"]
+|===
+|Environment Variable
+|Description
+|`DEBUG_ACCEPTANCE_REQUESTS`
+|Output the details of each API request.
+|`DEBUG_ACCEPTANCE_RESPONSES`
+|Output the details of each API response.
+|`DEBUG_ACCEPTANCE_API_CALLS`
+|Output the details of each API request and response.
+|===
+
+[source,bash]
+----
+make test-acceptance-api BEHAT_SUITE=apiTags OC_TEST_ALT_HOME=1
+----
+
 
 === Optional Environment Variables
 
@@ -570,7 +593,7 @@ This reduces some duplication in feature files.
 
 == Controlling Running Test Scenarios In Different Environments
 
-A feature or test scenario might only be relevant to run on a system-under-test that has a particular environment. 
+A feature or test scenario might only be relevant to run on a system-under-test that has a particular environment.
 For example, a particular app enabled.
 
 To allow the test runner script to run the features and scenarios relevant to the system-under-test the feature file or individual scenarios are tagged.
@@ -632,7 +655,7 @@ When a feature or scenario requires a core app to be enabled then tag it like:
 @systemtags-app-required
 ----
 
-The above apps might be disabled on a system-under-test. 
+The above apps might be disabled on a system-under-test.
 Tagging the feature or scenario allows all tests for the app to be quickly run or skipped.
 
 For tests in an app repository, do not tag them with the app name (e.g., `files_texteditor-app-required`).
@@ -642,7 +665,7 @@ It is already a given that the app in the repository is required for running the
 
 ==== Skip UI Tests On A Particular Browser
 
-Some browsers have difficulty with some automated test actions. 
+Some browsers have difficulty with some automated test actions.
 To skip scenarios for a browser tag them with the relevant tags:
 
 [source,gherkin]
@@ -691,13 +714,13 @@ When writing scenarios for new or fixed federated features that are not expected
 |skip the scenario if the test is running against an OCIS system.
 |`@skipOnStorage:ceph`
 |skip the scenario if the test is running with `ceph` backend storage.
-|`@skipOnStorage:scality` 
+|`@skipOnStorage:scality`
 |skip the scenario if the test is running with `scality` backend storage.
-|`@skipOnEncryption` 
+|`@skipOnEncryption`
 |skip the scenario if the test is running with encryption enabled.
-|`@skipOnEncryptionType:masterkey` 
+|`@skipOnEncryptionType:masterkey`
 |skip the scenario if the test is running with `masterkey` encryption enabled.
-|`@skipOnEncryptionType:user-keys` 
+|`@skipOnEncryptionType:user-keys`
 |skip the scenario if the test is running with `user-keys` encryption enabled.
 |===
 
@@ -707,11 +730,11 @@ When writing scenarios for new or fixed federated features that are not expected
 |===
 |Annotation
 |Description
-|`@smokeTest` 
+|`@smokeTest`
 |this scenario has been selected as part of a base set of smoke tests.
-|`@TestAlsoOnExternalUserBackend` 
+|`@TestAlsoOnExternalUserBackend`
 |this scenario is selected as part of a base set of tests to run when a special user backend is in place (e.g., LDAP).
-|`@local_storage` 
+|`@local_storage`
 |this scenario requires and tests the local storage feature.
 |`@mailhog`
 |this scenario requires an email server running
@@ -723,10 +746,10 @@ When writing scenarios for new or fixed federated features that are not expected
 |===
 |Annotation
 |Description
-|`@insulated` 
-|this makes the browser driver restart the browser session between each scenario. 
-It helps isolate the browser state. 
-When the browser session is recording, there is a separate video for each scenario. 
+|`@insulated`
+|this makes the browser driver restart the browser session between each scenario.
+It helps isolate the browser state.
+When the browser session is recording, there is a separate video for each scenario.
 Use this tag on all UI scenarios.
 |`@disablePreviews`
 |generating previews/thumbnails takes time. Use this tag on UI test scenarios that do not need to test thumbnail behavior.
