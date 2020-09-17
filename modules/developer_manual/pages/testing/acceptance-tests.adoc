@@ -241,13 +241,33 @@ When you run acceptance tests, the user names and attributes will be replaced.
 
 === Displaying the ownCloud Log
 
-
 It can be useful to see the tail of the ownCloud log when the test run ends.
 To do that, specify `SHOW_OC_LOGS=true`:
 
 [source,bash]
 ----
 make test-acceptance-api BEHAT_SUITE=apiTags SHOW_OC_LOGS=true
+----
+
+=== Step Through Each Step of a Scenario
+
+When doing test development, or investigating problems with a test or with the system-under-test,
+it is useful to be able to stop the test at each step while investigating what happens.
+Setting `STEP_THROUGH=true` will cause the test runner to pause after each step.
+Press enter to resume the test and execute the next test step.
+
+[source,bash]
+----
+make test-acceptance-api STEP_THROUGH=true BEHAT_FEATURE=tests/acceptance/features/apiComments/createComments.feature:35
+...
+  Scenario: sharee comments on a group shared file
+    Given group "grp1" has been created
+  [Paused after "group "grp1" has been created" - press enter to continue]
+    And user "Brian" has been added to group "grp1"
+  [Paused after "user "Brian" has been added to group "grp1"" - press enter to continue]
+    And user "Alice" has uploaded file "filesForUpload/textfile.txt" to "/myFileToComment.txt"
+  [Paused after "user "Alice" has uploaded file "filesForUpload/textfile.txt" to "/myFileToComment.txt"" - press enter to continue]
+...
 ----
 
 === Get Detailed Information About API Requests
