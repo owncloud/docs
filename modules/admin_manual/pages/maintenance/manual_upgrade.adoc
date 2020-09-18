@@ -6,6 +6,29 @@
 
 This section describes how to manually upgrade your ownCloud installation.
 
+Change to the directory where occ is located, generally '/var/www/owncloud'
+
+=== Review Third-Party Apps
+
+Review any installed third-party apps for compatibility with the new ownCloud release.
+Ensure that they are all disabled before beginning the upgrade.
+Third party apps are all apps that are not distributed by https://marketplace.owncloud.com/publishers/owncloud[ownCloud]
+or not listed in xref:installation/apps_supported.adoc[Supported Apps in ownCloud].
+
+. Disable via Command Line
++
+[source,console,subs="attributes+"]
+----
+# This command lists all apps by <app-id> and app version
+{occ-command-example-prefix} app:list
+
+# This command disables the app with the given <app-id>
+{occ-command-example-prefix} app:disable <app-id>
+----
+
+. Disable via Browser +
+Goto menu:Settings[Admin > Apps] and disable all third-party apps
+
 === Enable Maintenance Mode
 
 Put your server in xref:configuration/server/occ_command.adoc#maintenance-commands[maintenance mode] and *disable xref:configuration/server/background_jobs_configuration.adoc#cron-jobs[Cron jobs]*.
@@ -53,27 +76,8 @@ mysqldump -u<username> -p<password> <databasename> > <ownCloud-Version-Dump.sql>
 
 In clustered environment please check that all nodes are in maintenance mode.
 
+In some environments you may need to specifiy a path for the backup file, such as your home directory
 
-=== Review Third-Party Apps
-
-Review any installed third-party apps for compatibility with the new ownCloud release.
-Ensure that they are all disabled before beginning the upgrade.
-Third party apps are all apps that are not distributed by https://marketplace.owncloud.com/publishers/owncloud[ownCloud]
-or not listed in xref:installation/apps_supported.adoc[Supported Apps in ownCloud].
-
-. Disable via Command Line
-+
-[source,console,subs="attributes+"]
-----
-# This command lists all apps by <app-id> and app version
-{occ-command-example-prefix} app:list
-
-# This command disables the app with the given <app-id>
-{occ-command-example-prefix} app:disable <app-id>
-----
-
-. Disable via Browser +
-Goto menu:Settings[Admin > Apps] and disable all third-party apps
 
 === Download the Latest Installation
 
@@ -135,6 +139,8 @@ In addition, if there are installed apps (whether compatible or incompatible wit
 
 If you are using third party or enterprise applications, look in your new `/var/www/owncloud/apps/` directory to see if they are present. 
 If not, copy them from your old `apps/` directory to your new one.
+
+Copy from your backup 'apps-external' directory to '/var/www/owncloud/'
 
 === Permissions
 
