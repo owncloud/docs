@@ -12,6 +12,8 @@ This project is a port of the ownCloud documentation, that was previously genera
 
 To get started contributing to the documentation, please refer to the [Getting Started Guide](./docs/getting-started.md).
 
+Trigger CI.
+
 ## Generating the Documentation
 
 To generate the documentation, whether in HTML or PDF format, please refer to the [Building the Documentation guide](./docs/build-the-docs.md).
