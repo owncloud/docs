@@ -29,16 +29,22 @@ You have control of a number of user permissions on file shares:
 ** Allow users to send mail notification for shared files
 ** Set the language used for public mail notification for shared files
 ** Allow users to share file via social media
+* Set default expiration date for user shares
+** Set the number of days to expire after
+** Enforce as maximum expiration date
+* Set default expiration date for group shares
+** Set the number of days to expire after
+** Enforce as maximum expiration date
 * Automatically accept new incoming local user shares
 * Allow resharing
-* Default user and group share permissions
+* Allow sharing with groups
 ** Restrict users to only share with users in their groups
 ** Restrict users to only share with groups they are a member of
-* Allow email notifications of new public link shares
+* Allow users to send mail notification for shared files to other users
 * Exclude groups from creating shares
 * Allow username autocompletion in share dialog
 ** Restrict enumeration to group members
-** Default user and group share permissions
+* Default user and group share permissions
 * Extra field to display in autocomplete results
 
 NOTE: ownCloud includes a xref:configuration/server/security/password_policy.adoc[Share Link Password Policy app].
@@ -58,14 +64,17 @@ Check this option to enable creating public link shares for people who are not o
 
 Check this option to allow anyone to upload files to public link shares.
 
-==== Enforce password protection
+==== Enforce password protection of public link shares
 
-Check this option to force users to set a password on all public link shares.
+Check these options to force users to set a password on public link shares.
+Passwords can be enforced on any or all of read-only, read-write, read-write-delete and upload-only (File Drop) public link shares.
 This does not apply to local user and group shares.
 
-==== Set default expiration date
+==== Set default expiration date of public link shares
 
 Check this option to set a default expiration date on public link shares.
+Check "Enforce as maximum expiration date" to limit the maximum expiration date to be the default.
+Users can choose an earlier expiration date if they wish.
 
 ==== Allow users to send mail notification for shared files
 
@@ -101,6 +110,34 @@ links via *Twitter*, *Facebook*, *Google+*, *Diaspora*, and email.
 
 image:configuration/files/sharing/sharing-files-via-social-media.png[ownCloud social media sharing links]
 
+=== Set default expiration date for user shares
+
+Check this option to set a default expiration date when sharing with another user.
+The user can change or remove the default expiration date of a share.
+
+==== Set the number of days to expire after
+
+Set the default number of days that user shares will expire. The default value is 7 days.
+
+==== Enforce as maximum expiration date
+
+Check this option to limit the maximum expiration date to be the default.
+Users can choose an earlier expiration date if they wish.
+
+=== Set default expiration date for group shares
+
+Check this option to set a default expiration date when sharing with a group.
+The user can change or remove the default expiration date of a share.
+
+==== Set the number of days to expire after
+
+Set the default number of days that group shares will expire. The default value is 7 days.
+
+==== Enforce as maximum expiration date
+
+Check this option to limit the maximum expiration date to be the default.
+Users can choose an earlier expiration date if they wish.
+
 === Automatically accept new incoming local user shares
 Disabling this option activates the "Pending Shares" feature. Users will be notified and have to accept new
 incoming user shares before they appear in the file list and are available for access giving them more control
@@ -110,6 +147,10 @@ xref:release_notes.adoc#pending-shares[pending shares] can be found in the relea
 === Allow resharing
 
 Check this option to enable users to re-share files shared with them.
+
+=== Allow sharing with groups
+
+Check this option to enable users to share with groups.
 
 === Default user and group share permissions
 
@@ -135,7 +176,7 @@ More information about
 xref:release_notes.adoc#more-granular-sharing-restrictions[more granular sharing restrictions]
 can be found in the release notes.
 
-=== Allow users to send mail notification for shared files
+=== Allow users to send mail notification for shared files to other users
 
 Check this option to enable users to send an email notification to every ownCloud user that the file is shared with.
 
@@ -376,7 +417,7 @@ NOTE: SabreDAV automatically deletes the target file first before moving, so req
 |copy a file from outside the shared folder into the shared folder
 
 |**copy_in_overwrite**
-a|copy a file from outside the shared folder and overwrite a file inside the shared folder 
+a|copy a file from outside the shared folder and overwrite a file inside the shared folder
 
 NOTE: SabreDAV automatically deletes the target file first before copying, so requires DELETE permission too.
 
