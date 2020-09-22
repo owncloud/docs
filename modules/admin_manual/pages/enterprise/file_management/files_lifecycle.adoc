@@ -1,8 +1,8 @@
 = File Lifecycle Management
 :toc: right
-:impersonate_app: https://marketplace.owncloud.com/apps/impersonate
-:activity_app: https://marketplace.owncloud.com/apps/activity
-:auditing_app: https://marketplace.owncloud.com/apps/admin_audit
+:impersonate_app_url: https://marketplace.owncloud.com/apps/impersonate
+:activity_app_url: https://marketplace.owncloud.com/apps/activity
+:auditing_app_url: https://marketplace.owncloud.com/apps/admin_audit
 
 == Introduction
 
@@ -15,10 +15,10 @@ To impose a workflow of Use => Archive => Delete, the extension equips ownCloud 
 
 Depending on the desired level of enforcement, the extension provides two policies to control the restoration of files from the archive if they are still needed:
 
-- xref:soft_policy[Soft policy]: Users can restore files in self-service
-- xref:hard_policy[Hard policy]: Only administrators or group administrators can restore files on request
+- xref:soft-policy[Soft policy]: Users can restore files in self-service
+- xref:hard-policy[Hard policy]: Only administrators or group administrators can restore files on request
 
-Users can view the lifecycle status for a file and see when the file is scheduled for archiving or deletion. All lifecycle events of a file are displayed transparently. They can be tracked for individual files as well as for a whole user account using the {activity_app}[Activity] stream. To stay informed, users can also receive regular Activity summaries by e-mail. For auditing purposes the extension integrates with the {auditing_app}[Auditing] app to provide all events of interest in the logs.
+Users can view the lifecycle status for a file and see when the file is scheduled for archiving or deletion. All lifecycle events of a file are displayed transparently. They can be tracked for individual files as well as for a whole user account using the {activity_app_url}[Activity] stream. To stay informed, users can also receive regular Activity summaries by e-mail. For auditing purposes, the extension integrates with the {auditing_app_url}[Auditing] app to provide all events of interest in the logs.
 
 == Setup & Configuration
 
@@ -27,9 +27,10 @@ Users can view the lifecycle status for a file and see when the file is schedule
 File Lifecycle Management uses the _upload time_ of files (server time at which it first appeared on the ownCloud server) to determine when to archive them. As ownCloud Server generally does not store this metadata, the File Lifecycle Management extension takes care of this when it is enabled.
 
 When File Lifecycle Management is set up on an existing ownCloud installation, you therefore have to set an _upload time_ for all files that existed before the extension has been enabled to allow the archiving policies to do their job.
-To set an upload time for all files that do not yet have one, you can use the `lifecycle:set-upload-time` _occ_ command. 
+To set an upload time for all files that do not yet have one, you can use the _occ_ command `lifecycle:set-upload-time`. 
 
 TIP: Files without an _upload time_ will not be considered for archiving.
+
 TIP: You only have to conduct this process once when setting up File Lifecycle Management on an installation with existing files. Files added after enabling File Lifecycle Management will be tracked automatically.
 
 Example to set missing upload time values to November, 1st 2019: 
@@ -59,7 +60,7 @@ Example to set the time passed since upload (or restore) for archiving files to 
 {occ-command-example-prefix} config:app:set files_lifecycle archive_period --value='90'
 ----
 
-To query existing values use this example command:
+To query existing values, use this example command:
 [source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} config:app:get files_lifecycle archive_period
@@ -81,7 +82,7 @@ The _soft policy_ is used by default. To switch from the hard policy to the soft
 
 The _hard policy_ is designed to enforce strict controls on user data, forcing archiving after the defined time and requiring escalated permissions in order to restore. If the archived data is still needed, users need to get in contact with a privileged manager and request the restoration.
 
-TIP: When the _hard policy_ is in place only administrators (or also group administrators, depending the configuration) are able to restore files from the archive by impersonating the respective users. The {impersonate_app}[Impersonate app] has to be installed and enabled as a prerequisite. Apart from that, system administrators can also use _occ_ commands to restore data from the archive (see section xref:restoring_files[Restoring Files]).
+TIP: When the _hard policy_ is in place only administrators (or also group administrators, depending the configuration) are able to restore files from the archive by impersonating the respective users. The {impersonate_app_url}[Impersonate app] has to be installed and enabled as a prerequisite. Apart from that, system administrators can also use _occ_ commands to restore data from the archive (see section xref:restoring-files[Restoring Files]).
 
 To put the _hard policy_ in place, use this _occ_ command:
 
@@ -164,11 +165,11 @@ To enable the user interface components again, this config value needs to be rem
 
 == Audit Events
 
-During archiving, restoring and expiration, Audit events are emitted. Logging those to the audit.log requires the minimum version 2.0.0 of the {auditing_app}[Auditing] app.
+During archiving, restoring and expiration, Audit events are emitted. Logging those to the audit.log requires the minimum version 2.0.0 of the {auditing_app_url}[Auditing] app.
 
 == Further Notes about Archived Files
 
 - File shares will disappear after archiving. When restoring archived files, shares will also be restored.
-- Users' archives currently can't be transferred with `occ transfer-ownership`
+- Users' archives currently can't be transferred with the occ command `transfer-ownership`
 - Files within a user's trash bin are not archived. The regular trash bin deletion policies have to be used to take care of those.
 - Archived files count towards the user's quota
