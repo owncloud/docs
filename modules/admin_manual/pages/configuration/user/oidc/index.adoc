@@ -21,11 +21,12 @@
 
 == Prerequisites
 - OpenID Connect requires an external Identity Provider
-- A distributed memcache setup is required to operate this app - such as Redis or Memcached. Please follow ref:configuration/server/caching_configuration.adoc[the documentation] on how to set up caching.
+- A distributed memcache setup is required to operate this app - such as Redis or Memcached. Please follow xref:configuration/server/caching_configuration.adoc[the documentation] on how to set up caching.
 
 == Setup and configuration
 
 Setting up ownCloud Server to work with OpenID Connect requires a couple of components to work together:
+
 - An external Identity Provider configured to work with the ownCloud components
 - The {openid-connect-app}[OpenID Connect App] installed on ownCloud Server
 - Configuration for the OpenID Connect App in `config.php` on ownCloud Server
@@ -34,6 +35,7 @@ Setting up ownCloud Server to work with OpenID Connect requires a couple of comp
 The sections below will explain these areas and provide configuration examples using {konnect}[Kopano Konnect] as the external Identity Provider.
 
 For the configuration examples, let's assume we have
+
 - ownCloud Server available as `https://cloud.example.com`
 - Kopano Konnect available as `https://idp.example.com`
 
@@ -42,6 +44,7 @@ For the configuration examples, let's assume we have
 In order to get your Identity Provider running and ready to be used with ownCloud, you have to obtain Kopano Konnect and run it with a set of configuration values which can be provided as environment variables. See the {konnect-docs}[Kopano Konnect documentation] for details.
 
 Specifically, you have to
+
 - provide basic configuration
 - set up a reverse proxy to expose the routes required to connect to Kopano Konnect. You'll find instructions in the {konnect-webserver}[Kopano Konnect documentation].
 - register the ownCloud Clients
@@ -51,7 +54,7 @@ TIP: Kopano Konnect can be set up via Docker. Images are available on Docker Hub
 ==== Register ownCloud Clients
 
 To allow the ownCloud Clients (Web/Desktop/Android/iOS) to interact with the Identity Provider, you have to register them as clients. In the case of Kopano Konnect you can do this using Konnect's `identifier-registration.yaml`.
-Below you find the default values for the regular ownCloud Clients. Other environments might require a different set of values. 
+Below you find the default values for the regular ownCloud Clients. Other environments might require a different set of values.
 
 TIP: When registering ownCloud as an OpenID Client, use `https://cloud.example.net/index.php/apps/openidconnect/redirect` as the redirect URL. If {openid-connect-frontchannel-logout-url}[OpenID Connect Front-Channel Logout 1.0] is supported, please enter `https://cloud.example.net/index.php/apps/openidconnect/logout` as the logout URL within the client registration of the OpenID Provider.
 
@@ -74,6 +77,7 @@ TIP: When registering ownCloud as an OpenID Client, use `https://cloud.example.n
 === Configure ownCloud Server
 
 To set up ownCloud Server to work with OpenID Connect, you have to
+
 1. Install the OpenID Connect App
 2. Configure config.php
 3. Set up service discovery
@@ -154,6 +158,7 @@ To make the endpoint available under the static service discovery path, it is re
 `RewriteRule ^\.well-known/openid-configuration /index.php/apps/openidconnect/config [P]`
 
 TIP: Depending on the respective infrastructure setup there can be other ways to solve this. In any case, please make sure not to use redirect rules as this will violate the OpenID Connect specification.
+
 TIP: Once service discovery is available as described above, the ownCloud Clients will attempt to connect via OpenID Connect.
 
 == Supported Identity Providers
