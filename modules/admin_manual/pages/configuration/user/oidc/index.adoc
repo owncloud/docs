@@ -165,22 +165,29 @@ TIP: Once service discovery is available as described above, the ownCloud Client
 
 ownCloud Server can work with Identity Providers that support OpenID Connect. There are many Identity Providers available and the OpenID Connect implementations vary a lot in terms of supported features as well as configuration needs. Please get in touch with ownCloud Consulting if you need help with a specific Identity Provider.
 
-== Which client versions support OIDC?
+== ownCloud desktop and mobile clients
+
+ownCloud desktop and mobile clients detect if OIDC is available (service discovery), and use this login method when a new account is created.
+
+=== Which client versions support OIDC?
+
 - Desktop >= 2.7.0
 - Android >= 2.15
 - iOS >= 1.2
 
-== Migration to OpenID Connect
-=== Basic authentication to OIDC
+=== Migrate clients from basic authentication to OIDC
 
-If your users log in via basic authentication (username/password) against ownCloud Server and you are not using OAuth2 to authorize the ownCloud Clients, a migration to OIDC can be conducted as follows:
+If your users are logged in to their desktop and mobile clients via basic authentication (username/password) against ownCloud Server and you are not using OAuth2 to authorize the ownCloud clients, a migration to OIDC can be conducted as follows:
 
 1. Make sure you have a working OIDC configuration based on the above sections
 2. Enable the OpenID Connect App
+3. Enable xref:configuration/server/config_sample_php_parameters.adoc#enforce-token-only-authentication-for-apps-and-clients-connecting-to-owncloud[token only authentication]
 
-Once the OpenID Connect App is enabled (and service discovery is properly set up), the ownCloud Clients will ask the users to re-authenticate. After a successful re-authentication, the migration is done.
+Once the OpenID Connect App is enabled, token only authentication is enforced, and service discovery is properly set up, the ownCloud Clients will ask the users to re-authenticate. After a successful re-authentication, the migration is done.
 
-=== OAuth2 to OIDC
+To connect legacy clients, users have to generate xref:user_manual:personal_settings/security.adoc#app-passwords-tokens[special app passwords (tokens)].
+
+=== Migrate clients from OAuth2 to OIDC
 
 If you use OAuth2 for client authorization, a migration to OIDC can be conducted as follows:
 
@@ -190,6 +197,6 @@ If you use OAuth2 for client authorization, a migration to OIDC can be conducted
 
 Once the OAuth2 App is disabled (and service discovery is properly set up), the ownCloud Clients will ask the users to re-authenticate. After a successful re-authentication, the migration is done.
 
-=== SAML to OIDC
+== Migrate web login (and client login) from SAML to OIDC
 
 If you are using SAML/SSO, a migration to OIDC depends on your Identity Provider and is not straight forward. Please get in touch with ownCloud Consulting to plan the migration.
