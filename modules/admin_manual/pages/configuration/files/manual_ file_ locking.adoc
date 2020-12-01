@@ -1,0 +1,35 @@
+= Manual File Locking
+:toc: right
+
+== Introduction
+
+ownCloud Server 10.5 comes with great enhancements for content collaboration. Manual file locking allows users to lock files in shared areas while working on them in order to prevent concurrent changes from other users (check-in/check-out).
+
+The feature builds on the WebDAV Locks backend which has been introduced with Server 10.1 and is now available in the ownCloud Web Interface. Using the context menu of files, every user who has access can lock them. Users can recognize locked files by the means of a new lock indicator. While a file is locked, other users can still access it but they can not make any changes. Locked files can manually be unlocked by the lock owner (the user who locked the file; exclusive locking) using the "Locks" tab in the file details view (right sidebar).
+
+== Installation
+
+By default locks set in the web interface will expire after 30 minutes. The maximum lock time by default is 24 hours.
+
+NOTE: The user-facing components in the web interface are disabled by default. Administrators can enable the feature by executing the following occ command: 
+
+----
+occ config:app:set files enable_lock_file_action --value yes
+----
+
+== Configuration
+
+To prevent files being locked infinitely, there is a mechanism that automatically expires locks after a certain time. The expiration time of locks can be configured via the "Manual File Locking" section in the Admin -> Additional settings or using occ commands:
+
+Default timeout for the locks is if not specified (in seconds): Maximum lifetime of a lock set via the web interface (or by not specifying a timeout value when calling the WebDAV Locks API)
+
+----
+occ config:app:set files lock_timeout_default --value 1800
+----
+
+Maximum timeout for the locks (in seconds): Maximum lifetime of locks which is allowed to be set by calling the WebDAV Locks API
+
+----
+occ config:app:set files lock_timeout_max --value 86400
+----
+
