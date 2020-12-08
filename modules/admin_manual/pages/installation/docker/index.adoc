@@ -3,19 +3,23 @@
 
 ownCloud can be installed using Docker, using
 https://hub.docker.com/r/owncloud/server/tags[the official ownCloud Docker image].
-This official image works standalone (e.g. for a quick evaluation with `docker run -p{std-port-http}:{std-port-http} owncloud/server`)
-but it is designed to work with a data volume in
-the host filesystem and with separate _MariaDB_ and _Redis_ containers.
+This official image works standalone for a quick evaluation, but is designed to be used in a docker-compose setup.
 
+== Quick Evaluation
+
+`docker run -e OWNCLOUD_DOMAIN=localhost:{std-port-http} -p{std-port-http}:{std-port-http} owncloud/server`
+
+== Docker Compose
 
 The configuration:
 
 * exposes ports {std-port-http}, allowing for HTTP connections.
+* uses separate _MariaDB_ and _Redis_ containers.
 * mounts the data and MySQL data directories on the host for persistent storage.
 
-== Installation on a Local Machine
+The following instructions assume you install locally. For remote access, the value of OWNCLOUD_DOMAIN must be adapted.
 
-To use it, first create a new project directory. Then copy and paste the sample
+First, create a new project directory. Then copy and paste the sample
 `docker-compose.yml` from this page
 into that new directory. Next, create a .env configuration file, which contains the required
 configuration settings. Only a few settings are required, these are:
