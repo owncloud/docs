@@ -14,13 +14,16 @@ files
  files:transfer-ownership   All files and folders are moved to another user
                             - outgoing shares are moved as well (incoming shares are
                             not moved as the sharing user holds the ownership of the respective files).
+ files:troubleshoot-transfer-ownership
+                            Scan for problems that might have occurred while running ownership transfer
+
 ----
 
-NOTE: These commands are not available in xref:maintenance-commands[single-user (maintenance) mode].
+IMPORTANT: These commands are not available in xref:maintenance-commands[single-user (maintenance) mode].
 
 == The files:check-cache command
 
-The main purpose for this command is to clean the cache for objectstores (objectstore and files_primary_S3 apps) as primary storage, but it is not limited to only those. 
+The main purpose for this command is, to clean the cache for objectstores (objectstore and files_primary_S3 apps) as primary storage, but it is not limited to only those.
 It can be used for any other storage type as long it is the primary storage.
 
 Files in the primary storage could be deleted outside of ownCloud, leaving information in ownCloud's file cache.
@@ -28,8 +31,8 @@ This command intends to check if the target file can be read from the primary ba
 
 [NOTE]
 ====
-Removing files directly from the primary storage is not supported and should not happen. 
-As such, the cases where you need to run this command should be extremely rare. 
+Removing files directly from the primary storage is not supported and should not happen.
+As such, the cases where you need to run this command should be extremely rare.
 This is why this command is only provided to check for one file instead of scanning the whole of ownCloud's filesystem.
 ====
 
@@ -60,26 +63,28 @@ Examples of checking files for user maria:
 [source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} files:check-cache maria welcome.txt
+
 welcome.txt has been accessed properly
 ----
 
 [source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} files:check-cache maria maria@smbhome/myfile.txt
+
 Ignoring maria@smbhome/myfile.txt because it is shared or not inside the primary storage
 
 ----
 
 == The files:checksums:verify command
 
-ownCloud supports file integrity checking, by computing and matching checksums. 
+ownCloud supports file integrity checking, by computing and matching checksums.
 Doing so ensures that transferred files arrive at their target in the exact state as they left their origin.
 
-In some rare cases, wrong checksums are written to the database which leads to synchronization issues, such as with the Desktop Client. 
+In some rare cases, wrong checksums are written to the database which leads to synchronization issues, such as with the Desktop Client.
 To mitigate such problems a new command is available: `occ files:checksums:verify`.
 
-Executing the command recalculates checksums, either for all files of a user or within a specified filesystem path on the designated storage. 
-It then compares them with the values in the database. 
+Executing the command recalculates checksums, either for all files of a user or within a specified filesystem path on the designated storage.
+It then compares them with the values in the database.
 The command also offers an option to repair incorrect checksum values (`-r, --repair`).
 
 CAUTION: Executing this command might take some time depending on the file count.
@@ -89,6 +94,7 @@ Below is sample output that you can expect to see when using the command.
 [source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} files:checksums:verify
+
 This operation might take very long.
 Mismatch for files/welcome.txt:
  Filecache:   SHA1:eeb2c08011374d8ad4e483a4938e1aa1007c089d MD5:368e3a6cb99f88c3543123931d786e21 ADLER32:c5ad3a63
@@ -102,13 +108,13 @@ Mismatch for thumbnails/9/2048-2048-max.png:
 
 [width="100%",cols="20%,70%",]
 |===
-|`-r, --repair`         
+|`-r, --repair`
 |Repair filecache-entry with mismatched checksums.
 
-|`-u, --user=USER`       
+|`-u, --user=USER`
 |Specific user to check.
 
-|`-p, --path=PATH`       
+|`-p, --path=PATH`
 |Path to check relative to user folder. [default: ""].
 For example, if the user's id was "john" and the `--path` value was "tree/apple", the command would check the ownCloud directory `/john/files/tree/apple`.
 |===
@@ -185,7 +191,7 @@ To get a list of scannable mounts for a given user, use the following command:
 {occ-command-example-prefix} files_external:list user_id
 ----
 
-TIP: Mounts are only scannable at the point of origin. 
+TIP: Mounts are only scannable at the point of origin.
 Scanning of shares including federated shares is not necessary on the receiver side and therefore not possible.
 
 NOTE: Mounts based on session credentials can not be scanned as the users credentials are not available to the occ command set.
@@ -195,8 +201,8 @@ The `--path`, `--all`, `--group`, `--groups` and `[user_id]` parameters are excl
 
 === The `--repair` Option
 
-As noted above, repairs can be performed for individual users, groups of users, and for all users in an ownCloud installation. 
-What's more, repair scans can be run even if no files are known to need repairing and if one or more files are known to be in need of repair. 
+As noted above, repairs can be performed for individual users, groups of users, and for all users in an ownCloud installation.
+What's more, repair scans can be run even if no files are known to need repairing and if one or more files are known to be in need of repair.
 Two examples of when files need repairing are:
 
 * If folders have the same entry twice in the web UI (known as a '__ghost folder__'), this can also lead to strange error messages in the desktop client.
@@ -209,7 +215,7 @@ The `--repair` option can be run within two different scenarios:
 * Requiring a downtime when used on all affected storages at once.
 * Without downtime, filtering by a specified User Id.
 
-The following commands show how to enable single user mode, run a repair file scan in bulk on all storages, and then disable single user mode. 
+The following commands show how to enable single user mode, run a repair file scan in bulk on all storages, and then disable single user mode.
 This way is much faster than running the command for every user separately, but it requires single user mode.
 
 [source,console,subs="attributes+"]
@@ -230,30 +236,109 @@ TIP: If many users are affected, it could be convenient to create a shell script
 
 == The files:transfer-ownership command
 
-You may transfer all files and shares from one user to another, including to a user who has never logged in yet. 
-This is useful before removing a user. 
+You may transfer all files and shares from one user to another, including to a user who has never logged in yet.
+This is useful before removing a user.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} files:transfer-ownership --help
+ Usage:
+   files:transfer-ownership [options] [--] <source-user> <destination-user>
+----
+
+=== Arguments
+
+[width="100%",cols="20%,70%",]
+|===
+| `source-user`      | owner of files which shall be moved
+| `destination-user` | user who will be the new owner of the files
+|===
+
+=== Options
+
+[width="100%",cols="35%,70%",]
+|===
+| `--path=[PATH]`        | selectively provide the path to transfer. +
+For example --path="folder_name"
+| `-s, +
+--accept-skipped-shares` | always confirm to continue in case of skipped shares.
+|===
+
 For example, to move all files from `<source-user>` to `<destination-user>`, use the following command:
 
 [source,console,subs="attributes+"]
 ----
-{occ-command-example-prefix} files:transfer-ownership <source-user> <destination-user>
-----
-
-You can also move a limited set of files from `<source-user>` to `<destination-user>` by making use of the `--path` switch, as in the example below. 
-Ownership of `folder/to/move` and all files and folders which it contains will be transferred to `<destination-user>`.
-
-[source,console,subs="attributes+"]
-----
-{occ-command-example-prefix} files:transfer-ownership --path="folder/to/move" \
+{occ-command-example-prefix} files:transfer-ownership \
     <source-user> \
     <destination-user>
 ----
 
-When using this command, please keep the following in mind:
+You can also move a limited set of files from `<source-user>` to `<destination-user>` by making use of the `--path` switch, as in the example below.
+Ownership of `folder/to/move` and all files and folders which it contains will be transferred to `<destination-user>`.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} files:transfer-ownership \
+    --path="folder/to/move" \
+    <source-user> \
+    <destination-user>
+----
+
+Please keep the following in mind when using this command:
 
 . The directory provided to the `--path` switch *must* exist inside `data/<source-user>/files`.
-. The directory and its contents won't be moved as-is between the users. 
-  It will be moved into the destination user's `files` directory, into a directory name which follows the format: `transferred from <source-user> on <timestamp>`. 
+. The directory and its contents won't be moved as-is between the users.
+  It will be moved into the destination user's `files` directory, into a directory name which follows the format: `transferred from <source-user> on <timestamp>`.
   Using the example above, it will be stored under: `data/<destination-user>/files/transferred from <source-user> on 20170426_124510/`
-. Currently file versions can't be transferred. 
+. Currently file versions can't be transferred.
   Only the latest version of moved files will appear in the destination user's account.
+
+== The files:troubleshoot-transfer-ownership command
+
+This command is used to scan for problems, that might have occurred during a run of
+ownership transfer using the above command `files:transfer-ownership`.
+It can also be used to automatically attempt to fix problems.
+For example, transferred shares that may now have an invalid share owner.
+
+NOTE: By default, the command performs a dry run and displays the problems found to the console output.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} files:troubleshoot-transfer-ownership --help
+ Usage:
+   files:troubleshoot-transfer-ownership [options] [--] [<type>]
+----
+
+=== Arguments
+
+[width="100%",cols="30%,90%",]
+|===
+| `type`          | "all", "invalid-owner", "invalid-initiator", +
+[default: ""]
+|===
+
+=== Options
+
+[width="100%",cols="20%,70%",]
+|===
+| `-f, --fix`     | perform auto-fix for found problems
+| `-u, --uid=UID` | scope for particular user
+|===
+
+Run the command with one of the type arguments:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} files:troubleshoot-transfer-ownership \
+    <all|invalid-owner|invalid-initiator>
+----
+
+The command can attempt to fix the issues with the `--fix` flag, +
+or execute for a single user using `--uid <uid>`
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} files:troubleshoot-transfer-ownership all \
+    --fix \
+    --uid=UID
+----
