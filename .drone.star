@@ -208,8 +208,6 @@ def build(ctx, latest_version, deployment_branch, base_branch):
                     "refs/pull/**",
                     "refs/pull-requests/**",
                     "refs/heads/" + deployment_branch,
-                ],
-                "exclude": [
                     "refs/heads/" + base_branch,
                 ],
             },
