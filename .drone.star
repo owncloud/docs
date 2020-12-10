@@ -152,7 +152,7 @@ def build(ctx, latest_version, deployment_branch, base_branch):
                         "cron",
                     ],
                     "branch": [
-                        deployment_branch,
+                        base_branch,
                     ],
                 },
             },
