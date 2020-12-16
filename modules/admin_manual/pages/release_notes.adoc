@@ -4,6 +4,7 @@
 :owncloud-server-changelog-url: https://owncloud.org/changelog/server/
 :page-aliases: whats_new_admin.adoc
 
+* xref:changes-in-10-6-0[Changes in 10.6.0]
 * xref:changes-in-10-5-0[Changes in 10.5.0]
 * xref:changes-in-10-4-1[Changes in 10.4.1]
 * xref:changes-in-10-4-0[Changes in 10.4.0]
@@ -30,6 +31,70 @@
 * xref:changes-in-8-1[Changes in 8.1]
 * xref:changes-in-8-0[Changes in 8.0]
 * xref:changes-in-7-0[Changes in 7.0]
+
+== Changes in 10.6.0
+
+Dear ownCloud administrator, please find below the changes and known issues in ownCloud Server 10.6 that need your attention.
+You can also read {owncloud-changelog-url}[the full ownCloud Server changelog] for further details on what has changed.
+
+=== Migrations
+* To allow sharing files with very long names (> 64 characters) via federation, a migration step will run. The impact on upgrade duration depends on the number of federated shares. https://github.com/owncloud/core/pull/37835[#37835]
+
+=== PHP 7.2 Deprecation Note
+
+PHP 7.2 recently reached its https://secure.php.net/supported-versions.php[end of life] and is not maintained anymore. ownCloud Server will, therefore, drop support in one of the next minor versions as well. If you’re running on PHP < 7.3, please make sure to schedule an upgrade to PHP 7.4 as soon as possible. See the https://doc.owncloud.com/server/admin_manual/installation/system_requirements.html[system requirements] for more information.
+
+=== ownCloud Web - The New Web Frontend for ownCloud
+
+ownCloud Server 10.6 comes with the prerequisites to run the new ownCloud Web frontend as an optional component on top of it.
+
+* The new server version comes with a switcher to the new frontend ("New Design"). It will be available to users in the apps menu if the address of ownCloud Web is specified in config.php. Likewise, the new frontend comes with a switcher back to the classic frontend ("Classic Design") to allow users to navigate back and forth.
+* https://github.com/owncloud/core/pull/37923[Pre-signed URLs] allow proper downloading and streaming of files in ownCloud Web.
+* A https://github.com/owncloud/core/pull/37673[capability for the Favorites feature] makes it available in ownCloud Web.
+
+There are different ways to deploy ownCloud Web with ownCloud Server. We strive to make it as easy as possible to make the new frontend available to users. For this, there is the new app for https://marketplace.owncloud.com/apps/web[Web] on the ownCloud Marketplace. It can be installed on ownCloud 10 servers with the regular tools. The app will make the new frontend available as described above when https://owncloud.github.io/clients/web/deployments/oc10-app/[deployed and configured correctly].
+
+TIP: Deploying ownCloud Web via the Marketplace app is the currently recommended approach.
+
+**Requirements for deploying ownCloud Web as an app for ownCloud Server 10**
+
+* ownCloud Server 10.6
+* https://marketplace.owncloud.com/apps/oauth2[OAuth2] or https://marketplace.owncloud.com/apps/openidconnect[OpenID Connect] is used for client authorization.
+* https://marketplace.owncloud.com/apps/web[ownCloud Web] is installed and enabled.
+* ownCloud Server and ownCloud Web are configured as outlined in the https://owncloud.github.io/clients/web/deployments/oc10-app/[documentation].
+
+=== Other Notable Changes
+
+* Federated shares can now also have an expiration date (including default and enforcement options) https://github.com/owncloud/core/pull/37548[#37548]
+* SGI images can now be displayed and have thumbnails https://github.com/owncloud/core/pull/37758[#37758]
+* When sharing public links via mail, the subject will now be translated https://github.com/owncloud/core/issues/37321[#37321]
+* Stability improvements for file checksums with versioning https://github.com/owncloud/core/pull/37934[#37934]
+* Manual file locking on the web UI can now be enabled/disabled in the admin settings section "Additional" https://github.com/owncloud/core/pull/37720[#37720]
+* Fixes and library updates for the Google Drive external storage integration https://github.com/owncloud/core/issues/25826[#25826] https://github.com/owncloud/core/pull/37739[#37739] https://github.com/owncloud/core/pull/37912[#37912]
+* When disabling storage encryption, the configuration is now properly cleaned up https://github.com/owncloud/core/pull/35980[#35980]
+* Many issues around unavailable federated shares have been fixed (e.g., not being able to remove them) https://github.com/owncloud/core/pull/38042[#38042] https://github.com/owncloud/core/pull/37956[#37956]
+* Performance improvements for the "Shared by link" view https://github.com/owncloud/core/pull/38000[#38000] https://github.com/owncloud/core/pull/38053[#38053]
+* Files with names up to 255 characters can now be shared via federation (was limited to 64 before) https://github.com/owncloud/core/issues/36730[#36730]
+* A user's language preference will not be overriden by locales sent by browsers anymore https://github.com/owncloud/core/pull/38073[#38073]
+* Fixed display of public links and user/group shares in case avatars are disabled https://github.com/owncloud/core/pull/37945[#37945] https://github.com/owncloud/core/pull/37964[#37964]
+* Fixed some translations not working with themes https://github.com/owncloud/core/pull/38072[#38072]
+* Improved output on errors for LDAP user sync https://github.com/owncloud/core/pull/37951[#37951]
+* A new occ command `files:troubleshoot-transfer-ownership` has been added to help finding issues with `files:transfer-ownership` https://github.com/owncloud/core/pull/37950[#37950]
+* Added values to the invalid uid list to prevent creating users with reserved UIDs https://github.com/owncloud/core/pull/37766[#37766]
+* The log level of "file locked" exceptions has been reduced to "debug" https://github.com/owncloud/core/pull/37907[#37907]
+
+=== Bundle and Delivery
+
+Since ownCloud Server 10.5 https://doc.owncloud.com/server/admin_manual/release_notes.html#changes-in-delivery[all supported apps are shipped in the ownCloud Server Complete bundles]. The following changes have been made to the bundle for Server 10.6:
+
+* Added https://marketplace.owncloud.com/apps/openidconnect[OpenID Connect]
+* Added https://marketplace.owncloud.com/apps/files_lifecycle[File Lifecycle Management]
+* Added https://marketplace.owncloud.com/apps/graphapi[Graph API]
+* Removed https://marketplace.owncloud.com/apps/twofactor_totp[Two-factor Authentication]
+
+=== Known issues
+
+Currently there are no known issues with ownCloud Server 10.6.0. This section will be updated when issues are discovered.
 
 == Changes in 10.5.0
 
