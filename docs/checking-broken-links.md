@@ -93,7 +93,7 @@ Follow [this](https://github.com/filiph/linkcheck#step-1-install-dart) procedure
 to install ``linkcheck``, which needs ``dart``:
 
 Because ``linkcheck`` provides the possibility to use a file to exclude search patterns,
-it is a good advice to create a file with following predefined content. In this example,
+it is good advice to create a file with the following predefined content. In this example,
 the file is named ``my_skip_file.txt`` and saved one level below the local docs repository.
 Adapt the content to your needs.
 
@@ -126,7 +126,7 @@ https://www.tscp.org
 It is good practice to first start checking excluding external pages / sites.
 ``linkcheck`` will report internal broken links AND broken links to anchors.
 Note: you can pipe the result into a file. Just add in ``> ../linkcheck.log``.
-The grep filter reduces the output to important once. 
+The grep filter reduces the output to important ones. 
 
 ```console
 linkcheck --skip-file ../my_skip_file.txt --no-connection-failures-as-warnings | grep "HTTP 40"
