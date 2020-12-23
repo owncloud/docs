@@ -93,7 +93,7 @@ Follow [this](https://github.com/filiph/linkcheck#step-1-install-dart) procedure
 to install ``linkcheck``, which needs ``dart``:
 
 Because ``linkcheck`` provides the possibility to use a file to exclude search patterns,
-it is good advice to create a file with following predefined content. In this example,
+it is a good advice to create a file with following predefined content. In this example,
 the file is named ``my_skip_file.txt`` and saved one level below the local docs repository.
 Adapt the content to your needs.
 
@@ -104,9 +104,9 @@ https://owncloud.org/support
 https://owncloud.org/install
 
 # do not crawl branches or client repositories
-http://localhost:8080/server/10.0
-http://localhost:8080/server/10.1
 http://localhost:8080/server/10.2
+http://localhost:8080/server/10.3
+http://localhost:8080/server/10.4
 http://localhost:8080/branded_clients
 http://localhost:8080/desktop
 http://localhost:8080/android
@@ -124,16 +124,20 @@ https://www.tscp.org
 ```
 
 It is good practice to first start checking excluding external pages / sites.
-``linkcheck`` will report internal broken links AND broken links to anchors:
+``linkcheck`` will report internal broken links AND broken links to anchors.
+Note: you can pipe the result into a file. Just add in ``> ../linkcheck.log``.
+The grep filter reduces the output to important once. 
 
 ```console
-linkcheck --skip-file ../my_skip_file.txt --no-connection-failures-as-warnings > ../linkcheck.log
+linkcheck --skip-file ../my_skip_file.txt --no-connection-failures-as-warnings | grep "HTTP 40"
 ```
 
-Fix any broken internal links found reported in ``linkcheck.log`` and continue with checking for external pages / sites:
+Fix any broken internal links found reported.
+
+Continue with checking also external pages / sites:
 
 ```console
-linkcheck -e --skip-file ../my_skip_file.txt --no-connection-failures-as-warnings > ../linkcheck.log
+linkcheck -e --skip-file ../my_skip_file.txt --no-connection-failures-as-warnings | grep "HTTP 40"
 ```
 
 #### Example Output
