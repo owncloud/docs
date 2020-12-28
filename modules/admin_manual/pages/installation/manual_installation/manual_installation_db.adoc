@@ -1,0 +1,104 @@
+= Manual Installation Databases
+:toc: right
+:page-partial:
+
+== Introduction
+
+This document gives you an overview of databases supported by ownCloud. It describes
+some basic installation steps and how to create an administrative user for the database.
+This administrative user is necessary that the ownCloud database and user who further
+manages the ownCloud database can be created The ownCloud database user has no access
+to other databases! 
+
+== Possible Databases
+
+When installing ownCloud Server & ownCloud Enterprise editions the administrator
+may choose one of 4 supported database products. These are:
+
+* SQLite
+* MYSQL/MariaDB (recommended)
+* PostgreSQL
+* Oracle 11g (Enterprise-edition only)
+
+IMPORTANT: After selecting and installing a database as described below, read the
+xref:configuration/database/linux_database_configuration.adoc[Database Configuration on Linux]
+documenation for more information regarding database engine configuration. 
+
+== SQLite
+
+NOTE: SQLite is not supported by the ownCloud Enterprise edition.
+
+IMPORTANT: SQLite should **only** be used for testing and lightweight single user setups.
+
+SQLite has no client synchronization support, so other devices will not be able
+to synchronize with the data stored in an ownCloud SQLite database.
+
+SQLite will be installed by ownCloud when installed via package manager.
+The necessary dependencies will be satisfied. If you used the package manager to
+install ownCloud, you may "Finish Setup" with no additional steps to
+configure ownCloud using the SQLite database for limited use.
+
+== MYSQL/MariaDB
+
+MariaDB is the ownCloud recommended database. It may be used with either
+ownCloud Server or ownCloud Enterprise editions. Please look for additional
+configuration parameters in the
+xref:configuration/database/linux_database_configuration.adoc[Database Configuration on Linux]
+guides.
+
+=== MariaDB higher than 10.4.3
+
+include::{partialsdir}installation/manual_installation/mariadb.adoc[leveloffset=+1]
+
+=== MariaDB lower than 10.4.3
+
+[NOTE]
+====
+For MariaDB server releases lower than 10.4.3, you will be prompted during the installation
+to create a root password. Be sure to remember your password, as you will need it during the
+ownCloud database setup.
+====
+
+To install an ownCloud database, you need an administrative user who can login, has rights to
+create/modify databases and users. If this user does not exist like on MariaDB server releases
+higher than 10.4.3 or if you want to create a temporary user for this task, you manually have
+to create one. You will be asked for the mysql root users password:
+
+[source,console]
+----
+sudo mysql --user=root -p
+
+CREATE USER 'dbadmin'@'localhost' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON *.* TO 'dbadmin'@'localhost' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+exit
+----
+
+== PostgreSQL
+
+To install postgres, use the following command (or that of your preferred package manager):
+
+[source,console]
+----
+sudo apt-get install postgresql
+----
+
+In order to allow ownCloud access to the database, create a known
+password for the default user, `postgres`, which was added when the
+database was installed.
+
+[source,console]
+----
+sudo -i -u postgres psql
+postgres=# \password
+Enter new password:
+Enter it again:
+postgres=# \q
+exit
+----
+
+== Oracle 11g
+
+Oracle 11g is **only** supported for the ownCloud Enterprise edition. Please see the
+xref:enterprise/installation/oracle_db_configuration.adoc[Oracle Database Setup & Configuration]
+in the Enterprise documentation section.

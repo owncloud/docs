@@ -21,15 +21,23 @@ The following databases are currently supported:
 
 * xref:mysql-mariadb-with-binary-logging-enabled[MySQL / MariaDB]
 * xref:postgresql-database[PostgreSQL]
-* xref:enterprise/server_branding/enterprise_server_branding.adoc[Oracle (_ownCloud Enterprise edition only_)]
+* xref:enterprise/installation/oracle_db_configuration.adoc[Oracle (_ownCloud Enterprise edition only_)]
 
 NOTE: The MySQL or MariaDB databases are the recommended database engines.
 
+IMPORTANT: After physically installing ownCloud, the setup of the owncloud database is either
+done with the xref:installation/installation_wizard.adoc[installation wizard] or via the
+command line. For more information see the
+xref:installation/manual_installation/manual_installation.adoc#complete-the-installation[Complete the Installation]
+section in the Manual Installation documentation.
+
 == Requirements
 
-Choosing to use MySQL / MariaDB, PostgreSQL, or Oracle as your database requires that you install and set up the server software first.  
+Choosing to use MySQL / MariaDB, PostgreSQL, or Oracle as your database requires,
+that you install and set up the server software first.  
 
-TIP: Oracle users, see xref:enterprise/installation/oracle_db_configuration.adoc[the Oracle Database Configuration guide].
+TIP: Oracle users, see
+xref:enterprise/installation/oracle_db_configuration.adoc[the Oracle Database Configuration guide].
 
 The steps for configuring a third party database are beyond the scope of this document. 
 Please refer to the documentation below, for your database vendor.
@@ -43,9 +51,11 @@ Please refer to the documentation below, for your database vendor.
 
 ==== Enabling Binary Logging 
 
-ownCloud is currently using a `TRANSACTION_READ_COMMITTED` transaction isolation to avoid data loss under high load scenarios (e.g., by using the sync client with many clients/users and many parallel operations).
-This requires a disabled or correctly configured binary logging when using MySQL or MariaDB.
-Your system is affected if you see the following in your log file during the installation or update of ownCloud:
+ownCloud is currently using a `TRANSACTION_READ_COMMITTED` transaction isolation to avoid
+data loss under high load scenarios (e.g., by using the sync client with many
+clients/users and many parallel operations). This requires a disabled or correctly configured
+binary logging when using MySQL or MariaDB. Your system is affected if you see the following
+in your log file during the installation or update of ownCloud:
 
 [source]
 ----
@@ -57,16 +67,19 @@ One is to disable binary logging.
 Binary logging records all changes to your database, and how long each change took.
 The purpose of binary logging is to enable replication and to support backup operations.
 
-The other is to change the BINLOG_FORMAT = STATEMENT in your database configuration file, or possibly in your database startup script, to BINLOG_FORMAT = MIXED or BINLOG_FORMAT = ROW.
-See {mariadb-binary-log-overview-url}[Overview of the Binary Log] and {mysql-binary-log-overview-url}[The Binary Log]
-for detailed information.
+The other is to change the BINLOG_FORMAT = STATEMENT in your database configuration file,
+or possibly in your database startup script, to BINLOG_FORMAT = MIXED or BINLOG_FORMAT = ROW.
+See {mariadb-binary-log-overview-url}[Overview of the Binary Log] and
+{mysql-binary-log-overview-url}[The Binary Log] for detailed information.
 
 ==== Set `READ COMMITED` as the Transaction Isolation Level
 
-As discussed above, ownCloud is using the `TRANSACTION_READ_COMMITTED` transaction isolation level.
-Some database configurations are enforcing other transaction isolation levels.
-To avoid data loss under high load scenarios (e.g., by using the sync client with many clients/users and many parallel operations), you need to configure the transaction isolation level accordingly.
-Please refer to the {mysql-set-transaction-url}[MySQL manual] for detailed information.
+As discussed above, ownCloud is using the `TRANSACTION_READ_COMMITTED` transaction isolation
+level. Some database configurations are enforcing other transaction isolation levels.
+To avoid data loss under high load scenarios (e.g., by using the sync client with many
+clients/users and many parallel operations), you need to configure the transaction isolation
+level accordingly. Please refer to the {mysql-set-transaction-url}[MySQL manual]
+for detailed information.
 
 ==== Configuring the Storage Engine
 
@@ -76,20 +89,25 @@ Running ownCloud in such an environment is not supported.
 
 == Parameters
 
-For setting up ownCloud to use any database, use the instructions in xref:installation/installation_wizard.adoc[the Installation Wizard].
+For setting up ownCloud to use any database, use the instructions in
+xref:installation/installation_wizard.adoc[the Installation Wizard].
 You should not have to edit the respective values in the `config/config.php`.
-However, in exceptional cases (for example, if you want to connect your ownCloud instance to a database created by a previous installation of ownCloud), some modification might be required.
+However, in exceptional cases (for example, if you want to connect your ownCloud instance
+to a database created by a previous installation of ownCloud), some modification might
+be required.
 
-=== MySQL
+=== MySQL / MariaDB
 
 If you decide to use a MySQL or MariaDB database, ensure the following:
 
 * That you have installed and enabled the `pdo_mysql` extension in PHP.
-* That the `mysql.default_socket` points to the correct socket (if the database runs on the same server as ownCloud).
+* That the `mysql.default_socket` points to the correct socket (if the database runs on
+  the same server as ownCloud).
 
 MariaDB is backward compatible with MySQL.
-All instructions work for both, so you will not need to replace or revise any existing MySQL client commands.
-The PHP configuration in `/etc/php/{recommended-php-version}/apache2/conf.d/20-mysql.ini` could look like this:
+All instructions work for both, so you will not need to replace or revise any existing
+MySQL client commands. The PHP configuration in
+`/etc/php/{recommended-php-version}/apache2/conf.d/20-mysql.ini` could look like this:
 
 [source,ini]
 ----
@@ -111,36 +129,13 @@ mysql.connect_timeout=60
 mysql.trace_mode=Off
 ----
 
-Now you need to create a database user and the database itself by using the MySQL command-line interface.
-The database tables will be created by ownCloud when you log in for the first time.
-To start the MySQL command-line mode use:
+An ownCloud instance configured with MySQL would contain the hostname on which the database
+is running, a valid username and password to access it, and the name of the database. The
+`config/config.php` as created by the
+xref:installation/installation_wizard.adoc[installation wizard]
+would therefore contain entries like this:
 
-[source,console]
-----
-mysql -uroot -p;
-----
-
-Then a `mysql>` or `MariaDB [root]>` prompt will appear.
-Now enter the following lines and confirm them with the enter key:
-
-[source,mysql]
-----
-CREATE DATABASE IF NOT EXISTS owncloud;
-GRANT ALL PRIVILEGES ON owncloud.* 
-  TO 'username'@'localhost' 
-  IDENTIFIED BY 'password';
-----
-
-You can quit the prompt by entering:
-
-[source,mysql]
-----
-quit;
-----
-
-An ownCloud instance configured with MySQL would contain the hostname on which the database is running, a valid username and password to access it, and the name of the database.
-The `config/config.php` as created by the xref:installation/installation_wizard.adoc[installation wizard] would therefore contain entries like this:
-
+[source,php]
 ----
 <?php
 
@@ -154,11 +149,15 @@ The `config/config.php` as created by the xref:installation/installation_wizard.
 
 ==== Configure MySQL for 4-byte Unicode Support
 
-For supporting such features as emoji, both MySQL (or MariaDB) *and* ownCloud need to be configured to use 4-byte Unicode support instead of the default 3-byte.
-If you are setting up a new ownCloud installation,
-using version 10.0 or above, *and* you’re using a minimum MySQL version of 5.7, then you don’t need to do anything, as support is checked during setup and used if available. 
+For supporting such features as emoji, both MySQL (or MariaDB) *and* ownCloud need to be
+configured to use 4-byte Unicode support instead of the default 3-byte. If you are setting
+up a new ownCloud installation, using version 10.0 or above, *and* you’re using a minimum
+MySQL version of 5.7, then you don’t need to do anything, as support is checked during setup
+and used if available. 
 
-However, if you have an existing ownCloud installation that you need to convert to use 4-byte Unicode support or you are working with MySQL earlier than version 5.7, then you need to do two things:
+However, if you have an existing ownCloud installation that you need to convert to use
+4-byte Unicode support or you are working with MySQL earlier than version 5.7, then you
+need to do two things:
 
 . In your MySQL configuration, add the configuration settings below.
 If you already have them configured, update them to reflect the values specified:
@@ -172,8 +171,9 @@ innodb_file_per_table=ON
 
 . Run the following occ command:
 +
+[source,console,subs="attributes+"]
 ----
-./occ db:convert-mysql-charset
+{occ-command-example-prefix} db:convert-mysql-charset
 ----
 +
 When this is done, tables will be created with:
@@ -184,7 +184,9 @@ When this is done, tables will be created with:
 
 [TIP]
 ====
-For more information, please either refer to xref:configuration/server/config_sample_php_parameters.adoc[config.sample.php], or have a read through the following links:
+For more information, please either refer to
+xref:configuration/server/config_sample_php_parameters.adoc[config.sample.php],
+or have a read through the following links:
 
 * https://dev.mysql.com/doc/refman/5.7/en/innodb-parameters.html#sysvar_innodb_large_prefix
 * https://mariadb.com/kb/en/library/innodb-system-variables/#innodb_large_prefix
@@ -197,8 +199,11 @@ For more information, please either refer to xref:configuration/server/config_sa
 
 === PostgreSQL
 
-If you decide to use a PostgreSQL database, make sure that you have installed and enabled {php-postgresql-extension-url}[the PostgreSQL extension] and {php-pdo-postgresql-extension-url}[the PostgreSQL PDO extension] in PHP.
-The PHP configuration in `/etc/php/{recommended-php-version}/apache2/conf.d/20-pgsql.ini` could look like this:
+If you decide to use a PostgreSQL database, make sure that you have installed and enabled
+{php-postgresql-extension-url}[the PostgreSQL extension] and
+{php-pdo-postgresql-extension-url}[the PostgreSQL PDO extension] in PHP. The PHP
+configuration in `/etc/php/{recommended-php-version}/apache2/conf.d/20-pgsql.ini`
+could look like this:
 
 [source,console]
 ----
@@ -217,8 +222,9 @@ pgsql.log_notice = 0
 
 [TIP]
 ====
-The default configuration for PostgreSQL (at least in Ubuntu 14.04) is to use the peer authentication method.
-Check `/etc/postgresql/9.3/main/pg_hba.conf` to find out which authentication method is used in your setup.
+The default configuration for PostgreSQL (at least in Ubuntu 14.04) is to use the peer
+authentication method. Check `/etc/postgresql/9.3/main/pg_hba.conf` to find out which
+authentication method is used in your setup.
 ====
 
 To start the PostgreSQL command-line mode use:
@@ -228,77 +234,19 @@ To start the PostgreSQL command-line mode use:
 sudo -u postgres psql -d template1
 ----
 
-Then a `template1=\#` prompt will appear.
-Now enter the following lines - _changing `<username>` to something appropriate_ - and confirm them with the enter key:
-
-[source,psql]
-----
-CREATE USER <username> CREATEDB;
-CREATE DATABASE owncloud OWNER <username>;
-----
-
-You can quit the prompt by entering:
+Then a `template1=\#` prompt will appear. You can now enter your commands as required. When
+finished, you can quit the prompt by entering:
 
 [source,psql]
 ----
 \q
 ----
 
-An ownCloud instance configured with PostgreSQL contains:
-
-* The path to the socket on which the database is running as the hostname
-* The system username the PHP process is using
-* An empty password to access it 
-* The name of the database
-
-The `config/config.php` as created by xref:installation/installation_wizard.adoc[the Installation Wizard] would therefore contain entries like this:
-
-[source,php]
-----
-<?php
-
-"dbtype"        => "pgsql",
-"dbname"        => "owncloud",
-"dbuser"        => "username",
-"dbpassword"    => "",
-"dbhost"        => "/var/run/postgresql",
-"dbtableprefix" => "oc_",
-----
-
-The host points to the socket that is used to connect to the database.
-Using `localhost` here will not work if PostgreSQL is configured to use peer authentication.
-Also note, that no password is specified, because this authentication method doesn’t use a password.
-
-If you use another authentication method (not peer), you’ll need to use the following steps to get the database setup. 
-First, you need to create a database user and the database itself by using the PostgreSQL command-line interface.
-The database tables will be created by ownCloud when you log in for the first time.
-To start the PostgreSQL command-line mode use:
-
-[source,psql]
-----
-psql -hlocalhost -Upostgres
-----
-
-Then a *postgres=\#* prompt will appear.
-Now enter the following lines and confirm them with the enter key:
-
-[source,psql]
-----
-CREATE USER <username> WITH PASSWORD 'password';
-CREATE DATABASE owncloud TEMPLATE template0 ENCODING 'UNICODE';
-ALTER DATABASE owncloud OWNER TO <username>;
-GRANT ALL PRIVILEGES ON DATABASE owncloud TO <username>;
-----
-
-You can quit the prompt by entering:
-
-[source,psql]
-----
-\q
-----
-
-An ownCloud instance configured with PostgreSQL would contain the hostname on which the database is running, a valid username and password to access it, and the name of the database.
-The `config/config.php` as created by xref:installation/installation_wizard.adoc[the Installation Wizard] would contain entries like this:
+An ownCloud instance configured with PostgreSQL will contain the hostname on which the
+database is running, a valid username and password to access it, and the name of the
+database. The `config/config.php` as created by
+xref:installation/installation_wizard.adoc[the Installation Wizard]
+would contain entries like this:
 
 [source,php]
 ----
@@ -316,17 +264,21 @@ The `config/config.php` as created by xref:installation/installation_wizard.adoc
 
 === How to Workaround General Error: 2006 MySQL Server Has Gone Away
 
-The database request takes too long, and therefore the MySQL server times out.
-It's also possible that the server is dropping a packet that is too large.
-Please refer to the manual of your database for how to raise the configuration options `wait_timeout` and/or `max_allowed_packet`.
+The database request takes too long, and therefore the MySQL server times out. It's also
+possible that the server is dropping a packet that is too large. Please refer to the manual
+of your database for how to raise the configuration options `wait_timeout` and/or
+`max_allowed_packet`.
 
-Some shared hosts are not allowing access to these config options.
-For such systems, ownCloud is providing a `dbdriveroptions` configuration option within your `config/config.php` where you can pass such options to the database driver.
-Please refer to xref:configuration/server/config_sample_php_parameters.adoc[the sample PHP configuration parameters] for an example.
+Some shared hosts are not allowing access to these config options. For such systems,
+ownCloud is providing a `dbdriveroptions` configuration option within your `config/config.php`
+where you can pass such options to the database driver. Please refer to
+xref:configuration/server/config_sample_php_parameters.adoc[the sample PHP configuration parameters]
+for an example.
 
 === How Can I Find Out If My MySQL/PostgreSQL Server Is Reachable?
 
-To check the server’s network availability, use the ping command on the server's hostname (`db.server.com` in this example):
+To check the server’s network availability, use the ping command on the server's hostname
+(`db.server.com` in this example):
 
 [source,console]
 ----
@@ -338,7 +290,8 @@ PING db.server.com (ip-address) 56(84) bytes of data.
 64 bytes from your-server.local.lan (192.168.1.10): icmp_req=3 ttl=64 time=0.062 ms
 ----
 
-For a more detailed check whether the access to the database server software itself works correctly, see the next question.
+For a more detailed check whether the access to the database server software itself works
+correctly, see the next question.
 
 === How Can I Find Out If a Created User Can Access a Database?
 
@@ -346,14 +299,16 @@ The easiest way to test if a database can be accessed is by starting the command
 
 ==== MySQL
 
-Assuming the database server is installed on the same system you’re running the command from, use:
+Assuming the database server is installed on the same system you’re running the command
+from, use:
 
 [source,console]
 ----
 mysql -uUSERNAME -p
 ----
 
-To access a MySQL installation on a different machine, add the -h option with the respective hostname:
+To access a MySQL installation on a different machine, add the -h option with the
+respective hostname:
 
 [source,console]
 ----
@@ -374,7 +329,8 @@ mysql> quit
 
 ==== PostgreSQL
 
-Assuming the database server is installed on the same system you’re running the command from, use:
+Assuming the database server is installed on the same system you’re running the command
+from, use:
 
 [source,console]
 ----
@@ -451,22 +407,24 @@ SQLSTATE[40001]: Serialization failure: 1213 Deadlock found when trying to get l
 
 ==== Explanation
 
-This error occurs when two transactions write and commit to the same rows in separate cluster nodes. 
-Only one of them can successfully commit. 
-The failing one will be aborted. 
+This error occurs when two transactions write and commit to the same rows in separate
+cluster nodes. Only one of them can successfully commit. The failing one will be aborted. 
 For cluster level aborts, Galera Cluster returns a deadlock error. 
 
 ==== Solution
 
-The solution, for Galera Cluster, would be to send all write requests to a single DB node, instead of all of them. 
-Here is {avoid-deadlocks-galery-haproxy-url}[a useful guide], when using {haproxy-url}[HAProxy]. 
+The solution, for Galera Cluster, would be to send all write requests to a single DB node,
+instead of all of them. Here is {avoid-deadlocks-galery-haproxy-url}[a useful guide],
+when using {haproxy-url}[HAProxy]. 
 
-The same concept applies when {maxscale-url}[MaxScale] is used as a DB proxy. 
-It needs to be configured to send all write requests to a single DB node instead all of them and balance read statements across the rest of the nodes. 
-Here is {maxscale-readwrite-splitting-with-galera-cluster-url}[a useful guide] on how to configure MaxScale with Read/Write splitting.
+The same concept applies when {maxscale-url}[MaxScale] is used as a DB proxy. It needs to be
+configured to send all write requests to a single DB node instead all of them and balance
+read statements across the rest of the nodes. Here is
+{maxscale-readwrite-splitting-with-galera-cluster-url}[a useful guide]
+on how to configure MaxScale with Read/Write splitting.
 
 ==== Enabling Causality Checks
 
-Additionally, to solve this issue, when using Galera Cluster, customers should try to set `wsrep_sync_wait=1`. 
-When enabled, the node triggers causality checks in response to certain types of queries. 
-This is disabled by default.
+Additionally, to solve this issue, when using Galera Cluster, customers should try to set
+`wsrep_sync_wait=1`. When enabled, the node triggers causality checks in response to certain
+types of queries. This is disabled by default.
