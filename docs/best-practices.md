@@ -161,13 +161,13 @@ Both types are used to make the raw documentation files easier to read and to ma
 When creating example files, these files must be saved into a path of the examples directory: `module_name`/`examples`
 
 The directive consists of following components:
-`include::example$<additional-path>/file.ext[]`
+`include::{examplesdir}<additional-path>/file.ext[]`
 
 Example:
 
-`include::example$installation/post-installation-steps.sh[]`
+`include::{examplesdir}installation/post-installation-steps.sh[]`
 
-`example$` will be resolved by the build process automatically
+`{examplesdir}` will be resolved by the build process automatically
 
 ### Example Files of Type `asciidoc`
 

@@ -3,16 +3,16 @@
 :description: If your Ubuntu 18.04 server is a bare-minimum installation, follow this preparation guide to get it ready to manually install ownCloud.
 :toc: right
 :toclevels: 1
-:auth-unix-socket-url: https://mariadb.com/kb/en/library/authentication-plugin-unix-socket/
+:page-partial:
 :disabling-thp-url: https://stackoverflow.com/questions/48743100/why-thp-transparent-huge-pages-are-not-recommended-for-databases-like-oracle-a
 :discover-samba-hosts-url: https://ubuntuforums.org/showthread.php?t=2384959
-:install-mariadb-latest-url: https://downloads.mariadb.org/mariadb/repositories/#
 :mcrypt-link-url: https://websiteforstudents.com/install-php-7-2-mcrypt-module-on-ubuntu-18-04-lts/
 :mcrypt-pecl-url: https://pecl.php.net/package/mcrypt
 :overriding-vendor-settings-url: https://www.freedesktop.org/software/systemd/man/systemd.unit.html
 :transport-huge-pages-url: https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/performance_tuning_guide/s-memory-transhuge
 :iscsi_initiator-url: https://help.ubuntu.com/lts/serverguide/iscsi-initiator.html
 :ondrej-php-url: https://launchpad.net/~ondrej/+archive/ubuntu/php
+:libsmbclient-php: https://github.com/eduardok/libsmbclient-php
 
 == Introduction
 
@@ -161,9 +161,13 @@ grep -P "sodium support => enabled" <( php -i )
 
 == libsmbclient-php Library
 
-libsmbclient-php is a PHP extension that uses Samba's libsmbclient library to provide Samba-related functions
-to PHP programs. You only need to install it if you have installed smbclient as described above. 
-To install it, run the following commands.
+`libsmbclient-php` is a PHP extension that uses Samba's libsmbclient library to provide
+Samba-related functions to PHP programs. You only need to install it, if you have
+installed `smbclient` as described above. `smbclient` is necessary, if you are using the
+xref:enterprise/external_storage/windows-network-drive_configuration.adoc[Windows Network Drives app]
+from ownClouds Enterprise Edition. 
+To install it, run the commands described below.
+Note, alternatively you can install it from {libsmbclient-php}[source].
 
 [source,console]
 ----
@@ -172,7 +176,7 @@ sudo pecl channel-update pecl.php.net
 sudo pecl install smbclient
 ----
 
-When the commands complete, you then have to:
+When the commands complete, you then have to (assuming you use PHP 7.2):
 
 - Create `/etc/php/7.2/mods-available/smbclient.ini` with following content `extension=smbclient.so`.
 - Enable the module by running `phpenmod smbclient`.
@@ -194,46 +198,7 @@ For more information see: {discover-samba-hosts-url}[Bionic Beaver can not disco
 
 == MariaDB Database
 
-For how to install the latest stable release of MariaDB, please refer to
-{install-mariadb-latest-url}[the MariaDB installation documentation].
-
-[NOTE]
-====
-For MariaDB server releases lower than 10.4.3, you will be prompted during the installation to create a root
-password. Be sure to remember your password, as you will need it during the ownCloud database setup.
-====
-
-[NOTE]
-====
-If you have an existing installation of MariaDB and upgrade to a higher version, do not forget to run the following
-command, to handle the new setup for admin users — especially when upgrading to MariaDB 10.4.3 upwards:
-
-[source,console]
-----
-sudo mysql_upgrade 
-----
-====
-
-[NOTE]
-====
-From MariaDB 10.4.3 onwards, the authentication method has changed to UNIX sockets. 
-For details, please refer to: {auth-unix-socket-url}[MariaDB: Authentication Plugin - Unix Socket].
-The unix_socket authentication plugin allows the user to use operating system credentials when
-connecting to MariaDB via a local UNIX socket. Follow the procedure below to create an admin user
-for non-socket login, giving ownCloud access to create it's database respectively for phpMyAdmin. 
-_This is not the ownCloud user!_
-_Don't forget to change the username and password according to your needs_.
-
-[source,console]
-----
-sudo mysql
-MariaDB [(none)]>
- CREATE USER IF NOT EXISTS 'newuser'@'localhost' IDENTIFIED BY 'changeme';
- GRANT ALL PRIVILEGES ON *.* TO 'newuser'@'localhost' WITH GRANT OPTION;
- FLUSH PRIVILEGES;
- SHOW GRANTS FOR 'newuser'@'localhost';
-----
-====
+include::{partialsdir}installation/manual_installation/mariadb.adoc[leveloffset=+1]
 
 NOTE: Follow this procedure, if you want to disable <<Disable Transparent Huge Pages (THP),Transparent Huge Pages>>
 
