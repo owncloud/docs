@@ -1,0 +1,39 @@
+:install-mariadb-latest-url: https://downloads.mariadb.org/mariadb/repositories/#
+:auth-unix-socket-url: https://mariadb.com/kb/en/library/authentication-plugin-unix-socket/
+
+For how to install the latest stable release of MariaDB, please refer to the
+{install-mariadb-latest-url}[MariaDB installation documentation].
+
+[NOTE]
+====
+If you have an existing installation of MariaDB and upgrade to a higher version, do not forget
+to run the following command, to handle the new setup for admin users — especially when
+upgrading to MariaDB 10.4.3 upwards:
+
+[source,console]
+----
+sudo mysql_upgrade 
+----
+====
+
+[NOTE]
+====
+From MariaDB 10.4.3 onwards, the authentication method has changed to UNIX sockets. 
+For details, please refer to: {auth-unix-socket-url}[MariaDB: Authentication Plugin - Unix Socket].
+The unix_socket authentication plugin allows the user to use operating system credentials when
+connecting to MariaDB via a local UNIX socket. Follow the procedure below to create an admin user
+for non-socket login, giving ownCloud access to create it's database respectively for phpMyAdmin. 
+_This is not the ownCloud user!_
+_Don't forget to change the username and password according to your needs_.
+
+[source,console]
+----
+sudo mysql
+MariaDB [(none)]>
+ CREATE USER IF NOT EXISTS 'dbadmin'@'localhost' IDENTIFIED BY 'password';
+ GRANT ALL PRIVILEGES ON *.* TO 'dbadmin'@'localhost' WITH GRANT OPTION;
+ FLUSH PRIVILEGES;
+ SHOW GRANTS FOR 'dbadmin'@'localhost';
+----
+====
+
