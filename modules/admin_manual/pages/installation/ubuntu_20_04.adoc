@@ -19,7 +19,6 @@ Run the following commands in your terminal to complete the installation.
 First, ensure that all of the installed packages are entirely up to date, and that PHP is available in the APT repository.
 To do so, follow the instructions below:
 
-[source,console,subs="attributes+"]
 ----
 apt update && \
   apt upgrade -y
@@ -42,14 +41,12 @@ EOM
 
 Make helper script executable:
 
-[source,console,subs="attributes+"]
 ----
 chmod +x /usr/local/bin/occ
 ----
 
 === Install the Required Packages
 
-[source,console,subs="attributes+"]
 ----
 apt install -y \
   apache2 \
@@ -98,7 +95,6 @@ apt install -y \
 
 ==== Change the Document Root
 
-[source,console,subs="attributes+"]
 ----
 sed -i "s#html#owncloud#" /etc/apache2/sites-available/000-default.conf
 
@@ -114,7 +110,6 @@ include::{examplesdir}installation/ubuntu/18.04/create-vhost-config.sh[]
 
 ==== Enable the Virtual Host Configuration
 
-[source,console,subs="attributes+"]
 ----
 a2ensite owncloud.conf
 service apache2 reload
@@ -122,7 +117,6 @@ service apache2 reload
 
 === Configure the Database
 
-[source,console,subs="attributes+"]
 ----
 mysql -u root -e "CREATE DATABASE IF NOT EXISTS owncloud; \
 GRANT ALL PRIVILEGES ON owncloud.* \
@@ -132,7 +126,6 @@ GRANT ALL PRIVILEGES ON owncloud.* \
 
 ==== Enable the Recommended Apache Modules
 
-[source,console,subs="attributes+"]
 ----
 echo "Enabling Apache Modules"
 
@@ -152,7 +145,6 @@ chown -R www-data. owncloud
 
 === Install ownCloud
 
-[source,console,subs="attributes+"]
 ----
 occ maintenance:install \
     --database "mysql" \
@@ -165,7 +157,6 @@ occ maintenance:install \
 
 === Configure ownCloud's Trusted Domains
 
-[source,console,subs="attributes+"]
 ----
 myip=$(hostname -I|cut -f1 -d ' ')
 occ config:system:set trusted_domains 1 --value="$myip"
@@ -175,7 +166,6 @@ occ config:system:set trusted_domains 1 --value="$myip"
 
 Set your backgroud job mode to cron
 
-[source,console,subs="attributes+"]
 ----
 occ background:cron
 ----
@@ -193,7 +183,6 @@ chmod 0600 /var/spool/cron/crontabs/{webserver-user}
 If you need to sync your users from an LDAP or Active Directory Server, add this additional xref:configuration/server/background_jobs_configuration.adoc[Cron job]. Every 15 minutes this cron job will sync LDAP users in ownCloud and disable the ones who are not available for ownCloud. Additionally you get a log file in `/var/log/ldap-sync/user-sync.log` for debugging.
 ====
 
-[source,console,subs="attributes+"]
 ----
 echo "*/15 * * * * /var/www/owncloud/occ user:sync 'OCA\User_LDAP\User_Proxy' -m disable -vvv >> /var/log/ldap-sync/user-sync.log 2>&1" > /var/spool/cron/crontabs/www-data
 chown www-data.crontab  /var/spool/cron/crontabs/www-data
