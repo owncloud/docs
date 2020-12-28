@@ -69,7 +69,7 @@ apt install -y \
 [source,console,subs="attributes+"]
 ----
 apt install -y \
-  ssh bzip2 rsync curl jq \
+  ssh bzip2 sudo cron rsync curl jq \
   inetutils-ping smbclient\
   php-smbclient coreutils php-ldap
 ----
@@ -108,6 +108,7 @@ service apache2 reload
 
 [source,console,subs="attributes+"]
 ----
+service mysql start
 mysql -u root -e "CREATE DATABASE IF NOT EXISTS owncloud; \
 GRANT ALL PRIVILEGES ON owncloud.* \
   TO owncloud@localhost \
@@ -200,6 +201,8 @@ occ config:system:set \
 occ config:system:set \
    memcache.locking \
    --value '\OC\Memcache\Redis'
+
+service redis-server start
 
 occ config:system:set \
    redis \
