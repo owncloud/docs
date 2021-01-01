@@ -3,19 +3,23 @@
 
 ownCloud can be installed using Docker, using
 https://hub.docker.com/r/owncloud/server/tags[the official ownCloud Docker image].
-This official image works standalone (e.g. for a quick evaluation with `docker run -p{std-port-http}:{std-port-http} owncloud/server`)
-but it is designed to work with a data volume in
-the host filesystem and with separate _MariaDB_ and _Redis_ containers.
+This official image works standalone for a quick evaluation, but is designed to be used in a docker-compose setup.
 
+== Quick Evaluation
+
+`docker run -e OWNCLOUD_DOMAIN=localhost:{std-port-http} -p{std-port-http}:{std-port-http} owncloud/server`
+
+== Docker Compose
 
 The configuration:
 
 * exposes ports {std-port-http}, allowing for HTTP connections.
+* uses separate _MariaDB_ and _Redis_ containers.
 * mounts the data and MySQL data directories on the host for persistent storage.
 
-== Installation on a Local Machine
+The following instructions assume you install locally. For remote access, the value of OWNCLOUD_DOMAIN must be adapted.
 
-To use it, first create a new project directory. Then copy and paste the sample
+First, create a new project directory. Then copy and paste the sample
 `docker-compose.yml` from this page
 into that new directory. Next, create a .env configuration file, which contains the required
 configuration settings. Only a few settings are required, these are:
@@ -32,7 +36,7 @@ configuration settings. Only a few settings are required, these are:
 
 | `OWNCLOUD_DOMAIN`
 | The ownCloud domain
-| `localhost`
+| `localhost:{std-port-http}`
 
 | `ADMIN_USERNAME`
 | The admin username
@@ -46,6 +50,10 @@ configuration settings. Only a few settings are required, these are:
 | The HTTP port to bind to
 | `{std-port-http}`
 |===
+
+NOTE: `ADMIN_USERNAME` and `ADMIN_PASSWORD` will not change between deploys even if you change the 
+values in the .env file. To change them, you'll need to do `docker volume prune`, which 
+*will delete all your data*.
 
 Then, you can start the container, using your preferred Docker
 command-line tool. The example below shows how to use
@@ -64,7 +72,7 @@ wget https://raw.githubusercontent.com/owncloud/docs/master/modules/admin_manual
 # Create the environment configuration file
 cat << EOF > .env
 OWNCLOUD_VERSION={latest-version}
-OWNCLOUD_DOMAIN=localhost
+OWNCLOUD_DOMAIN=localhost:{std-port-http}
 ADMIN_USERNAME=admin
 ADMIN_PASSWORD=admin
 HTTP_PORT={std-port-http}
@@ -119,7 +127,8 @@ image below.
 image:docker/owncloud-ui-login.png[The ownCloud UI via Docker]
 
 The username and password are the admin username and password which you
-stored in `.env` earlier.
+stored in `.env` earlier. Note that these will not change between deploys
+even if you change the values in .env. 
 
 === Stopping the Containers
 
