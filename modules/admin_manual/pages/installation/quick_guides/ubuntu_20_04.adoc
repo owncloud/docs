@@ -10,13 +10,13 @@ Run the following commands in your terminal to complete the installation.
 
 == Prerequisites
 
-* A fresh install of Ubuntu 20.04 with SSH enabled.
+* A fresh installation of https://www.ubuntu.com/download/server[Ubuntu 20.04] with SSH enabled.
 * This guide assumes that you are connected as the root user.
 * This guide assumes your ownCloud directory is located in `/var/www/owncloud/`
 
 == Preparation
 
-First, ensure that all of the installed packages are entirely up to date, and that PHP is available in the APT repository.
+First, ensure that all the installed packages are entirely up to date, and that PHP is available in the APT repository.
 To do so, follow the instructions below:
 
 ----
@@ -38,7 +38,7 @@ sudo -u {webserver-user} /usr/bin/php {install-directory}/occ "\$@"
 EOM
 ----
 
-Make helper script executable:
+Make the helper script executable:
 
 ----
 chmod +x /usr/local/bin/occ
@@ -60,12 +60,13 @@ apt install -y \
   wget
 ----
 
-Note : php 7.4 is default version installable with Ubuntu 20.04
+Note : php 7.4 is the default version installable with Ubuntu 20.04
 
 === Install the Recommended Packages
 
-The package php-smbclient was removed from the offical repository, so you have to add ondrej’s ppa:
-You will need the php-smbclient from ondrej's repository.
+The package php-smbclient was removed from the official repository.
+It is available in the ondrej/php repository (ppa).
+Add ondrej’s ppa with these commands:
 
 ----
 sudo add-apt-repository ppa:ondrej/php
@@ -78,7 +79,8 @@ and add the key:
 ----
 apt-key adv --recv-keys --keyserver hkps://keyserver.ubuntu.com:443 4F4EA0AAE5267A6C
 ----
-Now you can install the recommended packages using the following command
+
+Now you can install the recommended packages using the following command:
 
 ----
 apt install -y \
@@ -160,7 +162,7 @@ occ config:system:set trusted_domains 1 --value="$myip"
 
 === Set Up a Cron Job
 
-Set your backgroud job mode to cron
+Set your background job mode to cron
 
 ----
 occ background:cron
@@ -176,7 +178,7 @@ chmod 0600 /var/spool/cron/crontabs/{webserver-user}
 
 [NOTE]
 ====
-If you need to sync your users from an LDAP or Active Directory Server, add this additional xref:configuration/server/background_jobs_configuration.adoc[Cron job]. Every 15 minutes this cron job will sync LDAP users in ownCloud and disable the ones who are not available for ownCloud. Additionally you get a log file in `/var/log/ldap-sync/user-sync.log` for debugging.
+If you need to sync your users from an LDAP or Active Directory Server, add this additional xref:configuration/server/background_jobs_configuration.adoc[Cron job]. Every 15 minutes this cron job will sync LDAP users in ownCloud and disable the ones who are not available for ownCloud. Additionally, you get a log file in `/var/log/ldap-sync/user-sync.log` for debugging.
 ====
 
 ----
