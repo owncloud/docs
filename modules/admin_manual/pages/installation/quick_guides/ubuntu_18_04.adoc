@@ -91,9 +91,23 @@ service apache2 restart
 
 ==== Create a Virtual Host Configuration
 
-[source,console,subs="attributes+"]
 ----
-include::{examplesdir}installation/ubuntu/18.04/create-vhost-config.sh[]
+FILE="etc/apache2/sites-available/owncloud.conf"
+/bin/cat <<EOM >$FILE
+Alias /owncloud "/var/www/owncloud/"
+
+<Directory /var/www/owncloud/>
+  Options +FollowSymlinks
+  AllowOverride All
+
+ <IfModule mod_dav.c>
+  Dav off
+ </IfModule>
+
+ SetEnv HOME /var/www/owncloud
+ SetEnv HTTP_HOME /var/www/owncloud
+</Directory>
+EOM
 ----
 
 ==== Enable the Virtual Host Configuration
