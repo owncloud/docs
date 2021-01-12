@@ -55,14 +55,14 @@ def build(ctx, latest_version, deployment_branch, base_branch):
                     "yarn install",
                 ],
             },
-            #{
-            #    "name": "docs-validate",
-            #    "pull": "always",
-            #    "image": "owncloudci/nodejs:11",
-            #    "commands": [
-            #        "yarn validate --pull",
-            #    ],
-            #},
+            {
+                "name": "docs-validate",
+                "pull": "always",
+                "image": "owncloudci/nodejs:11",
+                "commands": [
+                    "yarn validate --pull",
+                ],
+            },
             {
                 "name": "docs-build",
                 "pull": "always",
