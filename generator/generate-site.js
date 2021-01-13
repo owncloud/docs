@@ -36,7 +36,7 @@ async function generateSite (args, env) {
 }
 
 function generateIndex (playbook, pages) {
-  if (process.env.BUILD_SEARCH_INDEX || 'true' !== 'true') {
+  if ((process.env.BUILD_SEARCH_INDEX || 'true') !== 'true') {
     console.log('Search index generation skipped')
     return
   }
