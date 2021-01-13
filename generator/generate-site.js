@@ -2,7 +2,7 @@
 
 const _ = require('lodash')
 const cheerio = require('cheerio')
-const Entities = require('html-entities').AllHtmlEntities
+const Entities = require('html-entities')
 const Elasticsearch = require('elasticsearch')
 
 const aggregateContent = require('@antora/content-aggregator')
@@ -45,7 +45,6 @@ function generateIndex (playbook, pages) {
   let siteUrl = playbook.site.url
 
   const documents = pages.map((page) => {
-    const entities = new Entities()
     const titles = []
 
     const html = page.contents.toString()
@@ -67,7 +66,7 @@ function generateIndex (playbook, pages) {
       $title.remove()
     })
 
-    let text = entities.decode($('article').text())
+    let text = Entities.decode($('article').text())
       .replace(/(<([^>]+)>)/ig, '')
       .replace(/\n/g, ' ')
       .replace(/\r/g, ' ')
