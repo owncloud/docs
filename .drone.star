@@ -60,7 +60,7 @@ def build(ctx, latest_version, deployment_branch, base_branch):
                 "pull": "always",
                 "image": "owncloudci/nodejs:11",
                 "commands": [
-                    "yarn validate --pull",
+                    "yarn validate --fetch",
                 ],
             },
             {
@@ -79,7 +79,7 @@ def build(ctx, latest_version, deployment_branch, base_branch):
                     "latestVersion": latest_version,
                 },
                 "commands": [
-                    "yarn antora --pull --attribute format=html",
+                    "yarn antora --fetch --attribute format=html",
                 ],
             },
             {
