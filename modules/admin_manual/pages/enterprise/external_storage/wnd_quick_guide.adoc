@@ -2,80 +2,77 @@
 
 == Installation
 
-First, you need to install samba packages and libraries that are required for the Windows Network Drives app.
+NOTE: If you are using Ubuntu 20.04 as your OS, you will need to add this repository:
 
 ----
-sudo apt-get update -y
-sudo apt-get install -y smbclient php-smbclient coreutils
-----
-
-If you are on Ubuntu 20.04, you will need to add a repository
-
----
 add-apt-repository ppa:ondrej/php
-apt-get update
-apt-get install smbclient php-smbclient libsmbclient
----
+----
 
-Next you have to enable the Windows Network Drives app:
+First, you need to install the samba packages and libraries that are required for the Windows Network Drives app.
 
 ----
-occ app:enable windows_network_drive
+apt-get update
+apt-get install -y smbclient php-smbclient coreutils libsmbclient
+----
+
+Next, you have to enable the Windows Network Drives app, either in the Web Interface or the command line:
+
+**WebUI**
+
+The Windows Network Drive app has to be downloaded from in the Market App.
+Navigate to the Market app, search for Windows Network Drives and install it.
+
+**Commandline**
+
+----
+occ market:install windows_network_drive
 ----
 
 == Configuration
 
-=== WebUI
+**WebUI**
 
-Next you will have to configure share.
+Enable external shares:
+- Navigate to admin -> settings -> storage (in the admin section)
+- Enable the external storage
+- Create a new share and choose Windows network Drives
 
-- Navigate to admin -> settings -> storage (admin section)
-
-- Enable the external storage by ticking the checkbox for it
-
-- Create a new share and choose Windows Network Drives
-
-Now configure:
-
+Configure external share:
 - Folder Name: A name for the WND Share
-- Authentication: Choose Log-in credentials, save in database
+- Authentication: Choose **Log-in credentials, save in database**
 - Host: domain name or IP address
-- Share: the name of the main share
-- Remote Subfolder: enter "$user" to get each user his own home share
-- Permission Manager: leave empty for default setups
-- Domain: the domain of your server
-- Available for: define groups or users this share is for
-- Settings: (gear wheel) check the options you need
+- Share: name of the top share
+- Remote Subfolder: enter `$user` for every user to get a home drive
+- Permission Manager: leave empty to use the default one
+- Domain: domain name of your server
+- Available for: limit access to groups
+- Settings: (gear wheel) enable the options you need
 
-If you don't plan to use the Windows Network Drives with the **Desktop Sync client**, your configuration ends here.
+-----
 
-If you plan to use the sync client, please continue:
+If you plan to use ownCloud **only** in the Web Browser - your setup of the WND is complete.
 
-=== Command Line
+If you plan to use a desktop client, you need to continue and configure the WND listener and WND process queue.
 
-Lastly you need to setup the **wnd listener** and the **wnd process queue** to propagate the changes made directly on the storage of your share to the sync client.
+**Commandline**
+
+Lastly, you need to setup the wnd listener and process queue to propagate the changes made directly on the storage of your share to the sync client.
 
 This can be done in 2 ways:
+- you configure a new systemd service for the istener and setup a process queue cron job
+- you setup a cronjob for the wnd:listen command and process queue cron job
 
-- You configure a new systemd service for the listener and setup a process queue cron job
-
-- You setup a cronjob for the wnd:listen command with flock and a process queue cron job
-
-==== WND Listener Configuration
-
-----
-sudo -u www-data php occ wnd:listen <host> <share> <username> <password>
-----
+=== WND Listener Configuration
 
 Create a service for systemd following the instructions below that checks the share for changes:
 
-- For each WND mount point distinguished by a SERVER - SHARE pair:
-	- Place one copy of a file with following content under /etc/systemd/system/owncloud-wnd-listen-SERVER-SHARE.service
-	- Replace the all upper case words SERVER, SHARE, USER and PASSWORD in both, the filename and in the contents below with their respective values.
-	- Take care to also adjust the paths in WorkingDirectory and ExecStart according to your installation.
-	- Password: Create a file readable only by the www-data and outside the directories handled by apache (let’s suppose in /tmp/mypass). The file must contain only the password for the share. In this example our file is: "/tmp/mypass". The listener will read the contents of the file and use them as the password for the account. This way, only root and the apache user should have access to the password.
-	- "--password-trim" removes blank characters from the password file added by 3rdparty software or other services.
-
+* For each WND mount point distinguished by a SERVER - SHARE pair:
+** Place one copy of a file with following content under `/etc/systemd/system/owncloud-wnd-listen-SERVER-SHARE.service`
+** Replace the all upper case words `SERVER`, `SHARE`, `USER` and `PASSWORD` in both, the **filename** and in the **contents** below with their respective values.
+** Take care to also adjust the paths in `WorkingDirectory` and `ExecStart` according to your installation.
+** Password: Create a file readable only by the www-data and outside the directories handled by apache (let's suppose in /tmp/mypass). The file must contain only the password for the share. In this example our file is: "/tmp/mypass". The listener will read the contents of the file and use them as the password for the account. This way, only root and the apache user should have access to the password.
+** "--password-trim" removes blank characters from the password file added by 3rdparty software or other services.
++
 ----
 [Unit]
 Description=ownCloud WND Listener for SERVER SHARE
@@ -98,15 +95,23 @@ Restart=always
 WantedBy=multi-user.target
 ----
 
-==== WND Process Queue Configuration
-
+* Run the following command, once for each created file:
++
+[source,console]
 ----
-sudo -u www-data php occ wnd:process-queue <host> <share>
+sudo systemctl enable owncloud-wnd-listen-SERVER-SHARE.service
+sudo systemctl start  owncloud-wnd-listen-SERVER-SHARE.service
 ----
 
-- Create or add a crontab file in /etc/cron.d/oc-wnd-process-queue.
-- Make a crontab entry to run a script iterating over all SERVER SHARE pairs with an appropriate occ wnd:process-queue command. The commands must be strictly sequential. This can be done by using flock -n and tuning the -c parameter of occ wnd:process-queue
+=== WND Process Queue Configuration
 
+Create or add a `crontab` file in `/etc/cron.d/oc-wnd-process-queue`.
+
+* Make a `crontab` entry to run a script iterating over all `SERVER SHARE` pairs with an appropriate `occ wnd:process-queue` command. 
+  The commands must be **strictly sequential**. 
+  This can be done by using `flock -n` and tuning the `-c` parameter of `occ wnd:process-queue`
+
+[source,console]
 ----
 * * * * *  sudo -u www-data /usr/bin/php /var/www/owncloud/occ wnd:process-queue <HOST> <SHARE>
 ----
@@ -114,16 +119,29 @@ sudo -u www-data php occ wnd:process-queue <host> <share>
 ==== Execution Serialization
 
 Parallel runs of wnd:process-queue might lead to a user lockout. The reason for this is that several wnd:process-queue might use the same wrong password because it hasn’t been updated by the time they fetch it.
+
 It’s recommended to force the execution serialization of the wnd:process-queue command. You might want to use Anacron, which seems to have an option for this scenario, or wrap the command with flock.
+
 If you need to serialize the execution of the wnd:process-queue, check the following example with flock
 
 ----
-flock -n /my/lock/file sudo -u www-data php occ wnd:process-queue <host> <share>
+* * * * * flock -n /tmp/wnd001 occ wnd:process-queue server1 share1
+* * * * * flock -n /tmp/wnd002 occ wnd:process-queue server1 share2
+* * * * * flock -n /tmp/wnd003 occ wnd:process-queue server2 share3
 ----
 
 == Troubleshooting
 
-Known Limitations:
-
 - process queue will not work if there is a backslash in the share path configured in webui
 
+If you encounter issues using Windows network drive, then try the following troubleshooting steps:
+
+First check the connection to the share by using smbclient on the command line of the ownCloud server. Here is an example:
+
+smbclient -U Username -L //Servername
+
+Take the example of attempting to connect to the share named MyData using occ wnd:listen. Running the following command would work:
+
+sudo -u www-data php occ wnd:listen MyHost MyData svc_owncloud password
+
+The command is case sensitive, and that it must match the information from the mount point configuration.
