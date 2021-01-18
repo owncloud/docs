@@ -33,20 +33,22 @@ occ market:install windows_network_drive
 **WebUI**
 
 Enable external shares:
-- Navigate to admin -> settings -> storage (in the admin section)
-- Enable the external storage
-- Create a new share and choose Windows network Drives
+
+* Navigate to admin -> settings -> storage (in the admin section)
+* Enable the external storage
+* Create a new share and choose Windows network Drives
 
 Configure external share:
-- Folder Name: A name for the WND Share
-- Authentication: Choose **Log-in credentials, save in database**
-- Host: domain name or IP address
-- Share: name of the top share
-- Remote Subfolder: enter `$user` for every user to get a home drive
-- Permission Manager: leave empty to use the default one
-- Domain: domain name of your server
-- Available for: limit access to groups
-- Settings: (gear wheel) enable the options you need
+
+* Folder Name: A name for the WND Share
+* Authentication: Choose **Log-in credentials, save in database**
+* Host: domain name or IP address
+* Share: name of the top share
+* Remote Subfolder: enter `$user` for every user to get a home drive
+* Permission Manager: leave empty to use the default one
+* Domain: domain name of your server
+* Available for: limit access to groups
+* Settings: (gear wheel) enable the options you need
 
 
 If you plan to use ownCloud **only** in the Web Browser - your setup of the WND is complete.
@@ -58,8 +60,9 @@ If you plan to use a desktop client, you need to continue and configure the WND 
 Lastly, you need to setup the wnd listener and process queue to propagate the changes made directly on the storage of your share to the sync client.
 
 This can be done in 2 ways:
-- you configure a new systemd service for the istener and setup a process queue cron job
-- you setup a cronjob for the wnd:listen command and process queue cron job
+
+* you configure a new systemd service for the istener and setup a process queue cron job
+* you setup a cronjob for the wnd:listen command and process queue cron job
 
 === WND Listener Configuration
 
@@ -131,16 +134,20 @@ If you need to serialize the execution of the wnd:process-queue, check the follo
 
 == Troubleshooting
 
-- process queue will not work if there is a backslash in the share path configured in webui
+* process queue will not work if there is a backslash in the share path configured in webui
 
 If you encounter issues using Windows network drive, then try the following troubleshooting steps:
 
 First check the connection to the share by using smbclient on the command line of the ownCloud server. Here is an example:
 
+----
 smbclient -U Username -L //Servername
+----
 
 Take the example of attempting to connect to the share named MyData using occ wnd:listen. Running the following command would work:
 
+----
 sudo -u www-data php occ wnd:listen MyHost MyData svc_owncloud password
+----
 
 The command is case sensitive, and that it must match the information from the mount point configuration.
