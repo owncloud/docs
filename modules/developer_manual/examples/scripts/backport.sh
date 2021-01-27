@@ -46,10 +46,10 @@ repository=$(git config --get remote.origin.url 2>/dev/null | perl -lne 'print $
 commitList=$(git log --no-merges --reverse --format=format:%h $1^..$1)
 
 # get the request reset time window from github in epoch
-rateLimitReset=$(curl -i https://api.github.com/users/octocat 2>&1 | grep -m1 'X-Ratelimit-Reset:' | grep -o '[[:digit:]]*')
+rateLimitReset=$(curl -iks https://api.github.com/users/zen 2>&1 | grep -im1 'X-Ratelimit-Reset:' | grep -o '[[:digit:]]*')
 
 # get the remaining requests in window from github
-rateLimitRemaining=$(curl -i https://api.github.com/users/octocat 2>&1 | grep -m1 'X-Ratelimit-Remaining:' | grep -o '[[:digit:]]*')
+rateLimitRemaining=$(curl -iks https://api.github.com/users/zen 2>&1 | grep -im1 'X-Ratelimit-Remaining:' | grep -o '[[:digit:]]*')
 
 # time remaining in epoch
 now=$(date +%s)
