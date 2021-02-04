@@ -109,15 +109,17 @@ function generateIndex (playbook, pages) {
       }]
     })
 
-    client.deleteByQuery({
+    client.indices.delete({
       index: process.env.ELASTICSEARCH_INDEX,
-      body: {
-        query: {
-          term: {
-            type: 'page'
-          }
-        }
+    }, function (err, resp) {
+      if (err) {
+        console.log('Failed to delete index:', err)
+        process.exit(1)
       }
+    });
+
+    client.indices.create({
+      index: process.env.ELASTICSEARCH_INDEX,
     }, function (err, resp) {
       if (err) {
         console.log('Failed to delete index:', err)
