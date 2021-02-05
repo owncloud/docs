@@ -85,7 +85,7 @@ function generateIndex (playbook, pages) {
   })
 
   if (process.env.UPDATE_SEARCH_INDEX == 'true' && process.env.ELASTICSEARCH_HOST && process.env.ELASTICSEARCH_INDEX) {
-    console.log('Uploading search index')
+    console.log('Rebuild search index')
     let result = []
 
     documents.forEach((document, index) => {
@@ -109,8 +109,10 @@ function generateIndex (playbook, pages) {
       }]
     })
 
+    console.log('Remove old search index')
     client.indices.delete({
       index: process.env.ELASTICSEARCH_INDEX,
+      ignore_unavailable: true,
     }, function (err, resp) {
       if (err) {
         console.log('Failed to delete index:', err)
@@ -118,15 +120,17 @@ function generateIndex (playbook, pages) {
       }
     });
 
+    console.log('Create empty search index')
     client.indices.create({
       index: process.env.ELASTICSEARCH_INDEX,
     }, function (err, resp) {
       if (err) {
-        console.log('Failed to delete index:', err)
+        console.log('Failed to create index:', err)
         process.exit(1)
       }
     });
 
+    console.log('Upload search index')
     client.bulk({
       body: result
     }, function (err, resp) {
