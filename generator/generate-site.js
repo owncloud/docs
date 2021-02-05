@@ -2,7 +2,7 @@
 
 const _ = require('lodash')
 const cheerio = require('cheerio')
-const Entities = require('html-entities').AllHtmlEntities
+const Entities = require('html-entities')
 const Elasticsearch = require('elasticsearch')
 
 const aggregateContent = require('@antora/content-aggregator')
@@ -36,14 +36,15 @@ async function generateSite (args, env) {
 }
 
 function generateIndex (playbook, pages) {
-  if (process.env.UPDATE_SEARCH_INDEX !== 'true' || !process.env.ELASTICSEARCH_HOST || !process.env.ELASTICSEARCH_INDEX) {
+  if ((process.env.BUILD_SEARCH_INDEX || 'true') !== 'true') {
+    console.log('Search index generation skipped')
     return
   }
 
+  console.log('Generating search index')
   let siteUrl = playbook.site.url
 
   const documents = pages.map((page) => {
-    const entities = new Entities()
     const titles = []
 
     const html = page.contents.toString()
@@ -65,7 +66,7 @@ function generateIndex (playbook, pages) {
       $title.remove()
     })
 
-    let text = entities.decode($('article').text())
+    let text = Entities.decode($('article').text())
       .replace(/(<([^>]+)>)/ig, '')
       .replace(/\n/g, ' ')
       .replace(/\r/g, ' ')
@@ -83,53 +84,62 @@ function generateIndex (playbook, pages) {
     }
   })
 
-  let result = []
+  if (process.env.UPDATE_SEARCH_INDEX == 'true' && process.env.ELASTICSEARCH_HOST && process.env.ELASTICSEARCH_INDEX) {
+    console.log('Rebuild search index')
+    let result = []
 
-  documents.forEach((document, index) => {
-    result.push({
-      index:  {
-        _index: process.env.ELASTICSEARCH_INDEX,
-        _type: 'page',
-        _id: index
-      }
+    documents.forEach((document, index) => {
+      result.push({
+        index:  {
+          _index: process.env.ELASTICSEARCH_INDEX,
+          _type: 'page',
+          _id: index
+        }
+      })
+
+      result.push(document)
     })
 
-    result.push(document)
-  })
+    const client = new Elasticsearch.Client({
+      host: [{
+        host: process.env.ELASTICSEARCH_HOST,
+        port: process.env.ELASTICSEARCH_PORT || 443,
+        protocol: process.env.ELASTICSEARCH_PROTOCOL || 'https',
+        auth: process.env.ELASTICSEARCH_WRITE_AUTH,
+      }]
+    })
 
-  const client = new Elasticsearch.Client({
-    host: [{
-      host: process.env.ELASTICSEARCH_HOST,
-      port: process.env.ELASTICSEARCH_PORT || 443,
-      protocol: process.env.ELASTICSEARCH_PROTOCOL || 'https',
-      auth: process.env.ELASTICSEARCH_WRITE_AUTH,
-    }]
-  })
-
-  client.deleteByQuery({
-    index: process.env.ELASTICSEARCH_INDEX,
-    body: {
-      query: {
-        term: {
-          type: 'page'
-        }
+    console.log('Remove old search index')
+    client.indices.delete({
+      index: process.env.ELASTICSEARCH_INDEX,
+      ignore_unavailable: true,
+    }, function (err, resp) {
+      if (err) {
+        console.log('Failed to delete index:', err)
+        process.exit(1)
       }
-    }
-  }, function (err, resp) {
-    if (err) {
-      console.log('Failed to delete index:', err)
-      process.exit(1)
-    }
-  });
+    });
 
-  client.bulk({
-    body: result
-  }, function (err, resp) {
-    if (err) {
-      console.log('Failed to upload index:', err)
-      process.exit(2)
-    }
-  });
+    console.log('Create empty search index')
+    client.indices.create({
+      index: process.env.ELASTICSEARCH_INDEX,
+    }, function (err, resp) {
+      if (err) {
+        console.log('Failed to create index:', err)
+        process.exit(1)
+      }
+    });
+
+    console.log('Upload search index')
+    client.bulk({
+      body: result
+    }, function (err, resp) {
+      if (err) {
+        console.log('Failed to upload index:', err)
+        process.exit(2)
+      }
+    });
+  }
 }
 
 function enforceEditurl (contentAggregate) {

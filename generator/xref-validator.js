@@ -11,7 +11,7 @@
  *
  * Usage (from root of playbook repository):
  *
- *  $ NODE_PATH=netlify/node_modules antora --pull --generator=./generator/xref-validator.js antora-playbook.yml
+ *  $ NODE_PATH=netlify/node_modules antora --fetch --generator=./generator/xref-validator.js antora-playbook.yml
  */
 const aggregateContent = require('@antora/content-aggregator')
 const buildPlaybook = require('@antora/playbook-builder')

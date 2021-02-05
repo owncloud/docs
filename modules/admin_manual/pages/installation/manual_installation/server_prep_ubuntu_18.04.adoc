@@ -3,26 +3,28 @@
 :description: If your Ubuntu 18.04 server is a bare-minimum installation, follow this preparation guide to get it ready to manually install ownCloud.
 :toc: right
 :toclevels: 1
-:auth-unix-socket-url: https://mariadb.com/kb/en/library/authentication-plugin-unix-socket/
+:page-partial:
 :disabling-thp-url: https://stackoverflow.com/questions/48743100/why-thp-transparent-huge-pages-are-not-recommended-for-databases-like-oracle-a
 :discover-samba-hosts-url: https://ubuntuforums.org/showthread.php?t=2384959
-:install-mariadb-latest-url: https://downloads.mariadb.org/mariadb/repositories/#
 :mcrypt-link-url: https://websiteforstudents.com/install-php-7-2-mcrypt-module-on-ubuntu-18-04-lts/
 :mcrypt-pecl-url: https://pecl.php.net/package/mcrypt
 :overriding-vendor-settings-url: https://www.freedesktop.org/software/systemd/man/systemd.unit.html
 :transport-huge-pages-url: https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/performance_tuning_guide/s-memory-transhuge
-:iscsi_initiator-url: https://help.ubuntu.com/lts/serverguide/iscsi-initiator.html
+:iscsi_initiator-url: https://ubuntu.com/server/docs/service-iscsi
 :ondrej-php-url: https://launchpad.net/~ondrej/+archive/ubuntu/php
+:libsmbclient-php_url: https://github.com/eduardok/libsmbclient-php
+:update-alternatives_url: https://manpages.ubuntu.com/manpages/precise/man8/update-alternatives.8.html
+:smbclient_url: https://packages.ubuntu.com/search?keywords=smbclient
+:pecl_url: https://pecl.php.net/package/smbclient
 
 == Introduction
 
-The target audience for this document is more sophisticated admins with additional needs and setup scenarios.
-Ubuntu 18.04, by design, only provides PHP 7.2.
-Because PHP 7.2 security support ends in November 2020, you may want to to consider using PHP 7.3.
-If you want to install the PHP 7.3 package and other required PHP extensions for PHP 7.3 for Ubuntu 18.04,
-you need to use the well known, custom, PPA {ondrej-php-url}[ondrej/php].
-Independent of the PHP version used, all other items, such as installing extensions or comments, and notes,
-remain the same.
+The target audience for this document are more sophisticated admins with additional needs and
+setup scenarios. Ubuntu 18.04, by design, only provides PHP 7.2. Because PHP 7.2 security
+support ends in November 2020, you may want to consider using PHP 7.3. If you want to install
+the PHP 7.3 package and other required PHP extensions for PHP 7.3 for Ubuntu 18.04, you need to
+use the well known, custom, PPA {ondrej-php-url}[ondrej/php]. Independent of the PHP version
+used, all other items, such as installing extensions or comments, and notes, remain the same.
 
 == Apache Web Server and PHP
 
@@ -32,6 +34,113 @@ The following command installs the Apache web server and PHP.
 ----
 sudo apt install php libapache2-mod-php apache2
 ----
+
+If you want to install in two steps, first PHP and then Apache, run the following commands:
+
+[source,console]
+----
+sudo apt install php-cgi
+sudo apt install php
+sudo apt install apache2 libapache2-mod-php
+----
+
+Use `php-fpm` when opting for the FastCGI Process Manager. This requires a non-standard setup.
+
+== Multiple Concurrent PHP Versions
+
+If you have multiple concurrent PHP versions installed, which will happen when using `ondrej/php`,
+you need to tell your Web Server and your CLI environment which one to use.
+To list all available versions and choose one from them, use the following command:
+
+[source,console]
+----
+sudo update-alternatives --config php
+----
+Here is an example output:
+
+[source,console]
+----
+There are 2 choices for the alternative php (providing /usr/bin/php).
+
+  Selection    Path             Priority   Status
+------------------------------------------------------------
+  0            /usr/bin/php7.4   74        auto mode
+* 1            /usr/bin/php7.3   73        manual mode
+  2            /usr/bin/php7.4   74        manual mode
+
+Press <enter> to keep the current choice[*], or type selection number:
+----
+
+You can also directly set the required PHP version:
+
+[source,console]
+----
+sudo update-alternatives --set php /usr/bin/php7.3
+----
+
+WARNING: Post selecting your PHP version, it is **highly** recommended to switch to the correct
+compiling environment which is essential e.g. when using PECL!
+
+[source,console]
+----
+sudo update-alternatives --set phar /usr/bin/phar7.3
+sudo update-alternatives --set phar.phar /usr/bin/phar.phar7.3
+sudo update-alternatives --set phpize /usr/bin/phpize7.3
+sudo update-alternatives --set php-config /usr/bin/php-config7.3
+----
+
+When using Apache PHP-FPM, you have to configure your PHP version in an Apache config
+file manually. In any case, the PHP version used must always be the same.
+
+You can read more about the `update-alternatives` command on the {update-alternatives_url}[man page].
+
+WARNING: When switching a PHP version, you MUST also configure the
+corresponding php.ini files and modules used accordingly!
+
+WARNING: You may get completely unexpected behaviour if the PHP version of the Web Server and
+the CLI are different!
+
+=== Avoiding a Nasty Pitfall
+
+If you are using a PECL install later on, check the output of the command soon after it has
+started. You will find text like:
+
+[source,console]
+----
+...
+PHP Api Version:         20190902
+Zend Module Api No:      20190902
+...
+----
+
+Then do a test by just entering the following command:
+
+[source,console]
+----
+php -i | grep extension_dir
+----
+
+If the output is different in than the example below, there is a problem that needs fixing:
+
+[source,console]
+----
+extension_dir => /usr/lib/php/20180731 => /usr/lib/php/20180731
+----
+
+This is the output that shows a fix is needed:
+
+[source,console]
+----
+PHP Warning:  PHP Startup: smbclient: Unable to initialize module
+Module compiled with module API=20190902
+PHP    compiled with module API=20180731
+These options need to match
+----
+
+As you see above, the API modules do not match and have been compiled with different versions
+and therefore will not work. To fix this, uninstall the module with
+`pecl uninstall <extension_name>` then set the correct `update-alternatives` as described above,
+and reinstall it.
 
 == Common Prerequisites
 
@@ -51,15 +160,15 @@ sudo apt install php-mysql php-mbstring php-gettext php-intl php-redis \
      php-imap php-ldap php-bz2 php-ssh2 php-phpseclib
 ----
 
-== Useful Commands For Managing PHP Extensions 
+== Useful Commands For Managing PHP Extensions
 
 === List Enabled PHP Extensions
- 
+
 If you want to retrieve a list of enabled PHP extensions run following command:
 
 [source,console]
 ----
-ls `php -i | grep "^extension_dir" | sed -e 's/.*=> //'`
+ls `php -i | grep "^extension_dir" | sed -e 's/.*=> //'` | sort
 ----
 
 === Enabling and Disabling PHP Extensions
@@ -87,7 +196,7 @@ grep -q -P 'EXIF Support => enabled' <(php -i) && echo "Exif is installed and en
 == Notes for PHP Library phpseclib
 
 phpseclib's BigInteger uses the php-gmp (GNU Multiple Precision Arithmetic Library), php-bcmath and OpenSSL extensions,
-if they're available, for speed, but doesn't require them to maintain maximum compatibility. 
+if they're available, for speed, but doesn't require them to maintain maximum compatibility.
 The GMP library uses an internal resource type, while the BCMath library uses strings as datatype.
 The most salient difference is, that GMP works on [arbitrary precision] integer values, whereas BCMath
 allows [arbitrary precision] decimal / float-like values.
@@ -105,8 +214,8 @@ If you need it, it is still available via PECL.
 mcrypt is only used if it's available.
 If mcrypt is not available, either a pure-PHP implementation or OpenSSL is used instead.
 
-The prioritization is as follows: OpenSSL > mcrypt > pure-PHP. 
-mcrypt and OpenSSL load faster than the pure-PHP implementation. 
+The prioritization is as follows: OpenSSL > mcrypt > pure-PHP.
+mcrypt and OpenSSL load faster than the pure-PHP implementation.
 mcrypt offers a 45x speedup over pure-PHP.
 OpenSSL offers a greater than 6.5x speedup over mcrypt.
 ====
@@ -115,7 +224,7 @@ OpenSSL offers a greater than 6.5x speedup over mcrypt.
 
 Here are the steps for installing mcrypt, when it is explicitly required.
 
-NOTE: Some of the steps were borrowed from the website for student’s
+NOTE: Some steps were borrowed from the website for student’s
 {mcrypt-link-url}[guide to installing the PHP 7.2-Mcrypt module].
 
 First, determine the mcrypt version you want to use in {mcrypt-pecl-url}[PECL's mcrypt documentation].
@@ -142,8 +251,8 @@ NOTE: From PHP 7.2 onwards, libsodium is part of PHP, so installing this extensi
 
 If you see the message "_PHP Fatal error: sodium_init() in Unknown on line 0_" when invoking the command
 `php -v` or when running PHP programs, php-libsodium may have been installed unnecessarily.
-This error does not do any harm, but it can be annoying and it fills up your logs.
-To prevent this, you can uninstall php-libsodium. 
+This error does not do any harm, but it can be annoying, and it fills up your logs.
+To prevent this, you can uninstall php-libsodium.
 This can be done by invoking the following command:
 
 [source,console]
@@ -161,9 +270,13 @@ grep -P "sodium support => enabled" <( php -i )
 
 == libsmbclient-php Library
 
-libsmbclient-php is a PHP extension that uses Samba's libsmbclient library to provide Samba-related functions
-to PHP programs. You only need to install it if you have installed smbclient as described above. 
-To install it, run the following commands.
+`libsmbclient-php` is a PHP extension that uses Samba's libsmbclient library to provide
+Samba-related functions to PHP programs. You only need to install it, if you have installed
+`smbclient` as described above. `smbclient` is necessary, if you are using the
+xref:enterprise/external_storage/windows-network-drive_configuration.adoc[Windows Network Drives app]
+from ownClouds Enterprise Edition. To install it, run the commands described below.
+You can find more information about `smbclient` and the latest version on {pecl_url}[PECL].
+
 
 [source,console]
 ----
@@ -172,7 +285,7 @@ sudo pecl channel-update pecl.php.net
 sudo pecl install smbclient
 ----
 
-When the commands complete, you then have to:
+When the commands complete, you then have to (assuming you use PHP 7.2):
 
 - Create `/etc/php/7.2/mods-available/smbclient.ini` with following content `extension=smbclient.so`.
 - Enable the module by running `phpenmod smbclient`.
@@ -180,12 +293,18 @@ When the commands complete, you then have to:
 +
   sudo service apache2 restart
 
+NOTE: Do not get confused by the name `smbclient`. It is on the one hand a
+{smbclient_url}[command-line SMB/CIFS client for Unix], and on the other hand the package
+name for the PECL libsmbclient-php` PHP extension.
+
+NOTE: Alternatively you can install it from {libsmbclient-php_url}[source].
+
 [IMPORTANT]
 ====
-Due to a change in the minimum protocol version used in the Samba client in Ubuntu 18.04, you may not get a
-valid connection in ownCloud. This error is identified by a red box at the mount definition or being unable to
-list directory content. In this case, you have to add the following to `/etc/samba/smb.cnf`, below the
-`workgroup =` statement:
+Due to a change in the minimum protocol version used in the Samba client in **Ubuntu 18.04**,
+you may not get a valid connection in ownCloud. This error is identified by a red box at the
+mount definition or being unable to list directory content. In this case, you have to add the
+following to `/etc/samba/smb.cnf`, below the `workgroup =` statement:
 
 `client max protocol = NT1`
 
@@ -194,46 +313,7 @@ For more information see: {discover-samba-hosts-url}[Bionic Beaver can not disco
 
 == MariaDB Database
 
-For how to install the latest stable release of MariaDB, please refer to
-{install-mariadb-latest-url}[the MariaDB installation documentation].
-
-[NOTE]
-====
-For MariaDB server releases lower than 10.4.3, you will be prompted during the installation to create a root
-password. Be sure to remember your password, as you will need it during the ownCloud database setup.
-====
-
-[NOTE]
-====
-If you have an existing installation of MariaDB and upgrade to a higher version, do not forget to run the following
-command, to handle the new setup for admin users — especially when upgrading to MariaDB 10.4.3 upwards:
-
-[source,console]
-----
-sudo mysql_upgrade 
-----
-====
-
-[NOTE]
-====
-From MariaDB 10.4.3 onwards, the authentication method has changed to UNIX sockets. 
-For details, please refer to: {auth-unix-socket-url}[MariaDB: Authentication Plugin - Unix Socket].
-The unix_socket authentication plugin allows the user to use operating system credentials when
-connecting to MariaDB via a local UNIX socket. Follow the procedure below to create an admin user
-for non-socket login, giving ownCloud access to create it's database respectively for phpMyAdmin. 
-_This is not the ownCloud user!_
-_Don't forget to change the username and password according to your needs_.
-
-[source,console]
-----
-sudo mysql
-MariaDB [(none)]>
- CREATE USER IF NOT EXISTS 'newuser'@'localhost' IDENTIFIED BY 'changeme';
- GRANT ALL PRIVILEGES ON *.* TO 'newuser'@'localhost' WITH GRANT OPTION;
- FLUSH PRIVILEGES;
- SHOW GRANTS FOR 'newuser'@'localhost';
-----
-====
+include::{partialsdir}installation/manual_installation/mariadb.adoc[leveloffset=+1]
 
 NOTE: Follow this procedure, if you want to disable <<Disable Transparent Huge Pages (THP),Transparent Huge Pages>>
 
@@ -248,14 +328,14 @@ sudo apt install phpmyadmin
 
 === Start a Service After a Resource is Mounted
 
-If you have network resources, such as NFS or iSCSI based mounts and you want to make
+If you have network resources, such as NFS or iSCSI based mounts, and you want to make
 sure that the database or web server only starts _after_ the resource is mounted,
 then consider the following example setup when configuring your system.
 
 The example below is based on an NFS mount which you want to be available _before_ the service with <name.service> starts.
-The same procedure can be used for iSCSI. 
+The same procedure can be used for iSCSI.
 For details setting up an iSCSI mount see the {iscsi_initiator-url}[Ubuntu 18.04 iSCSI Initiator] guide.
- 
+
 The name in <name.service> could be any valid service, including `apache2`, `mysql` or `mariadb`.
 
 * Add `_netdev` to the list of NFS mount point options in `/etc/fstab`.
@@ -287,7 +367,7 @@ systemctl list-units | grep -nP "\.mount"
 ----
 
 You should see lines printed to the console.
-Look for the mount you want to be up in the command's output. 
+Look for the mount you want to be up in the command's output.
 
 [source,console]
 ----

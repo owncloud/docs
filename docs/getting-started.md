@@ -141,9 +141,11 @@ If, however, you're linking to local files, such as inline code examples, images
 
 In this case, you need to use Antora to regenerate the documentation and manually check if there are any broken links or if something looks amiss.
 
-To check for broken links manually see [install and use a broken-link-checker](./checking-broken-links.md).
-
 Next, you need to learn how to [build the docs](./build-the-docs.md) from the command line and how to review the changes in your browser.
+
+####  Broken Link Checker
+
+To check for broken links manually, see [install and use a broken-link-checker](./checking-broken-links.md).
 
 ### Contributing to the Documentation
 

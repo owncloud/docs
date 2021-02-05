@@ -4,7 +4,7 @@ def main(ctx):
     # Version shown as latest in generated documentations
     # It's fine that this is out of date in version branches, usually just needs
     # adjustment in master/deployment_branch when a new version is added to site.yml
-    latest_version = "10.5"
+    latest_version = "10.6"
 
     # Current version branch (used to determine when changes are supposed to be pushed)
     # pushes to base_branch will trigger a build in deployment_branch but pushing
@@ -60,7 +60,7 @@ def build(ctx, latest_version, deployment_branch, base_branch):
                 "pull": "always",
                 "image": "owncloudci/nodejs:11",
                 "commands": [
-                    "yarn validate --pull",
+                    "yarn validate --fetch",
                 ],
             },
             {
@@ -68,6 +68,7 @@ def build(ctx, latest_version, deployment_branch, base_branch):
                 "pull": "always",
                 "image": "owncloudci/nodejs:11",
                 "environment": {
+                    "BUILD_SEARCH_INDEX": "true",
                     "UPDATE_SEARCH_INDEX": ctx.build.branch == deployment_branch,
                     "ELASTICSEARCH_HOST": from_secret("elasticsearch_host"),
                     "ELASTICSEARCH_INDEX": from_secret("elasticsearch_index"),
@@ -78,7 +79,7 @@ def build(ctx, latest_version, deployment_branch, base_branch):
                     "latestVersion": latest_version,
                 },
                 "commands": [
-                    "yarn antora --pull --attribute format=html",
+                    "yarn antora --fetch --attribute format=html",
                 ],
             },
             {

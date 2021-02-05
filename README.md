@@ -2,6 +2,7 @@
 
 [![Build Status](http://drone.owncloud.com/api/badges/owncloud/docs/status.svg?branch=master)](http://drone.owncloud.com/owncloud/docs)
 
+
 This project is a port of the ownCloud documentation, that was previously generated using [Sphinx-Doc](http://www.sphinx-doc.org), to [Antora](./docs/what-is-antora.md). Fundamentally, not that much has changed. All of the same information is still available. However, here's what has changed:
 
 1. The platform (and tools) used to build the documentation, which is [Antora](./docs/what-is-antora.md).
@@ -24,7 +25,18 @@ Please read how to test un-merged [docs-ui](./docs/test-ui-bundle.md) changes wi
 
 ## Best Practices and Tips
 
-Please refer to [Best Practices and Tips](./docs/best-practices.md) for more information.
+Please refer to [Best Practices and Tips for writing in AsciiDoc](./docs/best-practices.md) for more information.
+
+## Target Branch and Backporting
+
+Please always do your changes in `master` and backport them to the relevant branches.
+The **ONLY** reason for doing a PR in a branch directly is, to fix an issue which is
+_only_ present in that particular branch! When creating a PR and it is necessary to backport,
+document in the PR to which branches a backport is needed.
+
+When backporting, consider using the [backport script](https://doc.owncloud.com/server/developer_manual/general/backporting.html)
+which eases life a lot and speeds up the process. It is also very benificial when using the
+extended code provided, that a clear naming structure of the backport PR is generated automatically.
 
 ## Version branches in this repo
 

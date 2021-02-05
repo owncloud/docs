@@ -152,7 +152,7 @@ These commands:
 
 - Starts up [ownCloud's NodeJS Docker container](https://hub.docker.com/r/owncloudci/nodejs/)
 - Runs Antora's `generate` command, which regenerates the documentation
-- You can add the `--pull` option to update the dependent repositories, or any other available flag.
+- You can add the `--fetch` option to update the dependent repositories, or any other available flag.
 
 If all goes well, you will _not_ see any console output. If a copy of the container doesn't exist locally, you can pull down a copy, by running `docker pull owncloudci/nodejs:11`. Otherwise, you should see output similar to the following:
 
