@@ -63,6 +63,14 @@ If your server requires authentication, enter your credentials on this tab.
 
 IMPORTANT: The base DN and port are mandatory.
 
+==== LDAPS Configuration
+
+LDAPS encrypts the connection between your LDAP server and ownCloud.
+
+1. First you need the Windows Server CA certificate in the `pem` format with `.crt` suffix
+2. Import the certificate to `/usr/local/share/ca-certificates/`
+3. Execute `update-ca-certificates`
+
 image:apps/user_ldap/ldap-wizard/server-tab.png[LDAP Wizard, Server Tab]
 
 Server configuration::
@@ -87,11 +95,11 @@ Port::
 +
 --
 The port on which to connect to the LDAP server. 
-The field is disabled in the beginning of a new configuration. 
 
 Example:
 
-* `389`
+* `389` for unencrypted connection
+* `636` for encrypted connection
 --
 
 Use StartTLS support::
@@ -640,7 +648,7 @@ Never clear the mappings in a production environment, but only in a testing or e
 IMPORTANT: Clearing the mappings is not configuration sensitive, it affects all LDAP configurations!
 --
 
-== Testing the Configuration
+=== Testing the Configuration
 
 The "**Test Configuration**" button checks the values as currently given in the input fields. 
 You do not need to save before testing. 
@@ -653,7 +661,7 @@ When the configuration test reports success, save your settings and check if the
 
 image:configuration/user/user-page.png[Users Page]
 
-== Syncing Users
+=== Syncing Users
 
 While users who match the login and user filters can log in, only synced users will be found in the sharing dialog. 
 Whenever users log in, their display name, email, quota, avatar and search attributes will be synced to ownCloud. 
@@ -669,7 +677,7 @@ You can use xref:developer_manual:core/apis/ocs/user-sync-api.adoc[the OCS User 
 This depends on the amount of users and speed of the update, but we recommend _at least_ once per day. 
 You can run it more frequently, but doing so may generate too much load on the server.
 
-== Reuse Existing User and Group LDAP Accounts
+=== Reuse Existing User and Group LDAP Accounts
 
 New LDAP logins can attempt to reuse _existing_ user and group accounts if:
 
@@ -684,7 +692,7 @@ To enable it, run the following command.
 {occ-command-example-prefix} config:app:set user_ldap reuse_accounts --value=yes
 ....
 
-== ownCloud Avatar Integration
+=== ownCloud Avatar Integration
 
 ownCloud supports user profile pictures, which are also called avatars. 
 If a user has a photo stored in the `jpegPhoto` or `thumbnailPhoto` attribute on your LDAP server, it will be used as their avatar. 
@@ -703,16 +711,38 @@ This affects only the presentation, and the original image is not changed.
 
 == Troubleshooting, Tips and Tricks
 
-=== SSL Certificate Verification (LDAPS, TLS)
+=== LDAPS
 
-A common mistake with SSL certificates is that they may not be known to PHP. 
-If you have trouble with certificate validation, make sure that:
+Use these commands to troubleshoot:
 
-* You have the certificate of the server installed on the ownCloud server.
-* The certificate is listed in the system's LDAP configuration file, usually `/etc/ldap/ldap.conf`.
-* If you are using LDAPS, make sure that the port is correctly configured (the default port is 636)
-* If you get the error "*Lost connection to LDAP server*" or "*No connection to LDAP server*", double-check the connection parameters and try connecting to LDAP with tools like `ldapsearch`. 
-  If using LDAPS or TLS, make sure the certificate is readable by the user that is used to serve ownCloud.
+Test encrypted connection:
+
+`openssl s_client -connect 10.211.55.15:636`
+
+look for **verify return:1**
+
+Try an ldapsearch query
+
+----
+ldapsearch \
+-H ldaps://ad16.oc.local:636 \
+-D "cn=Administrator,cn=users,dc=oc,dc=local" \
+-b "dc=oc,dc=local" \
+-w MyPassword
+----
+
+Check:
+
+`/etc/ldap/ldap.conf`
+`/etc/openldap/ldap.conf`
+
+look for 
+
+`TLS_CACERT      /etc/ssl/certs/ca-certificates.crt`
+
+Turn off certificate validation for testing:
+
+`TLS_REQCERT    ALLOW`
 
 === Microsoft Active Directory
 
@@ -736,7 +766,7 @@ In case you have a working configuration and want to create a similar one or "sn
 
 Now you can modify and enable the configuration.
 
-== Performance Tips
+=== Performance Tips
 
 === Filter out Deactivated Users
 
@@ -796,7 +826,7 @@ The more precise your base DN, the faster LDAP can search because it has fewer b
 
 Use good filters to further define the scope of LDAP searches, and to intelligently direct your server where to search, rather than forcing it to perform needlessly-general searches.
 
-== ownCloud LDAP Internals
+=== ownCloud LDAP Internals
 
 Some parts of how the LDAP backend works are described here.
 
