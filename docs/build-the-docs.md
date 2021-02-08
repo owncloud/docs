@@ -1,6 +1,6 @@
 # Building the Documentation
 [link-git]: https://git-scm.com
-[link-Node-8]: https://nodejs.org
+[link-Node]: https://nodejs.org
 [link-Gulp-CLI]: http://gulpjs.com
 [link-Yarn]: https://yarnpkg.com
 [link-git-package]: https://git-scm.com/downloads
@@ -15,7 +15,7 @@
 Before you can build the ownCloud documentation, you need to install the following software:
 
 - [git][link-git] (command: `git`)
-- [Node 8][link-Node-8] (command: `node`)
+- [Node][link-Node] (command: `node`)
 - [Yarn][link-Yarn] (command: `yarn`)
 
 ### Checking for the Prerequisites on Linux
@@ -48,26 +48,26 @@ For any prerequisite that is not installed, follow the instructions below to ins
 
 To install git, download and install the [git package][link-git-package] for your operating system, or use your package manager, if you are using a Linux distribution.
 
-#### Node 8
+#### Node
 
 While you can install Node from the official packages, we strongly recommend that you use [NVM][link-nvm] (Node Version Manager) to install and manage Node.
 Follow the [NVM installation instructions][link-nvm-installation-instructions] to set up NVM on your machine.
 Once you've installed NVM, open a new terminal and install Node 8 using the following command:
 
 ```
-nvm install 8
+nvm install
 ```
 
-You can switch to this version of Node at any time using the following command:
+You can switch to a version of Node at any time using the following command:
 
 ```
-nvm use 8
+nvm use 10
 ```
 
-To make Node 8 the default in new terminals, type:
+To make Node 10 the default in new terminals, type:
 
 ```
-nvm alias default 8
+nvm alias default 10
 ```
 
 #### Yarn
@@ -95,7 +95,7 @@ yarn run vv1.15.2
 info Commands available from binary scripts: antora, blc, broken-link-checker, crc32, ecstatic, errno, esparse, esvalidate, handlebars, he, hs, http-server, isogit, js-yaml, json5, mime, mkdirp, nopt, opener, os-name, osx-release, printj, semver, sha.js, strip-ansi, supports-color, uglifyjs, write-good, writegood
 info Project commands
    - antora
-      antora --stacktrace generate --cache-dir cache --redirect-facility disabled --generator ./generator/generate-site.js --clean site.yml
+      antora --stacktrace generate --cache-dir cache --redirect-facility disabled --generator ./generator/generate-site.js --clean --fetch --attribute format=html site.yml
    - linkcheck
       broken-link-checker --filter-level 3 --recursive --verbose
    - prose
@@ -103,7 +103,7 @@ info Project commands
    - serve
       http-server public/ -d -i
    - validate
-      antora --stacktrace generate --cache-dir cache --redirect-facility disabled --generator ./generator/xref-validator.js --clean site.yml
+      antora --stacktrace generate --cache-dir cache --redirect-facility disabled --generator ./generator/xref-validator.js --clean --fetch --attribute format=html site.yml
 question Which command would you like to run?:
 ```
 Please see the [documentaion](https://yarnpkg.com/lang/en/docs/cli/run/)
@@ -119,6 +119,42 @@ There are two ways to generate the documentation in HTML format:
 
 - Using ownCloud's custom Antora Docker Container
 - Running Antora from the Command-Line
+
+#### Using Antora from the Command-Line
+
+Using Yarn, as in the example below, is the easiest way to build the documentation. This project has a predefined target (`antora`) which calls Antora, supplying all of the required options to build the docs, to build the documentation on any branch of [the ownCloud documentation repository](https://github.com/owncloud/docs).
+
+```
+yarn antora
+```
+
+#### Additional Command Line Parameters
+
+You can add additional parameters to the current defined ones. For example, defining the default URL
+or additional global attributes. Just add them after the `yarn antora` command. 
+
+##### Overwrite the Default URL
+If you want to serve your changes locally, you have to overwrite the default URL, which points to https://doc.owncloud.com. You can append a custom URL to the command like this:
+
+```console
+yarn antora --url http://localhost:8080
+```
+
+##### Attribute Error Searching and Fixing
+
+It is very benificial to use command line attributes when searching and fixing attribute errors. This can be
+necessary when you get warnings like: `WARNING: skipping reference to missing attribute: <attribute-name>`
+
+- First, you may want to search if the attribute-name is used as an attribute all. Run in docs root\
+`grep -rn --exclude-dir={public,.git,node_modules} \{attribute-name`\
+If found, check if the attribute definition is made or passed or needs exclusion. 
+- Second, if no result is found, it may be the case that the erroring attribute is not in the master
+branch but in another one. This can be identified by adding a custom attribute to the yarn antora command like:\
+`--attribute the-erroring-attribute=HUGO` where HUGO can be anything that is not used and easy to grep.
+- Finally, run in `public` directory: `grep -rn HUGO`. You will see exactly in which branch and file the issue occurs.
+In case it is a branch other than `master` and a ongoing but not merged fix that targets this issue, you have to
+merge the changes first, and then backport them to the branch. Do not forget to sync the branch post merging too.
+Having done that, re-running `yarn antora` should eliminate that particular missing attribue warning.
 
 #### Using the Docker Container
 
@@ -172,20 +208,6 @@ cec1230fab6b: Pull complete
 78bc608ac308: Pull complete
 Digest: sha256:d7706c693242c65b36b3205a52483d8aa567d09a1465707795d9273c0a99c0c2
 Status: Downloaded newer image for owncloudci/nodejs:11
-```
-
-#### Using Antora from the Command-Line
-
-Using Yarn, as in the example below, is the easiest way to build the documentation. This project has a predefined target (`antora`) which calls Antora, supplying all of the required options to build the docs, to build the documentation on any branch of [the ownCloud documentation repository](https://github.com/owncloud/docs).
-
-```
-yarn antora
-```
-
-If you want to serve your changes locally you have to overwrite the default URL, which points to https://doc.owncloud.com. You can append a custom URL to the command like this:
-
-```console
-yarn antora --url http://localhost:8080
 ```
 
 ### Viewing The HTML Documentation

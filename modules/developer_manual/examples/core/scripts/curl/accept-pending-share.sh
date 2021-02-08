@@ -3,9 +3,9 @@
 ##
 ## Variable Declaration
 ##
-SERVER_URI={oc-examples-server-url}
+base_uri={oc-examples-server-url}
 API_PATH=ocs/v1.php/apps/files_sharing/api/v1
 
 curl -X POST \
     --user {oc-examples-username}:{oc-examples-password} \
-    "$SERVER_URI/$API_PATH/shares/pending/<share_id>"
+    "$base_uri/$API_PATH/shares/pending/<share_id>"
