@@ -9,13 +9,13 @@ import (
 )
 
 func main() {
-	serverUri := "https://your.owncloud.install.com/owncloud/ocs/v1.php/apps/files_sharing/api/v1"
+	base_uri := "{oc-examples-server-url}ocs/v1.php/apps/files_sharing/api/v1"
 	username := "your.username"
 	passwd := "your.password"
 
 	client := &http.Client{}
 
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/%s", serverUri, "shares/115464"), nil)
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/%s", base_uri, "shares/115464"), nil)
 	if err != nil {
 		log.Print(err)
 		os.Exit(1)
