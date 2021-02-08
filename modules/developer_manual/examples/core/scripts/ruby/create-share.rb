@@ -1,8 +1,8 @@
 require 'net/http'
 require 'uri'
 
-base_uri = 'https://your.owncloud.install.com/owncloud/ocs/v1.php/apps/files_sharing/api/v1'
-uri = URI("#{base_uri}/shares")
+base_uri = '{oc-examples-server-url}/ocs/v1.php/apps/files_sharing/api/v1/'
+uri = URI(base_uri + "shares")
 
 Net::HTTP.start(uri.host, uri.port, :use_ssl => uri.scheme == 'https') do |http|
   req = Net::HTTP::Get.new uri

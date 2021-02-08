@@ -31,8 +31,8 @@ public class GetShareInfo {
         GetShareInfo info = new GetShareInfo();
 
         String credentials = Credentials.basic("your.username", "your.password");
-        String ownCloudDomain = "your.owncloud.domain.com/owncloud";
-        String url = "https://" + ownCloudDomain + "/ocs/v1.php/apps/files_sharing/api/v1/shares/<share_id>'";
+        String ownCloudDomain = "{oc-examples-server-url}";
+        String url = ownCloudDomain + "/ocs/v1.php/apps/files_sharing/api/v1/shares/<share_id>'";
 
         String response = info.run(url, credentials);
         System.out.println(response);
