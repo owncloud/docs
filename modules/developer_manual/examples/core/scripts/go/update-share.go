@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	serverUri := "https://your.owncloud.install.com/owncloud/ocs/v1.php/apps/files_sharing/api/v1"
+	base_uri := "{oc-examples-server-url}/ocs/v1.php/apps/files_sharing/api/v1"
 	username := "your.username"
 	passwd := "your.password"
 
@@ -24,7 +24,7 @@ func main() {
 	// Build the core request object
 	req, _ := http.NewRequest(
 		"PUT",
-		fmt.Sprintf("%s/%s", serverUri, "shares/115470"),
+		fmt.Sprintf("%s/%s", base_uri, "shares/115470"),
 		strings.NewReader(form.Encode()),
 	)
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
