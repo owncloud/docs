@@ -6,12 +6,12 @@ import okhttp3.Request
 import java.io.IOException
 
 fun main(args: Array<String>) {
-    val ownCloudDomain = "your.owncloud.domain.com/owncloud"
+    val ownCloudDomain = "{oc-examples-server-url}"
     var client = OkHttpClient()
     val credentials = Credentials.basic("your.username", "your.password");
 
     var builder = Request.Builder()
-            .url("https://$ownCloudDomain/ocs/v1.php/apps/files_sharing/api/v1/shares/<share_id>'")
+            .url("$ownCloudDomain/ocs/v1.php/apps/files_sharing/api/v1/shares/<share_id>'")
             .header("Authorization", credentials)
             .build()
 
