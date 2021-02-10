@@ -1,30 +1,47 @@
 = Installing with Docker
 :toc: right
+:docker-tags-url: https://hub.docker.com/r/owncloud/server/tags
+:docker-compose-url: https://docs.docker.com/compose/
+:webhippie-mariadb-url: https://hub.docker.com/r/webhippie/mariadb/
 
-ownCloud can be installed using Docker, using
-https://hub.docker.com/r/owncloud/server/tags[the official ownCloud Docker image].
-This official image works standalone for a quick evaluation, but is designed to be used in a docker-compose setup.
+== Introduction
+
+ownCloud can be installed using Docker, using the {docker-tags-url}[official ownCloud Docker image].
+This official image works standalone for a quick evaluation, but is designed to be used in a
+docker-compose setup.
+
+[NOTE]
+====
+Preceding `sudo` in the docker commands is not necessary, if you add your user to the `docker` group
+by invoking
+
+[source,console]
+----
+sudo usermod -aG docker <your-user>
+----
+====
 
 == Quick Evaluation
 
-`docker run -e OWNCLOUD_DOMAIN=localhost:{std-port-http} -p{std-port-http}:{std-port-http} owncloud/server`
+`sudo docker run -e OWNCLOUD_DOMAIN=localhost:{std-port-http} -p{std-port-http}:{std-port-http} owncloud/server`
 
 == Docker Compose
 
 The configuration:
 
-* exposes ports {std-port-http}, allowing for HTTP connections.
-* uses separate _MariaDB_ and _Redis_ containers.
-* mounts the data and MySQL data directories on the host for persistent storage.
+* Exposes ports {std-port-http}, allowing for HTTP connections.
+* Uses separate _MariaDB_ and _Redis_ containers.
+* Mounts the data and MySQL data directories on the host for persistent storage.
 
 The following instructions assume you install locally. For remote access, the value of OWNCLOUD_DOMAIN must be adapted.
 
-First, create a new project directory. Then copy and paste the sample
-`docker-compose.yml` from this page
-into that new directory. Next, create a .env configuration file, which contains the required
-configuration settings. Only a few settings are required, these are:
+. Create a new project directory. Then copy and paste the sample `docker-compose.yml` from this page
+into that new directory.
+. Create a `.env` configuration file, which contains the required configuration settings.
 
-[cols=3,options=header]
+Only a few settings are required, these are:
+
+[width="100%",cols="45%,50%,80%",options="header"]
 |===
 | Setting Name
 | Description
@@ -55,14 +72,13 @@ NOTE: `ADMIN_USERNAME` and `ADMIN_PASSWORD` will not change between deploys even
 values in the .env file. To change them, you'll need to do `docker volume prune`, which 
 *will delete all your data*.
 
-Then, you can start the container, using your preferred Docker
-command-line tool. The example below shows how to use
-https://docs.docker.com/compose/[Docker Compose].
+Then, you can start the container, using your preferred Docker _command-line tool_.
+The example below shows how to use {docker-compose-url}[Docker Compose].
 
 [source,console,subs="attributes+"]
 ----
 # Create a new project directory
-mkdir owncloud-docker-server
+sudo mkdir owncloud-docker-server
 
 cd owncloud-docker-server
 
@@ -79,13 +95,12 @@ HTTP_PORT={std-port-http}
 EOF
 
 # Build and start the container
-docker-compose up -d
+sudo docker-compose up -d
 ----
 
-When the process completes, then check that all the containers have
-successfully started, by running `docker-compose ps`. If they are all
-working correctly, you should expect to see output similar to that
-below:
+When the process completes, check that all the containers have successfully started, by running
+`sudo docker-compose ps`. If they are all working correctly, you should expect to see output
+similar to that below:
 
 [source,console,subs="attributes+"]
 ----
@@ -96,143 +111,178 @@ ownclouddockerserver_owncloud_1   … /usr/bin/owncloud server  Up      0.0.0.0:
 ownclouddockerserver_redis_1      … /bin/s6-svscan /etc/s6    Up      {std-port-redis}/tcp
 ----
 
-In it, you can see that the database, ownCloud, and Redis containers are running, and that only ownCloud is accessible via port {std-port-http} on the host machine.
+In it, you can see that the database, ownCloud, and Redis containers are running, and that ownCloud
+is accessible via port {std-port-http} on the host machine.
 
 [IMPORTANT]
 ====
 All files stored in this setup are contained in Docker volumes, rather than a physical filesystem tree.
-It is the admin's responsibility to persist the files.
-Use, e.g., `docker volume ls | grep ownclouddockerserver` to inspect the volumes.
-Use e.g., `docker run -v ownclouddockerserver_files:/mnt ubuntu tar cf - -C /mnt . > files.tar` to export the files as a tar archive.
+It is the admin's responsibility to persist the files. +
+To inspect the volumes run:
+[source,console]
+----
+sudo docker volume ls | grep ownclouddockerserver`
+----
+To export the files as a tar archive run:
+[source,console]
+----
+sudo docker run -v ownclouddockerserver_files:/mnt \
+            ubuntu tar cf - -C /mnt . > files.tar
+----
 ====
 
 [TIP]
 ====
-Although the containers are up and running, it may still take a few minutes until ownCloud is fully functional.
-Run, e.g., `docker-compose logs --follow owncloud` and inspect the log output.
-Wait until the output shows "Starting apache daemon..." before you access the web UI.
+Although the containers are up and running, it may still take a few minutes until ownCloud is fully
+functional. +
+To inspect the log output:
+[source,console]
+----
+sudo docker-compose logs --follow owncloud
+----
+Wait until the output shows **Starting apache daemon...** before you access the web UI.
 ====
 
 [IMPORTANT]
 ====
-Although all important data persists after `docker-compose down; docker-compose up -d`, there are certain details that get lost, e.g., default apps may re-appear after they were uninstalled.
+Although all important data persists after:
+[source,console]
+----
+sudo docker-compose down; docker-compose up -d
+----
+there are certain details that get lost, e.g., default apps may re-appear after they were uninstalled.
 ====
 
 === Logging In
 
-To log in to the ownCloud UI, open `http://localhost:{std-port-http}` in your browser
+To log in to the ownCloud UI, open `pass:a[http://localhost:{std-port-http}]` in your browser
 of choice, where you see the standard ownCloud login screen, as in the
 image below.
 
 image:docker/owncloud-ui-login.png[The ownCloud UI via Docker]
 
-The username and password are the admin username and password which you
-stored in `.env` earlier. Note that these will not change between deploys
-even if you change the values in .env. 
+The username and password are the credentials which you stored in `.env` earlier.
+Note that these will not change between deploys even if you change the values in .env. 
 
 === Stopping the Containers
 
-Assuming you used docker-compose, as in the previous example, to stop the containers use `docker-compose stop`.
-Alternatively, use `docker-compose down --rmi all --volumes` to stop and remove containers, along with the related networks, images, and volumes.
+Assuming you used `docker-compose`, as in the previous example. +
+To stop the containers use:
+[source,console]
+----
+sudo docker-compose stop
+----
+
+To stop and remove containers, along with the related networks, images, and volumes:
+[source,console]
+----
+sudo docker-compose down --rmi all --volumes
+----
 
 === Running occ command
 
 If you want to run an occ command, first go to the directory where your `.yaml` or `.env` file is located.
-Next, you are able to run any command referring to xref:configuration/server/occ_command.adoc[Using the occ Command], by entering: 
+Next, you are able to run any command referring to
+xref:configuration/server/occ_command.adoc[Using the occ Command], by entering: 
 
 [source,console]
 ----
-docker-compose exec owncloud occ <command>
+sudo docker-compose exec owncloud occ <command>
 ----
 
 [IMPORTANT]
 ====
-Don't use the `php` command prefix, this leads to several errors and is not intended to run in docker environments.
+Don't use the `php` command prefix, this leads to several errors and is not intended to run in
+docker environments.
 ====
 
 === Upgrading ownCloud on Docker
 
-When a new version of ownCloud gets released, you should update your
-instance. To do so, follow these simple steps.
+When a new version of ownCloud gets released, you should update your instance. To do so, follow
+these simple steps.
 
-First, go to your docker directory where your `.yaml` or `.env` file
-exists. Second, put ownCloud into maintenance mode; you can do so using
-the following command:
-
+. Go to your docker directory where your `.yaml` or `.env` file exists.
+. Put ownCloud into maintenance mode. You can do so using the following command:
++
 [source,console]
 ----
-docker-compose exec owncloud occ maintenance:mode --on
+sudo docker-compose exec owncloud occ maintenance:mode --on
 ----
 
-Third, create a backup in case something goes wrong during the upgrade
-process, using the following command:
-
+. Create a backup in case something goes wrong during the upgrade process, using the following command:
++
 [source,console]
 ----
-docker-compose exec db backup
+sudo docker-compose exec db backup
 ----
++
+NOTE: This assumes that you are using the {webhippie-mariadb-url}[default database container from Webhippie].
 
-NOTE: This assumes that you are using
-https://hub.docker.com/r/webhippie/mariadb/[the default database container from Webhippie].
-
-Fifth, shutdown the containers.
-
+. Shutdown the containers.
++
 [source,console]
 ----
-docker-compose down
+sudo docker-compose down
 ----
 
-Sixth, update the version number of ownCloud in your `.env` file or the
-YAML file. You can use sed for it, as in the following example.
-
+. Update the version number of ownCloud in your `.env` file or the YAML file. You can use sed
+for it, as in the following example.
++
 [source,console]
 ----
 # Make sure that you adjust the example to match your installation.
 sed -i 's/^OWNCLOUD_VERSION=.*$/OWNCLOUD_VERSION=<newVersion>/' /compose/*/.env
 ----
 
-Seventh, view the file to ensure the changes has been implemented.
-
+. View the file to ensure the changes has been implemented.
++
 [source,console]
 ----
 cat .env
 ----
 
-Eighth, start your docker instance again.
+. Start your docker instance again.
++
+[source,console]
+----
+sudo docker-compose up -d
+----
+
+Now you should have the current ownCloud running with `docker-compose`. Please note that the container will
+automatically run `occ upgrade` when starting up. If you notice the container starting over and over again,
+you can check the update log with the following command:
 
 [source,console]
 ----
-docker-compose up -d
-----
-
-Now you should have the current ownCloud running with docker-compose.
-Please note that the container will automatically run `occ upgrade` when starting up.
-If you notice the container starting over and over again, you can check the update log with the following command:
-
-[source,console]
-----
-docker-compose logs --timestamp owncloud
+sudo docker-compose logs --timestamp owncloud
 ----
 
 === Docker Compose YAML File
 
-NOTE: If you are an enterprise customer and are already registered on portal.owncloud.com, replace `image: owncloud/server` with `image: registry.owncloud.com/owncloud/enterprise` to be able to download our enterprise docker image.
-Then, login to our registry by running `docker login registry.owncloud.com`, along with your portal credentials.
+[NOTE]
+====
+If you are an enterprise customer and are already registered on portal.owncloud.com, replace +
+`image: owncloud/server` +
+with +
+`image: registry.owncloud.com/owncloud/enterprise` +
+to be able to download our enterprise docker image. Then, login to our registry by running +
+`sudo docker login registry.owncloud.com` +
+along with your portal credentials.
+====
 
 [source,yaml]
 ----
 include::{examplesdir}installation/docker/docker-compose.yml[Example Docker Compose YAML configuration file for ownCloud Server.]
 ----
 
-=== Troubleshooting
+== Troubleshooting
 
 If you have issues logging in to the registry, make sure the `.docker` file is in your home directory.
 If you installed Docker via `snap`, create a symbolic link to your home directory with the following command:
 
 [source,console]
 ----
-ln -sf snap/docker/384/.docker
+sudo ln -sf snap/docker/384/.docker
 ----
 
-The version `384` might differ from yours.
-Please adjust it accordingly.
+The version `384` might differ from yours. Please adjust it accordingly.
