@@ -35,13 +35,13 @@ async function generateSite (args, env) {
   return publishSite(playbook, [contentCatalog, uiCatalog, siteCatalog])
 }
 
-function generateIndex (playbook, pages) {
+async function generateIndex (playbook, pages) {
   if ((process.env.BUILD_SEARCH_INDEX || 'true') !== 'true') {
-    console.log('Search index generation skipped')
+    console.log('elastic: search index generation skipped')
     return
   }
 
-  console.log('Generating search index')
+  console.log('elastic: generate search index')
   let siteUrl = playbook.site.url
 
   const documents = pages.map((page) => {
@@ -85,7 +85,7 @@ function generateIndex (playbook, pages) {
   })
 
   if (process.env.UPDATE_SEARCH_INDEX == 'true' && process.env.ELASTICSEARCH_HOST && process.env.ELASTICSEARCH_INDEX) {
-    console.log('Uploading search index')
+    console.log('elastic: rebuild search index')
     let result = []
 
     documents.forEach((document, index) => {
@@ -109,30 +109,17 @@ function generateIndex (playbook, pages) {
       }]
     })
 
-    client.deleteByQuery({
-      index: process.env.ELASTICSEARCH_INDEX,
-      body: {
-        query: {
-          term: {
-            type: 'page'
-          }
-        }
-      }
-    }, function (err, resp) {
-      if (err) {
-        console.log('Failed to delete index:', err)
-        process.exit(1)
-      }
-    });
-
-    client.bulk({
-      body: result
-    }, function (err, resp) {
-      if (err) {
-        console.log('Failed to upload index:', err)
-        process.exit(2)
-      }
-    });
+    try {
+      console.log("elastic: remove old search index");
+      await indexDelete(client)
+      console.log("elastic: create empty search index");
+      await indexCreate(client)
+      console.log('elastic: upload search index')
+      await indexBulk(client, result)
+    } catch (err) {
+      console.log("elastic: ERROR: " + err.status + " - " + err.displayName);
+      process.exit(1);
+    }
   }
 }
 
@@ -152,6 +139,51 @@ function enforceEditurl (contentAggregate) {
   })
 
   return contentAggregate
+}
+
+function indexDelete(client) {
+  return new Promise((resolve, reject) => {
+    client.indices
+      .delete({
+        index: process.env.ELASTICSEARCH_INDEX,
+        ignore_unavailable: true,
+      })
+      .then((resp) => {
+        resolve(resp);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+}
+
+function indexCreate(client) {
+  return new Promise((resolve, reject) => {
+    client.indices
+      .create({
+        index: process.env.ELASTICSEARCH_INDEX,
+      })
+      .then((resp) => {
+        resolve(resp);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+}
+
+function indexBulk(client, result) {
+  return new Promise((resolve, reject) => {
+    client.bulk({
+      body: result
+    })
+      .then((resp) => {
+        resolve(resp);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
 }
 
 function create404Page () {

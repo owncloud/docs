@@ -1,6 +1,6 @@
 = User Authentication with LDAP
 :toc: right
-:toclevels: 1
+:toclevels: 3
 :page-aliases: go/admin-ldap.adoc
 :linkattrs:
 // URLS
@@ -16,18 +16,20 @@
 :oracle-ismemberof-url: https://docs.oracle.com/cd/E29127_01/doc.111170/e28967/ismemberof-5dsat.htm
 :reverse-group-membership-maintenance-url: https://www.openldap.org/doc/admin24/overlays.html#Reverse%20Group%20Membership%20Maintenance
 :selinux-url: https://selinuxproject.org/page/Main_Page
+:service-ldap-with-tls-url: https://ubuntu.com/server/docs/service-ldap-with-tls
+:ldap-over-ssl-ldaps-certificate-url: https://social.technet.microsoft.com/wiki/contents/articles/2980.ldap-over-ssl-ldaps-certificate.aspx
 
 == Introduction
 
 IMPORTANT: Please check both the advanced and expert configurations carefully before using in production.
 
-ownCloud ships with an LDAP application, called user_auth_ldap.
+ownCloud ships with an LDAP application, called `user_auth_ldap`.
 This application allows LDAP users (including those from Active Directory) to appear in your ownCloud user listings.
 These users can authenticate to ownCloud with their LDAP credentials so that separate ownCloud user accounts don't need to be created for them.
 You will manage their ownCloud group memberships, quotas, and sharing permissions just like any other ownCloud user.
 
 NOTE: The PHP LDAP module is required. 
-It is supplied by `php7.2-ldap` on Debian/Ubuntu and `php-ldap` on CentOS/Red Hat/Fedora. 
+It is supplied by `php7.4-ldap` on Debian/Ubuntu and `php-ldap` on CentOS/Red Hat/Fedora. 
 Please check for the correct version, based on your installation of PHP.
 
 The LDAP application supports:
@@ -63,9 +65,23 @@ If your server requires authentication, enter your credentials on this tab.
 
 IMPORTANT: The base DN and port are mandatory.
 
+==== LDAPS Configuration
+
+LDAPS encrypts the connection between your LDAP server and ownCloud via SSL/TLS.
+
+1. First you need the Server CA certificate in the `pem` format with `.crt` suffix
+- For windows see the {ldap-over-ssl-ldaps-certificate-url}[Microsoft TechNet - LDAP over SSL (LDAPS) Certificate] documentation.
++
+NOTE: The certificate you export from a Microsoft Domain Controller (DC) is usually in binary format and needs to be
+converted to base64. This can e.g. be done with openssl: +
+`openssl x509 -inform der -in BinaryFromDC.cer -out base64LDAPSForOwnCloud.pem`
+- For Ubuntu see {service-ldap-with-tls-url}[OpenLDAP - LDAP & TLS]
+2. Import the certificate to directory `/usr/local/share/ca-certificates/` at your ownCloud server
+3. Execute `sudo update-ca-certificates`
+
 image:apps/user_ldap/ldap-wizard/server-tab.png[LDAP Wizard, Server Tab]
 
-Server configuration::
+Server Configuration::
   Configure one or more LDAP servers.
   Click btn:[Delete Configuration] to remove the active configuration.
 
@@ -87,14 +103,14 @@ Port::
 +
 --
 The port on which to connect to the LDAP server. 
-The field is disabled in the beginning of a new configuration. 
 
 Example:
 
-* `389`
+* `389` for unencrypted connection
+* `636` for encrypted connection
 --
 
-Use StartTLS support::
+Use StartTLS Support::
 Check this option to use Transport Layer Security (TLS) when interacting with the LDAP server.
 
 [TIP]
@@ -140,12 +156,12 @@ You may bypass the form fields and enter a raw LDAP filter if you prefer.
 
 image:apps/user_ldap/ldap-wizard/users-tab.png[LDAP Wizard, Users Tab]
 
-Only those object classes::
+Only those Object Classes::
   ownCloud determines the object classes that are typically available for user objects in your LDAP. 
   ownCloud automatically selects the object class that returns the highest number of users. 
   You may select multiple object classes.
 
-Only from those groups::
+Only From those Groups::
 +
 --
 If your LDAP server supports the `memberof-overlay` in LDAP filters, you can define that only users from one or more certain groups are allowed to appear in user listings in ownCloud. 
@@ -154,7 +170,7 @@ You may select multiple groups.
 
 [NOTE]
 ====
-Group membership is configured by adding `memberUid`, `uniqueMember` or member attributes to an LDAP group (see xref:group-member-association[Group Member association]) below. 
+Group membership is configured by adding `memberUid`, `uniqueMember` or member attributes to an LDAP group see (xref:group-member-association[Group Member association]) below. 
 To efficiently look up the groups, a user who is a member of the LDAP server must support a `memberof-overlay`. 
 It allows using the virtual `memberOf` or `isMemberOf` attributes of an LDAP user in the user filter. 
 If your LDAP server does not support the `memberof-overlay` in LDAP filters, the input field is disabled. 
@@ -166,7 +182,7 @@ Please contact your LDAP administrator.
 ====
 --
 
-Edit raw filter instead::
+Edit Raw Filter Instead::
 +
 --
 Clicking on this text toggles the filter mode, and you can enter the raw LDAP filter directly. 
@@ -178,7 +194,9 @@ include::{examplesdir}configuration/user/user_auth_ldap/group_filter.ldif[]
 ----
 --
 
-x users found::
+// &lt;x&gt --> renders to <x>
+
+&lt;x&gt; Users Found::
 +
 --
 This is an indicator that tells you approximately how many users will be listed in ownCloud. 
@@ -249,7 +267,7 @@ Other Attributes::
   This multi-select box allows you to select other attributes for the comparison. 
   The list is generated automatically from the user object attributes in your LDAP server.
 
-Edit raw filter instead::
+Edit Raw Filter Instead::
 +
 --
 Clicking on this text toggles the filter mode, and you can enter the raw LDAP filter directly. 
@@ -260,14 +278,14 @@ user upon login.
 
 *Examples:*
 
-* Only username:
+* Only Username:
 +
 [source,ldap]
 ----
 include::{examplesdir}configuration/user/user_auth_ldap/only_username.ldif[]
 ----
 
-* Username or email address:
+* Username or Email Address:
 +
 [source]
 ----
@@ -289,11 +307,11 @@ Only those object classes::
   You can select multiple object classes. 
   A typical object class is `group`, or `posixGroup`.
 
-Only from those groups::
+Only From those Groups::
   ownCloud will generate a list of available groups found in your LDAP server. 
   From these groups, you can select the group or groups that get access to your ownCloud server.
 
-Edit raw filter instead::
+Edit Raw Filter Instead::
 +
 --
   Clicking on this text toggles the filter mode, and you can enter the raw LDAP filter directly.
@@ -304,9 +322,13 @@ Example:
 * `objectClass=posixGroup`
 --
 
-y groups found::
+// &lt;x&gt --> renders to <x>
+
+&lt;x&gt; Groups Found::
   This tells you approximately how many groups will be available in ownCloud. 
   The number updates automatically after any change.
+
+NOTE: Renaming of LDAP-Groups on the LDAP Server is not supported. Changes like renaming groups in LDAP will not be propagated to ownCloud.
 
 === Advanced Settings
 
@@ -481,7 +503,7 @@ If you override the default, the group display name attribute will not be taken 
 * `description`
 --
 
-Group Member association::
+Group Member Association::
 +
 --
 The attribute that is used to indicate group memberships, i.e., the attribute used by LDAP groups to refer to their users.
@@ -601,7 +623,7 @@ Changes will affect only newly mapped LDAP users.
 * `uid`
 --
 
-Override UUID detection::
+Override UUID Detection::
 +
 --
 By default, ownCloud auto-detects the UUID attribute. 
@@ -640,7 +662,7 @@ Never clear the mappings in a production environment, but only in a testing or e
 IMPORTANT: Clearing the mappings is not configuration sensitive, it affects all LDAP configurations!
 --
 
-== Testing the Configuration
+=== Testing the Configuration
 
 The "**Test Configuration**" button checks the values as currently given in the input fields. 
 You do not need to save before testing. 
@@ -653,7 +675,7 @@ When the configuration test reports success, save your settings and check if the
 
 image:configuration/user/user-page.png[Users Page]
 
-== Syncing Users
+=== Syncing Users
 
 While users who match the login and user filters can log in, only synced users will be found in the sharing dialog. 
 Whenever users log in, their display name, email, quota, avatar and search attributes will be synced to ownCloud. 
@@ -669,7 +691,7 @@ You can use xref:developer_manual:core/apis/ocs/user-sync-api.adoc[the OCS User 
 This depends on the amount of users and speed of the update, but we recommend _at least_ once per day. 
 You can run it more frequently, but doing so may generate too much load on the server.
 
-== Reuse Existing User and Group LDAP Accounts
+=== Reuse Existing User and Group LDAP Accounts
 
 New LDAP logins can attempt to reuse _existing_ user and group accounts if:
 
@@ -684,7 +706,7 @@ To enable it, run the following command.
 {occ-command-example-prefix} config:app:set user_ldap reuse_accounts --value=yes
 ....
 
-== ownCloud Avatar Integration
+=== ownCloud Avatar Integration
 
 ownCloud supports user profile pictures, which are also called avatars. 
 If a user has a photo stored in the `jpegPhoto` or `thumbnailPhoto` attribute on your LDAP server, it will be used as their avatar. 
@@ -703,23 +725,45 @@ This affects only the presentation, and the original image is not changed.
 
 == Troubleshooting, Tips and Tricks
 
-=== SSL Certificate Verification (LDAPS, TLS)
+=== LDAPS
 
-A common mistake with SSL certificates is that they may not be known to PHP. 
-If you have trouble with certificate validation, make sure that:
+Use these commands to troubleshoot:
 
-* You have the certificate of the server installed on the ownCloud server.
-* The certificate is listed in the system's LDAP configuration file, usually `/etc/ldap/ldap.conf`.
-* If you are using LDAPS, make sure that the port is correctly configured (the default port is 636)
-* If you get the error "*Lost connection to LDAP server*" or "*No connection to LDAP server*", double-check the connection parameters and try connecting to LDAP with tools like `ldapsearch`. 
-  If using LDAPS or TLS, make sure the certificate is readable by the user that is used to serve ownCloud.
+Test encrypted connection:
+
+`openssl s_client -connect 10.211.55.15:636`
+
+look for **verify return:1**
+
+Try an ldapsearch query
+
+----
+ldapsearch \
+-H ldaps://ad16.oc.local:636 \
+-D "cn=Administrator,cn=users,dc=oc,dc=local" \
+-b "dc=oc,dc=local" \
+-w MyPassword
+----
+
+Check:
+
+`/etc/ldap/ldap.conf`
+`/etc/openldap/ldap.conf`
+
+look for 
+
+`TLS_CACERT      /etc/ssl/certs/ca-certificates.crt`
+
+Turn off certificate validation for testing:
+
+`TLS_REQCERT    ALLOW`
 
 === Microsoft Active Directory
 
 Compared to earlier ownCloud versions, no further tweaks need to be done to make ownCloud work with Active Directory. 
 ownCloud will automatically find the correct configuration in the set-up process.
 
-=== memberOf / Read MemberOf permissions
+=== memberOf / Read MemberOf Permissions
 
 If you want to use `memberOf` within your filter you might need to give your querying user the permissions to use it. 
 For Microsoft Active Directory this is described {enumerate-ad-user-groups-permissions-url}[here].
@@ -736,7 +780,7 @@ In case you have a working configuration and want to create a similar one or "sn
 
 Now you can modify and enable the configuration.
 
-== Performance Tips
+// === Performance Tips
 
 === Filter out Deactivated Users
 
@@ -796,7 +840,7 @@ The more precise your base DN, the faster LDAP can search because it has fewer b
 
 Use good filters to further define the scope of LDAP searches, and to intelligently direct your server where to search, rather than forcing it to perform needlessly-general searches.
 
-== ownCloud LDAP Internals
+=== ownCloud LDAP Internals
 
 Some parts of how the LDAP backend works are described here.
 
