@@ -156,6 +156,11 @@ In case it is a branch other than `master` and a ongoing but not merged fix that
 merge the changes first, and then backport them to the branch. Do not forget to sync the branch post merging too.
 Having done that, re-running `yarn antora` should eliminate that particular missing attribue warning.
 
+##### Fixing a Directory Not Found Error
+
+In case you get an error like: `Error: ENOENT: no such file or directory, lstat '/var/owncloud/docs/cache/`, you just need
+to delete the contents of the `cache` directory and restart building the docs.
+
 #### Using the Docker Container
 
 To build the documentation using the Docker container, from the command line, in the root of the docs directory, run the following command:
