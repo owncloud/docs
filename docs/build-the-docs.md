@@ -58,7 +58,7 @@ Once you've installed NVM, open a new terminal and install Node 8 using the foll
 nvm install
 ```
 
-You can switch to a version of Node at any time using the following command:
+You can switch to a specific version of Node at any time using the following command:
 
 ```
 nvm use 10
@@ -86,7 +86,7 @@ With the dependencies installed, you are now ready to build (generate) the ownCl
 
 ## Prepared Yarn Commands
 
-To get all prepared yarn commands run following command:
+To see all prepared yarn commands run following command:
 
 ```console
 yarn run
@@ -106,7 +106,7 @@ info Project commands
       antora --stacktrace generate --cache-dir cache --redirect-facility disabled --generator ./generator/xref-validator.js --clean --fetch --attribute format=html site.yml
 question Which command would you like to run?:
 ```
-Please see the [documentaion](https://yarnpkg.com/lang/en/docs/cli/run/)
+Please see the [documentation](https://yarnpkg.com/lang/en/docs/cli/run/)
 for more information about the the `yarn run` command.
 
 ## Generating the Documentation
@@ -142,7 +142,7 @@ yarn antora --url http://localhost:8080
 
 ##### Attribute Error Searching and Fixing
 
-It is very benificial to use command line attributes when searching and fixing attribute errors. This can be
+It is very beneficial to use command line attributes when searching and fixing attribute errors. This can be
 necessary when you get warnings like: `WARNING: skipping reference to missing attribute: <attribute-name>`
 
 - First, you may want to search if the attribute-name is used as an attribute all. Run in docs root\
@@ -152,13 +152,13 @@ If found, check if the attribute definition is made or passed or needs exclusion
 branch but in another one. This can be identified by adding a custom attribute to the yarn antora command like:\
 `--attribute the-erroring-attribute=HUGO` where HUGO can be anything that is not used and easy to grep.
 - Finally, run in `public` directory: `grep -rn HUGO`. You will see exactly in which branch and file the issue occurs.
-In case it is a branch other than `master` and a ongoing but not merged fix that targets this issue, you have to
+If it is a branch other than `master` and an ongoing but not merged fix that targets this issue, you have to
 merge the changes first, and then backport them to the branch. Do not forget to sync the branch post merging too.
-Having done that, re-running `yarn antora` should eliminate that particular missing attribue warning.
+Having done that, re-running `yarn antora` should eliminate that particular missing attribute warning.
 
 ##### Fixing a Directory Not Found Error
 
-In case you get an error like: `Error: ENOENT: no such file or directory, lstat '/var/owncloud/docs/cache/`, you just need
+If you get an error like: `Error: ENOENT: no such file or directory, lstat '/var/owncloud/docs/cache/`, you just need
 to delete the contents of the `cache` directory and restart building the docs.
 
 #### Using the Docker Container
@@ -191,8 +191,8 @@ docker run -ti --rm \
 
 These commands:
 
-- Starts up [ownCloud's NodeJS Docker container](https://hub.docker.com/r/owncloudci/nodejs/)
-- Runs Antora's `generate` command, which regenerates the documentation
+- Start up [ownCloud's NodeJS Docker container](https://hub.docker.com/r/owncloudci/nodejs/)
+- Run Antora's `generate` command, which regenerates the documentation
 - You can add the `--fetch` option to update the dependent repositories, or any other available flag.
 
 If all goes well, you will _not_ see any console output. If a copy of the container doesn't exist locally, you can pull down a copy, by running `docker pull owncloudci/nodejs:11`. Otherwise, you should see output similar to the following:
@@ -217,7 +217,7 @@ Status: Downloaded newer image for owncloudci/nodejs:11
 
 ### Viewing The HTML Documentation
 
-Assuming that there are no errors, the next thing to do is to view the result in your browser. In case you have already installed a webserver, you need to make the HTML docmentation available pointing to subdirectory `public` or for easy handling use our predefined Yarn target so that you can view your changes, before committing and pushing the changes to the remote docs repository. You could also use [PHP's built-in webserver](https://secure.php.net/manual/en/features.commandline.webserver.php) as well.
+Assuming that there are no errors, the next thing to do is to view the result in your browser. If you have already installed a webserver, you need to make the HTML documentation available pointing to subdirectory `public` or for easy handling use our predefined Yarn target so that you can view your changes, before committing and pushing the changes to the remote docs repository. You could also use [PHP's built-in webserver](https://secure.php.net/manual/en/features.commandline.webserver.php) as well.
 
 The following example uses our Yarn target, to start it run the following command in the root of your docs repository:
 
