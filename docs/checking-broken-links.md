@@ -86,7 +86,7 @@ All the others in the list are example links, and therefore not broken.
 
 ### Linkcheck by Filip Hracek
 
-This is a extremely fast and very comfortable / configurable link checker.
+This is an extremely fast and very comfortable / configurable link checker.
 
 A description of ``linkcheck`` can be found [here](https://github.com/filiph/linkcheck#linkcheck).
 Follow [this](https://github.com/filiph/linkcheck#step-1-install-dart) procedure,

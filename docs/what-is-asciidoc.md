@@ -27,7 +27,7 @@ Let's step through each one.
 Just like writing in any other format or computer language, you're going to need a text editor or an IDE.
 And as you're a developer, you'll already have one, and it likely supports AsciiDoc already.
 If not there should be a plugin available for it.
-Here are some of the text editors and IDEs that we recommend.
+Here are some text editors and IDEs that we recommend.
 
 ### VIM
 

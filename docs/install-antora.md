@@ -6,7 +6,7 @@ Installing Antora on your local development (virtual) machine doesn't take *too*
 
 ## Install The Antora Tools Locally
 
-To install all the Antora tools on your local machine will take a little bit of time and effort. Before you get started, make sure that your development machine is one of [the supported hardware platforms](https://docs.antora.org/antora/1.0/supported-platforms/#platforms).
+To install all the Antora tools on your local machine will take a bit of time and effort. Before you get started, make sure that your development machine is one of [the supported hardware platforms](https://docs.antora.org/antora/1.0/supported-platforms/#platforms).
 
 After that, install the system requirements for your platform, whether that's [Linux](https://docs.antora.org/antora/1.0/install/linux-requirements/), [macOS](https://docs.antora.org/antora/1.0/install/macos-requirements/), or [Microsoft Windows](https://docs.antora.org/antora/1.0/install/windows-requirements/). These include the base build tools, Node 8, and NVM.
 
