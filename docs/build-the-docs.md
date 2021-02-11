@@ -28,7 +28,7 @@ dependencies=( git node npm yarn ) && for i in "${dependencies[@]}"; do command 
 
 You will see the path to each binary displayed, if it is installed.
 For any that you do not see displayed, follow the instructions below to install it.
-This is the output if you have everything installed
+This is an example output if you have everything installed. Please consider that the home directory, root in this example, is dependent on the user you used during installing and can be different in your installation.
 
 ```
 /usr/bin/git
