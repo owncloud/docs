@@ -28,6 +28,14 @@ dependencies=( git node npm yarn ) && for i in "${dependencies[@]}"; do command 
 
 You will see the path to each binary displayed, if it is installed.
 For any that you do not see displayed, follow the instructions below to install it.
+This is an example output if you have everything installed. Please consider that the home directory, root in this example, is dependent on the user you used during installing and can be different in your installation.
+
+```
+/usr/bin/git
+/root/.nvm/versions/node/v12.19.0/bin/node
+/root/.nvm/versions/node/v12.19.0/bin/npm
+/usr/bin/yarn
+```
 
 ### Checking for the Prerequisites on Microsoft Windows
 
@@ -52,10 +60,10 @@ To install git, download and install the [git package][link-git-package] for you
 
 While you can install Node from the official packages, we strongly recommend that you use [NVM][link-nvm] (Node Version Manager) to install and manage Node.
 Follow the [NVM installation instructions][link-nvm-installation-instructions] to set up NVM on your machine.
-Once you've installed NVM, open a new terminal and install Node 8 using the following command:
+Once you've installed NVM, open a new terminal and install Node using the following command:
 
 ```
-nvm install
+nvm install --lts
 ```
 
 You can switch to a specific version of Node at any time using the following command:
@@ -117,8 +125,9 @@ The documentation can be generated in HTML and PDF formats.
 
 There are two ways to generate the documentation in HTML format:
 
-- Using ownCloud's custom Antora Docker Container
 - Running Antora from the Command-Line
+- Using ownCloud's custom Antora Docker Container
+
 
 #### Using Antora from the Command-Line
 
