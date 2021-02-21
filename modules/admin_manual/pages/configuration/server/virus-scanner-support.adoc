@@ -19,6 +19,7 @@ What's more, ClamAV's Freshclam daemon automatically updates its malware signatu
 
 Install ClamAV on Ubuntu with the following command:
 
+[source,console]
 ----
 sudo apt install clamav clamav-daemon
 ----
@@ -48,37 +49,39 @@ Executing: /lib/systemd/systemd-sysv-install enable clamav-daemon
 
 First we have to ensure the process is currently not running. Gently end the freshclam process with this command:
 
+[source,console]
 ----
 sudo pkill -15 -x freshclam
 ----
 
 Then we manually start the updating process. Start the refresh process again with this command:
 
+[source,console]
 ----
 sudo freshclam
 ----
 
 Automate the update process with this cron entry for example.
 
+[source,console]
 ----
 # m   h  dom mon dow  command
-47  *  *   *    *  /usr/bin/freshclam --quiet
+47  *  *  *  *  /usr/bin/freshclam --quiet
 ----
 
 NOTE: Please avoid any multiples of 10, because those are when the ClamAV servers are hit the hardest for updates.
 
 == Install the ownCloud Anti-Virus App
 
-The Anti-Virus app needs to be installed from the ownCloud Market (it's available in the  _ "Security"_ category).
+The Anti-Virus app needs to be installed from the ownCloud Market (it's available in the  _"Security"_ category).
 
 image:apps/files_antivirus/antivirus-app.png[image]
 
-'''
-
 To install the App via occ command, execute:
 
+[source,console,subs="attributes+"]
 ----
-occ market:install files_antivirus
+{occ-command-example-prefix} market:install files_antivirus
 ----
 
 == Configuring ClamAV within ownCloud
@@ -87,7 +90,7 @@ IMPORTANT: If the app is enabled but either not configured or incorrectly config
 
 ClamAV can be configured in two ways:
 
-. xref:configure-clamav-using-occ[By using the `occ config:app:set` command.]
+. xref:configure-clamav-using-occ[By using the `occ config:app:set` command set.]
 . xref:configure-clamav-using-the-antivirus-configuration-panel[By using the Antivirus Configuration panel]
 
 === Configure ClamAV Using The Antivirus Configuration Panel
@@ -182,7 +185,7 @@ First, set btn:[Mode] to "*Daemon (Socket)*".
 ownCloud should detect your `clamd` socket and fill in the "*Socket*" field. 
 This is the `LocalSocket` option in `clamd.conf`. 
 
-You can run `netstat` to verify it, as in the example below:
+You can run `ss` to verify it, as in the example below:
 
 [source,console]
 ----
@@ -250,7 +253,7 @@ image:configuration/server/anti-virus-message-socket-connection-problem.png[Conf
 
 When infected files are detected during a scan, the app can take one of two actions:
 
-* **Only log**: Log the event.
+* **Log Only** Log the event.
 * **Delete file**: Delete the detected file.
 
 Set btn:[When infected files were found during a background scan] to the value that suits your needs.
@@ -267,8 +270,8 @@ Rules can match on either an exit status (e.g., 0, 1, or 40) or a pattern in the
 
 Here are some points to bear in mind about rules:
 
-* Scanner exit status rules are used to handle errors when ClamAV is run in CLI mode while
-* scanner output rules are used in daemon/socket mode.
+* Scanner exit status rules are used to handle errors when ClamAV is run in CLI mode, while
+* Scanner output rules are used in daemon/socket mode.
 * Daemon output is parsed by regexp.
 * In case there are no matching rules, the status is: `Unknown`, and a warning will be logged.
 
