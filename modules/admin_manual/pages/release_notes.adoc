@@ -3,9 +3,6 @@
 :release-notes-known-issues-url: https://doc.owncloud.com/server/admin_manual/release_notes.html#known-issues
 :owncloud-server-changelog-url: https://owncloud.org/changelog/server/
 :supported-versions-php-url: https://secure.php.net/supported-versions.php
-:marketplace-web-url: https://marketplace.owncloud.com/apps/web
-:marketplace-openidconnect-url: https://marketplace.owncloud.com/apps/openidconnect
-:marketplace-oauth2-url: https://marketplace.owncloud.com/apps/oauth2
 :page-aliases: whats_new_admin.adoc
 
 * xref:changes-in-10-6-0[Changes in 10.6.0]
@@ -70,7 +67,7 @@ in ownCloud Web.
 
 There are different ways to deploy ownCloud Web with ownCloud Server. We strive to make it as easy as
 possible to make the new frontend available to users. For this, there is the new app for
-{marketplace-web-url}[Web] on the ownCloud Marketplace. It can be installed on ownCloud 10 servers with
+{oc-marketplace-url}/apps/web[Web] on the ownCloud Marketplace. It can be installed on ownCloud 10 servers with
 the regular tools. The app will make the new frontend available as described above when
 https://owncloud.github.io/clients/web/deployments/oc10-app/[deployed and configured correctly].
 
@@ -79,9 +76,9 @@ TIP: Deploying ownCloud Web via the Marketplace app is the currently recommended
 **Requirements for deploying ownCloud Web as an app for ownCloud Server 10**
 
 * ownCloud Server 10.6
-* {marketplace-oauth2-url}[OAuth2] or {marketplace-openidconnect-url}[OpenID Connect]
+* {oc-marketplace-url}/apps/oauth2[OAuth2] or {oc-marketplace-url}/apps/openidconnect[OpenID Connect]
 is used for client authorization.
-* {marketplace-web-url}[ownCloud Web] is installed and enabled.
+* {oc-marketplace-url}/apps/web[ownCloud Web] is installed and enabled.
 * ownCloud Server and ownCloud Web are configured as outlined in the
 https://owncloud.github.io/clients/web/deployments/oc10-app/[documentation].
 
@@ -110,10 +107,10 @@ https://owncloud.github.io/clients/web/deployments/oc10-app/[documentation].
 Since ownCloud Server 10.5 xref:release_notes.adoc#changes-in-delivery[all supported apps are shipped in
 the ownCloud Server Complete bundles]. The following changes have been made to the bundle for Server 10.6:
 
-* Added {marketplace-openidconnect-url}[OpenID Connect]
-* Added https://marketplace.owncloud.com/apps/files_lifecycle[File Lifecycle Management]
-* Added https://marketplace.owncloud.com/apps/graphapi[Graph API]
-* Removed https://marketplace.owncloud.com/apps/twofactor_totp[Two-factor Authentication]
+* Added {oc-marketplace-url}/apps/openidconnect[OpenID Connect]
+* Added {oc-marketplace-url}/apps/files_lifecycle[File Lifecycle Management]
+* Added {oc-marketplace-url}/apps/graphapi[Graph API]
+* Removed {oc-marketplace-url}/apps/twofactor_totp[Two-factor Authentication]
 
 === Known issues
 
@@ -459,7 +456,7 @@ TIP: If your ownCloud deployment is based on the official Docker images or the U
 
 === Media Viewer replaces Gallery and Video Player
 
-The https://marketplace.owncloud.com/apps/files_mediaviewer[Media Viewer] app has recently been released. 
+The {oc-marketplace-url}/apps/files_mediaviewer[Media Viewer] app has recently been released. 
 The Media Viewer is the next generation image and video file viewer for ownCloud.
 It provides a foundation based on new technologies and officially supersedes the former `gallery` and `files_videoplayer` apps.
 ownCloud Server 10.3 does not bundle `gallery` and `files_videoplayer` anymore. 
@@ -470,7 +467,7 @@ More details on the Media Viewer can be found in the https://owncloud.org/news/g
 * For a clean transition to Media Viewer, it is necessary to **disable both deprecated apps before the upgrade** using either the admin "Apps" panel in the web interface or via `occ` (e.g., `occ app:disable gallery` followed by `occ app:disable files_videoplayer`).
 * After the upgrade, enable the Media Viewer app via the admin panel or `occ app:enable files_mediaviewer`.
 * It is not recommended to continue with the deprecated apps. 
-  However, if you want to do so, you can copy over the `files_videoplayer` directory from the `apps/` folder of the previous ownCloud Server directory and obtain `gallery` from the https://marketplace.owncloud.com/apps/gallery[ownCloud Marketplace].
+  However, if you want to do so, you can copy over the `files_videoplayer` directory from the `apps/` folder of the previous ownCloud Server directory and obtain `gallery` from the {oc-marketplace-url}/apps/gallery[ownCloud Marketplace].
 
 TIP: Please do not enable `gallery`/`files_videoplayer` and `files_mediaviewer` simultaneously, as these apps are mutually exclusive.
 
@@ -509,7 +506,7 @@ Please get in contact with ownCloud Support if you're still using OpenStack SWIF
 
 === S3 object storage as secondary storage is now a separate app
 
-The extension to integrate S3 object storages as secondary storages (`files_external_s3`) has been updated, unbundled from ownCloud Server (was previously part of `files_external`) and released to the https://marketplace.owncloud.com/apps/files_external_s3[ownCloud Marketplace]. 
+The extension to integrate S3 object storages as secondary storages (`files_external_s3`) has been updated, unbundled from ownCloud Server (was previously part of `files_external`) and released to the {oc-marketplace-url}/apps/files_external_s3[ownCloud Marketplace]. 
 If you're using S3 external storage mounts, you have to conduct some steps to ensure continuous operation after upgrading to Server 10.3:
 
 * After the upgrade to Server 10.3 has finished successfully, keep the maintenance mode activated and install/enable `files_external_s3` (either manually or via the Market app) as the app is not bundled with ownCloud Server anymore.
@@ -808,7 +805,7 @@ App developers need to re-release their apps to make them compatible with the ne
 
 === Change Management for Server Updates
 
-`occ upgrade` pulls app updates from the ownCloud Marketplace to make sure that not only the Server itself but also the installed apps are kept up-to-date. In line with the new versioning principles `occ upgrade` as well as the https://marketplace.owncloud.com/apps/market[Market App] now make a difference between major and minor app updates. Practically, this means that during a minor Server upgrade only new minor app versions will be installed. This is to make sure that apps with breaking changes will not be automatically installed when upgrading the Server. The `--major` option for `occ upgrade` and `occ market:install` provides the means for administrators to force installing new major app versions. Additionally, the https://marketplace.owncloud.com/apps/market[Market App] now includes a version picker to enable administrators to choose which version of an app they want to install or upgrade to.
+`occ upgrade` pulls app updates from the ownCloud Marketplace to make sure that not only the Server itself but also the installed apps are kept up-to-date. In line with the new versioning principles `occ upgrade` as well as the {oc-marketplace-url}/apps/market[Market App] now make a difference between major and minor app updates. Practically, this means that during a minor Server upgrade only new minor app versions will be installed. This is to make sure that apps with breaking changes will not be automatically installed when upgrading the Server. The `--major` option for `occ upgrade` and `occ market:install` provides the means for administrators to force installing new major app versions. Additionally, the {oc-marketplace-url}/apps/market[Market App] now includes a version picker to enable administrators to choose which version of an app they want to install or upgrade to.
 
 === MS Office Online Server Compatibility 
 
@@ -865,7 +862,7 @@ Federation enables instances of ownCloud and other supporting platforms to excha
 
 === New Collaborative Tags Scope: Static Tags
 
-Version 10.1 comes with a new scope for Collaborative Tags called "Static Tags". In addition to the https://doc.owncloud.com/server/10.0/user_manual/files/webgui/tagging.html#filter-by-tag[other tag scopes], these tags are intended to be supplied by administrators and linked with policies in the https://marketplace.owncloud.com/apps/firewall[File Firewall], https://marketplace.owncloud.com/apps/files_classifier[Document Classification] or https://marketplace.owncloud.com/apps/workflow[Workflows], for example. Every user will be able to see these tags assigned to files but only users in specified groups have the permission to assign or unassign them. This makes it possible to equip certain users with the means to impose pre-defined policies upon files. To create such tags administrators need to use the https://marketplace.owncloud.com/apps/systemtags_management[Collaborative Tags Management] extension.
+Version 10.1 comes with a new scope for Collaborative Tags called "Static Tags". In addition to the https://doc.owncloud.com/server/10.0/user_manual/files/webgui/tagging.html#filter-by-tag[other tag scopes], these tags are intended to be supplied by administrators and linked with policies in the {oc-marketplace-url}/apps/firewall[File Firewall], {oc-marketplace-url}/apps/files_classifier[Document Classification] or {oc-marketplace-url}/apps/workflow[Workflows], for example. Every user will be able to see these tags assigned to files but only users in specified groups have the permission to assign or unassign them. This makes it possible to equip certain users with the means to impose pre-defined policies upon files. To create such tags administrators need to use the {oc-marketplace-url}/apps/systemtags_management[Collaborative Tags Management] extension.
 
 === Other notable changes
 
@@ -942,7 +939,7 @@ find files on their smartphones.
 === Native Brute-Force Protection
 
 Together with the new server version, another security-enhancing extension is available,
-https://marketplace.owncloud.com/apps/brute_force_protection[Brute Force Protection].
+{oc-marketplace-url}/apps/brute_force_protection[Brute Force Protection].
 This extension is tasked with preventing attackers from guessing user passwords (brute-force attack)
 by delaying subsequent failed login attempts for a user account from the same IP address.
 
@@ -950,8 +947,8 @@ While in the past similar functionality was only achievable via third party appl
 this extension provides the functionality natively, configurable by ownCloud administrators on the Security
 settings section.
 
-The new extension supersedes the former https://marketplace.owncloud.com/apps/security[Security]
-extension together with the new https://marketplace.owncloud.com/apps/password_policy[Password Policy]
+The new extension supersedes the former {oc-marketplace-url}/apps/security[Security]
+extension together with the ne {oc-marketplace-url}/apps/password_policy[Password Policy]
 extension, which xref:release_notes.adoc#password-history-and-expiration[has been released
 with ownCloud Server 10.0.9]. This community-contributed extension is well-tested, but out of ownCloud's
 general support scope. However, individual support can be obtained on request.
@@ -1118,7 +1115,7 @@ without requiring the owner to share it again.
 ==== Password history and expiration
 
 To prepare ownCloud Server for new capabilities in the authentication process, we have introduced an authentication middleware,
-and a new major version of https://marketplace.owncloud.com/apps/password_policy[the Password Policy extension] is now available.
+and a new major version of the {oc-marketplace-url}/apps/password_policy[Password Policy extension] is now available.
 
 ===== The Authentication Middleware
 
@@ -1134,14 +1131,14 @@ The authentication middleware is currently focused on offering new features for 
 
 ===== The Password Policy Extension
 
-https://marketplace.owncloud.com/apps/password_policy[The Password Policy Extension]
+The {oc-marketplace-url}/apps/password_policy[Password Policy Extension]
 has got a new major release and has been relicensed (OCL => GPLv2) to be available for community and standard
 subscription users as well. It now supports password expiration and history policies for user accounts.
 
 [NOTE]
 ====
-These features don't apply to users imported from LDAP or other backends but only for local users created by administrators or
-https://marketplace.owncloud.com/apps/guests[the Guests extension].
+These features don't apply to users imported from LDAP or other backends but only for local users created by administrators or the
+{oc-marketplace-url}/apps/guests[Guests extension].
 ====
 
 Imposing password expiration and history policies enhances security for a number of reasons.
@@ -1185,17 +1182,17 @@ Please consult `the ownCloud documentation`_ for guidance.
 
 ownCloud Server 10.0.9 comes with the prerequisites to be ready for the new S3 Objectstore implementation
 "_files_primary_s3_", which will massively improve performance, reliability and protocol-related capabilities.
-The new extension is available as a technology preview via
-https://marketplace.owncloud.com[the ownCloud Marketplace] and will supersede the current
-https://marketplace.owncloud.com/apps/objectstore[Objectstore] extension.
+The new extension is available as a technology preview via the
+{oc-marketplace-url}[ownCloud Marketplace] and will supersede the current
+{oc-marketplace-url}/apps/objectstore[Objectstore] extension.
 
 It has received extensive testing and is in very good shape.
 However, there is no out-of-the-box migration from the current _Objectstore_ to _files_primary_s3_ as this will require individual guidance.
 
-Due to changes to the Versioning API,
-https://marketplace.owncloud.com/apps/ransomware_protection[the ownCloud Ransomware Protection]
+Due to changes to the Versioning API, the
+{oc-marketplace-url}/apps/ransomware_protection[ownCloud Ransomware Protection]
 is not yet compatible with _files_primary_s3_.
-For now the https://marketplace.owncloud.com/apps/objectstore[Objectstore]
+For now the {oc-marketplace-url}/apps/objectstore[Objectstore]
 extension will continue to work as usual.
 Once the new implementation leaves the technology preview state and migrations have been taken care of,
 the current implementation will be deprecated.
@@ -1539,7 +1536,7 @@ Contacts app will still appear as suggestions.
 The command `occ notifications:generate` can be used to send notifications to individual users or groups.
 With 10.0.8 it is also capable of including links to such notifications using the `-l, --link=LINK` option.
 Please append `--help` for more information.
-There is also `https://marketplace.owncloud.com/apps/announcementcenter[Announcement center]
+There is also {oc-marketplace-url}/apps/announcementcenter[Announcement center]
 to conduct such tasks from the web interface but it is currently limited to send notifications to all users.
 For now administrators can use the `occ` command if more granularity is required.
 
@@ -1558,7 +1555,7 @@ _config.sample.php_ for more information.
 
 The Mail Template Editor has been unbundled from the default apps and is not shipped with the Server anymore.
 When upgrading ownCloud will try to automatically
-https://marketplace.owncloud.com/apps/templateeditor[install the latest version from the ownCloud Marketplace]
+{oc-marketplace-url}/apps/templateeditor[install the latest version from the ownCloud Marketplace]
 in case the app was installed before.
 
 If this is not possible (e.g. no internet connection or clustered setup) you will either need to disable the app
@@ -1646,7 +1643,7 @@ Please make sure to have the desired theme enabled after upgrading.
 
 
 Please switch to
-https://marketplace.owncloud.com/apps/files_external_dropbox[the new _External Storage: Dropbox_ app]
+{oc-marketplace-url}/apps/files_external_dropbox[the new _External Storage: Dropbox_ app]
 with Dropbox API v2 support to continue providing Dropbox external storages to your users.
 
 === Fixed: Only set CORS headers on WebDAV endpoint when Origin header is specified
@@ -1775,7 +1772,7 @@ properly detect current mode after upgrade to ownCloud 10]
 === Known issues
 
 * Impersonate app 0.1.1 does not work with ownCloud Server 10.0.4.
-Please update to https://marketplace.owncloud.com/apps/impersonate[Impersonate 0.1.2]
+Please update to {oc-marketplace-url}/apps/impersonate[Impersonate 0.1.2]
 to be able to use the feature with ownCloud 10.0.4.
 * https://github.com/owncloud/core/issues/29793[Mounting ownCloud storage via davfs does not work]
 
@@ -1962,7 +1959,7 @@ are ready.
 application (e.g. fail2ban rules) relying on this file
 * External storages::
   ** FTP external storage moved to a separate app
-  (https://marketplace.owncloud.com/apps/files_external_ftp)
+  ({oc-marketplace-url}/apps/files_external_ftp)
   ** "Local" storage type can now be disabled by sysadmin in
   config.php (to prevent users mounting the local file system)
 
