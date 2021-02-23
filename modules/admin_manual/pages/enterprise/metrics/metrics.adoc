@@ -1,0 +1,101 @@
+= Metrics
+:toc: right
+
+== Introduction
+
+The https://marketplace.owncloud.com/apps/metrics[Metrics App] provides a building block for monitoring and reporting of ownCloud Server. For simple use cases, it ships with an integrated dashboard that summarizes information about users, storage as well as shares and allows exporting it to a CSV file. Additionally, it adds a Metrics HTTP API endpoint to ownCloud Server, which can be used to obtain the Metrics data in regular intervals. Thus, more sophisticated analysis and visualizations can be conducted.
+
+The Metrics data are provided as snapshot values in the JSON format and are optimized to be consumed by professional data analyzers (like Splunk, ELK or Prometheus/Grafana) to collect statistics, derive visualizations and to set alerts for certain events of interest. They can be perfectly combined with the ownCloud Audit Logs (provided by the https://marketplace.owncloud.com/apps/admin_audit[Auditing App]) to gather time series data and to create a monitoring and reporting engine for ownCloud.
+
+Specifically, the extension adds:
+- an API endpoint which allows querying snapshot values of the system data as well as per-user data
+- an API endpoint for downloading the data in the CSV format
+- a dashboard that displays the snapshot data in the ownCloud Web UI and offers a CSV download (accessible by ownCloud administrators via the app launcher)
+
+TIP: Please note: If you're operating very large instances (users/files/shares,) it is recommended to use a special setup in order to not put the production database under huge load when gathering the values. For this, please replicate your installation (application server + read-only database) and install/use the Metrics App on the replica.
+
+The following data is available:
+
+**System data**
+- Date/Time stamp - Server time of the request
+- Storage
+  - Used storage (this also includes storage for avatars and thumbnails)
+  - Free storage
+  - Total storage (used + free)
+  - Number of files
+- Number of users
+  - registered (total number of known users)
+  - active (number of users with `lastLogin` less than two weeks ago)
+  - concurrent (number of users with at least one active session)
+- Shares
+  - Number of user shares
+  - Number of group shares
+  - Number of guest shares
+  - Number of link shares
+  - Number of federated shares
+
+**Per-user data**
+- User ID
+- Display name
+- User backend
+- Last login
+- Active sessions
+- Quota
+  - Quota limit
+  - Quota usage
+- Number of files
+- Shares
+  - Number of user shares
+  - Number of group shares
+  - Number of guest shares
+  - Number of link shares
+  - Number of federated shares
+
+== Usage
+
+=== Authorization
+
+To get set up, you have to set a secret for authorization. This token is stored in config.php as `metrics_shared_secret` and needs to be sent with each request.
+
+See the following example on how to set it:
+
+```
+occ config:system:set "metrics_shared_secret" --value <your-metrics-secret>
+```
+
+TIP: You have to set the Metrics secret to use the dashboard.
+
+=== Endpoints and parameters
+
+==== Metrics endpoint
+
+To query for the Metrics data, use the following endpoint:
+
+```
+https://<your owncloud>/ocs/v1.php/apps/metrics/api/v1/metrics
+```
+- Parameters
+  - `users=true`
+  - `shares=true`
+  - `quota=true`
+  - `userData=true`
+- Header `"OC-MetricsApiKey: <your-metrics-secret>"`
+
+Except for the header, all other parameters are optional. You can split the query into parts by setting the respective parameters to `false`.
+
+See the `curl` example to request the complete output:
+```
+curl https://<your owncloud>/ocs/v1.php/apps/metrics/api/v1/metrics\?users\=true\&files\=true\&shares\=true\&quota\=true\&userData\=true\&format\=json -H "OC-MetricsApiKey: <your-metrics-secret>"
+```
+
+TIP: Please replace `<your-metrics-secret>` with your respective system config value and `<your owncloud>` with the URL of your ownCloud instance.
+
+==== CSV download endpoint
+
+Downloading the current user metrics as a CSV file is possible through the Web UI. However, if you want to set up a cronjob for downloading the metrics regularly without admin permissions, there is also a public endpoint that requires the configured token instead of admin privileges.
+
+See the `curl` example to request a CSV file:
+
+`curl -H "Content-Type: application/csv" -H "OC-MetricsApiKey: <your-metrics-secret>" -X GET https://<your owncloud>/index.php/apps/metrics/download-api > /path/to/download/storage/metrics.csv`
+
+TIP: Please replace `<your-metrics-secret>` with your respective system config value and `<your owncloud>` with the URL of your ownCloud instance.
