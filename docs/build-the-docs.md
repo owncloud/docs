@@ -119,7 +119,7 @@ question Which command would you like to run?:
 Please see the [documentation](https://yarnpkg.com/lang/en/docs/cli/run/)
 for more information about the the `yarn run` command.
 The difference when running `antora` versus `antora-local` is, that the latter command already defines a
-local URL the documentation is build on. Please also see: "Overwrite the Default URL" below.
+local URL the documentation is built on. Please also see: "Overwrite the Default URL" below.
 ## Generating the Documentation
 
 The documentation can be generated in HTML and PDF formats.
