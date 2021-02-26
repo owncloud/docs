@@ -104,6 +104,8 @@ info Commands available from binary scripts: antora, blc, broken-link-checker, c
 info Project commands
    - antora
       antora --stacktrace generate --cache-dir cache --redirect-facility disabled --generator ./generator/generate-site.js --clean --fetch --attribute format=html site.yml
+   - antora-local
+      antora --stacktrace generate --cache-dir cache --redirect-facility static --generator ./generator/generate-site.js --clean --fetch --attribute format=html --url http://localhost:8080 site.yml
    - linkcheck
       broken-link-checker --filter-level 3 --recursive --verbose
    - prose
@@ -116,7 +118,8 @@ question Which command would you like to run?:
 ```
 Please see the [documentation](https://yarnpkg.com/lang/en/docs/cli/run/)
 for more information about the the `yarn run` command.
-
+The difference when running `antora` versus `antora-local` is, that the latter command already defines a
+local URL the documentation is built on. Please also see: "Overwrite the Default URL" below.
 ## Generating the Documentation
 
 The documentation can be generated in HTML and PDF formats.
@@ -148,6 +151,7 @@ If you want to serve your changes locally, you have to overwrite the default URL
 ```console
 yarn antora --url http://localhost:8080
 ```
+Overwriting the default URL to local is especially helpful, if you further want to check for broken links.
 
 ##### Attribute Error Searching and Fixing
 
