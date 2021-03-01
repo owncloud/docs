@@ -1,0 +1,1144 @@
+= Provisioning API
+:toc: right
+:page-aliases: go/admin-provisioning-api.adoc 
+
+== Introduction
+
+The Provisioning API application enables a set of APIs that external
+systems can use to:
+
+* Create, edit, delete and query user attributes
+* Query, set and remove groups
+* Set quota and query total storage used in ownCloud
+* Group admin users can also query ownCloud and perform the same
+functions as an admin for groups they manage.
+* Query for active ownCloud applications, application info, and to
+enable or disable an app.
+
+HTTP requests can be used via
+https://en.wikipedia.org/wiki/Basic_access_authentication[a Basic Auth header]
+to perform any of the functions listed above. The Provisioning
+API app is enabled by default. The base URL for all calls to the share
+API is *owncloud_base_url/ocs/v1.php/cloud*.
+
+== Instruction Set For Users
+
+=== Add User
+
+Create a new user on the ownCloud server.
+
+IMPORTANT: The Basic Authorization HTTP header must be used to authenticate this request, using the credentials of a user who has sufficient access rights to make the request.
+
+==== Syntax
+
+[cols=",,",options="header",]
+|===
+| Request Path | Method | Content Type
+| `ocs/v1.php/cloud/users` | `POST` | `text/plain`
+|===
+
+[cols="15%,15%,70%",options="header",]
+|===
+| Argument 
+| Type 
+| Description
+
+| `groups`
+| array 
+| Groups to add the user to (_optional_).
+Groups must already exist.
+
+| `password` 
+| string 
+| The required password for the new user.
+
+| `userid` 
+| string 
+| The required username for the new user.
+|===
+
+==== Status Codes
+
+* 100 - successful
+* 101 - invalid input data
+* 102 - username already exists
+* 103 - unknown error occurred whilst adding the user
+* 104 - group does not exist
+
+==== Usage Examples
+
+.Create the user "Frank" with password "frankspassword".
+[source,console]
+----
+curl -X POST http://admin:secret@example.com/ocs/v1.php/cloud/users \
+   -d userid="Frank" \
+   -d password="frankspassword"
+----
+
+.Create the user "Frank" with password "frankspassword" and add him to the "finance" and "management" groups.
+[source,console]
+----
+curl -X POST http://admin:secret@example.com/ocs/v1.php/cloud/users \
+   -d userid="Frank" \
+   -d password="frankspassword" \
+   -d groups[]="finance" -d groups[]="management"
+----
+
+==== XML Output
+
+[source,xml]
+----
+<?xml version="1.0"?>
+<ocs>
+  <meta>
+    <status>ok</status>
+    <statuscode>100</statuscode>
+    <message/>
+  </meta>
+  <data/>
+</ocs>
+----
+
+=== Get Users
+
+Retrieves a list of users from the ownCloud server.
+
+IMPORTANT: The Basic Authorization HTTP header must be used to authenticate this request, using the credentials of a user who has sufficient access rights to make the request.
+
+[cols=",,",options="header",]
+|=============================================
+| Request Path | Method | Content Type
+| `ocs/v1.php/cloud/users` | `GET` | `text/plain`
+|=============================================
+
+[cols=",,",options="header",]
+|======================================
+| Argument | Type | Description
+| search | string | optional search string
+| limit | int | optional limit value
+| offset | int | optional offset value
+|======================================
+
+==== Status Codes
+
+* 100 - successful
+
+==== Get Users Example
+
+[source,console]
+----
+# Returns list of users matching the search string.
+curl http://admin:secret@example.com/ocs/v1.php/cloud/users?search=Frank
+----
+
+==== XML Output
+
+[source,xml]
+----
+<?xml version="1.0"?>
+<ocs>
+  <meta>
+    <statuscode>100</statuscode>
+    <status>ok</status>
+  </meta>
+  <data>
+    <users>
+      <element>Frank</element>
+     </users>
+  </data>
+</ocs>
+----
+
+=== Get User
+
+Retrieves information about a single user.
+
+IMPORTANT: The Basic Authorization HTTP header must be used to authenticate this request, using the credentials of a user who has sufficient access rights to make the request.
+
+[cols=",,",options="header",]
+|==============================================================
+|Request Path |Method |Content Type
+| `Syntax: ocs/v1.php/cloud/users/\{userid\}` | `GET` | `text/plain`
+|==============================================================
+
+[cols=",,",options="header",]
+|=======================================
+| Argument | Type | Description
+| userid | int | Id of the user to retrieve
+|=======================================
+
+==== Status Codes
+
+* 100 - successful
+
+==== Get User Example
+
+[source,xml]
+----
+# Returns information on the user "Frank"
+curl http://admin:secret@example.com/ocs/v1.php/cloud/users/Frank
+----
+
+==== XML Output
+
+[source,xml]
+----
+<?xml version="1.0"?>
+<ocs>
+   <meta>
+     <status>ok</status>
+     <statuscode>100</statuscode>
+     <message/>
+   </meta>
+   <data>
+     <enabled>true</enabled>
+     <quota>
+       <free>81919008768</free>
+       <used>5809166</used>
+       <total>81924817934</total>
+       <relative>0.01</relative>
+     </quota>
+     <email>user@example.com</email>
+     <displayname>Frank</displayname>
+     <home>/mnt/data/files/Frank</home>
+     <two_factor_auth_enabled>false</two_factor_auth_enabled>
+  </data>
+</ocs>
+----
+
+=== Edit User
+
+Edits attributes related to a user. Users are able to edit _email_,
+_displayname_ and _password_; admins can also edit the _quota_ value.
+Exactly one attribute can be set or modified at a time.
+To set or modify multiple attributes then multiple calls must be made.
+
+IMPORTANT: The Basic Authorization HTTP header must be used to authenticate this request, using the credentials of a user who has sufficient access rights to make the request.
+
+[cols=",,",options="header",]
+|======================================================
+| Request Path | Method | Content Type
+| `ocs/v1.php/cloud/users/\{userid\}` | `PUT` | `text/plain`
+|======================================================
+
+[cols=",,",options="header",]
+|================================================================
+| Argument | Type | Description
+| key | string | the field to edit (email, quota, display, password)
+| value | mixed | the new value for the field
+|================================================================
+
+==== Status Codes
+
+* 100 - successful
+* 101 - user not found
+* 102 - invalid input data
+
+==== Edit User Example
+
+[source,console]
+----
+Updates the email address for the user "Frank"
+curl -X PUT http://admin:secret@example.com/ocs/v1.php/cloud/users/Frank \
+    -d key="email" \
+    -d value="franksnewemail@example.org"
+
+Updates the quota for the user "Frank"
+curl -X PUT http://admin:secret@example.com/ocs/v1.php/cloud/users/Frank \
+    -d key="quota" \
+    -d value="100MB"
+----
+
+==== XML Output
+
+[source,xml]
+----
+<?xml version="1.0"?>
+<ocs>
+  <meta>
+    <statuscode>100</statuscode>
+    <status>ok</status>
+  </meta>
+  <data/>
+</ocs>
+----
+
+=== Enable User
+
+Enables a user on the ownCloud server.
+
+IMPORTANT: The Basic Authorization HTTP header must be used to authenticate this request, using the credentials of a user who has sufficient access rights to make the request.
+
+[cols="2,1,1",options="headers"]
+|===
+| Request Path | Method | Content Type
+| `ocs/v1.php/cloud/users/\{userid\}/enable` | `PUT` | `text/plain`
+|===
+
+[cols="1,1,2",options="headers"]
+|===
+| Argument | Type | Description
+| userid | string | The id of the user to enable
+|===
+
+==== Status Codes
+
+* 100 - successful
+* 101 - failure
+
+==== Enable User Example
+
+[source,console]
+----
+# Enable the user with the userid "Frank"
+curl -X PUT http://admin:secret@example.com/ocs/v1.php/cloud/users/Frank/enable
+----
+
+==== XML Output
+
+[source,xml]
+----
+<?xml version="1.0"?>
+<ocs>
+  <meta>
+    <status>ok</status>
+    <statuscode>100</statuscode>
+    <message/>
+  </meta>
+  <data/>
+</ocs>
+----
+
+=== Disable User
+
+Disables a user on the ownCloud server.
+
+IMPORTANT: The Basic Authorization HTTP header must be used to authenticate this request, using the credentials of a user who has sufficient access rights to make the request.
+
+[cols="2,1,1",options="headers"]
+|===
+| Request Path                              | Method | Content Type
+| `ocs/v1.php/cloud/users/\{userid\}/disable` | `PUT`  | `text/plain`
+|===
+
+[cols="1,1,2",options="headers"]
+|===
+| Argument | Type   | Description
+| userid   | string | The id of the user to disable
+|===
+
+==== Status Codes
+
+* 100 - successful
+* 101 - failure
+
+==== Disable User Example
+
+[source,console]
+----
+# Disable the user "Frank"
+curl -X PUT http://admin:secret@example.com/ocs/v1.php/cloud/users/Frank/disable
+----
+
+==== XML Output
+
+[source,xml]
+----
+<?xml version="1.0"?>
+<ocs>
+  <meta>
+    <status>ok</status>
+    <statuscode>100</statuscode>
+     <message/>
+  </meta>
+  <data/>
+</ocs>
+----
+
+
+=== Delete User
+
+Deletes a user from the ownCloud server.
+
+IMPORTANT: The Basic Authorization HTTP header must be used to authenticate this request, using the credentials of a user who has sufficient access rights to make the request.
+
+[cols=",,",options="header",]
+|=========================================================
+| Request Path | Method | Content Type
+| `ocs/v1.php/cloud/users/\{userid\}` | `DELETE` | `text/plain`
+|=========================================================
+
+[cols=",,",options="header",]
+|============================================
+| Argument | Type | Description
+| userid | string | The id of the user to delete
+|============================================
+
+==== Status Codes
+
+* 100 - successful
+* 101 - failure
+
+==== Delete User Example
+
+[source,console]
+----
+# Deletes the user "Frank"
+curl -X DELETE http://admin:secret@example.com/ocs/v1.php/cloud/users/Frank
+----
+
+==== XML Output
+
+[source,xml]
+----
+<?xml version="1.0"?>
+<ocs>
+  <meta>
+    <statuscode>100</statuscode>
+    <status>ok</status>
+  </meta>
+  <data/>
+</ocs>
+----
+
+=== Get Groups
+
+Retrieves a list of groups the specified user is a member of.
+
+IMPORTANT: The Basic Authorization HTTP header must be used to authenticate this request, using the credentials of a user who has sufficient access rights to make the request.
+
+[cols=",,",options="header",]
+|=============================================================
+| Request Path | Method | Content Type
+| `ocs/v1.php/cloud/users/\{userid\}/groups` | `GET` | `text/plain`
+|=============================================================
+
+[cols=",,",options="header",]
+|=========================================================
+| Argument | Type | Description
+| userid | string | The id of the user to retrieve groups for
+|=========================================================
+
+==== Status Codes
+
+* 100 - successful
+
+==== Get Groups Example
+
+[source,console]
+----
+# Retrieves a list of groups of which "Frank" is a member
+curl http://admin:secret@example.com/ocs/v1.php/cloud/users/Frank/groups
+----
+
+==== XML Output
+
+[source,xml]
+----
+<?xml version="1.0"?>
+<ocs>
+  <meta>
+    <statuscode>100</statuscode>
+    <status>ok</status>
+  </meta>
+  <data>
+    <groups>
+      <element>admin</element>
+      <element>group1</element>
+    </groups>
+  </data>
+</ocs>
+----
+
+=== Add To Group
+
+Adds the specified user to the specified group.
+
+IMPORTANT: The Basic Authorization HTTP header must be used to authenticate this request, using the credentials of a user who has sufficient access rights to make the request.
+
+[cols=",,",options="header",]
+|==============================================================
+| Request Path | Method | Content Type
+| `ocs/v1.php/cloud/users/\{userid\}/groups` | `POST` | `text/plain`
+|==============================================================
+
+[cols=",,",options="header",]
+|=========================================================
+| Argument | Type | Description
+| userid | string | The id of the user to retrieve groups for
+| groupid | string | The group to add the user to
+|=========================================================
+
+==== Status Codes
+
+* 100 - successful
+* 101 - no group specified
+* 102 - group does not exist
+* 103 - user does not exist
+* 104 - insufficient privileges
+* 105 - failed to add user to group
+
+==== Add To Group Example
+
+[source,console]
+----
+# Adds the user "Frank" to the group "newgroup"
+curl -X POST http://admin:secret@example.com/ocs/v1.php/cloud/users/Frank/groups -d groupid="newgroup"
+----
+
+==== XML Output
+
+[source,xml]
+----
+<?xml version="1.0"?>
+<ocs>
+  <meta>
+    <statuscode>100</statuscode>
+    <status>ok</status>
+  </meta>
+  <data/>
+</ocs>
+----
+
+=== Remove From Group
+
+Removes the specified user from the specified group.
+
+IMPORTANT: The Basic Authorization HTTP header must be used to authenticate this request, using the credentials of a user who has sufficient access rights to make the request.
+
+[cols=",,",options="header",]
+|================================================================
+| Request Path | Method | Content Type
+| `ocs/v1.php/cloud/users/\{userid\}/groups` | `DELETE` | `text/plain`
+|================================================================
+
+[cols=",,",options="header",]
+|=========================================================
+| Argument | Type | Description
+| userid | string | The id of the user to retrieve groups for
+| groupid | string | The group to remove the user from
+|=========================================================
+
+==== Status Codes
+
+* 100 - successful
+* 101 - no group specified
+* 102 - group does not exist
+* 103 - user does not exist
+* 104 - insufficient privileges
+* 105 - failed to remove user from group
+
+==== Remove From Group Example
+
+[source,console]
+----
+# Removes the user "Frank" from the group "newgroup"
+curl -X DELETE http://admin:secret@example.com/ocs/v1.php/cloud/users/Frank/groups -d groupid="newgroup"
+----
+
+==== XML Output
+
+[source,xml]
+----
+<?xml version="1.0"?>
+<ocs>
+  <meta>
+    <statuscode>100</statuscode>
+    <status>ok</status>
+  </meta>
+  <data/>
+</ocs>
+----
+
+=== Create Sub-admin
+
+Makes a user the sub-admin of a group.
+
+IMPORTANT: The Basic Authorization HTTP header must be used to authenticate this request, using the credentials of a user who has sufficient access rights to make the request.
+
+[cols=",,",options="header",]
+|=================================================================
+| Request Path | Method | Content Type
+| `ocs/v1.php/cloud/users/\{userid\}/subadmins` | `POST` | `text/plain`
+|=================================================================
+
+[cols=",,",options="header",]
+|================================================================
+| Argument | Type | Description
+| userid | string | The id of the user to be made a sub-admin
+| groupid | string | the group of which to make the user a sub-admin
+|================================================================
+
+==== Status Codes
+
+* 100 - successful
+* 101 - user does not exist
+* 102 - group does not exist
+* 103 - unknown failure
+
+==== Create Sub-admin Example
+
+[source,console]
+----
+# Makes the user "Frank" a sub-admin of the "group" group
+curl -X POST https://admin:secret@example.com/ocs/v1.php/cloud/users/Frank/subadmins -d groupid="group"
+----
+
+==== XML Output
+
+[source,xml]
+----
+<?xml version="1.0"?>
+<ocs>
+  <meta>
+    <statuscode>100</statuscode>
+    <status>ok</status>
+  </meta>
+  <data/>
+</ocs>
+----
+
+=== Remove Sub-admin
+
+Removes the sub-admin rights for the user specified from the group
+specified.
+
+IMPORTANT: The Basic Authorization HTTP header must be used to authenticate this request, using the credentials of a user who has sufficient access rights to make the request.
+
+[cols=",,",options="header",]
+|===================================================================
+| Request Path | Method | Content Type
+| `ocs/v1.php/cloud/users/\{userid\}/subadmins` | `DELETE` | `text/plain`
+|===================================================================
+
+[cols=",,",options="header",]
+|=======================================================================
+| Argument | Type | Description
+| userid | string | the id of the user to retrieve groups for
+
+| groupid | string | the group from which to remove the user’s sub-admin
+rights
+|=======================================================================
+
+==== Status Codes
+
+* 100 - successful
+* 101 - user does not exist
+* 102 - user is not a sub-admin of the group / group does not exist
+* 103 - unknown failure
+
+==== Remove Sub-admin Example
+
+----
+# Removes "Frank's" sub-admin rights from the "oldgroup" group
+curl -X DELETE https://admin:secret@example.com/ocs/v1.php/cloud/users/Frank/subadmins -d groupid="oldgroup"
+----
+
+==== XML Output
+
+[source,xml]
+----
+<?xml version="1.0"?>
+<ocs>
+  <meta>
+    <statuscode>100</statuscode>
+    <status>ok</status>
+  </meta>
+  <data/>
+</ocs>
+----
+
+=== Get Sub-admin Groups
+
+Returns the groups in which the user is a sub-admin.
+
+IMPORTANT: The Basic Authorization HTTP header must be used to authenticate this request, using the credentials of a user who has sufficient access rights to make the request.
+
+[cols=",,",options="header",]
+|================================================================
+| Request Path | Method | Content Type
+| `ocs/v1.php/cloud/users/\{userid\}/subadmins` | `GET` | `text/plain`
+|================================================================
+
+[cols=",,",options="header",]
+|===================================================================
+| Argument | Type | Description
+| userid | string | The id of the user to retrieve sub-admin groups for
+|===================================================================
+
+==== Status Codes
+
+* 100 - successful
+* 101 - user does not exist
+* 102 - unknown failure
+
+==== Get Sub-admin Groups Example
+
+[source,console]
+----
+# Returns the groups of which "Frank" is a sub-admin
+curl -X GET https://admin:secret@example.com/ocs/v1.php/cloud/users/Frank/subadmins
+----
+
+==== XML Output
+
+[source,xml]
+----
+<?xml version="1.0"?>
+<ocs>
+  <meta>
+      <status>ok</status>
+      <statuscode>100</statuscode>
+    <message/>
+  </meta>
+  <data>
+    <element>testgroup</element>
+  </data>
+</ocs>
+----
+
+== Instruction Set For Groups
+
+=== Get Groups
+
+Retrieves a list of groups from the ownCloud server.
+
+IMPORTANT: The Basic Authorization HTTP header must be used to authenticate this request, using the credentials of a user who has sufficient access rights to make the request.
+
+[cols=",,",options="header",]
+|==============================================
+| Request Path | Method | Content Type
+| `ocs/v1.php/cloud/groups` | `GET` | `text/plain`
+|==============================================
+
+[cols=",,",options="header",]
+|======================================
+| Argument | Type | Description
+| search | string | optional search string
+| limit | int | optional limit value
+| offset | int | optional offset value
+|======================================
+
+==== Status Codes
+
+* 100 - successful
+
+==== Get Groups Example
+
+[source,console]
+----
+# Returns list of groups matching the search string.
+curl http://admin:secret@example.com/ocs/v1.php/cloud/groups?search=admi
+----
+
+==== XML Output
+
+[source,xml]
+----
+<?xml version="1.0"?>
+<ocs>
+  <meta>
+    <statuscode>100</statuscode>
+    <status>ok</status>
+  </meta>
+  <data>
+    <groups>
+      <element>admin</element>
+    </groups>
+  </data>
+</ocs>
+----
+
+=== Add Group
+
+Adds a new group.
+
+IMPORTANT: The Basic Authorization HTTP header must be used to authenticate this request, using the credentials of a user who has sufficient access rights to make the request.
+
+[cols=",,",options="header",]
+|===============================================
+| Request Path | Method | Content Type
+| `ocs/v1.php/cloud/groups` | `POST` | `text/plain`
+|===============================================
+
+[cols=",,",options="header",]
+|=====================================
+| Argument | Type | Description
+| groupid | string | the new group’s name
+|=====================================
+
+==== Status Codes
+
+* 100 - successful
+* 101 - invalid input data
+* 102 - group already exists
+* 103 - failed to add the group
+
+==== Add Group Example
+
+[source,console]
+----
+# Adds a new group called "newgroup"
+curl -X POST http://admin:secret@example.com/ocs/v1.php/cloud/groups -d groupid="newgroup"
+----
+
+==== XML Output
+
+[source,xml]
+----
+<?xml version="1.0"?>
+<ocs>
+  <meta>
+    <statuscode>100</statuscode>
+    <status>ok</status>
+  </meta>
+  <data/>
+</ocs>
+----
+
+=== Get Group
+
+Retrieves a list of group members.
+
+IMPORTANT: The Basic Authorization HTTP header must be used to authenticate this request, using the credentials of a user who has sufficient access rights to make the request.
+
+[cols=",,",options="header",]
+|========================================================
+| Request Path | Method | Content Type
+| `ocs/v1.php/cloud/groups/\{groupid\}` | `GET` | `text/plain`
+|========================================================
+
+[cols=",,",options="header",]
+|====================================================
+| Argument | Type | Description
+| groupid | string | The group id to return members from
+|====================================================
+
+==== Status Codes
+
+* 100 - successful
+
+==== Get Group Example
+
+[source,console]
+----
+# Returns a list of users in the "admin" group
+curl http://admin:secret@example.com/ocs/v1.php/cloud/groups/admin
+----
+
+==== XML Output
+
+[source,xml]
+----
+<?xml version="1.0"?>
+<ocs>
+  <meta>
+    <statuscode>100</statuscode>
+    <status>ok</status>
+  </meta>
+  <data>
+    <users>
+      <element>Frank</element>
+    </users>
+  </data>
+</ocs>
+----
+
+=== Get Sub-admins
+
+Returns sub-admins of the group.
+
+IMPORTANT: The Basic Authorization HTTP header must be used to authenticate this request, using the credentials of a user who has sufficient access rights to make the request.
+
+[cols=",,",options="header",]
+|==================================================================
+| Request Path | Method | Content Type
+| `ocs/v1.php/cloud/groups/\{groupid\}/subadmins` | `GET` | `text/plain`
+|==================================================================
+
+[cols=",,",options="header",]
+|===================================================
+| Argument | Type | Description
+| groupid | string | The group id to get sub-admins for
+|===================================================
+
+==== Status Codes
+
+* 100 - successful
+* 101 - group does not exist
+* 102 - unknown failure
+
+==== Get Sub-admins Example
+
+[source,console]
+----
+# Return the sub-admins of the group: "mygroup"
+curl https://admin:secret@example.com/ocs/v1.php/cloud/groups/mygroup/subadmins
+----
+
+==== XML Output
+
+[source,xml]
+----
+<?xml version="1.0"?>
+<ocs>
+  <meta>
+    <status>ok</status>
+    <statuscode>100</statuscode>
+    <message/>
+  </meta>
+  <data>
+    <element>Tom</element>
+  </data>
+</ocs>
+----
+
+=== Delete Group
+
+Removes a group.
+
+IMPORTANT: The Basic Authorization HTTP header must be used to authenticate this request, using the credentials of a user who has sufficient access rights to make the request.
+
+[cols=",,",options="header",]
+|===========================================================
+| Request Path | Method | Content Type
+| `ocs/v1.php/cloud/groups/\{groupid\}` | `DELETE` | `text/plain`
+|===========================================================
+
+[cols=",,",options="header",]
+|====================================
+| Argument | Type | Description
+| groupid | string | the group to delete
+|====================================
+
+==== Status Codes
+
+* 100 - successful
+* 101 - group does not exist
+* 102 - failed to delete group
+
+==== Delete Group Example
+
+[source,console]
+----
+# Delete the group "mygroup"
+curl -X DELETE http://admin:secret@example.com/ocs/v1.php/cloud/groups/mygroup
+----
+
+==== XML Output
+
+[source,xml]
+----
+<?xml version="1.0"?>
+<ocs>
+  <meta>
+    <statuscode>100</statuscode>
+    <status>ok</status>
+  </meta>
+  <data/>
+</ocs>
+----
+
+== Instruction Set For Apps
+
+=== Get Apps
+
+Returns a list of apps installed on the ownCloud server.
+
+IMPORTANT: The Basic Authorization HTTP header must be used to authenticate this request, using the credentials of a user who has sufficient access rights to make the request.
+
+[cols=",,",options="header",]
+|=============================================
+| Request Path | Method | Content Type
+| `ocs/v1.php/cloud/apps/` | `GET` | `text/plain`
+|=============================================
+
+[cols=",,",options="header",]
+|======================================================
+| Argument | Type | Description
+| filter | string | Whether to retrieve enabled or disable
+| | | apps. Available values are `enabled`
+| | | and `disabled`.
+|======================================================
+
+==== Status Codes
+
+* 100 - successful
+* 101 - invalid input data
+
+==== Get Apps Example
+
+[source,console]
+----
+# Gets enabled apps
+curl http://admin:secret@example.com/ocs/v1.php/cloud/apps?filter=enabled
+----
+
+==== XML Output
+
+[source,xml]
+----
+<?xml version="1.0"?>
+<ocs>
+  <meta>
+    <statuscode>100</statuscode>
+    <status>ok</status>
+  </meta>
+  <data>
+    <apps>
+      <element>files</element>
+      <element>provisioning_api</element>
+    </apps>
+  </data>
+</ocs>
+----
+
+=== Get App Info
+
+Provides information on a specific application.
+
+IMPORTANT: The Basic Authorization HTTP header must be used to authenticate this request, using the credentials of a user who has sufficient access rights to make the request.
+
+[cols=",,",options="header",]
+|====================================================
+| Request Path | Method | Content Type
+| `ocs/v1.php/cloud/apps/\{appid\}` | `GET` | `text/plain`
+|====================================================
+
+[cols=",,",options="header",]
+|==================================================
+| Argument | Type | Description
+| appid | string | The app to retrieve information for
+|==================================================
+
+==== Status Codes
+
+* 100 - successful
+
+==== Get App Info Example
+
+[source,console]
+----
+# Get app info for the "files" app
+curl http://admin:secret@example.com/ocs/v1.php/cloud/apps/files
+----
+
+==== XML Output
+
+[source,xml]
+----
+<?xml version="1.0"?>
+<ocs>
+  <meta>
+    <statuscode>100</statuscode>
+    <status>ok</status>
+  </meta>
+  <data>
+    <info/>
+    <remote>
+      <files>appinfo/remote.php</files>
+      <webdav>appinfo/remote.php</webdav>
+      <filesync>appinfo/filesync.php</filesync>
+    </remote>
+    <public/>
+    <id>files</id>
+    <name>Files</name>
+    <description>File Management</description>
+    <licence>AGPL</licence>
+    <author>Robin Appelman</author>
+    <require>4.9</require>
+    <shipped>true</shipped>
+    <standalone></standalone>
+    <default_enable></default_enable>
+    <types>
+      <element>filesystem</element>
+    </types>
+  </data>
+</ocs>
+----
+
+=== Enable App
+
+Enable an app.
+
+IMPORTANT: The Basic Authorization HTTP header must be used to authenticate this request, using the credentials of a user who has sufficient access rights to make the request.
+
+[cols=",,",options="header",]
+|=====================================================
+| Request Path | Method | Content Type
+| `ocs/v1.php/cloud/apps/\{appid\}` | `POST` | `text/plain`
+|=====================================================
+
+[cols=",,",options="header",]
+|==========================================
+| Argument | Type | Description
+| appid | string | The id of the app to enable
+|==========================================
+
+==== Status Codes
+
+* 100 - successful
+
+==== Enable Example
+
+[source,console]
+----
+# Enable the "files_texteditor" app
+curl -X POST http://admin:secret@example.com/ocs/v1.php/cloud/apps/files_texteditor
+----
+
+==== XML Output
+
+[source,xml]
+----
+<?xml version="1.0"?>
+<ocs>
+  <meta>
+    <statuscode>100</statuscode>
+    <status>ok</status>
+  </meta>
+</ocs>
+----
+
+=== Disable App
+
+Disables the specified app.
+
+IMPORTANT: The Basic Authorization HTTP header must be used to authenticate this request, using the credentials of a user who has sufficient access rights to make the request.
+
+[cols=",,",options="header",]
+|=======================================================
+| Request Path | Method | Content Type
+| `ocs/v1.php/cloud/apps/\{appid\}` | `DELETE` | `text/plain`
+|=======================================================
+
+[cols=",,",options="header",]
+|===========================================
+| Argument | Type | Description
+| appid | string | The id of the app to disable
+|===========================================
+
+==== Status Codes
+
+* 100 - successful
+
+==== Disable Example
+
+[source,console]
+----
+Disable the "files_texteditor" app
+curl -X DELETE http://admin:secret@example.com/ocs/v1.php/cloud/apps/files_texteditor
+----
+
+==== XML Output
+
+[source,xml]
+----
+<?xml version="1.0"?>
+<ocs>
+  <meta>
+    <statuscode>100</statuscode>
+    <status>ok</status>
+  </meta>
+</ocs>
+----

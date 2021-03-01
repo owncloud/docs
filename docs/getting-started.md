@@ -93,7 +93,7 @@ To contribute to the documentation, you need to:
 3. Make sure you have [tools](./what-is-asciidoc.md#writing--editing-asciidoc-files) that can edit and preview AsciiDoc files.
 4. Setup a [GitHub account](https://github.com/), if you haven't already.
 5. Setup your local copy of the docs repository
-6. Environmental setups depending the kind of changes
+6. Environmental setups depending on the kind of changes
 7. Contributing to the documentation
 8. Getting support
 
@@ -118,9 +118,9 @@ With this done, you then need to get your local copy of the docs repository read
     git fetch {username}
     ```
 
-### Environmental Setups Depending the Kind of Changes
+### Environmental Setups Depending on the Kind of Changes
 
-Depending if you are making text changes only or if you change images, inline code examples or more complex content, you may need to use different tools to validate your outcome.
+Depending on if you are making text changes only or if you change images, inline code examples or more complex content, you may need to use different tools to validate your outcome.
 
 #### You Are Making Text Changes Only
 
@@ -181,7 +181,7 @@ To ssh://git@github.com/{username}/docs.git
 
 #### Cleaning Up Your Branches After They're Merged
 
-If you are a frequent contributor, you'll likely create a large number of branches, both locally and remotely. To avoid confusing which ones are new and which are old, once your pull requests are merged into the master repository, we suggest removing the underlying branches. Here's how to do this.
+If you are a frequent contributor, you'll likely create many branches, both locally and remotely. To avoid confusing which ones are new and which are old, once your pull requests are merged into the master repository, we suggest removing the underlying branches. Here's how to do this.
 
 ##### Local Branch Cleanup
 

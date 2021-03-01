@@ -6,7 +6,7 @@ require_once ('vendor/autoload.php');
 
 // Configure the basic client
 $client = new Client([
-    'base_uri' => 'https://your.owncloud.install.com/owncloud/ocs/v1.php/apps/files_sharing/api/v1/',
+    'base_uri' => '{oc-examples-server-url}/ocs/v1.php/apps/files_sharing/api/v1/',
 ]);
 
 try {

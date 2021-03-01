@@ -9,13 +9,13 @@ import (
 )
 
 func main() {
-	serverUri := "{oc-examples-server-url}/ocs/v1.php/apps/files_sharing/api/v1"
+	base_uri := "{oc-examples-server-url}/ocs/v1.php/apps/files_sharing/api/v1"
 	username := "{oc-examples-username}"
 	passwd := "{oc-examples-password}"
 
 	client := &http.Client{}
 
-	req, err := http.NewRequest("POST", fmt.Sprintf("%s/%s", serverUri, "shares/pending/<share_id>"), nil)
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s/%s", base_uri, "shares/pending/<share_id>"), nil)
 	if err != nil {
 		log.Print(err)
 		os.Exit(1)

@@ -230,14 +230,38 @@ and specify the values to be used at run time. For example:
 }
 ----
 
-Then define the environment variable `REPLACE_USERNAMES` to be true:
+If you are running tests locally, define the environment variable `REPLACE_USERNAMES` to be true:
 
 [source,bash]
 ----
 export REPLACE_USERNAMES=true
 ----
 
-When you run acceptance tests, the user names and attributes will be replaced.
+You can also run the acceptance tests in CI with the replaced user attributes. This is useful if you want to
+run many acceptance tests with an unusual combination of usernames, display names, email addresses and
+passwords without taking up many hours on a local machine. _A PR is necessary for testing but is not to be merged_,
+it is just a way to get test results. In the `acceptance` section of `.drone.star` switch on the `replaceUsernames` setting.
+Commit the changes to `.drone.star` and `tests/acceptance/usernames.json`, push to GitHub, and make a _draft_ PR:
+
+**Example Changes**
+[source,bash]
+----
+'acceptance': {
+  'api': {
+    'suites': [
+      'apiAuth',
+      'apiAuthOcs',
+      'apiAuthWebDav',
+      # and so on...
+    ],
+    'replaceUsernames': True,
+  },
+},
+----
+
+When the acceptance tests are run, the user names and attributes will be replaced.
+When you are finished running the tests, remember to close the PR and leave a comment
+describing the outcome of your testing.
 
 === Displaying the ownCloud Log
 

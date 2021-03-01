@@ -15,6 +15,7 @@ reference for common used writing and formatting tasks. For a complete reference
 * [Table of Contents](#table-of-contents)
 * [Code Blocks](#code-blocks)
 * [Literal Text and Blocks](#literal-text-and-blocks)
+* [Attributes](#attributes)
 * [Admonition](#admonition)
 * [Air Quotes](#air-quotes)
 * [Preserve Line Breaks](#preserve-line-breaks)
@@ -24,6 +25,7 @@ reference for common used writing and formatting tasks. For a complete reference
 * [Lists](#lists)
 * [Headers, Titles, Sections, Anchors and Paragraph Titles](#headers-titles-sections-anchors-and-paragraph-titles)
 * [Tables](#tables)
+* [TabSets](#tabsets)
 * [Comments](#comments)
 * [Relocating or Renaming Files](#relocating-or-renaming-files)
 
@@ -67,7 +69,7 @@ Please see [Troubleshooting Complex URLs](https://asciidoctor.org/docs/user-manu
 This is an example of an URL containing problematic characters which needs special treatment:
 `https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)`
 
-**Strongly** in favour of using the following method which greatly improves readability while authoring the document.
+**Strongly** in favour of using attributes which greatly improves readability while authoring the document.
 
 ```
 = The Page Header
@@ -274,6 +276,38 @@ Checking system health.
 ....
 ```
 
+## Attributes
+
+Reference: [`Document Attributes`](https://docs.asciidoctor.org/asciidoc/latest/attributes/document-attributes/)
+Reference: [`Inline Passthroughs`](https://docs.asciidoctor.org/asciidoc/latest/pass/pass-macro/)
+
+Attributes are a way of creating a variable with content which then can be used throughout the document. Using attributes increases
+readability a lot and makes it easy to change content one time for all locations used. Attributes are written on top of the page
+and have the following form:
+
+Definition:
+```
+:name-of-an-attribute: value
+```
+
+Usage:
+```
+This is some text {name-of-an-attribute} which continues here.
+```
+
+Attributes can also be used in scripts when you want to handover common used values. In this case, you must define the attributes and macros that
+are handed over to the script for processing. "macros" is e.g. needed, when using inline passthroughs:
+
+```
+[subs=attributes+,+macros]
+----
+include...
+----
+```
+
+When you have parts of texts or inside a script where you must render the content as it is, which is necessary for e.g. language constructs,
+read the Antora Inline Passthroughs section referenced above.
+
 ## Admonition
 
 Reference: [`Admonitions`](https://asciidoctor.org/docs/asciidoc-writers-guide/#admonitions)
@@ -476,10 +510,10 @@ Note: please check for documentation build warnings or use a [broken link checke
 
 #### Referencing Sections with xref
 
-Each section is by design it's own reference ID called an `Anchor` which can be referenced with xref in the same or from another document. You can also give the section an own custom ID.
+Each section is by design its own reference ID called an `Anchor` which can be referenced with xref in the same or from another document. You can also give the section an own custom ID.
 
 When using [`Auto-generated IDs`](https://asciidoctor.org/docs/user-manual/#auto-generated-ids) some rules apply:
-Compared to AsciiDoc's standard, ownCloud has set it's own definition:
+Compared to AsciiDoc's standard, ownCloud has set its own definition:
 
 * All characters are converted to lowercase
 * Spaces, hyphens, and periods are substituted by a dash `-`
@@ -493,7 +527,7 @@ xref:my-section[Text to Print]
   text
 ```
 
-When using [`Custom IDs`](https://asciidoctor.org/docs/user-manual/#custom-ids), those replace the auto-generated once. These are very useful when you want to define a stable anchor for linking to a section using a cross reference. The benefit of using custom ID's is, that xref is independent of section text changes which can cause broken links.
+When using [`Custom IDs`](https://asciidoctor.org/docs/user-manual/#custom-ids), those replace the auto-generated once. These are very useful when you want to define a stable anchor for linking to a section using a cross-reference. The benefit of using custom ID's is, that xref is independent of section text changes which can cause broken links.
 
 Example:
 ```
@@ -590,6 +624,27 @@ a|image:themes/classic.png[ownCloud iOS App - Classic theme]
 a|image:themes/dark.png[ownCloud iOS App - Dark theme]
 a|image:themes/light.png[ownCloud iOS App - Light theme]
 |===
+```
+
+## TabSets
+
+ownCloud has added the AsciiDoc tabset extension for the documentation. With tabsets, you can create tabs inside
+your document which is very useful, for example, for scripts in different languages for the same task.
+
+```
+[tabs]
+====
+Tab A::
++
+--
+Tab A contents
+--
+Tab B::
++
+--
+Tab B contents
+--
+====
 ```
 
 ## Comments
