@@ -154,13 +154,13 @@ Your changes are saved automatically.
 NOTE: When you create a new mountpoint using Login credentials, you must log out of ownCloud and then
 log back in so you can access the share. You only have to do this the first time.
 
-==== Access Control Lists 
+==== Access Control Lists
 
 From version 1.0.1 the Windows Network Drives App supports {acl-url}[Access Control Lists (ACLs)].
 To obtain ACL information, it supports two ACL providers:
 
 - xref:the-null-permission-manager[The Null Permission Manager]
-- xref:the-owncloud-ldap-permission-manager[The ownCloud LDAP Permission Manager] 
+- xref:the-owncloud-ldap-permission-manager[The ownCloud LDAP Permission Manager]
 
 image::enterprise/external_storage/windows_network_drive/acl-permissions-manager.png[Configuring ACL retrieval in the ownCloud Windows Network Drive app.]
 
@@ -200,7 +200,7 @@ IMPORTANT: The ownCloud LDAP apps must configure the `sAMAccountName` to be the 
 
 [TIP]
 ====
-Some groups, such as "everyone" might not be handled properly. 
+Some groups, such as "everyone" might not be handled properly.
 This is because such groups don't exist in the LDAP server, or might not be found if the domain is
 different, such as `nt authority\system` or `builtin\domain-users`.
 ====
@@ -280,19 +280,22 @@ The simplest way to start the `wnd:listen` process manually, perhaps for initial
 ----
 
 The password is an optional parameter and you'll be asked for it if you
-didn't provide it, as in the example above. In order to start the
-`wnd:listen` without any user interaction, provide the password as the
-user's 4th parameter, as in the following example:
+didn't provide it, as in the example above. In order to start
+`wnd:listen` without any user interaction, provide the password from
+a password file.
 
 [source,console,subs="attributes+"]
 ----
-{occ-command-example-prefix} wnd:listen <host> <share> <username> <password>
+{occ-command-example-prefix} wnd:listen <host> <share> <username> \
+  --password-file=/my/secret/password/file --password-trim
 ----
 
 For additional options to provide the password, check xref:password-options[Password Options]
 
-Note that in any case there won't be any processing of the password by default. This means that spaces or
-newline chars won't be removed unless explicitly told. Use the `--password-trim` option in those cases.
+Note, that the password must be in plain text inside the file, and neither spaces nor newline characters will be
+removed from the file by default, unless the `--pasword-trim` option is added. The password file must be readable
+by the apache user (or www-data). Also make sure that the password file is outside of any directory handled
+by apache (web-readable).
 
 You should be able to run any of those commands, and/or wrap them into a systemd service or any other
 startup service, so that the `wnd:listen` command is automatically started during boot, if you need it.
@@ -360,8 +363,8 @@ sudo systemctl start  owncloud-wnd-listen-SERVER-SHARE.service
 
 Create or add a `crontab` file in `/etc/cron.d/oc-wnd-process-queue`.
 
-* Make a `crontab` entry to run a script iterating over all `SERVER SHARE` pairs with an appropriate `occ wnd:process-queue` command. 
-  The commands must be **strictly sequential**. 
+* Make a `crontab` entry to run a script iterating over all `SERVER SHARE` pairs with an appropriate `occ wnd:process-queue` command.
+  The commands must be **strictly sequential**.
   This can be done by using `flock -n` and tuning the `-c` parameter of `occ wnd:process-queue`
 
 [source,console]
@@ -434,7 +437,7 @@ variable in Apache:
 export HOME=/usr/share/httpd
 ----
 
-By default, CentOS has activated SELinux, and the `httpd` process can not make outgoing network connections. 
+By default, CentOS has activated SELinux, and the `httpd` process can not make outgoing network connections.
 This will cause problems with the `curl`, `ldap` and `samba` libraries.  You'll need to get around this
 to make this work. First, check the status:
 
@@ -486,7 +489,7 @@ for each. For example, if you have one configuration with `10.0.0.2/share1` and 
 second.
 
 Third, run the `wnd:process-queue` periodically, usually via
-xref:configuration/server/background_jobs_configuration.adoc#cron-jobs[a Cron job]. 
+xref:configuration/server/background_jobs_configuration.adoc#cron-jobs[a Cron job].
 The command processes all the stored notifications for a specific host and share. If you have several,
 you could set up several Cron jobs, one for each host and share with different intervals, depending on the
 load or update urgency. As a simple example, you could run the command every 2 minutes for one server
@@ -545,7 +548,7 @@ needs to show the password as plaintext on standard output.
 
 === Reduce WND Notifier Memory Usage
 
-The WND in-memory notifier for password changes provides the ability to notify all _affected_ WND storages to reset their passwords. 
+The WND in-memory notifier for password changes provides the ability to notify all _affected_ WND storages to reset their passwords.
 This feature is intended to prevent a password lockout for the user in the backend. However, this
 functionality _can_ consume a significant amount of memory. To disable it, in one of the
 `config/config.php.` files, add the following configuration:
@@ -594,7 +597,7 @@ pass the-password-name | {occ-command-example-prefix} wnd:listen <host> <share> 
 
 === Password Option Precedence
 
-If both the argument and the option are passed, e.g., 
+If both the argument and the option are passed, e.g.,
 `occ wnd:listen <host> <share> <username> <password> --password-file=/tmp/pass`,
 then the `--password-file` option will take precedence.
 
@@ -616,8 +619,8 @@ precious time — especially for large organizations.
 | Switch | Allowed Values
 | `--serializer-type` | `file`. Other valid values may be added in the future, as more
 implementations are requested.
-| `--serializer-params` 
-| Depends on `--serializer-type`, because those will be the parameters that the chosen serializer will use. 
+| `--serializer-params`
+| Depends on `--serializer-type`, because those will be the parameters that the chosen serializer will use.
 For the `file` serializer, you need to provide a file location in the host FS where the storages will be serialized.
 You can use `--serializer-params file=/tmp/file` as an example.
 |===
