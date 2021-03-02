@@ -1,0 +1,31 @@
+= Drone Tests
+
+== Setup drone
+
+- download drone https://github.com/drone/drone-cli 
+- have docker available locally
+- look at .drone.yml for possible values or the variables as they appear in the CI drone runs
+- command: PHP_VERSION=7.1 DB_TYPE=postgres TEST_SUITE=phpunit drone exec
+
+== Acceptance tests
+
+- need local OC setup to have run (occ maintenance:install)
+- cd tests/acceptance && ./run.sh
+- can add feature file name and optionally line number: ex ./run.sh features/sharing-v1.feature:123
+- from drone use TEST_SUITE=api-acceptance-tests
+
+== Smashbox tests
+
+https://github.com/owncloud-docker/smashbox[Get Smashbox]
+
+----
+docker run -e SMASHBOX_URL=localhost:9680 -e SMASHBOX_USERNAME=admin -e SMASHBOX_ACCOUNT_PASSWORD=admin owncloud/smashbox lib/test_basicSync.py <= will not work, docker, does not understand localhost, and needs admin password
+----
+
+----
+docker run -e SMASHBOX_URL=172.42.16.124:80/octest -e SMASHBOX_USERNAME=admin -e SMASHBOX_ACCOUNT_PASSWORD=admin -e SMASHBOX_PASSWORD=admin owncloud/smashbox lib/test_basicSync.py 
+----
+
+----
+docker run -e SMASHBOX_URL=172.42.16.124:80/octest -e SMASHBOX_USERNAME=admin -e SMASHBOX_ACCOUNT_PASSWORD=admin -e SMASHBOX_PASSWORD=admin owncloud/smashbox lib/test_basicSync.py -t 0 <= specific test 
+----
