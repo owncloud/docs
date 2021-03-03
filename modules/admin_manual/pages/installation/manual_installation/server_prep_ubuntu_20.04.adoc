@@ -1,0 +1,372 @@
+= Server Preparation for Ubuntu 20.04
+:toc: right
+:toclevels: 1
+:page-partial:
+:php_versions_url: https://www.php.net/supported-versions.php
+:ubuntu_upgrade_url: https://www.cyberciti.biz/faq/upgrade-ubuntu-18-04-to-20-04-lts-using-command-line/
+:remove_ppa_url: https://itsfoss.com/how-to-remove-or-delete-ppas-quick-tip/
+:php-common: https://tecadmin.net/enable-disable-php-modules-ubuntu/
+:disabling-thp-url: https://stackoverflow.com/questions/48743100/why-thp-transparent-huge-pages-are-not-recommended-for-databases-like-oracle-a
+:ondrej-php-url: https://launchpad.net/~ondrej/+archive/ubuntu/php
+:libsmbclient-php_url: https://github.com/eduardok/libsmbclient-php
+:update-alternatives_url: https://manpages.ubuntu.com/manpages/precise/man8/update-alternatives.8.html
+:smbclient_url: https://packages.ubuntu.com/search?keywords=smbclient
+:pecl_url: https://pecl.php.net/package/smbclient
+:phpmyadmin_latest_url: https://www.phpmyadmin.net/downloads/
+
+== Introduction
+
+The target audience for this document are more sophisticated admins with additional needs and
+setup scenarios. Ubuntu 20.04 default only provides PHP 7.4. In case you are running a PHP
+version lower than 7.4, your PHP version is either already EOL or, for PHP 7.3, it will be EOL
+in 2021. Consider upgrading to PHP 7.4. For more information see
+{php_versions_url}[Currently Supported PHP Versions]. This document considers two basic scenarios.
+You have/plan to upgrade from 18.04 LTS to 20.04 LTS or you have a fresh Ubuntu 20.04 LTS installation.
+
+NOTE: The commands and links provided in this description should give you proper hints but are
+without any responsibility.
+
+== Upgrading from Ubuntu 18.04 to 20.04
+
+Without going into the upgrade details, you can now upgrade directly from to Ubuntu 18.04 LTS
+to 20.04 LTS without using the _development_ (`-d`) option when using the `do-release-upgrade`
+command. For more details see an example description at
+{ubuntu_upgrade_url}[Upgrade Ubuntu 18.04 to 20.04 LTS using command line]
+
+[source,console]
+----
+sudo apt update
+sudo apt upgrade
+sudo apt dist-upgrade
+sudo apt autoremove
+sudo apt install update-manager-core
+sudo do-release-upgrade
+----
+
+In case you have upgraded successfully and you had previously installed any versions of PHP,
+it is adviced to uninstall all PHP versions and ALL extensions and focus on a fresh PHP 7.4 native
+installation. This is especially true when using the `ondrej php` PPA as it installs all available
+PHP versions, which are either no longer needed or supported or will run EOL in 2021. To do so, 
+stop any services which depend or use PHP like your Web Server. Then get a list of all PHP
+related programs and extensions by typing:
+
+[source,console]
+----
+dpkg -l | grep php | awk '{print $2}' | tr "\n" " "
+----
+
+Disable all extensions listed (see the section
+xref:useful-commands-for-managing-php-extensions[Useful Commands For Managing PHP Extensions])
+
+Then purge them step by step
+
+[source,console]
+----
+sudo apt purge <package name from the list above>
+----
+
+Alternatively, if you are fine removing all packages listed, you can run:
+
+[source,console]
+----
+sudo apt purge `dpkg -l | grep php | awk '{print $2}' | tr "\n" " "`
+----
+
+NOTE: Keep a copy of your relevant `php.ini` and other configuration files as reference _before_
+you start purging, to quickly reconfigure your PHP 7.4 installation afterwards.
+
+If you had installed the `ondrej php` PPA, remove it, else it will reinstall PHP from this
+source again. To do so run:
+
+[source,console]
+----
+sudo apt install ppa-purge
+sudo ppa-purge ppa:ondrej/php
+sudo rm -i /etc/apt/sources.list.d/ondrej-ubuntu-php-*
+sudo apt update
+----
+
+You can also follow this guide to remove PPA´s {remove_ppa_url}[How to Remove or Delete PPA in Ubuntu].
+
+WARNING: If you have not cleanly removed that ppa, you may get conflicts when installing php.
+
+After deinstallation of all versions and extensions of PHP and cleaning up all remnants, you
+should have an empty `/etc/php` directory. You can proceed like having a fresh installation
+of Ubuntu 20.04 LTS. 
+
+== Clean Ubuntu 20.04 Installation
+
+After you have installed your Ubuntu 20.04 LTS server from scratch, use following commands to
+install PHP 7.4 and necessary extensions:
+
+[source,console]
+----
+sudo apt install php-fpm php-cgi
+sudo apt install php
+sudo apt install php-mysql php-mbstring php-intl php-redis php-imagick \
+         php-igbinary php-gmp php-bcmath php-curl php-gd php-zip php-imap \
+         php-ldap php-bz2 php-ssh2 php-phpseclib
+sudo apt install php-dev libsmbclient-dev php-pear
+----
+
+Use following commands to install some common prerequisites
+
+[source,console]
+----
+sudo apt install smbclient
+sudo apt install redis-server
+sudo apt install unzip
+sudo apt install openssl
+----
+
+The following step is necessary to upgrade Pear to the latest version because of a change
+in PHP 7.4.1+
+
+[source,console]
+----
+pear version
+sudo mkdir -p /tmp/pear/cache
+sudo pear upgrade --force --alldeps http://pear.php.net/get/PEAR-1.10.12
+sudo pear clear-cache
+sudo pear update-channels
+sudo pear upgrade --force
+sudo pear upgrade-all
+pear version
+----
+
+If you get any notices containing `You should add "extension=...`, check if the extension is
+listed in `mods-available`. If it is not present, add the .ini file as required manually and
+xref:useful-commands-for-managing-php-extensions[enable it].
+
+Post upgrading pear, you can safely remove the directory `/tmp/pear/cache`.
+
+== Important Note on `smbclient`
+
+On Ubuntu 18.04, the default `smbclient` version was 4.7.6. With Ubuntu 20.04 the version provided
+is 4.11.6, the actual compilable version is 4.13.x. If you have successfully configured and
+connetced with `smbclient` under Ubuntu 18.04 to a Windows Server, you may now get issues
+connecting to older NAS systems. Some requirements are now more strict than before or have changed.
+
+If you needed to set `client max protocol = NT1` before in `smb.conf` to connect, you may get
+with samba 4.11+ a response like `Max protocol NT1 is less than min protocol SMB2_02` which
+highlights a disabled former connectivity. Starting with Samba version 4.11, the NT1 protocol has
+been removed completely.
+
+To check if you are affected connecting to a particular file server, do tests with the Ubuntu
+provided version like:
+
+[source,console]
+----
+host -t SRV _ldap._tcp.<full_domain_name>
+----
+
+If you do not get SRV records printed, your dns settings may need a change. The first DNS server
+must be able to resolve your LDAP Active Directory request properly. If not, `smbclient` can not
+find a KDC to check credentials.
+ 
+[source,console]
+----
+sudo smbclient -L <file_server_name> -U <full_domain_name>/<user_name>
+----
+
+Any other output than a list of shares, like the error message +
+`tree connect failed: NT_STATUS_INVALID_PARAMETER` +
+shows, that this target server is affected. This may impact your onwCloud installation when using
+SMB shares with that file server.
+
+The only solution that can be suggested is, to compile a working Samba version on your own.
+This xref:installation/manual_installation/compile_samba.adoc[Compact Samba Compiling Guide]
+helps how to do that. 
+
+== Apache Web Server
+
+The following command installs the Apache Web Server.
+
+[source,console]
+----
+sudo apt install libapache2-mod-php apache2
+----
+
+Even not supported by ownCloud, you can configure Apache to use `php-fpm`, the
+FastCGI Process Manager, which is a non standard setup and not covered by this document.
+
+== Multiple Concurrent PHP Versions
+
+If you have multiple concurrent PHP versions installed, which will happen when using the
+{ondrej-php-url}[ondrej/php] PPA, you must tell your Web Server and your CLI environment which
+one to use. Using the `ondrej/php` PPA may be needed if you want to test or prepare for the
+latest PHP version like PHP 8. Please note that `ondrej/php` installs _ALL_ versions of PHP.
+To list all available versions installed and choose one from them, use the following command:
+
+[source,console]
+----
+sudo update-alternatives --config php
+----
+Here is an example output:
+
+[source,console]
+----
+There are 2 choices for the alternative php (providing /usr/bin/php).
+
+  Selection    Path             Priority   Status
+------------------------------------------------------------
+* 0            /usr/bin/php7.4   74        auto mode
+  1            /usr/bin/php7.4   74        manual mode
+  2            /usr/bin/php8.0   80        manual mode
+
+Press <enter> to keep the current choice[*], or type selection number:
+----
+
+You can also directly set the required PHP version:
+
+[source,console]
+----
+sudo update-alternatives --set php /usr/bin/php7.4
+----
+
+WARNING: Post selecting your PHP version, it is **highly** recommended to switch to the correct
+compiling environment which is essential e.g. when using PECL!
+
+[source,console]
+----
+sudo update-alternatives --set phar /usr/bin/phar7.4
+sudo update-alternatives --set phar.phar /usr/bin/phar.phar7.4
+sudo update-alternatives --set phpize /usr/bin/phpize7.4
+sudo update-alternatives --set php-config /usr/bin/php-config7.4
+----
+
+When using Apache PHP-FPM, you have to configure your PHP version in an Apache config
+file manually. In any case, the PHP version used must always be the same.
+
+You can read more about `update-alternatives` command on the {update-alternatives_url}[man page].
+
+WARNING: Please be advised, when switching a php version, you **MUST** also configure the
+corresponding php.ini files and extensions used accordingly! Extension binaries are **not** shared!
+
+WARNING: You may get completely unexpected behaviour or a broken environment if the PHP version
+for the Web Server and for CLI are different!
+
+=== Avoiding a Nasty Pitfall
+
+If you are using a PECL install later on, check the output of the installation command soon after
+it has started. You will find a text like:
+
+[source,console]
+----
+...
+PHP Api Version:         20190902
+Zend Module Api No:      20190902
+...
+----
+
+Then do a test by just entering the following command:
+
+[source,console]
+----
+php -i | grep extension_dir
+----
+
+If the output is different than the style below, there is a problem that needs fixing:
+
+[source,console]
+----
+extension_dir => /usr/lib/php/20180731 => /usr/lib/php/20180731
+----
+
+This is the output that shows a fix is needed:
+
+[source,console]
+----
+PHP Warning:  PHP Startup: smbclient: Unable to initialize module
+Module compiled with module API=20190902
+PHP    compiled with module API=20180731
+These options need to match
+----
+
+As you see above, the API modules do not match and have been compiled with different versions
+and therefore will not work. To fix this, uninstall the Pecl module with
+`pecl uninstall <extension_name>`, set the correct `update-alternatives` as described above
+and reinstall it.
+
+== libsmbclient-php Library
+
+`libsmbclient-php` is a PHP extension that uses Samba's libsmbclient library to provide
+Samba-related functions to PHP programs. You need to install it, if you have installed
+`smbclient` as described above. `smbclient` is e.g. necessary, if you are using the
+xref:enterprise/external_storage/windows-network-drive_configuration.adoc[Windows Network Drives app]
+from ownClouds Enterprise Edition. To install it, run the commands described below.
+You can find more information about `smbclient` and the latest version on {pecl_url}[PECL].
+
+
+[source,console]
+----
+sudo pecl channel-update pecl.php.net
+sudo pecl install smbclient
+----
+
+When the commands complete, you then have to (assuming you use PHP 7.4):
+
+- Create `/etc/php/7.4/mods-available/smbclient.ini` with following content `extension=smbclient.so`.
+- Enable the module by running `phpenmod smbclient`.
+- Restart PHP and your web server by running the following command:
++
+  sudo service apache2 restart
+
+NOTE: Do not get confused by the name `smbclient`. It is on the one hand a
+{smbclient_url}[command-line SMB/CIFS client for Unix], and on the other hand the package
+name for the {pecl_url}[PECL smbclient] PHP extension
+
+NOTE: Alternatively you can install `smbclient` from {libsmbclient-php_url}[source].
+
+== Useful Commands For Managing PHP Extensions 
+
+=== List Enabled PHP Extensions
+ 
+If you want to retrieve a list of enabled PHP extensions run following command:
+
+[source,console]
+----
+ls `php -i | grep "^extension_dir" | sed -e 's/.*=> //'` | sort
+----
+
+=== Enabling and Disabling PHP Extensions
+
+To enable or disable a PHP extension for CLI, FPM or Apache, use the commands
+`phpenmod` or `phpdismod`.
+
+Example:
+[source,console]
+----
+sudo phpenmod php-ldap
+# or
+sudo phpdismod php-ldap
+----
+
+Type the command without parameters or see this {php-common}[guide] to read more about the commands
+in the php-common package.
+
+== Notes for PHP Library phpseclib
+
+phpseclib's BigInteger uses the php-gmp (GNU Multiple Precision Arithmetic Library), php-bcmath and OpenSSL extensions,
+if they're available, for speed, but doesn't require them to maintain maximum compatibility. 
+The GMP library uses an internal resource type, while the BCMath library uses strings as datatype.
+The most salient difference is, that GMP works on _arbitrary precision integer values_, whereas BCMath
+allows _arbitrary precision] decimal / float-like values_.
+
+== Database Installation
+
+To install a database, see the
+xref:installation/manual_installation/manual_installation_db.adoc[Manual Installation Databases guide].
+
+NOTE: Follow the procedure described in xref:useful-tips[Useful Tips], if you want to
+`Disable Transparent Huge Pages (THP),Transparent Huge Pages`
+
+You may want to use the latest version of phpmyadmin as the OS default versions lacks behind
+the {phpmyadmin_latest_url}[latest available stable] version a lot and may report php errors with
+php7.2 onwards. Follow this
+xref:installation/manual_installation/upgrade_install_phpmyadmin.adoc[quick upgrade guide]
+to install it.
+
+== Useful Tips
+
+include::{partialsdir}installation/manual_installation/useful_tips.adoc[leveloffset=+1]
