@@ -230,8 +230,41 @@ TIP: If many users are affected, it could be convenient to create a shell script
 
 == The files:transfer-ownership command
 
-You may transfer all files and shares from one user to another, including to a user who has never logged in yet. 
-This is useful before removing a user. 
+You may transfer all files and *outgoing* shares from one user to another.
+
+Incoming shares are not transferred.
+
+If the target user does not exist - he will be created.
+
+This command is useful before removing a user.
+
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} files:transfer-ownership --help
+ Usage:
+   files:transfer-ownership [options] [--] <source-user> <destination-user>
+----
+
+=== Arguments
+
+[width="100%",cols="20%,70%",]
+|===
+| `source-user`      | owner of files which shall be moved
+| `destination-user` | user who will be the new owner of the files
+|===
+
+=== Options
+
+[width="100%",cols="35%,70%",]
+|===
+| `--path=[PATH]`        | selectively provide the path to transfer. +
+For example --path="folder_name"
+| `-s, +
+--accept-skipped-shares` | always confirm to continue in case of skipped shares.
+|===
+
+>>>>>>> 31d43ca91 (clarified the functionality of the command)
 For example, to move all files from `<source-user>` to `<destination-user>`, use the following command:
 
 [source,console,subs="attributes+"]
