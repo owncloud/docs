@@ -1,3 +1,5 @@
+
+
 = Windows Network Drive (WND)
 :toc: right
 :toclevels: 1
@@ -241,8 +243,7 @@ SMB storage. ownCloud supports SMB notifications with an `occ` command,
 
 `occ wnd:listen`.
 
-NOTE: The notifier only works with remote storage on Windows servers. It does not work reliably with Linux
-servers due to technical limitations.
+NOTE: The capability of the listener depends on the ability of the used SMB/CIFS storage backend to provide notifications. While Windows file servers have no limitations, some vendors may have restrictions. Please check these with your storage provider. It may be possible, that notifications for Samba only work for the target folder you're listening to, but not for any sub structures. If you're listening on the "/top" folder, you may not receive notifications for "/top/middle/bottom" folder. In this case, you have to setup listeners for every _existing_ folder and also for any _new_ folders that will be created. With Windows file servers, you will receive notifications for every file or subfolder inside the folder you're listening to.
 
 Your `smbclient` version needs to be 4.x, as older versions do not support notifications. The ownCloud
 server needs to know about changes to files on integrated storage so that the changed files will be synced
