@@ -1,0 +1,85 @@
+= Drone Testing
+:toc: right
+
+:drone-cli-url: https://github.com/drone/drone-cli
+:smashbox-url: https://github.com/owncloud-docker/smashbox
+
+== Introduction
+
+This document will show you how to run drone tests locally.
+
+== Setup Drone
+
+- Download the {drone-cli-url}[command line client] for the Drone Continuous Integration Server
+- Have a local docker available
+- Look at file `.drone.yml` for possible values or the variables as they appear in the CI drone runs
+- Command: `PHP_VERSION=7.4 DB_TYPE=postgres TEST_SUITE=phpunit drone exec`
+
+== Acceptance Tests
+
+- You need a local ownCloud setup. If not already done, finalize the installation it with:
++
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} maintenance:install
+----
+
+- Change into directory:
++
+[source,console]
+----
+cd tests/acceptance
+----
+
+- Run all tests:
++
+[source,console]
+----
+./run.sh
+----
+
+- Run a particular test by adding a feature file name and optionally line number:
++
+[source,console]
+----
+ ./run.sh features/sharing-v1.feature:123
+----
+
+- From drone, use TEST_SUITE=api-acceptance-tests
+
+== Smashbox Tests
+
+Download the {smashbox-url}[ownCloud Smashbox Image] and see following possible commands:
+
+Note, the following command will not work, docker does not understand localhost, and needs a user and password:
+
+[source,console]
+----
+sudo docker run -e SMASHBOX_URL=localhost:9680 \
+   -e SMASHBOX_USERNAME=admin \
+   -e SMASHBOX_ACCOUNT_PASSWORD=admin \
+   owncloud/smashbox lib/test_basicSync.py
+----
+
+This is a correct working example:
+
+[source,console]
+----
+sudo docker run -e SMASHBOX_URL=172.42.16.124:80/octest \
+   -e SMASHBOX_USERNAME=admin \
+   -e SMASHBOX_ACCOUNT_PASSWORD=admin \
+   -e SMASHBOX_PASSWORD=admin \
+   owncloud/smashbox lib/test_basicSync.py 
+----
+
+This will run a specific test:
+
+[source,console]
+----
+sudo docker run -e SMASHBOX_URL=172.42.16.124:80/octest \
+   -e SMASHBOX_USERNAME=admin \
+   -e SMASHBOX_ACCOUNT_PASSWORD=admin \
+   -e SMASHBOX_PASSWORD=admin \
+   owncloud/smashbox lib/test_basicSync.py -t 0
+----
+
