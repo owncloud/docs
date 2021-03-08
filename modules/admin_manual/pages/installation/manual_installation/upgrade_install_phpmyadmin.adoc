@@ -1,0 +1,103 @@
+= Upgrade `phpmyadmin`
+:toc: right
+:toclevels: 2
+:phpmyadmin_home_url: https://www.phpmyadmin.net
+:phpmyadmin_dl_url: https://www.phpmyadmin.net/downloads/
+
+== Introduction
+
+This guide helps you to upgrade an existing installation of {phpmyadmin_home_url}[phpmyadmin]
+from source. This may be necessary if the provided version of your OS lacks behind the available
+version and/or you see php errors when using it and you need an updated version.
+
+NOTE: `phpmyadmin` gets rarely upgraded as Ubuntu installation. Usually only on Ubuntu LTS upgrades.
+In case Ubuntu upgrades in between, just redo the procedure described below.
+
+NOTE: The guide has been tested, is at it is and comes without any warranty.
+ 
+== Prerequisites
+
+Please note, you must already have an existig, configured and working `phpmyadmin` installation.
+Check your existing version with following command:
+
+[source,console]
+----
+sudo apt-cache policy phpmyadmin
+----
+
+When using `phpmyadmin`, post login, look at the bottom right side to see the actual version running.
+
+image:installation/manual_installation/phpmyadmin_v4.9.5deb2.png[]
+
+You will find the existing installation in directory: `/usr/share/phpmyadmin`
+
+== Upgrade `phpmyadmin`
+
+To download `phpmyadmin`, see the {phpmyadmin_dl_url}[phpmyadmin download page] and select a
+version that fits your needs. Then start downloading, extracting and putting the files to the
+correct location. 
+
+=== Download and Move
+
+The following example uses `phpMyAdmin-5.0.4-all-languages` as basis for upgrading. It renames the
+old installation because we need to keep some basic configuration settings. 
+
+[source,console]
+----
+cd /tmp
+sudo wget https://files.phpmyadmin.net/phpMyAdmin/5.0.4/phpMyAdmin-5.0.4-all-languages.tar.gz
+sudo tar -xvf phpMyAdmin-5.0.4-all-languages.tar.gz
+sudo mv /usr/share/phpmyadmin /usr/share/phpmyadmin.old
+sudo mkdir -p /usr/share/phpmyadmin
+sudo cp -r phpMyAdmin-5.0.4-all-languages/. /usr/share/phpmyadmin
+sudo rm -r phpMyAdmin-5.0.4-all-languages*
+----
+
+=== Recreate Basic Configuration Settings
+
+Because the upgrade has default basic configuration settings, it is necessary to recreate them
+based on the former settings coming from the Ubuntu installation. The file to change can be found
+in `/usr/share/phpmyadmin/libraries/vendor_config.php`. To keep a copy of the original file from
+the update, create a backup with:
+
+[source,console]
+----
+cd /usr/share/
+sudo cp phpmyadmin/libraries/vendor_config.php phpmyadmin/libraries/vendor_config.php.orig
+----
+
+Then, open two editors of your choice in parallel with following files:
+
+(1) - `phpmyadmin/libraries/vendor_config.php` +
+(2) - `phpmyadmin.old/libraries/vendor_config.php`
+
+**Step One**
+
+Search in (1) for `define('TEMP_DIR', ROOT_PATH . 'tmp/');` +
+Search in (2) for `define('TEMP_DIR',` +
+
+Replace in (1) `ROOT_PATH . 'tmp/'` with the value of (2).
+This can be eg: `'/var/lib/phpmyadmin/tmp/'` 
+
+**Step Two**
+
+Search in (1) for `define('CONFIG_DIR', ROOT_PATH);` +
+Search in (2) for `define('CONFIG_DIR',` +
+
+Replace in (1) `ROOT_PATH` with the value of (2).
+This can be eg: `'/etc/phpmyadmin/'` 
+
+== Testing
+
+When the upgrade has finished, test it by logging in. When succeeded, check the actual version
+running at the bottom right of the screen.
+
+image:installation/manual_installation/phpmyadmin_v5.0.4.png[]
+
+When you are fine with your upgrade, you can safely delete the old installation files.
+
+[source,console]
+----
+cd /usr/share/
+sudo rm -r /usr/share/phpmyadmin.old
+----
