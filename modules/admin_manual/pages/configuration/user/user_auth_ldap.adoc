@@ -1,4 +1,4 @@
-= User Authentication with LDAP
+= LDAP Integration
 :toc: right
 :toclevels: 3
 :page-aliases: go/admin-ldap.adoc
@@ -21,16 +21,7 @@
 
 == Introduction
 
-IMPORTANT: Please check both the advanced and expert configurations carefully before using in production.
-
-ownCloud ships with an LDAP application, called `user_auth_ldap`.
-This application allows LDAP users (including those from Active Directory) to appear in your ownCloud user listings.
-These users can authenticate to ownCloud with their LDAP credentials so that separate ownCloud user accounts don't need to be created for them.
-You will manage their ownCloud group memberships, quotas, and sharing permissions just like any other ownCloud user.
-
-NOTE: The PHP LDAP module is required. 
-It is supplied by `php7.4-ldap` on Debian/Ubuntu and `php-ldap` on CentOS/Red Hat/Fedora. 
-Please check for the correct version, based on your installation of PHP.
+The LDAP Integration app allows you to integrate your existing LDAP users in ownCloud.
 
 The LDAP application supports:
 
@@ -42,14 +33,9 @@ The LDAP application supports:
 * Support for primary groups in Active Directory
 * Only read access to your LDAP (edit or delete of users on your LDAP is not supported)
 
-CAUTION: The LDAP app is not compatible with the `User backend using remote HTTP servers` app. You cannot use both of them at the same time.
-
-NOTE: A non-blocking or correctly configured {selinux-url}[SELinux] setup is needed for the LDAP backend to work. 
-Please refer to the xref:installation/selinux_configuration.adoc[SELinux Configuration].
-
 == Configuration
 
-First, enable the `LDAP user and group backend` app on the Apps page in ownCloud. 
+First, install the {oc-marketplace-url}/apps/user_ldap[LDAP Integration] app.
 Then, go to your Admin page to configure it. 
 The LDAP configuration panel has four tabs. 
 A correctly completed first tab ("Server") is mandatory to access the other tabs. 
@@ -63,21 +49,13 @@ You may configure multiple servers if you have them.
 At a minimum, you must supply the LDAP server's hostname. 
 If your server requires authentication, enter your credentials on this tab.
 
-IMPORTANT: The base DN and port are mandatory.
-
 ==== LDAPS Configuration
 
 LDAPS encrypts the connection between your LDAP server and ownCloud via SSL/TLS.
 
-1. First you need the Server CA certificate in the `pem` format with `.crt` suffix
-- For windows see the {ldap-over-ssl-ldaps-certificate-url}[Microsoft TechNet - LDAP over SSL (LDAPS) Certificate] documentation.
-+
-NOTE: The certificate you export from a Microsoft Domain Controller (DC) is usually in binary format and needs to be
-converted to base64. This can e.g. be done with openssl: +
-`openssl x509 -inform der -in BinaryFromDC.cer -out base64LDAPSForOwnCloud.pem`
-- For Ubuntu see {service-ldap-with-tls-url}[OpenLDAP - LDAP & TLS]
-2. Import the certificate to directory `/usr/local/share/ca-certificates/` at your ownCloud server
-3. Execute `sudo update-ca-certificates`
+1. First you need the Windows Server CA certificate in the `pem` format with `.crt` suffix
+2. Import the certificate to `/usr/local/share/ca-certificates/`
+3. Execute `update-ca-certificates`
 
 image:apps/user_ldap/ldap-wizard/server-tab.png[LDAP Wizard, Server Tab]
 
@@ -109,15 +87,6 @@ Example:
 * `389` for unencrypted connection
 * `636` for encrypted connection
 --
-
-Use StartTLS Support::
-Check this option to use Transport Layer Security (TLS) when interacting with the LDAP server.
-
-[TIP]
-====
-When using this option, ownCloud assumes that the CA certificates are properly setup.
-The connection will be encrypted, if the server supports it.
-====
 
 User DN::
 +
@@ -596,6 +565,8 @@ This prevents data loss due to re-provisioning the users home folder in case of 
 --
 
 === Expert Settings
+
+IMPORTANT: Please check both the advanced and expert configurations carefully before using in production.
 
 image:apps/user_ldap/ldap-wizard/expert-tab.png[LDAP Wizard, Expert Tab]
 
