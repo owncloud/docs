@@ -17,11 +17,21 @@ STYLE="owncloud"
 STYLES_DIRECTORY="resources/themes"
 LANGUAGE=
 
+DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+# define path and file of .yml to parse
+YMLFILE="$DIR/../site.yml"
+
 ERR_UNSUPPORTED_LANGUAGE=20
 ERR_UNSUPPORTED_MANUAL=21
 ERR_UNSUPPORTED_ACTION=22
 ERR_LINTER_NOT_AVAILABLE=23
 ERR_NO_LANGUAGE_SPECIFIED=24
+
+# yamlparse.sh is a script to get a list of key/value pairs from site.yml which
+# will then be used as additional dynamically created argument set for asciidoctor-pdf.
+# Else the attributes used can´t be resolved and are printed like {key}
+
+source $DIR/yamlparse.sh
 
 if [[ -z "${VERSION:-}" ]]; then
     if [[ -n "${DRONE_TAG:-}" ]]; then
@@ -157,6 +167,11 @@ function build_pdf_manual()
     local book_file="books/ownCloud_${manual_infix}_Manual.adoc" 
     local nav_file="modules/${manual}_manual/nav.adoc"
 
+    # Get the dynamic list of attributes from site.yml
+    # The output after sed is a string like -a key=value -a key=value ...
+    # For testing, also use the yamltest.sh script
+    local attributes=("$(parse_yaml $YMLFILE | grep asciidoc_attributes | sed 's/asciidoc_attributes_/-a /g' | sed 's/\")/\"/' | sed 's/=(/=/' | sed "s/\"'/\'/" | sed "s/'\"/\'/")")
+
     if [[ "$DRY_RUN" == true ]]; then
         echo "Manual Generation - **DRY RUN**"
         echo 
@@ -168,6 +183,39 @@ function build_pdf_manual()
 
     echo "Generating version '${revision}' of the ${manual} manual, dated: ${release_date}"
     mkdir -p "$build_directory"
+
+    # Create argument list, necessary as we have dynamic attributes coming from another file
+    # The param string needs to be proper constructed, pls be careful, see comment below
+    param='-d book '
+    param+='-a pdf-stylesdir=''"'${STYLES_DIRECTORY}/'" '
+    param+='-a pdf-fontsdir=''"'${FONTS_DIRECTORY}'" '
+    param+='-a pdf-style=''"'${STYLE}'" '
+    param+='-a format="pdf" '
+    param+='-a experimental="" '
+    param+='-a examplesdir=''"'$(pwd)/modules/${manual}_manual/examples/'" '
+    param+='-a imagesdir=''"'$(pwd)/modules/${manual}_manual/assets/images/'" '
+    param+='-a partialsdir=''"'$(pwd)/modules/${manual}_manual/pages/_partials/'" '
+    param+='-a revnumber=''"'${revision}'" '
+    param+='-a revdate=''"'${release_date}'" '
+    param+="$attributes"' '
+    param+='--base-dir ''"'$(pwd)'" '
+    param+='--out-file ''"'$(pwd)/build/server/${revision}/${manual}_manual/ownCloud_${manual_infix}_Manual.pdf'" '
+
+# please uncomment echo in case you want/need debugging
+#    echo "Parameterlist, useful for debugging"
+#    echo $param
+#    echo
+#    exit
+
+createpdf="asciidoctor-pdf $param - < <(cat $book_file <(convert_antora_nav_to_asciidoc_list "$nav_file"))"
+
+eval $createpdf
+
+: '
+# The following lines are the original call with all arguments but not containing the
+# dynamically created argument list from ../site.yml
+# Kept for reviewing purposes
+
     asciidoctor-pdf -d book \
         -a pdf-stylesdir="${STYLES_DIRECTORY}/" \
         -a pdf-fontsdir="${FONTS_DIRECTORY}" \
@@ -182,6 +230,7 @@ function build_pdf_manual()
         --base-dir "$(pwd)" \
         --out-file "$(pwd)/build/server/${revision}/${manual}_manual/ownCloud_"${manual_infix}"_Manual.pdf" \
         - < <(cat $book_file <(convert_antora_nav_to_asciidoc_list "$nav_file"))
+'
 }
 
 function build_manuals()
