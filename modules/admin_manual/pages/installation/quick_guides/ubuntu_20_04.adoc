@@ -181,13 +181,14 @@ chmod 0600 /var/spool/cron/crontabs/{webserver-user}
 If you need to sync your users from an LDAP or Active Directory Server, add this additional xref:configuration/server/background_jobs_configuration.adoc[Cron job]. Every 15 minutes this cron job will sync LDAP users in ownCloud and disable the ones who are not available for ownCloud. Additionally, you get a log file in `/var/log/ldap-sync/user-sync.log` for debugging.
 ====
 
+[source,subs="attributes+"]
 ----
-echo "*/15 * * * * /var/www/owncloud/occ user:sync 'OCA\User_LDAP\User_Proxy' -m disable -vvv >> /var/log/ldap-sync/user-sync.log 2>&1" > /var/spool/cron/crontabs/www-data
-chown www-data.crontab  /var/spool/cron/crontabs/www-data
-chmod 0600  /var/spool/cron/crontabs/www-data
+echo "*/15 * * * * /var/www/owncloud/occ user:sync 'OCA\User_LDAP\User_Proxy' -m disable -vvv >> /var/log/ldap-sync/user-sync.log 2>&1" >> /var/spool/cron/crontabs/{webserver-user}
+chown {webserver-user}.crontab  /var/spool/cron/crontabs/{webserver-user}
+chmod 0600  /var/spool/cron/crontabs/{webserver-user}
 mkdir -p /var/log/ldap-sync
 touch /var/log/ldap-sync/user-sync.log
-chown www-data. /var/log/ldap-sync/user-sync.log
+chown {webserver-user}. /var/log/ldap-sync/user-sync.log
 ----
 
 === Configure Caching and File Locking
