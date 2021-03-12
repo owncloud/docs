@@ -29,7 +29,7 @@ The command `search:index:create` creates the initial full text search index for
 
 === Arguments
 
-[width="100%",cols="20%,70%",subs="attributes+"]
+[width="100%",cols="20%,70%"]
 |===
 | `<user_id>` 
 | The id of the user (or space-separated list of user ids) to create a full text search index for. 
@@ -40,7 +40,7 @@ A full text search index is created for all users, if this value is omitted.
 
 This example creates a full text search index for the user with user id `testuser`.
 
-[source,console,subs="attributes"]
+[source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} search:index:create testuser
 
@@ -51,7 +51,7 @@ Indexing user testuser
 
 This example creates a full text search index for the users with user ids `admin` and `testuser`.
 
-[source,console,subs="attributes"]
+[source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} search:index:create admin testuser
 
@@ -70,7 +70,7 @@ The command `search:index:rebuild` rebuilds the full text search index for one, 
 
 === Arguments
 
-[width="100%",cols="20%,70%",subs="attributes+"]
+[width="100%",cols="20%,90%"]
 |===
 | `<user_id>` 
 | The id of the user (or space-separated list of user ids) to rebuild a full text search index for.
@@ -85,7 +85,7 @@ The command `search:index:rebuild` rebuilds the full text search index for one, 
 This example rebuilds the full text search index for the user with user id `testuser`.
 
 .Rebuild the index for a single user
-[source="console",subs="attributes"]
+[source="console",subs="attributes+"]
 ----
 {occ-command-example-prefix} search:index:rebuild testuser
 
@@ -103,9 +103,10 @@ Rebuilding full text search Index for testuser
 This example rebuilds the full text search index for the users with user ids `admin` and `testuser`.
 
 .Rebuild the index for multiple users
-[source="console"]
+[source="console",subs="attributes+"]
 ----
-docker-compose exec owncloud occ search:index:rebuild admin testuser                                                                                           
+{occ-command-example-prefix} search:index:rebuild admin testuser
+
 This will delete all search index data for admin, testuser! Do you want to proceed?
   [0] no
   [1] yes
@@ -135,7 +136,7 @@ The command `search:index:reset` resets (recreates and clears) the full text sea
 
 === Arguments
 
-[width="100%",cols="20%,70%",subs="attributes+"]
+[width="100%",cols="20%,90%"]
 |===
 | `-f` `--force` 
 | Use this option to reset the index without further questions.
@@ -143,7 +144,7 @@ The command `search:index:reset` resets (recreates and clears) the full text sea
 
 === Example
 
-[source,console,subs="attributes"]
+[source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} search:index:reset
 This will delete the whole search index! Do you want to proceed?
@@ -164,7 +165,7 @@ The command `search:index:update` updates the full text search index by running 
 
 === Arguments
 
-[width="100%",cols="20%,70%",subs="attributes+"]
+[width="100%",cols="20%,90%"]
 |===
 | `-q` `--quiet` 
 | Suppress all output from the command.
@@ -174,22 +175,21 @@ The command `search:index:update` updates the full text search index by running 
 
 This example updates the full text search index for all users.
 
-[source,console,subs="attributes"]
+[source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} search:index:update
 Start Updating the Elastic search index:
 No pending jobs found.
-
 ----
 
 == Enable and Disable App Mode
 
-To do an initial full indexing without the full text search_elastic app interfering, it can be put in passive mode.
+To do an initial full indexing without the full text search_elastic app interfering, it can be put in
+passive mode.
 
 [source="console",subs="attributes+"]
 ----
-{occ-command-example-prefix} config:app:set search_elastic mode \
-    --value passive
+{occ-command-example-prefix} config:app:set search_elastic mode --value passive
 ----
 
 When the search_elastic app is in passive mode:
@@ -202,13 +202,13 @@ Switching back to active mode can be done by running the following command:
 
 [source="console",subs="attributes+"]
 ----
-{occ-command-example-prefix} config:app:set search_elastic mode \
-    --value active
+{occ-command-example-prefix} config:app:set search_elastic mode --value active
 ----
 
 == Configure Full Text Search to Only Index Metadata
 
-If you only want to use the search_elastic app as a more scalable filenames search, you can disable content indexing by setting `nocontent` to `true` (default is `false`), as in the example below.
+If you only want to use the search_elastic app as a more scalable filenames search, you can disable content
+indexing by setting `nocontent` to `true` (default is `false`), as in the example below.
 
 [source="console",subs="attributes+"]
 ----
@@ -216,5 +216,4 @@ If you only want to use the search_elastic app as a more scalable filenames sear
 ----
 
 NOTE: if this setting is reverted to false after being set to true, all files must be reindexed. 
-Setting it to `true` does _not_ require reindexing. 
-
+Setting it to `true` does _not_ require reindexing.

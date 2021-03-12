@@ -1,0 +1,210 @@
+= Linux Package Manager Installation
+:toc: right
+:apt-mark-hold-url: https://manpages.debian.org/stretch/apt/apt-mark.8.en.html#PREVENT_CHANGES_FOR_A_PACKAGE
+:yum-versionlock-plugin-url: http://man7.org/linux/man-pages/man1/yum-versionlock.1.html
+:owncloud-repositories-url: https://download.owncloud.org/download/repositories/stable/owncloud/
+
+== Introduction
+
+You can use the packetmanager installation, but it is not recommended to do so. This is because
+somtimes dependencies are acting against each other like ownCloud version, minimum PHP version
+and Linux distribution restrictions. Anyone who runs a package manager installation should consider
+migrating to a manual installation to overcome this situation.
+
+== Add the ownCloud Repository
+
+Before you can install `owncloud-files`, you need to add {owncloud-repositories-url}[ownCloud's repository] to your distribution's package manager.
+
+NOTE: Package managers should only be used for single-server setups. For production environments, we recommend installing from
+https://owncloud.org/download/#owncloud-server-tar-ball[the tar archive].
+
+== Available Packages
+
+The recommended package to use is `owncloud-complete-files`. 
+It only installs ownCloud, and does not install Apache, a database, or any of the required PHP dependencies.
+
+== Avoid Automatic Upgrades
+
+If you are installing ownCloud using one of the various Linux package managers, we *strongly* recommend that you avoid automatically updating the `owncloud-complete-files` package, when running a system update or upgrade and when upgrading other packages.
+That way, there are no surprise changes (whether positive or negative) to your ownCloud installation.
+
+Here are the ways to do so for xref:apt[APT], xref:yum[Yum], and xref:zypper[Zypper].
+
+=== APT
+
+If you are using APT, use {apt-mark-hold-url}[apt-mark hold] to  mark the `owncloud-complete-files` package as held.
+Here’s an example of how to do so:
+
+[source,console]
+----
+apt-mark hold owncloud-complete-files
+----
+
+To see if owncloud-complete-files has already been held, use the `showhold` command, as in the following example.
+If it’s printed out to the console, then it’s being held.
+
+[source,console]
+----
+apt-mark showhold owncloud-complete-files
+----
+
+To unset `owncloud-complete-files` as held back, use the `unhold` command, as in the example below.
+
+[source,console]
+----
+apt-mark unhold owncloud-complete-files
+----
+
+=== Yum
+
+If you are using Yum, there are two options that you can take to lock packages from being upgraded.
+You can:
+
+. Add `exclude=owncloud-complete-files` to `/etc/yum.conf`
+. Use {yum-versionlock-plugin-url}[the versionlock plugin] for Yum.
+
+==== The VersionLock Plugin
+
+If the `versionlock` plugin is not installed, install it by running:
+
+----
+yum install yum-plugin-versionlock
+----
+
+When it is installed, you can lock `owncloud-complete-files` run:
+
+----
+yum versionlock add owncloud-complete-files
+----
+
+To confirm that it is locked, run: 
+
+----
+yum versionlock list
+----
+
+To unlock `owncloud-complete-files`, run: 
+
+----
+yum versionlock delete owncloud-complete-files
+----
+
+=== Zypper
+
+If you are using Zypper, use the `addlock` or `al` commands.
+Similar to `apt-mark hold` these add a package lock that prevents the package from being modified.
+The example below shows how to use the command to lock `owncloud-complete-files`.
+
+[source,console]
+----
+zypper addlock owncloud-complete-files
+----
+
+To see if the package has already been locked, use the `locks` command. 
+If `owncloud-complete-files` is already locked, then you will see output similar to the below example.
+
+[source,console]
+----
+# | Name           | Type    | Repository
+--+----------------+---------+-----------
+1 | owncloud-complete-files | package | (any)
+----
+
+To unlock `owncloud-complete-files`, if it is already locked, use the `removelocks` or `rl` commands, as in the example below.
+
+[source,console]
+----
+zypper removelock owncloud-complete-files
+----
+
+== Installing ownCloud Community Edition
+
+First, install your own LAMP stack, as doing so allows you to create
+your own custom LAMP stack without dependency conflicts with the
+ownCloud package. Then,
+http://download.owncloud.org/download/repositories/production/owncloud/[update package manager’s configuration].
+
+Configurations are available for the following Linux distributions:
+
+* Ubuntu 14.04 & 16.04
+* Debian 7 & 8
+* RHEL 6 & 7
+* CentOS 7.2 & 7.3
+* SLES 11SP4 & 12SP2
+* openSUSE Leap 42.2 & 42.3
+
+NOTE: Repositories for Fedora, openSUSE Tumbleweed, and Ubuntu 15.04 have been dropped. 
+If you use Fedora, use https://owncloud.org/download/#owncloud-server-tar-ball[the tar archive] with your own LAMP stack. openSUSE users can rely on LEAP packages for Tumbleweed.
+
+Once your package manager has been updated, follow the rest of the
+instructions on the download page to install ownCloud. Once ownCloud’s
+installed, run xref:installation/installation_wizard.adoc[the Installation Wizard] to complete
+your installation.
+
+NOTE: See the system_requirements for the recommended ownCloud setup and supported platforms.
+
+IMPORTANT: Do not move the folders provided by these packages after the installation, as this will break updates.
+
+=== What is the Correct Version?
+
+Package versions are composed of a major, a minor, and a patch number,
+such as 9.0, 9.1, 10.0, 10.0.1, and 10.0.2. The second number represents
+a major release, and the third number represents a minor release.
+
+==== Major Releases
+
+If you want to follow either of the most recent major releases, then
+substitute `version` with either 9.0 or 10.0.
+
+==== Minor Releases
+
+If you want to follow any of the four most recent patch releases, then
+substitute `version` with one of 10.0.1, 10.0.2, 10.0.3, or 10.0.4.
+Following a minor release avoids you accidentally upgrading to the next
+major release before you’re ready.
+
+==== The Latest Stable Version
+
+Alternatively you can use `stable` for the latest stable version. If you
+do, you never have to change it as it always tracks the current stable
+ownCloud version through all major releases.
+
+== Installing ownCloud Enterprise Edition
+
+See xref:enterprise/installation/install.adoc[the enterprise installation guide]
+for instructions on installing ownCloud Enterprise edition.
+
+== Downgrading
+
+Downgrading is not supported and risks corrupting your data! If you want
+to revert to an older ownCloud version, install it from scratch and then
+restore your data from backup. Before doing this, file a support ticket
+(https://owncloud.com/pricing/[if you have paid support]) or ask for
+help in the ownCloud forums to see if your issue can be resolved without
+downgrading.
+
+== Additional Guides and Notes
+
+See installation_wizard for important steps, such as choosing the best
+database and setting correct directory permissions. See
+xref:installation/configuration_notes_and_tips.adoc#config-notes-and-tips-selinux[the SELinux guide]
+for a suggested configuration for SELinux-enabled distributions such as _Fedora_ and _CentOS_.
+
+If your distribution is not listed, your Linux distribution may maintain
+its own ownCloud packages or you may prefer to xref:installation/manual_installation.adoc[install from source].
+
+=== Archlinux
+
+The current 
+https://www.archlinux.org/packages/community/x86_64/owncloud-client/[client stable version] is in the official community repository,
+more packages are in the https://aur.archlinux.org/packages/?O=0&K=owncloud[Arch User Repository].
+
+=== Note for MySQL/MariaDB environments
+
+Please refer to 
+xref:configuration/database/linux_database_configuration.adoc#mysql-mariadb-with-binary-logging-enabled[MySQL / MariaDB with Binary Logging Enabled]
+on how to correctly configure your environment if you have binary logging enabled.
+
+=== Running ownCloud in a sub-directory
+
+If you’re running ownCloud in a sub-directory and want to use CalDAV or CardDAV clients, make sure you have configured the correct xref:configuration/general_topics/general_troubleshooting.adoc#service-discovery[service discovery URLs].

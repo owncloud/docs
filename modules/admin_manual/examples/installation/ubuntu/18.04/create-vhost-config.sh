@@ -1,5 +1,5 @@
 FILE="/etc/apache2/sites-available/owncloud.conf"
-sudo /bin/cat <<EOM >$FILE
+/bin/cat <<EOM >$FILE
 Alias /owncloud "{install-directory}/"
 
 <Directory {install-directory}/>
