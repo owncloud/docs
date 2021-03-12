@@ -3,6 +3,7 @@
 :docker-tags-url: https://hub.docker.com/r/owncloud/server/tags
 :docker-compose-url: https://docs.docker.com/compose/
 :webhippie-mariadb-url: https://hub.docker.com/r/webhippie/mariadb/
+:linux-server-doc-url: https://docs.linuxserver.io/faq
 
 == Introduction
 
@@ -271,15 +272,7 @@ include::{examplesdir}installation/docker/docker-compose.yml[Example Docker Comp
 
 == Troubleshooting
 
-If you have issues logging in to the registry, make sure the `.docker` file is in your home directory.
-If you installed Docker via `snap`, create a symbolic link to your home directory with the following command:
-
-[source,console]
-----
-sudo ln -sf snap/docker/384/.docker
-----
-
-The version `384` might differ from yours. Please adjust it accordingly.
+=== Raspberry Pi
 
 If your container fails to start on Raspberry Pi or other ARM devices, you most likely have an old version of `libseccomp2` on your host. This should only affect distros based on Rasbian Buster 32 bit. Install a newer version with the following command:
 
@@ -293,15 +286,15 @@ sudo dpkg -i libseccomp2_2.5.1-1_armhf.deb
 Alternatively you can add the backports repo for DebianBuster:
 
 [source,console]
- ----
- sudo apt-key adv --keyserver keyserver.ubuntu.com \
-      --recv-keys 04EE7237B7D453EC 648ACFD622F3D138
- echo "deb http://deb.debian.org/debian buster-backports main" | \
-      sudo tee -a /etc/apt/sources.list.d/buster-backports.list
- sudo apt update
- sudo apt install -t buster-backports libseccomp2
- ----
- 
- In any case, you should need to restart the container after confirming you have libseccomp2.4.4 installed.
- 
- For more information see: https://docs.linuxserver.io/faq
+----
+sudo apt-key adv --keyserver keyserver.ubuntu.com \
+     --recv-keys 04EE7237B7D453EC 648ACFD622F3D138
+echo "deb http://deb.debian.org/debian buster-backports main" | \
+     sudo tee -a /etc/apt/sources.list.d/buster-backports.list
+sudo apt update
+sudo apt install -t buster-backports libseccomp2
+----
+
+In any case, you should need to restart the container after confirming you have `libseccomp2.4.4` installed.
+
+For more information see: {linux-server-doc-url}[Linux Server Docs]
