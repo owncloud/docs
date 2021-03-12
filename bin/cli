@@ -126,7 +126,7 @@ function convert_antora_nav_to_asciidoc_list()
 
     while read line; do
         if [[ ${line} =~ \]$ ]]; then 
-            level_offset=$(echo "$line" | awk -F"*" '{print NF-1}')
+            level_offset=$(echo "$line" | awk -F"*" '{print NF-2}')
             revised_line=$(echo "$line" | sed 's/xref:/include::{module_base_path}/' | sed 's/\[.*\]//g' | sed -r 's/^\*{1,} //')
             echo "${revised_line}[leveloffset=+${level_offset}]"
             echo
