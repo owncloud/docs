@@ -2,12 +2,9 @@
 
 [![Build Status](http://drone.owncloud.com/api/badges/owncloud/docs/status.svg?branch=master)](http://drone.owncloud.com/owncloud/docs)
 
-
-This project is a port of the ownCloud documentation, that was previously generated using [Sphinx-Doc](http://www.sphinx-doc.org), to [Antora](./docs/what-is-antora.md). Fundamentally, not that much has changed. All of the same information is still available. However, here's what has changed:
-
-1. The platform (and tools) used to build the documentation, which is [Antora](./docs/what-is-antora.md).
-2. The file format that the documentation is written in, which is [AsciiDoc](./docs/what-is-asciidoc.md).
-3. The <abbr title="User Interface">UI</abbr> & <abbr title="User Experience">UX</abbr> of the documentation
+1. The platform and tools used to build the documentation is [Antora](./docs/what-is-antora.md).
+2. The file format that the documentation is written in is [AsciiDoc](./docs/what-is-asciidoc.md).
+3. The <abbr title="User Interface">UI</abbr> & <abbr title="User Experience">UX</abbr> of the documentation can be found at [docs-ui](https://github.com/owncloud/docs-ui)
 
 ## Contributing to the Documentation
 
@@ -36,19 +33,29 @@ document in the PR to which branches a backport is needed.
 
 When backporting, consider using the [backport script](https://doc.owncloud.com/server/developer_manual/general/backporting.html)
 which eases life a lot and speeds up the process. It is also very benificial when using the
-extended code provided, that a clear naming structure of the backport PR is generated automatically.
+extended code provided, because a clear naming structure of the backport PR is generated automatically.
 
-## Version branches in this repo
+## When does a Change Get Published to the Docs Web Site
 
-When doing a `10.x` release of ownCloud Server a version branch should be created from `master` by doing the following steps:
+Changes made will get published to the web with following conditions:
+
+1. A nightly running drone job pulls the documentation from the Client, IOS and Android repo.
+This pull will further be used for any build triggered mentioned below. This means, that changes made in one of these
+repos, a merge to master or one of the used branches in docs the next day is needed to get them published.
+2. A merge to one of the defined version branches triggers as last step a master branch build.
+3. A merge to master triggers a site build which then pushes all versions defined in site.yml
+
+## Create a New Version Branch for Docs
+
+When doing a new release of ownCloud Server like `10.x`, a new version branch should be created based on
+`master` by doing the following steps:
 
 1. Create new `10.x` branch based on `origin/master`
-2. Set `latest_version` in `.drone.star` to `10.x`
-3. Adjust `asciidoc.attributes` in `site.yml` (increment `-version` values usually)
-4. Commit changes to `10.x` branch
-5. Create `add-10.x` branch based on `10.x` branch
-6. Add `10.x` branch to `content.sources` in `site.yml` where the url points to this repo on `add-10.x` branch
-7. Push `add-10.x` branch
-8. Set `version` in `antora.yml` on `10.x` branch
-9. Push `10.x` branch
-10. Send PR `add-10.x` -> `master`
+2. In `.drone.star` set `latest_version` to `10.x` (on top in section `def main(ctx)`)
+3. In `site.yml` adjust the last two branches at `url: https://github.com/owncloud/docs.git` accordingly
+(in section `content.sources.url.branches`)
+4. In `site.yml` adjust `latest-version` and `latest-download-version` values accordingly
+(in section `asciidoc.attributes`)
+5. Commit changes to `10.x` branch
+6. Push `10.x` branch
+7. Send PR `10.x` to `master`
