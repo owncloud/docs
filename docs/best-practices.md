@@ -25,6 +25,7 @@ reference for common used writing and formatting tasks. For a complete reference
 * [Lists](#lists)
 * [Headers, Titles, Sections, Anchors and Paragraph Titles](#headers-titles-sections-anchors-and-paragraph-titles)
 * [Tables](#tables)
+* [Conditional Rendering](#conditional-rendering)
 * [TabSets](#tabsets)
 * [Comments](#comments)
 * [Relocating or Renaming Files](#relocating-or-renaming-files)
@@ -127,9 +128,22 @@ Reference: [`Images`](https://asciidoctor.org/docs/asciidoc-syntax-quick-referen
 
 All images have to be stored in a path under `modules`/`module_name`/`assets/images`/`<path>`
 
-An `image` is written in following example style: `image:<path>/image_name[Alternative Image Text]`
+An `image` is written in following example style: `image:<path>/image_name[Alternative Image Text, options]`
+
+Please use the comma as separator for one or more options.
+
+The `, options` part is optional. Here you can define eg. the sizing of an image like `, width=40%`
 
 Example: `image:configuration/files/encryption1.png[Encryption]`
+
+There are two ways that an image is treated defined by either using `image:` or `image::`
+
+When using `image:`, the image will be part of the text written. This is useful when you want to have
+an image part of the text flow like an icon you reference to.
+
+When using `image::`, the image is not part of the text written and stands on its own. This means it
+will be rendered into a new line and be centered by default if not otherwise defined by an option like
+`align="center|left|right"`
 
 **IMPORTANT**
 Please be advised, in case you use an Alternative Image Text, not to use double quotes to highlight some text elements.
@@ -617,19 +631,62 @@ cell type to `a`, short for "asciidoc", which treats it as a standalone AsciiDoc
 ```
 [cols=",,",options="header"]
 |===
-|Classic theme
-|Dark theme
-|Light theme
-a|image:themes/classic.png[ownCloud iOS App - Classic theme]
-a|image:themes/dark.png[ownCloud iOS App - Dark theme]
-a|image:themes/light.png[ownCloud iOS App - Light theme]
+| Classic theme
+| Dark theme
+| Light theme
+a| image:themes/classic.png[ownCloud iOS App - Classic theme]
+a| image:themes/dark.png[ownCloud iOS App - Dark theme]
+a| image:themes/light.png[ownCloud iOS App - Light theme]
 |===
+```
+
+You can also align content in cells. Without the following directives, cells are always aligned
+top/left. You can set the alignment for complete columns or individual cells. The style for the
+alignment is always horizontal dot vertical. The dot separates the horizontal and vertical directive.
+
+Examples:
+
+```
+^    center only, top automatically
+^.>  center, bottom 
+.>   left automatically, bottom
+```
+Directives horizontal and vertical
+```
+`^` center center
+`<` left   top
+`>` right  bottom
+```
+To use these directives, you can either set them into the `cols=""` definition which is then used for all
+columns like `cols="^,^.>"` or at the beginning of an individual cell `^.>| cell text`.
+
+## Conditional Rendering
+
+References: [Conditionals](https://docs.asciidoctor.org/asciidoc/latest/directives/conditionals/)
+
+Antora can render conditionally. This is eg. needed, when content can be rendered to html but not to pdf.
+In these cases, you have to use a conditional render directive which renders content based on an attribute
+which defines the type to be rendered. ownCloud has created predefined site wide attributes for this
+case when the documentation is built for html or pdf.
+```
+ifeval::["{format}" == "html"]
+...
+endif::[]
+```
+or
+```
+ifeval::["{format}" == "pdf"]
+...
+endif::[]
 ```
 
 ## TabSets
 
 ownCloud has added the AsciiDoc tabset extension for the documentation. With tabsets, you can create tabs inside
 your document which is very useful, for example, for scripts in different languages for the same task.
+
+Attention: TabSets, by nature, cannot be rendered in pdf. You have to use conditional rendering and an own
+description for html and pdf.
 
 ```
 [tabs]
