@@ -47,15 +47,4 @@ repos, a merge to master or one of the used branches in docs the next day is nee
 
 ## Create a New Version Branch for Docs
 
-When doing a new release of ownCloud Server like `10.x`, a new version branch should be created based on
-`master` by doing the following steps:
-
-1. Create new `10.x` branch based on `origin/master`
-2. In `.drone.star` set `latest_version` to `10.x` (on top in section `def main(ctx)`)
-3. In `site.yml` adjust the last two branches at `url: https://github.com/owncloud/docs.git` accordingly
-(in section `content.sources.url.branches`)
-4. In `site.yml` adjust `latest-version` and `latest-download-version` values accordingly
-(in section `asciidoc.attributes`)
-5. Commit changes to `10.x` branch
-6. Push `10.x` branch
-7. Send PR `10.x` to `master`
+Please refer to [Create a New Version Branch for Docs](./docs/new-version-branch.md) for more information.
