@@ -25,7 +25,7 @@ When doing a new release of ownCloud Server like `10.x`, a new version branch mu
 12. No changes in `antora.yml` but check if the version is set to `master`
 13. Run a build by entering `yarn antora`. No errors should occur
 14. Commit changes and push it
-15. Create a Pull Request. When CI is green, all is done correctly
+15. Create a Pull Request. When CI is green, all is done correctly. Merge the PR to master.
 
 **Step 3: Protection and Renaming**
 
