@@ -31,4 +31,4 @@ When doing a new release of ownCloud Server like `10.x`, a new version branch mu
 
 16. Go to the settings of the docs repository and change the protection of the branch list so that
     the `10.x` branch gets protected and the `10.x-2` branch is no longer protected.
-17. Rename the `10.x-1` branch to `x_archived_10.x-1`
+17. Rename the `10.x-2` branch to `x_archived_10.x-2`
