@@ -116,7 +116,7 @@ Where `module_name:`, `#section` and `[Printed Name]` are optional components.
 `<path>` is the relative path via the module name to your referenced file.
 
 You can reference a section or an anchor inside the same file, another file - even in another module.
-Section titles automatically create references, where the text is converted to lower characters
+Section titles create automatically references, where the text is converted to lower characters
 and all special characters including an underscore are converted to a dash (`-`) 
 
 You can create anchors anywhere in the page manually by writing `[anchor-name]`. This anchor can be referenced with xref.
@@ -127,7 +127,7 @@ You can create anchors anywhere in the page manually by writing `[anchor-name]`.
 - This example references another file and a particular section title: <br/>
 `xref:configuration/server/occ_command.adoc#apps-commands[the Market app]`
 
-- This example references another file in another module and a particular section title: <br/>
+- This example references another file in an other module and a particular section title: <br/>
 `xref:admin_manual:configuration/server/occ_command.adoc#apps-commands[the Market app]`
 
 **Strongly** In general it's advisable to use a ToC ([Table of Contents](#table-of-contents)) instead of a list of xrefs.
