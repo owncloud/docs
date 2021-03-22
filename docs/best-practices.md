@@ -102,7 +102,7 @@ Prefix: `xref:`
 Reference: [`Cross Reference`](https://asciidoctor.org/docs/user-manual/#xref)
 
 In a nutshell, an internal link called `Cross Reference` can link to
-- a in-page reference
+- an in-page reference
 - a documentation file
 - a section-title or anchor-name inside a documentation file
 
