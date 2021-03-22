@@ -104,7 +104,7 @@ Reference: [`Cross Reference`](https://asciidoctor.org/docs/user-manual/#xref)
 In a nutshell, an internal link called `Cross Reference` can link to
 - an in-page reference
 - a documentation file
-- a section-title or anchor-name inside a documentation file
+- a section title or anchor name inside a documentation file
 
 All content you want to reference **must be** inside the directory structure of `modules/`.
 
