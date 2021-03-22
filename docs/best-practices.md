@@ -129,7 +129,7 @@ You can create anchors anywhere in the page manually by writing `{anchor-name]`.
 
 **Strongly** In general it`s advisable to use a ToC ([Table of Contents](#table-of-contents)) instead of a list of xref´s.
 
-**Note:** Use a broken link checker regularly to find broken links to section-titles or anchors.
+**Note:** Use a link checker regularly to find broken links to section titles or anchors.
 If an anchor link is broken, a build will not report an error as the page itself is accessible.
 
 ## Images
