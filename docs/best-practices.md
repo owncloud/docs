@@ -113,7 +113,7 @@ An `xref` is usually written in the following example style:  <br/>
 
 Where `module_name:`, `#section` and `[Printed Name]` are optional components.
 `module_name:` is mandatory when referenced content is not in the same module.
-`<path>` is the relative path via the module-name to your referenced file.
+`<path>` is the relative path via the module name to your referenced file.
 
 You can reference a section or an anchor inside the same file, another file - even in another module.
 Section titles automatically create references, where the text is converted to lower characters 
