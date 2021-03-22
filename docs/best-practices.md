@@ -99,23 +99,38 @@ Prefix: `xref:`
 Reference: [`Cross Reference`](https://asciidoctor.org/docs/user-manual/#xref)
 
 In a nutshell, an internal link called `Cross Reference` can link to
+- an in-page reference
 - a documentation file
-- a section title inside a documentation file
-- a reference to an anchor set inside a documentation file
+- a section title or anchor name inside a documentation file
 
-All referencable content **must be** inside the directory structure of `modules/`.
+All content you want to reference **must be** inside the directory structure of `modules/`.
 
-An `xref` is written in following example style: `xref:module_name:<path>/file.adoc#section[Printed Name]`
+An `xref` is usually written in the following example style:  <br/>
+`xref:module_name:<path>/file.adoc#section[Printed Name]`
 
 Where `module_name:`, `#section` and `[Printed Name]` are optional components.
 `module_name:` is mandatory when referenced content is not in the same module.
-`<path>` is the path to your referenced file.
+`<path>` is the relative path via the module name to your referenced file.
 
 You can reference a section or an anchor inside the same file, another file - even in another module.
+Section titles automatically create references, where the text is converted to lower case characters 
+and all special characters including an underscore are converted to a dash (`_`)
 
-Example: `xref:configuration/server/occ_command.adoc#apps-commands[the Market app]`
+You can create anchors anywhere in the page manually by writing `{anchor-name]`. This anchor can be referenced with `xref:configuration/server/occ_command.adoc#apps-commands[the Market app]`
 
-**Strongly** in favour of this where relevant, using a ToC ([Table of Contents](#table-of-contents)) instead of a list of xref´s.
+- This example references a section title inside the same document: <br/>
+`xref:section-title[FAQ]`
+
+- This example references another file and a particular section title: <br/>
+`xref:configuration/server/occ_command.adoc#apps-commands[the Market app]`
+
+- This example references another file in another module and a particular section title: <br/>
+`xref:admin_manual:configuration/server/occ_command.adoc#apps-commands[the Market app]`
+
+**Strongly** In general it`s advisable to use a ToC ([Table of Contents](#table-of-contents)) instead of a list of xref´s.
+
+**Note:** Use a link checker regularly to find broken links to section titles or anchors.
+If an anchor link is broken, a build will not report an error as the page itself is accessible.
 
 ## Images
 
