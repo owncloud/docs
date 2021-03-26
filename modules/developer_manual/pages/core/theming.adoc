@@ -17,15 +17,17 @@ NOTE: Before ownCloud 10, theming was done via the `config.php` entry `'theme' =
 This is deprecated in ownCloud 10.
 Users who have this entry in their `config.php` should remove it and use a theme app to customize their ownCloud instance instead.
 
-Here are 7 commands to get a theme quickly:
-(adjust the names and paths accordingly)
+== Quick Start
 
+For the impatient, who want to play with themes right away, the following 8 commands get a theme installed quickly. Adjust the names and paths according to your setup. For docker installations use the directory `/var/www/owncloud/custom`.
+
+[source,console,subs="attributes+"]
 ----
 # 0 You need unzip
-apt install unzip
+sudo apt install unzip
 
-# 1. Go in your apps folder
-cd /var/www/owncloud/apps
+# 1. If it exists, go into your `apps-external` folder, else use `apps`
+cd /var/www/owncloud/apps-external
 
 # 2. Download the theme
 wget https://github.com/owncloud/theme-example/archive/master.zip
@@ -40,19 +42,27 @@ mv theme-example-master mynewtheme
 sed -i "s#<id>theme-example<#<id>mynewtheme<#" "mynewtheme/appinfo/info.xml"
 
 # 6. Adjust the permissions
-chown -R www-data. mynewtheme
+sudo chown -R www-data. mynewtheme
 
 # 7. Activate your theme
-occ app:enable mynewtheme
+{occ-command-example-prefix} app:enable mynewtheme
+
+# 8. Exclude your new theme from integrity checking
+'integrity.ignore.missing.app.signature' => [
+	'mynewtheme',
+  ],
+
 ----
 
-Throughout this section of the documentation, for sakes of simplicity,
-it will be assumed that your owncloud installation directory is
-`/owncloud`. If you’re following this guide to create or customise a
-theme, please make sure you change any references to match the location
-of your owncloud installation.
+The last step is necessary since you're not likely to provide a signature.json file. The theme is treated like an app. The ID is usually the name of the subfolder for the theme, in this case mynewtheme.
 
-To save you time and effort, you can use the shell script below, to
+Throughout this section of the documentation, for sakes of simplicity,
+it will be assumed that your ownCloud installation directory is
+`/owncloud`. If you’re following this guide to create or customize a
+theme, make sure you change any references to match the location
+of your ownCloud installation.
+
+To save time and effort, you can use the shell script below to
 create the basis of a new theme from https://github.com/owncloud/theme-example[ownCloud's example theme].
 
 Using this script (and the following one, `read-config.php`), you will have a new theme, ready to go, in less than
@@ -85,7 +95,7 @@ include::{examplesdir}scripts/read-config.php[]
 
 == How to Create a New Theme
 
-At its most basic, to create a theme requires two steps:
+Now in more detail for those who want to understand the procedures presented above and work on their new theme. To create a theme requires two basic steps:
 
 1.  Copy and extend https://github.com/owncloud/theme-example[ownCloud's example theme],
 or create one from scratch.
