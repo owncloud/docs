@@ -1,0 +1,115 @@
+= Windows Network Drive (WND)
+
+Marketplace URL: {oc-marketplace-url}/apps/windows_network_drive[External Storage: Windows Network Drives]
+
+Integrate Windows and Samba/CIFS shared network drives as external storages. For details please see the
+xref:enterprise/external-storage/windows-network-drive_configuration.adoc[Windows Network Drive (WND)] documentation.
+
+The `wnd` commands configure the WND app.
+
+[source,console]
+----
+wnd
+ wnd:listen                 Listen to smb changes and store notifications for later processing
+ wnd:process-queue          Process the notifications stored by the wnd:listen command
+ wnd:set-service-account    Sets the service account for the target mount point
+----
+
+Please see the
+xref:enterprise/external_storage/windows-network-drive_configuration.adoc#windows-network-drive-notifications[Windows Network Drive Notifications] for how to properly setup `wnd:listen` and `wnd:process-queue`.
+
+== Configure the Listener
+
+Listen to smb changes and store notifications for later processing in the database
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} wnd:listen [options] [--] <host> <share> <username> [<password>]
+----
+
+=== Arguments
+
+[width="90%",cols="40%,80%",]
+|===
+| `host` 
+| The hostname or IP address of the server to listen to
+| `share`
+| The share inside the host to listen to for changes
+| `username` 
+| The username that will be used to connect to the share
+| `password`
+| The user's password (will be asked for if it isn't provided)
+|===
+
+=== Options
+
+[width="90%",cols="40%,80%",]
+|===
+| `-p, +
+--path=PATH` 
+| The path inside the share to watch for changes [default: ""]
+| `--password-file=PASSWORD-FILE`
+| The file containing the password for the account to be used to listen
+| `--password-trim` 
+| Trim blank characters from the password
+| `--unbuffering-option=UNBUFFERING-OPTION`
+| Force the usage of that unbuffering option for the underlying smbclient command. Possible options are either "auto", "pty" or "stdbuf" [default: "auto"]
+| `--output[=OUTPUT]`
+| The output format to use (plain, json or json_pretty). [default: "plain"] 
+|===
+
+== Process Notifications
+
+Process the notifications stored by the `wnd:listen` command
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} wnd:process-queue [options] [--] <host> <share>
+----
+
+=== Arguments
+
+[width="90%",cols="40%,80%",]
+|===
+| `host` 
+| The server whose notifications will be processed
+| `share`
+| The share whose notifications will be processed
+|===
+
+=== Options
+
+[width="90%",cols="40%,80%",]
+|===
+| `--output[=OUTPUT]`
+| The output format to use (plain, json or json_pretty). [default: "plain"] 
+|===
+
+== Set the Service Account
+
+Sets the service account for the target mount point. You'll be asked for the password of the service account.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} wnd:set-service-account [options] [--] <mount-id>
+----
+
+Please see the occ documentation of
+xref:configuration/server/occ_command.adoc#files_externallist[files_external:list]
+to get the required mount-id.
+
+=== Arguments
+
+[width="90%",cols="40%,80%",]
+|===
+| `mount-id` 
+| Id of the mount point. Use "occ files_external:list" to find it
+|===
+
+=== Options
+
+[width="90%",cols="40%,80%",]
+|===
+| `--output[=OUTPUT]`
+| The output format to use (plain, json or json_pretty). [default: "plain"] 
+|===
