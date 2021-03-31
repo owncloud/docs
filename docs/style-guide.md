@@ -46,7 +46,7 @@ If you wonder whether commas are really that important, they can actually change
 
 A panda enters a bar, eats[,] shoots and leaves.
 
-The comma decides whether the panda eats bamboo shoots or shoots  firearms.
+The comma decides whether the panda eats bamboo shoots or shoots firearms.
 
 
 ## Hyphenated Words
