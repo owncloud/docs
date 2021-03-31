@@ -52,7 +52,7 @@ The comma decides whether the panda eats bamboo shoots or shoots  firearms.
 ## Hyphenated Words
 
 In English, composite terms are rarely hyphenated except for adjectives.
-Some nouns have become one word overtime:
+Some nouns have become one word over time:
 
 username
 
