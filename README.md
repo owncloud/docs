@@ -10,6 +10,8 @@
 
 To get started contributing to the documentation, please refer to the [Getting Started Guide](./docs/getting-started.md).
 
+With regard to language and style issues, consult the [Style Guide](./docs/style-guide.md).
+
 ## Generating the Documentation
 
 To generate the documentation, whether in HTML or PDF format, please refer to the [Building the Documentation guide](./docs/build-the-docs.md).
@@ -22,7 +24,7 @@ Please read how to test un-merged [docs-ui](./docs/test-ui-bundle.md) changes wi
 
 ## Best Practices and Tips
 
-Please refer to [Best Practices and Tips for writing in AsciiDoc](./docs/best-practices.md) for more information.
+Refer to [Best Practices and Tips for writing in AsciiDoc](./docs/best-practices.md) for more information.
 
 ## Target Branch and Backporting
 
@@ -35,15 +37,15 @@ When backporting, consider using the [backport script](https://doc.owncloud.com/
 which eases life a lot and speeds up the process. It is also very benificial when using the
 extended code provided, because a clear naming structure of the backport PR is generated automatically.
 
-## When does a Change Get Published to the Docs Web Site
+## When Does a Change Get Published to the Docs Web Site?
 
-Changes made will get published to the web with following conditions:
+Changes made will get published to the web under the following conditions:
 
 1. A nightly running drone job pulls the documentation from the Client, IOS and Android repo.
-This pull will further be used for any build triggered mentioned below. This means, that changes made in one of these
-repos, a merge to master or one of the used branches in docs the next day is needed to get them published.
-2. A merge to one of the defined version branches triggers as last step a master branch build.
-3. A merge to master triggers a site build which then pushes all versions defined in site.yml
+This pull will also be used for any builds triggered by the scenarios outlined below. This means for changes made in one of these
+repos, a merge to master or one of the used branches in docs the next day is necessary to get them published.
+2. A merge to one of the defined version branches triggers as a last step a master branch build.
+3. A merge to master triggers a site build which then pushes all versions defined in site.yml.
 
 ## Create a New Version Branch for Docs
 
