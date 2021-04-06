@@ -46,9 +46,9 @@ First, xref:maintenance/backup.adoc[backup] the following items:
 ----
 # This example assumes Ubuntu Linux and MariaDB
 # Rename owncloud directory
-mv /var/www/owncloud /var/www/owncloud-old-version-number
+mv /var/www/owncloud /var/www/backup_owncloud
 # Backup the Database
-mysqldump -u<username> -p<password> <databasename> > <ownCloud-Version-Dump.sql>
+mysqldump -u<username> -p<password> <databasename> > <old-ownCloud-Dump.sql>
 ----
 
 In clustered environment please check that all nodes are in maintenance mode.
@@ -84,15 +84,6 @@ cd /var/www/
 wget https://download.owncloud.org/community/owncloud-{latest-download-version}.tar.bz2
 ----
 
-NOTE: Enterprise users must download their new ownCloud archives from their accounts on https://customer.owncloud.com/owncloud/.
-
-To download the tarball from https://customer.owncloud.com you will need a command like this:
-
-[source,console]
-----
-wget https://username:password@customer.owncloud.com/link-to-tarball
-----
-
 == Upgrade
 
 NOTE: For this description we assume that your existing ownCloud installation is located in the default location: `/var/www/owncloud`. 
@@ -111,14 +102,14 @@ With the new source files now in place of the old ones, next copy the `config.ph
 
 [source,console]
 ----
-sudo cp /var/www/owncloud-old-version-number/config/config.php /var/www/owncloud/config/config.php
+sudo cp /var/www/backup_owncloud/config/config.php /var/www/owncloud/config/config.php
 ----
 
 If you keep your `data/` directory _inside_ your `owncloud/` directory, move it from your old version of ownCloud to your new version:
 
 [source,console]
 ----
-mv /var/www/owncloud-old-version-number/data /var/www/owncloud/data
+mv /var/www/backup_owncloud/data /var/www/owncloud/data
 ----
 
 If you keep your `data` **outside** of your `owncloud` directory, then you don’t have to do anything with it, because its location is configured in your original `config.php`, and none of the upgrade steps touch it.
@@ -188,19 +179,8 @@ With maintenance mode disabled, login and:
 It can be reviewed at the bottom of menu:Settings[Admin > General].
 . Check that your other settings are correct.
 . Go to the menu:Settings[Admin > Apps] page and review the core apps to make sure the right ones are enabled.
-. After the upgrade is complete, re-enable any third-party apps that are compatible with the new release.
-+
-* Enable via Command Line
-+
-[source,console,subs="attributes+"]
-----
-# This command enables the app with the given <app-id>
-{occ-command-example-prefix} app:enable <app-id>
-----
-* Enable via Browser 
-+
-** Go to menu:Settings[Admin > Apps > "Show disabled apps"] and enable all compatible third-party apps.
-+
+. After the upgrade is complete, re-enable any third-party apps that are compatible with the new release. Use `occ app:enable <app-id>` or go to Settings[Admin > Apps > "Show disabled apps"] and enable all compatible third-party apps.
+
 WARNING: Install or enable unsupported apps at your own risk.
 
 == Rollback
