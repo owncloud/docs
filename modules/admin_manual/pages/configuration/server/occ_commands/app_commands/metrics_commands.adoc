@@ -1,0 +1,60 @@
+= Metrics
+
+Marketplace URL: {oc-marketplace-url}/apps/metrics[Metrics]
+
+Monitoring and reporting of ownCloud Server. For details please see the
+xref:enterprise/reporting/metrics.adoc[Metrics] documentation.
+
+Set a secret for authenticating requests at the endpoint.
+
+In case you want to generate a random secret, use the following example command: +
+
+[source,console]
+----
+echo $(tr -dc 'a-z0-9' < /dev/urandom | head -c 20)
+----
+
+== Set or change the Secret
+
+Writes the key `metrics_shared_secret` and the secret to config.php. The name must not be changed and be exactly as written.
+
+Note: You can also set the config key/value manually into your config.php file.
+
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} config:system:set \
+     "metrics_shared_secret" \
+     --value "your-metrics-secret"
+----
+
+The above command adds the following at the end of `config.php`:
+
+[source,console]
+----
+'metrics_shared_secret' => 'your-metrics-secret',
+----
+
+== Get the Secret
+
+This command reads the value of the `metrics_shared_secret` key from config.php:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} config:system:get "metrics_shared_secret"
+----
+
+[source,console]
+----
+your-metrics-secret
+----
+
+== Delete the Secret
+
+This command completely removes the key and the value from config.php:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} config:system:delete "metrics_shared_secret"
+----
+
