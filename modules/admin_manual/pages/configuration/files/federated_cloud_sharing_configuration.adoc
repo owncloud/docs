@@ -162,6 +162,8 @@ The following functionality has been recorded:
 
 == Tips
 
+=== VCARD properties
+
 It is possible to configure the VCARD properties that are searched in order to retrieve a list of federated users in the share dialog. By default, ownCloud uses CLOUD and FN properties, however this list may be configured by the admin:
 
 [source,console,subs="attributes+"]
@@ -177,3 +179,20 @@ Possible options are:
 * N
 * EMAIL
 * CLOUD
+
+=== Listing Federated Shares
+
+Federated shares are saved in your database. 
+
+Incoming shares can be listed with the following query:
+
+----
+select * from oc_share where share_type=6;
+----
+
+Outgoing shares can be listed with the following query:
+(Adjust the server URL to your setup)
+
+----
+select * from oc_share_external where remote NOT IN ('https//owncloud.server.org'); 
+----
