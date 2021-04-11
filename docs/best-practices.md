@@ -119,16 +119,27 @@ You can reference a section or an anchor inside the same file, another file - ev
 Section titles automatically create references, where the text is converted to lower case characters 
 and all special characters including an underscore are converted to a dash (`_`)
 
-You can create anchors anywhere in the page manually by writing `{anchor-name]`. This anchor can be referenced with `xref:configuration/server/occ_command.adoc#apps-commands[the Market app]`
+You can create anchors manually anywhere in the page by using following methods:
+
+* text `[[anchor-name]]` text (anchor-name will not be printed, it is only the reference point)
+* text `[#anchor-name]#Anchor text to be referenced to#` text (Anchor text will be printed)
+
+Reference Examples:
 
 - This example references a section title inside the same document: <br/>
 `xref:section-title[FAQ]`
 
+- This example references a manual anchor inside the same document: <br/>
+`xref:anchor-name[FAQ]`
+
+- This example references another file: <br/>
+`xref:configuration/server/occ_command.adoc[Market app]`
+
 - This example references another file and a particular section title: <br/>
-`xref:configuration/server/occ_command.adoc#apps-commands[the Market app]`
+`xref:configuration/server/occ_command.adoc#apps-commands[Market app]`
 
 - This example references another file in another module and a particular section title: <br/>
-`xref:admin_manual:configuration/server/occ_command.adoc#apps-commands[the Market app]`
+`xref:admin_manual:configuration/server/occ_command.adoc#apps-commands[Market app]`
 
 **Strongly** In general it`s advisable to use a ToC ([Table of Contents](#table-of-contents)) instead of a list of xref´s.
 
