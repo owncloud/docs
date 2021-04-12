@@ -4,6 +4,8 @@ This page gives contributors a quick overview of tips and best practices for
 writing in AsciiDoc. It is for sure not complete nor covers all possibilities, but gives a quick
 reference for common used writing and formatting tasks. For a complete reference see the
 [Asciidoctor Documentation](https://asciidoctor.org/docs/).
+Also see the [AsciiDoc Syntax Quick Reference](https://docs.asciidoctor.org/asciidoc/latest/syntax-quick-reference/)
+guide.
 
 **Table of Contents**
 
