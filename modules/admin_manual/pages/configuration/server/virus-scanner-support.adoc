@@ -6,6 +6,7 @@
 :c-icap-url: https://sourceforge.net/p/c-icap/wiki/ModulesConfiguration/
 :docker-url: https://hub.docker.com/r/deepdiver/icap-clamav-service
 :anti-virus-app-url: https://marketplace.owncloud.com/apps/files_antivirus
+:kav-docker-url: https://box.kaspersky.com/d/c8d8577dc2494256b45e/
 
 == Introduction
 
@@ -81,7 +82,7 @@ Automate the update process with this cron entry for example.
 
 NOTE: Please avoid any multiples of 10, because those are when the ClamAV servers are hit the hardest for updates.
 
-== Install the ownCloud Anti-Virus App
+=== Install the ownCloud Anti-Virus App
 
 The Anti-Virus app needs to be installed from the ownCloud Market (it's available in the  _"Security"_ category).
 
@@ -264,7 +265,7 @@ image:configuration/server/anti-virus-message-socket-connection-problem.png[Conf
 During an upload these actions are taken:
 
 * The upload is blocked.
-* The event is logged in the owncloud server log
+* The event is logged in the owncloud server log.
 * The event is reported and/or logged by the client / Web UI.
 
 During a background scan the app can take one of two actions:
@@ -391,54 +392,57 @@ Scanner output rules are used in daemon/socket mode.
 
 == ICAP
 
-{icap-url}[ICAP] is an open standard supported by many antivirus products. With the release of the _Anti-Virus_ app 1.0.0, other virus scanners beside ClamAV can be used via ICAP if you are running it on an ownCloud Enterprise Edition. Currently the only supported virus scanners are _Kaspersky Anti-Virus_ and _McAfee Antivirus_ although far more products might simply work.
+{icap-url}[ICAP] is an open standard supported by many antivirus products. With the release of the _Anti-Virus_ app 1.0.0, other virus scanners beside ClamAV can be used via ICAP if you are running it on an ownCloud Enterprise Edition. Currently the only supported virus scanners are _Kaspersky ScanEngine_ and _McAfee Antivirus_ although far more products might simply work.
 
 === Installation
 
-- Install the Anti-Virus app 1.0.0 from the {anti-virus-app-url}[ownCloud marketplace].
-
-- Alternatively, use this occ command:
+- Install the Anti-Virus app 1.0.0 from the {anti-virus-app-url}[ownCloud marketplace]. Alternatively, use this occ command:
 
 [source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} market:install files_antivirus
 ----
 
+- Enable the app as admin in ownCloud under Settings > Apps or with the following occ command:
 
-- Enable it as admin in ownCloud under Settings > Apps.
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} app:enable files_antivirus
+----
+
 
 === General Configuration
 
 ICAP ist configured via occ commands. Go to your ownCloud directory, usually `/var/www/owncloud`, and enter the following occ commands:
 
-. To set the IP address of your anti-virus server:
+* To set the IP address of your anti-virus server:
 
 [source,console,subs="attributes+"]
 ----
-{occ-command-example-prefix} occ config:app:set files_antivirus av_host --value="172.17.0.3"
+{occ-command-example-prefix} config:app:set files_antivirus av_host --value="172.17.0.3"
 ----
 
-. Specify the port of the anti-virus server:
-
-[source,console,subs="attributes+"]
-----
-{occ-command-example-prefix} occ config:app:set files_antivirus av_port --value="1344"
-----
-
-. Set the mode to ICAP:
+* Specify the port of the anti-virus server:
 
 [source,console,subs="attributes+"]
 ----
-{occ-command-example-prefix} occ config:app:set files_antivirus av_mode --value="icap"
+{occ-command-example-prefix} config:app:set files_antivirus av_port --value="1344"
+----
+
+* Set the mode to ICAP:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} config:app:set files_antivirus av_mode --value="icap"
 ----
 
 The setting 'icap' triggers a grace period of 24 hours if you don't have an Enterprise license but want to test ICAP.
 
-. Specify what do do with the offending file:
+* Specify what do do with the offending file:
 
 [source,console,subs="attributes+"]
 ----
-{occ-command-example-prefix} occ config:app:set files_antivirus av_infected_action --value="delete"
+{occ-command-example-prefix} config:app:set files_antivirus av_infected_action --value="delete"
 ----
 
 Possible values are 'delete' and 'only_log'.
@@ -452,7 +456,7 @@ An out of the box docker image is available {docker-url}[here].
 
 For simple local testing, run `docker run -ti deepdiver/icap-clamav-service` and get its IP address using docker inspect.
 
-The IP address needs to be set in the general configuration above. Then set the mode to c-icap with ClamAV:
+The IP address needs to be set in the general configuration above. Then set the mode to 'c-icap with ClamAV':
 
 [source,console,subs="attributes+"]
 ----
@@ -463,29 +467,29 @@ Then set the response header:
 
 [source,console,subs="attributes+"]
 ----
-{occ-command-example-prefix} occ config:app:set files_antivirus av_response_header --value="X-Infection-Found"
+{occ-command-example-prefix} config:app:set files_antivirus av_response_header --value="X-Infection-Found"
 ----
 
 
 ### Run with Kaspersky Anti-Virus (KAV)
 
-Kaspersky provides docker images as well (https://box.kaspersky.com/d/c8d8577dc2494256b45e/).
+Kaspersky provides {kav-docker-url}[docker images] as well.
 Follow the instructions in Kaspersky ScanEngine for Kubernetes.7z.
 
 Additional configuration: Set <Configuration><ICAPSettings><Allow204>1</Allow204></ICAPSettings></Configuration> in kavicapd.xml
 
-Set KAV as virus scanner:
+Set KAV as virus scanner with the value 'req':
 
 [source,console,subs="attributes+"]
 ----
-{occ-command-example-prefix} occ config:app:set files_antivirus av_request_service --value="req"
+{occ-command-example-prefix} config:app:set files_antivirus av_request_service --value="req"
 ----
 
 And the respective response header:
 
 [source,console,subs="attributes+"]
 ----
-{occ-command-example-prefix} occ config:app:set files_antivirus av_response_header --value="X-Virus-ID"
+{occ-command-example-prefix} config:app:set files_antivirus av_response_header --value="X-Virus-ID"
 ----
 
 NOTE: The older versions of KAV did not send back the virus/infection name in an ICAP header.
@@ -497,6 +501,4 @@ sed -i -e 's@<VirusNameICAPHeader.*@<VirusNameICAPHeader>X-Infection-Found</Viru
 /opt/kaspersky/ScanEngine/etc/init.d/kavicapd restart
 ```
 
-### Run with McAfee Antivirus
 
-// to be added.
