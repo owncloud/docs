@@ -1,0 +1,124 @@
+= OpenID Connect (OIDC)
+:toc: right
+:toclevels: 2
+:openid-connect-url: https://openid.net/connect/
+:konnect: https://github.com/Kopano-dev/konnect
+:konnect-docs: https://github.com/Kopano-dev/konnect#running-konnect
+:konnect-webserver: https://documentation.kopano.io/kopanocore_administrator_manual/configure_kc_components.html#configure-a-webserver-for-konnect
+:page_aliases: index.html
+
+== Introduction
+
+{openid-connect-url}[OpenID Connect] is an open standard for single sign-on, identity and access management. With ownCloud it can be used for user authentication and client authorization against an external identity provider(IdP).
+
+**Benefits of using ownCloud with OpenID Connect**
+
+- Increased security by shifting user authentication to an external identity provider.
+- Seamless integration into single sign-on (SSO) environments as well as with third party products.
+- Centralized client management within the identity provider.
+- Enterprise-grade security through the use of authentication security features (e.g., multi-factor authentication) and policies (e.g., automatic token expiration on certain conditions) provided by identity providers.
+
+NOTE: ownCloud only supports one configured identity provider which is then valid for all requests.
+
+//image:configuration/user/oidc/OAuth-code-flow-sequence-diagram.png[make me a clickable enlarged image]
+
+== Supported Identity Providers
+
+ownCloud Server can work with identity providers (IdP) that support OpenID Connect. There are many identity providers available and the OpenID Connect implementations vary a lot in terms of supported features as well as configuration needs. Please get in touch with ownCloud Consulting if you need help with a specific identity provider.
+
+== Prerequisites
+
+Setting up ownCloud Server to work with OpenID Connect requires a couple of components to work together:
+
+- An external identity provider configured to work with the ownCloud components
+- A distributed memcache setup - such as Redis or Memcached - is required to operate this app. Follow the xref:configuration/server/caching_configuration.adoc[caching documentation] on how to set it up.
+- The {oc-marketplace-url}/apps/openidconnect[OpenID Connect App] installed on ownCloud Server
+- Configuration for the OpenID Connect App in `config.php` on ownCloud Server
+- Service discovery for the xref:owncloud-desktop-and-mobile-clients[ownCloud Clients]
+
+== Set Up Service Discovery
+
+. Webserver Service Discovery Information
++
+In order to allow the ownCloud Clients (Desktop/Android/iOS) to make use of OpenID Connect, the webserver serving ownCloud Server needs to _provide service discovery information_ under the following static path:
++
+[source,url]
+----
+https://cloud.example.com/.well-known/openid-configuration
+----
+
+. App Service Discovery Information
++
+When enabled, the OpenID Connect App provides the service discovery information on the endpoint:
++
+[source,url]
+----
+https://cloud.example.com/index.php/apps/openidconnect/config
+----
+
+. Webserver Rewrite Rule
++
+To make the endpoint available under the static service discovery path, it is recommended to put a `RewriteRule` in place using `.htaccess` (the Apache modules `proxy` and `proxy_http` have to be enabled):
++
+[source,apache]
+----
+RewriteRule ^\.well-known/openid-configuration /index.php/apps/openidconnect/config [P]
+----
++
+TIP: Depending on the respective infrastructure setup there can be other ways to solve this. In any case, please make sure _not to use redirect rules_ as this will violate the OpenID Connect specification.
++
+IMPORTANT: If you use the `.htaccess` file in the ownCloud web root, you have to manually add that rewrite rule again after any ownCloud upgrade.
+
+. Once service discovery is available as described above, the ownCloud clients will attempt to connect via OpenID Connect.
+
+== Example Setup Using Kopano Konnect
+
+Follow this link to see 
+xref:configuration/user/oidc/kopano-setup.adoc[Example Setup Using Kopano Konnect].
+
+== Example Setup Using Microsoft Azure
+
+Follow this link to see 
+xref:configuration/user/oidc/ms-azure-setup.adoc[Example Setup Using Microsoft Azure].
+
+== ownCloud Desktop and Mobile Clients
+
+ownCloud desktop and mobile clients detect whether OIDC is available (service discovery) and use this login method when a new account is created.
+
+=== Client Support for OIDC
+
+[caption=]
+.Following owncloud clients support OIDC 
+[width="50%",cols="40%,50%",options="header"]
+|===
+| ownCloud Client  | Release with OIDC support
+| Desktop | >= 2.7.0
+| Android | >= 2.15
+| iOS     | >= 1.2
+|===
+
+=== Migrate Clients from Basic Authentication to OIDC
+
+If your users are logged in to their desktop and mobile clients via basic authentication (username/password) against ownCloud Server and you are not using OAuth2 to authorize the ownCloud clients, a migration to OIDC can be conducted as follows:
+
+1. Make sure you have a working OIDC configuration based on the above sections.
+2. Enable the OpenID Connect App.
+3. Enable xref:configuration/server/config_sample_php_parameters.adoc#enforce-token-only-authentication-for-apps-and-clients-connecting-to-owncloud[token-only authentication].
+
+Once the OpenID Connect App is enabled, token-only authentication is enforced and service discovery is properly set up, the ownCloud clients will ask the users to re-authenticate. After a successful re-authentication, the migration is done.
+
+To connect legacy clients, users have to generate xref:user_manual:personal_settings/security.adoc#app-passwords-tokens[special app passwords (tokens)].
+
+=== Migrate Clients from OAuth2 to OIDC
+
+If you use OAuth2 for client authorization, a migration to OIDC can be conducted as follows:
+
+1. Make sure you have a working configuration based on the above sections.
+2. Enable the OpenID Connect App (while having the OAuth2 App still enabled).
+3. Disable the OAuth2 App.
+
+Once the OAuth2 App is disabled and service discovery is properly set up, the ownCloud Clients will ask the users to re-authenticate. After a successful re-authentication, the migration is done.
+
+== Migrate Web Login (and Client Login) from SAML to OIDC
+
+If you are using SAML/SSO, a migration to OIDC depends on your identity provider and is not straight forward. Please get in touch with ownCloud Consulting to plan the migration.
