@@ -102,14 +102,28 @@ When the process completes, check that all the containers have successfully star
 `sudo docker-compose ps`. If they are all working correctly, you should expect to see output
 similar to that below:
 
-[source,console,subs="attributes+"]
-----
-Name                              Command                     State   Ports
-__________________________________________________________________________________________
-owncloud_mariadb   docker-entrypoint.sh --max ...   Up (healthy)   {std-port-mysql}/tcp
-owncloud_redis     docker-entrypoint.sh --dat ...   Up (healthy)   {std-port-redis}/tcp
-owncloud_server    /usr/bin/entrypoint /usr/b ...   Up (healthy)   0.0.0.0:std-port-http}->std-port-http}/tcp
-----
+[width="100%",cols="30%,50%,30%,50%",options="header"]
+|===
+| Name
+| Command
+| State
+| Ports
+
+| owncloud_mariadb
+| docker-entrypoint.sh --max ...
+| Up (healthy)
+| {std-port-mysql}/tcp
+
+| owncloud_redis
+| docker-entrypoint.sh --dat ...
+| Up (healthy)
+| {std-port-redis}/tcp
+
+| owncloud_server
+| /usr/bin/entrypoint /usr/b ...
+| Up (healthy)
+| 0.0.0.0:{std-port-http}->{std-port-http}/tcp
+|===
 
 In it, you can see that the database, ownCloud, and Redis containers are running, and that ownCloud
 is accessible via port {std-port-http} on the host machine.
@@ -117,11 +131,12 @@ is accessible via port {std-port-http} on the host machine.
 [IMPORTANT]
 ====
 All files stored in this setup are contained in Docker volumes, rather than a physical filesystem tree.
-It is the admin's responsibility to persist the files. +
+It is the admin's responsibility to persist the files.
+
 To inspect the volumes run:
 [source,console]
 ----
-sudo docker volume ls | grep ownclouddockerserver`
+sudo docker volume ls | grep ownclouddockerserver
 ----
 To export the files as a tar archive run:
 [source,console]
@@ -213,7 +228,9 @@ sudo docker-compose exec owncloud occ maintenance:mode --on
 +
 [source,console]
 ----
-sudo docker-compose exec mariadb /usr/bin/mysqldump -u root --password=owncloud owncloud > owncloud_$(date +%Y%m%d).sql
+sudo docker-compose exec mariadb \
+     /usr/bin/mysqldump -u root --password=owncloud \
+     owncloud > owncloud_$(date +%Y%m%d).sql
 ----
 +
 NOTE: You need to adjust the password and database name if you have changed it in your deployment.
