@@ -4,17 +4,14 @@
 :clamav-url: http://www.clamav.net/index.html
 :icap-url: https://tools.ietf.org/html/rfc3507
 :c-icap-url: https://sourceforge.net/p/c-icap/wiki/ModulesConfiguration/
-:docker-url: https://hub.docker.com/r/deepdiver/icap-clamav-service
-:anti-virus-app-url: https://marketplace.owncloud.com/apps/files_antivirus
-:kav-docker-url: https://box.kaspersky.com/d/c8d8577dc2494256b45e/
 
 == Introduction
 
-When sharing files, security is a key aspect. The ownCloud {anti-virus-app-url}[Anti-Virus] extension helps by protecting against malicious software like trojans or viruses. It forwards files that are being uploaded to the ownCloud server to a  malware scanning engine before they are written to the storage. When a file is recognized as malicious, it can be logged and prevented from being uploaded to the server to ensure that files in ownCloud are free of malware. More sophisticated rules may be specified in 'Advanced' mode. ownCloud administrators can find the configuration options in the 'Security' settings.
+When sharing files, security is a key aspect. The ownCloud {anti-virus-app-url}[Anti-Virus] extension helps by protecting against malicious software like trojans or viruses. It forwards files that are being uploaded to the ownCloud server to a  malware scanning engine before they are written to the storage. When a file is recognized as malicious, it can be logged and prevented from being uploaded to the server to ensure that files in ownCloud are free of malware. More sophisticated rules may be specified as admin in the ownCloud Webinterface menu:Admin[Settings > Security].
 
-Out of the box, the ownCloud Anti-Virus extension works with {clamav-url}[Clam AntiVirus(ClamAV)] as the officially supported virus scanner. It detects all forms of malware including trojans, viruses, and worms and scans compressed files, executables, image files, PDF, as well as many other file types. The ownCloud Anti-Virus application relies on the underlying ClamAV virus scanning engine, to which the admin points ownCloud when configuring the application. The ClamAV virus definitions need to be kept up to date in order to provide effective protection.
+Out of the box, the ownCloud Anti-Virus extension works with {clamav-url}[Clam AntiVirus(ClamAV)] as the directly supported virus scanner. It detects all forms of malware including trojans, viruses and worms and scans compressed files, executables, image files, PDF, as well as many other file types. The ownCloud Anti-Virus application relies on the underlying ClamAV virus scanning engine, to which the admin points ownCloud when configuring the application. The ClamAV virus definitions need to be kept up to date in order to provide effective protection.
 
-From version 1.0.0 on, Anti-Virus offers an ICAP integration for Enterprise installations. This means that admins can integrate their favorite enterprise-grade Antivirus Scanners through the open standard {icap-url}[Internet Content Adaptation Protocol (ICAP)]. With this set up, ownCloud can delegate the scanning of uploaded files to another machine, the ICAP server. The ICAP server then checks them and either greenlights them or, if malicious code is found, treats the offending file(s) according to its settings and notifies the ownCloud server. ownCloud can then act accordingly and reject the upload. Offloading the anti-virus scans to another dedicated server can greatly improve performance and scale compared to running the ClamAV virus scanner on the same machine as ownCloud.
+Starting with Anti-Virus version 1.0.0, the app also offers an ICAP integration for Enterprise installations. Admins can integrate their favorite enterprise-grade Antivirus Scanners through the open standard {icap-url}[Internet Content Adaptation Protocol (ICAP)]. With this set up, ownCloud can delegate the scanning of uploaded files to another machine, the ICAP server. The ICAP server then checks them and either greenlights them or, if malicious code is found, treats the offending file(s) as specified in the settings and notifies the ownCloud server. ownCloud can then act accordingly and reject the upload. Offloading the anti-virus scans to another dedicated server can greatly improve performance compared to running the ClamAV virus scanner on the same machine as ownCloud.
 
 == ClamAV
 
@@ -392,11 +389,11 @@ Scanner output rules are used in daemon/socket mode.
 
 == ICAP
 
-{icap-url}[ICAP] is an open standard supported by many antivirus products. With the release of the _Anti-Virus_ app 1.0.0, other virus scanners beside ClamAV can be used via ICAP if you are running it on an ownCloud Enterprise Edition. Currently the only supported virus scanners are _Kaspersky ScanEngine_ and _McAfee Antivirus_ although far more products might simply work.
+{icap-url}[ICAP] is an open standard supported by many antivirus products. With the release of the _Anti-Virus_ app 1.0.0, other virus scanners beside ClamAV can be used via ICAP if you are running it on an ownCloud Enterprise Edition. Currently the only tested and supported virus scanners, besides ClamAV, are _Kaspersky ScanEngine_ and _McAfee Antivirus_ although far more products might simply work.
 
 === Installation
 
-- Install the Anti-Virus app 1.0.0 from the {anti-virus-app-url}[ownCloud marketplace]. Alternatively, use this occ command:
+- Install the {oc-marketplace-url}/apps/files_antivirus[Anti-Virus app] from the ownCloud marketplace. Alternatively, use this occ command:
 
 [source,console,subs="attributes+"]
 ----
@@ -413,7 +410,36 @@ Scanner output rules are used in daemon/socket mode.
 
 === General Configuration
 
-ICAP ist configured via occ commands. Go to your ownCloud directory, usually `/var/www/owncloud`, and enter the following occ commands:
+ICAP can be configured via the Web frontend as admin user or via occ commands.
+
+==== Antivirus Configuration Panel
+
+Log in to ownCloud as admin via the Web interface and go to menu:Admin[Settings > Security] and you'll see the Antivirus Configuration dialog.
+
+* `Mode`: Set to `Daemon (ICAP)`.
+
+* `Host`: Enter the IP addess of your ICAP server.
+
+* `Port`: Specify the port number (default 1344).
+
+* `Stream Length`: Set the length of streams sent to the ICAP server in bytes.
+
+* `File size limit`: If you want to limit the file size, enter the maximum value in bytes. Default is no limit (-1).
+
+* `ICAP request service`: Select the antivirus software you want to use: avscan for ClamAV, req for Kaspersky ScanEngine and `wwreqmod` for McAfee.
+
+* `ICAP response header holding the virus information`: Use `X-Infection-Found` for ClamAV (avscan) and `X-Virus-ID` for KAV (req). McAfee doesn't have response headers.
+
+* `When infected files were found during a background scan`: Specify what to do with the flagged files. Possible values: `Delete file` or `Only log`.
+
+IMPORTANT: Do not change the rules hidden under btn:[Advanced] unless you know exactly what you're doing. The defaults should work best. If you have special requirements, contact us.
+
+// contact consulting@owncloud.com? Waiting for feedback.
+
+
+==== Command-line Configuration
+
+Change to your ownCloud directory, usually `/var/www/owncloud`, and enter the following occ commands:
 
 * To set the IP address of your anti-virus server:
 
@@ -436,7 +462,7 @@ ICAP ist configured via occ commands. Go to your ownCloud directory, usually `/v
 {occ-command-example-prefix} config:app:set files_antivirus av_mode --value="icap"
 ----
 
-The setting 'icap' triggers a grace period of 24 hours if you don't have an Enterprise license but want to test ICAP.
+NOTE: The setting `icap` triggers a grace period of 24 hours if you don't have an Enterprise license but want to test ICAP.
 
 * Specify what do do with the offending file:
 
@@ -450,20 +476,18 @@ Possible values are 'delete' and 'only_log'.
 
 === Run with c-icap/ClamAV
 
-c-icap has a built in ClamAV module. For more information see: {c-icap-url}[c-icap on sourceforge]
+c-icap has a built in ClamAV module. For more information see: {c-icap-url}[c-icap on sourceforge].
 
-An out of the box docker image is available {docker-url}[here].
+* The IP address needs to be set in the general configuration above.
 
-For simple local testing, run `docker run -ti deepdiver/icap-clamav-service` and get its IP address using docker inspect.
-
-The IP address needs to be set in the general configuration above. Then set the mode to 'c-icap with ClamAV':
+* Now set the mode to 'c-icap with ClamAV':
 
 [source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} occ config:app:set files_antivirus av_request_service --value="avscan"
 ----
 
-Then set the response header:
+* Next, set the response header:
 
 [source,console,subs="attributes+"]
 ----
@@ -473,32 +497,47 @@ Then set the response header:
 
 ### Run with Kaspersky Anti-Virus (KAV)
 
-Kaspersky provides {kav-docker-url}[docker images] as well.
-Follow the instructions in Kaspersky ScanEngine for Kubernetes.7z.
+* Install Kaspersky ScanEngine for Kubernetes.7z and follow the instructions.
 
-Additional configuration: Set <Configuration><ICAPSettings><Allow204>1</Allow204></ICAPSettings></Configuration> in kavicapd.xml
+* Additional configuration:
 
-Set KAV as virus scanner with the value 'req':
+Open the file `/opt/kaspersky/ScanEngine/etc/kavicapd.xml` and set `<Configuration><ICAPSettings><Allow204>1</Allow204></ICAPSettings></Configuration>`. Afterward restart the daemon:
+
+```
+/opt/kaspersky/ScanEngine/etc/init.d/kavicapd restart
+```
+
+* Set KAV as virus scanner with the value `req`:
 
 [source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} config:app:set files_antivirus av_request_service --value="req"
 ----
 
-And the respective response header:
+* Set the respective response header:
 
 [source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} config:app:set files_antivirus av_response_header --value="X-Virus-ID"
 ----
 
-NOTE: The older versions of KAV did not send back the virus/infection name in an ICAP header.
+NOTE: Older versions of KAV did not send back the virus/infection name in an ICAP header. Version 2.0.0 of KAV allows you to configure the header to transport the virus. By default no header is sent.
 
-In v2.0.0 the header to transport the virus can be configured. Default: No header is sent.
 
-```
-sed -i -e 's@<VirusNameICAPHeader.*@<VirusNameICAPHeader>X-Infection-Found</VirusNameICAPHeader> <SentVirusNameICAPHeader>X-Infection-Found</SentVirusNameICAPHeader>@' /opt/kaspersky/ScanEngine/etc/kavicapd.xml
-/opt/kaspersky/ScanEngine/etc/init.d/kavicapd restart
-```
+=== Run with McAfee
 
+// Which product exactly?
+
+Install the McAfee virus scanner.
+
+* The IP address needs to be set in the general configuration above.
+
+* Now set the mode to `wwreqmod` to use McAfee:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} occ config:app:set files_antivirus av_request_service --value="wwreqmod"
+----
+
+NOTE: McAfee does not offer response headers.
 
