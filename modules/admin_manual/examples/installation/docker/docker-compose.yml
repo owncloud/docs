@@ -1,11 +1,9 @@
-version: '2.1'
+version: "3"
 
 volumes:
   files:
     driver: local
   mysql:
-    driver: local
-  backup:
     driver: local
   redis:
     driver: local
@@ -13,11 +11,12 @@ volumes:
 services:
   owncloud:
     image: owncloud/server:${OWNCLOUD_VERSION}
+    container_name: owncloud_server
     restart: always
     ports:
       - ${HTTP_PORT}:8080
     depends_on:
-      - db
+      - mariadb
       - redis
     environment:
       - OWNCLOUD_DOMAIN=${OWNCLOUD_DOMAIN}
@@ -25,7 +24,7 @@ services:
       - OWNCLOUD_DB_NAME=owncloud
       - OWNCLOUD_DB_USERNAME=owncloud
       - OWNCLOUD_DB_PASSWORD=owncloud
-      - OWNCLOUD_DB_HOST=db
+      - OWNCLOUD_DB_HOST=mariadb
       - OWNCLOUD_ADMIN_USERNAME=${ADMIN_USERNAME}
       - OWNCLOUD_ADMIN_PASSWORD=${ADMIN_PASSWORD}
       - OWNCLOUD_MYSQL_UTF8MB4=true
@@ -39,35 +38,33 @@ services:
     volumes:
       - files:/mnt/data
 
-  db:
-    image: webhippie/mariadb:latest
+  mariadb:
+    image: mariadb:10.5
+    container_name: owncloud_mariadb
     restart: always
     environment:
-      - MARIADB_ROOT_PASSWORD=owncloud
-      - MARIADB_USERNAME=owncloud
-      - MARIADB_PASSWORD=owncloud
-      - MARIADB_DATABASE=owncloud
-      - MARIADB_MAX_ALLOWED_PACKET=128M
-      - MARIADB_INNODB_LOG_FILE_SIZE=64M
+      - MYSQL_ROOT_PASSWORD=owncloud
+      - MYSQL_USER=owncloud
+      - MYSQL_PASSWORD=owncloud
+      - MYSQL_DATABASE=owncloud
+    command: ["--max-allowed-packet=128M", "--innodb-log-file-size=64M"]
     healthcheck:
-      test: ["CMD", "/usr/bin/healthcheck"]
-      interval: 30s
-      timeout: 10s
+      test: ["CMD", "mysqladmin", "ping", "-u", "root", "--password=owncloud"]
+      interval: 10s
+      timeout: 5s
       retries: 5
     volumes:
       - mysql:/var/lib/mysql
-      - backup:/var/lib/backup
 
   redis:
-    image: webhippie/redis:latest
+    image: redis:6
+    container_name: owncloud_redis
     restart: always
-    environment:
-      - REDIS_DATABASES=1
+    command: ["--databases", "1"]
     healthcheck:
-      test: ["CMD", "/usr/bin/healthcheck"]
-      interval: 30s
-      timeout: 10s
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
       retries: 5
     volumes:
-      - redis:/var/lib/redis
-
+      - redis:/data
