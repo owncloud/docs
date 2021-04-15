@@ -400,7 +400,7 @@ Scanner output rules are used in daemon/socket mode.
 {occ-command-example-prefix} market:install files_antivirus
 ----
 
-- Enable the app as admin in ownCloud under Settings > Apps or with the following occ command:
+- Enable the app as admin in ownCloud under menu:[Settings > Apps] in the category `Security` or with the following occ command:
 
 [source,console,subs="attributes+"]
 ----
@@ -410,11 +410,15 @@ Scanner output rules are used in daemon/socket mode.
 
 === General Configuration
 
-ICAP can be configured via the Web frontend as admin user or via occ commands.
+ICAP can be configured via the Web interface as admin user or via xref:occ_command.adoc[occ commands].
 
 ==== Antivirus Configuration Panel
 
 Log in to ownCloud as admin via the Web interface and go to menu:Admin[Settings > Security] and you'll see the Antivirus Configuration dialog.
+
+image:configuration/server/anti-virus-panel.png[Security Settings, width:80%]
+
+Enter the desired values:
 
 * `Mode`: Set to `Daemon (ICAP)`.
 
@@ -426,20 +430,18 @@ Log in to ownCloud as admin via the Web interface and go to menu:Admin[Settings 
 
 * `File size limit`: If you want to limit the file size, enter the maximum value in bytes. Default is no limit (-1).
 
-* `ICAP request service`: Select the antivirus software you want to use: avscan for ClamAV, req for Kaspersky ScanEngine and `wwreqmod` for McAfee.
+* `ICAP request service`: Select the antivirus software you want to use: avscan for ClamAV, req for Kaspersky ScanEngine or `wwreqmod` for McAfee.
 
-* `ICAP response header holding the virus information`: Use `X-Infection-Found` for ClamAV (avscan) and `X-Virus-ID` for KAV (req). McAfee doesn't have response headers.
+* `ICAP response header holding the virus information`: Use `X-Infection-Found` for ClamAV (avscan) and `X-Virus-ID` for KAV (req). McAfee doesn't offer response headers.
 
 * `When infected files were found during a background scan`: Specify what to do with the flagged files. Possible values: `Delete file` or `Only log`.
 
-IMPORTANT: Do not change the rules hidden under btn:[Advanced] unless you know exactly what you're doing. The defaults should work best. If you have special requirements, contact us.
-
-// contact consulting@owncloud.com? Waiting for feedback.
+CAUTION: Do not change the rules hidden under btn:[Advanced] unless you know exactly what you're doing. The defaults should work best. If you have special requirements, contact us at consulting@owncloud.com.
 
 
 ==== Command-line Configuration
 
-Change to your ownCloud directory, usually `/var/www/owncloud`, and enter the following occ commands:
+On the command line, change into your ownCloud directory, usually `/var/www/owncloud`, and enter the following occ commands:
 
 * To set the IP address of your anti-virus server:
 
@@ -498,14 +500,6 @@ c-icap has a built in ClamAV module. For more information see: {c-icap-url}[c-ic
 ### Run with Kaspersky Anti-Virus (KAV)
 
 * Install Kaspersky ScanEngine for Kubernetes.7z and follow the instructions.
-
-* Additional configuration:
-
-Open the file `/opt/kaspersky/ScanEngine/etc/kavicapd.xml` and set `<Configuration><ICAPSettings><Allow204>1</Allow204></ICAPSettings></Configuration>`. Afterward restart the daemon:
-
-```
-/opt/kaspersky/ScanEngine/etc/init.d/kavicapd restart
-```
 
 * Set KAV as virus scanner with the value `req`:
 
