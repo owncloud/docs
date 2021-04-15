@@ -182,17 +182,39 @@ Possible options are:
 
 === Listing Federated Shares
 
+In case you want to see which federated shares exist on your server, you can use this command to list them.
+
+Currently there is no ownCloud `occ` command to list federated shares, that's why you have to use these database queries to obtain the information.
+
 Federated shares are saved in your database. 
+
+[source,mysql]
+----
+sudo mysql -u <ownCloud_DB_User> -p<ownCloud_DB_Password> -h <ownCloud_DB_Host> <ownCloud_DB_Name>
+----
 
 Incoming shares can be listed with the following query:
 
+[source,mysql]
 ----
 select * from oc_share where share_type=6;
 ----
 
-Outgoing shares can be listed with the following query:
-(Adjust the server URL to your setup)
+Each unique ID gives you a incoming federated share.
 
+Outgoing shares can be listed with the following query:
+(replace `cloud.example.com` with your instance URL)
+
+[source,mysql]
 ----
-select * from oc_share_external where remote NOT IN ('https//owncloud.server.org'); 
+select * from oc_share_external where remote NOT IN ('https//cloud.example.com'); 
+----
+
+Each unique ID gives you a outgoing federated share.
+
+Exit the database console with this command:
+
+[source,mysql]
+----
+quit
 ----
