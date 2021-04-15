@@ -1,13 +1,12 @@
 = Installing with Docker
 :toc: right
-:docker-tags-url: https://hub.docker.com/r/owncloud/server/tags
+:dockerhub-url: https://hub.docker.com/r/owncloud/server
 :docker-compose-url: https://docs.docker.com/compose/
-:webhippie-mariadb-url: https://hub.docker.com/r/webhippie/mariadb/
 :linux-server-doc-url: https://docs.linuxserver.io/faq
 
 == Introduction
 
-ownCloud can be installed using Docker, using the {docker-tags-url}[official ownCloud Docker image].
+ownCloud can be installed using Docker, using the {dockerhub-url}[official ownCloud Docker image].
 This official image works standalone for a quick evaluation, but is designed to be used in a
 docker-compose setup.
 
@@ -69,8 +68,8 @@ Only a few settings are required, these are:
 | `{std-port-http}`
 |===
 
-NOTE: `ADMIN_USERNAME` and `ADMIN_PASSWORD` will not change between deploys even if you change the 
-values in the .env file. To change them, you'll need to do `docker volume prune`, which 
+NOTE: `ADMIN_USERNAME` and `ADMIN_PASSWORD` will not change between deploys even if you change the
+values in the .env file. To change them, you'll need to do `docker volume prune`, which
 *will delete all your data*.
 
 Then, you can start the container, using your preferred Docker _command-line tool_.
@@ -103,14 +102,28 @@ When the process completes, check that all the containers have successfully star
 `sudo docker-compose ps`. If they are all working correctly, you should expect to see output
 similar to that below:
 
-[source,console,subs="attributes+"]
-----
-Name                              Command                     State   Ports
-__________________________________________________________________________________________
-ownclouddockerserver_db_1         … /bin/s6-svscan /etc/s6    Up      {std-port-mysql}/tcp
-ownclouddockerserver_owncloud_1   … /usr/bin/owncloud server  Up      0.0.0.0:{std-port-http}->{std-port-http}/tcp
-ownclouddockerserver_redis_1      … /bin/s6-svscan /etc/s6    Up      {std-port-redis}/tcp
-----
+[width="100%",cols="30%,50%,30%,50%",options="header"]
+|===
+| Name
+| Command
+| State
+| Ports
+
+| owncloud_mariadb
+| docker-entrypoint.sh --max ...
+| Up (healthy)
+| {std-port-mysql}/tcp
+
+| owncloud_redis
+| docker-entrypoint.sh --dat ...
+| Up (healthy)
+| {std-port-redis}/tcp
+
+| owncloud_server
+| /usr/bin/entrypoint /usr/b ...
+| Up (healthy)
+| 0.0.0.0:{std-port-http}->{std-port-http}/tcp
+|===
 
 In it, you can see that the database, ownCloud, and Redis containers are running, and that ownCloud
 is accessible via port {std-port-http} on the host machine.
@@ -118,11 +131,12 @@ is accessible via port {std-port-http} on the host machine.
 [IMPORTANT]
 ====
 All files stored in this setup are contained in Docker volumes, rather than a physical filesystem tree.
-It is the admin's responsibility to persist the files. +
+It is the admin's responsibility to persist the files.
+
 To inspect the volumes run:
 [source,console]
 ----
-sudo docker volume ls | grep ownclouddockerserver`
+sudo docker volume ls | grep ownclouddockerserver
 ----
 To export the files as a tar archive run:
 [source,console]
@@ -163,7 +177,7 @@ image below.
 image:docker/owncloud-ui-login.png[The ownCloud UI via Docker]
 
 The username and password are the credentials which you stored in `.env` earlier.
-Note that these will not change between deploys even if you change the values in .env. 
+Note that these will not change between deploys even if you change the values in .env.
 
 === Stopping the Containers
 
@@ -184,7 +198,7 @@ sudo docker-compose down --rmi all --volumes
 
 If you want to run an occ command, first go to the directory where your `.yaml` or `.env` file is located.
 Next, you are able to run any command referring to
-xref:configuration/server/occ_command.adoc[Using the occ Command], by entering: 
+xref:configuration/server/occ_command.adoc[Using the occ Command], by entering:
 
 [source,console]
 ----
@@ -214,10 +228,12 @@ sudo docker-compose exec owncloud occ maintenance:mode --on
 +
 [source,console]
 ----
-sudo docker-compose exec db backup
+sudo docker-compose exec mariadb \
+     /usr/bin/mysqldump -u root --password=owncloud \
+     owncloud > owncloud_$(date +%Y%m%d).sql
 ----
 +
-NOTE: This assumes that you are using the {webhippie-mariadb-url}[default database container from Webhippie].
+NOTE: You need to adjust the password and database name if you have changed it in your deployment.
 
 . Shutdown the containers.
 +
