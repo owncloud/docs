@@ -162,6 +162,8 @@ The following functionality has been recorded:
 
 == Tips
 
+=== VCARD properties
+
 It is possible to configure the VCARD properties that are searched in order to retrieve a list of federated users in the share dialog. By default, ownCloud uses CLOUD and FN properties, however this list may be configured by the admin:
 
 [source,console,subs="attributes+"]
@@ -177,3 +179,42 @@ Possible options are:
 * N
 * EMAIL
 * CLOUD
+
+=== Listing Federated Shares
+
+In case you want to see which federated shares exist on your server, you can use this command to list them.
+
+Currently there is no ownCloud `occ` command to list federated shares, that's why you have to use these database queries to obtain the information.
+
+Federated shares are saved in your database. 
+
+[source,mysql]
+----
+sudo mysql -u <ownCloud_DB_User> -p<ownCloud_DB_Password> -h <ownCloud_DB_Host> <ownCloud_DB_Name>
+----
+
+Incoming shares can be listed with the following query:
+
+[source,mysql]
+----
+select * from oc_share where share_type=6;
+----
+
+Each unique ID gives you a incoming federated share.
+
+Outgoing shares can be listed with the following query:
+(replace `cloud.example.com` with your instance URL)
+
+[source,mysql]
+----
+select * from oc_share_external where remote NOT IN ('https//cloud.example.com'); 
+----
+
+Each unique ID gives you a outgoing federated share.
+
+Exit the database console with this command:
+
+[source,mysql]
+----
+quit
+----
