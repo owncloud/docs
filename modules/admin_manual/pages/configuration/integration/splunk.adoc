@@ -1,0 +1,81 @@
+= ownCloud App for Splunk
+
+== Introduction
+
+The SPLUNKBASE_LINK[ownCloud App for Splunk] provides a sophisticated reporting and auditing tool for ownCloud service operators. It makes use of both ownCloud's technical logs (owncloud.log) and audit logs, and the ownCloud Metrics API to provide insights. It shows information about users as well as storage and sharing usage across the instance and per user. It also makes audit evaluations quicker and more efficient. The app configures Splunk to retrieve and store the data and to provide visualizations, log filtering tools and pre-defined alerts for certain events. 
+
+By aggregating, evaluating and visualizing the data provided by ownCloud, the ownCloud App for Splunk allows service providers to gain insights into how their ownCloud platform is used and adopted (e.g., user, storage and sharing growth). Automatically gathering and processing ownCloud data enables to build up a continuous reporting tool for stakeholders. For auditing purposes the app provides very fine-grained and flexible tools that allow tracing actions by user, by operation or even by a single file, and more.
+
+The app makes all relevant ownCloud data available in Splunk. With that, the dashboards and tools can easily be extended or modified. With just a few clicks they can be adapted to specific needs using the filtering and visualization features provided by Splunk.
+
+== Prerequisites
+To get set up with the _ownCloud App for Splunk_ there is a number of prerequisites that have to be fulfilled.
+
+* ownCloud Server has a minimum version of 10.5
+* Splunk has a minimum version of 7.2
+* The https://marketplace.owncloud.com/apps/metrics[Metrics App] is installed, configured and enabled on ownCloud Server
+* The https://marketplace.owncloud.com/apps/admin_audit[Auditing App] is installed, configured and enabled on ownCloud Server
+* Both components of the _ownCloud App for Splunk_ are installed and configured
+
+== Setup & Configuration
+=== ownCloud
+
+1. Install and set up the https://marketplace.owncloud.com/apps/admin_audit[Auditing App] as https://doc.owncloud.com/server/admin_manual/enterprise/logging/admin_audit.html[documented]. Especially take care for the log file paths (owncloud.log / admin_audit.log) as those will be required in the Splunk configuration below.
+
+2. Install and set up the https://marketplace.owncloud.com/apps/metrics[Metrics App] as https://doc.owncloud.com/server/latest/admin_manual/enterprise/reporting/metrics.html[documented]. Especially take care of setting the Metrics API key as it will be required in the Splunk configuration below.
+
+=== Splunk
+
+The _ownCloud App for Splunk_ consists of two components that have to be installed and configured in Splunk.
+
+* The _ownCloud Add-on for Splunk_ gathers and stores the ownCloud data in Splunk.
+* The _ownCloud App for Splunk_ adds dashboards and other functionalities to the Splunk web interface.
+
+Both can be installed from the Splunkbase app store. Below you find the necessary configuration to get started.
+
+==== ownCloud Add-on for Splunk (TA_owncloud)
+
+- Link to be added once available!
+
+The _ownCloud Add-on for Splunk_ (`TA_owncloud`) takes care of gathering the data from ownCloud as well as storing and indexing it in Splunk. It requires a Splunk Universal Forwarder to be installed on the ownCloud host.
+
+To get started, please follow the steps below.
+
+1. Create an index for your ownCloud data (e.g., `index=owncloud`)
+
+The _ownCloud Add-on for Splunk_ does not ship with an index. You have to create an index on your Splunk instance or Splunk index cluster. For further help, see https://docs.splunk.com/Documentation/Splunk/latest/Indexer/Setupmultipleindexes.
+
+2. Install a Splunk Universal Forwarder on your ownCloud host. For further help, see https://docs.splunk.com/Documentation/Forwarder/latest/Forwarder/Installanixuniversalforwarder.
+
+3. Install the _ownCloud Add-on for Splunk_
+
+* If you're using a standalone Splunk instance, you have to install the _ownCloud Add-on for Splunk_.
+* If you're using a distributed Splunk installation, it depends on your setup:
+  * Search Heads: Installation of the _ownCloud Add-on for Splunk_ is required
+  * Indexers: Installation of the _ownCloud Add-on for Splunk_ is conditional. It is not required if you use Heavy Forwarders to collect data. It is required if you use Universal Forwarders to collect data.
+  * Universal or Heavy Forwarders: Installation of the _ownCloud Add-on for Splunk_ required. In addition it is required to enable data and scripted input as described below.
+
+4. Enable data and scripted input with a configuration file
+
+On your Universal Forwarder or Heavy Forwarder instance, you must enable the inputs using the configuration files.
+
+1. Copy `$SPLUNK_HOME/etc/apps/TA_owncloud/default/inputs.conf.example` to `$SPLUNK_HOME/etc/apps/TA_owncloud/local` directory and rename the file to `inputs.conf`.
+2. Open `$SPLUNK_HOME/etc/apps/TA_owncloud/local/inputs.conf` for editing.
+3. Check all `index = owncloud` settings and change the index name if needed.
+4. Check the ownCloud Logs locations (default: `/var/www/owncloud/data/`) and change them to the values you configured on the ownCloud Server.
+4. Save the `$SPLUNK_HOME/etc/apps/TA_owncloud/local/inputs.conf` file.
+5. Copy `$SPLUNK_HOME/etc/apps/TA_owncloud/default/owncloud.conf.example` to `$SPLUNK_HOME/etc/apps/TA_owncloud/local` directory and rename the file to `owncloud.conf`.
+6. Open `$SPLUNK_HOME/etc/apps/TA_owncloud/local/owncloud.conf` for editing.
+7. Change the `METRICSAPIKEY` setting to the Metrics API key value you configured on the ownCloud Server.
+8. Change the `API_HOST` setting to your ownCloud instance domain name or IP address. This value is used to query the Metrics API for data.
+9. Save the `$SPLUNK_HOME/etc/apps/TA_owncloud/local/owncloud.conf` file.
+10. Restart the Splunk instance.
+
+==== ownCloud App for Splunk (owncloud_app)
+
+- Link to be added once available!
+
+The _ownCloud App for Splunk_ (`owncloud_app`) adds the dashboards, visualizations and other functionalities to the Splunk web interface based on the indexed data.
+
+* Install the _ownCloud App for Splunk_ from Splunkbase. You only have to install it on Search Heads.
+* If you created a custom index for ownCloud data, you have to modify a macro to include this index. You can do this in the Splunk web interface by navigating to _Settings_ => _Advanced search_ => _Search macros_ and changing `owncloud-indexes` to your dedicated index (default: `index=owncloud`).
