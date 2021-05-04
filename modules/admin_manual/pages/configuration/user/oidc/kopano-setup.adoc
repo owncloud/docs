@@ -1,0 +1,105 @@
+= Example Setup Using Kopano Konnect
+:toc: right
+:toclevels: 2
+:openid-connect-frontchannel-logout-url: https://openid.net/specs/openid-connect-frontchannel-1_0.html
+:konnect: https://github.com/Kopano-dev/konnect
+:konnect-docs: https://github.com/Kopano-dev/konnect#running-konnect
+:konnect-webserver: https://documentation.kopano.io/kopanocore_administrator_manual/configure_kc_components.html#configure-a-webserver-for-konnect
+
+== Introduction
+
+Kopano Konnect is an OpenID Connect provider (IdP) that directly integrates a Web login and consent form. It brings support for both OpenID Connect (OIDC) and Open Authentication (OAuth 2.0). In addition to the easier integration with third-party applications, Kopano Konnect will also provide the authentication part for the Kopano RestAPI and clients consuming it.
+
+== Setup and Configuration
+
+The sections below will explain these areas and provide configuration examples using {konnect}[Kopano Konnect] as the external identity provider.
+
+For the configuration examples, let's assume we have:
+
+- ownCloud Server available as `+https://cloud.example.com+`
+- Kopano Konnect available as `+https://idp.example.com+`
+
+=== Set Up and Configure Kopano
+
+To get your identity provider running and ready to be used with ownCloud, you have to obtain Kopano Konnect and run it with a set of configuration values which can be provided as environment variables. See the {konnect-docs}[Kopano Konnect documentation] for details.
+
+Specifically, you have to:
+
+- Provide basic configuration.
+- Set up a reverse proxy to expose the routes required to connect to Kopano Konnect. You'll find instructions in the {konnect-webserver}[Kopano Konnect documentation].
+- Register the ownCloud clients.
+
+TIP: Kopano Konnect can be set up via Docker. Images are available on Docker Hub (`kopano/konnectd`).
+
+=== Configure ownCloud Server
+
+To set up ownCloud Server to work with OpenID Connect, you have to:
+
+1. Install the {oc-marketplace-url}/apps/openidconnect[OpenID Connect App]
+2. Configure `config.php`
+3. Set up service discovery
+
+TIP: It is recommended to first figure out all configurations on a test system and to bring it to the production system once it's proven to work. Enabling the OpenID Connect app on the production system should be the last step in this process as it will then advertise OpenID Connect to all clients.
+
+==== List of OpenID Connect config.php Parameters
+
+Follow this link to read more about the
+xref:configuration/server/config_apps_sample_php_parameters.adoc#app-openid-connect-oidc[OIDC config.php parameters] available to configure OpenID Connect on ownCloud Server.
+
+==== Example config.php
+
+An example snippet that can be added to `config.php` is shown below.
+
+[source,php]
+----
+'openid-connect' => [
+    'provider-url' => 'https://idp.example.com',
+    'client-id' => '<owncloud-server-client-id>',
+    'client-secret' => '<owncloud-server-client-secret>',
+    'loginButtonName' => 'Kopano',
+    'autoRedirectOnLoginPage' => false,
+      // change this to 'email' if necessary (see identity provider configuration)
+    'mode' => 'userid',
+      // change this to suit your environment (see identity provider configuration)
+    'search-attribute' => 'preferred_username'
+],
+----
+
+=== Register ownCloud Clients
+
+To allow the ownCloud clients (Web/desktop/Android/iOS) to interact with the identity provider, you have to register them as clients. In the case of Kopano Konnect, you can do this using Konnect's `identifier-registration.yaml`. The default values for the regular ownCloud clients are shown below. Other environments might require a different set of values.
+
+[TIP]
+====
+* When registering ownCloud as an OpenID Client, use the following redirect URL:
++
+[source,url]
+----
+https://cloud.example.com/index.php/apps/openidconnect/redirect
+----
+* If {openid-connect-frontchannel-logout-url}[OpenID Connect Front-Channel Logout 1.0] is supported, enter the following as the logout URL within the client registration of the OpenID Provider:
++
+[source,url]
+----
+https://cloud.example.com/index.php/apps/openidconnect/logout
+----
+====
+
+==== Client ID
+
+- Server/Web: as specified in `config.php`
+- Desktop: `xdXOt13JKxym1B1QcEncf2XDkLAexMBFwiT9j6EfhhHFJhs2KM9jbjTmf8JBXE69`
+- Android: `e4rAsNUSIUs0lF4nbv9FmCeUkTlV9GdgTLDH1b5uie7syb90SzEVrbN7HIpmWJeD`
+- iOS: `mxd5OQDk6es5LzOzRvidJNfXLUZS2oN3oUFeXPP8LpPrhx3UroJFduGEYIBOxkY1`
+
+==== Client Secret
+
+- Server/Web: as specified in `config.php`
+- Desktop: `UBntmLjC2yYCeHwsyj73Uwo9TAaecAetRwMw0xYcvNL9yRdLSUi0hUAHfvCHFeFh`
+- Android: `dInFYGV33xKzhbRmpqQltYNdfLdJIfJ9L5ISoKhNoT9qZftpdWSP71VrpGR9pmoD`
+- iOS: `KFeFWWEZO9TkisIQzR3fo7hfiMXlOpaqP8CFuTbSHzV1TUuGECglPxpiVKJfOXIx`
+
+==== Redirect URIs
+
+- Android: `oc://android.owncloud.com`
+- iOS: `oc://ios.owncloud.com` and `oc.ios://ios.owncloud.com`

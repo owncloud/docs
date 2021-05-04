@@ -1,0 +1,861 @@
+= Auditing
+:toc: right
+:toclevels: 3
+:page_aliases: enterprise_logging_apps.adoc
+
+== Introduction
+
+The {oc-marketplace-url}/apps/admin_audit[Auditing] app is an Enterprise only app and available on the marketplace. It traces user and admin actions. In particular the events:
+
+* Login and logout events of users
+* File system operations (create / delete / move; including actions on the trash bin and versioning)
+* Sharing operations (user / group sharing, sharing via link, changing permissions, calls to sharing API from clients)
+* Custom Groups events
+* File tagging operations (add / remove tags)
+* File commenting operations (create / update / delete)
+* User management operations (creation / deletion / activation / deactivation of users, group management)
+* User settings changes
+* Impersonation events
+* Enabling / disabling of ownCloud Apps
+* Executions of OCC commands (CLI)
+
+== Installation and Enabling
+
+Download the {oc-marketplace-url}/apps/admin_audit[Auditing] app from the marketplace and enable it in the ownCloud app settings.
+
+.Figure 1 Auditing
+image:enterprise/logging/admin_auditing.png[Auditing]
+
+== Configuration
+
+It is advised to redirect messages into a separate file. To do so, add these lines to `config.php` and adjust the target path accordingly. Note that the target path must be writeable for the web server user:
+
+[source,console]
+----
+'log.conditions' => [
+	[
+		'apps' => ['admin_audit'],
+		'logfile' => '/var/www/owncloud/data/admin_audit.log'
+	]
+]
+----
+
+NOTE: All messages regardless of log level will be logged there.
+
+To ignore all CLI triggered events (default is to include them), set the following option:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} config:app:set admin_audit ignore_cli_events --value='yes'
+----
+
+== Grouped Logging
+
+With each log message, a number of users are calculated to be the 'audit context'. This is the list of users which are related to the log message. Additionally, each log message includes a list of groups that the users are a member of, to enable filtering / splitting of the log messages at a later date. In cases when users are members of many groups, to reduce the data output, the group list can be filtered by adding the following to your `config.php`. Change the groups needed accordingly:
+
+[source,console]
+----
+'admin_audit.groups' => [
+    'group1',
+    'group2'
+]
+----
+
+When the filter is configured, only the filtered list of groups will be output in _auditGroups_, else, all groups that the _auditUsers_ are a member of are output.
+
+== View and Download Logs
+
+NOTE: If you have configured a different logfile than the default, you must download it manually.
+
+To download your logfile on your admin page. Click menu:Settings[Admin > Download logfile]. The default location for manually downloading the standard ownCloud log is `data/owncloud.log`.
+
+TIP: See xref:configuration/server/logging/logging_configuration.adoc[Logging Configuration] and xref:enterprise/file_management/files_tagging.adoc[File Tagging] for more information on logging and tagging.
+
+== Connect with Splunk Cloud
+
+=== Install the Universal Forwarder
+
+Connect to the deployment server, change `input-prd-your-server-here` according your setup:
+
+`splunk set deploy-poll input-prd-your-server-here.cloud.splunk.com:8089`
+
+=== Install the Splunk Cloud credentials
+
+`splunk install app path/to/splunkclouduf.spl -auth admin:changeme`
+
+=== Monitor the `admin_audit.log` 
+
+To Monitor the ownCloud Splunk audit log, add this to `inputs.conf`, assuming you use the custom logging path/file from above:
+
+[source,console]
+----
+[monitor://var/www/owncloud/data/admin_audit.log]
+ disabled = false
+ sourcetype = _json
+ index = main
+----
+
+Finally, configure the following `props.conf` to ensure the time field is correctly used and the fields are extracted.
+
+[source,console]
+----
+[_json]
+ INDEXED_EXTRACTIONS = json
+ KV_MODE = json
+ TIMESTAMP_FIELDS = [Time]
+ category = Structured
+----
+
+=== Extra Fields
+
+The audit app listens for internal ownCloud events and hooks and produces a rich set of audit entries useful for reporting on usage of your ownCloud server.
+
+Log entries are based upon the internal ownCloud logging system, but utilise extra fields to hold relevant data fields related to the specific event. Each event will contain the following data at a minimum:
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `remoteAddr` | string | The remote client IP
+| `user` | string | The UID of the user performing the action, +
+or `IP x.x.x.x.`, `cron`, `CLI`, `unknown`
+| `url` | string | The process request URI
+| `method` | string | The HTTP request method
+| `userAgent` | string | The HTTP request user agent
+| `time` | string | The time of the event eg: `2018-05-08T08:26:00+00:00`
+| `app` | string | Always `admin_audit`
+| `message` | string | Sentence explaining the action
+| `action` | string | Unique action identifier eg: +
+`file_delete` or `public_link_created`
+| `CLI` | boolean | If the action was performed from the CLI
+| `level` | integer | The log level of the entry (usually `1` for audit events)
+|===
+
+=== Output
+
+==== Files
+
+===== file_create
+
+When a file is created.
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `path` | string | The full path to the create file
+| `owner` | string | The UID of the owner of the file
+| `fileId` | string | The newly created files identifier
+|===
+
+===== file_read
+
+When a file is read.
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `path` | string | The full path to the file
+| `owner` | string | The UID of the owner of the file
+| `fileId` | string | The files identifier
+|===
+
+===== file_update
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `path` | string | The full path to the updated file
+| `owner`| string | The UID of the owner of the file
+| `fileId` | string | The updated files identifier
+|===
+
+===== file_delete
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `path` | string | The full path to the updated file
+| `owner` | string | The UID of the owner of the file
+| `fileId` | string | The updated files identifier
+|===
+
+===== file_copy
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `oldPath` | string | The full path to the source file
+| `path` | string | The full path to the new file
+| `sourceOwner` | string | The UID of the owner of the source file
+| `owner` | string | The UID of the owner of the file
+| `sourceFileId` | string | The source files identifier
+| `fileId` | string | The new files identifier
+|===
+
+===== file_rename
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `oldPath` | string | The original path file
+| `path` | string | The new path file
+| `fileId` | string | The files identifier
+|===
+
+===== file_trash_delete
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `owner` | string | The UID of the owner of the file
+| `path` | string | The full path to the deleted file
+|===
+
+===== file_trash_restore
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `owner` | string | The UID of the owner of the file
+| `fileId` | string | The restored files identifier
+| `oldPath` | string | The original path to the file
+| `newPath` | string | The new path to the file
+| `owner` | string | The UID of the owner of the file
+|===
+
+===== file_version_delete
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `path` | string | The full path to the version file deleted
+| `trigger` | string | The delete trigger reasoning
+|===
+
+===== file_version_restore
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `path` | string | The full path to the file being restored to the new version
+| `revision` | string | The revision of the file restored
+|===
+
+==== Users
+
+===== user_created
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `targetUser` | string | The UID of the created user
+|===
+
+===== user_password_reset
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `targetUser` | string | The UID of the user
+|===
+
+===== group_member_added
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `targetUser` | string | The UID of the user
+| `group` | string | The GID of the group
+|===
+
+===== user_deleted
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `targetUser` | string | The UID of the user
+|===
+
+===== group_member_removed
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `targetUser` | string | The UID of the user
+| `group` | string | The GID of the group
+|===
+
+===== user_state_changed
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `targetUser` | string | The UID of the user
+| `enabled` | boolean | If the user is enabled or not
+|===
+
+===== group_created
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `group` | string | The GID of the group
+|===
+
+===== group_deleted
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `group` | string | The GID of the group
+|===
+
+===== user_feature_changed
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `targetUser` | string | The UID of the user
+| `group` | string | The GID of the group (or empty string)
+| `feature` | string | The feature that was changed
+| `value` | string | The new value
+|===
+
+==== Sharing
+
+Sharing events come with a default set of fields
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `fileId` | string | The file identifier for the item shared
+| `owner` | string | The UID of the owner of the shared item
+| `path` | string | The path to the shared item
+| `shareId` | string | The sharing identifier +
+(not available for public_link_accessed or when recipient unshares)
+|===
+
+===== file_shared
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `itemType` | string | `file` or `folder`
+| `expirationDate` | string | The text expiration date in format `yyyy-mm-dd`
+| `sharePass` | boolean | If the share is password protected
+| `permissions` | string | The permissions string eg: "READ"
+| `shareType` | string | `group` `user` or `link`
+| `shareWith` | string | The UID or GID of the share recipient +
+(not available for public link)
+| `shareOwner` | string | The UID of the share owner
+| `shareToken` | string | For link shares the `unique token`, else `null`
+|===
+
+===== file_unshared
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `itemType` | string | `file` or `folder`
+| `shareType` | string | `group` `user` or `link`
+| `shareWith` | string | The UID or GID of the share recipient
+|===
+
+===== share_permission_update
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `itemType` | string | `file` or `folder`
+| `shareType` | string | `group` `user` or `link`
+| `shareOwner` | string | The UID of the share owner
+| `permissions` | string | The new permissions string eg: "READ"
+| `shareWith` | string | The UID or GID of the share recipient +
+(not available for public link)
+| `oldPermissions` | string | The old permissions string eg: "READ"
+|===
+
+===== share_name_updated
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `oldShareName` | string | The previous share name
+| `shareName` | string | The updated share name
+|===
+
+===== share_password_updated
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `itemType` | string | `file` or `folder`
+| `shareOwner` | string | The UID of the share owner
+| `permissions` | string | The full permissions string eg: "READ"
+| `shareToken` | string | The share token
+| `sharePass` | boolean | If the share is password protected
+|===
+
+===== share_expiration_date_updated
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `itemType` | string | `file` or `folder`
+| `shareType` | string | `group`, `user` or `link`
+| `shareOwner` | string | The UID of the owner of the share
+| `permissions` | string | The permissions string eg: "READ"
+| `expirationDate` | string | The new text expiration date in format `yyyy-mm-dd`
+| `oldExpirationDate` | string | The old text expiration date in format `yyyy-mm-dd`
+|===
+
+===== share_accepted
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `itemType` | string | `file` or `folder`
+| `path` | string | The path of the shared item
+| `owner` | string | The UID of the owner of the shared item
+| `fileId` | string | The file identifier for the item shared
+| `shareId` | string | The sharing identifier (not available for public_link_accessed)
+| `shareType` | string | `group` or `user`
+|===
+
+===== share_declined
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `itemType` | string | `file` or `folder`
+| `path` | string | The path of the shared item
+| `owner` | string | The UID of the owner of the shared item
+| `fileId` | string | The file identifier for the item shared
+| `shareId` | string | The sharing identifier (not available for public_link_accessed)
+| `shareType` | string | `group` or `user`
+|===
+
+===== federated_share_received
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `name` | string | The path of shared item
+| `targetuser` | string | The target user who sent the item
+| `shareType` | string | `remote`
+|===
+
+===== federated_share_accepted
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `itemType` | string | The path of shared item
+| `targetUser` | string | The target user who sent the item
+| `shareType` | string | `remote`
+|===
+
+===== federated_share_declined
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `itemType` | string | The path of shared item
+| `targetuser` | string | The target user who sent the item
+| `shareType` | string | `remote`
+|===
+
+===== public_link_accessed
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `shareToken` | string | The share token
+| `success` | boolean | If the request was successful `tue` or `false`
+|===
+
+===== public_link_removed
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `shareType` | string | `link`
+|===
+
+===== public_link_accessed_webdav
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `token` | string | The token used to access the url
+|===
+
+===== federated_share_unshared
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `targetUser` | string | The user who initiated the unshare action
+| `targetmount` | string | The file/folder unshared
+| `shareType` | string | `remote`
+|===
+
+==== Custom Groups
+
+===== custom_group_member_removed
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `removedUser` | string | The UID of the user that was removed from the group
+| `group` | string | The custom group name
+|===
+
+===== custom_group_user_left
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `removedUser` | string | The UID of the user that left the group
+| `group` | string | The custom group name
+| `groupId` | integer | The custom group id
+|===
+
+===== custom_group_user_role_changed
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `targetUser` | string | The UID of the user that changed role
+| `group` | string | The custom group name
+| `groupId` | integer | The custom group id
+| `roleNumber` | integer | The new role number: 0 = member, 1= admin
+|===
+
+===== custom_group_renamed
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `oldGroup` | string | The old custom group name
+| `group` | string | The new custom group name
+| `groupId` | integer | The custom group id
+|===
+
+===== custom_group_created
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `group` | string | The custom group name created
+| `groupId` | string | The custom group id
+| `addedUser` | string | The UID of the user added
+| `admin` | boolean | `true` or `false`
+|===
+
+==== Comments
+
+All comment events have the same data:
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `commentId` | string | The comment identifier
+| `path` | string | The path to the file that the comment is attached to
+| `fileId` | string | The file identifier
+|===
+
+// ===== comment_created
+
+// ===== comment_deleted
+
+// ===== comment_updated
+
+==== Config
+
+===== config_set
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `settingName` | string | The key
+| `settingValue` | string | The new value
+| `oldValue` | string | The old value
+| `created` | boolean | If the setting is created for the first time
+|===
+
+===== config_delete
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `settingName` | string | The key
+|===
+
+==== Console
+
+===== command_executed
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `command` | string | The exact command that was executed
+|===
+
+==== Tags
+
+===== tag_created
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `tagName` | string | The tag name
+|===
+
+===== tag_deleted
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `tagName` | string | The tag name
+|===
+
+===== tag_updated
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `oldTag` | string | The old tag name
+| `tagName` | string | The new tag name
+|===
+
+===== tag_assigned
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `tagName` | string | The tag name
+| `fileId` | string | The file identifier to which the tag was assigned
+| `path` | string | The path to the file
+|===
+
+===== tag_unassigned
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `tagName` | string | The tag name
+| `fileId` | string | The file identifier from which the tag was unassigned
+| `path` | string | The path to the file
+|===
+
+==== Apps
+
+===== app_enabled
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `targetApp` | string | The app ID of the enabled app
+| `groups` | string [] | Array of group IDs if the app was enabled for certain groups
+|===
+
+===== app_disabled
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `targetApp` | string | The app ID of the disabled app
+|===
+
+==== Auth
+
+===== user_login
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `success` | boolean | If the login was successful
+| `login` | string | The attempted login value
+|===
+
+===== user_logout
+
+//==== Holding Period
+
+//(requires at least v0.1.3)
+
+==== File Lifecycle
+
+(requires at least v1.0.0)
+
+===== lifecycle_archived
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `path` | string | The path to the file that was archived
+| `owner` | string | The UID of the owner of the file that was deleted
+| `fileId` | integer | The file ID for the file that was archived
+|===
+
+===== lifecycle_restored
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `path` | string | The path to the file that was restored  
+| `fileId` | integer | The number of days interval specified during expiration
+|===
+
+===== lifecycle_expired
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `fileId` | integer | The file id of the file that was expired
+|===
+
+===== update_user_preference_value
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `key` | string | The key
+| `value` | string | The value associated with the key
+| `appname` | string | The name of the app
+| `user` | string | The UID of the user who has the preference key-value for the app
+|===
+
+===== user_preference_set
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `key` | string | The key
+| `value` | string | The value associated with the key
+| `appname` | string | The name of the app
+| `user` | string | The UID of the user who has the preference key-value for the app
+|===
+
+===== remove_user_preference_key
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `key` | string | The key
+| `appname` | string | The name of the app
+| `user` | string | The UID of the user whose preference key is deleted for the app
+|===
+
+===== remove_preferences_of_user
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `user` | string | The UID of the user, whose all user preferences are deleted
+|===
+
+===== delete_all_user_preference_of_app
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `appname` | string | The name of the app whose all user preferences are deleted
+|===
+
+==== Impersonate
+
+===== impersonated
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `user` | string | The current user who did an impersonate action
+| `targetUser` | string | The user who is being impersonated
+|===
+
+===== impersonate_logout
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `user` | string | The user who performed impersonate action
+|===
+
+==== SMB ACL
+
+===== before_set_acl
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `user` | string | The user who is trying to set the ACL
+| `ocPath` | string | The owncloud instance path
+| `smbPath` | string | The SMB path
+| `descriptor` | array | The descriptor array. It contains to following keys:
+|===
+
+[caption=]
+.`descriptor[] keys`
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `revision` | integer | Always `1`
+| `owner` | string | The SMB owner
+| `group` | string | The SMB group
+| `acl` | array | A list of ACEs. The list could be empty. Each ACE contains following keys:
+|===
+
+[caption=]
+.`acl[] keys`
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `trustee` | string | The SMB user affected by this ACE
+| `mode` | string | `allowed` or `denied`
+| `flags` | string | Inheritance flags
+| `mask` | string | Permission mask
+| `flagsAsInt` | integer | The inheritance flags as integer value
+| `maskAsInt` | integer | The permission mask as integer value
+|===
+
+===== after_set_acl
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `user` | string | The user who is trying to set the ACL
+| `ocPath` | string | The owncloud instance path
+| `smbPath` | string | The SMB path
+| `descriptor` | array | The descriptor array. It contains to following keys:
+|===
+
+[caption=]
+.`descriptor[] keys`
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `revision` | integer | Always `1`
+| `owner` | string | The SMB owner
+| `group` | string | The SMB group
+| `acl` | array | A list of ACEs. The list could be empty. Each ACE contains following keys:
+|===
+
+[caption=]
+.`acl[] keys`
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `trustee` | string | The SMB user affected by this ACE
+| `mode` | string | `allowed` or `denied`
+| `flags` | string | Inheritance flags
+| `mask` | string | Permission mask
+| `flagsAsInt` | integer | The inheritance flags as integer value
+| `maskAsInt` | integer | The permission mask as integer value
+|===
+
+[width="100%",cols="25%,20%,100%",options="header"]
+|===
+| Key | Type | Description
+| `oldDescriptor` | array\|false | The previous descriptor array or false if the previous descriptor couldn't be fetched. The previous descriptor will have the same keys
+|===
