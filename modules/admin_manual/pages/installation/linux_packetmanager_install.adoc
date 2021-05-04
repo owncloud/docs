@@ -121,25 +121,30 @@ zypper removelock owncloud-complete-files
 
 First, install your own LAMP stack, as doing so allows you to create
 your own custom LAMP stack without dependency conflicts with the
-ownCloud package. Then,
-http://download.owncloud.org/download/repositories/production/owncloud/[update package manager’s configuration].
+ownCloud package. Then download and install from
+http://download.owncloud.org/download/repositories/production/owncloud/.
 
-Configurations are available for the following Linux distributions:
+The ownCloud server is designed to work with different databases and
+different web-servers, in a large range of configurations.
 
-* Ubuntu 14.04 & 16.04
-* Debian 7 & 8
-* RHEL 6 & 7
-* CentOS 7.2 & 7.3
-* SLES 11SP4 & 12SP2
-* openSUSE Leap 42.2 & 42.3
+This package comes without dependencies so that the installation
+is most likely to succeed. It also means unfortunately, that the
+server will not directly run after installing this package.
 
-NOTE: Repositories for Fedora, openSUSE Tumbleweed, and Ubuntu 15.04 have been dropped. 
-If you use Fedora, use https://owncloud.org/download/#owncloud-server-tar-ball[the tar archive] with your own LAMP stack. openSUSE users can rely on LEAP packages for Tumbleweed.
+To get started, try:
 
-Once your package manager has been updated, follow the rest of the
-instructions on the download page to install ownCloud. Once ownCloud’s
-installed, run xref:installation/installation_wizard.adoc[the Installation Wizard] to complete
-your installation.
+apt install apache2 libapache2-mod-php mariadb-server openssl
+apt install php-imagick php-common php-curl php-gd php-imap php-intl
+apt install php-json php-mbstring php-mysql php-ssh2 php-xml php-zip
+apt install php-apcu php-redis redis-server wget
+
+mysql -e "CREATE DATABASE IF NOT EXISTS owncloud"
+mysql -e "GRANT ALL PRIVILEGES ON owncloud.* TO owncloud@localhost IDENTIFIED BY 'password'";
+cp /usr/share/doc/*/owncloud-config-apache.conf.default /etc/apache2/sites-available/owncloud.conf
+a2ensite owncloud; systemctl reload apache2
+
+For more details see:
+xref:installation/quick_guides/ubuntu_20_04.adoc[Quick Installation Guide]
 
 NOTE: See the system_requirements for the recommended ownCloud setup and supported platforms.
 
