@@ -27,33 +27,74 @@ just like your other ownCloud files and folders.
 
 Compared to standard SMB access, WND has advanced features like:
 
-* User lockout prevention and password reset
-* More authentication mechanisms against the backend
-* Change notifications
-* Enhanced ACL support
+. User lockout prevention and password reset
+. More authentication mechanisms against the backend
+. Listen to change information triggered by the backend
+. Enhanced ACL support
+. Collaborative WND (CWND)
 
-Here is a brief description of the advanced features:
+.Brief Description of Advanced Features:
 
-Depending on the Windows or Samba policy, the user could get locked out of his account if he enters a wrong password a number of times. The lockout prevention tries to avoid this from happening, by resetting the password if it is wrong. For the case of ownCloud's standard SMB connector, the password won't be reset. It could happen, that the user gets locked out of the file server.
+User lockout prevention and password reset::
+Depending on the Windows or Samba policy, users could get locked out of their account if they enter a wrong password a number of times. The lockout prevention tries to avoid this from happening by resetting the password if it is wrong. In the case of ownCloud's standard SMB connector the password won't be reset. It could happen that users get locked out of the file server.
 
+More authentication mechanisms against the backend::
 Please see the details about the xref:enterprise/external_storage/enterprise_only_auth.adoc[Enterprise-Only Authentication Options]
 
-WND has the ability to trigger change notifications to users based on changes for files and folders. 
+Listen to change information triggered by the backend::
+Native Windows File Servers provide the ability to send change notifications regarding modified files and folders somewhere in a share. Samba can send file notifications as well, as long as all the file actions are performed through the SMB protocol. However, it won't work if the action is performed directly inside the filesystem used by Samba. This mechanism then updates the ownCloud database and provides the changes made to accessing users. Users do not need to manually check for changes in all possible locations of their mount. Changes processed are also propagated to sync clients automatically.
 
-With enhanced ACL support, both SMB and WND evaluate the file attributes (whether the file is hidden or read-only) to decide what ownCloud permissions should the file or folder have in ownCloud. On top of this, WND can also evaluate the ACLs by using the "ocLdapPermissionManager" in the mount point configuration. This will bring more accurate permissions to ownCloud, specially if each user could have different permissions over the files in Windows.
+Enhanced ACL support::
+With enhanced ACL support, both SMB and WND evaluate the file attributes (whether the file is hidden or read-only) to decide what ownCloud permissions the file or folder should have in ownCloud. On top of this, WND can also evaluate the ACLs by using the `ocLdapPermissionManager` in the mount point configuration. This will bring more accurate permissions to ownCloud, especially when each user can have different permissions for the files in Windows. Consider when using CWND, only the default `nullPermissionManager` can be used.
 
-Mounts to a Windows or Samba file server are labeled with a little four-pane Windows-style icon, and the left pane of your Files page includes a Windows Network Drive filter. Figure 1 shows a new Windows Network Drive share marked with red warning which indicates that ownCloud cannot connect to the share. The reason is that it may require the user to login, or it is not available, or there is an error in the configuration.
+Collaborative WND (CWND)::
+Compared to a standard WND mountpoint, a collaborative WND mount offers enhanced features. In a CWND, each user shares the same ownCloud internal information for files and folders based on its internal identification (file_id). This means that _comments_ and _tags_ can be shared with all users accessing files and folders of this mount without the need that users must be members of the mount from an ownCloud point of view. A CWND can only be set by an admin in menu:Settings[Admin > Storage] but not in the users section. With CWND, all accessing users have their own access to the mount with their own credentials but share additional information with other users accessing the same data. See the table below to compare the differences.
++
+.Collaborative WND Differences Based on the Mount Type
+[cols=".^15%,.^35%,.^35%",options="header",caption=]
+|===
+|
+^| Windows Network Drive
+^| Windows Network Drive (collaborative)
 
-Files are synchronized bi-directionally, and you can create, upload, and delete files and folders.
+h| Login Credentials
+a| * User credentials +
+* Credentials of the sharer
+a| * `Log-in credentials, saved in session` +
+* `Log-in credentials, saved in database` +
+* `User entered, stored in database`
+
+h| File ID
+| Unique per user or from the sharer
+| Same for all users accessing this mount
+
+h| Access Rights
+| From the accessing user or the sharer
+| From the accessing user
+
+h| Activities +
+Comments +
+Tags
+a| * No shared access +
+** Visibility limited to the user +
+* Shared access +
+** Comments and tags are shared, access based on the sharer
+| Comments and tags are shared, access based on the user
+|===
+
+.More WND Properties
+Mounts to a Windows or Samba file server are labeled with a little four-pane Windows-style icon, and the left pane of your Files page includes a Windows Network Drive filter. Figure 1 shows a new Windows Network Drive share marked with a red warning which indicates that ownCloud cannot connect to the share. The reason is that it may require the user to login, or it is not available, or there is an error in the configuration.
+
+Files are synchronized bidirectionally, and you can create, upload and delete files and folders.
 ownCloud server admins can create Windows Network Drive mounts and optionally allow users to set up their
 own personal Windows Network Drive mounts.
 
 Depending on the authentication method, passwords for each mount are encrypted and stored in the ownCloud
 database, using a long random secret key stored in `config.php`. This allows ownCloud to access the shares
-when the users who own the mounts are not logged in. This access will not work if the mount is session based, where passwords are not stored, and available only for the current active session.
+when the users who own the mounts are not logged in. This access will not work if the mount is session based, where passwords are not stored and are available only for the current active session.
 
 .Figure 1. Windows Network Drive share on your Files page
-image:enterprise/external_storage/windows_network_drive/wnd-1.png[Windows Network Drive share on your Files page]
+image:enterprise/external_storage/windows_network_drive/wnd-1.png[Windows Network Drive share on your Files page, width=50%]
 
 == Installation
 
@@ -109,11 +150,11 @@ To enable external storage, as the ownCloud administrator go to menu:Settings[St
 
 === Creating a New Share
 
-When you create a new WND share, you need three things:
+.When you create a new WND share, you need three things:
 
-* The login credentials for the share
-* The server address, the share name; and
-* The folder you want to connect to
+* the login credentials for the share,
+* the server address, the share name and
+* the folder you want to connect to.
 
 [CAUTION]
 .Treat all the parameters as being case-sensitive.
@@ -122,23 +163,25 @@ Although some parts of the app might work properly regardless of casing, other p
 if the case is not respected.
 ====
 
-1. Enter the ownCloud mount point for your new WND share. This _must not_ be an existing folder.
-2. Select your authentication method; See xref:enterprise/external_storage/enterprise_only_auth.adoc[Enterprise-Only Authentication Options] for complete information on the five available authentication methods.
+.Follow this procedure to create a new mount point based on WND
+
+. Enter the ownCloud mount point for your new WND share. This _must not_ be an existing folder.
+. Select your authentication method. See xref:enterprise/external_storage/enterprise_only_auth.adoc[Enterprise-Only Authentication Options] for complete information on the five available authentication methods.
 +
 .Figure 2. WND mountpoint and authorization credentials
-image:enterprise/external_storage/windows_network_drive/wnd-2.png[WND mountpoint and authorization credentials]
-3. Enter the address of the server that contains the WND share.
-4. The Windows share name.
-5. The root folder of the share. This is can be the subfolder name, or the `$user` variable for the user's home directories. Note that the LDAP `Internal Username Attribute` must be set to the `samaccountname` for either the share or the root to work, and the user's home directory needs to match the `samaccountname`.
+image:enterprise/external_storage/windows_network_drive/wnd-2.png[WND mountpoint and authorization credentials, width=60%]
+. Enter the address of the server that contains the WND share.
+. The Windows share name.
+. The root folder of the share. This is can be the subfolder name, or the `$user` variable for the user's home directory. Note that the LDAP `Internal Username Attribute` must be set to the `samaccountname` for either the share or the root to work, and the user's home directory needs to match the `samaccountname`.
 (See xref:configuration/user/user_auth_ldap.adoc[User Authentication with LDAP].)
-6. Login credentials.
-7. Select users or groups with access to the share. The default is all users.
-8. Click the gear icon for additional mount options. Note, that previews are enabled by default, while
+. Login credentials.
+. Select users or groups with access to the share. The default is all users.
+. Click the gear icon for additional mount options. Note that previews are enabled by default, while
 sharing is not (see Figure 3). Sharing is not available for all authorization methods. For details please see the
 xref:enterprise/external_storage/enterprise_only_auth.adoc[Enterprise-Only Authentication Options]. When using large storages with many files, you may want to disable previews, because this can significantly increase performance.
 +
 .Figure 3. WND server, credentials, and additional mount options
-image:enterprise/external_storage/windows_network_drive/wnd-3.png[WND server, credentials, and additional mount options]
+image:enterprise/external_storage/windows_network_drive/wnd-3.png[WND server, credentials, and additional mount options, width=50%]
 
 Your changes are saved automatically.
 
@@ -192,9 +235,9 @@ different, such as `nt authority\system` or `builtin\domain-users`.
 
 The value to select for this provider is: `ocLdapPermissionManager`.
 
-=== Windows Network Drive Notifications
+=== WND Notifications
 
-The SMB protocol supports registering for notifications of file changes on remote Windows SMB storage servers. Notifications are more efficient than polling for changes, as polling requires scanning the whole mounted SMB storage. While files changed through the ownCloud Web Interface or sync clients are automatically recognized by ownCloud, this recognitions are not possible when files are changed directly on remote SMB storage mounts. When using the _listener_, files changed on the SMB backend are recognized and a notification is stored in the database. The _process-queue_ job reads these stored notifications and initiates further actions.
+The SMB protocol supports registering for notifications of file changes on remote Windows SMB storage servers. Notifications are more efficient than polling for changes, as polling requires scanning the whole mounted SMB storage. While files changed through the ownCloud Web Interface or sync clients are automatically recognized by ownCloud, recognition is not possible when files are changed directly on remote SMB storage mounts. When using the _listener_, files changed on the SMB backend are recognized and a notification is stored in the database. The _process-queue_ job reads these stored notifications and initiates further actions.
 
 NOTE: The capability of the listener depends on the ability of the used SMB/CIFS storage backend to provide notifications. While Windows file servers have no limitations, some vendors may have restrictions. Please check these with your storage provider. It may be possible, that notifications for Samba only work for the target folder you're listening to, but not for any sub structures. If you're listening on the "/top" folder, you may not receive notifications for "/top/middle/bottom" folder. In this case, you have to setup listeners for every _existing_ folder and also for any _new_ folders that will be created. With Windows file servers, you will receive notifications for every file or subfolder inside the folder you're listening to.
 
@@ -329,7 +372,7 @@ NOTE: The commands must be **strictly sequential**. This can be done by using `f
 * * * * *  sudo -u www-data /usr/bin/php /var/www/owncloud/occ wnd:process-queue <HOST> <SHARE>
 ----
 
-==== Execution Serialization
+===== Execution Serialization
 
 Parallel runs of `wnd:process-queue` might lead to a user lockout. The reason for this is that several
 `wnd:process-queue` might use the same wrong password because it hasn't been updated by the time they fetch it.
@@ -402,6 +445,92 @@ Users who can access the Windows Network Drive storage via share won't receive a
 ----
 
 NOTE: `wnd.activity.sendToSharees` key depends on the `wnd.activity.registerExtension` key to take effect.
+
+=== Collaborative WND
+
+CWND can only be set by an admin in menu:Settings[Admin > Storage]. This mount type cannot be selected by users in the user section. To prepare access for your mount point using the CWND mount type, you must provide a _Service Account_ (SA) which is an ordinary SMB user granting read access to the share you want to mount. You can use one SA for all CWND mounts or separate ones. The SA is used to gather the contents of a share used by the WND Listener and provides a common `file_id` to all accessing users, while the accessing user has only access to those files and folders for which he is granted rights.
+
+. As an admin, go to menu:Settings[Admin > Storage] and create a new CWND based mount point.
++
+.Figure 5. Add a Collaborative Windows Network Drive Mount
+image:enterprise/external_storage/windows_network_drive/cwnd_add_storage.png[Add Collaborative Windows Network Drive Mount, width=50%]
+. Chose any name for the mount point that fits your needs.
+. Select user login type.
++
+[IMPORTANT]
+====
+The following three are sensible and working selections for CWND:
+[loweralpha]
+. `Log-in credentials, saved in session`
+. `Log-in credentials, saved in database`
+. `User entered, stored in database` ^[1]^
++
+[1] Must be used if user authentication is made with OIDC
+====
++
+.Figure 6. Select How User Logs in to the Mount Point
+image:enterprise/external_storage/windows_network_drive/cwnd_login_possibilities.png[Select How User Logs Into the Mount Point]
+[loweralpha]
+.. `Log-in credentials, saved in session`
++
+When the user logs in to ownCloud via a browser, the credentials to authenticate CWND are taken from this login. These credentials immediately end when the user logs out because the session has ended.
++
+* _This login type can not be set to `Enable Sharing`._
+* _This login type is by design not compatible with OIDC authentication._
+.. `Log-in credentials, saved in database`
++
+Similar to `Log-in credentials, saved in session`, the credentials to authenticate CWND are taken from the login but saved in the ownCloud database. Any re-login also updates the database entry. As the credentials to access CWND are taken from the database, a user logout will not stop CWND access and serving data is continued, e.g. for synchronization.
++
+* _This login type can be set to `Enable Sharing`._
+* _This login type is by design not compatible with OIDC authentication._
+.. `User entered, stored in database`
++
+User login to ownCloud and providing credentials to access the CWND mount are completely separated. After logging in to ownCloud, the user may see his CWND mounts marked inaccessible. To regain access, the user must enter his share credentials in menu:Settings[Personal > Storage] which are then stored into the ownCloud database. As the credentials to access CWND are taken from the database, a user logout will not stop CWND access and serving data is continued, e.g. for synchronization.
++
+* _This login type can be set to `Enable Sharing`._
+* _This login type is by design *the only one compatible with OIDC authentication*._
++
+.Figure 7. Re-enter Mount Access Credentials
+image:enterprise/external_storage/windows_network_drive/cwnd_regain_mount_access.png[Re-enter Mount Access Credentials]
+
+. Configure this mount point by adding data into the corresponding fields
++
+The password for the Service Account can be temporarily any value to satisfy the creation of the mount point. The functional password is entered in the next step.
++
+.Figure 8. Enter Connection Info and the Service Account
+image:enterprise/external_storage/windows_network_drive/cwnd_fields.png[Enter Connection Info and Service Account]
++
+When everything has been entered correctly, the mount point gets a green button on the left.
+. Enter the Password of the Service Account
++
+First get the <mount id> of the newly created mount point by running the command below in a shell:
++
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} files_external:list --short
+----
++
+This will produce an output like the following:
++
+----
++----------+-------------+------------------+-------------------+------+-------+
+| Mount ID | Mount Point | Applicable Users | Applicable Groups | Auth | Type  |
++----------+-------------+------------------+-------------------+------+-------+
+| 1        | /SFTP       | All              |                   | User | Admin |
+| 2        | /CWND       | All              |                   | User | Admin |
++----------+-------------+------------------+-------------------+------+-------+
+----
++
+Use the <mount-id> number of your freshly created CWND mount for the next command:
++
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} wnd:set-service-account <mount-id>
+----
++
+This command will ask you for the password of the used Service Account and stores it encrypted in the database.
++
+NOTE: If the password for the SA changes, you have to redo this step for each CWND mount point.
 
 == Troubleshooting
 
