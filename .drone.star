@@ -87,7 +87,7 @@ def build(ctx, latest_version, deployment_branch, base_branch):
                 "pull": "always",
                 "image": "owncloudci/asciidoctor:latest",
                 "commands": [
-                    "bin/cli -m",
+                    "bin/makepdf -m",
                 ],
             },
             {
