@@ -292,13 +292,13 @@ To generate the documentation in PDF format, you need to have `asciidoctor-pdf` 
 When installed, run the command below in the root directory of the repository, to generate PDF versions of the _administration_, _developer_ and _user_ manuals.
 
 ```console
-./bin/cli -m
+./bin/makepdf -m
 Generating version 'master' of the admin manual, dated: March 12, 2021
 Generating version 'master' of the developer manual, dated: March 12, 2021
 Generating version 'master' of the user manual, dated: March 12, 2021
 ```
 
-`./bin/cli` invokes [asciidoctor-pdf](https://github.com/asciidoctor/asciidoctor-pdf) and passes:
+`./bin/makepdf` invokes [asciidoctor-pdf](https://github.com/asciidoctor/asciidoctor-pdf) and passes:
 
 1. **The configuration file to use**
 
