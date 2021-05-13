@@ -1,5 +1,14 @@
 #!/usr/bin/env bash
 
+# Use and adapt this script only if there are multiple manuals
+# Each manual build is based on a book template found in the mandatory directory books.
+# This script creates pdf versions of the manual.
+# If no manual is in the parameter list, all available manuals are built to pdf.
+# If called from the command line, the script user the term "master" (or "main") as branch reference.
+# If called from drone, the script uses additional variables (like a branch name).
+# The script uses another script to provide the attribute list of the yaml file dynamically.
+# Be aware that a manual name MUST NOT contain a blank.
+
 set -e
 set -u
 set -o noclobber
@@ -9,23 +18,23 @@ set -o nounset
 IFS=$'\n\t'
 
 ACTION=
+VERSION=
+DEFAULT_VERSION="master"
 DRY_RUN=false
 FONTS_DIRECTORY="fonts"
 MANUAL_NAME=
 RELEASE_DATE=$(date +'%B %d, %Y')
 STYLE="owncloud"
 STYLES_DIRECTORY="resources/themes"
-LANGUAGE=
+BUILD_BASE_DIR="build/server"
+AVAILABLE_MANUALS=(admin user developer)
+
+ERR_UNSUPPORTED_MANUAL=21
+ERR_UNSUPPORTED_ACTION=22
 
 DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 # define path and file of .yml to parse
 YMLFILE="$DIR/../site.yml"
-
-ERR_UNSUPPORTED_LANGUAGE=20
-ERR_UNSUPPORTED_MANUAL=21
-ERR_UNSUPPORTED_ACTION=22
-ERR_LINTER_NOT_AVAILABLE=23
-ERR_NO_LANGUAGE_SPECIFIED=24
 
 # yamlparse.sh is a script to get a list of key/value pairs from site.yml which
 # will then be used as additional dynamically created argument set for asciidoctor-pdf.
@@ -37,13 +46,24 @@ if [[ -z "${VERSION:-}" ]]; then
     if [[ -n "${DRONE_TAG:-}" ]]; then
         VERSION=${DRONE_TAG/v//}
     else
-        [[ -n "${DRONE_BRANCH:-}" ]] && VERSION=${DRONE_BRANCH/v//} || VERSION=master
+        [[ -n "${DRONE_BRANCH:-}" ]] && VERSION=${DRONE_BRANCH/v//} || VERSION=${DEFAULT_VERSION}
     fi
 fi
 
 function usage()
 {
-    echo "Usage: bin/makepdf [-c] [-d] [-h] [-m] [-n <admin|developer|user>] [-l <go|xml|json|php|kotlin|yaml>]"
+    # create a list of modules separated by |
+    local list=$(echo ${AVAILABLE_MANUALS[@]} | sed -r 's/[ ]+/|/g')
+
+    echo
+    echo "Usage: ./bin/makepdf [-c] [-d] [-h] [-m] [-n <${list}>]"
+    echo
+    echo "-h ... help"
+    echo "-c ... clean the build/ directory (contains the pdf)"
+    echo "-d ... Debug mode, prints the book to be converted. Only in combination with -m and/or -n"
+    echo "-m ... Build all available manuals"
+    echo "-n ... Build manual <name>. Only in combination with -m"
+    echo
 }
 
 function clean_build_dir()
@@ -53,89 +73,13 @@ function clean_build_dir()
     echo "...build directory cleaned."
 }
 
-function validate_code_files()
-{
-    case $LANGUAGE in
-        go)
-            if command -v golint &>/dev/null; then
-                echo "Validating go source files" && \
-                find ./modules/*_manual/examples -type f -name "*.go" \
-                    -exec sh -c 'echo Linting {} && golint {} && echo' \;
-            else
-                echo "Golint is not available."
-                echo "Exiting."
-                exit $ERR_LINTER_NOT_AVAILABLE
-            fi
-            ;;
-
-        json)
-            if command -v jsonlint &>/dev/null; then
-                find ./modules/*_manual/examples -type f -name "*.json" \
-                    -exec sh -c 'echo Linting {} && jsonlint -qp {} && echo' \;
-            else
-                echo "jsonlint is not available."
-                echo "Exiting."
-                exit $ERR_LINTER_NOT_AVAILABLE
-            fi
-            ;;
-
-        kotlin)
-            if command -v ktlint &>/dev/null; then
-                ktlint --reporter=plain "./modules/*_manual/**/*.kt" || true;
-            else
-                echo "ktlint is not available."
-                echo "Exiting."
-                exit $ERR_LINTER_NOT_AVAILABLE
-            fi
-            ;;
-
-        php)
-            if command -v php &>/dev/null; then
-                find ./modules/*_manual/examples -type f -name "*.php" \
-                    ! -path "**/vendor/*" \
-                    -exec php -l {} \;
-            else
-                echo "Golint is not available."
-                echo "Exiting."
-                exit $ERR_LINTER_NOT_AVAILABLE
-            fi
-            ;;
-
-        xml)
-            if command -v xmllint &>/dev/null; then
-                find ./modules/*_manual/examples -type f -name "*.xml" \
-                    -exec xmllint --noout {} \;
-            else
-                echo "xmllint is not available."
-                echo "Exiting."
-                exit $ERR_LINTER_NOT_AVAILABLE
-            fi
-            ;;
-
-        yaml)
-            if command -v yamllint &>/dev/null; then
-                find ./modules/*_manual/examples -type f -name "*.yml" \
-                    -exec sh -c 'echo Linting {} && yamllint -f parsable {} && echo' \;
-            else
-                echo "yamllint is not available."
-                echo "Exiting."
-                exit $ERR_LINTER_NOT_AVAILABLE
-            fi
-            ;;
-
-        *)
-            echo "That language is not, currently, supported" 
-            exit $ERR_UNSUPPORTED_LANGUAGE
-            ;;
-    esac
-}
-
 function convert_antora_nav_to_asciidoc_list()
 {
     local filename="$1"
 
     while read line; do
-        if [[ ${line} =~ \]$ ]]; then 
+        if [[ ${line} =~ \]$ ]]; then
+			# on multi manual repos, the level offset is corrected with 2 (NF-2)
             level_offset=$(echo "$line" | awk -F"*" '{print NF-2}')
             revised_line=$(echo "$line" | sed 's/xref:/include::{module_base_path}/' | sed 's/\[.*\]//g' | sed -r 's/^\*{1,} //')
             echo "${revised_line}[leveloffset=+${level_offset}]"
@@ -146,15 +90,18 @@ function convert_antora_nav_to_asciidoc_list()
 
 function validate_manual()
 {
+    # make a comma-separated list of the modules
+    local list=$(echo ${AVAILABLE_MANUALS[@]} | sed -r 's/[ ]+/, /g')
     local manual="$1"
 
-    if [[ "$manual" != "admin" && "$manual" != "developer" && "$manual" != "user" ]]; then
-        echo "[${manual}] is not a valid manual." 
-        echo "Available manuals are admin, developer, and user."
-        return $ERR_UNSUPPORTED_MANUAL
+    # ok if manual is in the list of possible manuals
+    if [[ ${AVAILABLE_MANUALS[@]} =~ (^|[[:space:]])"${manual}"($|[[:space:]]) ]]; then
+       return 0
     fi
 
-    return 0
+    echo "[${manual}] is not a valid manual." 
+    echo "Available manuals are: ${list}."
+    return $ERR_UNSUPPORTED_MANUAL
 }
 
 function build_pdf_manual()
@@ -162,7 +109,7 @@ function build_pdf_manual()
     local manual="$1"
     local release_date="$2"
     local revision="$3"
-    local build_directory="$(pwd)/build/server/${revision}/${manual}_manual/"
+    local build_directory="$(pwd)/${BUILD_BASE_DIR}/${revision}/${manual}_manual/"
     local manual_infix="$(tr '[:lower:]' '[:upper:]' <<< ${manual:0:1})${manual:1}"
     local book_file="books/ownCloud_${manual_infix}_Manual.adoc" 
     local nav_file="modules/${manual}_manual/nav.adoc"
@@ -170,6 +117,8 @@ function build_pdf_manual()
     # Get the dynamic list of attributes from site.yml
     # The output after sed is a string like -a key=value -a key=value ...
     # For testing, also use the yamltest.sh script
+    # You can do the same for extensions like kroki if needed (currently not implemented).
+    # Be aware, that the tabs.js extension MUST not be used in case (html only)
     local attributes=("$(parse_yaml $YMLFILE | grep asciidoc_attributes | sed 's/asciidoc_attributes_/-a /g' | sed 's/\")/\"/' | sed 's/=(/=/' | sed "s/\"'/\'/" | sed "s/'\"/\'/")")
 
     if [[ "$DRY_RUN" == true ]]; then
@@ -184,68 +133,61 @@ function build_pdf_manual()
     echo "Generating version '${revision}' of the ${manual} manual, dated: ${release_date}"
     mkdir -p "$build_directory"
 
-    # Create argument list, necessary as we have dynamic attributes coming from another file
-    # The param string needs to be proper constructed, pls be careful, see comment below
-    param='-d book '
-    param+='-a pdf-stylesdir=''"'${STYLES_DIRECTORY}/'" '
-    param+='-a pdf-fontsdir=''"'${FONTS_DIRECTORY}'" '
-    param+='-a pdf-style=''"'${STYLE}'" '
-    param+='-a format="pdf" '
-    param+='-a experimental="" '
-    param+='-a examplesdir=''"'$(pwd)/modules/${manual}_manual/examples/'" '
-    param+='-a imagesdir=''"'$(pwd)/modules/${manual}_manual/assets/images/'" '
-    param+='-a partialsdir=''"'$(pwd)/modules/${manual}_manual/pages/_partials/'" '
-    param+='-a revnumber=''"'${revision}'" '
-    param+='-a revdate=''"'${release_date}'" '
-    param+="$attributes"' '
-    param+='--base-dir ''"'$(pwd)'" '
-    param+='--out-file ''"'$(pwd)/build/server/${revision}/${manual}_manual/ownCloud_${manual_infix}_Manual.pdf'" '
+    # https://docs.asciidoctor.org/asciidoctor.js/latest/cli/options/
 
-# please uncomment echo in case you want/need debugging
+    # Create argument list, necessary as we have dynamic attributes coming from another file
+    # The param string needs to be properly constructed, please be careful, see comment below.
+
+    param=''
+    param+='-d book '
+    param+='-a pdf-stylesdir='${STYLES_DIRECTORY}/' '
+    param+='-a pdf-fontsdir='${FONTS_DIRECTORY}' '
+    param+='-a pdf-style='${STYLE}' '
+    param+='-a format="pdf" '
+#    param+='-a experimental="" ' #   experimental already set in site.yml
+    param+='-a examplesdir='$(pwd)/modules/${manual}_manual/examples/' '
+    param+='-a imagesdir='$(pwd)/modules/${manual}_manual/assets/images/' '
+    param+='-a partialsdir='$(pwd)/modules/${manual}_manual/pages/_partials/' '
+    param+='-a revnumber='${revision}' '
+    param+='-a revdate="'${release_date}'" '
+    param+="$attributes"' '
+    param+='--base-dir '$(pwd)' '
+    param+='--out-file '$(pwd)/${BUILD_BASE_DIR}/${revision}/${manual}_manual/ownCloud_${manual_infix}_Manual.pdf' '
+#    param+='--trace '
+#    param+='--verbose '
+
+# please uncomment in case you want/need debugging
 #    echo "Parameterlist, useful for debugging"
 #    echo $param
 #    echo
+#    cat $book_file <(convert_antora_nav_to_asciidoc_list "$nav_file")
 #    exit
 
-createpdf="asciidoctor-pdf $param - < <(cat $book_file <(convert_antora_nav_to_asciidoc_list "$nav_file"))"
+    createpdf="asciidoctor-pdf $param - < <(cat $book_file <(convert_antora_nav_to_asciidoc_list "$nav_file"))"
+#    createpdf="asciidoctor-pdf $param - < <(cat $book_file)"
 
-eval $createpdf
+    eval $createpdf
 
-: '
-# The following lines are the original call with all arguments but not containing the
-# dynamically created argument list from ../site.yml
-# Kept for reviewing purposes
-
-    asciidoctor-pdf -d book \
-        -a pdf-stylesdir="${STYLES_DIRECTORY}/" \
-        -a pdf-fontsdir="${FONTS_DIRECTORY}" \
-        -a pdf-style="${STYLE}" \
-        -a format="pdf" \
-        -a experimental="" \
-        -a examplesdir="$(pwd)/modules/${manual}_manual/examples/" \
-        -a imagesdir="$(pwd)/modules/${manual}_manual/assets/images/" \
-        -a partialsdir="$(pwd)/modules/${manual}_manual/pages/_partials/" \
-        -a revnumber="${revision}" \
-        -a revdate="${release_date}" \
-        --base-dir "$(pwd)" \
-        --out-file "$(pwd)/build/server/${revision}/${manual}_manual/ownCloud_"${manual_infix}"_Manual.pdf" \
-        - < <(cat $book_file <(convert_antora_nav_to_asciidoc_list "$nav_file"))
-'
 }
 
 function build_manuals()
 {
+    local actual_manual
+
+    # if no specific manual is named, then build them all
     if [[ -z "${MANUAL_NAME}" ]]; then
-        build_pdf_manual "admin" "$RELEASE_DATE" "$VERSION"
-        build_pdf_manual "developer" "$RELEASE_DATE" "$VERSION"
-        build_pdf_manual "user" "$RELEASE_DATE" "$VERSION"
+        for actual_manual in "${AVAILABLE_MANUALS[@]}"
+        do
+	       build_pdf_manual ${actual_manual} "$RELEASE_DATE" "$VERSION"
+        done
+    # build the given manual
     else
         validate_manual "$MANUAL_NAME" 
         build_pdf_manual "$MANUAL_NAME" "$RELEASE_DATE" "$VERSION"
     fi
 }
 
-while getopts ":hcdmn:l:" o
+while getopts ":hcdmn:" o
 do
     case ${o} in
         d )
@@ -256,10 +198,6 @@ do
             ;;
         m )
             ACTION="BUILD_MANUALS"
-            ;;
-        l )
-            ACTION="VALIDATE"
-            LANGUAGE="${OPTARG}"
             ;;
         c )
             ACTION="CLEAN"
@@ -281,15 +219,6 @@ case "$ACTION" in
         ;;
     CLEAN)
         clean_build_dir
-        ;;
-    VALIDATE)
-        if [[ -z $LANGUAGE ]]; then 
-            echo "No language was specified to be validated."
-            echo "Use the -l option to specify one."
-            echo "exiting."
-            exit $ERR_NO_LANGUAGE_SPECIFIED
-        fi
-        validate_code_files 
         ;;
     HELP | *)
         usage
