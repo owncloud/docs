@@ -1,20 +1,29 @@
 = Upgrade ownCloud From Packages
 :toc: right
+:packages-url: https://owncloud.com/older-versions/#server
 
-== Upgrade Quickstart
+== Upgrade Steps
 
 The alternative to a manual upgrade is configuring your system to use ownCloud’s
 https://download.owncloud.org/download/repositories/stable/owncloud/[Open Build Service] repository.
-Then stay current by using your Linux package manager to install fresh ownCloud packages. 
-After installing upgraded packages you must run a few more steps to complete the upgrade. 
-These are the basic steps to upgrading ownCloud:
+Then stay current by using your Linux package manager to install fresh ownCloud packages. However, you should exclude the ownCloud package during system upgrades. For more information, check out the section on xref:installation/linux_packetmanager_install.adoc[Linux Package Manager Installation]
+
+IMPORTANT: This approach should not be used unattended nor in clustered setups.
+
+In general, we discourage upgrades with a Linux package manager because you might encounter unwanted side effects and you'll have to manage the PHP installation separately. For further information on upgrading PHP, see section xref:upgrading/upgrade_php.adoc[Upgrade PHP on RedHat 7 and CentOS 7]
+
+If you want to proceed anyway, read the xref:release_notes.adoc[the release notes] for important information first.
+
+Before installing upgraded packages, perform the following steps: 
 
 * Disable all xref:maintenance/manual_upgrade.adoc#review-third-party-apps[third-party apps].
 * Make xref:maintenance/backup.adoc[a fresh backup].
-* Upgrade your ownCloud packages.
-* Run xref:configuration/server/occ_command.adoc#command-line-upgrade[occ upgrade]
-+
+
+Now you can upgrade your ownCloud packages, then run xref:configuration/server/occ_command.adoc#command-line-upgrade[{occ-command-example-prefix} upgrade].
+
 NOTE: The optional parameter to skip migration tests was removed in ownCloud 10.0. See xref:maintenance/upgrade.adoc[Testing a Migration] for background information.
+
+After the the upgrade is finished, perform the following actions:
 
 * Apply xref:installation/manual_installation.adoc#set-strong-directory-permissions[strong permissions] to your ownCloud directories.
 * Take your ownCloud server out of xref:configuration/server/occ_command.adoc#maintenance-commands[maintenance mode].
@@ -26,40 +35,40 @@ IMPORTANT: When upgrading from oC 9.0 to 9.1 with existing Calendars or Address 
 the xref:release_notes.adoc#changes-in-9-1[release notes] for important information about the needed 
 migration steps during that upgrade.
 
-== Upgrade Tips
+== Upgrading Only ownCloud or the Complete System
 
 Upgrading ownCloud from our
 https://download.owncloud.org/download/repositories/stable/owncloud/[Open Build Service]
-repository is just like any normal Linux upgrade. For example, on Debian or Ubuntu Linux this is the 
+repository like any normal Linux upgrade. For example, on Debian or Ubuntu Linux this is the 
 standard system upgrade command:
 
 ----
-apt-get update && apt-get upgrade
+sudo apt-get update && apt-get upgrade
 ----
 
 Or you can upgrade just ownCloud with this command:
 
 ----
-apt-get update && apt-get install owncloud-files
+sudo apt-get update && apt-get install owncloud-files
 ----
 
 On Fedora, CentOS, and Red Hat Linux use `yum` to see all available
 updates:
 
 ----
-yum check-update
+sudo yum check-update
 ----
 
 You can apply all available updates with this command:
 
 ----
-yum update
+sudo yum update
 ----
 
 Or update only ownCloud:
 
 ----
-yum update owncloud-files
+sudo yum update owncloud-files
 ----
 
 Your Linux package manager only downloads the current ownCloud packages.
@@ -69,14 +78,7 @@ may not see this until you refresh your ownCloud page.
 image:upgrade-1.png[image]
 
 Then use `occ` to complete the upgrade. You must run `occ` as your HTTP
-user. This example is for Debian/Ubuntu:
-
-[source,console,subs="attributes+"]
-----
-{occ-command-example-prefix} upgrade
-----
-
-This example is for CentOS/RHEL/Fedora:
+user. This example is for Debian/Ubuntu as well as CentOS/RHEL/Fedora:
 
 [source,console,subs="attributes+"]
 ----
@@ -96,9 +98,9 @@ xref:installation/manual_installation.adoc#set-strong-directory-permissions[dire
 == Upgrading Across Skipped Releases
 
 It is best to update your ownCloud installation with every new point
-release (e.g., 8.1.10), and to never skip any major release (e.g., don’t
+release (e.g., 8.1.10) and to never skip any major release (e.g., don’t
 skip 8.2.x between 8.1.x and 9.0.x). If you have skipped any major
-release you can bring your ownCloud current with these steps:
+release, you should upgrade your ownCloud step by step:
 
 1.  Add the repository of your current version (e.g., 8.1.x)
 2.  Upgrade your current version to the latest point release (e.g., 8.1.10) via your package manager
@@ -108,5 +110,4 @@ release you can bring your ownCloud current with these steps:
 6.  Run the `occ upgrade` routine (see xref:upgrade-quickstart[Upgrade Quickstart] above)
 7.  Repeat from step 4 until you reach the last available major release (e.g., 9.1.x)
 
-You’ll find repositories of previous ownCloud major releases on the 
-https://owncloud.com/older-versions/#server[Server Packages page].
+You’ll find repositories of previous ownCloud major releases on the {packages-url}[Server Packages page].
