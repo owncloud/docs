@@ -5,13 +5,16 @@
 # see if any of the example files are orphaned.
 #
 
-MANUALS=( admin developer user )
+AVAILABLE_MANUALS=( admin developer user )
 
-echo "Checking for orphaned example files."
+list=$(echo ${AVAILABLE_MANUALS[@]} | sed -r 's/[ ]+/, /g')
+
+echo
+echo "Checking for orphaned EXAMPLE files in manual: ${list}."
 echo "Please run this scrip from your docs root"
 echo
 
-for manual in "${MANUALS[@]}"; do
+for manual in "${AVAILABLE_MANUALS[@]}"; do
     [[ ! -e "./modules/${manual}_manual/" ]] && echo "Cannot find ${manual} manual." && continue
 
     echo "Checking the ${manual} manual"
@@ -23,5 +26,10 @@ for manual in "${MANUALS[@]}"; do
 done
 
 echo "Check completed."
-echo "Please consider that files may have been added intentionally but have currently not been included in the documeantation."
-echo "You may want to check the orphan history via 'git log --full-history -- full_path_file_from_above'."
+echo
+echo "Please consider that files may have been added intentionally but have currently not been included in the documentation."
+echo
+echo "You may want to check the orphan history via:"
+echo
+echo "git log --full-history -- full_path_file_from_above"
+echo
