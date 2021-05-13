@@ -893,3 +893,78 @@ In the above example, `listFolder` is called and does an API call to access the 
 
 For more information on Behat, and how to write acceptance tests using it, see http://behat.org/en/latest/guides.html[the Behat documentation].
 For background information on Behaviour-Driven Development (BDD), see https://dannorth.net/whats-in-a-story/[Dan North resources].
+
+== Skipping and Debugging Test Suites in CI
+
+=== Skip Pipelines
+
+For various purposes, we may skip one or more CI pipelines. Use `skip` in drone config to skip the test pipelines. `skip` is available for `javascript`, `unit` and `acceptance` tests.
+
+Usage:
+[source,py]
+----
+...
+'phpunit': {
+    'allDatabases' : {
+      'phpVersions': [
+        '7.2',
+      ],
+      'skip': True
+  },
+}
+...
+'acceptance': {
+  'api': {
+    'suites': [
+      'apiAuth',
+      'apiAuthOcs',
+      'apiAuthWebDav',
+      'apiCapabilities',
+      'apiComments'
+    ],
+    'skip': True
+  },
+}
+...
+----
+
+=== Debug Specific Test Suites
+In CI, we may want to run only one or specific test suites for debugging purpose. To do so we can use `debugSuites` in drone config which takes list of suite names. If `debugSuites` is included with one or more test suites in it then only those suites will run in CI.
+(Note: remember to check `'skip': False` if you are using `skip`)
+
+Usage:
+[source,py]
+----
+...
+'acceptance': {
+  'api': {
+    'suites': [
+      'apiAuth',
+      'apiAuthOcs',
+      'apiAuthWebDav',
+      'apiCapabilities',
+      'apiComments'
+    ],
+    'debugSuites': ['apiAuth']
+  }
+}
+...
+----
+
+Similarly, in the case of test suites that run in parts, we can use `skipExceptParts` to specify only which part we want to run.
+
+Usage:
+[source,py]
+----
+...
+'acceptance': {
+  'apiProxy': {
+    'suites': {
+      'apiProxySmoketest': 'apiProxySmoke',
+    },
+    'numberOfParts': 8,
+    'skipExceptParts': [3]
+  }
+}
+...
+----
