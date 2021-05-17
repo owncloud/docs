@@ -792,6 +792,28 @@ Use this tag on all UI scenarios.
 |generating previews/thumbnails takes time. Use this tag on UI test scenarios that do not need to test thumbnail behavior.
 |===
 
+=== Running tests using release tarballs in CI
+If you want to run the tests in CI against a system installed from one of the release tarballs, you can use the `testAgainstCoreTarball` setting in the `config` section of `.drone.star`. You can use the `coreTarball` option to specify which release tarball to install from. If no tarball version is specified then `daily-master-qa` will be used.
+This will only use the release tarballs for running the acceptance tests while the unit and integration tests will run using the git branch.
+
+[source,python]
+----
+config = {
+  'acceptance': {
+    'api': {
+      'suites': [
+        'apiAuth',
+        'apiAuthOcs',
+        'apiAuthWebDav',
+        # and so on...
+      ],
+      'testAgainstCoreTarball': True,
+      'coreTarball': '10.7.0',
+    },
+  },
+}
+----
+
 == Writing Scenarios For Bugs
 
 If you are developing a new feature, and the scenarios that you have written do not pass,
