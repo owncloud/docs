@@ -77,7 +77,7 @@ function find_orphans_for_manual()
 
 	# _partials may not be present
 	partial_files=()
-	if [ -d "$partials_dir" ]; then
+	if [ -d "$pages_dir/$partials_dir" ]; then
 		partial_files=($(find "$pages_dir/$partials_dir" ${not_in_path} -type f -name '*.adoc' -print | sed "s|$pages_dir\/||g" | sort))
 		#echo "${partial_files[@]}" | tr ' ' '\n'
 	fi
@@ -87,6 +87,12 @@ function find_orphans_for_manual()
 	not_partial_files=($(echo ${all_files[@]} ${partial_files[@]} | tr ' ' '\n' | sort | uniq -u))
 	#echo "${not_partial_files[@]}" | tr ' ' '\n'
 
+	# get all files which have an include statement
+	# this is necessary because includes do have a relative path which needs further processing
+	# to remove false positives. the result includes the relative path of the files 
+	files_with_include=($(grep -oF 'include::./' "${not_partial_files[@]/#/$pages_dir/}" | sed "s|:include::.\/||g" | sort | uniq))
+	#echo "${files_with_include[@]}" | tr ' ' '\n'
+
 	# get all files referenced in the navigation file
 	nav_list=(`get_antora_nav_list "$nav_file"`)
 	#echo "${nav_list[@]}" | tr ' ' '\n'
@@ -95,20 +101,37 @@ function find_orphans_for_manual()
 	not_in_nav=($(echo ${not_partial_files[@]} ${nav_list[@]} | tr ' ' '\n' | sort | uniq -u))
 	#echo "${not_in_nav[@]}" | tr ' ' '\n'
 
+	# check if files not in nav are somewhere referenced in the "with_include" list
+	# those files are referenced and will be excluded from the not_in_nav list
+
+	# get only the filename without path component
+	not_in_nav_filename_only=($(echo "${not_in_nav[@]##*/}"))
+	#echo "${not_in_nav_filename_only[@]}" | tr ' ' '\n'
+
+	# run only if there are files with an include:: statement found
+	# if not found, true_not_in_nav will not be set
+	if (( ${#files_with_include[@]} )); then
+		includes_found=($(grep -hF "${not_in_nav_filename_only[@]/#/-e}" -- $(echo "${files_with_include[@]}" | tr ' ' '\n') | sed "s|include::.\/||g" | sed "s/\[[^\[]*$//" | uniq -u))
+		#echo "${includes_found[@]}" | tr ' ' '\n'
+
+		true_not_in_nav=($(echo "${not_in_nav[@]}" | tr ' ' '\n' | grep -v "${includes_found[@]/#/-e}"))
+		#echo "${true_not_in_nav[@]}" | tr ' ' '\n'
+	fi
+
 	# if all files found are referenced in the navigation, you do not have orhaned .adoc files
-	if [ -z "$not_in_nav" ]; then
-		echo "All .adoc files are referenced the the navigation"
+	if [ -z "$true_not_in_nav" ]; then
+		echo -e "\e[1;32mAll .adoc files are referenced in the navigation or included \e[0m"
 		echo
-		echo "No orphans, exiting"
+		echo -e "\e[1;32mNo orphans, exiting \e[0m"
 		echo
 		exit
 	fi
 
 	echo
-	echo "Following files are not listed in nav.adoc"
-	echo "Check if this is intended"
+	echo -e "\e[1;35mFollowing files are not listed in nav.adoc or not included anywhere \e[0m"
+	echo -e "\e[1;35mCheck if this is intended \e[0m"
 	echo
-	echo "${not_in_nav[@]}" | tr ' ' '\n'
+	echo "${true_not_in_nav[@]}" | tr ' ' '\n'
 	echo
 
 	# we only need to check those files which are not part of the navigation
@@ -120,15 +143,15 @@ function find_orphans_for_manual()
 	#echo "${checkable_files_rp[@]}" | tr ' ' '\n'
 
 	# check if a file has occurences in the list of all files 
-	matches_found=($(grep -ohF "${not_in_nav[@]/#/-e}" -- $(echo "${checkable_files_rp[@]}" | tr ' ' '\n') | sort | uniq))
+	matches_found=($(grep -ohF "${true_not_in_nav[@]/#/-e}" -- $(echo "${checkable_files_rp[@]}" | tr ' ' '\n') | sort | uniq))
 	#echo "${matches_found[@]}" | tr ' ' '\n'
 
-	# these files are orphaned as they have no reference from anywhere
-	not_linked_in_files=($(echo ${not_in_nav[@]} ${matches_found[@]} | tr ' ' '\n' | sort | uniq -u))
-	#echo "${not_linked_in_files[@]}"
+	# these files look orphaned as they have no reference from anywhere
+	not_linked_in_files=($(echo ${true_not_in_nav[@]} ${matches_found[@]} | tr ' ' '\n' | sort | uniq -u))
+	#echo "${not_linked_in_files[@]}"  | tr ' ' '\n'
 
-	echo "Following files are not linked anywhere and therefore orphaned"
-	echo "Check if this is intended"
+	echo -e "\e[1;31mFollowing files are not linked anywhere and therefore orphaned \e[0m"
+	echo -e "\e[1;31mCheck if this is intended \e[0m"
 	echo
 	if (( ${#not_linked_in_files[@]} )); then
 		found=1
@@ -146,7 +169,7 @@ function find_orphans_for_manual()
 
 	# these _partials are orphaned as they have no reference from anywhere
 	not_linked_in_files=($(echo ${corrected_partials[@]} ${matches_found[@]} | tr ' ' '\n' | sort | uniq -u))
-	#echo "${not_linked_in_files[@]}"
+	#echo "${not_linked_in_files[@]}" | tr ' ' '\n'
 
 	if (( ${#not_linked_in_files[@]} )); then
 		echo
@@ -155,7 +178,7 @@ function find_orphans_for_manual()
 		exit
 	fi
 	if [ -z "$found" ]; then
-		echo "No orphands found"
+		echo -e "\e[1;32No orphands found \e[0m"
 		echo
 		exit
 	fi
