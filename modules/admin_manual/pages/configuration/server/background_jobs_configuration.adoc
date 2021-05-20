@@ -47,14 +47,14 @@ Using the operating system Cron feature is the preferred method for executing re
 This method enables the execution of scheduled jobs without the inherent limitations which the
 web server might have.
 
-For example, to run a Cron job on a *nix system every minute, under the default web server
+For example, to run a Cron job on a *nix system every 15 minutes (recommended), under the default web server
 user (often, `www-data` or `wwwrun`) you must set up the following Cron job to call the occ
 `background:cron` command:
 
 [source,console]
 ----
 # sudo crontab -u www-data -e
-*  *  *  *  * /usr/bin/php -f /path/to/your/owncloud/occ system:cron
+*/15  *  *  *  * /usr/bin/php -f /path/to/your/owncloud/occ system:cron
 ----
 
 You can verify if the cron job has been added and scheduled by executing:
@@ -62,14 +62,14 @@ You can verify if the cron job has been added and scheduled by executing:
 [source,console]
 ----
 # sudo crontab -u www-data -l
-*  *  *  *  * /usr/bin/php -f /path/to/your/owncloud/occ system:cron
+*/15  *  *  *  * /usr/bin/php -f /path/to/your/owncloud/occ system:cron
 ----
 
 NOTE: You have to make sure that PHP is found by Cron;
 hence why we've deliberately added the full path.
 
 Please refer to {crontab_url}[the crontab man page] for the exact command syntax if you
-don't want to have it run every minute.
+don't want to have it run every 15 minutes.
 
 NOTE: There are other methods to invoke programs by the system regularly, e.g.,
 {systemd_url}[systemd timers]
