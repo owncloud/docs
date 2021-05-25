@@ -356,7 +356,8 @@ The email address of `carla` is updated to `foobar@foo.com`.
 
 == Generating a User Count Report
 
-Generate a simple report that counts all users, including users on external user authentication servers such as LDAP.
+Generate a simple report that counts all users including users on external user authentication servers such as LDAP,
+and guest users which are created by the guests app.
 
 [source,console,subs="attributes+"]
 ----
@@ -368,17 +369,21 @@ There are no arguments and no options beside the default once to parametrize the
 [source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} user:report
-+------------------+----+
-| User Report      |    |
-+------------------+----+
-| Database         | 12 |
-| LDAP             | 86 |
-|                  |    |
-| total users      | 98 |
-|                  |    |
-| user directories | 2  |
-+------------------+----+
++--------------------------+-----+
+| User Report              |     |
++--------------------------+-----+
+| OCA\User_LDAP\User_Proxy | 23  |
+| OC\User\Database         | 100 |
+|                          |     |
+| guest users              | 20  |
+|                          |     |
+| total users              | 143 |
+|                          |     |
+| user directories         | 4   |
++--------------------------+-----+
 ----
+
+NOTE: A user directory is created, when a local user has logged on the first time after creation. Therefore the differnce between `OC\User\Database` and `user directories` equals all users which have been created locally, but  have not logged on at least once.
 
 == Setting a User's Password
 
