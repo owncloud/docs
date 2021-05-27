@@ -15,9 +15,156 @@ config
  config:system:set      Set a system config value
 ----
 
+== Config App Commands
+These commands manage the configurations of apps.
+
+== config:app:delete
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} config:app:delete [options] [--] <app> <name>
+----
+
+=== Arguments
+
+[width="100%",cols="20%,70%",]
+|===
+| `app`  |  Name of the app.
+| `name` |  Name of the config to delete.
+|===
+
+=== Options
+
+[width="100%",cols="20%,70%",]
+|===
+| `--error-if-not-exists` | Checks whether the config exists before deleting it.
+| `--output=[OUTPUT]`     | The output format to use (`plain`, `json` or `json_pretty`, default is `plain`).
+|===
+
+=== Examples:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} config:app:delete myappname provisioning_api
+Config value provisioning_api of app myappname deleted
+----
+
+The delete command will by default not complain if the configuration was not set before. 
+If you want to be notified in that case, set the `--error-if-not-exists` flag.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} config:app:delete doesnotexist --error-if-not-exists
+Config provisioning_api of app appname could not be deleted because it did not exist
+----
+
+== config:app:get
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} config:app:get [options] [--] <app> <name>
+----
+
+=== Arguments
+
+[width="100%",cols="20%,70%",]
+|===
+| `app`  |  Name of the app.
+| `name` |  Name of the config to get.
+|===
+
+=== Options
+
+[width="100%",cols="33%,70%",]
+|===
+| `--default-value[=DEFAULT-VALUE]` | If no default value is set and the config does not exist,
+the command will exit with 1.
+| `--output=[OUTPUT]` | The output format to use (`plain`, `json` or `json_pretty`, default is `plain`).
+|===
+
+=== Examples
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} config:app:get activity installed_version
+2.2.1
+----
+
+== config:app:set
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} config:app:set [options] [--] <app> <name>
+----
+
+=== Arguments
+
+[width="100%",cols="20%,70%",]
+|===
+| `app`  |  Name of the app.
+| `name` |  Name of the config to set.
+|===
+
+=== Options
+
+[width="100%",cols="20%,70%",]
+|===
+| `--value=[VALUE]`   | The new value of the config.
+| `--update-only`     | Only updates the value. If it is not set before, it is not being added.
+| `--output=[OUTPUT]` | The output format to use (`plain`, `json` or `json_pretty`, default is `plain`).
+|===
+
+=== Examples
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} config:app:set \
+   files_sharing \
+   incoming_server2server_share_enabled \
+   --value=true \
+   --type=boolean
+Config value incoming_server2server_share_enabled for app files_sharing set to yes
+----
+
+The `config:app:set` command creates the value, if it does not already exist. To update an existing value, set `--update-only`:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} config:app:set \
+   doesnotexist \
+   --value=true \
+   --type=boolean \
+   --update-only
+Value not updated, as it has not been set before.
+----
+
+== General Config Commands
+These commands manage listing and importing configurations.
+
+== config:import
+
+The exported content can also be imported again to allow the fast setup of similar instances. 
+The import command will only add or update values. 
+Values that exist in the current configuration, but not in the one that is being imported are left untouched.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} config:import filename.json
+----
+
+It is also possible to import remote files, by piping the input:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} config:import < local-backup.json
+----
+
+NOTE: While it is possible to update/set/delete the versions and installation statuses of apps and ownCloud itself, it is *not* recommended to do this directly. 
+Use the `occ app:enable`, `occ app:disable` and `occ update` commands instead.
+
 == config:list
 
-The `config:list` command lists all configuration values, both for your ownCloud setup, along with any apps.
+The `config:list` command lists all configuration values for your ownCloud setup as well as for any apps.
 
 [source,console,subs="attributes+"]
 ----
@@ -40,8 +187,7 @@ The `config:list` command lists all configuration values, both for your ownCloud
 | Use this option when you want to include sensitive configs, like passwords and salts.
 |===
 
-By default, passwords and other sensitive data are omitted from the report so that the output can be posted publicly (e.g., as part of a bug report). 
-You can see a sample output in the example below.
+By default, passwords and other sensitive data are omitted from the report so that the output can be posted publicly (e.g., as part of a bug report). You can see a sample output in the example below.
 
 [source,json]
 ----
@@ -60,7 +206,7 @@ To generate a full report which includes sensitive values, such as passwords and
 === Filtering Information Reported
 
 The output can be filtered to just the core information, core and apps, or one specific app.
-In the example below, you can see how to filter in each of these ways.
+In the example below, you can see how to filter for each of these categories.
 
 [source,console,subs="attributes+"]
 ----
@@ -90,30 +236,38 @@ Below is an example of listing the config details for a single app.
 }
 ----
 
-== config:import
+== Config System Commands
+These commands manage system configurations.
 
-The exported content can also be imported again to allow the fast setup of similar instances. 
-The import command will only add or update values. 
-Values that exist in the current configuration, but not in the one that is being imported are left untouched.
-
-[source,console,subs="attributes+"]
-----
-{occ-command-example-prefix} config:import filename.json
-----
-
-It is also possible to import remote files, by piping the input:
+== config:system:delete
 
 [source,console,subs="attributes+"]
 ----
-{occ-command-example-prefix} config:import < local-backup.json
+{occ-command-example-prefix} config:system:delete [options] [--] <name> (<name>)...
 ----
 
-NOTE: While it is possible to update/set/delete the versions and installation statuses of apps and ownCloud itself, it is *not* recommended to do this directly. 
-Use the `occ app:enable`, `occ app:disable` and `occ update` commands instead.
+=== Arguments
 
-== Getting a Single Configuration Value
+[width="100%",cols="20%,70%",]
+|===
+| `name` |  Name of the config to delete, specify multiple for array parameter.
+|===
 
-These commands get the value of a single app or system configuration:
+=== Options
+
+[width="100%",cols="20%,70%",]
+|===
+| `--error-if-not-exists` | Checks whether the config exists before deleting it.
+| `--output=[OUTPUT]`     | The output format to use (`plain`, `json` or `json_pretty`, default is `plain`).
+|===
+
+=== Examples:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} config:system:delete maintenance:mode
+System config value maintenance:mode deleted
+----
 
 == config:system:get
 
@@ -138,44 +292,13 @@ the command will exit with 1.
 | `--output=[OUTPUT]`               | The output format to use (`plain`, `json` or `json_pretty`, default is `plain`).
 |===
 
-== config:app:get
-
-[source,console,subs="attributes+"]
-----
-{occ-command-example-prefix} config:app:set [options] [--] <app> <name>
-----
-
-=== Arguments
-
-[width="100%",cols="20%,70%",]
-|===
-| `app`  |  Name of the app.
-| `name` |  Name of the config to get.
-|===
-
-=== Options
-
-[width="100%",cols="33%,70%",]
-|===
-| `--default-value[=DEFAULT-VALUE]` | If no default value is set and the config does not exist,
-the command will exit with 1.
-| `--output=[OUTPUT]` | The output format to use (`plain`, `json` or `json_pretty`, default is `plain`).
-|===
-
-=== Examples
+=== Examples:
 
 [source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} config:system:get version
-10.0.8.5
-
-{occ-command-example-prefix} config:app:get activity installed_version
-2.2.1
+10.7.0.4
 ----
-
-== Setting a Single Configuration Value
-
-These commands set the value of a single app or system configuration.
 
 == config:system:set
 
@@ -198,84 +321,11 @@ These commands set the value of a single app or system configuration.
 | `--type=[TYPE]`     | Value type to use (`string`, `integer`, `double`, `boolean`, `json`, default is `string`). +
 Note: you must use json to write multi array values.
 | `--value=[VALUE]`   | The new value of the config.
-| `--update-only`     | Only updates the value, if it is not set before, it is not being added.
+| `--update-only`     | Only updates the value. If it is not set before, it is not being added.
 | `--output=[OUTPUT]` | The output format to use (`plain`, `json` or `json_pretty`, default is `plain`).
 |===
 
-=== Examples
-
-Adding Redis to the configuration:
-
-[source,console,subs="attributes+"]
-----
-{occ-command-example-prefix} config:system:set \
-   redis \
-   --value '{"host": "{oc-examples-server-ip}", "port": "{std-port-redis}"}' \
-   --type json
-
-System config value redis set to json {"host": "{oc-examples-server-ip}", "port": "{std-port-redis}"}
-----
-
-== config:app:set
-
-[source,console,subs="attributes+"]
-----
-{occ-command-example-prefix} config:app:set [options] [--] <app> <name>
-----
-
-=== Arguments
-
-[width="100%",cols="20%,70%",]
-|===
-| `app`  |  Name of the app.
-| `name` |  Name of the config to set.
-|===
-
-=== Options
-
-[width="100%",cols="20%,70%",]
-|===
-| `--value=[VALUE]`   | The new value of the config.
-| `--update-only`     | Only updates the value, if it is not set before, it is not being added.
-| `--output=[OUTPUT]` | The output format to use (`plain`, `json` or `json_pretty`, default is `plain`).
-|===
-
-=== Examples
-
-[source,console,subs="attributes+"]
-----
-{occ-command-example-prefix} config:system:set \
-   logtimezone \
-   --value="Europe/Berlin"
-System config value logtimezone set to Europe/Berlin
-----
-
-[source,console,subs="attributes+"]
-----
-{occ-command-example-prefix} config:app:set \
-   files_sharing \
-   incoming_server2server_share_enabled \
-   --value=true \
-   --type=boolean
-Config value incoming_server2server_share_enabled for app files_sharing set to yes
-----
-
-The `config:system:set` command creates the value, if it does not
-already exist. To update an existing value, set `--update-only`:
-
-[source,console,subs="attributes+"]
-----
-{occ-command-example-prefix} config:system:set \
-   doesnotexist \
-   --value=true \
-   --type=boolean \
-   --update-only
-Value not updated, as it has not been set before.
-----
-
-NOTE: In order to write a boolean, float, JSON, or integer value to the configuration file, you need to specify the type on your command. 
-This applies only to the `config:system:set` command. 
-Please see table above for available types.
+NOTE: In order to write a boolean, float, JSON, or integer value to the configuration file, you need to specify the type of your command. This applies only to the `config:system:set` command. See table above for available types.
 
 === Examples
 
@@ -311,7 +361,17 @@ Create the `app_paths` config setting (using a JSON payload because of multi arr
     ]'
 ----
 
-== Setting an Array of Configuration Values
+Adding Redis to the configuration:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} config:system:set \
+   redis \
+   --value '{"host": "{oc-examples-server-ip}", "port": "{std-port-redis}"}' \
+   --type json
+
+System config value redis set to json {"host": "{oc-examples-server-ip}", "port": "{std-port-redis}"}
+----
 
 Some configurations (e.g., the trusted domain setting) are an array of data. 
 The array starts counting with 0. In order to set (and also get) the value of one key, you can specify multiple `config` names separated by spaces:
@@ -336,74 +396,3 @@ localhost
 owncloud.local
 example.com
 ----
-
-== Deleting a Single Configuration Value
-
-These commands delete the configuration of an app or system configuration:
-
-== config:system:delete
-
-[source,console,subs="attributes+"]
-----
-{occ-command-example-prefix} config:system:delete [options] [--] <name> (<name>)...
-----
-
-=== Arguments
-
-[width="100%",cols="20%,70%",]
-|===
-| `name` |  Name of the config to delete, specify multiple for array parameter.
-|===
-
-=== Options
-
-[width="100%",cols="20%,70%",]
-|===
-| `--error-if-not-exists` | Checks whether the config exists before deleting it.
-| `--output=[OUTPUT]`     | The output format to use (`plain`, `json` or `json_pretty`, default is `plain`).
-|===
-
-== config:app:delete
-
-[source,console,subs="attributes+"]
-----
-{occ-command-example-prefix} config:app:delete [options] [--] <app> <name>
-----
-
-=== Arguments
-
-[width="100%",cols="20%,70%",]
-|===
-| `app`  |  Name of the app.
-| `name` |  Name of the config to delete.
-|===
-
-=== Options
-
-[width="100%",cols="20%,70%",]
-|===
-| `--error-if-not-exists` | Checks whether the config exists before deleting it.
-| `--output=[OUTPUT]`     | The output format to use (`plain`, `json` or `json_pretty`, default is `plain`).
-|===
-
-=== Examples:
-
-[source,console,subs="attributes+"]
-----
-{occ-command-example-prefix} config:system:delete maintenance:mode
-System config value maintenance:mode deleted
-
-{occ-command-example-prefix} config:app:delete myappname provisioning_api
-Config value provisioning_api of app myappname deleted
-----
-
-The delete command will by default not complain if the configuration was not set before. 
-If you want to be notified in that case, set the `--error-if-not-exists` flag.
-
-[source,console,subs="attributes+"]
-----
-{occ-command-example-prefix} config:system:delete doesnotexist --error-if-not-exists
-Config provisioning_api of app appname could not be deleted because it did not exist
-----
-
-
