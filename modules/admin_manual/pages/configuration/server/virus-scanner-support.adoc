@@ -1,9 +1,11 @@
 = Virus Scanner Support
 :toc: right
+:toclevels: 3
 :page-aliases: configuration/server/antivirus_configuration.adoc
 :clamav-url: http://www.clamav.net/index.html
 :icap-url: https://tools.ietf.org/html/rfc3507
-:c-icap-url: https://sourceforge.net/p/c-icap/wiki/ModulesConfiguration/
+:c-icap-url: https://sourceforge.net/p/c-icap/wiki/configcicap/
+:kasperski-scanengine-url: https://support.kaspersky.com/ScanEngine/1.0/en-US/199729.htm
 
 == Introduction
 
@@ -15,13 +17,40 @@ Starting with Anti-Virus version 1.0.0, the app also offers an ICAP integration 
 
 == ClamAV
 
-Feature List:
+=== ClamAV Feature List
 
 * Operates on all major operating systems, including _Windows_, _Linux_, and _macOS_.
 * Detects all forms of malware including _Trojan horses_, _viruses_, and _worms_.
 * Scans _compressed files_, _executables_, _image files_, _Flash_, _PDF_, as well as many others.
 
 What's more, ClamAV's Freshclam daemon automatically updates its malware signature database at scheduled intervals. 
+
+=== ClamAV Integration Into ownCloud
+
+ownCloud integrates with antivirus tools by connecting to them via:
+
+* A URL 
+* A hostname and port
+* A socket
+* Streaming the data from the command-line via a pipe with a configured executable
+
+In case of ClamAV, ownCloud's antivirus extension sends files either through a unix-domain socket (which requires clamd running on the same host) or through a pipe to stdin/stdout of the clamscan executable (installed on the same host) or through the network using a hostname and port pair (which allows running the clamd daemon on another server).
+
+NOTE: Individual chunks are *not* scanned. The whole file is scanned when it is moved or saved to the final location.
+
+The information is then parsed, or an exit code is evaluated if no result is available to determine the response from the scan. In case of an infected upload, the approproate action is always delete. The choice "delete" or "log" for the infected condition only applies to the special case of background scans.
+
+NOTE: Scanner exit status rules are used to handle errors when ClamAV is run in CLI mode. Scanner output rules are used in daemon/socket mode only.
+
+=== Scanning Notes for ClamAV
+
+. Files are checked when they are uploaded or updated but _not_ when they are downloaded.
+. ownCloud does not maintain a cache of previously scanned files.
+. If the app is either not configured or is misconfigured, then it rejects file uploads.
+. If ClamAV is unavailable, then the app rejects file uploads.
+. A file size limit applies both to background jobs and to file uploads.
+. After installing ClamAV and the related tools, you will have two configuration files: `/etc/freshclam.conf` and `/etc/clamd.d/scan.conf`. 
+. We recommend that you enable verbose logging in both `clamd.conf` and `freshclam.conf` initially, to verify correct operation of both.
 
 === Installing ClamAV
 
@@ -37,55 +66,59 @@ This automatically creates the default configuration files and launches the `cla
 
 ==== Enabling and Running ClamAV
 
-Enable the `clamd` service file and start `clamd`. 
+Enable and start the `clamd` service with following commands. 
 
 [source,console]
 ----
+sudo systemctl daemon-reload
 sudo systemctl enable clamav-daemon.service
 sudo systemctl start clamav-daemon.service
 ----
 
-When successful, output similar to the following renders to the console:
+When successful, an output similar to the following should appear on the terminal:
 
 [source,console]
 ----
-Synchronizing state of clamav-daemon.service with SysV service script with /lib/systemd/systemd-sysv-install.
+Synchronizing state of clamav-daemon.service with SysV service script with
+/lib/systemd/systemd-sysv-install.
 Executing: /lib/systemd/systemd-sysv-install enable clamav-daemon
 ----
 
 ==== ClamAV Virus Database Updates
 
-First we have to ensure the process is currently not running. Gently end the freshclam process with this command:
-
-[source,console]
-----
-sudo pkill -15 -x freshclam
-----
-
-Then we manually start the updating process. Start the refresh process again with this command:
-
+. You can manually start the updating process with this command:
++
 [source,console]
 ----
 sudo freshclam
 ----
++
+You should update manually at least once before using ClamAV within ownCloud. The initial update can take several minutes. In case of persisting issues running `freshclam`, you can gently end the process with the following command:
++
+[source,console]
+----
+sudo pkill -15 -x freshclam
+----
++
+and retry manually updating again.
 
-Automate the update process with this cron entry for example.
-
+. To automate the update process, run this cron entry for example.
++
 [source,console]
 ----
 # m   h  dom mon dow  command
 47  *  *  *  *  /usr/bin/freshclam --quiet
 ----
-
-NOTE: Please avoid any multiples of 10, because those are when the ClamAV servers are hit the hardest for updates.
++
+NOTE: Avoid any multiples of 10 to better distribute the load on the ClamAV virus pattern servers. This can reduce the load on the servers and therefore update times.
 
 === Install the ownCloud Anti-Virus App
 
 The Anti-Virus app needs to be installed from the ownCloud Market (it's available in the  _"Security"_ category).
 
-image:apps/files_antivirus/antivirus-app.png[image]
+image:apps/files_antivirus/antivirus-app.png[image, width=70%]
 
-To install the App via occ command, execute:
+To install the App directly via the occ command, execute:
 
 [source,console,subs="attributes+"]
 ----
@@ -94,38 +127,46 @@ To install the App via occ command, execute:
 
 === Configuring ClamAV within ownCloud
 
-IMPORTANT: If the app is enabled but either not configured or incorrectly configured it will *strictly reject all uploads* for the whole instance
+IMPORTANT: If the app is enabled but either not or incorrectly configured, it will *strictly reject all uploads* for the whole instance!
 
-ClamAV can be configured in two ways:
+ClamAV can be configured in the following two ways:
 
-. xref:configure-clamav-using-occ[By using the `occ config:app:set` command set.]
-. xref:configure-clamav-using-the-antivirus-configuration-panel[By using the Antivirus Configuration panel]
+. xref:configure-clamav-using-the-av-configuration-panel[By using the Antivirus Configuration panel]
+. xref:configure-clamav-using-occ[By using the `occ config:app` command set.]
 
-==== Configure ClamAV Using the Antivirus Configuration Panel
+==== Change Log Level Temporarily
 
-Once ClamAV is installed, select menu:Settings[General (Admin)] and, in the "*Log*" section, set btn:[Log level] to "_Everything (fatal issues, errors, warnings, info, debug)_".
+Once ClamAV is installed, select menu:Settings[General (Admin)] and, in the "*Log*" section, temporarily set btn:[Log level] to "_Everything (fatal issues, errors, warnings, info, debug)_".
 
-image:apps/files_antivirus/antivirus-logging.png[the ownCloud Antivirus configuration panel]
+image:apps/files_antivirus/antivirus-logging.png[The ownCloud Antivirus configuration panel]
 
-Now, navigate to menu:Settings[Security (Admin)], where you'll find the "**Antivirus Configuration**" panel. 
-There, as below, you'll see the configuration options which ownCloud passes to ClamAV.
+==== Configure ClamAV Using the AV Configuration Panel
+
+Navigate to menu:Settings[Security (Admin)], where you'll find the "**Antivirus Configuration**" panel as you can see in the example screenshot below.
 
 image:apps/files_antivirus/antivirus-daemon.png[The antivirus configuration panel in ownCloud]
 
 ==== Configure ClamAV Using occ
 
-All of the configuration settings for ClamAV are configurable by passing the relevant key and value to the `occ config:app:set files_antivirus` command.
-For example:
+All of the configuration settings for ClamAV are configurable by passing the relevant key and value to the `occ config:app:set files_antivirus` command. For example:
 
 [source,console,subs="attributes+"]
 ----
-{occ-command-example-prefix} config:app:set \
-    files_antivirus av_socket --value="/var/run/clamav/clamd.ctl"
+{occ-command-example-prefix} config:app:set files_antivirus \
+    av_socket --value="/var/run/clamav/clamd.ctl"
 ----
 
-===== Available Configuration Settings
+To get a current option run for example:
 
-[cols="32%,43%,15%",options="header"]
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} config:app:get files_antivirus \
+    av_socket
+----
+
+[caption=]
+.Available Configuration Settings
+[cols="23%,45%,15%",options="header"]
 |===
 |Setting 
 |Description 
@@ -140,16 +181,18 @@ For example:
 |
 
 |`av_infected_action`
-|The action to take when infected files were found during a background scan.
+|The action to take when infected files were found during a background scan. +
 It can be set to one of `only_log` and `delete`.
 |`only_log`
 
 |`av_max_file_size`
-|The maximum file size limit; `-1` means no limit.
+|The maximum file size limit; +
+`-1` means no limit.
 |`-1`
 
 |`av_mode`
-|The operating mode. It can be set to one of `executable`, `daemon`, and `socket`.
+|The Anti Virus binary operating mode. +
+It can be set to one of `executable`, `daemon`, and `socket`.
 |`executable`
 
 |`av_path`
@@ -157,8 +200,8 @@ It can be set to one of `only_log` and `delete`.
 |`/usr/bin/clamscan`
 
 |`av_port`
-|The port number of the Antivirus server. 
-Allowed values are 1 - 65535.
+|The port number of the Antivirus server. +
+Allowed values are `1 - 65535`.
 |
 
 |`av_socket`
@@ -166,11 +209,13 @@ Allowed values are 1 - 65535.
 |`/var/run/clamav/clamd.ctl`
 
 |`av_stream_max_length`
-|The maximum stream length that ClamAV will accept.
+|The maximum stream length that ClamAV will accept in bytes (*).
 |`26214400`
 |===
 
-==== Mode Configuration
+(*) The `Stream Length` value sets the number of bytes to read in one pass and defaults to 26214400 bytes (twenty six megabytes). This value should be no larger than the PHP `memory_limit` settings or physical memory if `memory_limit` is set to -1 (no limit).
+
+==== Configuration Modes
 
 ClamAV runs in one of three modes: 
 
@@ -178,78 +223,78 @@ ClamAV runs in one of three modes:
 * xref:daemon[Daemon]
 * xref:executable[Executable]
 
-===== Daemon (Socket)
+===== Daemon (Socket, Same Server)
 
-In this mode, ClamAV runs in the background on the same server as the ownCloud installation, or the socket can be made available via a share mount.
-When there is no activity, `clamd` places a minimal load on your system. 
-However, if your users upload large volumes of files, you will see high CPU usage. 
-Please keep this in mind.
+In _Daemon (Socket)_ mode, ClamAV runs in the background on the same server as the ownCloud installation, or the socket can be made available via a share mount. When there is no activity, `clamd` places a minimal load on your system. Consider that high CPU usage can occur when users upload large volumes of files.
 
 IMPORTANT: You must run `freshclam` at least once for ClamAV to generate the socket.
 
 image:apps/files_antivirus/antivirus-daemon-socket.png[image]
 
-First, set btn:[Mode] to "*Daemon (Socket)*".
-ownCloud should detect your `clamd` socket and fill in the "*Socket*" field. 
-This is the `LocalSocket` option in `clamd.conf`. 
-
-You can run `ss` to verify it, as in the example below:
-
+. Set btn:[Mode] to "*Daemon (Socket)*". ownCloud should detect your `clamd` socket and fill in the "*Socket*" field. This is the `LocalSocket` option in `clamd.conf`. 
++
+You can run `ss` (a utility to investigate sockets) to verify it, as in the example below:
++
 [source,console]
 ----
 sudo ss -a | grep -iq clamav && echo "ClamAV is running"
 ----
-
++
 [TIP]
 ====
-If you don't have `ss` installed, you may have `netstat` installed. 
-If so, you can run the following to check if ClamAV is running:
- 
+If you don't have `ss` installed, you may have `netstat` installed. If so, you can run the following to check if ClamAV is running:
 [source,console]
 ----
 netstat -a | grep -q clam && echo "ClamAV is running"
 ----
 ====
 
-The `Stream Length` value sets the number of bytes to read in one pass; 10485760 bytes (ten megabytes) is the default. 
-This value should be no larger than the PHP `memory_limit` settings or physical memory if `memory_limit` is set to -1 (no limit).
-
-`When infected files were found during a background scan` gives you the choice of either:
-
+. When infected files were found during a background scan, you have the choice of either:
++
 * Logging any alerts without deleting the files 
 * Immediately deleting infected files
 
-====== Daemon
+===== Daemon (Different Server)
 
-In this mode, ClamAV runs on a different server. 
-This is a good option for ownCloud servers with high volumes of file uploads. 
+In _Daemon_ mode, ClamAV runs on a different server. This is a good option to reduce load on the ownCloud servers when high network bandwidth is available and many concurrent uploads happen.
 
 image:apps/files_antivirus/antivirus-daemon.png[image]
 
-First, set btn:[Mode] to "*Daemon*".
-Then, you need to set btn:[Host] to the hostname or IP address of the remote server running ClamAV, and set btn:[Port] to the server's port number.
-
+. Set btn:[Mode] to "*Daemon*". 
+. Set btn:[Host] to the hostname or IP address of the remote server running ClamAV, and set btn:[Port] to the server's port number.
++
 TIP: The port number is the value of `TCPSocket` in `/etc/clamav/clamd.conf`.
 
 ===== Executable
 
-In this mode, ClamAV runs on the same server as the ownCloud installation, with the `clamscan` command running only when a file is uploaded. 
+In _Executable_ mode, ClamAV runs on the same server as the ownCloud installation, with the `clamscan` command running only when a file is uploaded. 
 
-TIP: `clamscan` is slow and not always reliable for on-demand usage; it is better to use one of the daemon modes.
+TIP: `clamscan` can respond slower and may not always be reliable for on-demand usage; it is better to use one of the daemon modes.
 
-image:apps/files_antivirus/antivirus-executable.png[image]
+image:apps/files_antivirus/antivirus-executable.png[image, width=80%]
 
-First, set btn:[Mode] to "*Executable*".
-Then, set btn:[Path to clamscan] to the path to `clamscan`, which is the interactive ClamAV scanning command, on your server.
-ownCloud should automatically find it.
-However, if it doesn't, run `which clamscan` to find the command's path.
+The image shows a command line option `--allmatch=yes` (continue scanning within the file after finding a match) which is not necessary to be set and just used here for demonstration purposes of the field.
+
+NOTE: Starting with ownCloud Anti-Virus version 1.0.0, the path to `clamscan` and the command line options are set via a config.php entry and are read-only in the user interface. Refer to the xref:configuration/server/config_apps_sample_php_parameters.adoc[config.php parameters for apps] for more details.
+
+NOTE: If you had configured the path and command line options before via the user interface, the values are being migrated from the database to config.php automatically. Check the settings in config.php for their presence after upgrading. 
+
+. Set btn:[Mode] to "*Executable*".
+. Set btn:[Path to clamscan] to the path of `clamscan`, which is the interactive ClamAV scanning command, on your server. To find the exact path, run
++
+[source,console]
+----
+which clamscan
+----
++
+
+==== Set Back Log Level
 
 When you are satisfied with how ClamAV is operating, you might want to go back and change all of your logging to less verbose levels.
 
 ==== Configuration Warnings
 
-The Antivirus App shows one of three warnings if it is misconfigured or ClamAV is not available. 
-You can see an example of all three below.
+The Antivirus App shows one of three warnings if it is misconfigured or ClamAV is not available. You can see an example of all three below.
 
 image:configuration/server/anti-virus-message-host-connection-problem.png[Configuration error message: 'Antivirus app is misconfigured or antivirus inaccessible. Could not connect to host 'localhost' on port 999'.]
 
@@ -257,7 +302,7 @@ image:configuration/server/anti-virus-message-misconfiguration-problem.png[Confi
 
 image:configuration/server/anti-virus-message-socket-connection-problem.png[Configuration error message: 'Antivirus app is misconfigured or antivirus inaccessible. Could not connect to socket ´/var/run/clamav/cslamd-socket´: No such file or directory (code 2)'.]
 
-==== What To Do With Infected Files Found During Scans
+==== Manage Infected Files Found
 
 During an upload these actions are taken:
 
@@ -267,12 +312,12 @@ During an upload these actions are taken:
 
 During a background scan the app can take one of two actions:
 
-* **Log Only** Log the event.
+* **Log Only**: Log the event.
 * **Delete file**: Delete the detected file.
 
 Set btn:[When infected files were found during a background scan] to the value that suits your needs.
 
-==== Rule Configuration
+==== Response Rule Configuration
 
 ownCloud provides the ability to customize how it reacts to the response given by an antivirus scan. 
 To do so, under menu:Admin[Security (Admin)] click btn:[Advanced], which you can see in the screenshot below, you can view and change the existing rules. 
@@ -280,7 +325,7 @@ You can also add new ones.
 
 image:configuration/server/anti-virus-configuration-rules.png[image]
 
-Rules can match on either an exit status (e.g., 0, 1, or 40) or a pattern in the string returned from ClamAV (e.g., `/.*: (.*) FOUND$/`).
+Rules can match on either an exit status (e.g., 0, 1, or 40) or a pattern in the string returned from ClamAV (e.g., `/.\*: (.\*) FOUND$/`).
 
 Here are some points to bear in mind about rules:
 
@@ -289,11 +334,11 @@ Here are some points to bear in mind about rules:
 * Daemon output is parsed by regexp.
 * In case there are no matching rules, the status is: `Unknown`, and a warning will be logged.
 
-===== Default Ruleset
+===== Default Rule Set
 
-The default rule set for ClamAV is populated automatically with the following rules:
-
-[cols=",,",options="header",]
+[caption=]
+.The default rule set for ClamAV is populated automatically with the following rules:
+[cols="20%,45%,15%",options="header",]
 |===
 | Exit Status or Signature | Description | Marks File As
 | 0 | | Clean
@@ -313,9 +358,9 @@ The default rule set for ClamAV is populated automatically with the following ru
 | 64 | Can't write to temporary directory | Unchecked
 | 70 | Can't allocate memory (calloc) | Unchecked
 | 71 | Can't allocate memory (malloc) | Unchecked
-| `/.*: OK$/` | | Clean
-| `/.*: (.*) FOUND$/` | | Infected
-| `/.*: (.*) ERROR$/` | | Unchecked
+| /.*: OK$/ | | Clean
+| /.\*: (.*) FOUND$/ | | Infected
+| /.\*: (.*) ERROR$/ | | Unchecked
 |===
 
 The rules are always checked in the following order:
@@ -328,17 +373,19 @@ In case there are no matching rules, the status would be `Unknown` and a warning
 
 ===== Update An Existing Rule
 
-To match on an exit status, change the "**Match by**" dropdown list to "**Scanner exit status**" and in the "**Scanner exit status or signature to search**" field, add the status code to match on.
+. You can change the rules to either meet an exit status or the scanner's output.
+** To match on an exit status, change the
+* "**Match by**" dropdown list to "**Scanner exit status**" and
+* in the "**Scanner exit status or signature to search**" field, add the status code to match on.
+** To match on the scanner's output, change the
+* "**Match by**" dropdown list to "**Scanner output**" and
+* in the "**Scanner exit status or signature to search**" field, add the regular expression to match against the scanner's output.
 
-To match on the scanner's output, change the "**Match by**" dropdown list to "**Scanner output**" and in the "**Scanner exit status or signature to search**" field, add the regular expression to match against the scanner's output.
-
-Then, while not mandatory, add a description of what the status or scan output means. 
-After that, set what ownCloud should do when the exit status or regular expression you set matches the value returned by ClamAV. 
-To do so change the value of the dropdown in the "**Mark as**" column.
-
-The dropdown supports the following three options:
-
-[cols=",",options="header",]
+. Then, while not mandatory, add a description of what the status or scan output means. After that, set what ownCloud should do when the exit status or regular expression you set matches the value returned by ClamAV. To do so, change the value of the dropdown in the "**Mark as**" column.
++
+[caption=]
+.The dropdown supports the following three options:
+[width="50%",cols="20%,60%",options="header",]
 |===
 | Option    | Description
 | Clean     | The file is clean and contains no viruses
@@ -357,66 +404,36 @@ Then follow the process outlined in xref:default-ruleset[Update An Existing Rule
 
 To delete an existing rule, click the btn:[rubbish bin] icon on the far right-hand side of the rule that you want to delete.
 
-==== How ClamAV Works With ownCloud
-
-ownCloud integrates with antivirus tools by connecting to them via:
-
-* A URL and port
-* A socket
-* Streaming the data from the command-line via a pipe with a configured executable
-
-In the case of ClamAV, ownCloud's Antivirus extension sends files as streams to a ClamAV service (which can be on the same ownCloud server or another server within the same network) which in turn scans them and returns a result to stdout.
-
-NOTE: Individual chunks are *not* scanned. 
-The whole file is scanned when it is moved to the final location.
-
-The information is then parsed, or an exit code is evaluated if no result is available to determine the response from the scan. 
-Based on ownCloud's evaluation of the response (or exit code) an appropriate action is then taken, such as recording a log message or deleting the file.
-
-NOTE: Scanner exit status rules are used to handle errors when ClamAV is run in CLI mode. 
-Scanner output rules are used in daemon/socket mode.
-
-=== Things To Note
-
-. Files are checked when they are uploaded or updated (whether because they were edited or saved) but _not_ when they are downloaded.
-. ownCloud doesn't support a cache of previously scanned files.
-. If the app is either not configured or is misconfigured, then it rejects file uploads.
-. If ClamAV is unavailable, then the app rejects file uploads.
-. A file size limit applies both to background jobs and to file uploads.
-. After installing ClamAV and the related tools, you will have two configuration files: `/etc/freshclam.conf` and `/etc/clamd.d/scan.conf`. 
-. We recommend that you enable verbose logging in both `clamd.conf` and `freshclam.conf` until you get any kinks with your ClamAV installation worked out
-
-
 == ICAP
 
-{icap-url}[ICAP] is an open standard supported by many antivirus products. With the release of the _Anti-Virus_ app 1.0.0, other virus scanners beside ClamAV can be used via ICAP if you are running it on an ownCloud Enterprise Edition. Currently the only tested and supported virus scanners, besides ClamAV, are _Kaspersky ScanEngine_ and _McAfee Antivirus_ although far more products might simply work.
+{icap-url}[ICAP] is an open standard supported by many antivirus products. With the release of the _Anti-Virus_ app 1.0.0, other virus scanners beside ClamAV can be used via ICAP if you are running it on an ownCloud Enterprise Edition. Currently the only tested and supported virus scanners, besides ClamAV, are _Kaspersky ScanEngine_ and _McAfee Antivirus_ although far more products might simply work. The use of ICAP requires an enterprise license. The functionality can be tested without a license with a grace period of 24 hours.
 
 === Installation
 
-- Install the {oc-marketplace-url}/apps/files_antivirus[Anti-Virus app] from the ownCloud marketplace. Alternatively, use this occ command:
-
+. Install the {oc-marketplace-url}/apps/files_antivirus[Anti-Virus app] from the ownCloud marketplace. Alternatively, use this occ command:
++
 [source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} market:install files_antivirus
 ----
 
-- Enable the app as admin in ownCloud under menu:[Settings > Apps] in the category `Security` or with the following occ command:
-
+. Enable the app as admin in ownCloud under menu:Settings[Apps] in the category `Security` or with the following occ command:
++
 [source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} app:enable files_antivirus
 ----
 
-
 === General Configuration
 
-ICAP can be configured via the Web interface as admin user or via xref:occ_command.adoc[occ commands].
+ICAP can be configured via the Web interface as admin user or via
+xref:configuration/server/occ_command.adoc[occ config:app commands].
 
 ==== Antivirus Configuration Panel
 
 Log in to ownCloud as admin via the Web interface and go to menu:Admin[Settings > Security] and you'll see the Antivirus Configuration dialog.
 
-image:configuration/server/anti-virus-panel.png[Security Settings, width:80%]
+image:apps/files_antivirus/antivirus-icap.png[Security Settings, width:80%]
 
 Enter the desired values:
 
@@ -446,108 +463,106 @@ Specify what to do with the flagged files. Possible values: `Delete file` or `On
 
 CAUTION: Do not change the rules hidden under btn:[Advanced] unless you know exactly what you're doing. The defaults should work best. If you have special requirements, contact us at consulting@owncloud.com.
 
+==== ICAP Configuration
 
-==== Command-line Configuration
+You can configure the ownCloud antivirus app either via the Web interface or the command line. The Web interface fields can be easily matched to the command line field names. On the command line, change into your ownCloud directory, usually `/var/www/owncloud`, and enter the following occ commands with an IP address and port based on your environment:
 
-On the command line, change into your ownCloud directory, usually `/var/www/owncloud`, and enter the following occ commands:
-
-* To set the IP address of your anti-virus server:
-
+. Set the IP address of your anti-virus server:
++
 [source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} config:app:set files_antivirus \
     av_host --value="172.17.0.3"
 ----
 
-* Specify the port of the anti-virus server:
-
+. Specify the port of the anti-virus server:
++
 [source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} config:app:set files_antivirus \
     av_port --value="1344"
 ----
 
-* Set the mode to ICAP:
-
+. Set the mode to ICAP:
++
 [source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} config:app:set files_antivirus \
     av_mode --value="icap"
 ----
-
++
 NOTE: The setting `icap` triggers a grace period of 24 hours if you don't have an Enterprise license but want to test ICAP.
 
-* Specify what do do with the offending file:
-
+. Specify what do do with the offending file:
++
 [source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} config:app:set files_antivirus \
     av_infected_action --value="delete"
 ----
-
-Possible values are 'delete' and 'only_log'.
-
++
+Possible values are `delete` and `only_log`.
++
+Depending on your ICAP server, select one of the following example configurations.
 
 === Run with c-icap/ClamAV
 
-c-icap has a built in ClamAV module. For more information see: {c-icap-url}[c-icap on sourceforge].
+`c-icap` can be configured to use ClamAV. For more information see: {c-icap-url}[c-icap on sourceforge] (for selecting ClamAV see their section: Selecting virus scan engine to use).
 
-* The IP address needs to be set in the general configuration above.
+. Install ClamAV based on the instructions at the beginning of this document and `c-icap` as referenced above.
 
-* Now set the mode to 'c-icap with ClamAV':
-
+. To use ClamAV, set the mode to `c-icap with ClamAV` either from the Web interface or via command line:
++
 [source,console,subs="attributes+"]
 ----
-{occ-command-example-prefix} occ config:app:set files_antivirus \
+{occ-command-example-prefix} config:app:set files_antivirus \
     av_request_service --value="avscan"
 ----
 
-* Next, set the response header:
-
+. Set the respective response header:
++
 [source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} config:app:set files_antivirus \
     av_response_header --value="X-Infection-Found"
 ----
 
-
 ### Run with Kaspersky Anti-Virus (KAV)
 
-* Install Kaspersky ScanEngine for Kubernetes.7z and follow the instructions.
+. Install Kaspersky ScanEngine based on their {kasperski-scanengine-url}[instructions] an prepare KAV for running in ICAP mode.
 
-* Set KAV as virus scanner with the value `req`:
+. Follow this procedure to configure ownCloud for the Kaspersky ScanEngine.
 
+. To use KAV, set the mode to `req` either from the Web interface or via command line:
++
 [source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} config:app:set files_antivirus \
     av_request_service --value="req"
 ----
 
-* Set the respective response header:
-
+. Set the respective response header:
++
 [source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} config:app:set files_antivirus \
     av_response_header --value="X-Virus-ID"
 ----
-
-NOTE: Older versions of KAV did not send back the virus/infection name in an ICAP header. Version 2.0.0 of KAV allows you to configure the header to transport the virus. By default no header is sent.
-
++
+NOTE: Older versions of KAV did not send back the virus/infection name in an ICAP header. Starting with version 2.0.0 of KAV, you can configure the header to transport the virus. By default no header is sent.
 
 === Run with McAfee
 
-// Which product exactly?
+Note, McAfee version 7.8.2 and up provide ICAP support. Follow this procedure to configure ownCloud for the McAfee virus scanner.
 
-Install the McAfee virus scanner.
+. Install McAfee based on their instructions.
 
-* The IP address needs to be set in the general configuration above.
-
-* Now set the mode to `wwreqmod` to use McAfee:
-
+. To use McAfee, set the mode to `wwreqmod` either from the Web interface or via command line:
++
 [source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} occ config:app:set files_antivirus \
     av_request_service --value="wwreqmod"
 ----
-
-NOTE: McAfee does not offer response headers.
++
+NOTE: McAfee does not offer predefined response headers.
