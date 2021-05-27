@@ -2,7 +2,7 @@
 
 #
 # This script checks the three core ownCloud documentation manuals to 
-# see if any of the example files are orphaned.
+# see if any of the attachment files are orphaned.
 #
 
 AVAILABLE_MANUALS=( admin user developer )
@@ -10,18 +10,18 @@ AVAILABLE_MANUALS=( admin user developer )
 list=$(echo ${AVAILABLE_MANUALS[@]} | sed -r 's/[ ]+/, /g')
 
 echo
-echo "Checking for orphaned EXAMPLE files in manual: ${list}."
-echo "Please run this scrip from your docs root"
+echo "Checking for orphaned ATTACHMENT files in manual: ${list}."
+echo "Please run this script from your docs root"
 echo
 
 for manual in "${AVAILABLE_MANUALS[@]}"; do
     [[ ! -e "./modules/${manual}_manual/" ]] && echo "Cannot find ${manual} manual." && continue
 
     echo -e "\e[1;32mChecking the ${manual} manual \e[0m"
-    find "./modules/${manual}_manual/examples/" \
+    find "./modules/${manual}_manual/assets/attachments/" \
         \( -path "**/.DS_Store" -o -path "**/vendor" -o -path "**/.gitkeep" \) -prune -o \
         -type f \
-        -exec bash -c 'grep -rnq -E "include:.*$(basename $0 | sed "s/\./\\./")" ./modules/$1_manual/pages || echo "$0"' {} "${manual}" \;
+        -exec bash -c 'grep -rnq -E "link:.*$(basename $0 | sed "s/\./\\./")" ./modules/$1_manual/pages || echo "$0"' {} "${manual}" \;
     echo
 done
 
