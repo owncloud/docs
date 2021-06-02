@@ -1,14 +1,14 @@
-= Controlling File Versions
+= Files Versions
 :toc: right
 :toclevels: 1
 
+== Introduction
+
+Every time when a file gets rewritten to the storage, the versions app (`files_versions`) creates a new backup copy of the file. Versions are visible for the user in the webinterface only and do not get synced to clients. An admin can control the retention behaviour of versioned files.
+
 == How Versions are Created
 
-Every time when a file gets rewritten to the storage, the versions app
-(`files_versions`) creates a new backup copy of the file. These backups are
-stored inside a folder `files_versions` which is inside the users root folder.
-The app will add the suffix `.v` followed by the unix timestamp of the creation
-date of the backup copy.
+When a backup copy is created , it is stored inside a folder `files_versions` which is inside the users root folder. The app will add the suffix `.v` followed by the unix timestamp of the creation date of the backup copy.
 
 ----
 .
@@ -20,23 +20,15 @@ date of the backup copy.
     └── welcome.txt.v1556203567
 ----
 
-NOTE: File versioning only gets triggered if the change is made via the
-ownCloud ecosystem. It does not get triggered if the change is made at a
-mounted filesystem directly.
+NOTE: File versioning only gets triggered if the change is made via the ownCloud ecosystem. It does not get triggered if the change is made at a mounted filesystem directly.
 
-Versions are displayed in the WebUI in the details view in the right sidebar if
-you click on the file row in the file listing. You can restore the current file
-to one of the earlier backup copies in the list, by clicking on the btn:[restore] icon
-of the specific version.
+Versions are displayed in the WebUI in the details view in the right sidebar if you click on the file row in the file listing. You can restore the current file to one of the earlier backup copies in the list, by clicking on the btn:[restore] icon of the specific version.
 
 image:configuration/files/files-versions.png[File Versions in the WebUI]
 
 == How Versions are Deleted
 
-The versions app deletes old file versions
-automatically to ensure that users do not exceed their storage quotas.
-This is done by automatic background jobs which clean up the versions following
-a specific pattern. This pattern defines the expiration date for each backup version.
+The versions app deletes old file versions automatically to ensure that users do not exceed their storage quotas. This is done by automatic background jobs which clean up the versions following a specific pattern. This pattern defines the expiration date for each backup version.
 
 === Default Versions Delete Patterns
 
@@ -50,8 +42,7 @@ This is the default pattern used to delete old versions:
 * For the last 30 days ownCloud keeps one version every day
 * If the versions are older than 30 days ownCloud keeps one version every week
 
-The versions are adjusted along this pattern every time a new version is
-created and the background job was executed.
+The versions are adjusted along this pattern every time a new version is created and the background job was executed.
 
 ==== Example
 
@@ -79,17 +70,13 @@ created and the background job was executed.
 | 30
 |===
 
-WARNING: The versions app never uses more that 50% of the user’s storage quota.
-If the stored versions exceed this limit, ownCloud deletes the oldest
-file versions until it meets the disk space limit again.
+WARNING: The versions app never uses more that 50% of the user’s storage quota. If the stored versions exceed this limit, ownCloud deletes the oldest file versions until it meets the disk space limit again.
 
-TIP: Adjust the `'versions_retention_obligation'` setting in `config.php` to avoid
-filling up the user's quota.
+TIP: Adjust the `'versions_retention_obligation'` setting in `config.php` to avoid filling up the user's quota.
 
 == Change the Expiration Settings
 
-You may alter the default pattern in `config.php`. The default setting
-is `auto`, which sets the default pattern:
+You may alter the default pattern in `config.php`. The default setting is `auto`, which sets the default pattern:
 
 [source,php]
 ----
@@ -100,6 +87,9 @@ is `auto`, which sets the default pattern:
 
 [cols="1a,3"]
 |===
+|`auto`
+|Default value if nothing is set
+
 |`D, auto`
 |Keep versions at least for D days, apply expiration rules to all versions that are older than D days
 
@@ -115,8 +105,7 @@ is `auto`, which sets the default pattern:
 
 ==== Example 1:
 
-Keep all versions for at least 10 days, apply expiration rules to all versions that are older than 10 days.
-This will keep a lot more versions during the last 10 days compared to the default pattern.
+Keep all versions for at least 10 days, apply expiration rules to all versions that are older than 10 days. This will keep a lot more versions during the last 10 days compared to the default pattern.
 
 [source,php]
 ----
