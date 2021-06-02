@@ -493,44 +493,14 @@ User login to ownCloud and providing credentials to access the CWND mount are co
 .Figure 7. Re-enter Mount Access Credentials
 image:enterprise/external_storage/windows_network_drive/cwnd_regain_mount_access.png[Re-enter Mount Access Credentials]
 
-. Configure this mount point by adding data into the corresponding fields
-+
-The password for the Service Account can be temporarily any value to satisfy the creation of the mount point. The functional password is entered in the next step.
+. Configure this mount point by adding required data into the corresponding fields
 +
 .Figure 8. Enter Connection Info and the Service Account
 image:enterprise/external_storage/windows_network_drive/cwnd_fields.png[Enter Connection Info and Service Account]
 +
+NOTE: Starting with ownCloud 10.8, you can properly enter the correct password without using the depreciated occ command `wnd:set-service-account`, as the security measures have been improved and all fields in the mount settings marked as _password_ are now encrypted from the beginning by default. Existing settings are automatically migrated when upgrading.
++
 When everything has been entered correctly, the mount point gets a green button on the left.
-. Enter the Password of the Service Account
-+
-First get the <mount id> of the newly created mount point by running the command below in a shell:
-+
-[source,console,subs="attributes+"]
-----
-{occ-command-example-prefix} files_external:list --short
-----
-+
-This will produce an output like the following:
-+
-----
-+----------+-------------+------------------+-------------------+------+-------+
-| Mount ID | Mount Point | Applicable Users | Applicable Groups | Auth | Type  |
-+----------+-------------+------------------+-------------------+------+-------+
-| 1        | /SFTP       | All              |                   | User | Admin |
-| 2        | /CWND       | All              |                   | User | Admin |
-+----------+-------------+------------------+-------------------+------+-------+
-----
-+
-Use the <mount-id> number of your freshly created CWND mount for the next command:
-+
-[source,console,subs="attributes+"]
-----
-{occ-command-example-prefix} wnd:set-service-account <mount-id>
-----
-+
-This command will ask you for the password of the used Service Account and stores it encrypted in the database.
-+
-NOTE: If the password for the SA changes, you have to redo this step for each CWND mount point.
 
 == Troubleshooting
 
