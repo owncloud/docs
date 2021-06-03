@@ -15,20 +15,39 @@ Depending on the desired level of enforcement, the extension provides two polici
 - xref:soft-policy[Soft policy]: Users can restore files in self-service
 - xref:hard-policy[Hard policy]: Only administrators or group administrators can restore files on request
 
-Users can view the lifecycle status for a file and see when the file is scheduled for archiving or deletion. All lifecycle events of a file are displayed transparently. They can be tracked for individual files as well as for a whole user account using the {oc-marketplace-url}/apps/activity[Activity] stream. To stay informed, users can also receive regular Activity summaries by e-mail. For auditing purposes, the extension integrates with the {oc-marketplace-url}/apps/admin_audit[Auditing] app to provide all events of interest in the logs.
+Users can view the lifecycle status for a file and see when the file is scheduled for archiving or deletion. All lifecycle events of a file are displayed transparently. They can be tracked for individual files as well as for a whole user account using the {oc-marketplace-url}/apps/activity[Activity] stream.
+
+image:apps/files_lifecycle/file-lifecycle-events.png[File Lifecycle Events, width=30%]
+
+To stay informed, users can also receive regular Activity summaries by email. For auditing purposes, the extension integrates with the {oc-marketplace-url}/apps/admin_audit[Auditing] app to provide all events of interest in the logs.
 
 == Setup & Configuration
 
+See the xref:configuration/server/occ_command.adoc#file-lifecycle-management[lifecycle occ command set] for details when using the command line.
+
+=== Archive Location
+
+By default, archived files are stored within the ownCloud data directory but outside the users' files directories so that they are not accessible using the Web UI and other clients.
+
+[width="70%",cols="40%,80%",options="header"]
+|===
+| Type 
+| Location
+| User files
+| `/<datadir>/$userid/files`
+| Archived files
+| `/<datadir>/$userid/archive/files/`
+|===
+
 === Setting Upload Times for Existing Files
 
-File Lifecycle Management uses the _upload time_ of files (server time at which it first appeared on the ownCloud server) to determine when to archive them. As ownCloud Server generally does not store this metadata, the File Lifecycle Management extension takes care of this when it is enabled.
+File Lifecycle Management uses the _upload time_ of files (server time at which they first appeared on the ownCloud server) to determine when to archive them. As ownCloud Server generally does not store this metadata, the File Lifecycle Management extension takes care of this when it is enabled.
 
-When File Lifecycle Management is set up on an existing ownCloud installation, you therefore have to set an _upload time_ for all files that existed before the extension has been enabled to allow the archiving policies to do their job.
-To set an upload time for all files that do not yet have one, you can use the _occ_ command `lifecycle:set-upload-time`. 
+When File Lifecycle Management is set up on an existing ownCloud installation, you therefore have to set an _upload time_ for all files that existed before the extension has been enabled. The same applies if it was temporarily disabled. Only then can the archiving policies work. To set an upload time for all files that do not yet have one, you can use the _occ_ command `lifecycle:set-upload-time`. 
 
 TIP: Files without an _upload time_ will not be considered for archiving.
 
-TIP: You only have to conduct this process once when setting up File Lifecycle Management on an installation with existing files. Files added after enabling File Lifecycle Management will be tracked automatically.
+TIP: You only have to conduct this process once when setting up File Lifecycle Management on an installation with existing files or if it was temporarily disabled . Files added after enabling File Lifecycle Management will be tracked automatically.
 
 Example to set missing upload time values to November, 1st 2019: 
 
@@ -40,6 +59,7 @@ Example to set missing upload time values to November, 1st 2019:
 TIP: The extension only considers files. Folder structures are kept available.
 
 === Policy Configuration
+
 ==== Overview
 
 File Lifecycle Management uses policies to determine which files to archive and when, as well as when to expire the files from archive. In addition, a soft and a hard policy are available to control whether users can restore archived files in self-service or not.
@@ -87,10 +107,6 @@ To put the _hard policy_ in place, use this _occ_ command:
 ----
 {occ-command-example-prefix} config:app:set files_lifecycle policy --value='hard'
 ----
-
-==== Archive Location
-
-By default, archived files are stored within the ownCloud data directory, but outside the users files directories so that they are not accessible using the Web UI and other clients. User files are stored in `/<datadir>/$userid/files`, whilst archived files are stored in `/<datadir>/$userid/archive/files/`.
 
 === Archive and Expiration Background Jobs
 
@@ -162,7 +178,7 @@ To enable the user interface components again, this config value needs to be rem
 
 == Audit Events
 
-During archiving, restoring and expiration, Audit events are emitted. Logging those to the audit.log requires the minimum version 2.0.0 of the {oc-marketplace-url}/apps/admin_audit[Auditing] app.
+During archiving, restoring and expiration, Audit events are emitted. Logging those to the `audit.log` requires the minimum version 2.0.0 of the {oc-marketplace-url}/apps/admin_audit[Auditing] app.
 
 == Further Notes about Archived Files
 
