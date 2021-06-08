@@ -1,103 +1,99 @@
-= Scripts for the Script Guided Installation
+= Scripts for the Script-Guided Installation
 :toc: right
 :toclevels: 1
 :apache_docs: https://httpd.apache.org/docs/2.4/
 
 == Introduction
 
-WARNING: Use the scripts on your own responsibility. It may not work as expected if not
+WARNING: Use the following scripts at your own risk. They may not work as expected if not
 properly configured.
 
-Using the following scripts, you can easily perform an install, upgrade or re-applying
-ownership and access rights. If you administrate more than one ownCloud instance, you
-need the `onwcloud-prep.sh` script only once. This script is doing the main job. Have as
-many instance scripts as you have instances to maintain. Only the instance script needs
-configuration. You provide in this script your target directory and other predefined information.
-The `instance.sh` script (or however you will reame it later on) calls `onwcloud-prep.sh`
-preconfigured for your instance.
+At the end of this section, you'll find two scripts to copy and paste for easy installation and upgrades of ownCloud instances. Using these scripts, you can also reapply
+ownership and access rights. If you administrate more than one ownCloud instance, you still only need the one
+`owncloud_prep.sh` script. This script is doing the main job. Have as
+many instance scripts as you have instances to maintain. Only the instance scripts need
+configuration, e.g. the respective target directory and other predefined information.
+The `instance.sh` script (or however you will name it) calls `owncloud_prep.sh`
+with the configuration you defined for the respective instance.
 
-The scripts are based on `bash`. Please download and keep them together on a location of your
-choice where you can reuse them.
+The scripts are written for the `bash` shell. After you copy and paste them, save both in a location where you can easily reuse them.
 
-NOTE: The scripts are working with tar archives for installations and upgrades only.
+NOTE: The scripts are only working with tar archives as sources for installations and upgrades.
 
-TIP: You can use this script when you want to set strong permissions.
+TIP: You can also use these scripts if you want to set strong permissions.
 
 == Configuration
 
-NOTE: You only need to configure the `instance.sh` script (or how ever you named it).
+NOTE: You only need to edit the `instance.sh` script (or however you name it), if you want to change the default settings.
 
-Following table illustrates the variables to be configured and their brief meaning.
+The following table illustrates the variables to be configured and what they mean.
 
 [width="90%",cols="20%,80%",options="header"]
 |===
 |Variable | Description
-|ocname   | the name of your directory containing the owncloud files
-|ocroot   | the path to ocname, usually /var/www (no trailing slash)
-|linkroot | the path to your source directory for linking data and apps-external (no trailing slash)
-|htuser   | the webserver user
-|htgroup  | the webserver group
-|rootuser | the root user
+|ocname   | the name of your directory containing the owncloud files (default is owncloud)
+|ocroot   | the path to ocname, usually /var/www (no trailing slash, default is /var/www)
+|linkroot | the path to your source directory for linking data and apps-external (default /mnt/owncloud_data)
+|htuser   | the webserver user (default www-data)
+|htgroup  | the webserver group (default www-data)
+|rootuser | the root user (default root)
 |===
 
 . `ocname` +
-This is the _directory name_ where your ownCloud files will be saved. Suggestion,
-use `owncloud` for single instances but feel free to take any name of your choice.
-Do not use any slashes (`/`)
+This is the _directory name_ where your ownCloud files will be saved. Suggestion:
+Use `owncloud` for a single instance but feel free to pick any name you like.
+Do not use slashes (`/`).
 +
-NOTE: Default, when having only one site to serve, use `html` as it requires no
-additional settings to maintain on the Apache webserver post its installation. If you
-use any other name like `owncloud`, you need to set the correct directory in Apache.
-For more information, see the {apache_docs}[Apache documentation]. Consider using a
-different name than the Apache default one when planning additional websites.
+NOTE: With only one site to serve, use `html` as it requires no
+additional settings to maintain on the Apache webserver after the installation. If you
+use any other name like `owncloud`, you need to set the correct directory in the Apache configuration.
+For more information, see the {apache_docs}[Apache documentation]. If you are hosting additional websites on the same server, better use a name different from the Apache default (html).
 
 . `ocroot` +
-This is the _path_ where `ocname` will be created. For example `/var/www` +
+This is the _path_ where `ocname` will be created, for example `/var/www`. +
 The path must be resolvable! Do not use trailing slashes (`/`). +
-`ocroot`/`ocname` Is the  path/directory where your webserver points to (document root). +
-The script resolves this for example to `/var/www/owncloud`
+`ocroot`/`ocname` is the  path/directory where your webserver points to (document root). +
+The script resolves this for example to `/var/www/owncloud`.
 
 . `linkroot` +
-Even not mandatory, it is highly recommended that you use symbolic links for the
-`data` and `apps-external` directories. This has following backgrounds. The `data`
-directory can grow very large. You easily reach GB or even TB. Any copy or move
+Although not mandatory, it is highly recommended that you use symbolic links for the
+`data` and `apps-external` directories, because the `data`
+directory can grow very large. Any copy or move
 process might take a long time. Therefore this directory is often put on external drives
-or on NFS mounts. The `apps-external` directory, ususally relatively small, is used for all
-apps not provided by the ownCloud installation file. On any physical upgrade you do,
-manual interverntion like copying may be necessary before finalizing with the upgrade command.
-Having symbolic links, makes the handling much easier and quicker and less error prone.
+or on NFS mounts. The `apps-external` directory is used for all
+apps not provided by the ownCloud installation. With any physical upgrade you perform,
+manual intervention like copying may be necessary before finalizing upgrade.
+Symbolic links make the administration much easier and less error-prone.
 +
 The script uses `linkroot` as base for both the `data` and `apps-external` directories.
 If not already present, it creates the directories from scratch and links them.
 +
 In case you consider using symbolic links, create a base directory at the location of
-choice (for example: `/mnt/oc_data`) and let that directory be owned by your webservers
-user/group. Use this directory as your `linkroot`. Do not use trailing slashes (`/`).
+choice (for example: `/mnt/oc_data`) and let that directory be owned by your webserver's
+user or group. Use this directory as your `linkroot`. Do not use trailing slashes (`/`).
 
 . `htuser` and `htgroup` +
-This is the user and group the webserver uses. Normally `www-data`.
+This is the user and group the webserver uses, usually `www-data`.
 
 . `rootuser` +
-This is the name of the root user. Normally `root`.
+This is the name of the root user, usually `root`.
 
 == Usage
 
-Using this script is very easy, because you already prepared it with your configurations.
 It is mandatory to run this script with root previleges, because files and directories
-will be created and/or ownwership and permissions will be set. Use the name of the script
-how ever you named it. 
+will be created and ownwership and permissions will be set. Call the instance script with the name you chose:
 
 [source,console]
 ----
 sudo ./instance.sh
 ----
 
-The script asks you a couple of questions which follow a logigal path. Default
-answers are capitalized. If the script extracts the files with tar, it automatically
+The script asks you a couple of questions which follow a logical path. Default
+answers are capitalized. When the script extracts the files with tar, it automatically
 extracts them to the target location without copying. In case of an upgrade, the old
-instance path is backuped by renaming and adding a time stamp. A new target folder with
-the old name is created. This ensures that in case of issues, you easily can go back.
-When upgrading successfully, you must manually remove the backup folder.
+instance path is backed up by renaming and adding a time stamp. A new target folder with
+the old name is created. This ensures that in case of issues, you can easily go back to the previous version.
+After a successful upgrade, you must manually remove the backup folder.
 
 TIP: If you do not install or upgrade, the script sets ownership and permissions only.
 
@@ -127,14 +123,13 @@ TIP: If you do not install or upgrade, the script sets ownership and permissions
   Used when installing or upgrading only. Enter the full path/filename to the tar source
   file, downloaded from owncloud.
 
-== Downloading
+== Creating the scripts
 
-Download both scripts to the same location and rename the script `instance.sh` according your
-needs.
+Copy & paste both scripts into an editor, adjust the `instance.sh` script and save them in the same directory. Name the script which we're calling `instance.sh` according to your needs so you can easily identify to which ownCloud installation it applies. However, the script `owncloud_prep.sh` is called with exactly that name by the instance script, therefore you must save it with exactly that name.
 
-TIP: Rename the `instance.sh` script in a way, where you can easily identify your instance.
+Edit the your version of the `instance.sh` script if you want to change the default values.
 
-Post downloading, make both scripts executable (use the correct script names instead of the placeholder):
+Next, make both scripts executable (use the correct script names instead of the placeholder):
 
 [source,console]
 ----
@@ -154,3 +149,7 @@ include::{examplesdir}installation/manual_installation/instance.sh[]
 ----
 include::{examplesdir}installation/manual_installation/owncloud_prep.sh[]
 ----
+
+At the end of the installation you should see a success message. Now, enter the URL of your ownCloud instance in a browser and continue the setup via the graphical installation wizard. For more information, see xref:installation/installation_wizard.adoc[The Installation Wizard].
+
+If you installed locally, depending on your webserver setup, you should be able to access your ownCloud instance via a browser at https://127.0.0.1/owncloud/ or localhost/owncloud/.
