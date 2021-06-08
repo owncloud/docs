@@ -3,98 +3,87 @@
 
 == Introduction
 
-The Workflow App provides advanced management of file tagging. The app
-has three parts: Tag Manager, Automatic Tagging, and Retention.
+The {oc-marketplace-url}/apps/workflow[Workflow App] enables admins to specify rules and conditions (file size, file mimetype, group membership and more) to automatically assign tags to uploaded files. Based on those tags automated file operations ('Workflow actions') like File Retention (automated file retention periods) can be conducted. The app has three parts:
 
-The Workflow App should be enabled by default (Apps page), and the three
-configuration modules visible on your ownCloud Admin page.
+* Tag Manager
+* Automatic Tagging
+* Retention
 
-See xref:user_manual:files/webgui/tagging.adoc[Tagging Files] in the ownCloud User manual to
-learn how to apply and filter tags on files.
+The Workflow App should be enabled by default (Apps page), and the three configuration modules will be visible on your ownCloud Admin page. See
+xref:user_manual:files/webgui/tagging.adoc[Tagging Files]
+in the ownCloud User manual to learn how to apply and filter tags on files.
 
 == Tag Manager
 
-[TIP]
-====
-To use this functionality, administrators need to install and enable the *Collaborative Tag Management* app from Market.
-====
+TIP: To use tag management, administrators need to install and enable the {oc-marketplace-url}/apps/systemtags_management[Collaborative Tags Management] app.
 
-The Tag Manager is for creating new tags, editing existing tags, and deleting tags. 
-Tags may be marked as *Visible*, *Static*, *Restricted*, or *Invisible*.
+The Tag Manager is used for creating new tags, editing existing tags, and deleting tags. Tags may be marked as *Visible*, *Static*, *Restricted*, or *Invisible*.
 
-Visible:: All users may see, rename, and apply these tags to files and folders.
+Visible::
+All users may see, rename, and apply these tags to files and folders.
 
-Static:: Only users in the specified groups can assign and un-assign the tag to a file. However, only admins can rename and edit the tag.
+Static::
+Only users in the specified groups can assign and un-assign the tag to a file. However, only admins can rename and edit the tag.
 
-Restricted:: Tags are assignable and editable only to the user groups that you select. 
-Other users can filter files by restricted tags, but cannot tag files with them or rename them. 
-The tags are marked (restricted).
+Restricted::
+Tags are assignable and editable only to the user groups that you select. Other users can filter files by restricted tags, but cannot tag files with them or rename them. The tags are marked (restricted).
 
-Invisible:: Tags are visible only to ownCloud admins.
+Invisible::
+Tags are visible only to ownCloud admins.
 
 To access this functionality, select menu:Settings[Admin > Workflow &amp; Tags].
 
-image:enterprise/file_management/workflow-1.png[Tag Manager.]
+image:enterprise/file_management/workflow-1.png[Tag Manager]
 
-This is an example of what your tags look like in the *Tags* view on your files page.
-Non-admin users will not see invisible tags, but they will see visible and restricted tags.
+This is an example of what your tags look like in the *Tags* view on your files page. Non-admin users will not see invisible tags, but visible and restricted tags only.
 
-image:enterprise/file_management/workflow-5.png[Tag Manager.]
+image:enterprise/file_management/workflow-5.png[Tag Manager]
 
 == Automatic Tagging
 
-The Automatic Tagging module operates on newly-uploaded files. Create a
-set of conditions, and then when a file or folder matches those
-conditions it is automatically tagged. The tag must already have been
-created with the Tag Manager.
+The Automatic Tagging module operates on newly-uploaded files. Create a set of conditions, and then when a file or folder matches those conditions it is automatically tagged. The tag must already have been created with the Tag Manager.
 
-For example, you can assign the invisible tag *iOS Uploads* to all files
-uploaded from iOS devices. This tag is visible only to admins.
+For example, you can assign the invisible tag *iOS Uploads* to all files uploaded from iOS devices. This tag is visible only to admins.
 
-image:enterprise/file_management/workflow-2.png[Automatic tagging.]
+image:enterprise/file_management/workflow-2.png[Automatic tagging]
 
-When files with this tag are shared with you, you can view them with the
-Tags filter on the Files page.
+When files with this tag are shared with you, you can view them with the Tags filter on the Files page.
 
-image:enterprise/file_management/workflow-3.png[Viewing tagged files.]
+image:enterprise/file_management/workflow-3.png[Viewing tagged files]
 
 Automatic Tagging is especially useful with the Retention module.
 
+The settings of a workflow can be fine tuned post creation, see the example below:
+
+image:enterprise/file_management/update_workflow.png[Update Workflow, width=50%]
+
 == Retention
 
-The Retention module is your housecleaning power tool, because it automatically deletes files after a time period that you specify. 
-Select which tag to set a time limit on, and then set your time limit. 
-File age is calculated from the file mtime (modification time).
+The Retention module is your housecleaning power tool, because it automatically deletes files after a time period that you specify. Select which tag to set a time limit on, and then set your time limit. File age is calculated from the file mtime (modification time).
 
 NOTE: ownCloud does not preserve directory mtimes (modification time), though it does update file mtimes.
 
-image:enterprise/file_management/workflow-4.png[Setting retention times via tag.]
+image:enterprise/file_management/workflow-4.png[Setting retention times via tag]
 
-For best performance, retention tags should be applied high in your file
-hierarchy. If subfolders have the same tags as their parent folders,
-their tags must also be processed, so it will take a little longer.
+For best performance, retention tags should be applied high in your file hierarchy. If subfolders have the same tags as their parent folders, their tags must also be processed, so it will take a little longer.
 
 == Retention Engines
 
-There are two retention engines that further allow you to fine-tune your
-retention settings: *TagBasedRetention* and *UserBasedRetention*.
-*TagBasedRetention* is the default.
+There are two retention engines that further allow you to fine-tune your retention settings:
 
-*TagBasedRetention*: This checks files that have a particular tag
-assigned. Then it checks (depth-first) the children of the tagged item,
-before continuing with the other tagged items. Children that have
-already been checked will not be checked a second time.
+TagBasedRetention::
+This is the default setting and checks files that have a particular tag assigned. Then it checks (depth-first) the children of the tagged item, before continuing with the other tagged items. Children that have already been checked will not be checked a second time.
++
+This is optimised for processing smaller numbers of files that have multiple retention tags.
 
-This is optimised for processing smaller numbers of files that have
-multiple retention tags.
+UserBasedRetention::
+Examines files per user. It first iterates over all files and folders (siblings first), then examines the tags for those
+items and checks their respective retention periods. This is optimised for many files with few retention tags.
 
-*UserBasedRetention*: Examines files per user. It first iterates over
-all files and folders (siblings first), then examines the tags for those
-items and checks their respective retention periods. This is optimised
-for many files with few retention tags.
+You can define the way how the retention engine behaves by adding following `config.php` setting. The value can be either 
+`tagbased` (default) or `userbased`.
 
-To select UserBasedRetention, add this line to your ee.config.php:
-
+[source,php]
 ----
-'workflow.retention_engine' => userbased,
+'workflow.retention_engine' => 'userbased',
 ----
