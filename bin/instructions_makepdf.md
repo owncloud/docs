@@ -40,7 +40,7 @@ The general idea of `asciidoctor-pdf` is to create a pdf from a given single fil
 The ownCloud Team <docs@owncloud.com>
 {revnumber}, {revdate}
 :source-highlighter: rouge
-:homepage: https://github.com/owncloud/client
+:homepage: https://github.com/owncloud/docs-client-desktop
 :listing-caption: Listing
 :toc:
 :toclevels: 2
