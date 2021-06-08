@@ -88,7 +88,7 @@ xref:configuration/server/config_apps_sample_php_parameters.adoc#app-openid-conn
 
 ==== Example config.php setup
 
-An example snippet that can be added to `config.php` is shown below. You need to add both config values as listed below.
+An example snippet that can be added to `config.php` is shown below. You need to add both config values as listed below. The example expects that login users have already been created in ownCloud.
 
 Use these links to see the corresponding configuration section for: 
 
@@ -102,6 +102,7 @@ Use these links to see the corresponding configuration section for:
 'http.cookie.samesite' => 'None',
 
 'openid-connect' => [
+    'auto-provision' => ['enabled' => false],
     'provider-url' => 'https://login.microsoftonline.com/YOUR-DIRECTORY-TENANT-ID/v2.0/',
     'client-id' => 'YOUR-CLIENT-ID',
     'client-secret' => 'YOUR-CLIENT-SECRET',
@@ -116,6 +117,18 @@ Use these links to see the corresponding configuration section for:
     'search-attribute' => 'unique_name',
     'use-access-token-payload-for-user-info' => true,
 ],
+----
+
+If you want to let ownCloud create users which are not present during a OIDC authentication, replace +
+`'auto-provision' => ['enabled' => false],` with:
+
+[source,php]
+----
+    'auto-provision' => [
+        'enabled' => true,
+        'email-claim' => 'email',
+        'display-name-claim' => 'name',
+    ],
 ----
 
 ////
