@@ -32,19 +32,9 @@ This is an example output if you have everything installed. Please consider that
 
 ```
 /usr/bin/git
-/root/.nvm/versions/node/v12.19.0/bin/node
-/root/.nvm/versions/node/v12.19.0/bin/npm
+/home/your_user/.nvm/versions/node/v14.17.0/bin/node
+/home/your_user/.nvm/versions/node/v14.17.0/bin/npm
 /usr/bin/yarn
-```
-
-### Checking for the Prerequisites on Microsoft Windows
-
-To check if the software is installed, when running Microsoft Windows, run the following commands in [the Windows Command Prompt][link-open-windows-cmd-prompt]:
-
-```
-git --version
-node --version
-yarn --version
 ```
 
 ### Install Prerequisites
@@ -71,40 +61,43 @@ nvm ls-remote | grep "Latest LTS"
         v8.17.0   (Latest LTS: Carbon)
        v10.24.1   (Latest LTS: Dubnium)
        v12.22.1   (Latest LTS: Erbium)
-       v14.16.1   (Latest LTS: Fermium)
-
+       v14.17.0   (Latest LTS: Fermium)
 ```
-Then install a suitable LTS version. You can install as many versions as you like or need!
+Then install a suitable LTS version. You can install as many versions as you like or need, see example below.
 
 ```
 nvm install 10.23.0
-nvm install 12.22.1
+nvm install 14.17.0
 ```
 
 List the installed versions
 
 ```
 nvm ls
-->     v10.23.0
-       v12.22.1
+       v10.23.0
+       v12.18.2
+->     v14.17.0
+        v15.5.1
          system
 default -> 10.23.0 (-> v10.23.0)
 ...
 ```
 
-Switch to a specific installed version of Node at any time using the following command:
+**Important:** For docs, DO NOT use a version above v10.23.0 and below v14.17.0 as it may later conflict with other dependencies especially with the `yarn serve` command where you will get warnings and it may not work as expected.
 
-**Important:** For docs, DO NOT use a version above v12 as it may later conflict with other dependencies especially with the `yarn serve` command where you will get warnings and it may not work as expected.
+**Info:** The backend to push to the web also uses node v14, see the `.drone.star` file. It is recommended to stay with the same release if possible.
 
+Switch to a specific installed version of Node at any time, use the following command:
 
 ```
-nvm use 10.23.0
+nvm use 14.17.0
 ```
+**Important:** If you have additional concurrent terminals open, you must close these terminals first and reopen them to use the new setup.
 
 To make a particular Node version default in new terminals, type:
 
 ```
-nvm alias default 10.23.0
+nvm alias default 14.17.0
 ```
 
 #### Yarn
@@ -128,7 +121,7 @@ To see all prepared yarn commands run following command:
 ```
 yarn run
 
-yarn run vv1.15.2
+yarn run v1.22.5
 info Commands available from binary scripts: antora, blc, broken-link-checker, crc32, ecstatic, errno, esparse, esvalidate, handlebars, he, hs, http-server, isogit, js-yaml, json5, mime, mkdirp, nopt, opener, os-name, osx-release, printj, semver, sha.js, strip-ansi, supports-color, uglifyjs, write-good, writegood
 info Project commands
    - antora
@@ -168,7 +161,7 @@ There are two ways to generate the documentation in HTML format:
 Using Yarn, as in the example below, is the easiest way to build the documentation. This project has a predefined target (`antora`) which calls Antora, supplying all of the required options to build the docs, to build the documentation on any branch of the [ownCloud documentation repository](https://github.com/owncloud/docs).
 
 ```
-yarn antora
+yarn antora-local
 ```
 
 #### Additional Command Line Parameters
