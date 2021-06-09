@@ -5,6 +5,7 @@ def main(ctx):
     # It's fine that this is out of date in version branches, usually just needs
     # adjustment in master/deployment_branch when a new version is added to site.yml
     latest_version = "10.7"
+    default_branch = "master"
 
     # Current version branch (used to determine when changes are supposed to be pushed)
     # pushes to base_branch will trigger a build in deployment_branch but pushing
@@ -13,14 +14,53 @@ def main(ctx):
 
     # Version branches never deploy themselves, but instead trigger a deployment in deployment_branch
     # This must not be changed in version branches
-    deployment_branch = "master"
+    deployment_branch = default_branch
+    pdf_branch = base_branch
 
     return [
-        build(ctx, latest_version, deployment_branch, base_branch),
-        trigger(ctx, latest_version, deployment_branch, base_branch),
+        checkStarlark(),
+        build(ctx, latest_version, deployment_branch, base_branch, pdf_branch),
+        trigger(ctx, latest_version, deployment_branch, base_branch, pdf_branch),
     ]
 
-def build(ctx, latest_version, deployment_branch, base_branch):
+def checkStarlark():
+    return {
+        "kind": "pipeline",
+        "type": "docker",
+        "name": "check-starlark",
+        "steps": [
+            {
+                "name": "format-check-starlark",
+                "image": "owncloudci/bazel-buildifier",
+                "pull": "always",
+                "commands": [
+                    "buildifier --mode=check .drone.star",
+                ],
+            },
+            {
+                "name": "show-diff",
+                "image": "owncloudci/bazel-buildifier",
+                "pull": "always",
+                "commands": [
+                    "buildifier --mode=fix .drone.star",
+                    "git diff",
+                ],
+                "when": {
+                    "status": [
+                        "failure",
+                    ],
+                },
+            },
+        ],
+        "depends_on": [],
+        "trigger": {
+            "ref": [
+                "refs/pull/**",
+            ],
+        },
+    }
+
+def build(ctx, latest_version, deployment_branch, base_branch, pdf_branch):
     return {
         "kind": "pipeline",
         "type": "docker",
@@ -62,7 +102,7 @@ def build(ctx, latest_version, deployment_branch, base_branch):
                 "pull": "always",
                 "image": "owncloudci/nodejs:14",
                 "environment": {
-                    "BUILD_SEARCH_INDEX": "true",
+                    "BUILD_SEARCH_INDEX": ctx.build.branch == deployment_branch,
                     "UPDATE_SEARCH_INDEX": ctx.build.branch == deployment_branch,
                     "ELASTICSEARCH_HOST": from_secret("elasticsearch_host"),
                     "ELASTICSEARCH_INDEX": from_secret("elasticsearch_index"),
@@ -141,7 +181,7 @@ def build(ctx, latest_version, deployment_branch, base_branch):
                         "cron",
                     ],
                     "branch": [
-                        base_branch,
+                        pdf_branch,
                     ],
                 },
             },
@@ -187,21 +227,22 @@ def build(ctx, latest_version, deployment_branch, base_branch):
                 },
             },
         ],
+        "depends_on": [
+            "check-starlark",
+        ],
         "trigger": {
             "ref": {
                 "include": [
                     "refs/heads/%s" % deployment_branch,
+                    "refs/heads/%s" % pdf_branch,
                     "refs/tags/**",
-                    "refs/pull/**"
-                ],
-                "exclude": [
-                    "refs/heads/%s" % base_branch,
+                    "refs/pull/**",
                 ],
             },
         },
     }
 
-def trigger(ctx, latest_version, deployment_branch, base_branch):
+def trigger(ctx, latest_version, deployment_branch, base_branch, pdf_branch):
     return {
         "kind": "pipeline",
         "type": "docker",
