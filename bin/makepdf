@@ -19,6 +19,7 @@ IFS=$'\n\t'
 
 ACTION=
 VERSION=
+FAILURE_LEVEL=
 DEFAULT_VERSION="master"
 DRY_RUN=false
 FONTS_DIRECTORY="fonts"
@@ -42,6 +43,19 @@ YMLFILE="$DIR/../site.yml"
 
 source $DIR/yamlparse.sh
 
+# if we are working local without drone, get the actual branch the pdf build is made for.
+# the correct branch name will be printed when the pdf is created.
+# check if git is present
+if command -v git &> /dev/null; then
+    # check if we are on a branch and get the name if we are on one
+    if currentbranch=$(git symbolic-ref --short -q HEAD)
+    then
+        DEFAULT_VERSION=${currentbranch}
+    else
+        DEFAULT_VERSION='No Branch'
+    fi
+fi
+
 if [[ -z "${VERSION:-}" ]]; then
     if [[ -n "${DRONE_TAG:-}" ]]; then
         VERSION=${DRONE_TAG/v//}
@@ -59,6 +73,7 @@ function usage()
     echo "Usage: ./bin/makepdf [-c] [-d] [-h] [-m] [-n <${list}>]"
     echo
     echo "-h ... help"
+    echo "-e ... Set failure level to ERROR (default: FATAL)"
     echo "-c ... clean the build/ directory (contains the pdf)"
     echo "-d ... Debug mode, prints the book to be converted. Only in combination with -m and/or -n"
     echo "-m ... Build all available manuals"
@@ -130,7 +145,7 @@ function build_pdf_manual()
         return 0
     fi
 
-    echo "Generating version '${revision}' of the ${manual} manual, dated: ${release_date}"
+    echo "Generating the ${manual} manual from branch '${revision}', dated: ${release_date}"
     mkdir -p "$build_directory"
 
     # https://docs.asciidoctor.org/asciidoctor.js/latest/cli/options/
@@ -163,8 +178,8 @@ function build_pdf_manual()
 #    cat $book_file <(convert_antora_nav_to_asciidoc_list "$nav_file")
 #    exit
 
-    createpdf="asciidoctor-pdf $param - < <(cat $book_file <(convert_antora_nav_to_asciidoc_list "$nav_file"))"
-#    createpdf="asciidoctor-pdf $param - < <(cat $book_file)"
+    createpdf="asciidoctor-pdf $FAILURE_LEVEL $param - < <(cat $book_file <(convert_antora_nav_to_asciidoc_list "$nav_file"))"
+#    createpdf="asciidoctor-pdf $FAILURE_LEVEL $param - < <(cat $book_file)"
 
     eval $createpdf
 
@@ -187,7 +202,7 @@ function build_manuals()
     fi
 }
 
-while getopts ":hcdmn:" o
+while getopts ":hecdmn:" o
 do
     case ${o} in
         d )
@@ -201,6 +216,9 @@ do
             ;;
         c )
             ACTION="CLEAN"
+            ;;
+        e )
+            FAILURE_LEVEL='--failure-level=ERROR'
             ;;
         : )
             echo "Invalid option: $OPTARG requires an argument" 1>&2
