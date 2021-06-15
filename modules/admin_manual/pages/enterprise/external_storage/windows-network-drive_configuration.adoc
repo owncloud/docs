@@ -504,6 +504,8 @@ When everything has been entered correctly, the mount point gets a green button 
 
 == Troubleshooting
 
+=== General or Connectivity Issues
+
 If you encounter issues using Windows network drive, then try the following troubleshooting steps:
 
 First check the connection to the share by using {smbclient-manpage-url}[smbclient] on the command line
@@ -841,12 +843,16 @@ Setup a Cron job or similar with something like the following two commands:
 sudo rm -f /opt/oc/store1 # With a different schedule
 ----
 
-The first run will create the `/opt/oc/store1` with the serialized storages, the rest of the executions
-will use that file. The second Cron job, the one removing the file, will force the `wnd:process-queue` to
+The first run will create the `/opt/oc/store1` with the serialized storages, the rest of the executions will use that file. The second Cron job, the one removing the file, will force the `wnd:process-queue` to
 refresh the data.
 
-It's intended to be run in a different schedule, so there are several
-executions of the `wnd:process-queue` fetching the data from the file.
-Note that the file can be removed manually at any time if it's needed
-(for example, the admin has reset some passwords, or has been notified
-about password changing).
+It's intended to be run in a different schedule, so there are several executions of the `wnd:process-queue` fetching the data from the file. Note that the file can be removed manually at any time if it's needed (for example, in case the admin has reset some passwords or has been notified about password changes).
+
+=== Perfomance on High Number of ACL Targeting Users
+
+The WND app doesn’t know about the users or groups associated with ACLs. This means that an ACL containing "admin" might refer to a user called "admin" or a group called "admin". By default, the group membership component considers the ACLs to target groups, and as such, it will try to get the information for such a group. This works fine if the majority of the ACLs target groups. If the majority of the ACLs contain users, this might be problematic. The cost of getting information on a group is usually higher than getting information on a user. This option makes the group membership component assume the ACL contains a user and checks whether there is a user in ownCloud with such a name first. If the name doesn’t refer to a user, it will get the group information. Note that this will have performance implications if the group membership component can’t discard users in a large number of cases. It is recommended to enable this option only if there are a high number of ACLs targeting users. In order to enable this setting, you can edit the `config/config.php` file and add the following configuration:
+
+[source,php]
+----
+'wnd.groupmembership.checkUserFirst' => true,
+----
