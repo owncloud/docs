@@ -12,8 +12,7 @@ docker-compose setup.
 
 [NOTE]
 ====
-Preceding `sudo` in the docker commands is not necessary if you add your user to the `docker` group
-by invoking
+Grant docker command privileges to certain users by adding them to the group `docker`. The changes below via `usermod` only take effect after the docker users log in. So you may have to log out and log in again or possibly reboot before you can run docker commands. Users not added to the `docker` group can run docker commands with a preceding `sudo`. In this section sudo is generally omitted before docker commands.
 
 [source,console]
 ----
@@ -23,7 +22,42 @@ sudo usermod -aG docker <your-user>
 
 == Quick Evaluation
 
-`sudo docker run -e OWNCLOUD_DOMAIN=localhost:{std-port-http} -p{std-port-http}:{std-port-http} owncloud/server`
+If you only want to take a peek and are content with SQLite as database, which ist not supported by ownCloud and not recommended for production purposes, try the following:
+
+[source,console]
+----
+`docker run --rm --name oc-eval -d -e OWNCLOUD_DOMAIN=localhost:{std-port-http} -p{std-port-http}:{std-port-http} owncloud/server`
+----
+
+This starts a docker container with the name "oc-eval" in the background (option `-d`). `owncloud/server` is the docker image downloaded from Docker Hub. If you don't start the container with option `-d`, the logs will be displayed in the shell. If you are running it in the background as in the example above, you can display the logs with the command:
+
+[source,console]
+----
+docker logs oc-eval
+----
+
+With the command `docker ps` you can list your running docker containers and should see the entry for oc-eval.
+
+You can log in to your ownCloud instance via a browser at `pass:a[http://localhost:{std-port-http}]` with the preconfigured user `admin` and password `admin`.
+
+NOTE: Access only works with http, not https.
+
+Now, if you like what you see but want a supported installation with MariaDB, you should remove the eval version before proceeding with the next section.
+
+[source,console]
+----
+docker kill oc-eval
+----
+
+This removes the container if you used the option `--rm` as suggested in the example above. If you omitted that option, you need to first run the command:
+
+[source,console]
+----
+docker rm oc-eval
+----
+
+If you now run `docker ps` again, the entry for oc-eval should be gone.
+
 
 == Docker Compose
 
@@ -95,11 +129,11 @@ HTTP_PORT={std-port-http}
 EOF
 
 # Build and start the container
-sudo docker-compose up -d
+docker-compose up -d
 ----
 
 When the process completes, check that all the containers have successfully started, by running
-`sudo docker-compose ps`. If they are all working correctly, you should see output
+`docker-compose ps`. If they are all working correctly, you should see output
 similar to the one below:
 
 [width="100%",cols="30%,50%,30%,50%",options="header"]
@@ -136,12 +170,12 @@ It is the admin's responsibility to make the files persistent.
 To inspect the volumes run:
 [source,console]
 ----
-sudo docker volume ls | grep ownclouddockerserver
+docker volume ls | grep ownclouddockerserver
 ----
 To export the files as a tar archive run:
 [source,console]
 ----
-sudo docker run -v ownclouddockerserver_files:/mnt \
+docker run -v ownclouddockerserver_files:/mnt \
             ubuntu tar cf - -C /mnt . > files.tar
 ----
 ====
@@ -153,7 +187,7 @@ functional. +
 To inspect the log output:
 [source,console]
 ----
-sudo docker-compose logs --follow owncloud
+docker-compose logs --follow owncloud
 ----
 Wait until the output shows **Starting apache daemon...** before you access the web UI.
 ====
@@ -163,7 +197,7 @@ Wait until the output shows **Starting apache daemon...** before you access the 
 Although all important data persists after:
 [source,console]
 ----
-sudo docker-compose down; docker-compose up -d
+docker-compose down; docker-compose up -d
 ----
 there are certain details that get lost, e.g., default apps may re-appear after they were uninstalled.
 ====
@@ -185,13 +219,13 @@ Again we assume you used `docker-compose` like in the previous example. +
 To stop the containers use:
 [source,console]
 ----
-sudo docker-compose stop
+docker-compose stop
 ----
 
 To stop and remove containers along with the related networks, images and volumes:
 [source,console]
 ----
-sudo docker-compose down --rmi all --volumes
+docker-compose down --rmi all --volumes
 ----
 
 === Running occ commands
@@ -202,7 +236,7 @@ xref:configuration/server/occ_command.adoc[Using the occ Command] by entering:
 
 [source,console]
 ----
-sudo docker-compose exec owncloud occ <command>
+docker-compose exec owncloud occ <command>
 ----
 
 [IMPORTANT]
@@ -221,14 +255,14 @@ these simple steps:
 +
 [source,console]
 ----
-sudo docker-compose exec owncloud occ maintenance:mode --on
+docker-compose exec owncloud occ maintenance:mode --on
 ----
 
 . Create a backup in case something goes wrong during the upgrade process, using the following command:
 +
 [source,console]
 ----
-sudo docker-compose exec mariadb \
+docker-compose exec mariadb \
      /usr/bin/mysqldump -u root --password=owncloud \
      owncloud > owncloud_$(date +%Y%m%d).sql
 ----
@@ -239,7 +273,7 @@ NOTE: You need to adjust the password and database name if you have changed it i
 +
 [source,console]
 ----
-sudo docker-compose down
+docker-compose down
 ----
 
 . Update the version number of ownCloud in your `.env` file. You can use sed
@@ -262,7 +296,7 @@ cat .env
 +
 [source,console]
 ----
-sudo docker-compose up -d
+docker-compose up -d
 ----
 
 Now you should have the current ownCloud running with `docker-compose`. Note that the container will
@@ -271,7 +305,7 @@ you can check the update log with the following command:
 
 [source,console]
 ----
-sudo docker-compose logs --timestamp owncloud
+docker-compose logs --timestamp owncloud
 ----
 
 === Docker Compose YAML File
@@ -299,7 +333,7 @@ wget http://ftp.us.debian.org/debian/pool/main/libs/libseccomp/libseccomp2_2.5.1
 sudo dpkg -i libseccomp2_2.5.1-1_armhf.deb
 ----
 
-Alternatively you can add the backports repo for DebianBuster:
+Alternatively you can add the backports repo for Debian Buster:
 
 [source,console]
 ----
