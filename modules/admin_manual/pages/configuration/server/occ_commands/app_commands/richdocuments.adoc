@@ -1,0 +1,82 @@
+= Collabora Online / Secure View
+
+Marketplace URL: {oc-marketplace-url}/apps/richdocuments[Collabora Online]
+
+Collabora Online allows you to work with all kinds of collabora office documents inside ownCloud for improved productivity. For details, see the
+xref:enterprise/collaboration/collabora_secure_view.adoc[Collabora Online / Secure View] documentation.
+
+`config:app` commands to configure the Collabora Online app.
+
+[source,console]
+----
+ config:app:get|set
+ richdocuments wopi_url            WOPI Server URL
+ richdocuments secure_view_option  Enable Secure View
+ richdocuments watermark_text      Watermark pattern displayed in the document
+ richdocuments secure_view_open_action_default  Open documents in Secure View with watermark by default
+----
+
+== App Configuration
+
+All app configurations are set and queried with the `config:app` command set. The examples below set a value. To query a value use `config:app:get` and the corresponding key without any options or attributes.
+
+== Set the WOPI URL
+
+WOPI Server URL
+
+This command sets the WOPI Server to `[IP/URL]:port` +
+`[IP/URL]:port` can be any IP/URL plus the port on which the WOPI server can be accessed like `'a.b.c.d'` or `'http:\\a.b.c.d:8098'` or `'https:\\rd.yourdomain.com'` etc. Adding the port is only necessary when not using standard ports.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} config:app:set richdocuments wopi_url --value='[IP/URL]:port'
+----
+
+== Set the secure_view_option
+
+Enable Secure View (possible values: true/false, default: false)
+
+The following example command enables secure view globally in the system
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} config:app:set richdocuments secure_view_option --value='true'
+----
+
+== Set the watermark_text
+
+A watermark pattern is displayed in the document when it is viewed. It can be an arbitrary string. The keyword \{viewer-email} will be replaced with the current user's email address in the document watermark. If an email address is not set then the user's display name will be used.
+
+The following example command sets the watermark pattern displayed in the document.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} config:app:set richdocuments watermark_text --value='Restricted to \{viewer-email}'
+----
+
+== Set the secure_view_open_action_default
+
+Open documents in Secure View with watermark by default (possible values: true/false, default: false)
+
+The following example command enables the option to globally enforce displaying the watermark when documents are viewed
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} config:app:set richdocuments secure_view_open_action_default --value='true'
+----
+
+== Delete a Key or Change a Key
+
+You can delete a key with the following example command:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} config:app:delete richdocuments secure_view_open_action_default
+----
+
+You can change a key with the following example command:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} config:app:set richdocuments secure_view_option --value='false'
+----
