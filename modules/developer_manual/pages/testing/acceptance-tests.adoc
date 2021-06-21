@@ -456,6 +456,41 @@ So `When` steps should end with a phrase specifying the interface to be tested, 
 - `using the WebDAV API`
 - `using the webUI`
 
+If a `When` step takes an action that is not expected to succeed, then the step can use the phrase "tries to".
+This makes it clear to the reader that the action is not expected to succeed in the normal way.
+It also allows the test code to act differently when handling the step. For example, it could ignore the fact that some
+element that is usually on the UI is missing, or it can understand that some different UI page will be displayed next.
+
+[source,gherkin]
+----
+  Scenario: admin login with invalid password
+    Given the user has browsed to the login page
+    When the administrator tries to login with an invalid password "wrongPassword" using the webUI
+    ...
+----
+
+Write `When` steps that state what the user wants to achieve. This helps the test to remain focused on the business
+need rather than the implementation detail.
+
+Sometimes there is a workflow on the UI that takes a few UI actions to achieve the result. For example, when the
+user moves or copies a file they go through a few actions. Normally write a single `When` step. But sometimes there
+are points in the workflow where the user has the option to take a different path. For example, there is a cancel
+button available at each step of the workflow. In order to test the cancel button, write smaller `When` steps to
+describe exactly how the user progresses through the workflow.
+
+[source,gherkin]
+----
+  Scenario: cancel copying a file
+    Given user "Alice" has logged in using the webUI
+    And the user has browsed to the files page
+    When the user opens the file action menu of folder "data.zip" using the webUI
+    And the user selects the copy action for folder "data.zip" using the webUI
+    And the user selects the folder "simple-empty-folder" as a place to copy the file using the webUI
+    And the user cancels the attempt to copy the file into folder "simple-empty-folder" using the webUI
+    Then file "data.zip" should be listed on the webUI
+    But file "data.zip" should not be listed in the folder "simple-empty-folder" on the webUI
+----
+
 ==== Writing a Then Step
 
 `Then` steps describe what should be the case if the `When` step(s) happened successfully.
