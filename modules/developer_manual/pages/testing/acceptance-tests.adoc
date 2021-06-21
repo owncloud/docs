@@ -98,13 +98,19 @@ The testing app must be installed and enabled on the system-under-test.
 
 The testing app also provides skeleton folders that the tests can use as the default set of files for new users.
 
-=== `apps/testing/data/apiSkeleton/`
+=== `apps/testing/data/tinySkeleton/`
 
-This folder stores the initial files loaded for a new user during API or CLI acceptance tests.
+This folder stores just a single file.
+This is useful when wanting to test with a skeleton and there is no need for more than one file.
 
-=== `apps/testing/data/webUISkeleton/`
+=== `apps/testing/data/smallSkeleton/`
 
-This folder stores the initial files loaded for a new user during webUI acceptance tests.
+This folder stores a small set of initial files to be loaded for a new user.
+
+=== `apps/testing/data/largeSkeleton/`
+
+This folder stores a larger set of initial files to be loaded for a new user.
+These can be convenient when a longer list of files is needed, e.g., in a UI test that scrolls a file list.
 
 == Running Acceptance Tests
 
@@ -313,7 +319,7 @@ This generates a large amount of output, but can be useful to understand exactly
 
 [source,bash]
 ----
-make test-acceptance-api BEHAT_SUITE=apiTags OC_TEST_ALT_HOME=1
+make test-acceptance-api DEBUG_ACCEPTANCE_API_CALLS=true BEHAT_SUITE=apiTags
 ----
 
 === Optional Environment Variables
@@ -387,9 +393,9 @@ Then the steps to execute for that scenario are listed.
 
 There are 3 types of test steps:
 
-- `Given` steps that get the system into the desired state to start the test (e.g. create users and groups, share some files)
-- `When` steps that perform the action under test (e.g. upload a file to a share)
-- `Then` steps that verify that the action was successful (e.g. check the HTTP status code, check that other users can access the uploaded file)
+- `Given` steps that get the system into the desired state to start the test (e.g., create users and groups, share some files)
+- `When` steps that perform the action under test (e.g., upload a file to a share)
+- `Then` steps that verify that the action was successful (e.g., check the HTTP status code, check that other users can access the uploaded file)
 
 A single scenario should test a single action or logical sequence of actions.
 So the `Given`, `When` and `Then` steps should come in that order.
@@ -449,6 +455,41 @@ So `When` steps should end with a phrase specifying the interface to be tested, 
 - `using the Provisioning API`
 - `using the WebDAV API`
 - `using the webUI`
+
+If a `When` step takes an action that is not expected to succeed, then the step can use the phrase "tries to".
+This makes it clear to the reader that the action is not expected to succeed in the normal way.
+It also allows the test code to act differently when handling the step. For example, it could ignore the fact that some
+element that is usually on the UI is missing, or it can understand that some different UI page will be displayed next.
+
+[source,gherkin]
+----
+  Scenario: admin login with invalid password
+    Given the user has browsed to the login page
+    When the administrator tries to login with an invalid password "wrongPassword" using the webUI
+    ...
+----
+
+Write `When` steps that state what the user wants to achieve. This helps the test to remain focused on the business
+need rather than the implementation detail.
+
+Sometimes there is a workflow on the UI that takes a few UI actions to achieve the result. For example, when the
+user moves or copies a file they go through a few actions. Normally write a single `When` step. But sometimes there
+are points in the workflow where the user has the option to take a different path. For example, there is a cancel
+button available at each step of the workflow. In order to test the cancel button, write smaller `When` steps to
+describe exactly how the user progresses through the workflow.
+
+[source,gherkin]
+----
+  Scenario: cancel copying a file
+    Given user "Alice" has logged in using the webUI
+    And the user has browsed to the files page
+    When the user opens the file action menu of folder "data.zip" using the webUI
+    And the user selects the copy action for folder "data.zip" using the webUI
+    And the user selects the folder "simple-empty-folder" as a place to copy the file using the webUI
+    And the user cancels the attempt to copy the file into folder "simple-empty-folder" using the webUI
+    Then file "data.zip" should be listed on the webUI
+    But file "data.zip" should not be listed in the folder "simple-empty-folder" on the webUI
+----
 
 ==== Writing a Then Step
 
@@ -531,11 +572,11 @@ So you can just create these users in `Given` steps and they get the correspondi
 |Brian
 |Brian Murphy
 |brian@example.org
-|The second actor, e.g. the one receiving a share
+|The second actor, e.g., the one receiving a share
 |Carol
 |Carol King
 |carol@example.org
-|The third actor, e.g. might be a member of a group
+|The third actor, e.g., might be a member of a group
 |David
 |David Lopez
 |david@example.org
