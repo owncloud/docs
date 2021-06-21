@@ -1,6 +1,41 @@
 :install-mariadb-latest-url: https://downloads.mariadb.org/mariadb/repositories/#
 :auth-unix-socket-url: https://mariadb.com/kb/en/library/authentication-plugin-unix-socket/
 
+== Standard Installation
+
+Use these commands to install MariaDB and secure it´s installation:
+
+[source,console]
+----
+sudo apt install mariadb-server
+sudo mysql_secure_installation
+----
+
+Check access and the version of MariaDB, replace `<admin_user>` as either defined during
+`mysql_secure_installation` above or use eg. `root`.
+
+[source,console]
+----
+sudo mysqladmin -u <admin_user> -p version
+----
+
+If you get an output like the below, your database is up and running and ready to serve requests.
+
+----
+mysqladmin  Ver 9.1 Distrib 10.3.25-MariaDB, for debian-linux-gnu on x86_64
+Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+
+Server version          10.3.25-MariaDB-0ubuntu0.20.04.1
+Protocol version        10
+Connection              Localhost via UNIX socket
+UNIX socket             /var/run/mysqld/mysqld.sock
+Uptime:                 14 min 53 sec
+
+Threads: 7  Questions: 470  Slow queries: 0  Opens: 177  Flush tables: 1  Open tables: 31  Queries per second avg: 0.526
+----
+
+== Latest Stable Release
+
 For how to install the latest stable release of MariaDB, please refer to the
 {install-mariadb-latest-url}[MariaDB installation documentation].
 
@@ -15,6 +50,32 @@ upgrading to MariaDB 10.4.3 upwards:
 sudo mysql_upgrade 
 ----
 ====
+
+== Notes For MariaDB Lower Than 10.4.3
+
+[NOTE]
+====
+For MariaDB server releases lower than 10.4.3, you will be prompted during the installation
+to create a root password. Be sure to remember your password, as you will need it during the
+ownCloud database setup.
+====
+
+To install an ownCloud database, you need an administrative user who can login, has rights to
+create/modify databases and users. If this user does not exist like on MariaDB server releases
+higher than 10.4.3 or if you want to create a temporary user for this task, you manually have
+to create one. You will be asked for the mysql root users password:
+
+[source,console]
+----
+sudo mysql --user=root -p
+
+CREATE USER 'dbadmin'@'localhost' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON *.* TO 'dbadmin'@'localhost' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+exit
+----
+
+== Notes For MariaDB Higher Than 10.4.3
 
 [NOTE]
 ====
@@ -37,3 +98,16 @@ MariaDB [(none)]>
 ----
 ====
 
+== phpmyadmin
+
+If you want to install phpMyAdmin as a graphical interface for administering the database, run the following command:
+
+[source,console]
+----
+sudo apt install phpmyadmin
+----
+
+Post installing, you need to configure your Web Server to access `phpmyadmin`. This is a manual
+task, dependent how your setup looks like and not part of this documentation.
+
+NOTE: You can run `sudo dpkg-reconfigure phpmyadmin` to reconfigure phpmyadmin. 

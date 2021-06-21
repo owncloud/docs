@@ -5,8 +5,13 @@
 :webserver-group: www-data
 :install-directory: /var/www/owncloud
 
+== Introduction
+
 This is an ultra-short guide to installing ownCloud on a fresh installation of Ubuntu 20.04.
 Run the following commands in your terminal to complete the installation.
+
+NOTE: This guide can not go into details and has its limits by nature. If you experience issues like with dependencies of PHP or other relevant things like OS / Webserver / Database, look at the xref:manual_installation/manual_installation.html#ubuntu-20-04-lts-server[Detailed Installation Guide]
+for more information.
 
 == Prerequisites
 
@@ -34,7 +39,7 @@ FILE="/usr/local/bin/occ"
 /bin/cat <<EOM >$FILE
 #! /bin/bash
 cd {install-directory}
-sudo -u {webserver-user} /usr/bin/php {install-directory}/occ "\$@"
+sudo -E -u {webserver-user} /usr/bin/php {install-directory}/occ "\$@"
 EOM
 ----
 
@@ -69,9 +74,8 @@ It is available in the ondrej/php repository (ppa).
 Add ondrej’s ppa with these commands:
 
 ----
-sudo add-apt-repository ppa:ondrej/php
-sudo apt-get update
-echo "deb http://ppa.launchpad.net/ondrej/php/ubuntu $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/php.list
+add-apt-repository ppa:ondrej/php
+apt-get update
 ----
 
 and add the key:
@@ -181,20 +185,21 @@ chmod 0600 /var/spool/cron/crontabs/{webserver-user}
 If you need to sync your users from an LDAP or Active Directory Server, add this additional xref:configuration/server/background_jobs_configuration.adoc[Cron job]. Every 15 minutes this cron job will sync LDAP users in ownCloud and disable the ones who are not available for ownCloud. Additionally, you get a log file in `/var/log/ldap-sync/user-sync.log` for debugging.
 ====
 
+[source,subs="attributes+"]
 ----
-echo "*/15 * * * * /var/www/owncloud/occ user:sync 'OCA\User_LDAP\User_Proxy' -m disable -vvv >> /var/log/ldap-sync/user-sync.log 2>&1" > /var/spool/cron/crontabs/www-data
-chown www-data.crontab  /var/spool/cron/crontabs/www-data
-chmod 0600  /var/spool/cron/crontabs/www-data
+echo "*/15 * * * * /var/www/owncloud/occ user:sync 'OCA\User_LDAP\User_Proxy' -m disable -vvv >> /var/log/ldap-sync/user-sync.log 2>&1" >> /var/spool/cron/crontabs/{webserver-user}
+chown {webserver-user}.crontab  /var/spool/cron/crontabs/{webserver-user}
+chmod 0600  /var/spool/cron/crontabs/{webserver-user}
 mkdir -p /var/log/ldap-sync
 touch /var/log/ldap-sync/user-sync.log
-chown www-data. /var/log/ldap-sync/user-sync.log
+chown {webserver-user}. /var/log/ldap-sync/user-sync.log
 ----
 
 === Configure Caching and File Locking
 
 Execute these commands:
 
-[source,php]
+[source,php,subs="attributes+"]
 ----
 occ config:system:set \
    memcache.local \
@@ -204,7 +209,7 @@ occ config:system:set \
    --value '\OC\Memcache\Redis'
 occ config:system:set \
    redis \
-   --value '{"host": "127.0.0.1", "port": "6379"}' \
+   --value '{"host": "127.0.0.1", "port": "{std-port-redis}"}' \
    --type json
 ----
 
@@ -214,7 +219,7 @@ Execute this command to set up {logrotate-url}[log rotation].
 
 [source,console,subs="attributes+"]
 ----
-include::{examplesdir}/installation/ubuntu/18.04/configure-log-rotation.sh[]
+include::{examplesdir}installation/ubuntu/18.04/configure-log-rotation.sh[]
 ----
 
 ==== Finalise the Installation

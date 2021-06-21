@@ -7,7 +7,7 @@
 :phpredis-issue-url: https://github.com/owncloud/docs/issues/2491
 :predis-extension-session-locking-config-url: https://github.com/phpredis/phpredis/blob/develop/README.markdown#session-locking
 :predis-extension-url: https://github.com/phpredis/phpredis
-:shibboleth-app-url: https://marketplace.owncloud.com/apps/user_shibboleth
+:shibboleth-app-url: {oc-marketplace-url}/apps/user_shibboleth
 
 == What is it?
 
@@ -18,6 +18,7 @@ The OAuth 2.0 authorization framework enables a third-party application to obtai
 
 Here is an overview of how the process works:
 
+// Based on the kroki extension. Marked for ease of finding. Be aware that this renders by default to svg which has issues when building pdf. ATM, this is not an issue as this document is not part of the pdf (too deep in the level limit) and because the extension is not added to the pdf build call. This would need an adjustment of the script. Be aware that tabs.js MUST be excluded in case (html only)! https://github.com/Mogztter/asciidoctor-kroki
 [ditaa, "OAuth2 workflow diagram"]
 ----
      +----------+
@@ -52,7 +53,7 @@ Here is an overview of how the process works:
 
 == The OAuth2 App
 
-OAuth2 support is available in ownCloud via https://marketplace.owncloud.com/apps/oauth2[an OAuth2 application] which is available from the ownCloud Marketplace.
+OAuth2 support is available in ownCloud via {oc-marketplace-url}/apps/oauth2[an OAuth2 application] which is available from the ownCloud Marketplace.
 The app aims to:
 
 . Connect ownCloud clients (both desktop and mobile) in a standardized and secure way.
@@ -71,11 +72,11 @@ To use the OAuth2 app, your ownCloud installation will need to meet the followin
 We strongly recommend that you configured PHP to store sessions in Redis.
 Here is an example configuration. 
 
-[source,ini]
+[source,ini,subs="attributes+"]
 ----
 ; Redis configuration
 SESSION_SAVE_HANDLER=redis
-SESSION_SAVE_PATH=tcp://[REDIS_SERVER]:6397
+SESSION_SAVE_PATH=tcp://[REDIS_SERVER]:{std-port-redis}
 REDIS_SESSION_LOCKING_ENABLED=1
 REDIS_SESSION_LOCK_RETRIES=750
 REDIS_SESSION_LOCK_WAIT_TIME=20000
@@ -219,4 +220,3 @@ check out https://stackoverflow.com/a/16341985/222011[this answer on StackOverfl
 * http://www.thread-safe.com/2012/01/problem-with-oauth-for-authentication.html[The problem with OAuth for Authentication.]
 * https://security.stackexchange.com/questions/81756/session-authentication-vs-token-authentication[Session Authentication vs Token Authentication]
 * https://tools.ietf.org/html/rfc7009[OAuth 2.0 Token Revocation]
-

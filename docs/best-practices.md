@@ -4,6 +4,8 @@ This page gives contributors a quick overview of tips and best practices for
 writing in AsciiDoc. It is for sure not complete nor covers all possibilities, but gives a quick
 reference for common used writing and formatting tasks. For a complete reference see the
 [Asciidoctor Documentation](https://asciidoctor.org/docs/).
+Also see the [AsciiDoc Syntax Quick Reference](https://docs.asciidoctor.org/asciidoc/latest/syntax-quick-reference/)
+guide.
 
 **Table of Contents**
 
@@ -25,6 +27,7 @@ reference for common used writing and formatting tasks. For a complete reference
 * [Lists](#lists)
 * [Headers, Titles, Sections, Anchors and Paragraph Titles](#headers-titles-sections-anchors-and-paragraph-titles)
 * [Tables](#tables)
+* [Conditional Rendering](#conditional-rendering)
 * [TabSets](#tabsets)
 * [Comments](#comments)
 * [Relocating or Renaming Files](#relocating-or-renaming-files)
@@ -101,23 +104,49 @@ Prefix: `xref:`
 Reference: [`Cross Reference`](https://asciidoctor.org/docs/user-manual/#xref)
 
 In a nutshell, an internal link called `Cross Reference` can link to
+- an in-page reference
 - a documentation file
-- a section title inside a documentation file
-- a reference to an anchor set inside a documentation file
+- a section title or anchor name inside a documentation file
 
-All referencable content **must be** inside the directory structure of `modules/`.
+All content you want to reference **must be** inside the directory structure of `modules/`.
 
-An `xref` is written in following example style: `xref:module_name:<path>/file.adoc#section[Printed Name]`
+An `xref` is usually written in the following example style:  <br/>
+`xref:module_name:<path>/file.adoc#section[Printed Name]`
 
 Where `module_name:`, `#section` and `[Printed Name]` are optional components.
 `module_name:` is mandatory when referenced content is not in the same module.
-`<path>` is the path to your referenced file.
+`<path>` is the relative path via the module name to your referenced file.
 
 You can reference a section or an anchor inside the same file, another file - even in another module.
+Section titles automatically create references, where the text is converted to lower case characters 
+and all special characters including an underscore are converted to a dash (`_`)
 
-Example: `xref:configuration/server/occ_command.adoc#apps-commands[the Market app]`
+You can create anchors manually anywhere in the page by using following methods:
 
-**Strongly** in favour of this where relevant, using a ToC ([Table of Contents](#table-of-contents)) instead of a list of xref´s.
+* text `[[anchor-name]]` text (anchor-name will not be printed, it is only the reference point)
+* text `[#anchor-name]#Anchor text to be referenced to#` text (Anchor text will be printed)
+
+Reference Examples:
+
+- This example references a section title inside the same document: <br/>
+`xref:section-title[FAQ]`
+
+- This example references a manual anchor inside the same document: <br/>
+`xref:anchor-name[FAQ]`
+
+- This example references another file: <br/>
+`xref:configuration/server/occ_command.adoc[Market app]`
+
+- This example references another file and a particular section title: <br/>
+`xref:configuration/server/occ_command.adoc#apps-commands[Market app]`
+
+- This example references another file in another module and a particular section title: <br/>
+`xref:admin_manual:configuration/server/occ_command.adoc#apps-commands[Market app]`
+
+**Strongly** In general it`s advisable to use a ToC ([Table of Contents](#table-of-contents)) instead of a list of xref´s.
+
+**Note:** Use a link checker regularly to find broken links to section titles or anchors.
+If an anchor link is broken, a build will not report an error as the page itself is accessible.
 
 ## Images
 
@@ -127,9 +156,22 @@ Reference: [`Images`](https://asciidoctor.org/docs/asciidoc-syntax-quick-referen
 
 All images have to be stored in a path under `modules`/`module_name`/`assets/images`/`<path>`
 
-An `image` is written in following example style: `image:<path>/image_name[Alternative Image Text]`
+An `image` is written in following example style: `image:<path>/image_name[Alternative Image Text, options]`
+
+Please use the comma as separator for one or more options.
+
+The `, options` part is optional. Here you can define eg. the sizing of an image like `, width=40%`
 
 Example: `image:configuration/files/encryption1.png[Encryption]`
+
+There are two ways that an image is treated defined by either using `image:` or `image::`
+
+When using `image:`, the image will be part of the text written. This is useful when you want to have
+an image part of the text flow like an icon you reference to.
+
+When using `image::`, the image is not part of the text written and stands on its own. This means it
+will be rendered into a new line and be centered by default if not otherwise defined by an option like
+`align="center|left|right"`
 
 **IMPORTANT**
 Please be advised, in case you use an Alternative Image Text, not to use double quotes to highlight some text elements.
@@ -617,19 +659,62 @@ cell type to `a`, short for "asciidoc", which treats it as a standalone AsciiDoc
 ```
 [cols=",,",options="header"]
 |===
-|Classic theme
-|Dark theme
-|Light theme
-a|image:themes/classic.png[ownCloud iOS App - Classic theme]
-a|image:themes/dark.png[ownCloud iOS App - Dark theme]
-a|image:themes/light.png[ownCloud iOS App - Light theme]
+| Classic theme
+| Dark theme
+| Light theme
+a| image:themes/classic.png[ownCloud iOS App - Classic theme]
+a| image:themes/dark.png[ownCloud iOS App - Dark theme]
+a| image:themes/light.png[ownCloud iOS App - Light theme]
 |===
+```
+
+You can also align content in cells. Without the following directives, cells are always aligned
+top/left. You can set the alignment for complete columns or individual cells. The style for the
+alignment is always horizontal dot vertical. The dot separates the horizontal and vertical directive.
+
+Examples:
+
+```
+^    center only, top automatically
+^.>  center, bottom 
+.>   left automatically, bottom
+```
+Directives horizontal and vertical
+```
+`^` center center
+`<` left   top
+`>` right  bottom
+```
+To use these directives, you can either set them into the `cols=""` definition which is then used for all
+columns like `cols="^,^.>"` or at the beginning of an individual cell `^.>| cell text`.
+
+## Conditional Rendering
+
+References: [Conditionals](https://docs.asciidoctor.org/asciidoc/latest/directives/conditionals/)
+
+Antora can render conditionally. This is eg. needed, when content can be rendered to html but not to pdf.
+In these cases, you have to use a conditional render directive which renders content based on an attribute
+which defines the type to be rendered. ownCloud has created predefined site wide attributes for this
+case when the documentation is built for html or pdf.
+```
+ifeval::["{format}" == "html"]
+...
+endif::[]
+```
+or
+```
+ifeval::["{format}" == "pdf"]
+...
+endif::[]
 ```
 
 ## TabSets
 
 ownCloud has added the AsciiDoc tabset extension for the documentation. With tabsets, you can create tabs inside
 your document which is very useful, for example, for scripts in different languages for the same task.
+
+Attention: TabSets, by nature, cannot be rendered in pdf. You have to use conditional rendering and an own
+description for html and pdf.
 
 ```
 [tabs]

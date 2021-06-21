@@ -792,6 +792,28 @@ Use this tag on all UI scenarios.
 |generating previews/thumbnails takes time. Use this tag on UI test scenarios that do not need to test thumbnail behavior.
 |===
 
+=== Running tests using release tarballs in CI
+If you want to run the tests in CI against a system installed from one of the release tarballs, you can use the `testAgainstCoreTarball` setting in the `config` section of `.drone.star`. You can use the `coreTarball` option to specify which release tarball to install from. If no tarball version is specified then `daily-master-qa` will be used.
+This will only use the release tarballs for running the acceptance tests while the unit and integration tests will run using the git branch.
+
+[source,python]
+----
+config = {
+  'acceptance': {
+    'api': {
+      'suites': [
+        'apiAuth',
+        'apiAuthOcs',
+        'apiAuthWebDav',
+        # and so on...
+      ],
+      'testAgainstCoreTarball': True,
+      'coreTarball': '10.7.0',
+    },
+  },
+}
+----
+
 == Writing Scenarios For Bugs
 
 If you are developing a new feature, and the scenarios that you have written do not pass,
@@ -893,3 +915,78 @@ In the above example, `listFolder` is called and does an API call to access the 
 
 For more information on Behat, and how to write acceptance tests using it, see http://behat.org/en/latest/guides.html[the Behat documentation].
 For background information on Behaviour-Driven Development (BDD), see https://dannorth.net/whats-in-a-story/[Dan North resources].
+
+== Skipping and Debugging Test Suites in CI
+
+=== Skip Pipelines
+
+For various purposes, you may skip one or more CI pipelines. Use `skip` in the drone config to skip the test pipelines. `skip` is available for `javascript`, `phpunit` and `acceptance` tests.
+
+Usage:
+[source,py]
+----
+...
+'phpunit': {
+    'allDatabases' : {
+      'phpVersions': [
+        '7.2',
+      ],
+      'skip': True
+  },
+}
+...
+'acceptance': {
+  'api': {
+    'suites': [
+      'apiAuth',
+      'apiAuthOcs',
+      'apiAuthWebDav',
+      'apiCapabilities',
+      'apiComments'
+    ],
+    'skip': True
+  },
+}
+...
+----
+
+=== Debug Specific Test Suites
+In CI, you may want to run only one or specific test suites for debugging purposes. To do so you can use `debugSuites` in the drone config which takes a list of suite names. If `debugSuites` is included with one or more test suites in it then only those suites will run in CI.
+(Note: remember to set `'skip': False` if you are using `skip`)
+
+Usage:
+[source,py]
+----
+...
+'acceptance': {
+  'api': {
+    'suites': [
+      'apiAuth',
+      'apiAuthOcs',
+      'apiAuthWebDav',
+      'apiCapabilities',
+      'apiComments'
+    ],
+    'debugSuites': ['apiAuth']
+  }
+}
+...
+----
+
+Similarly, in the case of test suites that run in parts, you can use `skipExceptParts` to specify only which part(s) you want to run.
+
+Usage:
+[source,py]
+----
+...
+'acceptance': {
+  'apiProxy': {
+    'suites': {
+      'apiProxySmoketest': 'apiProxySmoke',
+    },
+    'numberOfParts': 8,
+    'skipExceptParts': [3, 7]
+  }
+}
+...
+----

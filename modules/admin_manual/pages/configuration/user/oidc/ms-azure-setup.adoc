@@ -1,0 +1,138 @@
+= Example Setup Using Microsoft Azure
+:toc: right
+:toclevels: 2
+:ms-azure-ad: Microsoft Azure Active Directory (Azure AD)
+:login-azure-url: https://portal.azure.com/#home
+:openid-connect-frontchannel-logout-url: https://openid.net/specs/openid-connect-frontchannel-1_0.html
+:ms-configure-openid-settings-url: https://docs.microsoft.com/en-us/powerapps/maker/portals/configure/configure-openid-settings
+
+== Introduction
+
+{ms-azure-ad} is Microsoft’s multi-tenant cloud-based directory and identity management service. This document describes how to integrate Microsoft Azure Active Directory (Azure AD) as an identity provider (IdP) by configuring OpenID Connect (OIDC) in both Single Sign‑On and Azure AD.
+
+== Setup and Configuration
+
+The sections below will explain these areas and provide configuration examples using {ms-azure-ad} as the external Identity Provider.
+
+=== Configure Microsoft Azure AD
+
+Follow these steps to configure Microsoft Azure AD for use with OpenID Connect (OIDC):
+
+. Login to {login-azure-url}[Azure].
++
+image:configuration/user/oidc/ms-azure-ad/login-with-ms-azure.png[,width=40%]
+
+. Go to menu:Manage Azure Active Directory[].
++
+image:configuration/user/oidc/ms-azure-ad/select-manag-azure-ad.png[,width=80%]
+
+. Then go to menu:Properties[Tenant ID] and note your [#tenant-id]#tenant ID# for later use.
++
+image:configuration/user/oidc/ms-azure-ad/portal-tenant-id-ms-azure-ad.png[,width=80%]
+
+. Then go to menu:App registrations[New registration].
++
+image:configuration/user/oidc/ms-azure-ad/new-registration-ms-azure-ad.png[,width=80%]
+
+. Provide all required information.
++
+image:configuration/user/oidc/ms-azure-ad/provide-required-information-ms-azure-ad.png[,width=80%]
+
+. Go to menu:Authentication[Configure Web > Redirect URI] and setup your Redirect URI.
++
+image:configuration/user/oidc/ms-azure-ad/setup-redirect-url-ms-azure-ad.png[,width=90%]
+
+. Go to menu:Certificates & secrets[Add a client secret] and setup the [#client-secret]#client secret# for your app.
++
+image:configuration/user/oidc/ms-azure-ad/setup-client-secret-ms-azure-ad.png[,width=90%]
+
+. Go to menu:Token configuration[Add optional claim] and setup the claims.
++
+image:configuration/user/oidc/ms-azure-ad/setup-claims-ms-azure-ad.png[,width=90%]
+
+. Go to menu:API permissions[Configured permissions > Add a permission] and add delegated permissions.
++
+image:configuration/user/oidc/ms-azure-ad/graph-permission-ms-azure-ad.png[,width=90%]
+
+. On the same page, do not forget to set menu:Grant admin consent[] to all permissions.
++
+image:configuration/user/oidc/ms-azure-ad/admin-consent-ms-azure-ad.png[,width=90%]
+
+. Go to menu:Expose an API[Set the App ID URI] and set the *Application ID URI*.
++
+image:configuration/user/oidc/ms-azure-ad/app-id-uri-ms-azure-ad.png[,width=90%]
+
+. Then on the same page menu:Add a scope[Scope name] give the scope a meaningful name like *owncloud* and menu:Add a scope[Who can consent] allow *Admins and users* to consent. You will see the full api  [#api-scope]#scope name# below your entered scope name.
++
+image:configuration/user/oidc/ms-azure-ad/scope-consent-ms-azure-ad.png[,width=90%]
+
+. You get the [#client-id]#CLIENT-ID# after you have completed the Microsoft Azure setup process. On the following screen, you find an overview of most settings made. You can get there by clicking on menu:Overview[].
++
+image:configuration/user/oidc/ms-azure-ad/overview-screen-ms-azure.png[,width=90%]
+
+
+=== Configure ownCloud Server
+
+To set up ownCloud Server to work with OpenID Connect, you have to:
+
+1. Install the {oc-marketplace-url}/apps/openidconnect[OpenID Connect App].
+2. Configure `config.php`.
+3. Set up service discovery.
+
+TIP: It is recommended to first figure out all configurations on a test system and to bring it to the production system once it's proven to work. Enabling the OpenID Connect App on the production system should be the last step in this process as it will then advertise OpenID Connect to all clients.
+
+==== List of OpenID Connect config.php Parameters
+
+Follow this link to read more about the
+xref:configuration/server/config_apps_sample_php_parameters.adoc#app-openid-connect-oidc[OIDC config.php parameters] available to configure OpenID Connect on ownCloud Server.
+
+==== Example config.php setup
+
+An example snippet that can be added to `config.php` is shown below. You need to add both config values as listed below. The example expects that login users have already been created in ownCloud.
+
+Use these links to see the corresponding configuration section for: 
+
+* xref:tenant-id[YOUR-DIRECTORY-TENANT-ID]
+* xref:client-secret[YOUR-CLIENT-SECRET]
+* xref:api-scope[YOUR-APPLICATION-ID-SCOPE-URI/owncloud]
+* xref:client-id[YOUR-CLIENT-ID]
+
+[source,php]
+----
+'http.cookie.samesite' => 'None',
+
+'openid-connect' => [
+    'auto-provision' => ['enabled' => false],
+    'provider-url' => 'https://login.microsoftonline.com/YOUR-DIRECTORY-TENANT-ID/v2.0/',
+    'client-id' => 'YOUR-CLIENT-ID',
+    'client-secret' => 'YOUR-CLIENT-SECRET',
+    'loginButtonName' => 'Azure AD',
+    'autoRedirectOnLoginPage' => false,
+    'scopes' => [
+        'openid',
+        'api://YOUR-APPLICATION-ID-SCOPE-URI/owncloud',
+        'profile', 'email', 'offline_access',
+    ],
+    'mode' => 'email',
+    'search-attribute' => 'unique_name',
+    'use-access-token-payload-for-user-info' => true,
+],
+----
+
+If you want to let ownCloud create users which are not present during a OIDC authentication, replace +
+`'auto-provision' => ['enabled' => false],` with:
+
+[source,php]
+----
+    'auto-provision' => [
+        'enabled' => true,
+        'email-claim' => 'email',
+        'display-name-claim' => 'name',
+    ],
+----
+
+////
+=== Register ownCloud Clients
+
+To allow the ownCloud clients (Web/desktop/Android/iOS) to interact with the identity provider, you have to register them as clients.
+////

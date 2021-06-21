@@ -7,6 +7,6 @@
  */
 public function theGroupsReturnedByTheApiShouldInclude($group) {
     $respondedArray = $this->getArrayOfGroupsResponded($this->response);
-    PHPUnit_Framework_Assert::assertContains($group, $respondedArray);
+    PHPUnit\Framework\Assert::assertContains($group, $respondedArray);
 }
 

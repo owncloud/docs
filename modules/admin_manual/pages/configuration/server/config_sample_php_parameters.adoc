@@ -382,6 +382,21 @@ WARNING: leave this as is if you're not sure what it does.
 'csrf.disabled' => false,
 ....
 
+=== Define how to relax same site cookie settings
+
+Possible values: `Strict`, `Lax` or `None`.
+Setting the same site cookie to `None` is necessary in case of OpenID Connect.
+For more information about the impact of the values see:
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie/SameSite#values and
+https://web.dev/schemeful-samesite/
+
+==== Code Sample
+
+[source,php]
+....
+'http.cookie.samesite' => 'Strict',
+....
+
 === Define the directory where the skeleton files are located
 These files will be copied to the data directory of new users.
 
@@ -691,9 +706,22 @@ user clicks an alert like this, he will be redirected to that URL and must logon
 ....
 
 === Define the Web base URL
-If web.baseUrl is set, public and private links will be redirected to this url.
 
-Web will handle these links accordingly.
+This key is necessary for the navigation item to the new ownCloud Web UI and for redirecting
+public and private links.
+
+==== Code Sample
+
+[source,php]
+....
+'web.baseUrl' => '',
+....
+
+=== Define rewrite private and public links
+
+Rewrite private and public links to the new ownCloud Web UI (if available).
+If web.rewriteLinks is set to 'true', public and private links will be redirected to this url.
+The Web UI will handle these links accordingly.
 
 As an example, in case 'web.baseUrl' is set to 'http://web.example.com',
 the shared link 'http://ocx.example.com/index.php/s/THoQjwYYMJvXMdW' will be redirected
@@ -703,7 +731,7 @@ by ownCloud to 'http://web.example.com/index.html#/s/THoQjwYYMJvXMdW'.
 
 [source,php]
 ....
-'web.baseUrl' => '',
+'web.rewriteLinks' => false,
 ....
 
 === Define clean URLs without `/index.php`
@@ -813,6 +841,52 @@ that triggers auto purging of deleted files for this user
 [source,php]
 ....
 'trashbin_purge_limit' => 50,
+....
+
+== Define trashbin directory skip list
+Define a list of directories that will skip the trashbin and therefore be deleted immediately.
+
+Only defined directories and only in the root of a mount will skip the trashbin.
+Consider not to use reserved directory names when using snapshot capable storage systems.
+The setting expects folder names with or without trailing slash.
+All the content of such directories including their subdirectories will also skip the trashbin.
+
+
+'trashbin_skip_directories' => [
+'temp',
+],
+
+=== Define trashbin file extension skip list
+Define a list of file extensions to determine files that will skip the trashbin and therefore be deleted immediately.
+
+Extension names are valid for all mount points, take care when selecting the names.
+
+Values must not have a leading ".", otherwise corresponding files wont be detected.
+
+==== Code Sample
+
+[source,php]
+....
+'trashbin_skip_extensions' => [
+	'iso',
+	'mkv',
+],
+....
+
+=== Define trashbin threshold size
+Define a threshold for files to skip the trashbin and delete immediately
+Once the size of a resource is greater than or equal the given value, the trashbin will be skipped.
+
+File sizes are valid for all mount points, take care when defining the threshold.
+
+All positive numbers and zero is allowed. Append one of the following options directly and without space:
+B, K, KB, MB, M, GB, G, TB, T, PB, P
+
+==== Code Sample
+
+[source,php]
+....
+'trashbin_skip_size_threshold' => "1GB",
 ....
 
 == File versions
@@ -1243,9 +1317,9 @@ Use this setting if LibreOffice/OpenOffice requires additional arguments.
 ....
 
 === Define preview providers
-Only register providers that have been explicitly enabled
+Show thumbnails for register providers that have been explicitly enabled.
 
-The following providers are enabled by default:
+The following providers are enabled by default if no other providers are selected:
 
 - OC\Preview\PNG
 - OC\Preview\JPEG
@@ -1256,37 +1330,78 @@ The following providers are enabled by default:
 - OC\Preview\MP3
 - OC\Preview\TXT
 
-The following providers are disabled by default due to performance or privacy
-concerns:
+The following providers are available, but disabled by default due to performance or privacy concerns:
 
 - OC\Preview\Illustrator
 - OC\Preview\Movie
+- OC\Preview\MSOfficeDoc
 - OC\Preview\MSOffice2003
 - OC\Preview\MSOffice2007
-- OC\Preview\MSOfficeDoc
 - OC\Preview\OpenDocument
+- OC\Preview\StarOffice
 - OC\Preview\PDF
 - OC\Preview\Photoshop
 - OC\Preview\Postscript
-- OC\Preview\StarOffice
 - OC\Preview\SVG
 - OC\Preview\TIFF
 - OC\Preview\Font
 
-The following providers are not available in Microsoft Windows:
+The following providers are only available if either LibreOffice or OpenOffice is installed on the server:
 
-- OC\Preview\Movie
 - OC\Preview\MSOfficeDoc
 - OC\Preview\MSOffice2003
 - OC\Preview\MSOffice2007
 - OC\Preview\OpenDocument
 - OC\Preview\StarOffice
+
+The following providers require the php `imagick` extension:
+
+- OC\Preview\SVG
+- OC\Preview\TIFF
+- OC\Preview\PDF
+- OC\Preview\AI
+- OC\Preview\PSD
+- OC\Preview\EPS
+- OC\Preview\TTF
+- OC\Preview\Heic
+- OC\Preview\SGI
+
+Install the following additional imagick library when using SVG.
+This library adds imagick support for SVG, WMF, OpenEXR, DjVu and Graphviz:
+
+`sudo apt install -y libmagickcore-6.q16-3-extra`
+
+Change the following imagick security policy when using PDF.
+Use the editor of your choice, the example uses `vi`.
+
+`sudo vi /etc/ImageMagick-6/policy.xml`
+
+`<policy domain="coder" rights="none" pattern="PDF" />`
+
+`rights="none"` -> `rights="read|write"`
+
+Install `ffmpeg` when using the `OC\Preview\Movie` provider.
+
+`sudo apt install -y ffmpeg`
+
+To get a list of file extensions linked to the image provider, change into the `owncloud`
+directory and run the following example command. Use a different filter for other provider types.
+
+`cat resources/config/mimetypemapping.dist.json | grep image`
+
+If you want to add a preview provider to the default ones, you must add all default ones too,
+else they will get disabled!
+
+To disable all preview providers set `'enabledPreviewProviders' => false,`
 
 ==== Code Sample
 
 [source,php]
 ....
 'enabledPreviewProviders' => [
+	'OC\Preview\PDF',
+	'OC\Preview\SGI',
+	'OC\Preview\Heic',
 	'OC\Preview\PNG',
 	'OC\Preview\JPEG',
 	'OC\Preview\GIF',
@@ -1950,16 +2065,6 @@ external storage setups that have limited rename capabilities.
 [source,php]
 ....
 'part_file_in_storage' => true,
-....
-
-=== Define the location of `mount.json`
-Defaults to `data/mount.json` in the ownCloud directory.
-
-==== Code Sample
-
-[source,php]
-....
-'mount_file' => '/var/www/owncloud/data/mount.json',
 ....
 
 === Prevent cache changes due to changes in the filesystem
