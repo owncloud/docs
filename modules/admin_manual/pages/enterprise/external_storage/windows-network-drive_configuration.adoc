@@ -14,6 +14,10 @@
 :acl-url: https://en.wikipedia.org/wiki/Access-control_list
 :password-lockout-policies-url: https://technet.microsoft.com/en-us/library/dd277400.aspx
 :manage-systemd-services-url: https://www.digitalocean.com/community/tutorials/how-to-use-systemctl-to-manage-systemd-services-and-units
+:base64-url: https://www.base64decode.org/
+:vaultproject-url: https://www.vaultproject.io
+:hashicorp-url: https://learn.hashicorp.com/collections/vault/getting-started
+:pass-url: http://xmodulo.com/manage-passwords-command-line-linux.html
 
 == Introduction
 
@@ -687,14 +691,20 @@ NOTE: The password will be reset on the next request, regardless of the flag set
 
 === 3rd Party Software Examples
 
+Third party password managers or processes can be integrated. The only requirement is that they have to provide the password in plain text somehow. If not, additional operations might be required to get the password as plain text and inject it in the listener.
+
+==== plainpass
+
+This provides a bit more security because the `/tmp/plainpass` password as shown below should be owned by root and only root should be able to read the file (0400 permissions); Apache, particularly, shouldn't be able to read it. It's expected that root will be the one to run this command.
+
 [source,console,subs="attributes+"]
 ----
 cat /tmp/plainpass | {occ-command-example-prefix} wnd:listen <host> <share> <username> --password-file=-
 ----
 
-This provides a bit more security because the `/tmp/plainpass` password should be owned by root and only
-root should be able to read the file (0400 permissions); Apache, particularly, shouldn't be able to read it.
-It's expected that root will be the one to run this command.
+==== base64
+
+Similar to plainpass, the contents in this case gets encoded in the {base64-url}[Base64 format]. There's not much security, but it has additional obfuscation.
 
 [source,console,subs="attributes+"]
 ----
@@ -702,28 +712,35 @@ base64 -d /tmp/encodedpass | \
    {occ-command-example-prefix} wnd:listen <host> <share> <username> --password-file=-
 ----
 
-Similar to the previous example, but this time the contents are encoded in
-https://www.base64decode.org/[Base64 format] (there's not much security, but it has additional obfuscation).
+==== pass
 
-Third party password managers can also be integrated. The only requirement is that they have to provide the
-password in plain text somehow. If not, additional operations might be required to get the password as
-plain text and inject it in the listener.
+Example using "pass"
 
-As an example:
-
-* You can use "pass" as a password manager.
-* You can go through http://xmodulo.com/manage-passwords-command-line-linux.html
-to setup the keyring for whoever will fetch the password (probably root) and then use something like the following
+* You can go through {pass-url}[manage passwords from the command line] to setup the keyring for whoever will fetch the password (probably root) and then use something like the following
 
 [source,console,subs="attributes+"]
 ----
 pass the-password-name | {occ-command-example-prefix} wnd:listen <host> <share> <username> --password-file=-
 ----
 
+==== HashiCorp Vault
+
+This example uses {vaultproject-url}[Vault] as the secrets store. See {hashicorp-url}[HCP Vault] on how to setup the secrets store. Then use something like the following:
+
+[source,console,subs="attributes+"]
+----
+vault kv get -field=password secret/samba | {occ-command-example-prefix} wnd:listen <host> <share> <username> --password-file=-
+----
+
+Use Vault's ACLs to limit access to the token. Destroy the token after starting the service during boot with systemd.
+
 === Password Option Precedence
 
 If both the argument and the option are passed, e.g.,
-`occ wnd:listen <host> <share> <username> <password> --password-file=/tmp/pass`,
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} wnd:listen <host> <share> <username> <password> --password-file=/tmp/pass`
+----
 then the `--password-file` option will take precedence.
 
 === Optimizing wnd:process-queue
