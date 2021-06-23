@@ -20,7 +20,9 @@ The `hsmdaemon` is a daemon provided by ownCloud to delegate encryption to an {h
 
 NOTE: When using `hsmdaemon` with an HSM, the keys _may_ still be stored on the same physical machine as ownCloud.
 
-NOTE: For hsmdaemon support, you need ownCloud Enterprise Edition >= 10.2. We recommend consulting with us when deploying storage encryption with an HSM.
+NOTE: For `hsmdaemon` support, you need ownCloud Enterprise Edition >= 10.2. We recommend consulting with us when deploying storage encryption with an HSM.
+
+NOTE: Starting with the Encryption App version 1.5.1, HSM can now work with both `binary` and `base64` encoding/decoding. If not otherwise configured, `binary` is the default.
 
 Running {php-exec-function-url}[exec()] to decrypt the key with a command line command to do the encryption might leak the HSM credentials if the admin lists the currently running processes. To prevent that, an HSM daemon will be used that can open a session to the HSM upon startup. 
 
@@ -156,9 +158,9 @@ Installing hsmdaemon requires several steps. These are:
 . xref:copy-the-config-file[Copy the Config File]
 . xref:install-the-system-service[Install the System Service]
 . xref:configure-the-pkcs11-module-path[Configure the PKCS 11 Module Path]
-. xref:configure-slot-and-pin[Configure Slot and Pin]
-. xref:test-key-generation[Test Key Generation]
-. xref:configure-other-options[Configure Other Options]
+. xref:configure-the-slot-and-pin[Configure Slot and Pin]
+. xref:test-the-hsmdaemon[Test the hsmdaemon]
+. xref:configure-other-options-optional[Configure Other Options]
 
 ==== Install the hsmdaemon Binary
 
@@ -282,12 +284,12 @@ module = "/usr/lib/x86_64-linux-gnu/softhsm/libsofthsm2.so"
 # or leave empty if no pin is necessary
 pin = "1234"     
 # Find your slot id with `sudo hsmdaemon listslots`     
-slot = 1989683358
+slot = 550099622
 ----
 
-=== Testing
+== Test the hsmdaemon
 
-==== Test Key Generation
+=== Test Key Generation
 
 [NOTE] 
 ====
@@ -313,9 +315,18 @@ jwIDAQAB
 -----END PUBLIC KEY-----
 ----
 
-==== Test Data Encryption
+=== Test Showing Keys
 
-For testing data encryption, run the the following example command:
+To show an existing key, use the `hsmdaemon showkey` command with the key's id as in the following example.
+
+[source,console]
+----
+sudo hsmdaemon showkey 9bac3719-2b8d-11e9-aeab-0242b5ece4c3
+----
+
+=== Test Data Encryption
+
+For testing data encryption, run the the following example commands:
 
 [source,console]
 ----
@@ -336,26 +347,79 @@ If successful, you should see output similar to the example below:
 WcezVb2N6bF8wlDooKZcmFn3tZgoIpoFGx6wQetx9sp1nK7JW2Y4OKt7P+0VKKlFO7yXaffVDD2Q6jZZCQukQVRV1zJrwbI9xU3YlOAwJFPP+WM/dZ1vdUwi7L05wq8UpL13LJWlMkvd1eIqKJS7apMnFk2hbnxXP6UKZmI++1tXvqbAc6fwhcB5J+JG6lmS4RwnD+eJC3dq5t00zzdI6vuIM/y3UT7ESklmHl5bKl+N+d6yk6qLxnFnIJweL+M3Tf13+XPNAh5JxZpheJPvN3oL28uX76aizy4BCLnRgQ/ryUQeDF+a4zNF22sMwBh4Pt46KrYGNDZAnQpVzmkrZQ==
 ----
 
-==== Test Showing Keys
+=== Test Data Decryption
 
-To show an existing key, use the `showkey` command with the key's id as in the following example.
+For testing data decryption, run the the following example commands:
 
 [source,console]
 ----
-sudo hsmdaemon showkey 9bac3719-2b8d-11e9-aeab-0242b5ece4c3
+sudo grep "generated keypair" /var/log/hsm.log
 ----
 
+You should see output similar to the example below:
+
+[source,console,options="nowrap"]
+----
+{"level":"debug","ts":"2021-06-19T03:10:01.562+0200","msg":"generated keypair","tokenID":"1262668f-d09b-11eb-b283-960000c05f34"}
+{"level":"debug","ts":"2021-06-19T03:10:03.043+0200","msg":"generated keypair","tokenID":"1374447f-d09b-11eb-83c8-960000c05f34"}
+{"level":"debug","ts":"2021-06-19T03:10:03.710+0200","msg":"generated keypair","tokenID":"13cd3f95-d09b-11eb-83c8-960000c05f34"}
+----
+
+[source,console]
+----
+key_id=$(sudo grep "generated keypair" /var/log/hsm.log | head -1 | jq .tokenID -r)
+
+hello="Hello, world!"
+
+echo "$hello" | base64
+
+SGVsbG8sIHdvcmxkIQo=
+----
+
+[source,console]
+----
+test_enc=$(sudo ./hsmdaemon encrypt $key_id $(echo "$hello" | base64) | tee /dev/stderr)
+----
+
+[source,console,options="nowrap"]
+----
+ep6Y1aAVAYpAesZ1+sQzzUepjO82o34kjmm63Drmz+6KED4oIBARQkXeW/OoxgUg6kQhQK1thA/3Ww33aaRxIESzVQF598qjXhhEXQ/OGL6BC+3tPclC7ujUZaA7CG1NDkMneLFDd2+Tbax4OM+/w0zhfTMPgT0I1NrH/03owVglbWHjgLZmN/vxpPZKm/lyAV9tI2HW36UjVLEMD2qtPFXqjLU4YjZOVnMdETxQNSCWIVauFw0+VQQ/RiAqiXzRXEgO6YKxOBk0n9IMT6XEH4MkMQTgb9pB12jrNSa9aMHbCvCneEmhd0CHBxPX499EkxxwtoEnXe6PATXsOg3VRA==
+----
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix}  encryption:hsmdaemon:decrypt --keyId $key_id "$test_enc"
+
+decrypted string (base64 encoded): 'SGVsbG8sIHdvcmxkIQo='
+----
+
+[source,console]
+----
+sudo tail -5 /var/log/hsm.log
+----
+
+[source,console,options="nowrap"]
+----
+{"level":"debug","ts":"2021-06-20T23:46:11.958+0200","msg":"openHSMSession","slotID":757826573}
+{"level":"debug","ts":"2021-06-20T23:46:11.960+0200","msg":"created new session"}
+{"level":"debug","ts":"2021-06-20T23:46:11.960+0200","msg":"Got uuid","string":"1262668f-d09b-11eb-b283-960000c05f34"}
+{"level":"debug","ts":"2021-06-20T23:46:11.962+0200","msg":"found object","id":"\u0012bf\ufffdЛ\u0011벃\ufffd\u0000\u0000\ufffd_4"}
+{"level":"debug","ts":"2021-06-20T23:46:11.963+0200","msg":"Decrypted"}
+----
+
+**Results**
+
+* [x] The base64 encoded string matches before encryption and after decryption.
+* [x] The key-id seen in the log with "generated keypair" causes no errors during encryption.
+* [x] The key-id re-appears in the log during decryption ("Got uuid")
+
 ////
-==== Testing Data Decryption
+=== Testing Key Deletion
 
 TODO.
-
-==== Testing Key Deletion
-
-TODO.
 ////
 
-=== Configure Other Options (optional)
+== Configure Other Options (optional)
 
 For more options see the self-documented default config file `hsmdaemon.toml`.
 
@@ -380,7 +444,7 @@ sudo hsmdaemon
 ----
 ====
 
-=== Configure ownCloud
+== Configure ownCloud
 
 [IMPORTANT]
 ====
@@ -393,17 +457,18 @@ Configuring ownCloud to work with the `hsmdaemon` requires the following steps:
 * xref:configure-hsm-based-encryption[Configure HSM-based Encryption]
 * xref:initialize-and-check-generated-keys[Initialize and Check Generated Keys]
 
-==== Generate a Secret for the hsmdaemon REST API
+=== Generate a Secret for the hsmdaemon REST API
 
 Generate a shared secret to use for the `hsmdaemon`.
 
 [source,console]
 ----
 cat /proc/sys/kernel/random/uuid
+
 7a7d1826-b514-4d9f-afc7-a7485084e8de
 ----
 
-Use this secret for hsmdaemon in `/etc/hsmdaemon/hsmdaemon.toml`
+Use this generated secret for hsmdaemon in `/etc/hsmdaemon/hsmdaemon.toml`
 
 ----
 [jwt]
@@ -424,7 +489,7 @@ If the command succeeds, you should see the following console output:
 Config value hsm.jwt.secret for app encryption set to 7a7d1826-b514-4d9f-afc7-a7485084e8de
 ----
 
-==== Configure HSM-based Encryption
+=== Configure HSM-based Encryption
 
 Enable the HSM mode and enable encryption by running the commands in the following example:
 
@@ -456,7 +521,7 @@ Default module: OC_DEFAULT_MODULE
 TBW.
 ////
 
-==== Initialize and Check Generated Keys
+=== Initialize and Check Generated Keys
 
 Now start your web server and log in with any user to initialize the keys, have a look at the output of the `hsmdaemon` to see key generation and decryption requests. Check that the private key `/path/to/data/files_encryption/OC_DEFAULT_MODULE/` is less than *1000 bytes*. If it is not, then something is not configured correctly. You have to wipe all keys and reset the database flags for encryption to get a clean start for the ownCloud setup.
 
