@@ -1,31 +1,45 @@
 = Encryption
 
-`occ` includes a complete set of commands for managing encryption.
+`occ` includes a complete set of commands for managing encryption. When using a HSM (Hardware Security Module, can also be emulated by software), additional occ encryption-related commands can be used.
 
 [source,console]
 ----
 encryption
+ config:app:set encryption encryptHomeStorage Encrypt the users home storage
+
  encryption:change-key-storage-root  Change key storage root
  encryption:decrypt-all              Disable server-side encryption and decrypt all files
  encryption:disable                  Disable encryption
  encryption:enable                   Enable encryption
  encryption:encrypt-all              Encrypt all files for all users
- encryption:fix-encrypted-version    Fix the encrypted version if the encrypted file(s) are not downloadable.
+ encryption:fix-encrypted-version    Fix the encrypted version if the encrypted file(s) are
+                                     not downloadable.
  encryption:list-modules             List all available encryption modules
- encryption:migrate                  initial migration to encryption 2.0
- encryption:recreate-master-key      Replace existing master key with new one. Encrypt the file system with
-                                     newly created master key
- encryption:select-encryption-type   Select the encryption type. The encryption types available are: masterkey and
-                                     user-keys. There is also no way to disable it again.
+ encryption:migrate                  Initial migration to encryption 2.0
+ encryption:recreate-master-key      Replace existing master key with new one. Encrypt the
+                                     file system with newly created master key
+ encryption:select-encryption-type   Select the encryption type. The encryption types available
+                                     are: masterkey and user-keys. There is also no way to
+                                     disable it again.
  encryption:set-default-module       Set the encryption default module
  encryption:show-key-storage-root    Show current key storage root
  encryption:status                   Lists the current status of encryption
 ----
 
+Commands only available when using HSM. For details see the HSM occ documentation below.
+
+[source,console]
+----
+encryption
+ encryption:hsmdaemon                Export or Import the Masterkey
+ encryption:hsmdaemon:decrypt        Decrypt a String
+ config:app:set encryption           Various encryption configuration commands for HSM
+----
+
 == Status
 
-`encryption:status` shows whether you have active encryption, and your default encryption module. 
-To enable encryption you must first enable the Encryption app, and then run `encryption:enable`:
+`occ encryption:status` shows whether you have active encryption and your default encryption module. 
+To enable encryption you must first enable the Encryption app and then run `occ encryption:enable`:
 
 [source,console,subs="attributes+"]
 ----
@@ -34,6 +48,15 @@ To enable encryption you must first enable the Encryption app, and then run `enc
 {occ-command-example-prefix} encryption:status
  - enabled: true
  - defaultModule: OC_DEFAULT_MODULE
+----
+
+== Encrypt the Users Home Storage
+
+Server-side encryption for local storage like the users home and remote storages like Google Drive can operate independently of each other. By doing so, you can encrypt a remote storage without also having to encrypt the users home storage on your ownCloud server. Possible values are `0` and `1`
+
+[source,console,subs="attributes+"]
+----
+config:app:set encryption encryptHomeStorage --value '1' 
 ----
 
 == Change Key Storage Root
@@ -145,3 +168,77 @@ See xref:configuration/files/encryption/encryption_configuration.adoc[encryption
 Given the size of your ownCloud filesystem, this may take some time to complete. 
 However, if your filesystem is quite small, then it will complete quite quickly. 
 The `-y` switch can be supplied to automate acceptance of user input.
+
+== HSM Related Commands
+
+=== Export or Import the Masterkey
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} encryption:hsmdaemon [options]
+----
+
+=== Options
+
+[width="100%",cols="20%,70%",]
+|===
+| `--export-masterkey` | Export the private master key in base64
+| `--import-masterkey= +
+IMPORT-MASTERKEY`     | Import a base64 encoded private masterkey.
+|===
+
+`--export-masterkey` prints the base64_encode of the file `data/files_encryption/OC_DEFAULT_MODULE/master_*.privateKey`.
+
+The private key file in the directory may named like `master_08ea43b7.privateKey`.
+
+
+=== Test to Decrypt a String
+
+Allows to test the `hsmdaemon` setup by providing an encrypted string to ownCloud and test if it can be decrypted.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} encryption:hsmdaemon:decrypt [options] [--] <decrypt>
+----
+
+=== Arguments
+
+[width="100%",cols="20%,70%",]
+|===
+| `decrypt` | The string to decrypt
+|===
+
+=== Options
+
+[width="100%",cols="20%,70%",]
+|===
+| `--username[=USERNAME]` | The name of the user who is able to decrypt the provided string
+| `--keyId[=KEYID]`       | The keyId which was used to encrypt the provided string
+|===
+
+=== Set the HSM URL
+
+Set the url on which the `hsmdaemon` REST-API is reachable.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} config:app:set encryption hsm.url --value 'http://127.0.0.1:8513'
+----
+
+=== Set the JSON Web Token Secret
+
+To access the `hsmdaemon` API, ownCloud must authenticate with a JWT (JSON Web Token). The given secret is shared between the `hsdmdaemon` (see the hsmdaemon.toml configuration file) and ownCloud to sign the JWT. See the xref:configuration/server/security/hsmdeamon/index.adoc[HSM documentation] for an example how to generate a secret.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} config:app:set encryption hsm.jwt.secret --value '7a7d1826-b514-4d9f-afc7-a7485084e8de'
+----
+
+=== Set the JWT Clockskew
+
+The JWT described above has an expiry timestamp. In case the time clocks on ownCloud and hsmdaemon system drift or skew appart, additional time is added to the expiry time to counteract this situation. Set or change the clockskew only if ownCloud advises to do so. Defaults to 120, value is in seconds.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} config:app:set encryption hsm.jwt.clockskew --value '120' 
+----
