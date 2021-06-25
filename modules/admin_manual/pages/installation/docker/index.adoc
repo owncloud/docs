@@ -10,15 +10,26 @@ ownCloud can be installed using the {dockerhub-url}[official ownCloud Docker ima
 This official image works standalone for a quick evaluation but is designed to be used in a
 docker-compose setup.
 
-[NOTE]
-====
-Grant docker command privileges to certain users by adding them to the group `docker`. The changes below via `usermod` only take effect after the docker users log in. So you may have to log out and log in again or possibly reboot before you can run docker commands. Users not added to the `docker` group can run docker commands with a preceding `sudo`. In this section sudo is generally omitted before docker commands.
+Grant docker command privileges to certain users by adding them to the group `docker`:
 
 [source,console]
 ----
 sudo usermod -aG docker <your-user>
 ----
+
+[NOTE]
 ====
+The changes via `usermod` only take effect after the docker users log in. So you may have to log out and log in again or possibly reboot before you can run docker commands.
+====
+
+Users not added to the `docker` group can run docker commands with a preceding `sudo`. In this section `sudo` is generally omitted before docker commands since we assume you have created a docker user, which is also the only way to run ownCloud's command-line interface `occ` in a docker container. For more information on `occ`, see section xref:configuration/server/occ_command.adoc[Using the occ Command].
+
+An example `occ` command looks like this:
+
+[source,console]
+----
+docker exec --user www-data <owncloud-container-name> php occ <your-command>
+----
 
 == Quick Evaluation
 
