@@ -92,10 +92,12 @@ This method helps prevent false positives when checking broken links.
 Example:
 
 ```
-This is an example web address: \http://example.com
+This is an example of an unlinked web address: \http://example.com
 ```
 The above example renders as: `This is an example web address: http://example.com`
 but there is no link.
+
+See [Troubleshooting URLs](https://docs.antora.org/antora/2.3/asciidoc/external-urls/#troubleshooting-urls) for more possibilities.
 
 ### Internal Links
 
@@ -433,7 +435,7 @@ Reference: [`Text Formatting`](https://asciidoctor.org/docs/user-manual/#text-fo
 There are various ways to emphasize text.
 You can use styles like `bold`, `italic`, etc respectively `quote` text.
 
-If you want to print a tick or backtick etc as it is, you must escape it.
+If you want to print a tick or backtick or curly brace etc as it is, you must escape it. Note, that if you want to print a full string without blanks in between like `{my_text}`, you only need to escape the first curly brace `\{my_text}`
 
 Please see the reference link for more details.
 
@@ -546,6 +548,19 @@ Example:
 == Level 1 Section Title
 === Level 2 Section Title
 ```
+
+If a page TOC (table of content) is defined, section levels are part of the TOC if the TOC setting includes the section level. In the rare case you want to exclude a section from the TOC but keep its referencability, add `[discrete]` right over the section.
+
+Example:
+```
+= Document Title (Level 0)
+:toc:
+:toclevels: 3
+== Level 1 Section Title
+[descrete]
+=== Level 2 Section Title
+```
+
 ### Anchors
 
 Note: please check for documentation build warnings or use a [broken link checker](./checking-broken-links.md) for broken references to anchors!
@@ -710,7 +725,7 @@ endif::[]
 
 ## TabSets
 
-ownCloud has added the AsciiDoc tabset extension for the documentation. With tabsets, you can create tabs inside
+ownCloud has added the AsciiDoc `tabset` extension for the documentation. With tabsets, you can create tabs inside
 your document which is very useful, for example, for scripts in different languages for the same task.
 
 Attention: TabSets, by nature, cannot be rendered in pdf. You have to use conditional rendering and an own
@@ -736,11 +751,22 @@ Tab B contents
 
 Reference: [`Comments`](https://asciidoctor.org/docs/user-manual/#comments)
 
-If you want to add a comment in your page to remark a writers note which will not be rendered, use two consecutive slashes `//`
+If you want to add a single line comment in your page to remark a writers note which will not be rendered, use two consecutive slashes `//`
 
 Example:
 ```
 // Needs revision as a new release will change the parameter.
+```
+
+If you want to comment a block, put the block between four slashes `////`
+
+Example:
+```
+////
+Needs revision as a new release will change the parameter.
+
+Maybe complex to do but lets see.
+////
 ```
 
 ## Relocating or Renaming Files
