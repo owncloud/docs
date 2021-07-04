@@ -1,18 +1,18 @@
 = Encryption Configuration Quick Guide
 :toc: right
-:toclevels: 1
+:toclevels: 2
 
-include::encryption-types.adoc[leveloffset=+1]
+== Introduction
 
-include::enable-encryption.adoc[leveloffset=+1]
+This quick guide gives a brief summary of the commands needed without going into the details and backgrounds. See the xref:configuration/files/encryption/encryption_configuration.adoc[full encryption configuration guide] for more details. 
 
-== Master Key Encryption
+== Master-Key-Based Encryption
 
 === Overview
 
 - The **recommended** type of encryption.
 - Best to activate on new instances with no data.
-- If you have existing data, use **encrypt all** command. Depending on the amount of existing data, this operation can take a long time.
+- If you have existing data, use the **occ encryption:encrypt-all** command. Depending on the amount of existing data and the location, this operation can take a long time.
 
 === Activate Master Key-Based Encryption
 
@@ -44,7 +44,7 @@ Depending on the amount of existing data, this operation can take a long time.
 {occ-command-example-prefix} maintenance:singleuser --off
 ----
 
-=== Deactivate Master Key-based Encryption
+=== Deactivate Master-Key-Based Encryption
 
 [source,console,subs="attributes+"]
 ----
@@ -53,17 +53,18 @@ Depending on the amount of existing data, this operation can take a long time.
 {occ-command-example-prefix} app:disable encryption
 ----
 
-If the master key has been compromised or exposed, you can recreate it.
-You will need the current master key for it.
+If the master key has been compromised or exposed, you can replace it. You will need the current master key for it.
 
 [source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} encryption:recreate-master-key
 ----
 
-== User-Specific Key-based Encryption
+== User-Key-Based Encryption
 
-=== Activate User-Specific Key-based Encryption
+IMPORTANT: User-Key encryption has been depreciated with xref:release_notes.adoc#deprecation-note-for-user-key-storage-encryption[ownCloud release 10.7]
+
+=== Activate User-Key-Based Encryption
 
 [source,console,subs="attributes+"]
 ----
@@ -79,12 +80,11 @@ After User-specific encryption is enabled, users must log out and log back in to
 
 === Set a Recovery Key
 
-- Go to the "_Encryption_" section of your Admin page.
+- Go to menu:Settings[Admin > Encryption].
 - Set a recovery key password.
 - Ask the users to opt-in to the recovery key.
 
-If a user decides not to opt-in to the recovery key and forgets or loses their password, **the user's data cannot be decrypted**.
-This leads to **permanent data loss**.
+IMPORTANT: If a user decides not to opt-in to the recovery key and forgets or loses their password, **the user's data cannot be decrypted**. This leads to **permanent data loss**.
 
 They need to:
 
@@ -100,8 +100,7 @@ They need to:
 
 === Decrypt Encrypted Files
 
-If you have an instance with a few users, you can use this example to decrypt the files. Note that you have to enter the password for each user manually.
-The ownCloud admin must be certain all users already have enabled the recovery password option in their personal settings page.
+If you have an ownCloud instance with only a few users, you can use the following example to decrypt the files. Note that you have to enter the password for each user manually. The admin must ensure all users have enabled the recovery password option in their personal settings page.
 
 [source,console,subs="attributes+"]
 ----
@@ -116,8 +115,7 @@ The ownCloud admin must be certain all users already have enabled the recovery p
 
 If you have a large instance with many users, use this to decrypt the files:
 
-* Set the variable as export `OC_RECOVERY_PASSWORD=1111`, then run this set of commands:
-(Replace "1111" with your actual Recovery Key)
+* Set the environment  variable with e.g. `export OC_RECOVERY_PASSWORD=1111`, then run this set of commands and replace "1111" with your actual Recovery Key:
 
 [source,console,subs="attributes+"]
 ----
@@ -137,24 +135,20 @@ sudo -E -u www-data php occ encryption:decrypt-all -m recovery -c yes
 {occ-command-example-prefix} app:disable encryption
 ----
 
-=== Cleanup your database
+== Clean up Your Database
 
-Access your ownCloud database and remove the remaining entries 
-that haven't been automatically removed with this command:
+Access your ownCloud database and remove the remaining entries that have not been automatically removed with this command:
 
 [source,sql]
 ----
 DELETE FROM oc_appconfig WHERE appid='encryption';
 ----
 
-=== Cleanup your storage
+== Clean up Your Storage
 
-Lastly you have to delete all encryption keys on storage by running this command: 
+The removal of remaining encryption keys is a manual process. You have to delete all encryption keys on the storage by running the following command. Modify the path to your data directory according to your installation. The `find` command limits the search to exactly one directory below the user level and for security reasons prompts before each deletion:
 
-(Modify the path to your data directory according to your installation)
-
+[source,console]
 ----
-find /var/www/html/owncloud/data -type d -name "files_encryption" -exec rm -R {} +
+find /var/www/owncloud/data/ -mindepth 2 -maxdepth 2 -type d -name "files_encryption" -exec rm -R -i {} +
 ----
-
-At this point, keys are deleted from storage. 
