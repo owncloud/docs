@@ -1,0 +1,192 @@
+= Install an Updated Imagick Version
+:toc: right
+:imei-url: https://github.com/SoftCreatR/imei/
+
+ImageMagic shipped for Ubuntu 18.04 or 20.04 is based on version 6, the corresponding `php-imagick` wrapper on version 3.4 which does not have additional capabilities to render patricular image types like HEIC or SVG. To install the latest version with many additional image and video capabilities for use with PHP, you must first uninstall and remove any former version of imagick and the wrapper and install the latest imagick and php-imagick version.
+
+== Remove the Old Imagick Installation
+
+=== Remove `php-imagick`
+
+. Check if `php-imagick` is Installed
++
+[source,console]
+----
+dpkg -l | grep php | awk '{print $2}' | tr "\n" " " | grep php-imagick
+----
++
+You will see the name printed if it is installed.
+. Check if the `imagick.so` library is Installed
++
+[source,console]
+----
+ls `php -i | grep "^extension_dir" | sed -e 's/.*=> //'` | sort | grep imagick
+----
+. Disable `php-imagick`
++
+[source,console]
+----
+sudo phpdismod imagick
+----
+. Remove `php-imagick`
++
+[source,console]
+----
+sudo apt remove php-imagick
+----
+. Depending on the installation, restart Apache or php-fpm
++
+[source,console]
+----
+sudo service apache2 restart
+or
+sudo service php7.4-fpm restart
+----
+
+=== Remove Imagick
+
+. Check the current version installed, the version may be different than the example printed.
++
+[source,console]
+----
+convert -version
+
+Version: ImageMagick 6.9.7-4
+...
+----
+. Remove the old `imagemagick-6` version
++
+[source,console]
+----
+sudo apt remove imagemagick-6-common
+----
+
+== Install Imagick
+
+=== Install the Lastest Imagick7 Binary
+
+To install ImageMagick 7, a script is used. You also can do all steps provided by the {imei-url}[IMEI - ImageMagick Easy Install] script manually by just copying all commands step by step.
+
+. Change to the /tmp directory
++
+[source,console]
+----
+cd /tmp
+----
+. Download and check the signature of the installation script which is done in four steps
++
+[source,console]
+----
+wget https://dist.1-2.dev/imei.sh && \
+wget https://dist.1-2.dev/imei.sh.sig && \
+wget https://dist.1-2.dev/public.pem && \
+openssl dgst -sha512 -verify public.pem -signature imei.sh.sig imei.sh
+----
+.. Download the IMEI script
+.. Download signature file
+.. Download public key
+.. Verify the installer
+. Make the script executable if you get a `Verified OK` message
++
+[source,console]
+----
+sudo chmod +x imei.sh
+----
+. Install the latest ImageMagick 7 release
++
+NOTE: Depending on your environment, this may take a while (+25min)
++
+[source,console]
+----
+sudo ./imei.sh
+----
+. Remove the downloaded script and verification files
++
+[source,console]
+----
+rm imei.*
+rm public.pem
+----
+
+=== Check the Installed Imagick7 Version
+
+Check the version installed, the version may be higher than the example printed.
+
+[source,console]
+----
+convert -version
+
+Version: ImageMagick 7.1.0-2
+...
+----
+
+=== Get a List of Supported Formats
+
+Type following commands to get a list of supported formats:
+
+[source,console]
+----
+convert identify -list format
+
+   Format  Module    Mode  Description
+----------------------------------------------------
+      3FR  DNG       r--   Hasselblad CFV/H3D39II
+      3G2  VIDEO     r--   Media Container
+      3GP  VIDEO     r--   Media Container
+      AAI* AAI       rw+   AAI Dune image
+...
+----
+
+=== Install the Imagick PHP Wrapper
+
+The new `php-imagick` wrapper is installed via PECL and based on the recent installed ImageMagick 7 version.
+
+. Install `php-imagick`
++
+[source,console]
+----
+sudo pecl channel-update pecl.php.net
+sudo pecl install imagick
+----
+. Check if file `imagick.ini` is present in `mods-available`
++
+Use your php version in the path of the example
++
+[source,console]
+----
+ll /etc/php/7.4/mods-available/imagick.ini
+----
+If the file is not present, add one with following content if not present:
++
+[source,console]
+----
+; configuration for php imagick module
+extension=imagick.so
+----
+
+== Enable the `php-imagick` wrapper
+
+. After ImageMagic 7 and the php wrapper has been installed, enable the php wrapper
++
+[source,console]
+----
+sudo phpenmod imagick
+----
+. Depending on the installation, restart Apache or php-fpm
++
+[source,console]
+----
+sudo service apache2 restart
+or
+sudo service php7.4-fpm restart
+----
+. Print supported `php-imagick` formats
++
+[source,console]
+----
+php -r 'phpinfo();' | grep ImageMagic
+----
+
+== TIP
+
+If you want to install a new version of ImageMagic 7 and/or php wrapper, repeat all steps from above.
