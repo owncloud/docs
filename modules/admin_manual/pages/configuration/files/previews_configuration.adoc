@@ -3,8 +3,7 @@
 
 == Introduction
 
-The ownCloud thumbnail system generates previews of files for all
-ownCloud apps that display files, such as Files.
+The ownCloud thumbnail system generates previews of files for all ownCloud apps that display files, such as the Files app.
 
 The following image shows some examples of previews of various file types.
 
@@ -16,38 +15,168 @@ By default, ownCloud can generate previews for the following filetypes:
 * Cover of MP3 files
 * Text documents
 
-NOTE: Older versions of ownCloud also supported the preview generation of other file types such as PDF, SVG or various office documents. Due to security concerns those providers have been disabled by default and are considered unsupported. While those providers are still available, we discourage enabling them, and they are not documented.
+ownCloud supports the preview generation of file types such as PDF, SVG or various office documents. These document types can be a security issue as they can have javascript or other code either embedded or linked. When enabling SVG, the preview code checks for the existance of `xlink` or `href` and disallows creating a preview. This minimizes a risk but does not eliminate it. Such a check is not made for PDF or Office documents and enabling the creation of previews for those documents can be therefore a serious security issue.
+ 
+IMPORTANT: Be careful enabling preview thumbnail generation for documents which could contain or reference executable code! ownCloud does NOT take any responsibility for any issues.
 
-== Parameters
+== Default Preview Providers
 
-Please notice that the ownCloud preview system comes already with
-sensible defaults, and therefore it is usually unnecessary to adjust
-those configuration values. If you want to configure previews, add
-or change the following parameters in `config/config.php`. 
+Please note that the ownCloud preview system comes already with sensible defaults, and therefore it is usually not necessary to adjust those configuration values. If you want to configure previews, add or change the following parameters in `config/config.php`. 
 
+The default list of enabled preview providers which do not need to be explicitly enabled in the config are:
 
-=== Disabling previews
+[source,console]
+----
+OC\Preview\BMP
+OC\Preview\GIF
+OC\Preview\JPEG
+OC\Preview\MarkDown
+OC\Preview\MP3
+OC\Preview\PNG
+OC\Preview\TXT
+OC\Preview\XBitmap
+----
 
-Under certain circumstances, for example if the server has limited
-resources, you might want to consider disabling the generation of
-previews. Note that if you do this all previews in all apps are
-disabled and will display generic icons instead of thumbnails.
+If you want to add or change the default list, you MUST define all elements used. If you just declare an additional item, only this item will be taken and none of the default list. 
+
+== Prerequisites
+
+When defining your own preview providers, some things need to be considered. For some file types, ownCloud uses ImageMagick to generate previews. By default, the delivered version of ImageMagick for Ubuntu 18.04 and 20.04 is version 6, and the wrapper for php is version 3.4. This version of ImageMacick is _not_ capable of processing additional file formats like SVG or HEIC and many others. If you want to use those providers, you must upgrade ImageMagick to version 7 and the php wrapper to version 3.5. See the xref:installation/manual_installation/server_prep_ubuntu_20.04.adoc#php-imagick-library[php-imagick Library] section in the installation guide for more information.
+
+=== Notes for PDF Preview Generation
+
+If you handle the security risk and decide to allow creating previews for PDF files, change the following imagick security policy. Use an editor of your choice like `nano` and change the following file, adapt the path if using ImageMagick 7:
+
+[source,console]
+----
+sudo nano /etc/ImageMagick-6/policy.xml
+or
+sudo nano /usr/local/etc/ImageMagick-7/policy.xml
+----
+
+Search for the following content:
+
+[source,console]
+----
+<policy domain="coder" rights="none" pattern="PDF" />
+----
+
+and change:
+
+[source,console]
+----
+rights="none" -> rights="read|write"
+----
+
+After changing the policy file for ImageMagic, restart your Apache web server or your php-fpm service.
+
+=== Notes for Video Preview Generation
+
+To be able to create previews for video files when using the `OC\Preview\Movie` provider, you must install `ffmpeg`. There can be significant load on the server during conversion when video thumbnail generation is enabled.
+
+[source,console]
+----
+sudo apt install -y ffmpeg
+----
+
+=== List Extensions Used for the Preview Generation
+
+To get a list of file extensions linked to the image or video provider, change into the `owncloud` directory and run the following example command. Use a different filter for other provider types.
+
+[source,console]
+----
+cat resources/config/mimetypemapping.dist.json | grep image
+----
+
+== Preview Format Requirements
+
+The following providers require the php `imagick` extension:
+
+[source,console]
+----
+OC\Preview\AI
+OC\Preview\EPS
+OC\Preview\Heic
+OC\Preview\PDF
+OC\Preview\PSD
+OC\Preview\SGI
+OC\Preview\SVG
+OC\Preview\TIFF
+OC\Preview\TTF
+----
+
+The following providers are only available if either LibreOffice or OpenOffice is installed on the server:
+
+[source,console]
+----
+OC\Preview\MSOfficeDoc
+OC\Preview\MSOffice2003
+OC\Preview\MSOffice2007
+OC\Preview\OpenDocument
+OC\Preview\StarOffice
+----
+
+The following providers are available, but disabled by default due to performance or privacy/security concerns:
+
+[source,console]
+----
+OC\Preview\Font
+OC\Preview\Illustrator
+OC\Preview\Movie
+OC\Preview\MSOfficeDoc
+OC\Preview\MSOffice2003
+OC\Preview\MSOffice2007
+OC\Preview\OpenDocument
+OC\Preview\StarOffice
+OC\Preview\SVG
+OC\Preview\PDF
+OC\Preview\Photoshop
+OC\Preview\Postscript
+OC\Preview\TIFF
+----
+ 
+== Managing Your Preview Settings
+
+=== Disabling Previews
+
+Under certain circumstances, for example if the server has limited resources, you might want to consider disabling the generation of previews. Note that if you do this all previews in all apps are disabled and will display generic icons instead of thumbnails.
 
 Set the configuration option `enable_previews` to `false`:
 
+[source,console]
 ----
   'enable_previews' => false,
 ----
 
-=== Maximum preview size
+=== Adding a Preview Provider
 
-There are two configuration options for setting the maximum size (in
-pixels) of a preview. These are `preview_max_x` which represents the
-x-axis and `preview_max_y` which represents the y-axis. The default
-value you can reference in `config/config.sample.php` is set to 2048.
+The example below adds the preview provider for `SGI` and `HEIC` images:
+
+[source,console]
+----
+'enabledPreviewProviders' => [
+	'OC\Preview\SGI',
+	'OC\Preview\Heic',
+	'OC\Preview\BMP',
+	'OC\Preview\GIF',
+	'OC\Preview\JPEG',
+	'OC\Preview\MarkDown'
+	'OC\Preview\MP3',
+	'OC\Preview\PNG',
+	'OC\Preview\TXT',
+	'OC\Preview\XBitmap',
+ ],
+----
+
+NOTE: You have to add all default providers if you do not want to disable them.
+
+=== Maximum Preview Size
+
+There are two configuration options for setting the maximum size (in pixels) of a preview. These are `preview_max_x` which represents the x-axis and `preview_max_y` which represents the y-axis. The default value you can reference in `config/config.sample.php` is set to 2048.
 
 The following example would limit previews to a maximum size of 100 px × 100 px:
 
+[source,console]
 ----
   'preview_max_x' => 100,
   'preview_max_y' => 100,
@@ -57,23 +186,23 @@ NOTE: If you want no limit applied for one or both of these values then set them
 
 === Maximum scale factor
 
-If a lot of small pictures are stored on the ownCloud instance and the
-preview system generates blurry previews, you might want to consider
-setting a maximum scale factor. By default, pictures are upscaled to 10
-times the original size:
+If a lot of small pictures are stored on the ownCloud instance and the preview system generates blurry previews, you might want to consider setting a maximum scale factor. By default, pictures are upscaled to 10 times the original size:
 
+[source,console]
 ----
   'preview_max_scale_factor' => 10,
 ----
 
 If you want to disable scaling at all, you can set the config value to `1':
 
+[source,console]
 ----
   'preview_max_scale_factor' => 1,
 ----
 
 If you want to disable the maximum scaling factor, you can set the config value to `null`:
 
+[source,console]
 ----
   'preview_max_scale_factor' => null,
 ----
