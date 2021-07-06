@@ -1,6 +1,6 @@
 # Create a New Version Branch for Docs
 
-When doing a new release of ownCloud Server like `10.x`, a new version branch must be created based on `master`. It is necessary to do this in three steps. Please set the new and former version numbers accordingly
+When doing a new release of ownCloud Server like `10.x`, a new version branch must be created based on `master`. It is necessary to do this in four steps. Please set the new and former version numbers accordingly
 
 **Step 1: This will create and configure the new `10.x` branch properly**
 
@@ -34,3 +34,7 @@ When doing a new release of ownCloud Server like `10.x`, a new version branch mu
 17. Go to the settings of the docs repository and change the protection of the branch list so that
     the `10.x` branch gets protected and the `10.x-2` branch is no longer protected.
 18. Rename the `10.x-2` branch to `x_archived_10.x-2`
+
+**Step 4: Fix Internal Redirects**
+
+19. Inform QA (@jnweiger) to update `go.php` via gitea for the use with the new 10.x branch.
