@@ -364,7 +364,7 @@ A cache is introduced to avoid unnecessary LDAP traffic, for example caching use
 Saving the configuration empties the cache. 
 The time is given in seconds.
 Note that almost every PHP request requires a new connection to the LDAP server. 
-If you require fresh PHP requests we recommend defining a minimum lifetime of 15s or so, rather than completely eliminating the cache.
+If you require fresh PHP requests, we recommend defining a minimum lifetime of about 15 seconds or higher, rather than completely eliminating the cache.
 
 *Examples:*
 
@@ -791,9 +791,7 @@ After a cache entry expires there is no automatic trigger for re-populating the 
 
 There is one trigger which is automatically triggered by a certain background job which keeps the `user-group-mappings` up-to-date, and always in cache.
 
-Under normal circumstances, all users are never loaded at the same time.
-Typically the loading of users happens while page results are generated, in steps of 30 until the limit is reached or no results are left. 
-For this to work on an oC-Server and LDAP-Server, "**Paged Results**" must be supported, which assumes PHP >= 5.6.
+Under normal circumstances, all of the users are never loaded at the same time. Typically, the loading of users happens while page results are generated in steps of 30, until the limit is reached or no results are left.
 
 TIP: Please ensure that you're using the minimum supported PHP version ({minimum-php-version}).
 
@@ -828,8 +826,7 @@ If the DN changes in LDAP, it will be detected, and there will be no conflicts.
 Those mappings are done in the database table `ldap_user_mapping` and `ldap_group_mapping`. 
 The user name is also used for the user's folder (except if something else is specified in _User Home Folder Naming Rule_), which contains files and meta data.
 
-From ownCloud 5, the internal user name and a visible display name are separated. 
-This is not the case for group names, yet, i.e., a group name cannot be altered.
+The internal user name and a visible display name are separated. This is not the case for group names yet, as a group name cannot be altered.
 
 That means that your LDAP configuration should be good and ready before putting it into production. 
 The mapping tables are filled early, but as long as you are testing, you can empty the tables any time. 
