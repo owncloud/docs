@@ -703,6 +703,16 @@ Directives horizontal and vertical
 To use these directives, you can either set them into the `cols=""` definition which is then used for all
 columns like `cols="^,^.>"` or at the beginning of an individual cell `^.>| cell text`.
 
+If you want to make a headline above a table which does not render as table headline, you need to mark the headline accordingly. To do so, see the following example:
+
+```
+[caption=]
+.Following will render as headline and not as "Table 1. Following..." 
+[width="50%",cols="40%,50%",options="header"]
+|===
+...
+```
+
 ## Conditional Rendering
 
 References: [Conditionals](https://docs.asciidoctor.org/asciidoc/latest/directives/conditionals/)
