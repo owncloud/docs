@@ -7,59 +7,61 @@
 :rediscli_url: https://redis.io/topics/rediscli
 :redis_select_url: https://redis.io/commands/select
 :redis_flushdb_url: https://redis.io/commands/flushdb
+:opcache_url: https://www.php.net/manual/en/opcache.installation.php
+:redis-memcached-url: https://scalegrid.io/blog/redis-vs-memcached-2021-comparison/
 
 == Introduction
 
-You can _significantly_ improve ownCloud server performance by using memory caching.
-This is the process of storing frequently-requested objects in-memory for faster retrieval
-later. There are two types of memory caching available:
+You can _significantly_ improve ownCloud server performance by using memory caching. This is the process of storing frequently requested objects in memory for faster retrieval later. There are two types of memory caching available:
 
-*A PHP opcode Cache (OPcache):* An opcode cache stores compiled PHP scripts so they don’t
-need to be re-compiled every time they are called. These compiled PHP scripts are stored
-in-memory, on the server on which they’re compiled.
+A PHP opcode Cache (OPcache)::
+An opcode cache stores compiled PHP scripts (opcodes) so they don’t need to be parsed and compiled every time they are called. These compiled PHP scripts are stored in shared memory on the server on which they’re compiled.
 
-*A Data Cache:* A data cache stores copies of _data_, _templates_, and other types of
-_information-based files_. Depending on the cache implementation, it can be either _local_,
-or specific, to one server, or _distributed_ across multiple servers. This cache type is ideal
-when you have a scale-out installation.
+A Data Cache::
+A data cache stores copies of _data_, _templates_, and other types of _information-based files_. Depending on the cache implementation, it can be either _local_ or specific to one server or _distributed_ across multiple servers. This cache type is ideal when you have a scale-out installation.
 
-In addition, we suggest to use *External Transactional File Locking* which reduces load on
-the database significantly.
+In addition, we suggest to use *External Transactional File Locking* which reduces load on the database significantly.
 
 == Supported Caching Backends
 
 The caching backends supported by ownCloud are:
 
+* xref:opcache[Opcache] +
+  This is an opcode cache only and does *not* cache any data.
+  Opcache is bundled with PHP from version 5.5.0 and later.
 * xref:apcu[APCu] +
-  APCu 4.0.6 and up is required. Alternatively you can use the Zend OPCache.
-  However, *it is not a data cache*, it is an opcode cache only.
+  This is a data cache only and does *not* cache any opcode.
+  APCu 4.0.6 and up is required.
 * xref:redis[Redis] +
-  This is a distributed cache for multi-server ownCloud installations and provides file locking.
-  Version 2.2.6 or higher of the PHP Redis extension is required.
+  This is an in-memory data structure store (cache) for single and multi-server ownCloud installations, which provides file locking and can be set up in local or distributed environments. Consider Redis younger, richer in features and more configurable than memcached. At least version 2.2.6 or higher of the PHP Redis extension is required.
 * xref:memcached[Memcached] +
-  This is a distributed cache for multi-server ownCloud installations.
+  This is a distributed cache for multi-server ownCloud installations and has *no* file locking capabilities.
+
+See the following page to learn more about the {redis-memcached-url}[Redis vs. Memcached – 2021 Comparison].
 
 [NOTE]
 ====
-You may use _both_ a local and a distributed cache. 
-The recommended ownCloud caches are APCu and Redis.
-If you do not install and enable a local memory cache you will see a warning on your ownCloud
-admin page. If you enable only a distributed cache in your `config.php` (`memcache.distributed`)
-and not a local cache (`memcache.local`) you will still see the cache warning.
+You may use _both_ a local and a distributed cache. The recommended ownCloud caches are APCu and Redis. If you do not install and enable a local memory cache you will see a warning on your ownCloud admin page. If you enable only a distributed cache in your `config.php` (`memcache.distributed`) and not a local cache (`memcache.local`) you will still see the cache warning.
 ====
 
 === Cache Directory Location
 
-The cache directory defaults to `data/$user/cache` where `$user` is the
-current user. You may use the `'cache_path'` directive in `config.php`
-(See xref:configuration/server/config_sample_php_parameters.adoc[Config.php Parameters]) to select a different location.
+The cache directory defaults to `data/$user/cache` where `$user` is the current user. You may use the `'cache_path'` directive in your configuration for different locations. For details see the  xref:configuration/server/config_sample_php_parameters.adoc#define-the-location-of-the-cache-folder[Define the location of the cache folder] description.
 
 == Cache Types
 
+=== Opcache
+
+Opcache should be enabled by default in your php installation. To check it, run the following command:
+
+[source,php]
+----
+php -r 'phpinfo();' | grep opcache.enable
+----
+
 === APCu
 
-The easiest cache to use is APCu, because it is a data cache, very fast and nothing needs
-to be configured. APCu can not be used when needed to run on an external server.
+The easiest cache to use is APCu, because it is a data cache, very fast and nothing needs to be configured. APCu can not be used when needed to run on an external server.
 
 ==== Installing APCu
 
@@ -67,23 +69,18 @@ to be configured. APCu can not be used when needed to run on an external server.
 ----
 # On Ubuntu/Debian/Mint systems
 sudo apt install php-apcu
-
 ----
 
-With that done, assuming that you don’t encounter any errors, restart Apache and the
-extension is ready to use.
+With that done, assuming that you don’t encounter any errors, restart Apache and the extension is ready to use.
 
 === Redis
 
-{redis_url}[Redis] is an excellent modern memory cache to use for both distributed caching
-and as a local cache for
-xref:configuration/files/files_locking_transactional.adoc[transactional file locking], 
-because it guarantees that cached objects are available for as long as they are needed.
+{redis_url}[Redis] is an excellent modern memory cache to use for both distributed caching and as a local cache for
+xref:configuration/files/files_locking_transactional.adoc[transactional file locking], because it guarantees that cached objects are available for as long as they are needed.
 
-Redis performance, when used with a socket connection, is close the performance of APCu.
+The performance of Redis when used with a socket connection is close to the performance of APCu.
 
-The Redis PHP module must be at least version 2.2.6 or higher.
-If you are running a Linux distribution that does not package the supported versions of this module — or does not package Redis at all — see xref:installing-redis-on-other-distributions[Installing Redis on other distributions].
+The Redis PHP module must be at least version 2.2.6 or higher. If you are running a Linux distribution that does not package the supported versions of this module — or does not package Redis at all — see xref:installing-redis-on-other-distributions[Installing Redis on other distributions].
 
 ==== Installing Redis
 
@@ -96,20 +93,16 @@ sudo apt install redis-server php-redis
 
 The installer will automatically launch Redis and configure it to launch at startup.
 
-After that, assuming that you don’t encounter any errors, restart Apache
-and the extension is ready to use.
+After that, assuming that you don’t encounter any errors, restart Apache and the extension is ready to use.
 
 ==== Additional notes for Redis vs. APCu on Memory Caching
 
-APCu is faster at local caching than Redis. If you have enough memory,
-use APCu for memory caching and Redis for file locking. If you are low
-on memory, use Redis for both.
+APCu is faster at local caching than Redis. If you have enough memory, use APCu for memory caching and Redis for file locking. If you are low on memory, use Redis for both.
 
 
 ==== Clearing the Redis Cache
 
-The Redis cache can be flushed from the command-line using the
-{rediscli_url}[redis-cli tool], as in the following example:
+The Redis cache can be flushed from the command-line using the {rediscli_url}[redis-cli tool], as in the following example:
 
 ----
 sudo redis-cli
@@ -117,27 +110,21 @@ SELECT <dbIndex>
 FLUSHDB
 ----
 
-`<dbIndex>` is the number of Redis database where the cache is stored.
-It is zero by default at ownCloud. To check what yours is currently set
-to, check the `dbindex` value in `config/config.php`. Here’s an example
-of what to look for:
+`<dbIndex>` is the number of the Redis database where the cache is stored. It is zero by default at ownCloud. To check what yours is currently set to for ownCloud, check the `dbindex` value in `config/config.php`. To change it, see the
+xref:configuration/server/config_sample_php_parameters.adoc#memory-caching-backend-configuration[Memory caching backend configuration]
 
-NOTE: Out of the box, every Redis instance supports 16 databases so `<dbIndex>` has to be
-set between 0 and 15.
+NOTE: Out of the box, every Redis instance supports 16 databases so `<dbIndex>` has to be set between 0 and 15.
 
-Please read more about the instructions for the {redis_select_url}[select] and
-{redis_flushdb_url}[flushdb] command.
+Please read more about the instructions for the
+{redis_select_url}[select] and {redis_flushdb_url}[flushdb] command.
 
 === Memcached
 
-Memcached is a reliable old-timer for shared caching on distributed
-servers. It performs well with ownCloud with one exception: it is not
-suitable to use with xref:configuration/files/files_locking_transactional.adoc[Transactional File Locking].
-This is because it does not store locks, and data can disappear from the
-cache at any time. Given that, Redis is the best memory cache to use.
+Memcached is a reliable old-timer for shared caching on distributed servers. It performs well with ownCloud with one exception: it is not suitable to use with
+xref:configuration/files/files_locking_transactional.adoc[Transactional File Locking].
+This is because it does not store locks, and data can disappear from the cache at any time. Given that, Redis is the best memory cache to use.
 
-NOTE: Be sure to install the *memcached* PHP module, and not _memcache_, as in the following examples.
-ownCloud supports only the *memcached* PHP module.
+NOTE: Be sure to install the *memcached* PHP module, and not _memcache_, as in the following examples. ownCloud supports only the *memcached* PHP module.
 
 ==== Installing Memcached
 
@@ -168,9 +155,7 @@ After that, assuming that you don’t encounter any errors:
 
 ==== Clearing the Memcached Cache
 
-The Memcached cache can be flushed from the command-line using a range
-of common Linux/Unix tools, including `netcat` and `telnet`.
-The following example uses telnet to login, run the {flushall_url}[flush_all command], and logout:
+The Memcached cache can be flushed from the command line, using a range of common Linux/Unix tools including `netcat` and `telnet`. The following example uses telnet to log in, run the {flushall_url}[flush_all command], and log out:
 
 [source,console,subs="attributes+"]
 ----
@@ -183,14 +168,17 @@ quit
 
 Memory caches must be explicitly configured in ownCloud by:
 
-. Installing and enabling your desired cache
-  (whether that be the PHP extension and/or the caching server).
+. Installing and enabling your desired cache (whether that be the PHP extension and/or the caching server).
 . Adding the appropriate entry to ownCloud’s `config.php`.
 
-See xref:configuration/server/config_sample_php_parameters.adoc[Config.php Parameters]
-for an overview of all possible config parameters. After installing and enabling your chosen
-memory cache, verify that it is active by viewing the 
+See the
+xref:configuration/server/config_sample_php_parameters.adoc#memory-caching-backend-configuration[Memory caching backend configuration]
+for an overview of all possible config parameters, as the examples below only show basic configuration settings. After installing and enabling your chosen memory cache, verify that it is active by viewing the
 xref:configuration/general_topics/general_troubleshooting.adoc#php-version-and-information[PHP configuration details].
+
+=== Opcache Configuration
+
+Opcache should already be configured with PHP 7, see the {opcache_url}[opcache documentation] for details.
 
 === APCu Configuration
 
@@ -205,16 +193,15 @@ With that done, refresh your ownCloud admin page, and the cache warning should d
 
 === Redis Configuration
 
-Regardless of whether you have setup Redis to use TCP or a Unix socket, we recommend adding
-the following for best performance:
+Redis is very configurable; consult {redis_doc_url}[the Redis documentation] to learn more.
+
+Regardless of whether you have setup Redis to use TCP or a Unix socket, we recommend adding the following for best performance. This enables External Transactional File Locking based on Redis:
 
 [source,php]
 ----
 'filelocking.enabled' => true,
 'memcache.locking' => '\OC\Memcache\Redis',
 ----
-
-This enables External Transactional File Locking based on Redis
 
 ==== Redis Configuration Using TCP
 
@@ -226,7 +213,7 @@ The following example `config.php` configuration connects to a Redis cache via T
 'memcache.local' => '\OC\Memcache\Redis',
 'redis' => [
     'host' => 'localhost',       // For a Unix domain socket, use '/var/run/redis/redis.sock'
-    'port' => {std-port-redis},              // Set to 0 when using a Unix socket
+    'port' => {std-port-redis},  // Set to 0 when using a Unix socket
     'timeout' => 0,              // Optional, keep connection open forever
     'password' => '',            // Optional, if not defined no password will be used.
     'dbindex' => 0,              // Optional, if undefined SELECT will not run and will
@@ -236,8 +223,7 @@ The following example `config.php` configuration connects to a Redis cache via T
 
 ==== Redis Configuration Using Unix Sockets
 
-If Redis is running on the same server as ownCloud, it is recommended to configure it to use
-Unix sockets. Then, configure ownCloud to communicate with Redis, as in the following example. 
+If Redis is running on the same server as ownCloud, it is recommended to configure it to use Unix sockets. Then, configure ownCloud to communicate with Redis as in the following example. 
 
 [source,php]
 ----
@@ -367,13 +353,8 @@ to TCP on localhost. The values can differ in your environment. Please do a loca
 | -6
 |===
 
-
-Redis is very configurable; consult {redis_doc_url}[the Redis documentation] to learn more.
-
 === Memcached Configuration
-Redis is very configurable;
-This example uses APCu for the local cache, Memcached as the distributed memory cache, and
-lists all the servers in the shared cache pool with their port numbers:
+This example uses APCu for the local cache, Memcached as the distributed memory cache, and lists all the servers in the shared cache pool with their port numbers:
 
 [source,php,subs="attributes+"]
 ----
@@ -412,8 +393,7 @@ Use APCu for local caching, Redis for file locking
 
 ==== Large Organization, Clustered Setup
 
-Use Redis for everything except a local memory cache. Use the server’s
-IP address or hostname so that it is accessible to other hosts:
+Use Redis for everything except a local memory cache. Use the server’s IP address or hostname so that it is accessible to other hosts:
 
 [source,php,subs="attributes+"]
 ----
@@ -430,10 +410,7 @@ IP address or hostname so that it is accessible to other hosts:
 == Configure Transactional File Locking
 
 xref:configuration/files/files_locking_transactional.adoc[Transactional File Locking]
-prevents simultaneous file saving. It is enabled by default and uses the database to store
-the locking data. This places a significant load on your database. It is recommended to use
-a cache backend instead. You have to configure it in `config.php` as in the following example,
-which uses Redis as the cache backend:
+prevents simultaneous file saving. It is enabled by default and uses the database to store the locking data. This places a significant load on your database. It is recommended to use a cache backend instead. You have to configure it in `config.php` as in the following example, which uses Redis as the cache backend:
 
 [source,php,subs="attributes+"]
 ----
@@ -447,18 +424,13 @@ which uses Redis as the cache backend:
  ],
 ----
 
-CAUTION: For enhanced security it is recommended to configure Redis to require a password. 
-See {redis_security_url} for more information.
+CAUTION: For enhanced security, it is recommended to configure Redis to require a password. See {redis_security_url} for more information.
 
 == Caching Exceptions
 
-If ownCloud is configured to use either Memcached or Redis as a memory
-cache, please be aware that you may encounter issues with functionality.
-When these occur, it is usually a result of PHP being incorrectly
-configured, or the relevant PHP extension not being available.
+If ownCloud is configured to use either Memcached or Redis as a memory cache, you may encounter issues with functionality. When these occur, it is usually a result of PHP being incorrectly configured or the relevant PHP extension not being available.
 
-In the table below, you can see all of the known reasons for reduced or
-broken functionality related to caching.
+In the table below, you can see all of the known reasons for reduced or broken functionality related to caching.
 
 [width="100%",cols="41%,59%",options="header",]
 |===
