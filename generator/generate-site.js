@@ -36,12 +36,13 @@ async function generateSite (args, env) {
 }
 
 async function generateIndex (playbook, pages) {
-  if ((process.env.BUILD_SEARCH_INDEX || 'true') !== 'true') {
+  // only run the creation of the search index if the env variables are set either in .drone.star or locally 
+  if ((process.env.BUILD_SEARCH_INDEX) !== 'true' || !process.env.ELASTICSEARCH_HOST || !process.env.ELASTICSEARCH_INDEX) {
     console.log('elastic: search index generation skipped')
     return
   }
 
-  console.log('elastic: generate search index')
+  console.log('elastic: prepare search index')
   let siteUrl = playbook.site.url
 
   const documents = pages.map((page) => {
@@ -84,43 +85,42 @@ async function generateIndex (playbook, pages) {
     }
   })
 
-  if (process.env.UPDATE_SEARCH_INDEX == 'true' && process.env.ELASTICSEARCH_HOST && process.env.ELASTICSEARCH_INDEX) {
-    console.log('elastic: rebuild search index')
-    let result = []
+  console.log('elastic: build search index')
+  let result = []
 
-    documents.forEach((document, index) => {
-      result.push({
-        index:  {
-          _index: process.env.ELASTICSEARCH_INDEX,
-          _type: 'page',
-          _id: index
-        }
-      })
-
-      result.push(document)
+  documents.forEach((document, index) => {
+    result.push({
+      index:  {
+        _index: process.env.ELASTICSEARCH_INDEX,
+        _type: 'page',
+        _id: index
+      }
     })
 
-    const client = new Elasticsearch.Client({
-      host: [{
-        host: process.env.ELASTICSEARCH_HOST,
-        port: process.env.ELASTICSEARCH_PORT || 443,
-        protocol: process.env.ELASTICSEARCH_PROTOCOL || 'https',
-        auth: process.env.ELASTICSEARCH_WRITE_AUTH,
-      }]
-    })
+    result.push(document)
+  })
 
-    try {
-      console.log("elastic: remove old search index");
-      await indexDelete(client)
-      console.log("elastic: create empty search index");
-      await indexCreate(client)
-      console.log('elastic: upload search index')
-      await indexBulk(client, result)
-    } catch (err) {
-      console.log("elastic: ERROR: " + err.status + " - " + err.displayName);
-      process.exit(1);
-    }
+  const client = new Elasticsearch.Client({
+    host: [{
+      host: process.env.ELASTICSEARCH_HOST,
+      port: process.env.ELASTICSEARCH_PORT || 443,
+      protocol: process.env.ELASTICSEARCH_PROTOCOL || 'https',
+      auth: process.env.ELASTICSEARCH_WRITE_AUTH,
+    }]
+  })
+
+  try {
+    console.log("elastic: remove old search index");
+    await indexDelete(client)
+    console.log("elastic: create empty search index");
+    await indexCreate(client)
+    console.log('elastic: upload search index')
+    await indexBulk(client, result)
+  } catch (err) {
+    console.log("elastic: ERROR: " + err.status + " - " + err.displayName);
+    process.exit(1);
   }
+
 }
 
 function enforceEditurl (contentAggregate) {

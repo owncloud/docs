@@ -103,7 +103,6 @@ def build(ctx, latest_version, deployment_branch, base_branch, pdf_branch):
                 "image": "owncloudci/nodejs:14",
                 "environment": {
                     "BUILD_SEARCH_INDEX": ctx.build.branch == deployment_branch,
-                    "UPDATE_SEARCH_INDEX": ctx.build.branch == deployment_branch,
                     "ELASTICSEARCH_HOST": from_secret("elasticsearch_host"),
                     "ELASTICSEARCH_INDEX": from_secret("elasticsearch_index"),
                     "ELASTICSEARCH_PORT": from_secret("elasticsearch_port"),
