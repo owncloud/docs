@@ -22,38 +22,47 @@ NOTE: After installing ImageMagick-7 and if you do not define the configuration 
 
 . Check if `php-imagick` is installed:
 +
+--
 [source,console]
 ----
 dpkg -l | grep php | awk '{print $2}' | tr "\n" " " | grep php-imagick
 ----
-+
+
 You will see the name printed if it is installed.
+--
+
 . Check if the `imagick.so` library is installed:
 +
 [source,console]
 ----
 ls `php -i | grep "^extension_dir" | sed -e 's/.*=> //'` | sort | grep imagick
 ----
+
 . Check the installed `php-imagick` version:
 +
+--
 [source,console]
 ----
 php --ri imagick | grep -i "module version"
 ----
-+
+
 If both the `php-imagick` library and the `imagick.so` binary is installed, proceed with the next steps.
+--
+
 . Disable `php-imagick`:
 +
 [source,console]
 ----
 sudo phpdismod imagick
 ----
+
 . Remove php-imagick:
 +
 [source,console]
 ----
 sudo apt remove php-imagick
 ----
+
 . Depending on the installation, restart Apache or php-fpm:
 +
 [source,console]
@@ -73,6 +82,7 @@ convert -version  | grep -i version
 
 Version: ImageMagick 6.9.7-4
 ----
+
 . Remove the old `imagemagick-6` version:
 +
 [source,console]
@@ -93,7 +103,16 @@ To install ImageMagick-7, a script is used. Alternatively, you can copy&paste al
 cd /tmp
 ----
 . Download and check the signature of the installation script which is done in four steps:
+.. Download the IMEI script
+.. Download signature file
+.. Download public key
+.. Verify the installer
+// the following blank line is intended to put the block aligned to the parent item
+
 +
+--
+Run this example to do all steps in one chained command:
+
 [source,console]
 ----
 wget https://dist.1-2.dev/imei.sh && \
@@ -101,10 +120,8 @@ wget https://dist.1-2.dev/imei.sh.sig && \
 wget https://dist.1-2.dev/imei.sh.pem && \
 openssl dgst -sha512 -verify imei.sh.pem -signature imei.sh.sig imei.sh
 ----
-.. Download the IMEI script
-.. Download signature file
-.. Download public key
-.. Verify the installer
+--
+
 . If you get a `Verified OK` message, make the script executable:
 +
 [source,console]
@@ -113,14 +130,17 @@ sudo chmod +x imei.sh
 ----
 . Install the latest ImageMagick-7 release:
 +
+--
 NOTE: For Ubuntu, ImageMagick uses `/etc` as base for the config directory, see the backup information above. This installation example uses the same base set by an option. Change it according your needs.
-+
+
 NOTE: Depending on your environment, this may take a while (+25min).
-+
+
 [source,console]
 ----
 sudo ./imei.sh --config-dir "/etc"
 ----
+--
+
 . Check if ImageMagic-7 and its libraries have been properly installed
 +
 [source,console]
@@ -175,35 +195,40 @@ NOTE: If you have installed the php-wrapper via PECL before and want to reinstal
 
 . Install `php-imagick`
 +
+--
 The `printf` command auto-accepts the question for using defaults.
-+
+
 [source,console]
 ----
 sudo pecl channel-update pecl.php.net
 printf "\n" | sudo pecl install imagick
 ----
+--
+
 . Check if file `imagick.ini` is present in `mods-available`.
 +
+--
 Use your php version in the path of the example command below:
-+
+
 [source,console]
 ----
 ll /etc/php/7.4/mods-available/imagick.ini
 ----
 If the file is not present, create one:
-+
+
 [source,console]
 ----
 sudo nano /etc/php/7.4/mods-available/imagick.ini
 ----
-+
+
 with following content:
-+
+
 [source,console]
 ----
 ; configuration for php imagick module
 extension=imagick.so
 ----
+--
 
 == Enable the php-imagick wrapper
 
@@ -213,6 +238,7 @@ extension=imagick.so
 ----
 sudo phpenmod imagick
 ----
+
 . Depending on the installation, restart Apache or php-fpm:
 +
 [source,console]
@@ -221,6 +247,7 @@ sudo service apache2 restart
 or
 sudo service php7.4-fpm restart
 ----
+
 . Print supported `php-imagick` formats:
 +
 [source,console]
