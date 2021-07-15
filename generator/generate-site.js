@@ -36,6 +36,10 @@ async function generateSite (args, env) {
 }
 
 async function generateIndex (playbook, pages) {
+console.log('BUILD_SEARCH_INDEX: ' + process.env.BUILD_SEARCH_INDEX)
+console.log('ELASTICSEARCH_HOST: ' + process.env.ELASTICSEARCH_HOST)
+console.log('ELASTICSEARCH_INDEX: ' + process.env.ELASTICSEARCH_INDEX)
+
   if ((process.env.BUILD_SEARCH_INDEX || 'true') !== 'true') {
     console.log('elastic: search index generation skipped')
     return
