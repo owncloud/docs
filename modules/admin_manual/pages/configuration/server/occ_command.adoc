@@ -9,14 +9,15 @@
 ownCloud's `occ` command (ownCloud console) is ownCloud's command-line interface. 
 You can perform many common server operations with `occ`, such as installing and upgrading ownCloud, managing users and groups, encryption, passwords, LDAP setting, and more.
 
-`occ` is in the `owncloud/` directory; for example `/var/www/owncloud` on Ubuntu Linux. `occ` is a PHP script. 
-*You must run it as your HTTP user* to ensure that the correct permissions are maintained on your ownCloud files and directories.
-
 toc::[]
 
-== Run occ As Your HTTP User
+== Running occ
 
-The HTTP user is different on the various Linux distributions. 
+=== As Your HTTP User
+
+On a regular ownCloud installation, `occ` is in the `owncloud/` directory; for example `/var/www/owncloud` on Ubuntu Linux. `occ` is a PHP script.
+
+*You must run it as your HTTP user* to ensure that the correct permissions are maintained on your ownCloud files and directories. The HTTP user is different on the various Linux distributions. 
 
 * The HTTP user and group in Debian/Ubuntu is `www-data`.
 * The HTTP user and group in Fedora/CentOS is `apache`.
@@ -32,17 +33,26 @@ For example, in CentOS 6.5 with SCL-PHP54 installed, the command looks like this
 sudo -u apache /opt/rh/php54/root/usr/bin/php /var/www/html/owncloud/occ
 ----
 
-[NOTE]
-====
+=== With a Docker Container
+
 If your ownCloud instance is set up in a docker container, you need a user in the group `docker` to perform `occ` commands. An example command looks like this:
 
 [source,console]
 ----
 docker exec --user www-data <owncloud-container-name> php occ <your-command>
 ----
-====
 
-For more information on docker, refer to section xref:installation/docker/index.adoc[Installing with Docker]
+For more information on docker, refer to section xref:installation/docker/index.adoc[Installing with Docker].
+
+=== With the ownCloud Appliance
+
+The ownCloud Appliance offers two possibilities to perform `occ` commands:
+
+. Log in to the ownCloud instance as root user with the command `univention-app shell owncloud`. Then use `occ` commands without a preceeding `sudo -u www-data php`.
+
+. Alternatively, you can use `occ` on the host system with the command `univention-app shell owncloud occ` followed by the desired options, commands and arguments.
+
+If you want to find out more about the Appliance, click xref:appliance/index.adoc[here].
 
 === Example Commands
 
