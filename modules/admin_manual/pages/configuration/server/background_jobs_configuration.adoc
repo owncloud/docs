@@ -48,7 +48,7 @@ This method enables the execution of scheduled jobs without the inherent limitat
 web server might have.
 
 For example, to run a Cron job on a *nix system every 15 minutes (recommended), under the default web server
-user (often, `www-data` or `wwwrun`) you must set up the following Cron job to call the occ
+user (often, `www-data` or `wwwrun`) you should set up the following Cron job to call the occ
 `background:cron` command:
 
 [source,console]
@@ -70,6 +70,17 @@ hence why we've deliberately added the full path.
 
 Please refer to {crontab_url}[the crontab man page] for the exact command syntax if you
 don't want to have it run every 15 minutes.
+
+NOTE: The cronjob can also be placed under `/etc/cron.d`. E.g. the owncloud ansible role deploys it like this:
+[source,console]
+----
+# cat /etc/cron.d/owncloud
+USER="www-data"
+#Ansible: oc cron
+*/15 * * * * www-data /usr/local/bin/occ system:cron
+#Ansible: occ cleanup chunks
+0 2 * * * www-data /usr/local/bin/occ dav:cleanup-chunks
+----
 
 NOTE: There are other methods to invoke programs by the system regularly, e.g.,
 {systemd_url}[systemd timers]
