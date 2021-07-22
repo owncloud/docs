@@ -33,6 +33,6 @@ When doing a new release of ownCloud Server like `10.x`, a new version branch mu
     the `10.x` branch gets protected and the `10.x-2` branch is no longer protected.
 18. Rename the `10.x-2` branch to `x_archived_10.x-2`
 
-**Step 4: Fix Internal Redirects**
+**Step 4: Set `latest` to 10.x**
 
-19. Inform QA (@jnweiger) to update `go.php` via gitea for the use with the new 10.x branch.
+19. Nothing needs to be done there. At the moment where the new server release gets tagged - which is part of the release process - `latest` will be automatically set to the tagged release number. This works automatically up to version 10.20. Post that, backend-admins need to be informed to updated the process behind.
