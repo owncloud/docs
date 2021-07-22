@@ -35,4 +35,4 @@ When doing a new release of ownCloud Server like `10.x`, a new version branch mu
 
 **Step 4: Set `latest` to 10.x**
 
-19. Nothing needs to be done there. At the moment where the new release gets tagged - which is part of the release process - `latest` will be automatically set to the tagged release number. This works automatically up to version 10.20. Post that, backend-admins need to be informed to updated the process behind.
+19. Nothing needs to be done there. At the moment where the new server release gets tagged - which is part of the release process - `latest` will be automatically set to the tagged release number. This works automatically up to version 10.20. Post that, backend-admins need to be informed to updated the process behind.
