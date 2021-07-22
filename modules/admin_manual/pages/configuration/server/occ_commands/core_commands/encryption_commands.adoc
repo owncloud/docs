@@ -125,7 +125,7 @@ This lets the command know whether to ask for permission to continue or not.
 
 == Fix Encrypted Version
 
-`encryption:fix-encrypted-version` fixes the encrypted version of files, if the encrypted file(s) are not downloadable, for a given user.
+`encryption:fix-encrypted-version` fixes the encrypted version of files if the encrypted file(s) are not downloadable for a given user. You only need this command if you get an "Invalid Signature" message in the browser or the clients.
 
 Background: the `oc_filecache` database table contains the integer columns "version" and "encryptedVersion" which start with 1 and are incremented on every file modification. When using encryption, those values are used together with the ciphertext to generate a cryptographic signature for the file. The version value is required to verify the signature. In some very rare cases like timeouts or bugs etc, the value might not get updated accordingly or get lost. The brute-force approach is to use the `fix:encrypted:version` command until the file can be decrypted. Starting with ownCloud 10.8, the behavior of the command got improved so that the encryptedVersion value is reset to its original value if no correct version was found. Before that fix, the last tried value was stored in the database thus modifying the state of the system and making further rescue attempts non-deterministic.
 
