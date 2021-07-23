@@ -382,6 +382,17 @@ make test-acceptance-api DEBUG_ACCEPTANCE_API_CALLS=true BEHAT_SUITE=apiTags
 
 === Optional Environment Variables
 
+If you define `SEND_SCENARIO_LINE_REFERENCES` then the API tests will send an extra `X-Request-Id` header in each request
+to the API. The value sent is a string that indicates the test suite, feature, scenario and line number of the step.
+For example, `apiComments/editComments.feature:26-28` indicates the apiComments test suite, editComments feature,
+the scenario at line 26 and the test step at line 28. A system-under-test could write that string into log entries,
+or report in a way that makes it easier to correlate the test runner API requests with the events in the system-under-test.
+
+[source,bash]
+----
+make test-acceptance-api BEHAT_SUITE=apiTags SEND_SCENARIO_LINE_REFERENCES=true
+----
+
 If you want to use an alternative home name using the `env` variable add to the execution `OC_TEST_ALT_HOME=1`, as in the following example:
 
 [source,bash]
