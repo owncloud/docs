@@ -8,20 +8,21 @@
 
 This document describes:
 
-* Prepare your server
+* How to prepare your server
 * Prerequisites and how to download ownCloud
-* Install ownCloud
+* Installation of ownCloud
 
-The descriptions are focussing on the Ubuntu distribution. Even if we try to make these steps
+The following descriptions focus on the Ubuntu distribution. Even if we try to make these steps
 as easy as possible by offering ready to use commands and scripts, you need to have sufficient
-knownledge about administrating a server environment which provides webservices.
-This document does not give any proposals securing your server.
+knowledge about administrating a server environment which provides web services.
+
+IMPORTANT: This document does not offer proposals about how to secure your server. Therefore, we strongly recommend checking out the xref:configuration/server/harden_server.adoc[Hardening and Security Guidance] before the installation and to keep it on hand through out.
 
 == Prepare Your Server
 
-For more information about the requirements of your server, read the 
+For more information on the requirements of your server, read the 
 xref:installation/manual_installation/manual_installation_prerequisites.adoc[general prerequisites guide].
-The following sections takes care about the procedures in detail.
+The following sections describe the procedures in detail.
 
 === Ubuntu 18.04 LTS Server
 
@@ -37,32 +38,31 @@ This guide installs PHP 7.4
 
 === Install a Database
 
-If you do not already have installed a supported database or using an existing one, follow the
-xref:installation/manual_installation/manual_installation_db.adoc[Manual Installation Databases guide].
+If you do not already have a supported database installed, follow the
+xref:installation/manual_installation/manual_installation_db.adoc[Manual Database Installation guide].
 
 === Configure the Web Server
 
-To configure your Apache Web Server for the use with ownCloud, follow the
+To configure your Apache web server for use with ownCloud, follow the
 xref:installation/manual_installation/manual_installation_apache.adoc[Apache preparation guide].
 
 == Installation of ownCloud Binaries
 
 To install ownCloud binaries, you have to download the required package. After doing so,
-you can do the following steps manually, or use provided scripts. These scripts are benificial,
-because they also can be used for upgrading and ease the process a lot. 
+you can perform the following steps manually or use the provided scripts. These scripts are convenient
+since they can also be used for upgrading which eases the process a lot. 
  
 === Download ownCloud
 
-Before downloading the ownCloud package, change to a directory where you will save
-your file temporarily. This can be, for example `/tmp`. In further examples, we use tar archives and
-the actual `ownCloud Complete Package`. The package name for the complete package is formed the following:
+Before downloading ownCloud, change to a directory where you want to save
+the file temporarily. This can be, for example `/tmp`. In further examples, we use tar archives or the complete ownCloud bundle. The name for the complete archive looks like this:
 `owncloud-complete-yyyymmdd.archive_type`.
  
 Download the archive of the latest ownCloud version:
 
 . Go to the {download_oc_url}[ownCloud Download Page] and select the package that fits your needs.
   You can download either the `.tar.bz2` or `.zip` archive. Based on the example below, copy the
-  link of the selected file and run following command to download it: +
+  link of the selected file and run the following command to download it: +
 +
 [source,console]
 ----
@@ -96,20 +96,20 @@ wget https://download.owncloud.org/community/owncloud-complete-yyyymmdd.tar.bz2.
 gpg --verify owncloud-complete-yyyymmdd.tar.bz2.asc owncloud-complete-yyyymmdd.tar.bz2
 ----
 
-=== Script Guided Installation
+=== Script-Guided Installation
 
-Use the xref:installation/manual_installation/script_guided_install.adoc[Script Guided Installation]
+Use the xref:installation/manual_installation/script_guided_install.adoc[Script-Guided Installation]
 if you want to easily install or upgrade ownCloud or manage ownership and permissions. The page
 contains detailed instructions about downloading and usage.
 
 TIP: Using the _Script Guided Installation_, you can handle many useful installation and update
 options automatically.
 
-=== Command Line Guided Installation
+=== Command Line Installation
 
-Use these steps, if you want to do the basic setup without any changes or physical installation options.
-Consider using the xref:installation/manual_installation/script_guided_install.adoc[Script Guided Installation]
-if you plan improving your setup from step one.
+Use the following commands if you want to do the basic setup without any changes and physical installation options.
+Consider using the xref:installation/manual_installation/script_guided_install.adoc[Script-Guided Installation]
+if you plan on improving your setup from step one.
 
 * Extract the archive contents and run the unpacking command for your tar archive:
 +
@@ -120,17 +120,17 @@ tar -xjf owncloud-complete-yyyymmdd.tar.bz2
 
 * tar unpacks to a single `owncloud` directory. 
   Copy the ownCloud directory to its final destination. 
-  When you are running the Apache HTTP server, you may safely install ownCloud in your Apache document root.
-  Assuming you document root is in `/var/www`.
+  If you are running the Apache HTTP server, you may safely install ownCloud in your Apache document root.
+  Assuming your document root is in `/var/www`.
 +
 [source,console]
 ----
 cp -r owncloud /var/www
 ----
 
-Post physical installation, set the correct ownership and permissions upfront.
-To do so, it is suggested use the scripts from the
-xref:installation/manual_installation/script_guided_install.adoc[Script Guided Installation].
+After the installation, set the correct ownership and permissions.
+To do so, we suggest using the scripts from the
+xref:installation/manual_installation/script_guided_install.adoc[Script-Guided Installation].
 
 == Complete the Installation
 
@@ -138,7 +138,7 @@ After restarting Apache, you must complete your installation by running either t
 Graphical Installation Wizard or on the command line with the `occ` command.
 
 After finalizing the installation, re-run the script provided in
-xref:installation/manual_installation/script_guided_install.adoc[Script Guided Installation]
+xref:installation/manual_installation/script_guided_install.adoc[Script-Guided Installation]
 to secure your `.htaccess` files. Your ownCloud instance is now ready to use.
 
 === Finalize Using the Graphical Installation Wizard
@@ -149,8 +149,8 @@ xref:installation/installation_wizard.adoc[Graphical Installation Wizard].
 === Finalize Using the Command Line
 
 If you want to finalize the installation via the command line, use the following example
-command. The command assumes, that you have unpacked the source to `/var/www/owncloud/`.
-Replace all the parameters according your needs.
+command. The command assumes that you have unpacked the source to `/var/www/owncloud/`.
+Replace all the parameters according to your needs.
 
 [source,console,subs="attributes+"]
 ----
@@ -164,7 +164,7 @@ cd /var/www/owncloud/
    --admin-pass "password"
 ----
 
-To use `occ` refer to the xref:configuration/server/occ_command.adoc[occ command reference]. +
+On how to use `occ`, refer to the xref:configuration/server/occ_command.adoc[occ command reference]. +
 
 NOTE: Admins of SELinux-enabled distributions may need to write new SELinux rules to complete
 their ownCloud installation; see
@@ -174,8 +174,10 @@ for a suggested configuration.
 == Post Installation Configuration
 
 After installing ownCloud successfully, ownCloud recommends that you perform some post
-installation tasks. These tasks help to configure background jobs or improve performance
+installation tasks. These tasks help configure background jobs or improve performance
 by caching.
+
+NOTE: At this point, we'd also like to remind you to consult the xref:configuration/server/harden_server.adoc[Hardening and Security Guidance] section.
 
 === Background Jobs
 
@@ -184,26 +186,26 @@ xref:configuration/server/background_jobs_configuration.adoc[Background Job Conf
 
 === Configure Caching
 
-It is recommended to install and enable caching (PHP opcode Cache and/or Data Cache), which
-significantly improves performance. For more information read the
+It is recommended to install and enable caching (PHP opcode cache and/or data cache), which
+significantly improves performance. For more information, read the
 xref:configuration/server/caching_configuration.adoc[Caching Configuration] guide.
 
 == Notes
 
 === Headers
 
-NOTE: ownCloud has a mechanism to set headers programmatically. 
+NOTE: ownCloud has a mechanism to set headers programmatically.
 These headers are set with the `always` directive to avoid errors when there are additional
-headers set in the web servers configuration file like `http.conf`. 
+headers set in the web server's configuration file like `http.conf`.
 More information on headers can be found in the {mod_headers-url}[`mod_headers`] documentation.
 
 === Managing Trusted Domains
 
-All URLs used to access your ownCloud server must be white-listed in your `config.php` file,
-under the `trusted_domains` setting. Users are allowed to log into ownCloud only when they
+All URLs used to access your ownCloud server must be white-listed in your `config.php` file
+under the `trusted_domains` setting. Users are allowed to log in to ownCloud only when they
 point their browsers to a URL that is listed in the `trusted_domains` setting.
 
-NOTE: This setting is important when changing or moving to a new domain name. 
+NOTE: This setting is important when changing or moving to a new domain name.
 You may use IP addresses and domain names.
 
 A typical configuration may look like this:
@@ -217,10 +219,10 @@ A typical configuration may look like this:
 ],
 ----
 
-The loopback address, `127.0.0.1`, is automatically white-listed, so as long as you have access to the physical server you can always log in. 
+The loopback address, `127.0.0.1`, is automatically white-listed, so as long as you have access to the physical server you can always log in.
 In the event that a load-balancer is in place, there will be no issues as long as it sends the correct `X-Forwarded-Host` header.
 
-NOTE: For further information on improving the quality of your ownCloud installation, please see xref:installation/configuration_notes_and_tips.adoc[the configuration notes and tips guide].
+NOTE: For further information on improving the quality of your ownCloud installation, see xref:installation/configuration_notes_and_tips.adoc[the configuration notes and tips guide].
 
-NOTE: Admins of SELinux-enabled distributions such as _CentOS_, _Fedora_, and _Red Hat Enterprise Linux_ may need to set new rules to enable installing ownCloud. 
+NOTE: Admins of SELinux-enabled distributions such as _CentOS_, _Fedora_, and _Red Hat Enterprise Linux_ may need to set new rules to enable installing ownCloud.
 See xref:installation/configuration_notes_and_tips.adoc#config-notes-and-tips-selinux[SELinux] for a suggested configuration.

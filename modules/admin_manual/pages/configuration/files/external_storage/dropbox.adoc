@@ -4,9 +4,9 @@
 
 == Introduction
 
-To connect Dropbox to your ownCloud installation requires four steps to be completed.
+Connecting Dropbox to your ownCloud installation requires only a few steps. Then you can easily keep a Dropbox folder in sync with an ownCloud folder. This guide assumes you already have a Dropbox account.
 
-== Install ownClouds Dropbox app
+== Install the ownCloud Dropbox app
 
 Install the External Storage Dropbox app from the ownCloud Marketplace
 
@@ -20,13 +20,13 @@ image:configuration/files/external_storage/external-storage-dropbox-highlighted.
 == Create a Dropbox app
 
 Next, you need to create a Dropbox app.
-To do that, https://www.dropbox.com/developers/apps/create[open the new app creation form], where you see three questions:
+To do that, https://www.dropbox.com/developers/apps/create[open the new app creation form], where you see three settings:
 
-1.  "Choose an API" –> "Dropbox API"
+1.  "Choose an API" –> "Scoped access"
 2.  "Choose the type of access" –> "App folder"
 3.  "Name your app"
 
-With all of the required details filled out, click the blue btn:[Create app] button, in the bottom, right-hand corner.
+Read and agree to the Dropbox API Terms and Conditions before clicking the blue btn:[Create app] button.
 After you do that, the settings page for the application loads.
 
 image:configuration/files/external_storage/dropbox/app-configuration.png[Dropbox app configuration settings]
@@ -38,49 +38,46 @@ Examples:
 When configuring as an *admin*:
 
 ----
-http(s)://<<Server_Address>>/index.php/settings/admin?sectionid=storage
+http(s)://<<Server_Address>>/settings/admin?sectionid=storage
 ----
 
 When configuring as a *user*:
 
 ----
-http(s)://<<Server_Address>>/index.php/settings/personal?sectionid=storage
+http(s)://<<Server_Address>>/settings/personal?sectionid=storage
 ----
+
+Take note of the App key and App secret since you'll need them in the next step.
 
 == Create a Dropbox Share
 
-To create a Dropbox share, under menu:Admin[Settings > Storage],
-check the btn:[Enable external storage] checkbox, if it’s not already checked.
-Then, in the drop-down list under menu:External storage[], click the btn:[Dropbox] option.
+Return to the ownCloud web interface. Under menu:Admin[Settings > Storage],
+check the btn:[Enable external storage] checkbox if it’s not already checked.
+Then, in the drop-down list under menu:External storage[], select Dropbox V2.
 
-There are two Dropbox options in the drop-down list, as Dropbox functionality is currently part of ownCloud’s core.
-However, the internal Dropbox functionality should be removed in ownCloud 10.0.4.
+Then, you need to provide a name for the folder in the "Folder name" field and a "client key" and "client secret" under "Configuration".
+The client key and client secret values are the "App key" and "App secret" which you saw earlier in your Dropbox app configuration settings.
 
-Then, you need to provide a name for the folder in the "Folder name" field, and a "client key" and "client secret", located in the
-"Configuration" column.
-The client key and client secret values are the "App key" and "App secret" fields which you saw earlier in your Dropbox app’s configuration settings page.
-
-After you have added these three settings, click btn:[Grant access].
-ownCloud then interacts with Dropbox’s API to set up the new shared folder.
-If the process is successful, a green circle icon appears, at the far left-hand side of the row, next to the folder’s name.
+After you have entered these values, click btn:[Grant access].
+ownCloud then interacts with the Dropbox API to set up the new shared folder.
+If the process is successful, a green circle icon appears at the far left-hand side of the row next to the folder name.
 
 image:configuration/files/external_storage/dropbox/successful-connection-to-dropbox.png[A Dropbox share successfully created.]
 
 === Other Options
 
-If you want to restrict access to the share to a select list of users and groups, you can add them to the field in the "Available for" column.
+If you want to grant access to the share to a select list of users and groups, you can add them to the field in the "Available for" column.
 
 == Using the Dropbox Share
 
-After a Dropbox-backed share is created, a new folder is available under "All Files".
-It has the name that you gave it when you created the share, and it is represented by an external share folder icon, as in the image below.
+After a Dropbox share is created, a new folder is available under "All Files" with the name you provided when you created the share. It is represented by an external share folder icon as in the image below.
 
 image:configuration/files/external_storage/dropbox/successful-connection-to-dropbox.png[A Dropbox share successfully created.]
 
-This links to a new folder in your Dropbox account, under "Dropbox > Apps", with the name of the Dropbox app that you created.
+This links to a new folder in your Dropbox account under "Dropbox > Apps" with the name of the Dropbox app that you created.
 
 image:configuration/files/external_storage/dropbox/dropbox-share-available.png[A new Dropbox share is available.]
 
-Now, if you add files and folders in either the new Dropbox folder or the new ownCloud folder, after being synced, they will be visible inside the other.
+Now, if you add files and folders in either the new Dropbox folder or the new ownCloud folder, they will be visible in both after they've been synced.
 
 image:configuration/files/external_storage/dropbox/dropbox-apps-folders.png[The Dropbox Apps folders.]
