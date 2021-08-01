@@ -164,7 +164,7 @@ echo "$commitList" | while IFS= read -r line; do
   # this only works if the commit was cherry picked before!
   # else it will just try and continue.
   is_cherry_picked=$(git log --grep $line 2>/dev/null)
-  if [[ -z "$is_cherry_picked" ]]; then
+  if [[ ! -z "$is_cherry_picked" ]]; then
     echo
     echo "Commit $line has aready been cherry picked, abort backporting."
     # go back to the base branch and delete the new branch with all its contents.
@@ -192,3 +192,4 @@ echo
 
 git push --quiet -u origin "$newBranch"
 git checkout --quiet "$sourceBranch"
+
