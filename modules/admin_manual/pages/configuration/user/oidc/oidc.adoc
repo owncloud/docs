@@ -48,12 +48,43 @@ Setting up ownCloud Server to work with OpenID Connect requires a couple of comp
 +
 * `'http.cookie.samesite' \=> 'None',`
 +
-See `config.sample.php` and {schemeful-samesite-url}[Schemeful Same-Site] for examples and details.
+See xref:configuration/server/config_sample_php_parameters.adoc#define-how-to-relax-same-site-cookie-settings[config.sample.php] and {schemeful-samesite-url}[Schemeful Same-Site] for examples and details.
 +
 * Settings for the OpenID Connect App
 +
-See `config.apps.sample.php` for examples and details.
+See xref:configuration/server/config_apps_sample_php_parameters.adoc#app-openid-connect-oidc[config.apps.sample.php] for examples and details or see section xref:save-settings-in-the-database[Save Settings in the Database] below when running clustered setups.
 - Service discovery for the xref:owncloud-desktop-and-mobile-clients[ownCloud Clients]
+
+=== Save Settings in the Database
+
+If you run a clustered setup, the following method configuring the OpenID Connect app is preferred, because it is stateless. The app checks for settings in the database first. If none are found, it falls back to the settings stored in `config.php`. The settings are stored as a JSON formatted string with the following keys and values: 
+
+[width="50%",cols="40%,50%",options="header"]
+|===
+| Key
+| Value
+
+| appid
+| 'openidconnect'
+
+| configkey
+| 'openid-connect'
+
+| configvalue
+| _JSON-String_
+|===
+
+If a malformed JSON string is found, an error is logged. The _key->value_ pairs are the same as when storing them to the `config.php` file. This task has to be done by invoking an occ command, see the following example. Use the occ commands `config:app:get` to view the current setting or `config:app:delete` to delete it. See the xref:configuration/server/occ_command.adoc#config-commands[Config Command Set] for more details.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} config:app:set \
+    openidconnect \
+    openid-connect \
+    --value='{"provider-url":"https:\/\/idp.example.net","client-id":"fc9b5c78-ec73-47bf-befc-59d4fe780f6f","client-secret":"e3e5b04a-3c3c-4f4d-b16c-2a6e9fdd3cd1","loginButtonName":"Login via OpenId Connect"}'
+----
+
+NOTE: Only set either the database or the config.php keys but not both for the OpenID Connect app.
 
 == Set Up Service Discovery
 

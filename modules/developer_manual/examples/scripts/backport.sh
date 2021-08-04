@@ -66,7 +66,10 @@ fi
 pullId=$(git log $1^! --oneline 2>/dev/null | tail -n 3 | grep -oP '(?<=#)[0-9]*' | tail -n 1)
 
 # get the repository from the given commit
-repository=$(git config --get remote.origin.url 2>/dev/null | perl -lne 'print $1 if /(?:(?:https?:\/\/github.com\/)|:)(.*?).git/')
+# remove prefix and suffix from the full url returned
+repository=$(git config --get remote.origin.url 2>/dev/null)
+repository=${repository#"https://github.com/"}
+repository=${repository%".git"}
 
 # get the list of commits in PR without any merge commit
 # $1^ means the first parent of the merge commit (that is passed in as $1).
