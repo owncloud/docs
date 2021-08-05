@@ -15,9 +15,24 @@ By default, ownCloud can generate previews for the following filetypes:
 * Cover of MP3 files
 * Text documents
 
-ownCloud supports the preview generation of file types such as PDF, SVG or various office documents. These document types can be a security issue as they can have javascript or other code either embedded or linked. When enabling SVG, the preview code checks for the existance of `xlink` or `href` and disallows creating a preview. This minimizes a risk but does not eliminate it. Such a check is not made for PDF or Office documents and enabling the creation of previews for those documents can be therefore a serious security issue.
+ownCloud supports the preview generation of file types such as PDF, SVG or various office documents. These document types can be a security issue as they can have javascript or other code either embedded or linked.
  
 IMPORTANT: Be careful enabling preview thumbnail generation for documents which could contain or reference executable code! ownCloud does NOT take any responsibility for any issues.
+
+== Important Considerations
+
+. Rendering takes place when the user accesses the folder and the preview has not been generated before. This means that each first folder access may create additional load on the server.
+
+. Previews are not a shared resource but rendered for each user individually.
+
+. Preview generation can only be set for the system and not for individual mounts. 
+
+. When enabling preview generation for SVG, the preview code checks for the existence of `xlink` or `href` and disallows creating a preview. This minimizes the risk but does not eliminate it. Such a check is not made for PDF or Office documents and enabling the creation of previews for those documents can be therefore a _serious security issue_.
+
+. When enabling preview generation for videos (or huge image files), consider the following points:
+.. Because the video needs to be downloaded before a preview can be created, this may impact general accessibility of files for other users if the video resides on an external mount point with limited bandwidth like Google Drive.
+.. The server may report timeouts if there are multiple videos to render and/or if the video is big.
+.. Preview generation for videos is in general a resource intensive process.
 
 == Default Preview Providers
 
@@ -51,7 +66,7 @@ If you handle the security risk and decide to allow creating previews for PDF fi
 ----
 sudo nano /etc/ImageMagick-6/policy.xml
 or
-sudo nano /usr/local/etc/ImageMagick-7/policy.xml
+sudo nano /etc/ImageMagick-7/policy.xml
 ----
 
 Search for the following content:
@@ -65,7 +80,7 @@ and change:
 
 [source,console]
 ----
-rights="none" -> rights="read|write"
+rights="none" --> rights="read|write"
 ----
 
 After changing the policy file for ImageMagic, restart your Apache web server or your php-fpm service.
