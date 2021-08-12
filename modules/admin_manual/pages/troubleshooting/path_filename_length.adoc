@@ -1,0 +1,102 @@
+= Path and Filename Length Limitations
+:toc: right
+:fs-limits-url: https://en.wikipedia.org/wiki/Comparison_of_file_systems#Limits
+:enable-long-paths-url: https://docs.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitation?tabs=cmd#enable-long-paths-in-windows-10-version-1607-and-later
+:getconf-url: http://manpages.ubuntu.com/manpages/focal/man1/getconf.1.html
+
+== Introduction
+
+Depending on the underlying filesystem of a mount point, the maximum length of a path component and the file name can differ. This is important if you start copying or moving single files or even complete paths from one mount to another where the target mount has a more restrictive length rule than the source. This can also be an issue when using a synchronization client running on an Operating System (OS) with a different filesystem than the source mount filesystem. The following table gives you a brief overview as a guideline.
+
+== Limitations
+
+See the {fs-limits-url}[comparison of file systems] for in depth details on various filesystem path and file name limitations.
+
+NOTE: While a filesystem can handle the limits as described in the table below, applications like Explorer, Finder, the Shell or other apps may have issues handling these limits. See the special notes below the table.
+
+NOTE: The ownCloud database has a size limit storing a path/file string with 4000 bytes. This must not be exceeded.
+
+[caption=]
+.File Name and Path Length Limitations 
+[cols="30%,80%,80%",options="header",]
+|===
+| Filesystem
+| max. Path Length
+| max. Filename Length
+
+| (*) Btrfs
+| No limit defined
+| 255 bytes
+
+| (*) ext2
+| No limit defined
+| 255 bytes
+
+| (*) ext3
+| No limit defined
+| 255 bytes
+
+| (*) ext4
+| No limit defined
+| 255 bytes
+
+| (*) XFS
+| No limit defined
+| 255 bytes
+
+| (*) ZFS
+| No limit defined
+| 255 bytes
+
+| APFS
+| Unknown (**)
+| 255 UTF-8 characters
+
+| FAT32
+a| 32,760 Unicode characters with *each* path component no more than 255 characters
+| 8.3 (255 UCS-2 code units with VFAT LFNs)
+
+| exFAT
+a| 32,760 Unicode characters with *each* path component no more than 255 characters
+| 255 UTF-16 characters
+
+| NTFS
+a| 32,767 Unicode characters with *each* path component (directory or filename) up to 255 characters long (MAX_PATH).
+
+====
+Starting in Windows 10, version 1607, MAX_PATH limitations have been removed from common Win32 file and directory functions. However, you must opt-in to the new behavior. For more details see {enable-long-paths-url}[Enable Long Paths in Windows 10, Version 1607, and Later]
+====
+| 255 characters
+|===
+
+(*)::
+In Unix environments, PATH_MAX with 4096 bytes and NAME_MAX with 255 bytes are very common limitations for applications including the Shell. You can get the current limitations by typing the following example commands, see the {getconf-url}[getconf manpage] for details:
++
+[source,console]
+----
+getconf NAME_MAX /
+255
+----
++
+[source,console]
+----
+getconf PATH_MAX /
+4096
+----
+
+(**)::
+Although not officially documented, when searching on the internet there is a limit with path names exceeding 1024 bytes. Users report warnings in Finder, the Shell or apps about this behavior. This can be verified with:
++
+[source,console]
+----
+getconf NAME_MAX /
+255
+----
++
+[source,console]
+----
+getconf PATH_MAX /
+1024
+----
++
+Note that these limits are true for macOS as well as for iOS because both are using APFS.
