@@ -4,29 +4,31 @@
 
 == Introduction
 
-If you have a QNAP NAS (Network Attached Storage) system, you can install the ready-to-use ownCloud app from the QNAP App Center on your NAS. The free-of-charge community edition can be used with up to five users and an unlimited number of guest users.
+If you have a QNAP NAS (Network Attached Storage) system, you can install the ready-to-use ownCloud app from the  App Center on your QNAP NAS. The free-of-charge community edition can be used with up to five users and an unlimited number of guest users.
 
-In case you want to use Enterprise features, you need to purchase a license from the QNAP store, where you can also buy licenses for additional users.
+In case you want to use Enterprise features, you need to purchase a license from the QNAP store, where you can also obtain licenses for additional users.
 
-The QNAP ready-to-use ownCloud installation can only be changed within very tight limits. If you change the database or web server related configuration, the installation will likely break.
+The QNAP ready-to-use ownCloud installation should only be changed within very tight limits. If you change the database or web server related configuration, the installation will likely break.
 
 All configuration should happen in the Web interface. However, command line configuration via `occ` commands is availabe.
+
+== Minimum Hardware Requirements
+
+To be added.
 
 == Preparation
 
 If you haven't done so already, perform the following steps on you QNAP system:
 
-. Create a storage pool in addition to the system volume. You can combine hard disks and solid state disks in RAID groups for flexible storage. This pool can be resized later if necessary.
+. Create a storage pool in addition to the system volume. You can combine hard disks and solid state disks in RAID groups for flexible storage. This pool can be resized later if necessary. Go to menu:Main Menu[Storage & Snapshots] to do so.
 
-. In the AppCenter, go to the QNAP Store and install Container Station version 2.0 or higher, which provides virtualization and Docker technogies.
+. In menu:Main Menu[AppCenter > QNAP Store] install Container Station version 2.0 or higher, which provides virtualization and Docker technogies.
 
 == Installation of ownCloud
 
-Go to the AppCenter and select QNAP Store.
+Go to menu:Main Menu[AppCenter > QNAP Store], search for ownCloud and click btn:[Install]. Confirm that you want to install this package. During installation, you'll see a progress bar displaying the percentage.
 
-Search for ownCloud and click btn:[Install]. Confirm that you want to install this package. During installation, you'll see a progress bar displaying the percentage.
-
-After a successful installation, ownCloud will show up in the AppCenter under menu:QNAP Store[My Apps]. Click on btn:[Open] and proceed with the configuration.
+After a successful installation, ownCloud will show up in the AppCenter under menu:QNAP Store[My Apps]. Click on btn:[Open] under the ownCloud icon and proceed with the configuration.
 
 == Configuration
 
@@ -55,23 +57,23 @@ A key feature of ownCloud is to enable users to share files. In the free communi
 === Prerequisites:
 
 . An email server must be configured and working.
-. The Guests app must be activated in the apps settings. For detailed information on the Guests app, see the xref:configuration/user/guests_app.adoc[Guests App section].
+. The Guests app must be installed and enabled in menu:admin[Settings > Admin > Apps]. For detailed information on the Guests app, see the xref:configuration/user/guests_app.adoc[Guests App section].
 . Guest users must be able to access ownCloud either from within the same local network or via the internet.
 
 === Managing Users
 
-In the menu:Admin[Users] section you can create and delete users, add them to groups, grant administrator privileges and more.
+In the menu:admin[Users] section you can create, disable, enable or delete users, add them to groups, grant administrator privileges and more.
 
-For detailed information see xref:configuration/user/user_configuration.adoc[User Management]
+For detailed information see xref:configuration/user/user_configuration.adoc[User Management].
 
-After you have created some users, they can upload files and share these with other ownCloud users and guest users. Folders can be created and shared as well. Sharing works via the email address of a user that should be granted access.
+After you have created some users, they can upload files and share these with other ownCloud users and guest users. Folders can be created and shared as well. Sharing works via the email address of a user who should be granted access.
 
 Once a regular user shares a file or folder specifying an external email address, the recipient of the email becomes a guest user.
 
 == Enabling ownCloud Apps
 
-With the free community edition, you can use all apps that are published under the GPL or similar public licenses, e.g. the GNU Affero General Public License. These you can simply activate and enjoy.
-In the upper left corner, click on menu:Files[Market] and select what you like.
+With the free community edition, you can use all apps that are published under the GPL or similar public licenses, e.g. the GNU Affero General Public License. These apps you can simply enable and enjoy.
+In the upper left corner, click on the main menu with the three bars, select menu:Market and install what you like.
 
 A bundle of Enterprise Apps is published under the ownCloud Commercial License and only available with the Enterprise Edition. To see what's not included in the free community edition, select `App Bundles` in the left-hand navigation bar.
 
@@ -81,15 +83,19 @@ If you want to use enterprise features, obtain a license from the QNAP Store and
 
 Licenses are valid for a year. If you don't renew them, only the first five users created will remain enabled as well as non-enterprise apps. Should you decide to buy a license and additional user packages again, you can enable the users you want to become active again in the web interface.
 
+Users can also be enabled or disabled via `occ` commands. For more information on the ownCloud command line interface, see below.
+
 == Accessing your QNAP ownCloud from the Internet
 
-If you want to connect to your ownCloud on QNAP from the Internet, you need to configure the network accordingly. Go to the administration interface of you QNAP NAS and select menu:SYSTEMS[Network & Virtual Switch]. Under "Access Services" click on menu:DDNS (Dynamic Domain Name Service) then btn[Add]. Here you can configure the DDNS settings.
+If you want to connect to your ownCloud on QNAP from the Internet, you need to configure the network accordingly. From the menu:Main menu of you QNAP NAS select menu:SYSTEMS[Network & Virtual Switch]. Under "Access Services" click on menu:DDNS (Dynamic Domain Name Service) then btn[Add]. Here you can configure the DDNS settings.
+
+// add info from https://github.com/owncloud/qnap/issues/36
 
 == Accessing ownCloud via Clients
 
 Besides logging in to ownCloud via the web interface, you can access it from iOS and Android devices by installing the respective apps, and there are desktop clients availble for Windows, Mac OS X and various Linux distributions.
 
-For more information, check out the documentation on the clients:
+For more information, check out the documentation on clients:
 https://doc.owncloud.com/server/10.8/#desktop-client-and-mobile-apps
 
 == Using External Storage
@@ -146,7 +152,7 @@ Beside the web interface, ownCloud also offers a command-line interface (occ) fo
 
 === Prerequisites
 
-In order to issue occ commands, enable `ssh` (secure shell) in the ControlPanel first.
+In order to issue `occ` commands, enable `ssh` (secure shell) in the ControlPanel first.
 . In the navigation bar on the left side, select menu:Networks & File Services[Telnet / SSH].
 . Check `Allow SSH connection` and specify the port number (default 22).
 . Next, check `Enable SFTP`. Once you click btn:[Apply], your admin user can log in to your NAS remotely.
@@ -170,15 +176,15 @@ For more information on which `occ` commands are available and how to use them, 
 
 Via the QuLog Center utility you can check the log entries.
 
-The event notifications in the top tool bar will also tell you if something has gone wrong.
+The event notifications in the top tool bar will also tell you if something has gone wrong. Look for i in a circle.
 
 === Specific Problems
 
-What to do if you forgot to install the Container Station?
+* What to do if you forgot to install the Container Station?
 An error message will pop up during the installation of ownCloud. Click on the link "System Event Log" in the pop-up window to find out what actually went wrong or hit btn:[OK] and install the Container Station. Then start the installation of ownCloud again.
 
-What to do if the admin user gets disabled?
-https://github.com/owncloud/qnap/issues/33
+// What to do if the admin user accidentally gets disabled?
+// https://github.com/owncloud/qnap/issues/33
 
 == FAQ
 
