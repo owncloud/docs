@@ -6,6 +6,10 @@
 2. The file format that the documentation is written in is [AsciiDoc](./docs/what-is-asciidoc.md).
 3. The <abbr title="User Interface">UI</abbr> & <abbr title="User Experience">UX</abbr> of the documentation can be found at [docs-ui](https://github.com/owncloud/docs-ui)
 
+## Documentation Guidelines
+
+Refer to the [Documentation Guidelines](./docs/doc-guidelines.md) for more information about backgrounds and processes. 
+
 ## Contributing to the Documentation
 
 To get started contributing to the documentation, please refer to the [Getting Started Guide](./docs/getting-started.md).
