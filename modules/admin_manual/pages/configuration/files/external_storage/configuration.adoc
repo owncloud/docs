@@ -24,6 +24,8 @@ image:configuration/files/external_storage/enable-app.png[Enabling External Stor
 
 == Storage Configuration
 
+IMPORTANT: Before adding a storage in a production environment make sure its configuration is correct. Removal of the external storage or change of its configuration does not remove metadata entries from the database belonging to the previous storage configuration.
+
 To create a new external storage mount, select an available backend from
 the dropdown *Add storage*. Each backend has different required options,
 which are configured in the configuration fields.
@@ -127,3 +129,7 @@ Alternatively, replace `–all` with the user name to trigger a rescan of the us
 for example every 15 minutes, which includes the mounted external storage.
 
 TIP: See xref:configuration/server/occ_command.adoc#the-filesscan-command[the occ’s file operations] for more information.
+
+== Known limitations
+
+- Removal of the external storage or change of its configuration does not remove metadata entries belonging to the previous storage configuration. This may impact performance of the installation as previous configuration metadata entries get orphaned. Removal of orphaned entries requires manual deletion of orphaned storage cache by its storage id. 
