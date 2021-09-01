@@ -7,12 +7,13 @@ With regard to English, many things are optional, and style certainly is subject
 
 - American English is used for all ownCloud documentation, therefore use customize instead of customise, behavior instead of behaviour, etc.
 
-- Don't use 'please'. No need to beg the reader to do something that is necessary to achieve a certain goal.
+- Use gender neutral language, which means don't use "he" and "his" as pronouns for an individual user. Where possible, use the plural instead. Most statements refer to users and their files. When writing about an individual user like admin, either use the awkwardly ungrammatical but legit "they" even with a singular noun or use "she or he" and "he or she" alternately.
+
+- Only use 'please' if you are asking a favor of the reader like sending feedback or reporting issues. No need to beg the reader to do something that is necessary to achieve a certain goal.
 
 - Contractions as in "don't" are okay to use.
 
 - Avoid writing "in order to" because "to" says it all.
-
 
 ## Use of Lower and Upper Case Letters:
 
@@ -60,6 +61,8 @@ cellphone
 
 ...
 
+However, host name is still two words.
+
 - Never use drop-down-menu or pop-up-window, instead it's drop-down menu and pop-up window.
 
 - Using a hyphen is the regular spelling for composite adjectives: right-hand side, four-year-old computer.
@@ -76,53 +79,12 @@ email (not e-mail)
 
 ## Document Structure
 
-For app or service installations, the following structure is recommended. Keep these headers level 2 and the table of contents limited to those.
+If in doubt how to organize your chapter or section, the following structure has proven useful for most cases:
 
 - Introduction
 - Installation
 - Configuration
 - Troubleshooting
-
-
-## Key Terms and Terminology (to be revised)
-
-- AMD64
-- ARM32
-- ARMv7
-- ARMv8
-- AWS
-- Apache
-- AppArmor
-- Bash
-- Bitbucket
-- Cron
-- Docker
-- HMAC
-- HTTP
-- HTTPS
-- HashiCorp
-- JSON
-- Kubernetes
-- Linux
-- MySQL
-- NGINX
-- OAuth
-- PostgreSQL
-- Redis
-- AWS S3
-- SELinux
-- SQLite
-- SSL
-- STDERR
-- STDIN
-- STDOUT
-- Traefik
-- localhost
-- webhooks
-- OpenSSL
-- RPC
-- URL
-- GDPR
 
 ## More Information
 
