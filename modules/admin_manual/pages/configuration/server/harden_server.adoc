@@ -10,21 +10,21 @@ security hardening can be applied in scenarios were the administrator
 has complete control over the ownCloud instance. This page assumes that
 you run ownCloud Server on Apache2 in a Linux environment.
 
-NOTE: ownCloud will warn you in the administration interface if some critical security-relevant options are missing. 
+NOTE: ownCloud will warn you in the administration interface if some critical security-relevant options are missing.
 However, it is still up to the server administrator to review and maintain system security.
 
 == Limit on Password Length
 
 ownCloud uses the https://en.m.wikipedia.org/wiki/Bcrypt[bcrypt]
-algorithm, and thus for security and performance reasons, e.g., denial
-of service as CPU demand increases exponentially, it only verifies the
-first 72 characters of passwords. This applies to all passwords that you
-use in ownCloud: user passwords, passwords on link shares, and passwords
+algorithm. For security reasons (e.g., denial
+of service) and performance reasons as CPU load increases exponentially, it only verifies the
+first 72 characters of passwords. This applies to all passwords you
+use in ownCloud: user passwords, passwords on link shares and passwords
 on external shares.
 
 == Rate Limiting
 
-Currently ownCloud deliberately does not provide any form of rate-limiting (though it does provide {oc-marketplace-url}/apps/brute_force_protection[brute-force protection]). 
+Currently ownCloud deliberately does not provide any form of rate-limiting (though it does provide {oc-marketplace-url}/apps/brute_force_protection[brute-force protection]).
 This is because ownCloud needs to integrate in to a diverse range of environments and infrastructure, which often already provide specialized rate-limiting solutions, e.g., _Apache_, _HAProxy_, and _F5_.
 
 If you are yet to implement a rate-limiting solution for your ownCloud instance, start by retrieving a list of all active routes.
@@ -35,7 +35,7 @@ This information is obtained by running xref:configuration/server/occ_command.ad
 {occ-command-example-prefix} security:routes
 ----
 
-It should print a list of all the routes, as in the following, truncated, example.
+It should print a list of all the routes as in the following truncated example.
 
 [source,console]
 ----
@@ -53,7 +53,7 @@ It should print a list of all the routes, as in the following, truncated, exampl
 +-----------------------------------------------------------+-----------------+
 ----
 
-With that information, you are then able to begin customising a rate-limiting solution specific to your ownCloud installation.
+With this information, you can begin customizing a rate-limiting solution specific to your ownCloud installation.
 
 === Further Reading
 
@@ -62,10 +62,9 @@ With that information, you are then able to begin customising a rate-limiting so
 ** https://github.com/jzdziarski/mod_evasive[mod_evasive]
 ** https://httpd.apache.org/docs/2.4/mod/mod_ratelimit.html[mod_ratelimit]
 ** https://johnleach.co.uk/words/2012/05/15/rate-limiting-with-apache-and-mod-security/[mod_security]
-** Rate limiting with Fail2Ban
-** https://www.fail2ban.org/wiki/index.php/Main_Page[Fail2Ban]
+** Rate limiting with https://www.fail2ban.org/wiki/index.php/Main_Page[Fail2Ban]
 ** https://centos.tips/fail2ban-behind-a-proxyload-balancer/[Fail2Ban Behind A Proxy/Load Balancer]
-* https://gist.github.com/procrastinatio/6b6579230d99be5bfa26d04acd788e7a[Rate limiting with HaProxy]
+* https://gist.github.com/procrastinatio/6b6579230d99be5bfa26d04acd788e7a[Rate limiting with HAProxy]
 * https://www.fir3net.com/Loadbalancers/F5-BIG-IP/f5-ltm-ratelimiting.html[Rate limiting with F5]
 
 == Operating system
@@ -74,60 +73,56 @@ With that information, you are then able to begin customising a rate-limiting so
 
 
 ownCloud uses a https://tools.ietf.org/html/rfc4086#section-5.2[RFC 4086 (`Randomness Requirements for Security`)]
-compliant mixer to generate cryptographically secure pseudo-random numbers. 
-This means that when generating a random number ownCloud will request multiple random 
-numbers from different sources and derive from these the final random number.
+compliant mixer to generate cryptographically secure pseudo-random numbers.
+When generating a random number, ownCloud will request multiple random
+numbers from different sources and create from these the final random number.
 
-The random number generation also tries to request random numbers from
-`/dev/urandom`, thus it is highly recommended to configure your setup in
-such a way that PHP is able to read random data from it.
+The random number generator also tries to request random numbers from
+`/dev/urandom`, therefore you should allow PHP to read from the device.
 
-NOTE: When having an `open_basedir` configured within your `php.ini` file, make sure to include `/dev/urandom`.
+NOTE: If you configure an `open_basedir` in your `php.ini` file, make sure to include `/dev/urandom`.
 
 === Enable hardening modules such as SELinux
 
-It is highly recommended to enable hardening modules such as SELinux.
+We also recommend to enable hardening modules such as SELinux
 where possible. See xref:installation/selinux_configuration.adoc[SELinux Configuration] to learn more about SELinux.
 
 == Deployment
 
 === Place data directory outside of the web root
 
-It is highly recommended to place your data directory outside of the Web
-root (i.e. outside of `/var/www`). It is easiest to do this on a new
-installation.
+A simple but efficient way to increase the security of your data is to place your `data` directory outside of the Web root (i.e. outside of `/var/www`), ideally at the time of installation.
+
 
 === Disable preview image generation
 
-ownCloud is able to generate preview images of common filetypes such as
-images or text files. By default the preview generation for some file
-types that we consider secure enough for deployment is enabled by
-default. However, administrators should be aware that these previews are
+ownCloud is able to generate preview images of common file types such as
+images or text files. By default, the preview generation for some file
+types that we consider secure enough for deployment is enabled. However, administrators should be aware that these previews are
 generated using PHP libraries written in C which might be vulnerable to
 attack vectors.
 
-For high security deployments we recommend disabling the preview
+For high security deployments, we recommend disabling the preview
 generation by setting the `enable_previews` switch to `false` in
-`config.php`. As an administrator you are also able to manage which
+`config.php`. As administrator you are also able to manage which
 preview providers are enabled by modifying the `enabledPreviewProviders`
 option switch.
 
 == Use HTTPS
 
-Using ownCloud without using an encrypted HTTPS connection opens up your
-server to a man-in-the-middle (MITM) attack, and risks the interception
+Using ownCloud without an encrypted HTTPS connection opens up your
+server to a man-in-the-middle (MITM) attack and risks the interception
 of user data and passwords. It is a best practice, and highly
-recommended, to always use HTTPS on production servers, and to never
+recommended, to always use HTTPS on production servers and to never
 allow unencrypted HTTP.
 
-How to setup HTTPS on your Web server depends on your setup; please
-consult the documentation for your HTTP server. The following examples
-are for Apache.
+For information on how to setup HTTPS, consult the documentation of your Web server. The following examples
+apply to Apache.
 
 === Redirect all unencrypted traffic to HTTPS
 
-To redirect all HTTP traffic to HTTPS administrators are encouraged to
-issue a permanent redirect using the 301 status code. When using Apache
+To redirect all HTTP traffic to HTTPS, administrators are encouraged to
+issue a permanent redirect using the 301 status code. Using Apache,
 this can be achieved by adding a setting such as the following in the
 Apache VirtualHosts configuration containing the `<VirtualHost *:80>`
 entry:
@@ -139,13 +134,13 @@ Redirect permanent / https://example.com/
 === Enable HTTP Strict Transport Security
 
 While redirecting all traffic to HTTPS is good, it may not completely
-prevent man-in-the-middle attacks. Thus administrators are encouraged to
-set the HTTP Strict Transport Security header, which instructs browsers
+prevent man-in-the-middle attacks. Therefore we recommend
+setting the HTTP Strict Transport Security header, which instructs browsers
 to not allow any connection to the ownCloud instance using HTTP, and it
 attempts to prevent site visitors from bypassing invalid certificate
 warnings.
 
-This can be achieved by setting the following settings within the Apache
+This can be achieved by adding the following settings in the Apache
 VirtualHost file containing the `<VirtualHost *:443>` entry:
 
 ----
@@ -154,7 +149,7 @@ VirtualHost file containing the `<VirtualHost *:443>` entry:
 </IfModule>
 ----
 
-If you don’t have access to your Apache configuration it is also
+If you don’t have access to your Apache configuration, it is also
 possible to add this to the main `.htaccess` file shipped with ownCloud.
 Make sure you’re adding it below the line:
 
@@ -171,14 +166,13 @@ NOTE: This requires the `mod_headers` extension in Apache.
 === Proper SSL configuration
 
 Default SSL configurations by Web servers are often not
-state-of-the-art, and require fine-tuning for an optimal performance and
-security experience. The available SSL ciphers and options depend
-completely on your environment and thus giving a generic recommendation
-is not really possible.
+state-of-the-art and require fine-tuning for an optimal performance and
+security. The available SSL ciphers and options depend
+completely on your environment, therefore we can't provide a general recommendation.
 
-We recommend using the
+However, We do recommend using the
 https://mozilla.github.io/server-side-tls/ssl-config-generator/[Mozilla SSL Configuration Generator]
-to generate a suitable configuration suited for your environment, and the free
+to generate a configuration suitable for your environment, and the free
 https://www.ssllabs.com/ssltest/[Qualys SSL Labs Tests] gives good
 guidance on whether your SSL server is correctly configured.
 
@@ -188,73 +182,66 @@ attack.
 == Use a dedicated domain for ownCloud
 
 Administrators are encouraged to install ownCloud on a dedicated domain
-such as cloud.domain.tld instead of domain.tld to gain all the benefits
-offered by the Same-Origin-Policy.
+such as cloud.domain.tld instead of domain.tld to benefit
+from the same-origin policy.
 
 == Ensure that your ownCloud instance is installed in a DMZ
 
-As ownCloud supports features such as Federated File Sharing we do not
-consider Server Side Request Forgery (SSRF) part of our threat model. In
-fact, given all our external storage adapters this can be considered a
-feature and not a vulnerability.
+As ownCloud supports features such as Federated File Sharing, we do not
+consider Server Side Request Forgery (SSRF) a threat. Given all our external storage adapters, this can be considered a feature and not a vulnerability.
 
 This means that a user on your ownCloud instance could probe whether
 other hosts are accessible from the ownCloud network. If you do not want
-this you need to ensure that your ownCloud is properly installed in a
+this, you need to ensure that your ownCloud is installed in a
 segregated network and proper firewall rules are in place.
 
-== Serve security Related Headers by the Web server
+== Use of Security-Related Headers on the Web server
 
-Basic security headers are served by ownCloud already in a default
+Basic security headers are provided by ownCloud already in a default
 environment. These include:
 
 `X-Content-Type-Options: nosniff`::
-Instructs some browsers to not sniff the mimetype of files. This is used for example to prevent browsers from interpreting text files as JavaScript.
+Instructs some browsers to not sniff the MIME type of files. This is used for example to prevent browsers from interpreting text files as JavaScript.
 
 `X-XSS-Protection: 0`::
-The Cross-Site-Scripting filter is deprecated and not used in modern browsers anymore.
+The cross-site scripting filter is deprecated and not used in modern browsers anymore.
 
 `X-Robots-Tag: none`::
-Instructs search machines to not index these pages.
+Instructs search engines to not index these pages.
 
 `X-Frame-Options: SAMEORIGIN`::
-Prevents embedding of the ownCloud instance within an iframe from other domains to prevent Clickjacking and other similar attacks.
+Prevents embedding of the ownCloud instance within an iframe on other domains to prevent clickjacking and similar attacks.
 
-These headers are hard-coded into the ownCloud server, and need no
+These headers are hard-coded into the ownCloud server and need no
 intervention by the server administrator.
 
-For optimal security, administrators are encouraged to serve these basic
-HTTP headers by the Web server to enforce them on response. To do this
-Apache has to be configured to use the `.htaccess` file and the
-following Apache modules need to be enabled:
+For optimal security, administrators are encouraged to let the Web server deliver these
+HTTP headers. To do this, configure Apache to use the `.htaccess` file and enable the
+following Apache modules:
 
 * `mod_headers`
 * `mod_env`
 
-Administrators can verify whether this security change is active by
-accessing a static resource served by the Web server and verify that the
-above mentioned security headers are shipped.
+Verify this security change by accessing a static resource and check the above mentioned security headers are delivered.
 
 == Use Fail2ban
 
-Another approach to hardening the server(s) on which your ownCloud
-installation rest is using an intrusion detection system. An excellent
+Another approach to hardening ownCloud server
+is to use an intrusion detection system. An excellent
 one is https://www.fail2ban.org/wiki/index.php/Main_Page[Fail2ban].
 Fail2ban is designed to protect servers from brute force attacks. It
-works by monitoring log files (such as those for _ssh_, _web_, _mail_,
+works by scanning log files (such as those for _ssh_, _web_, _mail_,
 and _log_ servers) for certain patterns, specific to each server, and
 taking actions should those patterns be found.
 
-Actions include banning the IP from which the detected actions are being
-made from. This serves to both make the process more difficult as well
-as to prevent DDOS-style attacks. However, after a predefined time
-period, the banned IP is normally un-banned again.
+Actions include banning the IP from which the detected actions originate. This makes the process more difficult and prevents DDOS-style attacks. However, after a predefined time
+period, the banned IP is usually unbanned again.
 
-This helps if the login attempts were genuine, so the user doesn’t lock
+This helps if the login attempts were genuine, so that users doesn’t lock
 themselves out permanently. An example of such an action is users
-attempting to brute force login to a server via ssh. In this case,
+attempting to brute force log in to a server via ssh. In this case,
 Fail2ban would look for something similar to the following in
-`/var/log/auth.log`.
+`/var/log/auth.log`:
 
 ----
 Mar 15 11:17:37 yourhost sshd[10912]: input_userauth_request: invalid user audra [preauth]
@@ -266,7 +253,7 @@ Mar 15 11:15:04 yourhost sshd[10837]: message repeated 2 times: [ Failed passwor
 Mar 15 11:15:04 yourhost sshd[10837]: Received disconnect from 221.194.44.231: 11:  [preauth]
 ----
 
-NOTE: If you’re not familiar with what’s going on, this snippet highlights a number of failed login attempts being made.
+NOTE: If you’re not familiar with what’s going on, this snippet highlights a number of failed login attempts.
 
 === Using Fail2ban to secure an ownCloud login
 
@@ -277,7 +264,7 @@ apt update && apt upgrade
 apt install fail2ban
 ----
 
-Fail2ban installs several default filters for _Apache_, and
+Fail2ban installs several default filters for _Apache_ and
 various other services, but none for ownCloud. Given that, we have to
 define our own filter. To do so, you first need to make sure that
 ownCloud uses your local timezone for writing log entries; otherwise,
@@ -294,8 +281,8 @@ https://secure.php.net/manual/en/timezones.php[PHP’s list of supported timezon
 This change takes effect as soon as you save `config.php`. You can test
 the change by:
 
-1.  Entering false credentials at your ownCloud login screen
-2.  Checking the timestamp of the resulting entry in ownCloud’s log
+1. entering false credentials at your ownCloud login screen, then
+2. checking the timestamp of the resulting entry in ownCloud’s log
 file.
 
 Next, define a new Fail2ban filter rule for ownCloud. To do so, create a
@@ -347,13 +334,13 @@ fail2ban-client status
 
 If "owncloud" is listed in the console output, the filter is both
 loaded and active. If you want to test the filter, run the following
-command, adjusting the path to your `owncloud.log`, if necessary:
+command, adjusting the path to your `owncloud.log` if necessary:
 
 ----
 fail2ban-regex /var/owncloud_data/owncloud.log /etc/fail2ban/filter.d/owncloud.conf
 ----
 
-The output will look similar to the following, if you had one failed
+The output will look similar to the following if you had one failed
 login attempt:
 
 ----
@@ -383,8 +370,8 @@ Date template hits:
 Lines: 40252 lines, 0 ignored, 1 matched, 40251 missed
 ----
 
-The `Failregex` counter increments by 1 for every failed login attempt.
-To un-ban an IP, which was locked either during testing or
+The `Failregex` counter increases in increments of 1 for every failed login attempt.
+To unban an IP locked either during testing or
 unintentionally, use the following command:
 
 ----
