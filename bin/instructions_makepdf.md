@@ -2,27 +2,32 @@
 
 ## Introduction
 
-`makepdf` generates a pdf version from a manual. Dependening on the parametrization on the command line, it builds either a given manual or all available. To create a pdf manual, `asciidoctor-pdf` is used as processor. Compared to the build to html which uses a different software from the same family, the parametrization of `asciidoctor-pdf` can not use the ui-styles, templates and attributes from the html build. In particular with regard to attributes, this can lead to unresolved "variables" which are printed as defined in the build made. To overcome this issue, an additional software (`yamlparse`) based on bash is used to dynamically create an attribute list from `site.yml` which is then added as parameter list to the pdf built. Whenever an attribute change is made in `site.yml`, a new pdf build will use these attributes automatically.
+`makepdf` generates a pdf version from a manual. Dependening on the parametrization on the command line, it builds either a given manual or all available. To create a pdf manual, `asciidoctor-pdf` is used as processor. Compared to the build to html which uses a different software from the same family, the parametrization of `asciidoctor-pdf` can not use the ui-styles, templates and attributes from the html build. In particular with regard to attributes, this can lead to unresolved "variables" which are printed as defined in the build made. To overcome this issue, an additional software (`yamlparse`) based on bash is used to dynamically create an attribute list from `site.yml` and `antora.yml` which is then added as parameter list to the pdf built. Whenever an attribute change is made in one of the `.yml` files, a new pdf build will use these attributes automatically.
+
+## Where are PDF Files Generated to
+
+When running `makepdf` locally, pdf files are generated into the `pdf_web` directory. This is for local viewing purposes only! The folder and the files will not get synced by git - it is exluded via the .gitignore file in the root of the repo. When CI triggers a `makepdf` run, it saves the files to a different location relevant for the webserver. The generated files are quasi-static and will only be overwritten if they exist, but not removed. This means that when having a branch switch, the former pdf file will stay untouched and can be linked - as long it will not get deleted manually! 
 
 ##  Manual Usage
 
 To use `makepdf`, call it from the root of the repo. Dependent on the doc repo you use, the list of buildable manuals may differ.
 
 ```
-./bin/makepdf -h
+bin/makepdf -h
 
-Usage: ./bin/makepdf [-c] [-d] [-h] [-m] [-n <admin|user|developer>]
+"Usage: ./bin/makepdf [-h] [-e] [-c] [-d] [-m] [-n <${list}>]"
 
--h ... help
--c ... clean the build/ directory (contains the pdf)
+-h ... help"
+-e ... Set failure level to ERROR (default: FATAL)
+-c ... clean the ${TARGET_PDF_DIRECTORY}/ directory (contains the locally generated pdf builds)
 -d ... Debug mode, prints the book to be converted. Only in combination with -m and/or -n
--m ... Build all available manuals
+-m ... Build ALL available manuals
 -n ... Build manual <name>. Only in combination with -m
 ```
 
 ##  Docker Usage
 
-[//]: <> (More content and details to be added)
+[//]: <> (More content and details to be added if needed)
 
 When called from Docker use:
 
@@ -34,60 +39,39 @@ When called from Docker use:
 
 ## How a pdf is Built
 
-The general idea of `asciidoctor-pdf` is to create a pdf from a given single file and add options to the build command, see the [CLI Options](https://docs.asciidoctor.org/asciidoctor.js/latest/cli/options/) for details. Because manuals are usually made out of multiple documents, a base document must be created which is then built to pdf. The following method is used: A book template file has to be physically present in the `books/` folder. The following example file shows the basic structure and provides some settings.
+The general idea of `asciidoctor-pdf` is to create a pdf from a given single file and add options to the build command, see the [CLI Options](https://docs.asciidoctor.org/asciidoctor.js/latest/cli/options/) for details. Because manuals are usually made out of multiple documents, a base document must be created which is then built to pdf. The following method is used: A book template file has to be physically present in the `book_templates/` folder. The following example file shows the basic structure and provides some settings.
 ```
-= ownCloud Desktop Client Manual
-The ownCloud Team <docs@owncloud.com>
-{revnumber}, {revdate}
-:source-highlighter: rouge
-:homepage: https://github.com/owncloud/docs-client-desktop
-:listing-caption: Listing
+= ownCloud Administration Manual
 :toc:
 :toclevels: 2
-:icons: font
+:homepage: https://github.com/owncloud/docs
 :icon-set: octicon
-:module_base_path: modules/ROOT/pages/
+:icons: font
+:listing-caption: Listing
+:source-highlighter: rouge
+:version-label: Version:
+:module_base_path: modules/admin_manual/pages/
+The ownCloud Team <docs@owncloud.com>
+{revnumber}, {revdate}
 ```
-You can adjust the settings as needed. `:module_base_path:` is the path to the base document files of the buildable manuals and must be set accordingly.
-The script takes this file, adds based on the table of contents of the manual (`nav.adoc`) include statemens like below
+You can adjust the settings as needed. `:module_base_path:` is the path to the base document files of the buildable manuals and must be set accordingly. The script takes the chosen template file, adds based on the table of contents of the manual (`nav.adoc`) include statemens like below
 ```
 include::{module_base_path}index.adoc[leveloffset=+1]
 
 include::{module_base_path}installing.adoc[leveloffset=+1]
 ...
 ```
-and pipes this as source file to the processor. You can define the level how deep you want to render the table of contents with `:toclevels:`. The pdf file created is saved in the `BUILD_BASE_DIR` or in a subdirectory if there are more than one manuals.
+and pipes this as source to the processor. You can define the level how deep you want to render the table of contents with `:toclevels:`. The pdf file created locally is saved in the `pdf_web` directory with a naming defined by the script.
 
 When using the debug mode `-d` of `makepdf` as described above, you see the files specified in the base document to use when generating a pdf.
 
-## Creating a New Documentation Repo
+## Create a New Documentation Repo
 
-When creating a new documentation repository, you need to to decide if you want a multi-manual documentation or not. Dependening on this decision, you must use a different `makepdf` source file and adopt this to your needs. See the ownCloud Server documentation and the Desktop Client documentation for examples. You can change your decision anytime by replacing this file. The docker backend process will always use the same call as describe in the docker section.
-
-### For Both Types You Have To
-
-- Provide a book template .adoc file under the `books` directory, adapted to the requirements.
-- Copy the `build`, `fonts` and `resources` directory
-
-### Single Manual
-
-In `makepdf` adapt the following variables according the repo:
-```
-BOOK_TEMPLATE_NAME="ownCloud_Desktop_Client_Manual"
-BUILD_BASE_DIR="build/desktop"
-SPEAKING_NAME="Desktop Client"
-AVAILABLE_MANUAL="ROOT"
-```
-
-### Multi-Manual Repo
-
-Adapt the following variables in `makepdf` according the repo:
-```
-BUILD_BASE_DIR="build/server"
-AVAILABLE_MANUALS=(admin user developer)
-```
-Note that `AVAILABLE_MANUALS` is a bash array where the module names are separated by a blank!
-Consider that a module name is the name of an array element plus a trailing `_manual` string. This leads to a full name like `admin_manual` which must be a physically present directory located in the `modules` directory containing the manual data.  
+In most cases it is a good idea to copy the contents of an existing repo and adopt them to the needs. In particular you need to take care on following folders and files.
+ 
+- Provide book template(s) .adoc file in the `book_templates` directory, adapted them to the requirements.
+- Copy the `pdf_web`, `fonts` and `resources` directory.
+- Make a copy of an existing `manual_config` file which must reside on the same level of the makepdf file and adopt its contents according the setup of the new repo. See the description inside the file. It will define the parameters the makepdf script will run for this repo.
 
 ### Debugging
 
