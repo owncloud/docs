@@ -6,6 +6,7 @@
 [link-git-package]: https://git-scm.com/downloads
 [link-nvm]: https://github.com/creationix/nvm
 [link-nvm-installation-instructions]: https://github.com/creationix/nvm#installation
+[link-prawn-gmagick]: https://github.com/asciidoctor/asciidoctor-pdf#supporting-additional-image-file-formats
 [link-makepdf]: https://github.com/owncloud/docs/tree/master/bin/instructions_makepdf.md
 
 **Table of Contents**
@@ -152,6 +153,15 @@ asciidoctor-pdf: /usr/local/bin/asciidoctor-pdf
 asciidoctor-pdf --version
 Asciidoctor PDF 1.6.0 using Asciidoctor 2.0.12 [https://asciidoctor.org]
 Runtime Environment (ruby 2.5.1p57 (2018-03-29 revision 63029) [x86_64-linux-gnu]) (lc:UTF-8 fs:UTF-8 in:UTF-8 ex:UTF-8)
+```
+
+When running a pdf build, you may get an error when using particular image formats or image formats with can contain special features like interlaced png, gif or tiff ect. To overcome this, you need to install [prawn-gmagick][link-prawn-gmagick]. Use the following commands to do so:
+
+```
+sudo apt-get install build-essential
+sudo apt-get install libgraphicsmagick1-dev
+sudo apt-get install ruby-dev
+sudo gem install prawn-gmagick
 ```
 
 With the dependencies installed, you are now ready to build (generate) the ownCloud documentation.

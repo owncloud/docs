@@ -1,6 +1,8 @@
 def main(ctx):
     # Config
 
+    environment = "server"
+
     # Version shown as latest in generated documentations
     # It's fine that this is out of date in version branches, usually just needs
     # adjustment in master/deployment_branch when a new version is added to site.yml
@@ -19,8 +21,8 @@ def main(ctx):
 
     return [
         checkStarlark(),
-        build(ctx, latest_version, deployment_branch, base_branch, pdf_branch),
-        trigger(ctx, latest_version, deployment_branch, base_branch, pdf_branch),
+        build(ctx, environment, latest_version, deployment_branch, base_branch, pdf_branch),
+        trigger(ctx, environment, latest_version, deployment_branch, base_branch, pdf_branch),
     ]
 
 def checkStarlark():
@@ -60,7 +62,7 @@ def checkStarlark():
         },
     }
 
-def build(ctx, latest_version, deployment_branch, base_branch, pdf_branch):
+def build(ctx, environment, latest_version, deployment_branch, base_branch, pdf_branch):
     return {
         "kind": "pipeline",
         "type": "docker",
@@ -165,15 +167,15 @@ def build(ctx, latest_version, deployment_branch, base_branch, pdf_branch):
             {
                 "name": "upload-pdf",
                 "pull": "always",
-                "image": "plugins/s3-sync:1",
+                "image": "plugins/s3-sync",
                 "settings": {
                     "bucket": "uploads",
                     "endpoint": "https://doc.owncloud.com",
                     "access_key": from_secret("docs_s3_access_key"),
                     "secret_key": from_secret("docs_s3_secret_key"),
                     "path_style": "true",
-                    "source": "build/",
-                    "target": "/deploy",
+                    "source": "pdf_web/",
+                    "target": "/pdf/%s" % environment,
                 },
                 "when": {
                     "event": [
@@ -188,7 +190,7 @@ def build(ctx, latest_version, deployment_branch, base_branch, pdf_branch):
             {
                 "name": "upload-html",
                 "pull": "always",
-                "image": "plugins/s3-sync:1",
+                "image": "plugins/s3-sync",
                 "settings": {
                     "bucket": "uploads",
                     "endpoint": "https://doc.owncloud.com",
@@ -197,6 +199,7 @@ def build(ctx, latest_version, deployment_branch, base_branch, pdf_branch):
                     "path_style": "true",
                     "source": "public/",
                     "target": "/deploy",
+                    "delete": "true",
                 },
                 "when": {
                     "event": [
@@ -242,7 +245,7 @@ def build(ctx, latest_version, deployment_branch, base_branch, pdf_branch):
         },
     }
 
-def trigger(ctx, latest_version, deployment_branch, base_branch, pdf_branch):
+def trigger(ctx, environment, latest_version, deployment_branch, base_branch, pdf_branch):
     return {
         "kind": "pipeline",
         "type": "docker",
