@@ -66,6 +66,8 @@ A key feature of ownCloud is to allow users to share files. In the free communit
 
 In the menu:admin[Users] section you can create, disable, enable or delete users, add them to groups, grant administrator privileges and more.
 
+image:qnap/users_on_qnap.png[User Management]
+
 For detailed information see xref:configuration/user/user_configuration.adoc[User Management].
 
 After you have created users, they can upload files and share these with other ownCloud users and guest users. Folders can be created and shared as well. Sharing works via the email address of the user who should be granted access to certain files.
@@ -85,7 +87,7 @@ If you want to use enterprise features, obtain a license from the QNAP Store and
 
 Licenses are valid for a year. If you don't renew them, only the first five users created will remain enabled and only non-enterprise apps. Should you decide to buy licenses again at a later point in time, you can enable the users you want to become active again in the web interface.
 
-Users can also be enabled or disabled via `occ` commands. For more information on the ownCloud command line interface, see below.
+Users can also be enabled or disabled via `occ` commands. For more information on the ownCloud command line interface, see below. This would be particularly useful if the admin user accidentally gets disabled.
 
 == Accessing your QNAP ownCloud from the Internet
 
@@ -139,37 +141,7 @@ image:qnap/qnap-controlpanel.png[,width=80%]
 
 On Windows you need to install PuTTY from a source you trust, then start PuTTY and enter the host name or IP address in the `Session dialog`. Port should be `22` and connection type `SSH`. Click btn:[Open]. A command line prompt appears. Press kbd:[y] for yes. You'll be asked for a user name. Enter `admin` and in the next step the admin user's password.
 
-You are logged in to the QNAP NAS Console Management - Main menu:
-
-[source,console]
-----
- +-------------------------------------------------------------------------+
-  |  Console Management - Main menu                                         |
-  |                                                                         |
-  |  1: Show network settings                                               |
-  |  2: System event logs                                                   |
-  |  3: Reset to factory default (password required)                        |
-  |  4: Activate/ deactivate a license                                      |
-  |  5: App management                                                      |
-  |  6: Reboot in Rescue mode (w/o configured disk)                         |
-  |  7: Reboot in Maintenance Mode                                          |
-  |  Q: Quit (return to normal shell environment)                           |
-  |                                                                         |
-  |                                                                         |
-  |                                                                         |
-  |                                                                         |
-  |                                                                         |
-  |                                                                         |
-  |                                                                         |
-  |                                                                         |
-  |                                                                         |
-  |                                                                         |
-  |                                                                         |
-  +-------------------------------------------------------------------------+
-  >> 
-----
-
-Press kbd:[q] to quit and confirm with kbd:[y] for yes and you'll be logged in with your regular shell.
+You are logged in to the QNAP NAS Console Management - Main menu.
 
 
 === Access From Linux or OSX machines
@@ -183,6 +155,10 @@ ssh admin@<your-nas-IP>
 
 Enter the admin user's password and you'll be in the QNAP Console Management - Main menu:
 
+=== Console Management
+
+In the Console Management you have several options that might be useful at some point:
+
 [source,console]
 ----
  +-------------------------------------------------------------------------+
@@ -196,15 +172,6 @@ Enter the admin user's password and you'll be in the QNAP Console Management - M
   |  6: Reboot in Rescue mode (w/o configured disk)                         |
   |  7: Reboot in Maintenance Mode                                          |
   |  Q: Quit (return to normal shell environment)                           |
-  |                                                                         |
-  |                                                                         |
-  |                                                                         |
-  |                                                                         |
-  |                                                                         |
-  |                                                                         |
-  |                                                                         |
-  |                                                                         |
-  |                                                                         |
   |                                                                         |
   |                                                                         |
   +-------------------------------------------------------------------------+
@@ -229,6 +196,8 @@ docker exec --user www-data <owncloud-container-name> php occ <your-command>
 ----
 
 For more information on which `occ` commands are available and how to use them, check out section xref:configuration/server/occ_command.adoc[Using the occ Command].
+
+CAUTION: Unless you know exactly what you are doing, you shouldn't run commands that change the database connection (could be done with occ:config:* and occ:db:*), the redis connection (could be done with occ:config:*) or remove a license key (could be done with occ:config:*).
 
 == Backing up and Restoring the Database
 
