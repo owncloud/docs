@@ -167,7 +167,7 @@ def build(ctx, environment, latest_version, deployment_branch, base_branch, pdf_
             {
                 "name": "upload-pdf",
                 "pull": "always",
-                "image": "plugins/s3-sync:1",
+                "image": "plugins/s3-sync",
                 "settings": {
                     "bucket": "uploads",
                     "endpoint": "https://doc.owncloud.com",
@@ -190,7 +190,7 @@ def build(ctx, environment, latest_version, deployment_branch, base_branch, pdf_
             {
                 "name": "upload-html",
                 "pull": "always",
-                "image": "plugins/s3-sync:1",
+                "image": "plugins/s3-sync",
                 "settings": {
                     "bucket": "uploads",
                     "endpoint": "https://doc.owncloud.com",
