@@ -19,14 +19,14 @@
 
 The target audience for this document are more sophisticated admins with additional needs and
 setup scenarios. Ubuntu 18.04, by design, only provides PHP 7.2. Because PHP 7.2 security
-support ends in November 2020, you may want to consider using PHP 7.3. If you want to install
-the PHP 7.3 package and other required PHP extensions for PHP 7.3 for Ubuntu 18.04, you need to
+support ended in November 2020, and ownCloud no longer supports PHP 7.2, you must use at least PHP 7.3. If you want to install
+the PHP 7.3 or 7.4 package and other required PHP extensions for PHP 7.3 or 7.4 for Ubuntu 18.04, you need to
 use the well known, custom, PPA {ondrej-php-url}[ondrej/php]. Independent of the PHP version
 used, all other items, such as installing extensions or comments, and notes, remain the same.
 
 NOTE: If you are looking installing PHP 7.4, read the
 xref:installation/manual_installation/server_prep_ubuntu_20.04.adoc[Ubuntu 20.04 preparation guide]
-as it contains special notes and guides regaring PHP 7.4
+as it contains special notes and guides regarding PHP 7.4
 
 == Apache Web Server and PHP
 
@@ -80,7 +80,7 @@ You can also directly set the required PHP version:
 sudo update-alternatives --set php /usr/bin/php7.3
 ----
 
-WARNING: Post selecting your PHP version, it is **highly** recommended to switch to the correct
+WARNING: After selecting your PHP version, it is **highly** recommended to switch to the correct
 compiling environment which is essential e.g. when using PECL!
 
 [source,console]
@@ -187,7 +187,7 @@ sudo phpdismod php-ldap
 
 == Exif Library
 
-This library _should_ already be part of PHP 7.2.
+This library _should_ already be part of PHP 7.3.
 However, you can check if it is by running the following command.
 
 [source,console]
@@ -205,7 +205,7 @@ allows [arbitrary precision] decimal / float-like values.
 
 == Cryptography Library
 
-The sodium and OpenSSL PHP libraries are cryptographic libraries which are part of the PHP core from PHP 7.2 onwards.
+The sodium and OpenSSL PHP libraries are cryptographic libraries which are part of the PHP core from PHP 7.3 onwards.
 Consequently, there is no need to install additional cryptographic libraries, such as php-libsodium or mcrypt.
 
 [NOTE]
@@ -227,7 +227,7 @@ OpenSSL offers a greater than 6.5x speedup over mcrypt.
 Here are the steps for installing mcrypt, when it is explicitly required.
 
 NOTE: Some steps were borrowed from the website for student’s
-{mcrypt-link-url}[guide to installing the PHP 7.2-Mcrypt module].
+{mcrypt-link-url}[guide to installing the PHP 7.2-Mcrypt module]. Adjust as needed for PHP 7.3 or 7.4
 
 First, determine the mcrypt version you want to use in {mcrypt-pecl-url}[PECL's mcrypt documentation].
 Then, run the following commands to install it.
@@ -241,7 +241,7 @@ sudo pecl install mcrypt-<desired mcrypt version>
 
 When the commands complete, you then have to:
 
-* Create `/etc/php/7.2/mods-available/mcrypt.ini` with the following content: `extension=mcrypt.so`.
+* Create `/etc/php/7.3/mods-available/mcrypt.ini` with the following content: `extension=mcrypt.so`.
 * Enable the module by running `phpenmod mcrypt`.
 * Restart your web server, by running the following commands:
 +
@@ -249,7 +249,7 @@ When the commands complete, you then have to:
 
 === php-libsodium
 
-NOTE: From PHP 7.2 onwards, libsodium is part of PHP, so installing this extension is no longer necessary.
+NOTE: From PHP 7.3 onwards, libsodium is part of PHP, so installing this extension is no longer necessary.
 
 If you see the message "_PHP Fatal error: sodium_init() in Unknown on line 0_" when invoking the command
 `php -v` or when running PHP programs, php-libsodium may have been installed unnecessarily.
@@ -287,9 +287,9 @@ sudo pecl channel-update pecl.php.net
 sudo pecl install smbclient
 ----
 
-When the commands complete, you then have to (assuming you use PHP 7.2):
+When the commands complete, you then have to (assuming you use PHP 7.3):
 
-- Create `/etc/php/7.2/mods-available/smbclient.ini` with following content `extension=smbclient.so`.
+- Create `/etc/php/7.3/mods-available/smbclient.ini` with following content `extension=smbclient.so`.
 - Enable the module by running `phpenmod smbclient`.
 - Restart PHP and your web server by running the following command:
 +

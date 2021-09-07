@@ -13,6 +13,7 @@
 :smbclient_url: https://packages.ubuntu.com/search?keywords=smbclient
 :pecl_url: https://pecl.php.net/package/smbclient
 :phpmyadmin_latest_url: https://www.phpmyadmin.net/downloads/
+:pear-package_url: https://pear.php.net/package/PEAR/
 
 == Introduction
 
@@ -46,10 +47,10 @@ sudo do-release-upgrade
 ----
 
 In case you have upgraded successfully and you had previously installed any versions of PHP,
-it is adviced to uninstall all PHP versions and ALL extensions and focus on a fresh PHP 7.4 native
+it is advised to uninstall all PHP versions and ALL extensions and focus on a fresh PHP 7.4 native
 installation. This is especially true when using the `ondrej php` PPA as it installs all available
-PHP versions, which are either no longer needed or supported or will run EOL in 2021. To do so, 
-stop any services which depend or use PHP like your Web Server. Then get a list of all PHP
+PHP versions, which are either no longer needed or supported or will run EOL in 2021. To do so,
+stop any services which depend on or use PHP like your Web Server. Then get a list of all PHP
 related programs and extensions by typing:
 
 [source,console]
@@ -94,7 +95,7 @@ WARNING: If you have not cleanly removed that ppa, you may get conflicts when in
 
 After deinstallation of all versions and extensions of PHP and cleaning up all remnants, you
 should have an empty `/etc/php` directory. You can proceed like having a fresh installation
-of Ubuntu 20.04 LTS. 
+of Ubuntu 20.04 LTS.
 
 == Clean Ubuntu 20.04 Installation
 
@@ -121,14 +122,14 @@ sudo apt install unzip
 sudo apt install openssl
 ----
 
-The following step is necessary to upgrade Pear to the latest version because of a change
-in PHP 7.4.1+
+The following step is necessary to upgrade PEAR because of a change in PHP 7.4.1+
+Note that you should always use the {pear-package_url}[latest stable PEAR release].
 
 [source,console]
 ----
 pear version
 sudo mkdir -p /tmp/pear/cache
-sudo pear upgrade --force --alldeps http://pear.php.net/get/PEAR-1.10.12
+sudo pear upgrade --force --alldeps http://pear.php.net/get/PEAR-1.10.13
 sudo pear clear-cache
 sudo pear update-channels
 sudo pear upgrade --force
@@ -142,14 +143,14 @@ xref:useful-commands-for-managing-php-extensions[enable it].
 
 Post upgrading pear, you can safely remove the directory `/tmp/pear/cache`.
 
-Please see the xref:php-imagick-library[php-imagick Library] section for reason to install an updated version of ImageMagick. 
+Please see the xref:php-imagick-library[php-imagick Library] section for reason to install an updated version of ImageMagick.
 
 == Important Note on `smbclient`
 
 On Ubuntu 18.04, the default `smbclient` version was 4.7.6. With Ubuntu 20.04 the version provided
 is 4.11.6, the actual compilable version is 4.13.x. If you have successfully configured and
-connetced with `smbclient` under Ubuntu 18.04 to a Windows Server, you may now get issues
-connecting to older NAS systems. Some requirements are now more strict than before or have changed.
+connected `smbclient` under Ubuntu 18.04 to a Windows Server, you may now get issues
+connecting to older NAS systems. Some requirements are now stricter than before or have changed.
 
 If you needed to set `client max protocol = NT1` before in `smb.conf` to connect, you may get
 with samba 4.11+ a response like `Max protocol NT1 is less than min protocol SMB2_02` which
@@ -167,7 +168,7 @@ host -t SRV _ldap._tcp.<full_domain_name>
 If you do not get SRV records printed, your dns settings may need a change. The first DNS server
 must be able to resolve your LDAP Active Directory request properly. If not, `smbclient` can not
 find a KDC to check credentials.
- 
+
 [source,console]
 ----
 sudo smbclient -L <file_server_name> -U <full_domain_name>/<user_name>
@@ -180,7 +181,7 @@ SMB shares with that file server.
 
 The only solution that can be suggested is, to compile a working Samba version on your own.
 This xref:installation/manual_installation/compile_samba.adoc[Compact Samba Compiling Guide]
-helps how to do that. 
+helps how to do that.
 
 == Apache Web Server
 
@@ -192,7 +193,7 @@ sudo apt install libapache2-mod-php apache2
 ----
 
 Even not supported by ownCloud, you can configure Apache to use `php-fpm`, the
-FastCGI Process Manager, which is a non standard setup and not covered by this document.
+FastCGI Process Manager, which is a non-standard setup and not covered by this document.
 
 == Multiple Concurrent PHP Versions
 
@@ -228,7 +229,7 @@ You can also directly set the required PHP version:
 sudo update-alternatives --set php /usr/bin/php7.4
 ----
 
-WARNING: Post selecting your PHP version, it is **highly** recommended to switch to the correct
+WARNING: After selecting your PHP version, it is **highly** recommended to switch to the correct
 compiling environment which is essential e.g. when using PECL!
 
 [source,console]
@@ -328,10 +329,10 @@ NOTE: Alternatively you can install `smbclient` from {libsmbclient-php_url}[sour
 
 When using new or extended formats for previews like HEIC or SVG, the standard installation of ImageMagick 6 and its php-imagick wrapper version 3.4 lacks this functionality. You have to manually install ImageMagick 7 and an updated php wrapper. To do so, follow the xref:installation/manual_installation/manual_imagick7.adoc[Install an Updated ImageMagick Version] guide. See the xref:configuration/files/previews_configuration.adoc[Previews Configuration] guide how to enable preview providers for various file types.
 
-== Useful Commands For Managing PHP Extensions 
+== Useful Commands For Managing PHP Extensions
 
 === List Enabled PHP Extensions
- 
+
 If you want to retrieve a list of enabled PHP extensions run following command:
 
 [source,console]
@@ -358,7 +359,7 @@ in the php-common package.
 == Notes for PHP Library phpseclib
 
 phpseclib's BigInteger uses the php-gmp (GNU Multiple Precision Arithmetic Library), php-bcmath and OpenSSL extensions,
-if they're available, for speed, but doesn't require them to maintain maximum compatibility. 
+if they're available, for speed, but doesn't require them to maintain maximum compatibility.
 The GMP library uses an internal resource type, while the BCMath library uses strings as datatype.
 The most salient difference is, that GMP works on _arbitrary precision integer values_, whereas BCMath
 allows _arbitrary precision] decimal / float-like values_.
@@ -371,9 +372,9 @@ xref:installation/manual_installation/manual_installation_db.adoc[Manual Install
 NOTE: Follow the procedure described in xref:useful-tips[Useful Tips], if you want to
 `Disable Transparent Huge Pages (THP),Transparent Huge Pages`
 
-You may want to use the latest version of phpmyadmin as the OS default versions lacks behind
-the {phpmyadmin_latest_url}[latest available stable] version a lot and may report php errors with
-php7.2 onwards. Follow this
+You may want to use the latest version of phpmyadmin as the OS default versions lags behind
+the {phpmyadmin_latest_url}[latest available stable] version a lot and may report PHP errors with
+PHP 7.3 onwards. Follow this
 xref:installation/manual_installation/upgrade_install_phpmyadmin.adoc[quick upgrade guide]
 to install it.
 
