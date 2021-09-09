@@ -1,0 +1,256 @@
+= ownCloud on QNAP
+:toc: right
+:toclevels: 1
+
+== Introduction
+
+If you have a QNAP NAS, you will soon be able to install the ownCloud app from the App Center and enjoy a ready-to-use ownCloud. The free-of-charge community edition can be used with up to five users and an unlimited number of guest users.
+
+If you want to use Enterprise features, you'll need to purchase a license from the QNAP store, where you can also obtain licenses for additional users, after you've bought a license for the initial five.
+
+The QNAP ready-to-use ownCloud installation should only be changed within very tight limits. If you change the database or web server configuration, the installation will likely break.
+
+All configuration should happen in the Web interface. However, command-line configuration via `occ` commands is available.
+
+== Minimum Hardware Requirements
+
+For ownCloud to properly run on a QNAP NAS device, at least 2 GB of RAM are necessary. However, we recommend at least 4 GB for a smooth operation.
+
+== Preparation
+
+If you haven't done so already, perform the following steps on you QNAP system:
+
+. Create a storage pool in addition to the system volume. You can combine hard disks and solid state disks in RAID groups for flexible storage. This pool can be resized later if necessary. Go to menu:Main Menu[Storage & Snapshots] or click on the icon.
++
+image:qnap/storage_pool.png[Storage Pool Creation]
+
+. Via the App Center install Container Station version 2.0 or higher.
++
+image:qnap/qnap-app_center.png[QNAP App Center with Container Station installed]
+
+== Installation of ownCloud
+
+In the App Center search for ownCloud and click btn:[Install]. Confirm that you want to install this app. During installation, you'll see a progress bar.
+
+After a successful installation, ownCloud will show up on your desktop and in the App Center under menu:QNAP Store[My Apps]. Click btn:[Open] under the ownCloud icon and proceed with the configuration.
+
+image:qnap/qnap_main_menu.png[QNAP Main Menu and ownCloud installed]
+
+== Configuration
+
+=== First Steps
+
+Log in as user `admin`. The default password is `admin` until you change it. In the upper right-hand corner, click on menu:admin[Settings]. In the left hand navigation bar, you find personal configuration options and administration-specific options. Under menu:Personal[General] you can change the password of your admin user.
+
+For more information on the web interface, refer to the xref:user_manual:webinterface.adoc[Web UI] documentation.
+
+=== Configure your Email.
+
+Email is an essential tool in ownCloud for notifying users, user registration, password resets, etc. Logged-in as admin, you can configure email in the menu:Admin[General] settings.
+
+For more information, refer to section xref:configuration/server/email_configuration.adoc[Email Configuration].
+
+=== Cron
+
+ownCloud performs regular tasks in the background. In order to schedule them, a mechanism called "cron" is used. It's already set up for you, so you don't need to do anything. Make sure not to change cron-related settings unless you have a very good reason to do so.
+
+NOTE: In general, we recommend to keep the default settings in the admin section.
+
+== Users
+
+A key feature of ownCloud is to allow users to share files. In the free community edition you can create up to five users, including an admin user, and optionally grant access to an unlimited number of guest users.
+
+=== Prerequisites:
+
+. An email server must be configured and working.
+
+. To share files with external users, the Guests app must be installed and enabled in menu:admin[Settings > Admin > Apps]. For detailed information on the Guests app, see the xref:configuration/user/guests_app.adoc[Guests App section].
++
+image:qnap/marketplace.png[ownCloud Marketplace and Guests App]
+
+=== Managing Users
+
+In the menu:admin[Users] section you can create, disable, enable or delete users, add them to groups, grant administrator privileges and more.
+
+image:qnap/users_on_qnap.png[User Management]
+
+For detailed information see xref:configuration/user/user_configuration.adoc[User Management].
+
+After you have created users, they can upload files and share these with other ownCloud users and guest users. Folders can be created and shared as well.
+
+Once a regular user shares a file or folder specifying an external email address, the recipient of the email becomes a guest user. Guest users must be able to access ownCloud either from within the same local network or via the internet.
+
+== Enabling ownCloud Apps
+
+With the free community edition, you can use all apps that are published under the GPL or similar public licenses, e.g. the GNU Affero General Public License. These apps you can simply enable and enjoy.
+In the upper left corner, click on the main menu with the three bars, select menu:Market and install what you like.
+
+image:qnap/ownCloud_main_menu.png[ownCloud Main Menu]
+
+A bundle of Enterprise Apps is published under the ownCloud Commercial License and only available with the Enterprise Edition. To see what's not included in the free community edition, select `App Bundles` in the left-hand navigation bar.
+
+== Enterprise Edition and Licensing
+
+If you want to use enterprise features, obtain a license from the QNAP Store and activate it in the QNAP LicenseCenter. If you want to have more regular users, you can buy additional licenses.
+
+Licenses are valid for a year. If you don't renew them, only the first five users created will remain enabled and only non-enterprise apps. Should you decide to buy licenses again at a later point in time, you can enable the users you want to become active again in the web interface.
+
+Users can also be enabled or disabled via `occ` commands. For more information on the ownCloud command line interface, see below. This would be particularly useful if the admin user accidentally gets disabled.
+
+== Accessing your QNAP ownCloud from the Internet
+
+If you want to connect to your ownCloud on QNAP from the Internet, you need to configure the network accordingly. In the menu:Main menu of your QNAP NAS, select menu:SYSTEMS[Network & Virtual Switch]. Under "Access Services" click on menu:DDNS (Dynamic Domain Name Service) then btn[Add]. Here you can configure the DDNS settings.
+
+image:qnap/DDNS_qnap-cropped.png[DDNS Configuration on QNAP]
+
+If you want to assign a static IP address, you need to access your QNAP device via `ssh` on the command line and edit the file `custom/user.config.php` in your top-level ownCloud app directory, e.g. `/share/CACHEDEV1_DATA/.qpkg/ownCloud`.
+Create an entry like in the following example with the correct IP address:
+
+[source,console]
+----
+<?php
+$CONFIG = array(
+    'overwriteprotocol' => 'https',
+    'overwritehost' => '203.0.113.0',
+    'overwrite.cli.url' => 'https://203.0.113.0/owncloud/',
+);
+----
+
+ownCloud on QNAP is set up as a subdirectory by default.
+
+You may also want to check out the QNAP FAQ:
+https://www.qnap.com/en-us/how-to/faq/article/how-do-i-access-the-files-stored-on-my-nas-at-home-when-im-outside
+
+For more information on command-line access, see below.
+
+== Accessing ownCloud via Clients
+
+Besides logging in to ownCloud via the web interface, you can access it from iOS and Android devices by installing the respective apps, and there are desktop clients available for Windows, Mac OS X and various Linux distributions.
+
+For more information, check out the ownCloud documentation on clients:
+https://doc.owncloud.com/server/10.8/#desktop-client-and-mobile-apps
+
+== Using External Storage
+
+With your ownCloud you can also use external storage services and devices. For more information, see section xref:configuration/files/external_storage/configuration.adoc[External Storage Configuration].
+
+== Secure Shell (SSH)
+
+You may need to log in to your ownCloud on QNAP from the command line, e.g. to run `occ` commands.
+
+=== Prerequisites
+
+Secure shell (ssh) access needs to be enabled in the Control Panel:
+
+. In the Control Panel click on `Telnet / SSH` in the section `Network & File Services`.
+
+. Click on the checkbox `Allow SSH connection` and specify the port number (default 22).
+
+. Next, check `Enable SFTP`. Once you click btn:[Apply], your admin user can log in to your NAS remotely.
++
+image:qnap/qnap-controlpanel.png[QNAP Control Panel]
+
+=== Access From a Windows machine
+
+On Windows you need to install PuTTY from a source you trust, then start PuTTY and enter the host name or IP address in the `Session dialog`. Port should be `22` and connection type `SSH`. Click btn:[Open]. A command line prompt appears. Press kbd:[y] for yes. You'll be asked for a user name. Enter `admin` and in the next step the admin user's password.
+
+You are logged in to the QNAP NAS Console Management - Main menu.
+
+
+=== Access From Linux or OSX machines
+
+Open a terminal and enter the command:
+
+[source,console]
+----
+ssh admin@<your-nas-IP>
+----
+
+Enter the admin user's password and you'll be in the QNAP Console Management - Main menu:
+
+=== Console Management
+
+In the Console Management you have several options that might be useful at some point:
+
+[source,console]
+----
+ +-------------------------------------------------------------------------+
+  |  Console Management - Main menu                                         |
+  |                                                                         |
+  |  1: Show network settings                                               |
+  |  2: System event logs                                                   |
+  |  3: Reset to factory default (password required)                        |
+  |  4: Activate/ deactivate a license                                      |
+  |  5: App management                                                      |
+  |  6: Reboot in Rescue mode (w/o configured disk)                         |
+  |  7: Reboot in Maintenance Mode                                          |
+  |  Q: Quit (return to normal shell environment)                           |
+  |                                                                         |
+  |                                                                         |
+  +-------------------------------------------------------------------------+
+  >> 
+----
+
+Press kbd:[q] to quit and confirm with kbd:[y] for yes and you'll be logged in with your regular shell.
+
+== occ commands
+
+Besides the web interface, ownCloud also offers a command-line interface (occ) for administrator tasks. Access via `ssh` needs to be enabled.
+
+=== Running occ Commands
+
+To issue `occ` commands, you need to use `ssh` to log in to your QNAP device. Then navigate to the top-level directory of your ownCloud app, e.g. `/share/CACHEDEV1_DATA/.qpkg/ownCloud`.
+
+ownCloud on QNAP lives in a Docker container, therefore `occ` commands look a little different than on regular installations. The prefix `docker exec` is needed:
+
+[source,console]
+----
+docker exec --user www-data <owncloud-container-name> php occ <your-command>
+----
+
+For more information on which `occ` commands are available and how to use them, check out section xref:configuration/server/occ_command.adoc[Using the occ Command].
+
+CAUTION: Unless you know exactly what you are doing, you shouldn't run commands that change the database connection (could be done with occ:config:* and occ:db:*), the redis connection (could be done with occ:config:*) or remove a license key (could be done with occ:config:*).
+
+== Backing up and Restoring the Database
+
+To prevent data loss, the ownCloud database should be backed up regularly. To do so, you need to log in to your QNAP device via `ssh` and navigate to the ownCloud app root directory, e.g. `/share/CACHEDEV1_DATA/.qpkg/ownCloud`. Here you can create a database snapshot with a time stamp by entering the following command:
+
+[source,console]
+----
+system-docker-compose exec db pg_dumpall -c -U owncloud > \
+  ownCloud_database_$(date +%Y-%m-%d_%H_%M_%S).sql
+----
+
+For more information, see section xref:maintenance/backup.adoc[Backing up ownCloud]. ownCloud on QNAP uses PostgrSQL.
+
+Should something happen and you need to restore the data, perform the following commands:
+
+[source,console]
+----
+# delete / drop the current database
+system-docker-compose exec db dropdb owncloud -U owncloud
+# create new database
+system-docker-compose exec db createdb owncloud -U owncloud
+# restore data to database
+cat ownCloud_database_xxxxx.sql | system-docker-compose exec \
+   -T db psql -U owncloud -d owncloud
+----
+
+== Troubleshooting
+
+=== General
+
+Via the QuLog Center app on your QNAP NAS, you can check the log entries.
+
+image:qnap/qulogcenter.png[Qulog Center]
+
+TIP: The event notifications in the top tool bar will also tell you if something has gone wrong. Look for the i in a circle.
+
+=== Specific Problems
+
+* What to do if you forgot to install the Container Station?
+
+An error message will pop up during the installation of ownCloud. Click on the link "System Event Log" in the pop-up window to find out what actually went wrong or hit btn:[OK] and install the Container Station. Then start the installation of ownCloud again.
+
+
