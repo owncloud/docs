@@ -5,11 +5,13 @@ When doing a new release of ownCloud Server like `10.x`, a new version branch mu
 **Step 1: This will create and configure the new `10.x` branch properly**
 
 1.  Create a new `10.x` branch based on latest `origin/master`
-2.  In `.drone.star` set `latest_version` to `10.x` (on top in section `def main(ctx)`)
-3.  In `site.yml` have **only one** branch at `url: https://github.com/owncloud/docs.git`
-    and set it to the **former** version of 10.x `10.x-1` ! (in section `content.sources.url.branches`)
+2.  Copy the `.drone.star` file from the _former_ `10.x-1` branch
+    (it contains the correct branch specific setup rules and replaces the current one coming from master)
+3.  In `.drone.star` set `latest_version` to `10.x` (on top in section `def main(ctx)`)
+4.  In `site.yml` have **only one** branch at `url: https://github.com/owncloud/docs.git`
+    and set it to the **former** version of 10.x `10.x-1` ! (in section `content.sources.url.branches`). Note, this step is only necessary for the docs repo, but not for the sub repos which are included (like docs-client-desktop).
 5.  In `site.yml`, in section `asciidoc.attributes`, adjust all `-version` keys according the new and former releases
-6.  In `antora.yml` change the version from `master` to `10.x`
+6.  In `antora.yml` change the version from `next` to `10.x`
 7.  In `antora.yml`, in section `asciidoc.attributes`, adjust all version dependent keys if exists
 8.  Edit the `modules/ROOT/pages/releases.adoc` file and manually add/link the pdf files from the former `10.x-2` branch to the `Older ownCloud Server Releases` section
 9.  Run a build by entering `yarn antora`. No build errors should occur
@@ -20,9 +22,9 @@ When doing a new release of ownCloud Server like `10.x`, a new version branch mu
 11.  Create new `changes_necessary_for_10.x` branch based on latest `origin/master`
 12.  In `.drone.star` set `latest_version` to `10.x` (on top in section `def main(ctx)`)
 13. In `site.yml` adjust the last **two** branches at `url: https://github.com/owncloud/docs.git` accordingly
-   (in section `content.sources.url.branches`)
+   (in section `content.sources.url.branches`). Note, this step is only necessary for the docs repo, but not for the sub repos which are included (like docs-client-desktop).
 14. In `site.yml` in section `asciidoc.attributes`, adjust all `-version` keys according the new and former releases
-15. In `antora.yml`, check if the version is set to `master` and adjust all version dependent keys if exists
+15. In `antora.yml`, check if the version is set to `next` and adjust all version dependent keys if exists
 16. Edit the `modules/ROOT/pages/releases.adoc` file and manually add/link the pdf files from the former `10.x-2` branch to the `Older ownCloud Server Releases` section (you can copy the changes made from step 1)
 17. Run a build by entering `yarn antora`. No build errors should occur
 18. Commit changes and push it
