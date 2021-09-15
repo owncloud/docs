@@ -724,7 +724,7 @@ specifically regarding password changes in the backend.
 fetch all the users from all the backends (currently only the ones that have logged in at least once
 because the others won't have the storages that we'll need updates).
 
-To optimize this, `wnd:process-queue` make use of two switches: `–serializer-type` and `–serializer-params`.
+To optimize this, `wnd:process-queue` make use of two switches: `–serializer-type` and `–serializer-param`.
 These serialize storages for later use, so that future executions don't need to fetch the users, saving
 precious time — especially for large organizations.
 
@@ -733,10 +733,10 @@ precious time — especially for large organizations.
 | Switch | Allowed Values
 | `--serializer-type` | `file`. Other valid values may be added in the future, as more
 implementations are requested.
-| `--serializer-params`
+| `--serializer-param`
 | Depends on `--serializer-type`, because those will be the parameters that the chosen serializer will use.
 For the `file` serializer, you need to provide a file location in the host FS where the storages will be serialized.
-You can use `--serializer-params file=/tmp/file` as an example.
+You can use `--serializer-param file=/tmp/file` as an example.
 |===
 
 While the specific behavior will depend on the serializer implementation, the overall behavior can be
@@ -835,11 +835,11 @@ location for all the server. We might need to provide a specific serializer for 
 
 {occ-command-example-prefix} wnd:process-queue host share -c 500 \
      --serializer-type file \
-     --serializer-params file=/opt/oc/store
+     --serializer-param file=/opt/oc/store
 
 {occ-command-example-prefix} wnd:process-queue host2 share2 -c 500 \
      --serializer-type File \
-     --serializer-params file=/opt/oc/store2
+     --serializer-param file=/opt/oc/store2
 ----
 
 To set it up, make sure the listener is running as a system service:
@@ -855,7 +855,7 @@ Setup a Cron job or similar with something like the following two commands:
 ----
 {occ-command-example-prefix} wnd:process-queue host share -c 500 \
      --serializer-type file \
-     --serializer-params file=/opt/oc/store1
+     --serializer-param file=/opt/oc/store1
 
 sudo rm -f /opt/oc/store1 # With a different schedule
 ----
