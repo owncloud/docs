@@ -400,7 +400,7 @@ https://web.dev/schemeful-samesite/
 === Define the directory where the skeleton files are located
 These files will be copied to the data directory of new users.
 
-Leave this directory empty if you do not want to copy any skeleton files.
+Set this to the empty string if you do not want to copy any skeleton files.
 A valid path must be given for this key otherwise errors will be generated in owncloud.log.
 
 ==== Code Sample
@@ -694,8 +694,9 @@ are generated within ownCloud using any kind of command line tools (cron or occ)
 
 The value should contain the full base URL: `https://www.example.com/owncloud`
 As an example, alerts shown in the browser to upgrade an app are triggered by
-a cron background process and therefore use the url of this key even if a user
-has logged on via a different domain defined in key `trusted_domains`. When users click an alert like this, they will be redirected to that URL and must log on again.
+a cron background process and therefore uses the url of this key, even if the user
+has logged on via a different domain defined in key `trusted_domains`. When the
+user clicks an alert like this, he will be redirected to that URL and must logon again.
 
 ==== Code Sample
 
@@ -1657,6 +1658,20 @@ instead of hard forcing HTTPS
 'sharing.federation.allowHttpFallback' => false,
 ....
 
+=== Show a quick action for the public link creation
+Set this to true to display a quick action for creating public links
+in the filelist. A public link created this way will be read-only per default.
+
+Note: if enforced password protection for read-only links is enabled, the
+quick action will not be displayed!
+
+==== Code Sample
+
+[source,php]
+....
+'sharing.showPublicLinkQuickAction' => false,
+....
+
 == All other configuration options
 
 === Define additional database driver options
@@ -2003,6 +2018,9 @@ same storage as the upload target. Setting this to false will store the part
 files in the root of the users folder which might be required to work with certain
 external storage setups that have limited rename capabilities.
 
+Note that setting this to false causes issues with the following apps: Encryption,
+Document classification, Anti-Virus and Ransomware Protection.
+
 ==== Code Sample
 
 [source,php]
@@ -2235,11 +2253,11 @@ behaviour of the grace period.
 ....
 
 === Link to get a demo key during active grace period
-As admin you will be directed to that web page if you click on the "get a demo key"
+The admin will be directed to that web page if he clicks in the "get a demo key"
 link in the grace period popup. It's expected that the web page contains instructions
 on how to get a valid demo key to be used in the ownCloud server.
 
-If this key isn't present, ownCloud's default will be used.
+If this key isn't present, ownCloud's default will be used
 
 ==== Code Sample
 
