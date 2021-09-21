@@ -116,6 +116,7 @@ def build(ctx, environment, latest_version, deployment_branch, base_branch, pdf_
                 },
                 "commands": [
                     "yarn antora --fetch --attribute format=html",
+                    "bin/optimize_crawl -x",
                 ],
             },
             {
