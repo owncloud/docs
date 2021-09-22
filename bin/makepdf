@@ -183,11 +183,16 @@ function build_pdf_manual()
 	# branch name from above
 	local branch="$4"
 
-	# this name is used as filename and to be printed on the frontpage of the document
-	# for pdf print, make the first letter of the manual upper case
-	# ${manual:0:1} is the first character
-	# ${manual:1} is the rest of the string
-	local manual_infix="$(tr '[:lower:]' '[:upper:]' <<< ${manual:0:1})${manual:1}"
+	if [ -z "${FIRST_LETTER_CAPITAL}" ] ; then
+		# first letter can also be lower case 
+		local manual_infix="${manual}"
+	else
+		# this name is used as filename and to be printed on the frontpage of the document
+		# for pdf print, make the first letter of the manual upper case
+		# ${manual:0:1} is the first character
+		# ${manual:1} is the rest of the string
+		local manual_infix="$(tr '[:lower:]' '[:upper:]' <<< ${manual:0:1})${manual:1}"
+	fi
 
 	local build_directory="$(pwd)/${TARGET_PDF_DIRECTORY}/"
 
