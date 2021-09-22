@@ -1,0 +1,379 @@
+#!/usr/bin/env bash
+
+# optimizes sitemap-xxx.xml and robots.txt for improved crawling as we only need references to "next" urls.
+#
+# 1.) deletes in all sitemap-<product>.xml files all xml blocks not containing the term "next" (DEFAULT_NAME)
+# post the product name. this is done only for only those xml files, which have the new docs structure
+# containing "next" as part of the url for the master branch.
+#
+# 2.) adds at the end of the robots.txt file "disallow" directives for all non "next" urls/* which match
+# the new docs structure containing "next", eg disallow: /server/10.8/*
+#
+# the script is intended to be called from the root of this repo.
+#
+# see the "PRODUCTS" variable for eligable repos
+#
+# note, no file should be created manually or by an other process with the extension defined in BACKUP_EXT.
+
+set -e
+set -u
+set -o noclobber
+set -o errexit
+set -o pipefail
+set -o nounset
+IFS=$'\n\t'
+
+# these are the products which already have the new doc structure. only those are taken for optimisation.
+# the name must be identical to the name tag in antora.yml of the particular doc repo.
+PRODUCTS=(server desktop ios-app)
+
+# the location where the site is built to
+HTML_ROOT="public"
+
+# the name of the master sitemap file
+# this file includes all other sitemaps
+SITEMAP="sitemap.xml"
+
+# define common variables
+ACTION=
+DOC_WEB_ROOT=
+SITEMAPS_TO_USE=
+DRY_RUN=false
+
+# note that the extension must include the leading dot
+BACKUP_EXT=".original"
+
+# the default name is the name used when the branch is master.
+# only for those products which have the new doc structure.
+DEFAULT_NAME="next"
+
+# error variables
+ERR_UNSUPPORTED_ACTION=22
+
+SITEMAP_ROOT_FILE="${HTML_ROOT}/${SITEMAP}"
+
+# the main function which processes all files
+function run()
+{
+	local i=
+	local url=
+	local hit=
+	local first=
+	local actual=()
+	local product_name=
+	local current_map=
+	local current_robot=
+	local product_name=
+	local unuseable_releases=()
+	local sitemap_header=
+	local url_component_ok=
+	local new_xml_content=
+	local add_robot_content=
+
+	current_robot="${HTML_ROOT}/robots.txt"
+
+	# find all files in the html root dir, and only there, where the extension is backup_ext
+	# if found, those files should be reverted back to the original state before continue executing
+	for i in `find "${HTML_ROOT}" -maxdepth 1 -name "*${BACKUP_EXT}" -type f`; do
+		hit=true
+	done
+	if [ "$hit" = true ]; then
+		echo
+		echo -e "\e[1;31mThere were files found indicating a past run. \e[0m"
+		echo -e "\e[1;31mRevert them first. \e[0m"
+		usage
+		exit $ERR_UNSUPPORTED_ACTION
+	fi
+
+	echo -e "\e[1;32mOptimizing \e[0m"
+	echo
+
+	# changes in the robots file only when not in debug mode
+	if [[ "$DRY_RUN" == false ]]; then
+		# create a copy of the robots file to make a backup
+		cp "${current_robot}" "${current_robot}${BACKUP_EXT}"
+
+		# add a blank line for better visibility to the following disallows
+		# (not using $'\n'... becomes a double blank line when used alone)
+		cat <<< "" >> "${current_robot}"
+	fi
+
+	# get the current existing docs url from sitemap.xml
+	get_doc_www_root "${SITEMAP_ROOT_FILE}"
+
+	# get the list of sitemaps to process
+	get_sitemaps "${SITEMAP_ROOT_FILE}" "${PRODUCTS[@]}"
+	#printf '%s\n' "${SITEMAPS_TO_USE[@]}"
+
+	# iterate over all sitemap files
+	for current_map in "${SITEMAPS_TO_USE[@]}"
+	do
+
+		new_xml_content=
+
+		#echo "${current_map}"
+		# get the product name of the current iterating map
+		product_name=($(get_product_name "${current_map}"))
+		# echo "$product_name"
+
+		# get all the releases we do not need to keep
+		unuseable_releases=($(get_unuseable_releases "${current_map}"))
+		# printf '%s\n' "${unuseable_releases[@]}"
+
+# keep this, for testing purposes only
+#		# get the header of the sitemap file
+#		sitemap_header=$(get_sitemap_header "${current_map}")
+#		#echo "$sitemap_header"
+
+		url_component_ok="${DOC_WEB_ROOT}"/"${product_name}"/"${DEFAULT_NAME}"/
+
+		i=-1
+		url=false
+		hit=false
+		first=true
+		unset actual
+
+		# read the current xml file and remove all non-"next" entries
+		while read line; do
+			i=$((i+1))
+			actual[$i]="${line}"
+
+			# starting the block. we expect that <url> </url> are in seperate lines
+			if [[ "${line}" == "<url>"  ]]; then
+				url=true
+				first=false
+			else
+				# get all lines before the first <url>, there is always necessary stuff above to be taken
+				# we do not need an array here but add the lines one by one
+				if [ "$first" = true ]; then
+					new_xml_content="${new_xml_content}""${line}"$'\n'
+					# unset the array to remove any leftovers for the first match of <url>
+					# necessary as we do not know if the first url block will be a hit or not
+					unset actual
+					#printf '%s\n' "${new_xml_content[@]}"
+					continue
+				fi
+			fi
+
+			# we are inside a block
+			if [ "$url" = true ]; then
+				# check if it is a <loc> block
+				if [[ "${line}" == "<loc>"* ]]; then
+					# check if it contains a usable url with "next"
+					if [[ "${line}" == *"${url_component_ok}"* ]]; then
+						hit=true
+						#echo "${line}"
+					fi
+				fi
+			fi
+
+			# at the end of the block
+			if [[ "${line}" == "</url>"  ]]; then
+				# use only if we have a hit
+				if [ "$hit" == true ]; then
+					#printf '%s\n' "${actual[@]}"
+					new_xml_content="${new_xml_content}"$(printf '%s\n' "${actual[@]}")$'\n'
+				fi
+				# if we had a hit, reset all
+				i=-1
+				url=false
+				hit=false
+				unset actual
+			fi
+
+		done < "${current_map}"
+
+		# finally, add all the remaining elements which are post the last </url>
+		# the last actual array contains all lines after the last </url>
+		new_xml_content="${new_xml_content}"$(printf '%s\n' "${actual[@]}")
+
+		# create a disallow entry for the particular product containig non- "next" entries
+		unset actual
+		add_robot_content= #$'\n'
+		for actual in "${unuseable_releases[@]}"
+		do
+			#echo $actual
+			url_component_ok=/"${product_name}"/"${actual}"/*
+			add_robot_content="${add_robot_content}""disallow: ""${url_component_ok}"$'\n'
+		done
+
+		# echo the output in debug mode but do not do anything else
+		# make the headline green for better identification of the current xml file
+		if [[ "$DRY_RUN" == true ]]; then
+			echo
+			echo -e "\e[1;32m${current_map} \e[0m"
+			echo
+			echo "${new_xml_content}"
+			echo
+			echo -e "\e[1;32mTo be added to ${HTML_ROOT}/robots.txt\e[0m"
+			echo "${add_robot_content}"
+		else
+			# write the changes to the files
+			# backup the current sitemap file
+			mv "${current_map}" "${current_map}${BACKUP_EXT}"
+			# create a new sitemap file and write the new contents
+			cat <<< "$new_xml_content" > "$current_map"
+			# append the contents to the new robots file
+			cat <<< "$add_robot_content" >> "${current_robot}"
+		fi
+
+		# for testing to make only one block
+#		break
+	done
+}
+
+# get the header lines of the current sitemap file
+function get_sitemap_header()
+{
+	# example
+	# <?xml version="1.0" encoding="UTF-8"?>
+	# <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+	local sh=
+	sh=$(sed '/<url>/Q' "$1")
+	echo "${sh}"
+}
+
+# get all unusabe releases of the current sitemap file
+function get_unuseable_releases()
+{
+	local a=()
+	local ur=()
+
+	# make an array of the default name to intersect with the existing names
+	local name=( "${DEFAULT_NAME}" )
+
+	ur=($(grep -oP '(?<=loc>)[^<]+' "$1" | grep -Po '\w\K/\w+[^?]+' | cut -c 2- | cut -d \/ -f 2 | sort | uniq))
+
+	# intersect the arrays
+	# the array must be returned in this case with printf and not with echo
+	readarray -t a < <(echo ${ur[@]} ${name[@]} | tr ' ' '\n' | sort | uniq -d | xargs echo ${ur[@]} | tr ' ' '\n' | sort | uniq -u)
+	printf '%s\n' "${a[@]}"
+}
+
+# get the product name of a particular sitemap file
+function get_product_name()
+{
+	local pn=
+	pn=($(grep -oP '(?<=loc>)[^<]+' "$1" | grep -Po '\w\K/\w+[^?]+' | cut -c 2- | cut -d \/ -f 1 | uniq))
+	echo "${pn}"
+}
+
+# query the URL of the docs site.
+# this can also be a local address (eg ip:port) if you have built eg with "yarn antora-local".
+# will be used to identify a deletable <url> block in a sitemap file
+function get_doc_www_root()
+{
+	DOC_WEB_ROOT=($(grep -oP '(?<=loc>)[^<]+' "$1" | cut -d/ -f1-3 |uniq))
+	#echo "${DOC_WEB_ROOT}"
+}
+
+# get_sitemaps <main_sitemap_file> <list_of_allowed_products_to_process>
+# get all sitemap files which are available and match the product array list
+# using parameters helps customizing the function easily
+function get_sitemaps()
+{
+	local a=()						# helper variable
+	local sitemap_base_file="$1"	# Save first argument in a variable 
+	shift							# Shift all arguments to the left (original $1 gets "lost")
+	local b=("$@")					# Rebuild the products array with rest of arguments
+	local found_sitemaps=()			# the list of sitemap files found 
+	
+	# append .xml to each availabe product and sort the outcome
+	a=( "${b[@]/%/.xml}" )
+	readarray -t available_products < <(printf '%s\n' "${a[@]}" | sort)
+	#printf '%s\n' "${available_products[@]}"
+
+	# get the list of referenced sitemaps from the main sitemap file and store it into an array
+	# the name is stored without the extension ".xml"
+	# the files are defined inbetween the <loc> </loc> tags
+	# for matching the arrays, we need to remove the leading "sitemap-" string
+	readarray -t found_sitemaps < <(grep -oP '(?<=loc>)[^<]+' "${sitemap_base_file}" | grep -Po '\w\K/\w+[^?]+' | cut -c 2- | sed 's/sitemap-//g' | sort)
+	#printf '%s\n' "${found_sitemaps[@]}"
+
+	# Intersection of possible and available sitmap files
+	readarray -t a < <(echo ${available_products[@]} ${found_sitemaps[@]} | tr ' ' '\n' | sort | uniq -d)
+	a=( "${a[@]/#/sitemap-}" )
+	#printf '%s\n'  "${a[@]}"
+	SITEMAPS_TO_USE=( "${a[@]/#/${HTML_ROOT}/}" )
+	#printf '%s\n' "${SITEMAPS_TO_USE[@]}"
+}
+
+# rename all files with the extension ${BACKUP_EXT} back to its original extension.
+# this is only when playing around and you do not want to manually type all the commands 
+function revert()
+{
+	local f=
+
+	echo
+	# find all files in the html root dir, and only there, where the extension is backup_ext
+	for f in `find "${HTML_ROOT}" -maxdepth 1 -name "*${BACKUP_EXT}" -type f`; do
+		# move the file by removing the backup extension
+		mv -- "${f}" "${f%${BACKUP_EXT}}"
+		echo -e "\e[1;32mReverting file: \e[0m" "${f}"
+		#echo "${f%${BACKUP_EXT}}"
+		#echo "$f"
+	done
+	# if f is empty there was nothing found to be reverted
+	if [ -z "$f" ]; then
+		echo -e "\e[1;32mNothing found to be reverted \e[0m" "${f}"
+	fi
+	echo
+}
+
+function revert_and_run()
+{
+	revert
+	run
+}
+
+function usage()
+{
+	echo
+	echo "Usage: bin/optimize_crawl [-h] [-e] [-x] [-d] [-r]"
+	echo
+	echo "-h ... help"
+	echo "-e ... Execute (add debug mode for a dry run)"
+	echo "-x ... Revert first and Execute (add debug mode for a dry run)"
+	echo "-d ... Debug mode, print only of the optimized sitmap content, no saving."
+	echo "-r ... Revert backuped files to originals if exists."
+	echo
+}
+
+while getopts ":rdexh:" o
+do
+	case ${o} in
+		r)
+			ACTION="REVERT"
+			;;
+		d )
+			DRY_RUN=true
+			;;
+		e)
+			ACTION="RUN"
+			;;
+		x)
+			ACTION="REVERT_AND_RUN"
+			;;
+		h | * )
+			ACTION="HELP"
+			;;
+	esac
+done
+
+shift $((OPTIND-1))
+
+case "$ACTION" in
+	REVERT)
+		revert
+		;;
+	RUN)
+		run
+		;;
+	REVERT_AND_RUN)
+		revert_and_run
+		;;
+	HELP | *)
+		usage
+		exit $ERR_UNSUPPORTED_ACTION
+		;;
+esac
