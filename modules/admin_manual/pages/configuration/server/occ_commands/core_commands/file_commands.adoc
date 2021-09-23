@@ -266,13 +266,17 @@ This command is useful before removing users.
 
 [width="100%",cols="35%,70%",]
 |===
-| `--path=[PATH]`        | selectively provide the path to transfer. +
+| `--path=[PATH]`                 | selectively provide the path to transfer. +
 For example --path="folder_name"
 | `-s, +
---accept-skipped-shares` | always confirm to continue in case of skipped shares.
+--accept-skipped-shares`          | always confirm to continue in case of skipped shares.
+| `--destination-use-user-folder` | transfer directly to top-level user folder, + 
+operation only possible if destination user +
+never logged in and command aborts otherwise.
 |===
 
-For example, to move all files from `<source-user>` to `<destination-user>`, use the following command:
+
+For example, to move all files from `<source-user>` to `<destination-user>` transfer folder, use the following command:
 
 [source,console,subs="attributes+"]
 ----
@@ -281,13 +285,24 @@ For example, to move all files from `<source-user>` to `<destination-user>`, use
     <destination-user>
 ----
 
-You can also move a limited set of files from `<source-user>` to `<destination-user>` by making use of the `--path` switch, as in the example below.
-Ownership of `folder/to/move` and all files and folders which it contains will be transferred to `<destination-user>`.
+You can also move a limited set of files from `<source-user>` to `<destination-user>` transfer folder by making use of the `--path` switch, as in the example below.
+Ownership of `folder/to/move` and all files and folders which it contains will be transferred to `<destination-user>` transfer folder.
 
 [source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} files:transfer-ownership \
     --path="folder/to/move" \
+    <source-user> \
+    <destination-user>
+----
+
+If the entire user folder of `<source-user>` needs to be migrated to `<destination-user>` user folder, use the `--destination-use-user-folder` switch, as in the example below.
+The destination user needs to be created but never log in, we recommend using owncloud maintenance mode for this operation.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} files:transfer-ownership \
+    --destination-use-user-folder \
     <source-user> \
     <destination-user>
 ----
