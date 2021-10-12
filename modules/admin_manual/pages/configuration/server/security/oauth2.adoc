@@ -1,15 +1,19 @@
 = OAuth2
 :toc: right
-// Page URLs
 :mod_headers-url: http://httpd.apache.org/docs/current/mod/mod_headers.html
 :mod_rewrite-url: http://httpd.apache.org/docs/current/mod/mod_rewrite.html
 :oauth2-user-auth-url: https://oauth.net/articles/authentication/
-:phpredis-issue-url: https://github.com/owncloud/docs/issues/2491
-:predis-extension-session-locking-config-url: https://github.com/phpredis/phpredis/blob/develop/README.markdown#session-locking
-:predis-extension-url: https://github.com/phpredis/phpredis
 :shibboleth-app-url: {oc-marketplace-url}/apps/user_shibboleth
+:official-oauth2-rfc-url: https://datatracker.ietf.org/doc/html/rfc6749#section-10
+:official-client-registration-rfc-url: https://tools.ietf.org/html/rfc6749#section-2
+:official-authorization-request-rfc-url: https://tools.ietf.org/html/rfc6749#section-4.1.1
+:official-authorization-response-rfc-url: https://tools.ietf.org/html/rfc6749#section-4.1.2
+:client-authentication-url: https://tools.ietf.org/html/rfc6749#section-2.3
+:official-access-token-request-rfc-url: https://tools.ietf.org/html/rfc6749#section-4.1.3
+:official-access-token-response-rfc-url: https://tools.ietf.org/html/rfc6749#section-4.1.4
+:stackoverflow-url: https://stackoverflow.com/a/16341985/222011
 
-== What is it?
+== Inroduction
 
 OAuth2 is summarized in https://tools.ietf.org/html/rfc6749#section-4.1.1[RFC 6749] as follows:
 
@@ -53,8 +57,7 @@ Here is an overview of how the process works:
 
 == The OAuth2 App
 
-OAuth2 support is available in ownCloud via {oc-marketplace-url}/apps/oauth2[an OAuth2 application] which is available from the ownCloud Marketplace.
-The app aims to:
+OAuth2 support is available in ownCloud via the {oc-marketplace-url}/apps/oauth2[OAuth2] application which is available from the ownCloud Marketplace. The app aims to:
 
 . Connect ownCloud clients (both desktop and mobile) in a standardized and secure way.
 . Make 3rd party software integrations easier by providing an unified authorization interface.
@@ -64,29 +67,10 @@ The app aims to:
 To use the OAuth2 app, your ownCloud installation will need to meet the following dependencies:
 
 * *Apache:* If you are hosting your ownCloud installation using the Apache web server, then {mod_rewrite-url}[mod_rewrite] and {mod_headers-url}[mod_headers] modules must be installed and enabled.
-. *Redis:* You will need to have a Redis server available, ideally the latest, stable, version
-. *PHP:* You PHP installation must have {predis-extension-url}[the phpredis extension] (>= 4.2) installed and enabled. 
-+
-[TIP]
-====
-We strongly recommend that you configured PHP to store sessions in Redis.
-Here is an example configuration. 
+* *Redis:* You will need to have a Redis server available, ideally the latest, stable, version.
+* *PHP-Redis:* You PHP installation must have the php-redis extension (>= 4.2) installed and enabled.
 
-[source,ini,subs="attributes+"]
-----
-; Redis configuration
-SESSION_SAVE_HANDLER=redis
-SESSION_SAVE_PATH=tcp://[REDIS_SERVER]:{std-port-redis}
-REDIS_SESSION_LOCKING_ENABLED=1
-REDIS_SESSION_LOCK_RETRIES=750
-REDIS_SESSION_LOCK_WAIT_TIME=20000
-----
-
-The configuration parameters above are taken from {predis-extension-session-locking-config-url}[the available ones].
-According to {phpredis-issue-url}[an issue in the phpredis repository], the default values are too small for common usage. 
-It suggested using the ones above instead.
-However, please adjust these values to meet your needs.
-====
+See the xref:installation/manual_installation/manual_installation.adoc[Detailed Installation Guide] for how to install Redis and PHP-Redis.
 
 === Installation
 
@@ -94,7 +78,23 @@ To install the application, place the content of the OAuth2 app inside your inst
 
 === Basic Configuration
 
-To enable token-only based app or client logins in `config/config.php` set `token_auth_enforced` to `true`.
+To enable token-only based app or client logins in `config/config.php` set `token_auth_enforced` to `true`, see xref:configuration/server/config_sample_php_parameters.adoc[config sample file] for more details.
+
+==== Trusting Clients
+
+Since version 0.5.0 of the OAuth2 app, you can mark clients as trusted. This will have the effect that the consent step in the authentication process will be skipped for this client.
+
+CAUTION: Only mark confidential clients and web apps under your control as trusted. Apps which can not keep the `Client Identifier (ID)` secret or have `redirect URIs` which can not be fully controlled should not be marked as trusted. +
+Refer to the {official-oauth2-rfc-url}[official OAuth2 RFC sections 10.1 and 10.2] for further information about the risks.
+
+image:configuration/server/security/oauth2_configuration.png[image]
+
+If you want to mark an existing client as trusted, you have to:
+
+* Copy the `Client Identifier (ID)` and the `Client Secret`.
+* Then delete the existing entry either in the UI or via the xref:configuration/server/occ_command.adoc#oauth2[occ oauth2 remove command]
+* And finally re-add it again with the xref:configuration/server/occ_command.adoc#oauth2[occ oauth2 add comand] with the trusted setting enabled. +
+When deleting in the web UI, you might need to scroll horizontally to see the delete buttons. Follow this link regarding xref:configuration/user/oidc/oidc.adoc#client-ids-secrets-and-redirect-uris[Client IDs, Secrets and Redirect URIs] for ownCloud clients.
 
 === Restricting Usage
 
@@ -102,29 +102,33 @@ To enable token-only based app or client logins in `config/config.php` set `toke
 
 === Endpoints
 
-[cols=",",options="header",]
+[width="60%",cols="30%,70%",options="header",]
 |==========================
-| Description | URI
-| Authorization URL | `/index.php/apps/oauth2/authorize`
-| Access Token URL  | `/index.php/apps/oauth2/api/v1/token`
+| Description
+| URI
+
+| Authorization URL
+| `/index.php/apps/oauth2/authorize`
+
+| Access Token URL
+| `/index.php/apps/oauth2/api/v1/token`
 |==========================
 
 === Protocol Flow
 
 ==== Client Registration
 
-The clients first have to be registered in the admin settings: `/settings/admin?sectionid=authentication`.
-You need to specify a name for the client (the name is unrelated to the OAuth 2.0 protocol and is just used to recognize it later) and the redirection URI.
-A client identifier and client secret are generated when adding a new client, which both consist of 64 characters.
-For further information about client registration, please refer to https://tools.ietf.org/html/rfc6749#section-2[the official client registration RFC from the IETF].
+The clients first have to be registered in the web-UI menu:Settings[Admin > Authentication]. You need to specify a name for the client (the name is unrelated to the OAuth 2.0 protocol and is just used to recognize it later) and the redirection URI. A _client identifier_ and _client secret_ are generated when adding a new client, which both consist of 64 characters.
+
+Refer to the
+{official-client-registration-rfc-url}[official client registration RFC from the IETF]
+for further information about client registration.
 
 ==== Authorization Request
 
-For every registered client an authorization request can be made.
-The client redirects the resource owner to the authorization URL and requests authorization.
-The following URL parameters have to be specified:
+For every registered client, an authorization request can be made. The client redirects the resource owner to the authorization URL and requests authorization. The following URL parameters have to be specified:
 
-[cols=",,",options="header",]
+[width="100%",cols="15%,^10%,60%",options="header",]
 |==========================
 | Parameter
 | Required
@@ -147,21 +151,24 @@ The following URL parameters have to be specified:
 | Can be set by the client "to maintain state between the request and callback". See `RFC 6749`_ for more information.
 |==========================
 
-For further information about client registration, please refer to https://tools.ietf.org/html/rfc6749#section-4.1.1[the official authorization request RFC from the IETF].
+Refer to the
+{official-authorization-request-rfc-url}[official authorization request RFC from the IETF]
+for further information about client registration.
 
 ==== Authorization Response
 
-After the resource owner's authorization, the app redirects to the `redirect_uri` specified in the authorization request and adds the authorization code as URL parameter `code`.
-An authorization code is valid for 10 minutes.
-For further information about client registration, please refer to https://tools.ietf.org/html/rfc6749#section-4.1.2[the official authorization response RFC from the IETF].
+After the resource owner's authorization, the app redirects to the `redirect_uri` specified in the authorization request and adds the authorization code as `URL parameter code`. An authorization code is valid for 10 minutes.
+
+Refer to the
+{official-authorization-response-rfc-url}[official authorization response RFC from the IETF]
+for further information about client registration.
 
 ==== Access Token Request
 
 With the authorization code, the client can request an access token using the access token URL.
-https://tools.ietf.org/html/rfc6749#section-2.3[Client authentication] is done using basic authentication with the client identifier as username and the client secret as a password.
-The following URL parameters have to be specified:
+{client-authentication-url}[Client authentication] is done using basic authentication with the client identifier as username and the client secret as a password. The following URL parameters have to be specified:
 
-[cols=",,",options="header",]
+[width="100%",cols="15%,50%,50%",options="header",]
 |==========================
 | Parameter
 | Required
@@ -172,24 +179,25 @@ The following URL parameters have to be specified:
 | Either `authorization_code` or `refresh_token`.
 
 | `code`
-| if the grant type `authorization_code` is used.
+| If the grant type `authorization_code` is used.
 |
 
 | `redirect_uri`
-| if the grant type `authorization_code` is used.
+| If the grant type `authorization_code` is used.
 |
 
 | `refresh_token`
-| if the grant type `refresh_token` is used.
+| If the grant type `refresh_token` is used.
 |
 |==========================
 
-For further information about client registration, please refer to https://tools.ietf.org/html/rfc6749#section-4.1.3[the official access token request RFC from the IETF].
+Refer to the
+{official-access-token-request-rfc-url}[official access token request RFC from the IETF]
+for further information about client registration.
 
 ==== Access Token Response
 
-The app responses to a valid access token request with a JSON response like the following.
-An access token is valid for 1 hour and can be refreshed with a refresh token.
+The app responses to a valid access token request with a JSON response like the following. An access token is valid for 1 hour and can be refreshed with a refresh token.
 
 [source,json]
 ----
@@ -203,14 +211,16 @@ An access token is valid for 1 hour and can be refreshed with a refresh token.
 }
 ----
 
-For further information about client registration, please refer to https://tools.ietf.org/html/rfc6749#section-4.1.4[the official access token response RFC from the IETF].
+Refer to the
+{official-access-token-response-rfc-url}[official access token response RFC from the IETF]
+for further information about client registration.
 
 NOTE: For a succinct explanation of the differences between access tokens and authorization codes, 
-check out https://stackoverflow.com/a/16341985/222011[this answer on StackOverflow].
+check out this {stackoverflow-url}[answer on StackOverflow].
 
 === Limitations
 
-- Since the app does not handle user passwords, only master key encryption works (similar to {shibboleth-app-url}[the Shibboleth app]).
+- Since the app does not handle user passwords, only master key encryption works (similar to the {shibboleth-app-url}[Shibboleth app]).
 - Clients cannot migrate accounts from Basic Authorization to OAuth2, if they are currently using the `user_ldap` backend.
 - It is not possible to explicitly end user sessions when using OAuth2. Have a read through {oauth2-user-auth-url}[User Authentication with OAuth 2.0] to find out more.
 
