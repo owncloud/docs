@@ -39,8 +39,8 @@ sudo apt autoremove
 
 === Preparing the Installation Environment
 
-To compile Samba, you need to install necessary packages. Copy the {samba_req_pack_url}[Bootstrap Dependencies Script] from Samba for Ubuntu 20.04. You will find it in section _Verified Package Dependencies_. Post downloading, make the script executable and execute it, which will install all required packages for a successful samba compilation. For your convenience, you can directly download the file
-link:{attachmentsdir}/installation/manual_installation/bootstrap.sh[bootstrap samba master] here.
+To compile Samba, you need to install necessary packages. Copy the {samba_req_pack_url}[Bootstrap Dependencies Script] from Samba for Ubuntu 20.04. You will find it in section _Verified Package Dependencies_. Post downloading, make the script executable and execute it, which will install all required packages for a successful samba compilation. For your convenience, you can directly download the
+link:{attachmentsdir}/installation/manual_installation/bootstrap.sh[bootstrap samba master] shell script here.
 
 [source,console]
 ----
@@ -87,6 +87,8 @@ The settings for the configuration options are important, so that Samba will be 
 for Ubuntu properly. If you are planning to use Samba in your installation where your server
 _will act_ as domain controller and not only as a client, you can safely remove `--without-ad-dc`
 from the options below. Read more on details {samba_conf_options_url}[config options] for Ubuntu. 
+For your convenience, you can directly download a
+link:{attachmentsdir}/installation/manual_installation/compile_samba.sh[compile samba] shell script here.
 
 [source,console]
 ----
@@ -190,10 +192,10 @@ via a separate non-destructive process.
 
 [source,console]
 ----
-sudo sudo systemctl edit smbd.service
+sudo systemctl edit smbd.service
 ----
 
-Add following content and save the result. The location and naming will be done automatically.
+Add the following content and save the result. The location and naming will be done automatically.
 Just say save.
 
 ----
@@ -240,3 +242,38 @@ sudo phpenmod smbclient
 == Restart Services
  
 Restart your Web Server and/or `php-fpm` when everything is finished.
+
+== Scripting the Compiling Procedure
+
+If you want to automate the compiling procedure, you can perform the following steps.
+Prepare a directory structure like in the example below where `opt/` and Samba version `samba-4.10.18` are used:
+
+----
+opt/
+  bootstrap.sh
+  compile_samba.sh
+  install_samba.sh
+  samba-4.10.18
+----
+
+Download the scripts:
+
+* link:{attachmentsdir}/installation/manual_installation/bootstrap.sh[bootstrap.sh]
+* link:{attachmentsdir}/installation/manual_installation/compile_samba.sh[compile_samba.sh]
+* link:{attachmentsdir}/installation/manual_installation/install_samba.sh[install_samba.sh]
+
+Make the scripts executable:
+ 
+[source,console]
+----
+sudo chmod +x <script_name>
+----
+
+Change into the extracted samba directory you want to compile, e.g. `samba-4.10.18`, and run the following command:
+
+[source,console]
+----
+sudo ../install_samba.sh
+----
+
+Creating a default `smb.conf` file, testing, uninstalling etc. remain a manual task as described in the above sections.
