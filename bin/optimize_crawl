@@ -6,14 +6,17 @@
 # post the product name. this is done only for only those xml files, which have the new docs structure
 # containing "next" as part of the url for the master branch.
 #
-# 2.) adds at the end of the robots.txt file "disallow" directives for all non "next" urls/* which match
-# the new docs structure containing "next", eg disallow: /server/10.8/*
+# 2.) adds at the end of the robots.txt file "Disallow" directives for all non "next" urls/* which match
+# the new docs structure containing "next", e.g. Disallow: /server/10.8/*
 #
 # the script is intended to be called from the root of this repo.
 #
 # see the "PRODUCTS" variable for eligable repos
 #
 # note, no file should be created manually or by an other process with the extension defined in BACKUP_EXT.
+#
+#
+# SEE IMPORTANT COMMENT AT ABOUT LINE 200
 
 set -e
 set -u
@@ -194,7 +197,19 @@ function run()
 		do
 			#echo $actual
 			url_component_ok=/"${product_name}"/"${actual}"/*
-			add_robot_content="${add_robot_content}""disallow: ""${url_component_ok}"$'\n'
+#
+# NOTE the following script line is temporarily commented.
+#
+# Google can't reindex a site where robots.txt disallows urls which are, when accessed, redirected to a disallowed
+# page, even robots.txt is valid and does not disallow the site itself.
+#
+# robots.txt --> disallow: /server/10.8/*
+# docs.owncloud.com --> docs.owncloud.com/server/latest --> docs.owncloud.com/server/10.8 (** bang **)
+#
+# when server gets its own repository and the main site entry does not automatically redirect to server/latest,
+# this comment can be removed and the disallow is added again.
+#
+#			add_robot_content="${add_robot_content}""Disallow: ""${url_component_ok}"$'\n'
 		done
 
 		# echo the output in debug mode but do not do anything else
@@ -220,6 +235,11 @@ function run()
 		# for testing to make only one block
 #		break
 	done
+
+	# remove any emtpy lines at the END of the script
+	# this keeps the content compact if not adding disallows
+	sed -i -e :a -e '/^\n*$/{$d;N;ba' -e '}' "${current_robot}"
+
 }
 
 # get the header lines of the current sitemap file
