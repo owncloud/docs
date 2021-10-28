@@ -34,6 +34,130 @@
 * xref:changes-in-8-0[Changes in 8.0]
 * xref:changes-in-7-0[Changes in 7.0]
 
+== Changes in 10.8.0
+
+Dear ownCloud administrator, please find below the changes and known issues in ownCloud Server 10.8 that need your attention. You can also read {owncloud-changelog-url}[the full ownCloud Server changelog] for further details on what has changed.
+
+=== ownCloud Web supplements the Classic Web Interface - Try it!
+
+The all-new web interface for ownCloud, ownCloud Web, has come a long way since its initial release at the end of 2020. It is available as an app on the https://marketplace.owncloud.com/apps/web[ownCloud Marketplace] and ownCloud Server has been xref:server_release_notes.adoc#owncloud-web-the-new-web-frontend-for-owncloud[prepared to work with it since version 10.6]. ownCloud Web https://owncloud.dev/clients/web/deployments/oc10-app/#configure-owncloud-10[can be deployed as a supplement to the classic web interface] and meanwhile it is in use at quite a number of installations. This has brought up good feedback around the integration with ownCloud 10 that has been addressed for 10.8. Additionally, lots of improvements have made their way into ownCloud Web. For an overview you can have a look at the https://owncloud.dev/ocis/release_notes/[ownCloud Infinite Scale release notes] and for a full list of changes, please see the https://github.com/owncloud/web/blob/master/CHANGELOG.md[ownCloud Web changelog].
+
+The most prominent recent improvements are
+
+* Accessibility: Compliance with WCAG 2.1 / BITV 2.0 (currently in the certification process)
+* Theming: Ability to change name, logos, colors and more via config file (see the https://owncloud.dev/clients/web/theming/[documentation] for more information)
+* Performance improvements in many areas
+
+With all these improvements we want to motivate ownCloud service providers to make ownCloud Web available to users, to experience the new technology as well as to provide feedback to further improve it. The ownCloud Web integration app comes as part of the 10.8 complete bundle. Furthermore, ownCloud Web has a release cycle of 3 weeks that is independent of ownCloud Server. This allows new versions with features, fixes and improvements to be made available regularly via the ownCloud Marketplace and to deploy them with minimal effort.
+
+TIP: ownCloud Web is currently in the status of a Technology Preview. This means that bugs and other undesired behavior are expected. After careful testing, ownCloud Web can be used on production systems. Features are still being added to ownCloud Web and users will need to use the Classic web interface to do certain actions. Please evaluate according to your use case how well the new web interface suits your needs and let us know any feedback that you encounter.
+
+==== Fixed known issues
+
+Both xref:server_release_notes.adoc#known-issues[known issues from ownCloud Server 10.7] have been fixed. The deployment of ownCloud Web is now more robust and administrators can optionally decide whether ownCloud Links (public and private links) should be provided by the Classic web interface or by ownCloud Web using a https://owncloud.dev/clients/web/deployments/oc10-app/#configure-link-routing[new option in config.php].
+
+==== Feedback
+As mentioned, features are still being added to ownCloud Web and the new web interface can't yet cover every use case of the Classic interface. To further shape the new product and to determine the development priorities it is of utmost importance to consider user feedback. We're very grateful for any hints or feedback that you supply via the following channels
+
+- ownCloud Web survey: https://owncloud.com/web-design-feedback
+- GitHub: https://github.com/owncloud/web[owncloud/web]
+- Chat: talk.owncloud.com / #web
+- Mail: product at owncloud dot com
+
+Since the ownCloud Web 3.4.0 release, the survey above is made available in ownCloud Web to allow users to directly report about their experience. If undesired, the feature can be turned off in the https://owncloud.dev/clients/web/getting-started/#options[ownCloud Web configuration].
+
+=== Improved Usability for "Add to ownCloud" on Public Links
+
+The usability of the "Add to ownCloud" feature on public link pages has been improved (https://github.com/owncloud/core/pull/38712[#38712]). Research on the feature has shown that most users use the feature to add links to the same ownCloud installation they originate from instead of creating federated shares with other ownCloud installations. For this reason there is a new default behavior which allows adding a link to a user account on the ownCloud installation the public link originates from with just a click and without requiring any further input. Advanced users can use a dropdown menu to add a link to a user account on another ownCloud installation.
+
+TIP: New icons have been introduced for this feature. If you're using a custom theme, it is recommended to check whether the icons have a good contrast.
+
+=== Modernized Login Page
+
+The login page has received several improvements regarding design and usability (https://github.com/owncloud/core/pull/38506[#38506]). A login button and labels for the input fields have been added and the "Alternative login" buttons (e.g., for authentication with OpenID Connect) have been redesigned to give a more modern look and feel. In this context, also the ownCloud Enterprise Theme has received improvements that are shipped with Server 10.8.
+
+TIP: If you're using a custom theme, it is recommended to check the login page and make sure that all elements appear as desired.
+
+=== Improvements for External Storages
+
+* Performance and caching improvements for external storages (e.g., Windows Network Drives) have been added https://github.com/owncloud/core/pull/38804[#38804]
+* Renaming or deleting a Windows Network Drive mount point from the files list is now properly prevented https://github.com/owncloud/core/pull/38709[#38709] https://github.com/owncloud/core/pull/38819[#38819]
+* Passwords in the external storage configuration can now be stored encrypted in the database (e.g., for Windows Network Drive mount points). With the next release of the Windows Network Drive app, these can also be used to set up the WND Listener. https://github.com/owncloud/core/pull/38728[#38728]
+* The external storage settings UI has been improved to prevent accidentally exposing mount points to all users https://github.com/owncloud/core/pull/38795[#38795]
+
+=== Re-sending User Invitation Emails
+
+Invitation links for new users in the local ownCloud user management expire after 12 hours for security reasons. For such cases, administrators can now conveniently re-send invitation emails to new users using the mail icon in the user management. https://github.com/owncloud/core/pull/38774[#38774]
+
+=== System Events in the Activity Stream
+
+Events in the activity stream that have been issued by the system (e.g., expired shares or workflow automations like file retention or auto-tagging) are now indicated properly. Before, these events appeared as if the user would have done them manually. To be effective, this requires the latest versions of the Workflow and Activity app versions which are shipped with ownCloud Server 10.8. https://github.com/owncloud/core/pull/38605[#38605] https://github.com/owncloud/core/pull/38631[#38631]
+
+=== Migrations
+
+Upgrading from ownCloud Server 10.7 to 10.8 does not involve database migrations. The upgrade duration is, therefore, expected to be short.
+
+=== Updated App Versions
+
+Since ownCloud Server 10.5, all supported apps are being shipped as part of the complete bundle for ownCloud Server. Find below a list of updated apps in comparison with the 10.7 complete bundle. More information on the changes can be found in the respective changelogs on ownCloud Marketplace.
+
+* https://marketplace.owncloud.com/apps/web[Web] 3.4.1 (new addition to the bundle)
+* https://marketplace.owncloud.com/apps/files_antivirus[Anti-Virus] 1.0.0 (with https://owncloud.com/news/through-icap-owncloud-enterprise-now-works-with-the-major-names-in-anti-virus/[ICAP support])
+* https://marketplace.owncloud.com/apps/user_ldap[LDAP] 0.15.4
+* https://marketplace.owncloud.com/apps/activity[Activity] 2.6.1
+* https://marketplace.owncloud.com/apps/workflow[Workflow] 0.5.2
+* https://marketplace.owncloud.com/apps/announcementcenter[Announcement Center] 1.5.2
+* https://marketplace.owncloud.com/apps/customgroups[Custom Groups] 0.6.2
+* https://marketplace.owncloud.com/apps/files_lifecycle[File Lifecycle Management]
+* https://marketplace.owncloud.com/apps/firewall[File Firewall] 2.10.3
+* https://marketplace.owncloud.com/apps/market[Market] 0.6.1
+* https://marketplace.owncloud.com/apps/admin_audit[Auditing] 2.1.3
+* https://marketplace.owncloud.com/apps/files_classifier[Document Classification] 1.3.1
+* https://marketplace.owncloud.com/apps/files_pdfviewer[PDF Viewer] 0.12.1
+* https://marketplace.owncloud.com/apps/files_texteditor[Text Editor] 2.3.1
+* https://marketplace.owncloud.com/apps/guests[Guests] 0.9.1
+* https://marketplace.owncloud.com/apps/wopi[Microsoft Office Online] 1.5.0
+* https://marketplace.owncloud.com/apps/theme-enterprise[ownCloud Enterprise Theme] 2.3.0
+
+=== PHP Minimum Version 7.2.5
+
+The minimum supported PHP version has been increased from 7.2 to 7.2.5. If you are still running PHP 7.2,
+ensure that you are running a recent patch release before upgrading to 10.8.
+
+=== PHP 7.2 Deprecation Note
+
+As announced with the xref:server_release_notes.adoc#php-7-2-deprecation-note[release notes of version 10.6], PHP 7.2 support will be dropped in one of the next minor releases. Support is still available with 10.8 but it will be necessary to plan an upgrade soon if PHP < 7.4 is in use.
+
+=== Other Notable Changes
+
+* The auto-removal of inaccessible federated shares has been made more robust https://github.com/owncloud/core/pull/38474[#38474]
+* Interoperability in federation with other OCM providers has been improved https://github.com/owncloud/core/pull/38738[#38738] https://github.com/owncloud/core/pull/38751[#38751]
+* Thumbnail previews for file versions work again https://github.com/owncloud/core/pull/38778[#38778]
+* Received shared files/folders can be renamed again without permission checks (only affecting the mount point for the user themself) https://github.com/owncloud/core/pull/38794[#38794]
+* An issue that caused the sharing autocomplete dropdown menu not appearing in the Safari browser has been fixed https://github.com/owncloud/core/pull/38831[#38831]
+* MOVE operations from encrypted storage to unencrypted storage have been fixed https://github.com/owncloud/core/pull/38567[#38567]
+* The performance of MOVE operations has been improved https://github.com/owncloud/core/pull/38649[#38649]
+* An issue related to CORS that prevented users from accepting shares has been fixed https://github.com/owncloud/core/pull/38639[#38639]
+* Design improvements for the tabs in the right sidebar have been made https://github.com/owncloud/core/pull/38653[#38653]
+* Improvements on the files list allow a better readability of file names on small screens https://github.com/owncloud/core/pull/38748[#38748]
+* The button to share a user's federation ID to Google+ has been removed from personal settings since it's obsolete https://github.com/owncloud/core/pull/38705[#38705]
+* The config report and the `occ user:report` command now provide the number of guest users https://github.com/owncloud/core/pull/38742[#38742] https://github.com/owncloud/configreport/pull/146[#146]
+* For more control over Deleted Files, administrators can now decide if a resource should be deleted immediately instead of moving it to the trash bin. The behavior can be configured based on file extensions, directory names and size using the `trashbin_skip` options in config.php. https://github.com/owncloud/core/pull/38704[#38704]
+* License keys can now be removed with a button in the admin settings https://github.com/owncloud/core/issues/38843[#38843]
+* Video playback in ownCloud relies on browser capabilities. If a video cannot be played, users will now see a hint with guidance. https://github.com/owncloud/enterprise/issues/4632[#4632]
+
+=== For developers
+
+* App developers can now exclude default file actions like "Rename" when their app adds a new file view to ownCloud. https://github.com/owncloud/core/pull/38643[#38643]
+
+=== Solved known issues
+
+All xref:server_release_notes.adoc#known-issues[known issues from Server 10.7] have been fixed.
+
+=== Known issues
+
+* If `open_basedir` is configured within your `php.ini` file and you update PHP to 7.4.21 or later then unnecessary entries will be logged to the log file about "open_basedir restriction in effect." See issue https://github.com/owncloud/core/issues/39034[#39034]. This issue will also happen on all other 10.* releases if `open_basedir` is used with PHP 7.4.21.
+
 == Changes in 10.7.0
 
 Dear ownCloud administrator, please find below the changes and known issues in ownCloud Server 10.7 that need your attention. You can also read {owncloud-changelog-url}[the full ownCloud Server changelog] for further details on what has changed.
@@ -71,7 +195,7 @@ TIP: Master-key storage encryption is still supported and has received improveme
 
 === PHP 7.2 Deprecation Note
 
-As announced with the xref:release_notes.adoc#php-7-2-deprecation-note[release notes of version 10.6], PHP 7.2 support will be dropped in one of the next minor releases. Support is still available with 10.7 but it will be necessary to plan an upgrade soon if PHP < 7.3 is in use.
+As announced with the xref:server_release_notes.adoc#php-7-2-deprecation-note[release notes of version 10.6], PHP 7.2 support will be dropped in one of the next minor releases. Support is still available with 10.7 but it will be necessary to plan an upgrade soon if PHP < 7.3 is in use.
 
 === Other Notable Changes
 
@@ -91,7 +215,7 @@ As announced with the xref:release_notes.adoc#php-7-2-deprecation-note[release n
 
 === Solved known issues
 
-Both xref:release_notes.adoc#known-issues[known issues from Server 10.6] have been fixed.
+Both xref:server_release_notes.adoc#known-issues[known issues from Server 10.6] have been fixed.
 
 * ownCloud Web now also allows proper downloading from public links. https://github.com/owncloud/core/pull/38376[#38376]
 * Theming issues have been resolved. https://github.com/owncloud/core/pull/38246[#38246]
@@ -175,7 +299,7 @@ https://owncloud.github.io/clients/web/deployments/oc10-app/[documentation].
 
 === Bundle and Delivery
 
-Since ownCloud Server 10.5 xref:release_notes.adoc#changes-in-delivery[all supported apps are shipped in
+Since ownCloud Server 10.5 xref:server_release_notes.adoc#changes-in-delivery[all supported apps are shipped in
 the ownCloud Server Complete bundles]. The following changes have been made to the bundle for Server 10.6:
 
 * Added {oc-marketplace-url}/apps/openidconnect[OpenID Connect]
@@ -774,7 +898,7 @@ To find a value that fits a specific setup, it is recommended to execute the com
 
 === New Option to Automatically Accept Federated Shares from Trusted Servers
 
-ownCloud Server 10.0.9 xref:release_notes.adoc#pending-shares[introduced the *Pending Shares* feature] which allows users to decide whether or not they want to accept local user shares instead of just making the decision for them, giving more control thereby.
+ownCloud Server 10.0.9 xref:server_release_notes.adoc#pending-shares[introduced the *Pending Shares* feature] which allows users to decide whether or not they want to accept local user shares instead of just making the decision for them, giving more control thereby.
 In contrast, Federated shares always had to be accepted as they can originate from external, potentially untrusted, sources.
 
 ownCloud Server 10.2 introduces a global option to automatically accept xref:admin_manual/configuration/files/federated_cloud_sharing_configuration.adoc#configuring-trusted-owncloud-servers[federated shares originating from trusted servers].
@@ -1020,7 +1144,7 @@ settings section.
 
 The new extension supersedes the former {oc-marketplace-url}/apps/security[Security]
 extension together with the ne {oc-marketplace-url}/apps/password_policy[Password Policy]
-extension, which xref:release_notes.adoc#password-history-and-expiration[has been released
+extension, which xref:server_release_notes.adoc#password-history-and-expiration[has been released
 with ownCloud Server 10.0.9]. This community-contributed extension is well-tested, but out of ownCloud's
 general support scope. However, individual support can be obtained on request.
 
@@ -1056,7 +1180,7 @@ It can be changed by altering the config.php parameter `'minimum.supported.deskt
 === New Option to Configure the Language of Mail Notifications for Public Links
 
 Usually ownCloud renders mail notifications in the language of the recipients, when they are known.
-For the xref:release_notes.adoc#personal-note-for-public-link-mail-notification[recently improved feature]
+For the xref:server_release_notes.adoc#personal-note-for-public-link-mail-notification[recently improved feature]
 to send public links with a personal note directly from the user interface, the recipients' language can't be
 determined automatically, it just knows the recipients' mail addresses.
 
@@ -1094,7 +1218,7 @@ for a scripted per-user decryption process.
 
 === Solved Known Issues
 
-ownCloud Server 10.0.10 takes care of xref:release_notes.adoc#changes-in-10-0-9[10.0.9 known issues]
+ownCloud Server 10.0.10 takes care of xref:server_release_notes.adoc#changes-in-10-0-9[10.0.9 known issues]
 and provides remedies for several others:
 
 - The Password Policy extension now works with two- or multi-factor authentication extensions.
@@ -1155,7 +1279,7 @@ Previously, shared contents would appear, unannounced, in the receiving user’s
 Incoming shares can now have a pending state, offering the ability to accept or decline (as known from federated sharing).
 We anticipate that this will provide a better user experience.
 
-In addition, the xref:release_notes.adoc#new-mail-notifications-feature[recently introduced notifications framework]
+In addition, the xref:server_release_notes.adoc#new-mail-notifications-feature[recently introduced notifications framework]
 is being used to inform users via mail.
 
 The bell icon in the web interface and the ownCloud Desktop Client can additionally be used to take action.
@@ -1385,7 +1509,7 @@ https://github.com/owncloud/theme-example[repository on GitHub].
 
 === Solved known issues
 
-ownCloud Server 10.0.9 takes care of xref:release_notes.adoc#changes-in-10-0-9[10.0.8 known issues],
+ownCloud Server 10.0.9 takes care of xref:server_release_notes.adoc#changes-in-10-0-9[10.0.8 known issues],
 and provides remedy for several others:
 
 * Issues with multiple theme apps and the Mail Template Editor
@@ -1409,13 +1533,13 @@ work properly). See https://github.com/owncloud/core/pull/31825[#31884] for furt
 
 === Known issues
 
-xref:release_notes.adoc#the-password-policy-extension[The new Password Policy feature "Password Expiration"]:
+xref:server_release_notes.adoc#the-password-policy-extension[The new Password Policy feature "Password Expiration"]:
 
 - Does not work together with Multi-Factor Authentication (e.g. `twofactor_totp`, `twofactor_privacyidea`).
 Please do not deploy expiration policies yet when having Two- or Multi-Factor Authentication extensions in place.
 This issue will be solved with the next ownCloud Server release.
 See https://github.com/owncloud/core/issues/32059[#32059] for more information.
-- xref:release_notes.adoc#the-password-policy-extension[The new Password Policy feature "Password Expiration"]
+- xref:server_release_notes.adoc#the-password-policy-extension[The new Password Policy feature "Password Expiration"]
 includes an *occ* command to manually force password expiration. Please run it directly after imposing
 expiration policies on an instance with existing users. Currently the command will only work when the
 policy *X days until user password expires* has been enabled. This might be confusing and will be solved
@@ -1635,7 +1759,7 @@ xref:installation/apps_management_installation.adoc#manually-installing-apps[dow
 
 === Solved known issues
 
-* Bogus `Login failed` log entries have been removed (see xref:release_notes.adoc#changes-in-10-0-7[10.0.7 known issues])
+* Bogus `Login failed` log entries have been removed (see xref:server_release_notes.adoc#changes-in-10-0-7[10.0.7 known issues])
 * The _Provisioning API_ can now properly set default or zero quota
 * User quota settings can be queried through _Provisioning API_
 * A regression preventing a user from setting their e-mail address in the settings page has been fixed
