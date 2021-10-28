@@ -2,33 +2,37 @@
 :toc: right
 :page-aliases: go/admin-backup.adoc
 
-When you backup your ownCloud server, there are four things that you need to copy:
+== Introduction
 
-1.  Your `config/` directory.
-2.  Your `data/` directory.
-3.  Your ownCloud database.
-4.  Your custom theme files, if you have any. (See xref:developer_manual:core/theming.adoc[Theming ownCloud])
+If you are running ownCloud in a docker container, refer to xref:installation/docker/index.adoc#upgrading-owncloud-on-docker[Upgrading ownCloud on docker].
 
-When you install your ownCloud server from our
+When backing up your ownCloud server, there are four things you need to copy:
+
+. the `config/` directory.
+. the `data/` directory,
+. a fresh ownCloud database dump,
+. custom theme files if you have any, see xref:developer_manual:core/theming.adoc[Theming ownCloud].
+
+If you install your ownCloud server from our
 https://download.owncloud.org/download/repositories/stable/owncloud/[Open
 Build Service] packages (or from distro packages, which we do not
-recommend) *do not backup your ownCloud server files*, which are the
+recommend), *do not backup your ownCloud server files*, which are the
 other files in your `owncloud/` directory such as `core/`, `3rdparty/`,
 `apps/`, `lib/`, and all the rest of the ownCloud files. If you restore
 these files from backup they may not be in sync with the current package
-versions, and will fail the code integrity check. This may also cause
-other errors, such as white pages.
+versions and will fail the code integrity check. This may also cause
+other errors.
 
-When you install ownCloud from the source tarballs this will not be an
+If you install ownCloud from the source tarballs, this will not be an
 issue, and you can safely backup your entire ownCloud installation, with
-the exception of your ownCloud database. Databases cannot be copied, but
+the exception of your ownCloud database. Databases cannot be copied, instead
 you must use the database tools to make a correct database dump.
 
 To restore your ownCloud installation from backup, see xref:maintenance/restore.adoc[Restoring ownCloud].
 
-== Backing Up the config/ and data/ Directories
+== Backing up the config/ and data/ Directories
 
-Simply copy your `config/` and `data/` folder to a place outside of your
+Simply copy your `config/` and `data/` folders to a place outside of your
 ownCloud environment. This example uses `rsync` to copy the two
 directories to `/oc-backupdir`:
 
@@ -36,7 +40,7 @@ directories to `/oc-backupdir`:
 rsync -Aax config data /oc-backupdir/
 ----
 
-There are many ways to backup normal files, and you may use whatever
+There are many ways to backup normal files. Use whatever
 method you are accustomed to.
 
 == Backup Database
@@ -46,8 +50,8 @@ a correct database dump.
 
 === MySQL/MariaDB
 
-MySQL or MariaDB, which is a drop-in MySQL replacement, is the
-recommended database engine. To backup MySQL/MariaDB:
+MySQL or MariaDB, which is a drop-in MySQL replacement, are the
+recommended database engines. To backup MySQL/MariaDB:
 
 [source,console]
 ----
@@ -75,10 +79,9 @@ sqlite3 data/owncloud.db .dump > owncloud-dbbackup_`date +"%Y%m%d"`.bak
 PGPASSWORD="password" pg_dump [db_name] -h [server] -U [username] -f owncloud-dbbackup_`date +"%Y%m%d"`.bak
 ----
 
-== Restoring Files From Backup When Encryption Is Enabled
+== Restoring Files from Backup When Encryption Is Enabled
 
-If you need to restore files from backup, which were backed up when
-encryption was enabled, here's how to do it.
+If you need to restore files from a backup during which encryption was enabled, proceed as follows with caution.
 
 WARNING: This is *not officially supported*. ownCloud officially supports either restoring the full backup or restoring nothing — not restoring individual parts of it.
 
@@ -90,14 +93,14 @@ WARNING: This is *not officially supported*. ownCloud officially supports either
 ====
 In the DB it will:
 
-- Have the "size" set to the encrypted size, which is wrong (and bigger);
-- The "encrypted" flag will be set to 0
+- Have the "size" set to the encrypted size, which is wrong (and bigger).
+- The "encrypted" flag will be set to 0.
 ====
 
-* xref:retrieve-encrypted-flag-value[Retrieve the encrypted flag value]
+* Retrieve the encrypted flag value
 * Update the encrypted flag.
 
-NOTE: There's no need to update the encrypted flag for files in either `files_versions` or `files_trashbin`,
+NOTE: There's no need to update the encrypted flag for files in either `files_versions` or `files_trashbin`
 because these aren't scanned or found by `occ files:scan`.
 
 * Download the file once as the user; the file's size will be corrected automatically.
@@ -110,8 +113,8 @@ If it's not suitable for yours, you might need to run an OCC command that does t
 1. In the backup database, retrieve the `numeric_id` value for https://github.com/owncloud/core/wiki/Storage-IDs[the storage]
    where the file was located from the `oc_storages` table and store the value
    for later reference.
-   For example, if you have the following in your `oc_storages` table, then
-   `numeric_id` you should use is `3`, if you need to restore a file for `user1`.
+   For example, if you have the following in your `oc_storages` table, the
+   `numeric_id` you should use is `3` if you need to restore a file for `user1`.
 
    +--------------------------------+------------+-----------+--------------+
    | id                             | numeric_id | available | last_checked |
@@ -134,7 +137,7 @@ If it's not suitable for yours, you might need to run an OCC command that does t
 
 4. Retrieve the required file from your backup and copy it to the real instance.
 
-5. In the backup database, retrieve the file's `encrypted` value, by running
+5. In the backup database, retrieve the file's `encrypted` value by running
    the query below and store the value for later reference.
    The example query assumes the storage was the same and the file was in the same location.
    If not, you will need to track down where the file was before.
