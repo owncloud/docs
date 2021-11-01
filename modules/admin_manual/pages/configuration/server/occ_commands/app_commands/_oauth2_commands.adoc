@@ -3,15 +3,15 @@
 
 Marketplace URL: {oc-marketplace-url}/apps/oauth2[OAuth2]
 
-The `oauth2` commands _add-client_ and _remove-client_, manage OAuth2 clients.
-
-Use these commands to configure the OAuth2 app:
+Use these commands to configure OAuth2 clients via the OAuth2 app:
 
 [source,console]
 ----
 oauth2
   oauth2:add-client     Adds an OAuth2 client
+  oauth2:list           Lists OAuth2 clients
   oauth2:remove-client  Removes an OAuth2 client
+  oauth2:modify-client  Modify OAuth2 client details
 ----
 
 == Add a Client
@@ -47,6 +47,49 @@ oauth2:add-client <name> <client-id> <client-secret> <redirect-url> [<allow-sub-
 
 | `force-trust`
 | Trust the client even if the redirect-url is localhost. [default: "false"]
+|===
+
+== List Clients
+
+=== Usage
+
+[source,console]
+----
+oauth2:list
+----
+
+////
+				'id' => $client->getId(),
+				'name' => $client->getName(),
+				'redirectUri' => $client->getRedirectUri(),
+				'identifier' => $client->getIdentifier(),
+				'secret' => $client->getSecret(),
+				'subdomainsAllowed' => $client->getAllowSubdomains() === true ? 'yes' : 'no',
+				'trusted' => $client->getTrusted() === true ? 'yes' : 'no',
+////
+
+== Modify Client Details
+
+=== Usage
+
+[source,console]
+----
+oauth2:modify-client
+----
+
+=== Arguments
+
+[width="100%",cols="20%,70%",]
+|===
+| `name`
+| Name of client
+
+| `key`
+| Key to be changed. Valid keys are: +
+`name`, `client-id`, `client-secret`, `redirect-url`, `allow-sub-domains`, `trusted`
+
+| `value`
+| The new value of the key.
 |===
 
 == Remove a Client
