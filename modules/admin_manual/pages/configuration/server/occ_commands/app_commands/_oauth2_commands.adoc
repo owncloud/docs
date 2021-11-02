@@ -9,7 +9,7 @@ Use these commands to configure OAuth2 clients via the OAuth2 app:
 ----
 oauth2
   oauth2:add-client     Adds an OAuth2 client
-  oauth2:list           Lists OAuth2 clients
+  oauth2:list-clients   Lists OAuth2 clients
   oauth2:remove-client  Removes an OAuth2 client
   oauth2:modify-client  Modify OAuth2 client details
 ----
@@ -55,18 +55,42 @@ oauth2:add-client <name> <client-id> <client-secret> <redirect-url> [<allow-sub-
 
 [source,console]
 ----
-oauth2:list
+oauth2:list-clients [options]
 ----
 
-////
-				'id' => $client->getId(),
-				'name' => $client->getName(),
-				'redirectUri' => $client->getRedirectUri(),
-				'identifier' => $client->getIdentifier(),
-				'secret' => $client->getSecret(),
-				'subdomainsAllowed' => $client->getAllowSubdomains() === true ? 'yes' : 'no',
-				'trusted' => $client->getTrusted() === true ? 'yes' : 'no',
-////
+=== Options
+
+[width="100%",cols="20%,70%",]
+|===
+| `--output[=OUTPUT]`
+|  The output format to use (plain, json or json_pretty). [default: "plain"]
+|===
+
+.Example Output
+[source,text]
+----
+  - Desktop Client:
+    - name: Desktop Client
+    - redirect-url: http://localhost:*
+    - client-id: xdXOt13JKxym1B1QcEncf2XDkLAexMBFwiT9j6EfhhHFJhs2KM9jbjTmf8JBXE69
+    - client-secret: UBntmLjC2yYCeHwsyj73Uwo9TAaecAetRwMw0xYcvNL9yRdLSUi0hUAHfvCHFeFh
+    - allow-sub-domains: false
+    - trusted: false
+  - Android:
+    - name: Android
+    - redirect-url: oc://android.owncloud.com
+    - client-id: e4rAsNUSIUs0lF4nbv9FmCeUkTlV9GdgTLDH1b5uie7syb90SzEVrbN7HIpmWJeD
+    - client-secret: dInFYGV33xKzhbRmpqQltYNdfLdJIfJ9L5ISoKhNoT9qZftpdWSP71VrpGR9pmoD
+    - allow-sub-domains: false
+    - trusted: false
+  - iOS:
+    - name: iOS
+    - redirect-url: oc://ios.owncloud.com
+    - client-id: mxd5OQDk6es5LzOzRvidJNfXLUZS2oN3oUFeXPP8LpPrhx3UroJFduGEYIBOxkY1
+    - client-secret: KFeFWWEZO9TkisIQzR3fo7hfiMXlOpaqP8CFuTbSHzV1TUuGECglPxpiVKJfOXIx
+    - allow-sub-domains: false
+    - trusted: false
+----
 
 == Modify Client Details
 
@@ -74,7 +98,7 @@ oauth2:list
 
 [source,console]
 ----
-oauth2:modify-client
+oauth2:modify-client <name> <key> <value>
 ----
 
 === Arguments
