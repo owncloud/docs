@@ -6,6 +6,8 @@
 # If called from the command line, the script user the term "master" as branch reference.
 # The script uses another script to provide the attribute list of the yaml files dynamically.
 
+# Note that the nav.adoc file has to be in {modulesdir}/pages/_partials
+
 set -e
 set -u
 set -o noclobber
@@ -126,6 +128,7 @@ function clean_build_dir()
 function convert_antora_nav_to_asciidoc_list()
 {
 
+	local level_offset=
 	local nav_filename="$1"
 
 	# have a blank line between the template content end and the beginning of the inserts
@@ -140,7 +143,9 @@ function convert_antora_nav_to_asciidoc_list()
 			  # on single manual repos, the level offset is corrected with 1 (NF-1)
 			  level_offset=$(echo "$line" | awk -F"*" '{print NF-1}')
 			fi
-			revised_line=$(echo "$line" | sed 's/xref:/include::{module_base_path}/' | sed 's/\[.*\]//g' | sed -r 's/^\*{1,} //')
+			# the last sed in the line below is to remove the manual component (:manual_name:) from the string
+			# this is because we have moved the nav.adoc file into partials and therefore need to add the module
+			revised_line=$(echo "$line" | sed 's/xref:/include::{module_base_path}/' | sed 's/\[.*\]//g' | sed -r 's/^\*{1,} //' | sed -e 's/\(module_base_path}\)\(.*:\)/\1/')
 			echo "${revised_line}[leveloffset=+${level_offset}]"
 			echo
 		fi
@@ -211,7 +216,7 @@ function build_pdf_manual()
 	local book_file="${BOOKS_DIRECTORY}/ownCloud_${manual_infix}_Manual.adoc"
 
 	# the navigation file for the manual to be built
-	local nav_file="modules/${source_root}/nav.adoc"
+	local nav_file="modules/${source_root}/pages/_partials/nav.adoc"
 
 	# Get the dynamic list of attributes from yml files
 	# The output after sed is a string like -a key=value -a key=value ...
@@ -250,6 +255,8 @@ function build_pdf_manual()
 
 	# Create argument list, necessary as we have dynamic attributes coming from another file
 	# The param string needs to be properly constructed, please be careful, see comment below.
+	# Note regarding the attribute: allow-uri-read
+	# For details read the comment in ./lib/extensions/remote-include-processor.js
 
 	param=''
 	param+='-d book '
@@ -263,6 +270,7 @@ function build_pdf_manual()
 	param+='-a partialsdir='$(pwd)/modules/${source_root}/pages/_partials/' '
 	param+='-a revnumber='${branch}' '
 	param+='-a revdate="'${release_date}'" '
+	param+='-a allow-uri-read="" '
 	param+="$attributes"' '
 	param+='--base-dir '$(pwd)' '
 	param+='--out-file '${build_directory}/${branch}_ownCloud_${manual_infix}_Manual.pdf' '
