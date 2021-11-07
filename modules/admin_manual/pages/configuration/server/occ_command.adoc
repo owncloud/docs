@@ -73,7 +73,14 @@ On a regular ownCloud installation, `occ` is in the `owncloud/` directory; for e
 * The HTTP user and group in Arch Linux is `http`.
 * The HTTP user in openSUSE is `wwwrun`, and the HTTP group is `www`.
 
-TIP: See xref:installation/manual_installation.adoc#set-strong-directory-permissions[Setting Strong Permissions] to learn how to find your HTTP user.
+[TIP]
+====
+Use the following command to find your HTTP user:
+[source,console]
+----
+ps -ef | egrep '(apache|apache2)' | grep -v `whoami` | grep -v root | head -n1 | awk '{print $1}'
+----
+====
 
 If your HTTP server is configured to use a different PHP version than the default (/usr/bin/php), `occ` should be run with the same version.
 For example, in CentOS 6.5 with SCL-PHP54 installed, the command looks like this:
