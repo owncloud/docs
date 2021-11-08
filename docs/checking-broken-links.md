@@ -28,7 +28,7 @@ Use the broken link checker of your choice, the following are usable examples. T
 ## Link Checkers provided by the Documentation
 ### Antora xref-validator
 
-The Antora ``xref-validator`` provided by the Antora core team, is able to check [the native Antora xref links](https://docs.antora.org/antora/1.0/asciidoc/page-to-page-xref/#xref-and-page-id-anatomy). It is automatically installed when you run `yarn install` for the Antora setup in the root of your local clone of the docs repository. It doesn't check external links, but it's still a good start.
+The Antora ``xref-validator`` provided by the Antora core team, is able to check the [native Antora xref links](https://docs.antora.org/antora/1.0/asciidoc/page-to-page-xref/#xref-and-page-id-anatomy). It is automatically installed when you run `yarn install` for the Antora setup in the root of your local clone of the docs repository. It doesn't check external links, but it's still a good start.
 
 ### Using Yarn Validate
 
@@ -61,11 +61,10 @@ worktree: /var/www/owncloud/docs | component: server | version: master
 
 ### Yarn Linkcheck
 
-If you installed the Antora dependencies via `yarn install`, then a broken link checker is available.
-You can run it using the following command:
+If you installed the Antora dependencies via `yarn install`, then a broken link checker is available. To run it, you must have one terminal open and run `yarn serve` to start a http server and in another terminal using the following command:
 
 ```console
-yarn linkcheck http://localhost:8080/server/index.html | grep "BROKEN"
+yarn linkcheck http://localhost:8080/server/next | grep "BROKEN"
 ```
 
 #### Example Output
@@ -84,13 +83,43 @@ All the others in the list are example links, and therefore not broken.
 
 ## Publicly Available Linkcheckers
 
+### htmltest by Will Pimblett
+
+This is an extremely fast and very comfortable link checker written in go.
+
+A description of ``htmltest`` can be found [here](https://github.com/wjdp/htmltest).
+Follow [this](https://dart.dev/get-dart) procedure, to install ``dart`` and 
+[this](https://github.com/wjdp/htmltest#floppy_disk-installation) link to install ``htmltest``.
+A [System-wide Install](https://github.com/wjdp/htmltest#system-wide-install) is recommended.
+
+To check docs, you first need to build the actual docs running ``yarn antora-local``. This creates all necessary files in the ``public`` directory.
+
+Then run ``htmltest -s public`` in the root of docs/ to check the build. Note that you **do not need** to have a webserver running (like ``yarn serve``. The ``-s`` option skips external link checks which speeds up time a lot and reduces the output. To include external links, omit the ``-s`` option.
+
+Note that ``htmltest`` checks the complete public/ directory including all products and all branches built. Due to this fact, you possibly get the same entries for each product/branch affected. As a rule of thumb, first look for the `master` or latest branch entries like 10.8, fix the issue, backport it if necessary and restart the procedure.
+
+#### Example Output
+
+```
+server/10.8/admin_manual/maintenance/export_import_instance_data.html
+  hash does not exist --- server/10.8/admin_manual/maintenance/export_import_instance_data.html --> #what_is_exported
+  hash does not exist --- server/10.8/admin_manual/maintenance/export_import_instance_data.html --> #known_limitations
+  hash does not exist --- server/10.8/admin_manual/maintenance/export_import_instance_data.html --> ../configuration/server/occ_command.html#data_exporter
+  hash does not exist --- server/10.8/admin_manual/maintenance/export_import_instance_data.html --> #known_limitations
+```
+
+As you can see in the example above, the file `admin_manual/maintenance/export_import_instance_data.html` has broken anchors. To fix the links, open `admin_manual/pages/maintenance/export_import_instance_data.adoc` (the `pages` directory has to be included in the path, `.html` replaced by `.adoc`), search for the item reported (eg. `#what_is_exported` and correct it. When searching, replace any references to doc internal pages from `.html` to `.adoc` like `configuration/server/occ_command.html#data_exporter` --> `configuration/server/occ_command.adoc#data_exporter`
+
+
 ### Linkcheck by Filip Hracek
 
-This is an extremely fast and very comfortable / configurable link checker.
+This is an extremely fast and very comfortable / configurable link checker written in go.
 
 A description of ``linkcheck`` can be found [here](https://github.com/filiph/linkcheck#linkcheck).
 Follow [this](https://github.com/filiph/linkcheck#step-1-install-dart) procedure,
 to install ``linkcheck``, which needs ``dart``:
+
+To run it, you must have one terminal open and run `yarn serve` to start a http server and in another terminal the ``linkcheck`` command:
 
 Because ``linkcheck`` provides the possibility to use a file to exclude search patterns,
 it is good advice to create a file with the following predefined content. In this example,
@@ -159,52 +188,3 @@ http://localhost:8080/server/admin_manual/configuration/database/linux_database_
 In the example output above, the first entry ``HTTP 200 but missing anchor`` highlights a broken link to an anchor.
 The second entry ``connection failed`` highlights the possibility that the page may no longer be accessible.
 You have to manually check if it is a false-positive or not.
-
-### Linkchecker by Bastian Kleineidam
-
-A description of ``linkchecker`` can be found [here](https://linkchecker.github.io/linkchecker/index.html)
-including a link to [github](https://github.com/linkchecker/linkchecker/).
-Follow this procedure, based on Ubuntu, to install ``linkchecker``, which needs ``python2.7``:
-
-```console
-sudo apt-get install python-dev
-sudo apt-get install python2.7-dev
-
-pip -V
-pip 18.1 from /usr/local/lib/python3.5/dist-packages/pip (python 3.5)
-
-which pip2.7
-/usr/local/bin/pip2.7
-
-sudo -H pip2.7 install git+https://github.com/linkchecker/linkchecker.git
-
-linkchecker --version
-LinkChecker 9.4.0 released xx.xx.xxxx
-Copyright (C) 2000-2014 Bastian Kleineidam
-```
-Here you can find a [short manual](https://linkchecker.github.io/linkchecker/man1/linkchecker.1.html) for linkchecker. For a full description of commands you can simply type `linkchecker --help` as usual. To run a check without external link check type:
-
-```console
-linkchecker --no-status --complete http://localhost:8080
-```
-
-To run a full check including links to external sites type:
-
-```console
-linkchecker --no-status --complete --check-extern http://localhost:8080
-```
-
-#### Example Output
-
-```console
-...
-URL        `https://www.archlinux.org/packages/community/any/owncloud'
-Name       `stable\nversion'
-Parent URL http://localhost:5000/server/admin_manual/installation/linux_installation.html, line 1232, col 1
-Real URL   https://www.archlinux.org/packages/community/any/owncloud/
-Check time 0.434 seconds
-Info       Redirected to
-           `https://www.archlinux.org/packages/community/any/owncloud/'.
-Result     Error: 404 Not Found
-...
-```
