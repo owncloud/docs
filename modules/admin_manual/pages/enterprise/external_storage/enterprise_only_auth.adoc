@@ -1,45 +1,212 @@
 = Enterprise-Only Authentication Options
 
-In ownCloud 9.0+, there are five authentication backends for external
-storage mounts:
+== Introduction
 
-* Username and password
-* Log-in credentials, save in session
-* Log-in credentials, save in database
-* User entered, store in database
-* Global credentials
+ownCloud provides several authentication options for mounting storages. Depending on the edition, these options can vary.
 
-The first two are common to all editions of ownCloud, and the last three
-are only in the Enterprise edition. These are available to:
+== Authentication Options
 
-* FTP
-* ownCloud
-* SFTP
-* SMB/CIFS
-* WebDAV
-* Windows Network Drive
+The following table shows which authentication option is available for which edition of ownCloud. 
+
+[width="70%",cols="35%,^20%,^20%",options="header"]
+|===
+| Authentication Method
+| Free Edition
+| Enterprise Edition
+
+| Username and password
+| x
+| x
+
+| Log-in credentials, save in session
+| x
+| x
+
+| Log-in credentials, save in database
+| 
+| x
+
+| User entered, store in database
+| 
+| x
+
+| Credentials hardcoded in config file *
+| 
+| x
+
+| Global credentials
+| 
+| x
+
+| RSA public key **
+| x
+| x
+|===
+
+(*) Note that `Credentials hardcoded in config file` will appear only if the Windows Network Drive (WND) app is installed and enabled. As long you have WND enabled, you can also use this authentication method for other mount types. If you use this authentication method with other mount types but disable WND, you will lose the connection to all the mounts where this authentication method was used.
+
+(**) Note that `RSA public key` is only available for SFTP.
+
+== Storage Implementations
+
+The following table shows which storage implementation can use the above authentication options.
+Note that this table does not cover other storage implementations like Google Drive or One Drive etc., as those use other authentication backends.
+
+[width="70%",cols="30%,^20%,^20%",options="header"]
+|===
+| Storage implementation
+| Free Edition
+| Enterprise Edition
+
+| FTP
+| x
+| x
+
+| SFTP
+| x
+| x
+
+| ownCloud
+| x
+| x
+
+| SMB/CIFS
+| x
+| x
+
+| WebDAV
+| x
+| x
+
+| Windows Network Drive
+| 
+| x
+|===
+
+Use the dropdown selector to choose the authentication backend when you create a new external mount.
+
+image:enterprise/external_storage/enterprise-only-auth/auth_backends-1.png[Authentication dropdown selector.]
+
+== Authentication Option Details
 
 Username and password::
-  This is the default; a login entered by the admin when the external
-  mount is created. The login is stored in the database, which allows
-  sharing, and background jobs, such as file scanning, to operate.
+  This is the default; a login entered by the admin when the external mount is created. The login is stored in the database, which allows sharing and background jobs, such as file scanning, to operate.
 Log-in credentials, save in session::
-  Credentials are only stored in the session and not captured in the
-  database. Files cannot be shared, as credentials are not stored.
+  Credentials are only stored in the session and not captured in the database. Files cannot be shared, as credentials are not stored.
 Log-in credentials, save in database::
   Credentials are stored in the database, and files can be shared.
 User entered, store in database::
-  Users provide their own login credentials, rather than using
-  admin-supplied credentials. User credentials are stored in the
-  database, and files can be shared.
+  Users provide their own login credentials, rather than using admin-supplied credentials. User credentials are stored in the database, and files can be shared.
+Credentials hardcoded in config file::
+  Used when all the users will share the same password and the password is not known to the users like for a shared space. The user id is always taken from the session. This authentication option can also be chosen when using oAuth or OpenIDConnect etc. For more details see  xref:notes-for-credentials-hardcoded-in-config-file[Notes for Credentials Hardcoded in Config File]. Files can be shared.
 Global credentials::
-  Re-usable credentials entered by the admin, files can be shared.
-
-Global credentials are entered in a separate form.
-
+  Re-usable credentials entered by the admin, files can be shared. Global credentials are entered in a separate form.
++
 image:enterprise/external_storage/enterprise-only-auth/auth_backends-2.png[Global credentials form.]
 
-Use the dropdown selector to choose the authentication backend when you
-create a new external mount.
+RSA public key::
+This authentication method is limited to SFTP only. Manually enter the public key or press btn:[Generate] in the mount form to generate one. Files can be shared.
 
-image:enterprise/external_storage/enterprise-only-auth/auth_backends-1.png[Authentication dropdown selector.]
+=== Authentication Options Allowing Sharing
+
+The following table shows which authentication option allows sharing:
+ 
+[width="70%",cols="50%,^20%",",options="header"]
+|===
+| Authentication Option
+| Sharing Allowed
+
+| Username and password
+| x
+
+| Log-in credentials, save in session
+|
+
+| Log-in credentials, save in database
+| x
+
+| User entered, store in database
+| x
+
+| Credentials hardcoded in config file
+| x
+
+| Global credentials
+| x
+
+| RSA public key
+| x
+|===
+
+=== Notes for Credentials Hardcoded in Config File
+
+* The username taken will be the same as the `user id` of the ownCloud session. For example, ownCloud user "Alice" with password "mysecret" (or even without password) will use "Alice" as username and the password from the config.php file to access the storage. Note that for LDAP, the `user id` is usually like _1223-cbdf-cacc-1234...,_ unless the configuration in the user_ldap app is changed.
+
+* The password will be fetched from a key inside the config.php file. For details see the section below. Even if the account doesn't have a password like oAuth or OpenIDConnect etc, the connection with the storage will use the password from  config.php. *Note that the password will be the same for any user accessing the particular mount!*
+
+==== Defining key/value pairs in config.php
+
+Key/value pairs in config.php must have the following structure:
+
+.Example having a single array
+[source,php]
+----
+'customApp.config' => [
+    'password' => 'the_password',
+]
+----
+
+.Example having nested arrays
+[source,php]
+----
+'customApp.config' => [
+  'server1' => [
+    'password' => 'the_first_password',
+  ],
+  'server2' => [
+    'password' => 'the_second_password',
+  ],
+  ....
+]
+----
+
+customApp.config::
+The naming of this key must be a string that is valid as an array key in a PHP array like the above `customApp.config` or as another example `my.config.key`, but not any reserved ownCloud key.
+
+password::
+Each array element **must** have exactly one key named `password` present and a corresponding value, even if empty.
+
+Nested arrays::
+You can use nested arrays as described in the example above. When using nested arrays, you can use as many sub-keys according your needs where the naming of the sub-key must be a string that is valid as an array key in a PHP array.
++
+Note that sub-keys, except the password key are not used as elements for the mount point. Sub-keys are only present to optimize grouping and accessing the passwords.
++
+Nested arrays are beneficial when having more than one server (host) with a password, but keeping them together in one master key. To access a particular sub-key in the mount definition, use the following scheme:
++
+[source,text]
+----
+<key>#<sub-key-level-1>#<sub-key-level-2>...
+----
++
+From the example above, +
+`customApp.config` corresponds to `key` and +
+`server1` corresponds to `sub-key-level-1`.
+
+
+==== Value to be entered in the mount point `config key` field
+
+Single array::
+Taking the single array example above to use the password for the mount, the value to be entered would be like:
++
+[source,text]
+----
+customApp.config
+----
+
+Nested arrays::
+Taking the nested array example above to use the password for the mount for the host with sub-key `server1`, the value to be entered would be like:
++
+[source,text]
+----
+customApp.config#server1
+----
