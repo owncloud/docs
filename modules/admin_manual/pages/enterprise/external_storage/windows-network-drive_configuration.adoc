@@ -40,7 +40,7 @@ Compared to standard SMB access, WND has advanced features like:
 .Brief Description of Advanced Features:
 
 User lockout prevention and password reset::
-Depending on the Windows or Samba policy, users could get locked out of their account if they enter a wrong password a number of times. The lockout prevention tries to avoid this from happening by resetting the password if it is wrong. In the case of ownCloud's standard SMB connector the password won't be reset. It could happen that users get locked out of the file server.
+Depending on the Windows or Samba policy, users could get locked out of their account if they enter a wrong password a number of times. The lockout prevention tries to avoid this from happening by resetting the password if it is wrong. This is also true for Collaborative WND when using `login credentials saved in database` and a repeatedly running files-scan job which may use outdated credentials. In the case of ownCloud's standard SMB connector, the password won't be reset. It could happen that users get locked out of the file server.
 
 More authentication mechanisms against the backend::
 Please see the details about the xref:enterprise/external_storage/enterprise_only_auth.adoc[Enterprise-Only Authentication Options]
@@ -114,7 +114,7 @@ if your distribution does not provide it.
 * `which` and `stdbuf`. These should be included in most Linux distributions.
 
 To install and configure the necessary packages, see the
-xref:installation/manual_installation/manual_installation.html#prepare-your-server[Prepare Your Server]
+xref:installation/manual_installation/manual_installation.adoc#prepare-your-server[Prepare Your Server]
 section of the manual installation documentation.
 
 TIP: For more information on SMB/CIFS in ownCloud, refer to the
@@ -131,7 +131,7 @@ ownCloud server, when:
 . The remote Windows/Samba file server requires at least {smb2-url}[version 2.0 of the SMB protocol].
 
 The
-xref:enterprise/external_storage/windows-network-drive_configuration.adoc[Windows Network Drive Listener] only supports version 1 of the SMB protocol (SMB1) with _earlier_ Samba versions.
+xref:wnd-listener-setup[Windows Network Drive Listener] only supports version 1 of the SMB protocol (SMB1) with _earlier_ Samba versions.
 
 *Background*
 
@@ -154,10 +154,11 @@ To enable external storage, as the ownCloud administrator go to menu:Settings[St
 
 === Creating a New Share
 
-.When you create a new WND share, you need three things:
+.When you create a new WND share, you need multiple things:
 
 * the login credentials for the share,
-* the server address, the share name and
+* the server address,
+* the share name and
 * the folder you want to connect to.
 
 [CAUTION]
@@ -170,19 +171,19 @@ if the case is not respected.
 .Follow this procedure to create a new mount point based on WND
 
 . Enter the ownCloud mount point for your new WND share. This _must not_ be an existing folder.
-. Select your authentication method. See xref:enterprise/external_storage/enterprise_only_auth.adoc[Enterprise-Only Authentication Options] for complete information on the five available authentication methods.
+. Select your authentication method. See xref:enterprise/external_storage/enterprise_only_auth.adoc[Enterprise-Only Authentication Options] for complete information on the available authentication methods.
 +
 .Figure 2. WND mountpoint and authorization credentials
 image:enterprise/external_storage/windows_network_drive/wnd-2.png[WND mountpoint and authorization credentials, width=60%]
 . Enter the address of the server that contains the WND share.
-. The Windows share name.
-. The root folder of the share. This is can be the subfolder name, or the `$user` variable for the user's home directory. Note that the LDAP `Internal Username Attribute` must be set to the `samaccountname` for either the share or the root to work, and the user's home directory needs to match the `samaccountname`.
+. The share name provided by Windows or Samba.
+. The root folder of the share. This is can be a subfolder name, or the `$user` variable for the user's home directory. Note that the LDAP `Internal Username Attribute` must be set to the `samaccountname` for either the share or the root to work, and the user's home directory needs to match the `samaccountname`.
 (See xref:configuration/user/user_auth_ldap.adoc[User Authentication with LDAP].)
 . Login credentials.
 . Select users or groups with access to the share. The default is all users.
 . Click the gear icon for additional mount options. Note that previews are enabled by default, while
 sharing is not (see Figure 3). Sharing is not available for all authorization methods. For details please see the
-xref:enterprise/external_storage/enterprise_only_auth.adoc[Enterprise-Only Authentication Options]. When using large storages with many files, you may want to disable previews, because this can significantly increase performance.
+xref:enterprise/external_storage/enterprise_only_auth.adoc#authentication-option-details[Enterprise-Only Authentication Options]. When using large storages with many files, you may want to disable previews, because this can significantly increase performance.
 +
 .Figure 3. WND server, credentials, and additional mount options
 image:enterprise/external_storage/windows_network_drive/wnd-3.png[WND server, credentials, and additional mount options, width=50%]
@@ -249,7 +250,7 @@ NOTE: The capability of the listener depends on the ability of the used SMB/CIFS
 
 The WND listener for ownCloud 10 includes two different commands that need to be executed:
 
-* xref:wnd-listen[wnd:listen] Listen to changes and save them in the database
+* xref:wndlisten[wnd:listen] Listen to changes and save them in the database
 * xref:wndprocess-queue[wnd:process-queue] Process saved listener changes from the database 
 
 ===== wnd:listen
