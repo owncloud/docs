@@ -85,7 +85,7 @@ All the others in the list are example links, and therefore not broken.
 
 ### htmltest by Will Pimblett
 
-This is an extremely fast and very comfortable link checker written in go.
+This is an extremely fast and very comfortable / configurable link checker written in go.
 
 A description of ``htmltest`` can be found [here](https://github.com/wjdp/htmltest).
 Follow [this](https://dart.dev/get-dart) procedure, to install ``dart`` and 
@@ -94,9 +94,13 @@ A [System-wide Install](https://github.com/wjdp/htmltest#system-wide-install) is
 
 To check docs, you first need to build the actual docs running ``yarn antora-local``. This creates all necessary files in the ``public`` directory.
 
-Then run ``htmltest -s public`` in the root of docs/ to check the build. Note that you **do not need** to have a webserver running (like ``yarn serve``. The ``-s`` option skips external link checks which speeds up time a lot and reduces the output. To include external links, omit the ``-s`` option.
+Then run ``htmltest -s public`` in the root of docs/ to check the build. Note that it is not mandatory to have a webserver running like ``yarn serve``. The ``-s`` option skips external link checks which speeds up time a lot and reduces the output. To include external links, omit the ``-s`` option.
 
-Note that ``htmltest`` checks the complete public/ directory including all products and all branches built. Due to this fact, you possibly get the same entries for each product/branch affected. As a rule of thumb, first look for the `master` or latest branch entries like 10.8, fix the issue, backport it if necessary and restart the procedure.
+Note that ``htmltest`` checks the complete public/ directory including all products and all branches built. Due to this fact, you possibly get the same entries for each product/branch affected. As a rule of thumb, first look for `next` or latest branch entries like 10.8, fix the issue, backport it if necessary and restart the procedure.
+
+Note, to reduce false positives like 503 which are being reported by https://www.php.net/ links, filter the results for 404. Some, but only a view 404 results are false positves like `Google Playstore` links, the URL can be accessed on the browser without any issues. 
+
+Note, run ``htmltest public`` which includes checking external links from the master branch to avoid antora build artifacts linking to the branch name.
 
 #### Example Output
 
