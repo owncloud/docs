@@ -98,7 +98,7 @@ Then run ``htmltest -s public`` in the root of docs/ to check the build. Note th
 
 Note that ``htmltest`` checks the complete public/ directory including all products and all branches built. Due to this fact, you possibly get the same entries for each product/branch affected. As a rule of thumb, first look for `next` or latest branch entries like 10.8, fix the issue, backport it if necessary and restart the procedure.
 
-Note, to reduce false positives like 503 which are being reported by https://www.php.net/ links, filter the results for 404. Some, but only a view 404 results are false positves like `Google Playstore` links, the URL can be accessed on the browser without any issues. 
+Note, to reduce false positives like 503 which are being reported by https://www.php.net/ links, filter the results for 404. Some, but only a few 404 results are false positives like `Google Playstore` links, the URL can be accessed on the browser without any issues. 
 
 Note, run ``htmltest public`` which includes checking external links from the master branch to avoid antora build artifacts linking to the branch name.
 
