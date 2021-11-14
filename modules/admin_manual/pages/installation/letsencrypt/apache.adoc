@@ -25,26 +25,21 @@ To follow this guide, your server needs to have the following dependencies insta
 
 == Assumptions
 
-This guide assumes two things:
+This guide assumes these things:
 
-. That you are using Ubuntu Linux 18.04. 
-  If you are not using Ubuntu 18.04, please adjust the instructions to suit your distribution or operating system.
+. That you are using Ubuntu. 
+  If you are not using Ubuntu, please adjust the instructions to suit your distribution or operating system.
 . That your ownCloud installation is configured using a {virtual-host-url}[VirtualHost (vhost)] configuration instead of being configured in the main Apache configuration, and 
 . That the vhost configuration file is stored under `/etc/apache2/sites-available/`. 
-  Not all distributions use this location, however. Please refer to your distribution's Apache documentation, to know where to store yours. 
+  Not all distributions use this location, however. Refer to your distribution's Apache documentation, to know where to store yours. 
 
 == Create and Configure a Diffie-Hellman Params File
 
-When using Apache 2.4.8 or later and OpenSSL 1.0.2 or later you can generate and specify a
-{diffie-hellman-url}[Diffie-Hellman] (DH) params file. 
-If not already present in your VirtualHost (vhost) file, add an
-{sslopensslconfcmd-url}[SSLOpenSSLConfCmd] directive and a new certificate with stronger
-keys, which improves {forward-secrecy-url}[forward secrecy]. 
+When using Apache 2.4.8 or later and OpenSSL 1.0.2 or later you can generate and specify a {diffie-hellman-url}[Diffie-Hellman] (DH) params file. If not already present in your VirtualHost (vhost) file, add an {sslopensslconfcmd-url}[SSLOpenSSLConfCmd] directive and a new certificate with stronger keys, which improves {forward-secrecy-url}[forward secrecy]. 
 
-TIP: The OpenSSL command may take a quite a while to complete, so please be patient.
+TIP: The OpenSSL command may take quite a while to complete, so be patient.
 
-You can place the generated SSL certificate into any directory of your choice, by running the following command, and changing the value supplied to the `-out` option. 
-We recommend storing it in  `/etc/apache2/` in this guide, solely for sakes of simplicity.
+You can place the generated SSL certificate into any directory of your choice by running the following command and changing the value supplied to the `-out` option. We recommend storing it in  `/etc/apache2/` in this guide, solely for simplicity.
 
 [source,console]
 ----
@@ -81,12 +76,7 @@ After that, add an Alias directive for the `/.well-known/acme-challenge` locatio
 
 == Create an SSL VirtualHost Configuration
 
-We recommend creating a separate file for storing the `SSL` directives.
-If these directives already exist in this Virtual Host,
-delete them and include the file instead.
-This is because, when the certificate has been created, you can use this file in any 
-SSL-enabled VirtualHost configuration for which the certificate is valid, without reissuing
-the SSL certificate.
+We recommend creating a separate file for storing the `SSL` directives for each site. If these directives already exist on the virtual host for the site, delete them and include the file instead. This way, after the certificate has been created, you can use the file in any virtual host configuration with SSL enabled for which the certificate is valid without reissuing the SSL certificate. It also eases the management for the web site certificate files, as you can easily include or exclude the file in the virtual config with a single remark and it keeps the files' contents compact. 
 
 [source,console]
 ----
@@ -144,8 +134,7 @@ sudo apache2ctl configtest
 sudo apache2ctl -t 
 ----
 
-It should not display any errors. 
-If it doesn't, load your new Apache configuration by running the following command:
+It should not display any errors. If it doesn't, load your new Apache configuration by running the following command:
 
 [source,console]
 ----
@@ -154,34 +143,11 @@ sudo apache2ctl graceful
 
 === Create the SSL Certificates
 
-To create the SSL certificates, run the following command:
+See the Let’s Encrypt xref:installation/letsencrypt/using_letsencrypt.adoc#create-an-ssl-certificate[Create an SSL Certificate]
+documentation for how to create the SSL certificates.
 
-[source,console]
-----
-sudo /etc/letsencrypt/<your-domain-name>.sh
-----
-
-Next, double check that the certificates have been issued by running the `list.sh` script.
-
-[source,console]
-----
-sudo /etc/letsencrypt/list.sh
-----
-
-If successful, you will see output similar to that below when the command completes:
-
-----
-Saving debug log to /var/log/letsencrypt/letsencrypt.log
-
--------------------------------------------------------------------------------
-Found the following certs:
-  Certificate Name: mydom.tld
-    Domains: mydom.tld
-    Expiry Date: 2018-06-18 10:57:18+00:00 (VALID: 89 days)
-    Certificate Path: /etc/letsencrypt/live/mydom.tld/fullchain.pem
-    Private Key Path: /etc/letsencrypt/live/mydom.tld/privkey.pem
--------------------------------------------------------------------------------
-----
+See the Let’s Encrypt xref:installation/letsencrypt/using_letsencrypt.adoc#listing-existing-certificates[Listing Existing Certificates]
+documentation for how to list the SSL certificates.
 
 As the certificate files exist, you can uncomment the `Include` directive in your HTTPS VirtualHost configuration to use them.
 
