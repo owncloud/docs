@@ -74,7 +74,7 @@ class SimpleConfigReader
  * As per the PHP manual: The first argument $argv[0] is always the name that
  * was used to run the script. So we need at least two to access the new app's
  * name, as well as the running script's name.
- * @see https://secure.php.net/manual/en/reserved.variables.argv.php
+ * @see https://www.php.net/manual/en/reserved.variables.argv.php
  */
 if (count($argv) != 2) {
     echo "Command usage: read-config.php <full path to ownCloud root dir> \n";
