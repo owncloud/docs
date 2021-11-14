@@ -1,68 +1,34 @@
 = Using Let’s Encrypt SSL Certificates
 :toc: right
 :toclevels: 1
+:letsencrypt-url: https://letsencrypt.org
+:a-record-url: https://support.dnsimple.com/articles/a-record/
+:raymii-ssl-url: https://raymii.org/s/tutorials/Strong_SSL_Security_On_Apache2.html
+:certbot-url: https://certbot.eff.org
+:certbot-docs-url: https://eff-certbot.readthedocs.io/en/stable/
+:ssl-labs-url: https://www.ssllabs.com/ssltest/
+:crontab-guru-url: https://crontab.guru
+:snapcraft-url: https://snapcraft.io/docs/getting-started
 
 == Introduction
 
-This page covers how to configure your web server to use
-https://letsencrypt.org[Let’s Encrypt] as the certificate authority for
-your ownCloud server. Note that Let’s Encrypt is _not officially
-supported_, and this page is _community-maintained_.
-Thank you, contributors!
+This page covers how to configure your web server to use {letsencrypt-url}[Let’s Encrypt] as the certificate authority for your ownCloud server. Note that Let’s Encrypt is _not officially supported_, and this page is _community-maintained_.
 
-* For ease of handling, SSL-specific directives have been moved into a
-separately included file. This can help for first-time certificate
-issuance as well as for reusing configurations.
-* The examples shown are based on Ubuntu 18.04.
-* Read the https://certbot.eff.org/docs/using.html[Certbot user guide]
-for details of the commands.
-* Let’s Encrypt CA issues short-lived certificates valid for 90 days.
-Make sure you renew the certificates at least once in this period,
-because expired certificates need reissuing. A certificate is due for
-renewal earliest 30 days before expiring. Certbot can be forced to renew
-via options at any time as long the certificate is valid.
+* For ease of handling, SSL-specific directives have been moved into a separate file to be included. This can help with first-time certificate issuance as well as with reusing configurations.
+* Read the {certbot-docs-url}[Certbot user guide] for details of the commands.
+* Let’s Encrypt CA issues short-lived certificates valid for 90 days. Make sure you renew the certificates at least once in this period, because expired certificates need reissuing. A certificate is due for renewal at the earliest 30 days before expiring. Certbot can be forced to renew via options at any time as long as the certificate is valid.
 
-TIP: Raymii.org provides https://raymii.org/s/tutorials/Strong_SSL_Security_On_Apache2.html[an excellent introduction to strong SSL security measures with Apache], if you would like to know more.
+TIP: Raymii.org provides raymii-ssl-url[an excellent introduction to strong SSL security measures with Apache], if you would like to know more.
 
 == Requirements & Dependencies
 
-You require a domain name with a valid
-https://support.dnsimple.com/articles/a-record/[A-Record] pointing back
-to your servers IP address. In case your server is behind a firewall, take
-the necessary measures to ensure that your server is accessible, worldwide,
-from the internet, by adding the required firewall and port forward rules.
+You require a domain name with a valid {a-record-url}[A-Record] pointing back to your server's IP address. In case your server is behind a firewall, ensure that your server is accessible from the internet by adding the required firewall and port forwarding rules.
 
 == Install Let’s Encrypt’s Certbot Client
 
-The https://certbot.eff.org[Certbot] client can be installed in following ways:
+NOTE: certbot has updated the prerequisites and the way to install the certbot script. You can find how to install it on {certbot-url}/instructions[certbot instructions]. Follow one of the possible ways and continue when ready.
 
-1. Installation via xref:via-apt[APT install]
-2. With the Ubuntu xref:via-ppa[PPA repository].
-
-=== Via APT
-
-To install Certbot via APT, run the following commands.
-
-[source,console]
-----
-sudo apt-get update
-sudo apt-get install certbot
-----
-
-=== Via PPA
-
-To install Certbot via the PPA repository, run the following commands. +
-These will add the repository, update APT’s cache, and install Certbot.
-
-NOTE: This method is preferred when you’re using a version of Ubuntu prior to 18.04.
-
-[source,console]
-----
-sudo apt-get update
-sudo apt-get install software-properties-common
-sudo add-apt-repository ppa:certbot/certbot
-sudo apt-get install certbot
-----
+NOTE: If you have used `certbot-auto` before, read how to upgrade in the {certbot-docs-url}/install.html#certbot-auto[certbot-auto] section.
 
 === Run Certbot
 
@@ -73,30 +39,15 @@ To run Certbot use the following command:
 sudo certbot
 ----
 
-[NOTE]
-====
-Depending on how you installed Let’s Encrypt, certbot may also be named `letsencrypt` or
-`certbot-auto`. However, this guide will refer to it as `certbot`. Please bear that in
-mind, and update the examples and scripts used in this guide to reflect your Certbot
-installation.
-====
-
 == Updating Certbot
 
-If you need to update Certbot at a later date, run:
-
-[source,console]
-----
-sudo apt-get install --only-upgrade certbot
-----
+Because certbot is using snap for Ubuntu, there is no need to manually check for updates. Snap checks this automatically and does not require admin intervention, although you can configure the update behavior. For details see the {snapcraft-url}[Snap getting started] documentation.
 
 == Register Your Email Address
 
 === First Time Registration
 
-Now that Certbot is installed, register your email address for urgent renewal
-and security notifications. This command also prepares Certbot’s environment
-if it’s not already installed. To do this, run the following command:
+Now that Certbot is installed, register your email address for urgent renewal and security notifications. This command also prepares Certbot’s environment if it’s not already installed. To do this, run the following command:
 
 [source,console]
 ----
@@ -160,16 +111,12 @@ IMPORTANT NOTES:
 
 == Create Let’s Encrypt’s Config Files
 
-* Create following files in the Let’s Encrypt directory. They will help
-to maintain your certificates.
-* Replace the path to Certbot and the Certbot script name based on your
-installation. +
+* Create the following files in the Let’s Encrypt directory. They will help to maintain your certificates.
+* Replace the path to Certbot and the Certbot script name based on your installation. +
 You can find it by running `which certbot`.
-* Rename <your-domain-name>.sh with the name of the domain(s) you want
-to issue a certificate for. +
-As an example, the script could be renamed to `your-domain-name.com.sh`.
-* Make all files executable except `cli.ini` by running
-`sudo chmod +x <script-name>`.
+* Rename <your-domain-name>.sh with the name of the domain(s) you want to issue a certificate for. +
+For example, the script could be renamed to `your-domain-name.com.sh`.
+* Make all files executable except `cli.ini` by running `sudo chmod +x <script-name>`.
 
 NOTE: All scripts have to be executed with `sudo`.
 
@@ -181,9 +128,7 @@ touch cli.ini list.sh renew.sh renew-cron.sh delete.sh <your-domain-name>.sh
 
 === cli.ini
 
-This file defines some default settings used by Certbot. Use the email address
-you registered with. Comment / un-comment the post-hook parameter
-according which web server you use.
+This file defines some default settings used by Certbot. Use the email address you registered with. Comment or uncomment the post-hook parameter depending on which web server you use.
 
 [source,console]
 ----
@@ -204,8 +149,7 @@ include::{examplesdir}installation/lets_encrypt/list.sh[]
 This script:
 
 * Renews all your issued certificates.
-* In case you have enabled the post hook for your webserver in `cli.ini`, it will reload
-the web server configuration automatically if a certificate has been renewed.
+* In case you have enabled the post hook for your web server in `cli.ini`, it will reload the web server configuration automatically if a certificate has been renewed.
 
 [source,console]
 ----
@@ -217,8 +161,7 @@ include::{examplesdir}installation/lets_encrypt/renew.sh[]
 This script:
 
 * Renews all your issued certificates but does not upgrade Certbot.
-* In case you have enabled the post hook for your webserver in `cli.ini`, it will reload
-the web server configuration automatically if a certificate has been renewed.
+* In case you have enabled the post hook for your web server in `cli.ini`, it will reload the web server configuration automatically if a certificate has been renewed.
 
 NOTE: This script is intended for use via Cron.
 
@@ -239,15 +182,11 @@ include::{examplesdir}installation/lets_encrypt/delete.sh[]
 
 === <your-domain-name>.sh
 
-As an example, this script creates a certificate for following domain /
-sub-domains. You can add or remove sub-domains as necessary. Use your
-domain / sub-domain names. The first (sub)domain name used in the script
-is taken for naming the directories created by Certbot.
+The following example script creates a certificate for a domain or sub-domains, which can be added or removed as necessary. Replace (sub-domain.)example.com with your domain or sub-domain names. The first (sub)domain name in the script is used for naming the directories created by Certbot.
 
 [NOTE]
 ====
-You can create different certificates for different sub-domains, such as
-`example.com`, `www.example.com`, and `subdomain.example.com`, by creating different scripts.
+You can create different certificates for different sub-domains, such as `example.com`, `www.example.com`, and `subdomain.example.com` by creating different scripts.
 ====
 
 [source,console]
@@ -270,7 +209,7 @@ sudo /etc/letsencrypt/<your-domain-name>.sh
 After you run the script, you will see output similar to the following:
 
 ----
-Saving debug log to /var/log/letsencrypt/letsencrypt.log
+Saving debug log to /var/log/letsencrypt/letsencrypt.log 
 Obtaining a new certificate
 Performing the following challenges:
 http-01 challenge for your-domain-name.com
@@ -294,21 +233,18 @@ IMPORTANT NOTES:
     Donating to EFF:                    https://eff.org/donate-le
 ----
 
-You can see that the SSL certificate’s been successfully created, and
-that it will expire on 2018-06-18.
+You can see that the SSL certificate has been successfully created and that it will expire on 2018-06-18.
 
 == Listing Existing Certificates
 
-If you want to list (view) existing SSL certificates, use `list.sh`,
-which can be run as follows:
+If you want to list (view) existing SSL certificates, use `list.sh`, which can be run as follows:
 
 [source,console]
 ----
 sudo /etc/letsencrypt/list.sh
 ----
 
-Depending on the number of certificates, you can expect to see output
-similar to the following:
+Depending on the number of certificates, you can expect to see output similar to the following:
 
 ----
 -------------------------------------------------------------------------------
@@ -327,18 +263,13 @@ Refer to xref:installation/letsencrypt/apache.adoc[the Apache setup guide], to s
 
 == Test the Setup
 
-After you have setup and configured the web server and installed the SSL
-certificate using Certbot, you should now test the security of your new
-configuration. To do so, you can use the free service of
-https://www.ssllabs.com/ssltest/[SSL Labs]. See an example screenshot of
-a test run below.
+After you have setup and configured the web server and installed the SSL certificate using Certbot, you should now test the security of your new configuration. To do so, you can use the free service of {ssl-labs-url}[SSL Labs]. See an example screenshot of a test run below.
 
 image:installation/ssllabs.png[ssllabs]
 
 == Renewing SSL Certificates
 
-As Let’s Encrypts certificates expire every 90 days, you should ensure
-you renew them before that time. +
+As Let’s Encrypt certificates expire every 90 days, ensure you renew them before that time. +
 There are two ways to do so:
 xref:manual-renewal[manually] and xref:automatic-renewal-via-crontab[automatically].
 
@@ -351,8 +282,7 @@ If you have provided your email address, you will receive reminder notifications
 sudo /etc/letsencrypt/renew.sh
 ----
 
-If the certificate is not yet due for renewal, you can expect to see
-output similar to that below:
+If the certificate is not yet due for renewal, you can expect to see output similar to that below:
 
 ----
 -------------------------------------------------------------------------------
@@ -388,22 +318,16 @@ Then, add the following at the end of the existing configuration:
 30 03 * * 6 /etc/letsencrypt/renew-cron.sh
 ----
 
-After you save and exit the file, the new job will have been added to
-the Cron job scheduler.
+After you save and exit the file, the new job will have been added to the Cron job scheduler.
 
-NOTE: If you want to use own values, you can check them eg. at
-https://crontab.guru[crontab.guru] or modify the script for other options.
+NOTE: If you want to use different values, you can check them e.g. at {crontab-guru-url}[crontab.guru] and modify the script with your preferred options.
 
 == Add Extra Domains to the Certificate
 
-If you want to add an extra domain, like `subdomain.example.com`, to your
-certificate, add the domain in the domain shell script above, re-run it
-and reload the web server config. This can be useful when migrating from
-a sub-directory to sub-domain access.
+If you want to add an extra domain, like `subdomain.example.com`, to your certificate, add the domain in the domain shell script above, re-run it and reload the web server config. This can be useful when migrating from
+a sub-directory for your ownCloud instance to sub-domain access.
 
-NOTE: This also implies that you need to comment the `include` directive
-(please refer to the relevant xref:web-server-setup[web server setup])
-and follow the steps afterwards.
+NOTE: This means you need to comment the `include` directive (see the relevant xref:web-server-setup[web server setup]) and follow the steps afterwards.
 
 == Deleting SSL Certificates
 
@@ -414,9 +338,7 @@ If you want to delete an SSL certificate, use the delete.sh script, running it a
 sudo /etc/letsencrypt/delete.sh
 ----
 
-It will start off, as below, by displaying a list of the currently
-available SSL certificate domain names, and then prompt you to supply
-the certificate that you want to delete.
+It will start off by displaying a list of the currently available SSL certificate domain names, as in the example below, and then prompt you to supply the certificate you want to delete.
 
 ----
 Available Certificates:
