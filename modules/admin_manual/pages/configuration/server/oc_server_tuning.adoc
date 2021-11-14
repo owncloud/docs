@@ -1,5 +1,9 @@
 = ownCloud Server Tuning
 :toc: right
+:memcached-url: https://memcached.org
+:thp-url: https://www.kernel.org/doc/Documentation/vm/transhuge.txt
+:redis-guide: https://redis.io/topics/latency
+:sql-lite-limits-url: http://www.sqlite.org/whentouse.html
 :page-aliases: go/admin-performance.adoc
 
 == Using Cron to Perform Background Jobs
@@ -13,8 +17,8 @@ Caching improves performance by storing data, code, and other objects in
 memory. Memory cache configuration for ownCloud is no longer
 automatically available from ownCloud 8.1 but must be installed and
 configured separately. ownCloud supports https://redis.io[Redis],
-http://php.net/manual/en/intro.apcu.php[APCu], and
-https://memcached.org[Memcached] as memory caching backends. See
+{php-net-url}/manual/en/intro.apcu.php[APCu], and
+{memcached-url}[Memcached] as memory caching backends. See
 xref:configuration/server/caching_configuration.adoc[Memory Caching], for further details.
 
 == Use Redis-based Transactional File Locking
@@ -72,8 +76,7 @@ WARNING you have Transparent Huge Pages (THP) support enabled in your kernel.
 This creates both latency and memory usage issues with Redis.
 ----
 
-If so, unfortunately, when a Linux kernel has
-https://www.kernel.org/doc/Documentation/vm/transhuge.txt[Transparent Huge Pages]
+If so, unfortunately, when a Linux kernel has {thp-url}[Transparent Huge Pages]
 enabled, Redis incurs a significant latency penalty after
 the fork call is used, to persist information to disk. Transparent Huge
 Pages are the cause of the following issue:
@@ -92,16 +95,13 @@ echo never > /sys/kernel/mm/transparent_hugepage/enabled
 
 === Redis Latency Problems
 
-If you are having issues with Redis latency, please refer to
-https://redis.io/topics/latency[the official Redis guide] on how to handle them.
+If you are having issues with Redis latency, please refer to the {redis-guide}[official Redis guide] on how to handle them.
 
 == Database Tuning
 
 === Using MariaDB/MySQL Instead of SQLite
 
-MySQL or MariaDB are preferred because of the
-http://www.sqlite.org/whentouse.html[performance limitations of SQLite
-with highly concurrent applications], like ownCloud.
+MySQL or MariaDB are preferred because of the {sql-lite-limits-url}[performance limitations of SQLite with highly concurrent applications], like ownCloud.
 
 See the section xref:configuration/database/linux_database_configuration.adoc[Linux Database Configuration] for how to configure ownCloud for MySQL or MariaDB.
 If your installation is already running on SQLite then it is possible to convert to MySQL or MariaDB using the steps provided in xref:configuration/database/db_conversion.adoc[database conversion].
