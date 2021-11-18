@@ -34,17 +34,25 @@ The output shows whether they are enabled or disabled.
 
 [width="100%",cols="20%,70%",]
 |===
-| --disabled
-| Only display disabled apps. If the app was previously enabled, the app version is also displayed.
-When used, the output will contain the app's version number as well, _if_ it was previously enabled.
-| --enabled
+| `--enabled`
 | Only display enabled apps.
+When used, the output will contain the app's version number as well
+
+| `--disabled`
+| Only display disabled apps. If the app was previously enabled, the app version is also displayed.
+When used, the output will contain the app's version number as well, _if_ it was previously enabled
+
+| `--shipped=<SHIPPED>`
+| If `SHIPPED` is set to `true`, only shipped apps will be listed.
+If `SHIPPED` is set to `false`, only non-shipped apps will be listed
+
+| `-m` +
+`--minimal`
+|  Minimal view - only display apps with version
 When used, the output will contain the app's version number as well.
+
 | --output[=OUTPUT]
 | The output format to use (`plain`, `json` or `json_pretty`). [default: "plain"]
-| --shipped=<SHIPPED>
-| If `SHIPPED` is set to `true`, only shipped apps will be listed.
-If `SHIPPED` is set to `false`, only non-shipped apps will be listed.
 |===
 
 == Enable an App
@@ -67,9 +75,14 @@ market disabled
 
 NOTE: Be aware that the following apps cannot be disabled: _DAV_, _FederatedFileSharing_, _Files_ and _Files_External_.
 
-`app:check-code` has multiple checks: it checks if an app uses ownCloud's public API (`OCP`) or private API (`OC_`), and it also checks for deprecated methods and the validity of the `info.xml` file. 
-By default all checks are enabled. 
-The Activity app is an example of a correctly-formatted app.
+== Check App Code
+
+`app:check-code` has multiple checks:
+
+* It checks if an app uses ownCloud's public API (`OCP`) or private API (`OC_`),
+* It also checks for deprecated methods and the validity of the `info.xml` file. 
+
+By default all checks are enabled. The Activity app is an example of a correctly-formatted app.
 
 [source,console,subs="attributes+"]
 ----
@@ -89,6 +102,8 @@ Analysing /var/www/owncloud/apps/files/foo_app.php
    line   47: OCP\Response - Static method of deprecated class must not be called
    line   49: OC_Util - Static method of private class must not be called
 ----
+
+== Get the App Installation Path
 
 You can get the full file path to an app.
 
