@@ -27,7 +27,7 @@
 
 == Introduction
 
-This document is a guide for technical measures to size your physical environment according some general setups described in scenarios below. It focuses on the software stack and may include some hardware recommendations. You can use any hardware as long the software is capable of running on it and has performance that meets your needs.
+This document is a guide for technical measures to size your physical environment regarding some general setups described in the scenarios below. It focuses on the software stack and may include some hardware recommendations. You can use any hardware as long the software is capable of running on it and delivers performance that meets your needs.
 
 NOTE: Independent of the technical measures, you can decide at any time the ownCloud licensing model - the {owncloud-edition-url}[ownCloud Edition].
 
@@ -38,11 +38,11 @@ What is the best way to install and maintain ownCloud? +
 The answer to that is, as always: _'it depends'_.
 ""
 
-This is because every ownCloud customer has their own particular needs and IT infrastructure. However, both ownCloud and the LAMP stack are highly-configurable. Given that, in this document we present a set of general recommendations, followed by three typical scenarios, and finish up with making best-practice recommendations for both software and hardware.
+This is because every ownCloud customer has their own particular needs and IT infrastructure. However, both ownCloud and the LAMP stack are highly configurable. Given that, in this document we present a set of general recommendations, followed by three typical scenarios, and finish up with making best-practice recommendations for both software and hardware.
 
 [NOTE]
 ====
-The recommendations presented here are based on a standard ownCloud installation, one without any particular _apps_, _themes_, or _code changes_. But, server load is dependent upon the number of _clients_, _files_, and _user activity_, as well as other usage patterns. Given that, these recommendations are only a rule of thumb based on our experience, as well as feedback from our customers.
+The recommendations presented here are based on a standard ownCloud installation, one without any particular _apps_, _themes_, or _code changes_. But, server load is dependent upon the number of _clients_, _files_, and _user activity_, as well as other usage patterns. Therefore, these recommendations are only rules of thumb based on our experience and customer feedback.
 ====
 
 * Operating system: Linux.
@@ -117,7 +117,7 @@ None.
 
 ==== Database
 
-MySQL, MariaDB, or PostgreSQL. We currently recommend MySQL / MariaDB, as our customers have had good experiences when moving to a Galera cluster to scale the DB. If using either MySQL or MariaDB, you must use the InnoDB storage engine as MyISAM is not supported, see: xref:configuration/database/linux_database_configuration.adoc#mysql-mariadb[MySQL / MariaDB storage engine]
+MySQL, MariaDB, or PostgreSQL. We currently recommend MySQL / MariaDB, as our customers have had good experiences when moving to a Galera cluster to scale the DB. If using either MySQL or MariaDB, you must use the InnoDB storage engine because MyISAM is not supported, see: xref:configuration/database/linux_database_configuration.adoc#mysql-mariadb[MySQL / MariaDB storage engine]
 
 IMPORTANT: If you are using MaxScale/Galera, then you need to use at least version 1.3.0. In earlier versions, there is a bug where the value of `last_insert_id` is not routed to the primary node. This bug can cause loops within ownCloud and corrupt database rows. You can find out more information {jira-mxs-220-url}[in the issue documentation].
 
@@ -151,7 +151,7 @@ A memory cache speeds up server performance, and ownCloud supports a number of t
 
 ==== Storage
 
-Local storage, alternatively NFS if already available.
+Local storage or Network File System (NFS) if already available.
 
 ==== Recommmended Licensing Model
 
@@ -293,7 +293,7 @@ The SSL termination is done in the load balancer. A standard SSL certificate is 
 
 ==== Load Balancer
 
-A redundant hardware load-balancer with heartbeat, for example, {bigip-f5-url}[F5 Big-IP]. This runs two load balancers in front of the application servers.
+A redundant hardware load balancer with heartbeat, for example, {bigip-f5-url}[F5 Big-IP]. This runs two load balancers in front of the application servers.
 
 ==== Database
 
@@ -313,7 +313,7 @@ Minimum daily backup without downtime. All MySQL/MariaDB statements should be re
 
 ==== Authentication
 
-User authentication via one or several LDAP or Active Directory servers, or SAML/Shibboleth. See xref:configuration/user/user_auth_ldap.adoc[User Authentication with LDAP] and xref:enterprise/user_management/user_auth_shibboleth.adoc[Shibboleth Integration].
+User authentication via one or several LDAP or Active Directory servers or SAML/Shibboleth. See xref:configuration/user/user_auth_ldap.adoc[User Authentication with LDAP] and xref:enterprise/user_management/user_auth_shibboleth.adoc[Shibboleth Integration].
 
 ==== LDAP
 
@@ -329,7 +329,7 @@ xref:configuration/server/caching_configuration.adoc#redis[Redis] for distribute
 
 ==== Storage
 
-For accessing a backend storage system via NFS, you can use a dedicated storage system like {netapp-hybrid-flash-array-url}[NetApp Hybrid Flash Storage Systems], or other systems like {ibm-elastic-storage-server-url}[IBM Elastic Storage] based on their Power8 servers or {redhat-ceph-url}[RedHat Ceph] with their NFS-Ceph gateway. Optionally, an S3 compatible object store can also be used.
+For accessing a backend storage system via NFS, you can use a dedicated storage system like {netapp-hybrid-flash-array-url}[NetApp Hybrid Flash Storage Systems] or other systems like {ibm-elastic-storage-server-url}[IBM Elastic Storage] based on their Power8 servers or {redhat-ceph-url}[RedHat Ceph] with their NFS-Ceph gateway. Optionally, an S3 compatible object store can also be used.
 
 You may take a look on the {netapp-nfs-bpg-url}[NetApp NFS Best Practice and Implementation Guide] for best NFS configuring practices, especially section _9.4 Mount Option Best Practices with NFS_ on page 111 and {netapp-mysql-url}[MySQL Database on NetApp ONTAP] which also includes performance measurements.
 
@@ -340,7 +340,7 @@ You may take a look on the {netapp-nfs-bpg-url}[NetApp NFS Best Practice and Imp
 
 ==== Redis Configuration
 
-Redis in a primary-replica configuration is {cloud-warm-hot-server-url}[a hot failover setup], and is usually sufficient. A replica can be omitted if high availability is provided via other means. And when it is, in the event of a failure, restarting Redis typically occurs quickly enough. Regarding Redis cluster, we don’t, usually, recommend it, as it requires a greater level of both maintenance and management in the case of failure.  A single Redis server, however, just needs to be rebooted, in the event of failure.
+Redis in a primary-replica configuration is {cloud-warm-hot-server-url}[a hot failover setup] and is usually sufficient. A replica can be omitted if high availability is provided via other means. If that's the case, restarting Redis typically happens fast enough in the event of a failure. Regarding Redis cluster, we don’t, usually, recommend it as it requires a greater level of both maintenance and management in the case of failure.  A single Redis server, however, just needs to be rebooted in the event of failure.
 
 == Known Issues
 
