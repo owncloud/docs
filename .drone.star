@@ -6,7 +6,7 @@ def main(ctx):
     # Version shown as latest in generated documentations
     # It's fine that this is out of date in version branches, usually just needs
     # adjustment in master/deployment_branch when a new version is added to site.yml
-    latest_version = "10.8"
+    latest_version = "10.9"
     default_branch = "master"
 
     # Current version branch (used to determine when changes are supposed to be pushed)
