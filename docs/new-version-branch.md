@@ -44,7 +44,7 @@ When doing a new release of ownCloud Server like `10.x`, a new version branch mu
 
 The following text is a copy/paste suggestion for the PR in step 2, replace the branch numbers accordingly:
 ```
-This are the changes necessary to finalize the creation of the 10.x branch.
+These are the changes necessary to finalize the creation of the 10.x branch.
 
 The 10.x branch is already pushed and prepared and is included in the branch protection rules.
 
@@ -52,7 +52,7 @@ When 10.x (core) is finally out, the 10.x-2 branch can be archived,
 see step 3 in  https://github.com/owncloud/docs/blob/master/docs/new-version-branch.md
 
 Note, that the 10.x branch in this repo is already created, but the `latest` pointer on the web
-will be set to it automatically when the tag in core set. This means, that in the docs homepage,
+will be set to it automatically when the tag in core is set. This means, that in the docs homepage,
 `latest` will point to 10.x-1 until the tag in core is set accordingly. When merging this PR,
 10.x-2 will be dropped from the web but is available via pdf as usual.
 
