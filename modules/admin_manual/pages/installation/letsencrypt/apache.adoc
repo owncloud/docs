@@ -5,11 +5,13 @@
 :keywords: LetsEncrypt, Apache, SSL, OpenSSL
 :diffie-hellman-url: https://en.wikipedia.org/wiki/Diffie–Hellman_key_exchange
 :sslopensslconfcmd-url: https://httpd.apache.org/docs/trunk/mod/mod_ssl.html#sslopensslconfcmd
-:forward-secrecy-url: https://scotthelme.co.uk/perfect-forward-secrecy/
+:forward-secrecy-1-url: https://www.thesslstore.com/blog/perfect-forward-secrecy-explained/
+:forward-secrecy-2-url: https://scotthelme.co.uk/perfect-forward-secrecy/
 :sslusestapling-url: https://httpd.apache.org/docs/trunk/mod/mod_ssl.html#sslusestapling
 :sslstaplingcache-url: https://httpd.apache.org/docs/trunk/mod/mod_ssl.html#sslstaplingcache
 :virtual-host-url: https://httpd.apache.org/docs/2.4/vhosts/examples.html
 :letsencrypt-url: https://letsencrypt.org/getting-started/
+:ssl-configuration-generator-url: https://ssl-config.mozilla.org/#server=apache&version=2.4.41&config=intermediate&openssl=1.1.1k&guideline=5.6
 
 == Introduction
 
@@ -27,17 +29,21 @@ To follow this guide, your server needs to have the following dependencies insta
 
 This guide assumes these things:
 
-. That you are using Ubuntu. 
+. That you are using Ubuntu. +
   If you are not using Ubuntu, please adjust the instructions to suit your distribution or operating system.
-. That your ownCloud installation is configured using a {virtual-host-url}[VirtualHost (vhost)] configuration instead of being configured in the main Apache configuration, and 
-. That the vhost configuration file is stored under `/etc/apache2/sites-available/`. 
+. That your ownCloud installation is configured using a {virtual-host-url}[VirtualHost (vhost)] configuration instead of being configured in the main Apache configuration.
+. That the vhost configuration file is stored under `/etc/apache2/sites-available/`. +
   Not all distributions use this location, however. Refer to your distribution's Apache documentation, to know where to store yours. 
+
+NOTE: See the {ssl-configuration-generator-url}[SSL Configuration Generator] for setup details depending on your environment, especially the differnt results based on the selected _Mozilla Configurations_.
 
 == Create and Configure a Diffie-Hellman Params File
 
-When using Apache 2.4.8 or later and OpenSSL 1.0.2 or later you can generate and specify a {diffie-hellman-url}[Diffie-Hellman] (DH) params file. If not already present in your VirtualHost (vhost) file, add an {sslopensslconfcmd-url}[SSLOpenSSLConfCmd] directive and a new certificate with stronger keys, which improves {forward-secrecy-url}[forward secrecy]. 
+NOTE: A Diffie-Hellman (DH) params file is necessary for Forward Secrecy and for securing your TLS setup. Read the {forward-secrecy-1-url}[Perfect Forward Secrecy Explained] or {forward-secrecy-2-url}[Perfect Forward Secrecy - An Introduction] for more details.
 
-TIP: The OpenSSL command may take quite a while to complete, so be patient.
+When using Apache 2.4.8 or later and OpenSSL 1.0.2 or later, you can generate and specify a {diffie-hellman-url}[Diffie-Hellman] (DH) params file. If not already present in your VirtualHost (vhost) file, add an {sslopensslconfcmd-url}[SSLOpenSSLConfCmd] directive and a new certificate with stronger keys, which improves Forward Secrecy.
+
+TIP: The following OpenSSL command may take quite a while to complete, so be patient.
 
 You can place the generated SSL certificate into any directory of your choice by running the following command and changing the value supplied to the `-out` option. We recommend storing it in  `/etc/apache2/` in this guide, solely for simplicity.
 

@@ -9,6 +9,7 @@
 :ssl-labs-url: https://www.ssllabs.com/ssltest/
 :crontab-guru-url: https://crontab.guru
 :snapcraft-url: https://snapcraft.io/docs/getting-started
+:certbot-sudo-url: https://certbot.eff.org/glossary#sudo
 
 == Introduction
 
@@ -30,9 +31,7 @@ NOTE: certbot has updated the prerequisites and the way to install the certbot s
 
 NOTE: If you have used `certbot-auto` before, read how to upgrade in the {certbot-docs-url}/install.html#certbot-auto[certbot-auto] section.
 
-=== Run Certbot
-
-To run Certbot use the following command:
+In general, to run Certbot, use the following command:
 
 [source,console]
 ----
@@ -111,29 +110,52 @@ IMPORTANT NOTES:
 
 == Create Let’s Encrypt’s Config Files
 
-* Create the following files in the Let’s Encrypt directory. They will help to maintain your certificates.
-* Replace the path to Certbot and the Certbot script name based on your installation. +
-You can find it by running `which certbot`.
-* Rename <your-domain-name>.sh with the name of the domain(s) you want to issue a certificate for. +
-For example, the script could be renamed to `your-domain-name.com.sh`.
-* Make all files executable except `cli.ini` by running `sudo chmod +x <script-name>`.
+Because remembering all the possible options for certbot, the following scripts ease the use for common tasks because of their self speaking name.
 
-NOTE: All scripts have to be executed with `sudo`.
-
+* Create the following files in the Let’s Encrypt directory which can usually be found in `/etc/letsencrypt`. Rename <your-domain-name>.sh with the name of the domain(s) you want to issue a certificate for.
++
 [source,console]
 ----
 cd /etc/letsencrypt
 touch cli.ini list.sh renew.sh renew-cron.sh delete.sh <your-domain-name>.sh
 ----
 
+* Make all files created executable _except_ `cli.ini` by running
++
+[source,console]
+----
+sudo chmod +x <script-name>
+----
+
+* Use `sudo` when running the scripts
++
+[NOTE]
+====
+All scripts have to be executed with `sudo` as certbot {certbot-sudo-url}[requires enhanced priviledges].
+
+""
+If you're logged in to your server as a user other than root, you'll likely need to put sudo before your Certbot commands so that they run as root (for example, sudo certbot instead of just certbot)
+""
+====
+
 === cli.ini
 
-This file defines some default settings used by Certbot. Use the email address you registered with. Comment or uncomment the post-hook parameter depending on which web server you use.
+This file defines some default settings used by Certbot. Use the email address you registered with. Comment or uncomment the post-hook parameter depending if you want to run post hooks. Running post hooks will reload the web server configuration automatically if a certificate has been renewed.
 
 [source,console]
 ----
 include::{examplesdir}installation/lets_encrypt/cli.ini[]
 ----
+
+[NOTE]
+====
+For the following scripts, replace the path to Certbot and the Certbot script name based on your installation. You can find it by running:
+
+[source,console]
+----
+which certbot
+----
+====
 
 === list.sh
 
@@ -259,7 +281,7 @@ Found the following certs:
 
 == Web Server Setup
 
-Refer to xref:installation/letsencrypt/apache.adoc[the Apache setup guide], to set up your web server and issue a certificate.
+Refer to the xref:installation/letsencrypt/apache.adoc[Apache setup guide], to set up your web server and issue a certificate.
 
 == Test the Setup
 
