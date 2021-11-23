@@ -1,9 +1,12 @@
 :install-mariadb-latest-url: https://downloads.mariadb.org/mariadb/repositories/#
 :auth-unix-socket-url: https://mariadb.com/kb/en/library/authentication-plugin-unix-socket/
+:upgrade-mariadb-url: https://mariadb.com/kb/en/upgrading/
 
 == Standard Installation
 
-Use these commands to install MariaDB and secure it´s installation:
+Use these commands to install MariaDB provided by Ubuntu and secure it's installation.
+
+NOTE: At the time of writing, with Ubuntu 20.04, `mariadb-server` will install version `10.4.21`:
 
 [source,console]
 ----
@@ -11,8 +14,7 @@ sudo apt install mariadb-server
 sudo mysql_secure_installation
 ----
 
-Check access and the version of MariaDB, replace `<admin_user>` as either defined during
-`mysql_secure_installation` above or use eg. `root`.
+Check access and the version of MariaDB, replace `<admin_user>` as either defined during `mysql_secure_installation` above or use eg. `root`.
 
 [source,console]
 ----
@@ -22,28 +24,35 @@ sudo mysqladmin -u <admin_user> -p version
 If you get an output like the below, your database is up and running and ready to serve requests.
 
 ----
-mysqladmin  Ver 9.1 Distrib 10.3.25-MariaDB, for debian-linux-gnu on x86_64
-Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+mysqladmin  Ver 9.1 Distrib 10.4.21-MariaDB, for debian-linux-gnu on x86_64
+Copyright (c) 2000, 2021, Oracle, MariaDB Corporation Ab and others.
 
-Server version          10.3.25-MariaDB-0ubuntu0.20.04.1
+Server version          10.4.21-MariaDB-1:10.4.21+maria~bionic
 Protocol version        10
 Connection              Localhost via UNIX socket
 UNIX socket             /var/run/mysqld/mysqld.sock
-Uptime:                 14 min 53 sec
+Uptime:                 59 min 51 sec
 
-Threads: 7  Questions: 470  Slow queries: 0  Opens: 177  Flush tables: 1  Open tables: 31  Queries per second avg: 0.526
+Threads: 16  Questions: 891020  Slow queries: 0  Opens: 119  Flush tables: 1  Open tables: 113  Queries per second avg: 248.125
 ----
 
-== Latest Stable Release
+== Higher Stable Release
 
-For how to install the latest stable release of MariaDB, please refer to the
-{install-mariadb-latest-url}[MariaDB installation documentation].
+For how to install a higher stable release of MariaDB than the provided one of Ubuntu, refer to the {install-mariadb-latest-url}[MariaDB installation documentation].
+
+WARNING: The installation and use of MariaDB 10.6 is *only* supported and functional with ownCloud release 10.9 or above, if it is a new ownCloud installation not requiring an ownCloud upgrade.
+
+== Upgarding an Existing Release
+
+When upgrading from one to another minor version of MariaDB like from 10.4 to 10.5, follow the respective {upgrade-mariadb-url}[Upgrading MariaDB] guide.
+
+WARNING: Do not upgrade a running ownCloud installation to MariaDB 10.6 until ownCloud release 10.9 is installed. ownCloud release 10.9 runs well with MariaDB lower than 10.6 and will have special instructions when upgrading the database of MariaDB to 10.6. 
+
+WARNING: You must not skip minor releases of MariaDB when upgrading like from 10.4 -> 10.6, you have to upgrade to each minor version in between step by step.
 
 [NOTE]
 ====
-If you have an existing installation of MariaDB and upgrade to a higher version, do not forget
-to run the following command, to handle the new setup for admin users — especially when
-upgrading to MariaDB 10.4.3 upwards:
+If you have an existing installation of MariaDB and upgrade to a higher version, do not forget to run the following command to handle the new setup for admin users — especially when running an older version of MariaDB and upgrading to MariaDB 10.4.3 upwards:
 
 [source,console]
 ----
@@ -55,15 +64,10 @@ sudo mysql_upgrade
 
 [NOTE]
 ====
-For MariaDB server releases lower than 10.4.3, you will be prompted during the installation
-to create a root password. Be sure to remember your password, as you will need it during the
-ownCloud database setup.
+For MariaDB server releases lower than 10.4.3, you will be prompted during the installation to create a root password. Be sure to remember your password, as you will need it during the ownCloud database setup.
 ====
 
-To install an ownCloud database, you need an administrative user who can login, has rights to
-create/modify databases and users. If this user does not exist like on MariaDB server releases
-higher than 10.4.3 or if you want to create a temporary user for this task, you manually have
-to create one. You will be asked for the mysql root users password:
+To install an ownCloud database, you need an administrative user who can login, has rights to create/modify databases and users. If this user does not exist like on MariaDB server releases higher than 10.4.3 or if you want to create a temporary user for this task, you manually have to create one. You will be asked for the mysql root users password:
 
 [source,console]
 ----
@@ -79,12 +83,9 @@ exit
 
 [NOTE]
 ====
-From MariaDB 10.4.3 onwards, the authentication method has changed to UNIX sockets. 
-For details, please refer to: {auth-unix-socket-url}[MariaDB: Authentication Plugin - Unix Socket].
-The unix_socket authentication plugin allows the user to use operating system credentials when
-connecting to MariaDB via a local UNIX socket. Follow the procedure below to create an admin user
-for non-socket login, giving ownCloud access to create it's database respectively for phpMyAdmin. 
-_This is not the ownCloud user!_
+From MariaDB 10.4.3 onwards, the authentication method has changed to UNIX sockets. For details, please refer to: {auth-unix-socket-url}[MariaDB: Authentication Plugin - Unix Socket]. The unix_socket authentication plugin allows the user to use operating system credentials when connecting to MariaDB via a local UNIX socket. Follow the procedure below to create an admin user for non-socket login, giving ownCloud access to create it's database respectively for phpMyAdmin.
+
+_This is not the ownCloud user!_ +
 _Don't forget to change the username and password according to your needs_.
 
 [source,console]
@@ -107,7 +108,6 @@ If you want to install phpMyAdmin as a graphical interface for administering the
 sudo apt install phpmyadmin
 ----
 
-Post installing, you need to configure your Web Server to access `phpmyadmin`. This is a manual
-task, dependent how your setup looks like and not part of this documentation.
+Post installing, you need to configure your Web Server to access `phpmyadmin`. This is a manual task, dependent how your setup looks like and not part of this documentation.
 
 NOTE: You can run `sudo dpkg-reconfigure phpmyadmin` to reconfigure phpmyadmin. 
