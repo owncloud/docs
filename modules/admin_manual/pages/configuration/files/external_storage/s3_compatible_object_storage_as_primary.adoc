@@ -29,7 +29,7 @@ Leverage object storage via S3 as primary storage
 
 NOTE: OpenStack Swift has been deprecated.
 
-When using `files_primary_s3`, the Amazon S3 bucket used needs to be created manually first, according to the {creating-a-bucket-url}[Amazon S3 developer documentation] and versioning needs to be enabled for this bucket.
+When using `files_primary_s3`, the Amazon S3 bucket to be used needs to be created manually first, according to the {creating-a-bucket-url}[Amazon S3 developer documentation] and versioning needs to be enabled for this bucket.
 
 == Implications
 
@@ -39,14 +39,14 @@ Read the following implications carfully **BEFORE** you start using `files_prima
 
 . In "object store" mode as primary storage access, ownCloud expects exclusive access to the object store container, because it only stores the binary data for each file. While in this mode, ownCloud stores the metadata in the local database for performance reasons.
 
-. The current implementation is _incompatible_ with any app that uses direct file I/O (input/output) as it circumvents the ownCloud virtual filesystem. An excellent example is the xref:configuration/files/encryption/encryption_configuration.adoc[Encryption app], which fetches critical files in addition to any requested file, which results in significant overhead. +
+. The current implementation is _incompatible_ with any app that uses direct file I/O (input/output) as it circumvents the ownCloud virtual file system. An excellent example is the xref:configuration/files/encryption/encryption_configuration.adoc[Encryption app], which fetches critical files in addition to any requested file, which results in significant overhead. +
 **Therefore encrypting the S3 primary storage via ownCloud has been disabled and can not be enabled**
 
 . When requiring encryption for the bucket containing the primary storage, use the bucket built-in encryption provided by the S3 API. See the configuration examples below how to enable it.
 
 . When using S3 primary storage with multiple buckets, it is _not recommended_ to use the command to transfer file ownership between users
 (xref:configuration/server/occ_command.adoc#the-filestransfer-ownership-command[occ files:transfer-ownership])
-as shares on the files can get lost. The reason for this is that file id's are changed during such cross-storage move operations.
+as shares on the files can get lost. The reason for this is that file IDs are changed during such cross-storage move operations.
 
 == Configuration
 
