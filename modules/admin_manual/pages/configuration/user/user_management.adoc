@@ -242,3 +242,68 @@ against quotas.
 
 When a user creates a public link share via URL, and allows uploads, any
 uploaded files count against that user’s quota.
+
+== Moving the User Home
+
+Usually, a users home folder is located in the `data/` directory which location is defined in `config.php` and defaults to `/var/www/owncloud/data`. Usually in smaller installations, the data directory mounts to a physical drive of the server and in bigger installations the data directory is mounted via NFS, this can be suboptimal when having very big installations with thousands of users and/or users having very big space consumption. This can result in having high load on a single mount point.
+
+ownCloud offers moving the home folder location of single users from the default location to another path outside the data directory to distribute the load on the mount points. You can also move back a users home to the location defined in config.php.
+
+NOTE: As general advice, moving a users home is the last step after all optimisations of the mount point have been set. Carefully monitor over a period of time the changes made before moving a users home.
+
+NOTE: Consider that these new home mount points also need to be part of a xref:maintenance/backup_and_restore/backup.adoc[backup] and xref:maintenance/backup_and_restore/restore.adoc[restore] plan.
+
+=== Steps to Move a Users Home
+
+For details of the occ user commands used below, see the xref:configuration/server/occ_command.adoc#user-commands[User Commands] section of the occ command reference. The examples use the user ID `lisa` and the mount for the new home is `/mnt/newhome_1`. 
+
+. To report a users home, use the following command:
++
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:list lisa -a home
+  - lisa: /var/www/owncloud/data/lisa
+----
++
+Here you can see, that the home of user `lisa` is located in `/var/www/owncloud/data/lisa`
+
+. Prepare new mounts *in advance* for one or more users:
++
+Use the OS methods to create one or more new mount points for users home directories not located as defined in config.php. You can create as many new homes as required containing as many new user homes as wanted - there is no ownCloud limitation. The mounts must be fully accessible by the webserver user (usually www-data).
+
+. Move the users home:
++
+====
+[NOTE]
+* To move a users home, the target folder *must not contain* a subfolder with the user's ID.
+* The target folder *can contain* other user folders.
+====
++
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:move-home lisa /mnt/newhome_1
+----
++
+The user gets disconnected and the users home is now moved which may take a while depending on the load of the server and the bandwidth available on the moint points. When the move operation has finished, 
++
+--
+* all data from the user is _copied_ to the new home,
+* the new path is set in the ownCloud database and 
+* the user gets enabled again.
+--
++
+After checking, the old users home location can safely be deleted manually.
++
+NOTE: If you are using LDAP and the xref:enterprise/external_storage/ldap_home_connector_configuration.adoc[LDAP Home Connector] app, update the users home mount in the attribute used accordingly.
+
+. To check the users new home, use the following command:
++
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:list lisa -a home
+  - lisa: /mnt/newhome_1/lisa
+----
++
+Here you can see that the home of user `lisa` is now located in `/mnt/newhome_1/lisa`
+
+
