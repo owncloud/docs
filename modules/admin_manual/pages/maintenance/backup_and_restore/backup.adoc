@@ -1,69 +1,94 @@
 = Backing up ownCloud
 :toc: right
+:depr-repo-url: https://download.owncloud.org/download/repositories/stable/owncloud/
 :page-aliases: go/admin-backup.adoc, \
 maintenance/backup.adoc
 
 == Introduction
 
-If you are running ownCloud in a docker container, refer to xref:installation/docker/index.adoc#upgrading-owncloud-on-docker[Upgrading ownCloud on docker].
+Depending on how the ownCloud instance has been installed, you may need slightly different steps to do a backup. You may also use different methods as the data directory can be huge. This document is intended as a guideline, but the way you implement it depends on your setup.
 
-When backing up your ownCloud server, you need to copy the following things in your ownCloud folder (by default located under `/var/www/`):
+In any case, you need the following components to be backed up:
 
-. the `config/` directory containing the main configuration file `config.php` plus sample configurations and possibly custom configurations,
-. the `data/` directory containing web-server-related files, `owncloud.log` and possibly encryption keys,
-. a fresh ownCloud database dump,
-. and if applicable custom theme files which are usually located in the `apps` or `apps-external` directory (see xref:developer_manual:core/theming.adoc[Theming ownCloud]).
+.  The `config/` directory.
+.  The `data/` directory. +
+Note that the `data/` directory may not only contain user files but also keys for encryption.
+.  The `apps/` directory. +
+Note that this is only necessary if you are not using the `apps-external/` directory and have added own apps or themes.
+.  The `apps-external/` directory. +
+Note that this is only necessary if it exists and is in use.
+.  The ownCloud database.
+.  The custom theme files, if you had any. See xref:developer_manual:core/theming.adoc[Theming ownCloud]. +
+Note that theme files are usually located in either the `apps/` or `apps-external/` directory.
 
-If you install your ownCloud server from our
-https://download.owncloud.org/download/repositories/stable/owncloud/[Open
-Build Service] packages (or from distro packages, which we do not
-recommend), *do not backup your ownCloud server files*, which are the
-other files in your `owncloud/` directory such as `core/`, `3rdparty/`,
-`apps/`, `lib/`, and all the rest of the ownCloud files. If you restore
-these files from backup they may not be in sync with the current package
-versions and will fail the code integrity check. This may also cause
-other errors.
+IMPORTANT: If you have customized user home direcories or a custom location for encryption keys, you have to manually take care of backing them up and restoring them to the same location.
 
-If you install ownCloud from the source tarballs, this will not be an
-issue, and you can safely backup your entire ownCloud installation, with
-the exception of your ownCloud database. Databases cannot be copied, instead
-you must use the database tools to make a correct database dump.
+== Prerequisites
 
-To restore your ownCloud installation from backup, see xref:maintenance/backup_and_restore/restore.adoc[Restoring ownCloud].
+To ensure a consistent backup, stop your web server to prevent users from trying to access ownCloud via the web. As an alternative, you can stop serving the virtual host for ownCloud:
 
-== Backing up the config/ and data/ Directories
-
-Simply copy your `config/` and `data/` folders to a place outside of your
-ownCloud environment. This example uses `rsync` to copy the two
-directories to `/oc-backupdir`:
-
+[source,console,subs="attributes+"]
 ----
-rsync -Aax config data /oc-backupdir/
+sudo service apache2 stop
 ----
 
-There are many ways to backup normal files. Use whatever
-method you are accustomed to.
+== Backup Scenarios
 
-== Backup Database
+Tarball Installation::
+. If you have installed ownCloud from a tarball, you can safely backup the entire installation, with the exception of your ownCloud database. Databases cannot be copied, instead you must use the database tools to make a correct backup.
 
-You can't just copy a database, but must use the database tools to make
-a correct database dump.
+. You can also back up only the directories mentioned above and the database. To avoid issues, you have to use the same tarball version as the ownCloud version when restoring.
+
+Package Installation::
+If you have installed your ownCloud server from our {depr-repo-url}[Open Build Service] packages (or from distro packages, which is deprecated), *do not back up your ownCloud server files*, which are the other files in your `owncloud/` directory such as `core/`, `3rdparty/`, `lib/`, etc. If you restore these files from backup they may not be in sync with the current package versions and in that case will fail the code integrity check and may also cause other errors.
+
+//missing docker...
+//If you are running ownCloud in a docker container, refer to //xref:installation/docker/index.adoc#upgrading-owncloud-on-docker[Upgrading ownCloud on docker].
+
+=== Backup Directories
+
+If possible, simply copy the directories from your ownCloud installation to your backup location, for example by running the following command from the owncloud directory. The following example command copies all directories mentioned above:
+
+[source,console]
+----
+rsync -Aax config data apps apps-external /oc-backupdir/
+----
+
+You can also back up the full ownCloud directory which eases the restore as you do not need to install ownCloud first.
+
+There are many ways to backup normal files. Use whatever method you are accustomed to.
+
+== Backup the Database
+
+You can't just copy a database, but must use the database tools to make a correct database dump.
+
+Before backing up the database, set your ownCloud instance into maintenance mode:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} maintenance:mode --on
+----
+
+NOTE: This guide uses a backup file name like `owncloud-dbbackup_<timestamp>.bak`.
 
 === MySQL/MariaDB
 
-MySQL or MariaDB, which is a drop-in MySQL replacement, are the
-recommended database engines. To backup MySQL/MariaDB:
+Depending on the database version and the setup, username and password may not be necessary. The general command to back up MySQL/MariaDB looks like this:
 
 [source,console]
 ----
-mysqldump --single-transaction -h [server] -u [username] -p [password] [db_name] > owncloud-dbbackup_`date +"%Y%m%d"`.bak
+sudo mysqldump --single-transaction -h [server] \
+ -u [username] -p [password] \
+ [db_name] > owncloud-dbbackup_`date +"%Y%m%d"`.bak
 ----
 
-Example:
+Example, replace username and password according your setup:
 
 [source,console]
 ----
-mysqldump --single-transaction -h localhost -u username -p password owncloud > owncloud-dbbackup_`date +"%Y%m%d"`.bak
+sudo mysqldump --single-transaction -h localhost \
+ -u username -p password \
+ owncloud > owncloud-dbbackup_`date +"%Y%m%d"`.bak
 ----
 
 === SQLite
@@ -77,80 +102,35 @@ sqlite3 data/owncloud.db .dump > owncloud-dbbackup_`date +"%Y%m%d"`.bak
 
 [source,postgresql]
 ----
-PGPASSWORD="password" pg_dump [db_name] -h [server] -U [username] -f owncloud-dbbackup_`date +"%Y%m%d"`.bak
+PGPASSWORD="password" pg_dump [db_name] \
+ -h [server] -U [username] \
+ -f owncloud-dbbackup_`date +"%Y%m%d"`.bak
 ----
 
-== Restoring Files from Backup When Encryption Is Enabled
+== Backup Cron Jobs
 
-If you need to restore files from a backup during which encryption was enabled, proceed as follows with caution.
+Use this if you want to protect against an accidental deletion of cron entries, plan to restore to a different server like a physical migration or you need to set up a server from scratch.
 
-WARNING: This is *not officially supported*. ownCloud officially supports either restoring the full backup or restoring nothing — not restoring individual parts of it.
+[source,console,subs="attributes+"]
+----
+sudo crontab -u www-data -l > www-data_crontab.bak
+----
 
-* Restore the file from backup.
-* Restore the file's encryption keys from your backup.
-* Run `occ files:scan`, which makes the scanner find it.
+== Final Tasks
 
-[NOTE]
-====
-In the DB it will:
+=== Reactivate Your Instance
 
-- Have the "size" set to the encrypted size, which is wrong (and bigger).
-- The "encrypted" flag will be set to 0.
-====
+Perform the following tasks to reactivate your ownCloud instance:
 
-* Retrieve the encrypted flag value
-* Update the encrypted flag.
+.Bring back ownCloud into normal operation mode
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} maintenance:mode --off
+----
 
-NOTE: There's no need to update the encrypted flag for files in either `files_versions` or `files_trashbin`
-because these aren't scanned or found by `occ files:scan`.
-
-* Download the file once as the user; the file's size will be corrected automatically.
-
-This process might not be suitable across all environments.
-If it's not suitable for yours, you might need to run an OCC command that does the scanning.
-
-=== Retrieve the Encrypted Flag Value
-
-1. In the backup database, retrieve the `numeric_id` value for https://github.com/owncloud/core/wiki/Storage-IDs[the storage]
-   where the file was located from the `oc_storages` table and store the value
-   for later reference.
-   For example, if you have the following in your `oc_storages` table, the
-   `numeric_id` you should use is `3` if you need to restore a file for `user1`.
-
-   +--------------------------------+------------+-----------+--------------+
-   | id                             | numeric_id | available | last_checked |
-   +--------------------------------+------------+-----------+--------------+
-   | home::admin                    |          1 |         1 |         NULL |
-   | local::/var/www/owncloud/data/ |          2 |         1 |         NULL |
-   | home::user1                    |          3 |         1 |         NULL |
-   +--------------------------------+------------+-----------+--------------+
-
-2. In the live database instance, find the `fileid` of the file to restore by
-   running the query below, substituting the placeholders for the retrieved
-   values, and store the value for later reference.
-
-   SELECT fileid
-   FROM oc_filecache
-   WHERE path = 'path/to/the/file/to/restore'
-     AND storage = <numeric_id>
-
-3. Retrieve the backup, which includes the data folder and database.
-
-4. Retrieve the required file from your backup and copy it to the real instance.
-
-5. In the backup database, retrieve the file's `encrypted` value by running
-   the query below and store the value for later reference.
-   The example query assumes the storage was the same and the file was in the same location.
-   If not, you will need to track down where the file was before.
-
-   SELECT encrypted
-   FROM oc_filecache
-   WHERE path = 'path/to/the/file/to/restore'
-     AND storage = <numeric_id>
-
-6. Update the live database instance with retrieved information, by running the
-   following query, substituting the placeholders for the retrieved values:
-
-   UPDATE oc_filecache
-     SET encrypted = <encrypted>
-     WHERE fileid = <fileid>.
+.Enable browser access
+Start your web server, or alternatively enable the virtual host serving ownCloud:
+[source,console]
+----
+sudo service apache2 start
+----
