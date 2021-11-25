@@ -34,15 +34,7 @@ xref:maintenance/backup_and_restore/backup.adoc[Backing up ownCloud] guide.
 You must not skip minor releases of MariaDB when upgrading like from 10.3 -> 10.5, you have to upgrade to each minor version in between step by step.
 ====
 +
-Have a backup of you database to rollback in case of issues.
-
-. Prevent browser access +
-Depending on your setup, prevent accessing users your ownCloud instance like:
-+
-[source,console,subs="attributes+"]
-----
-sudo service apache2 stop
-----
+Have a backup of your database to rollback in case of issues.
 
 === Upgrade Steps
 
@@ -51,6 +43,16 @@ sudo service apache2 stop
 [source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} maintenance:mode --on
+----
+
+. Prevent browser access +
++
+Stop your webserver to prevent users trying to access ownCloud via the web. As an alternative, you can stop serving the virtual host for ownCloud.
++
+[source,console]
+----
+# Stop the web server
+sudo service apache2 stop
 ----
 
 . Run an occ command to prepare the database for the upgrade
@@ -72,9 +74,9 @@ Follow the respective {upgrade-mariadb-url}[Upgrading MariaDB] guide.
 ----
 
 . Enable browser access +
-Depending on your setup, re-enable accessing users your ownCloud instance like:
+Start your web server, or alternatively re-enable the virtual host serving ownCloud:
 +
-[source,console,subs="attributes+"]
+[source,console]
 ----
 sudo service apache2 start
 ----
