@@ -6,13 +6,13 @@ maintenance/backup.adoc
 
 == Introduction
 
-Depending how the ownCloud instance has been installed, you may need slightly different steps to do a backup. You may also use diffrent methods as the data directory can be huge. This document is intended as a guideline, but the way you implement it depends on your setup.
+Depending on how the ownCloud instance has been installed, you may need slightly different steps to do a backup. You may also use different methods as the data directory can be huge. This document is intended as a guideline, but the way you implement it depends on your setup.
 
-In any case you need the following components to be backed up:
+In any case, you need the following components to be backed up:
 
 .  The `config/` directory.
 .  The `data/` directory. +
-Note that the `data/` directory may not only contain user files, but also keys for encryption.
+Note that the `data/` directory may not only contain user files but also keys for encryption.
 .  The `apps/` directory. +
 Note that this is only necessary if you are not using the `apps-external/` directory and have added own apps or themes.
 .  The `apps-external/` directory. +
@@ -25,7 +25,7 @@ IMPORTANT: If you have customized user home direcories or a custom location for 
 
 == Prerequisites
 
-To ensure a consistent backup, stop your webserver to prevent users trying to access ownCloud via the web. As an alternative, you can stop serving the virtual host for ownCloud:
+To ensure a consistent backup, stop your web server to prevent users from trying to access ownCloud via the web. As an alternative, you can stop serving the virtual host for ownCloud:
 
 [source,console,subs="attributes+"]
 ----
@@ -37,24 +37,24 @@ sudo service apache2 stop
 Tarball Installation::
 . If you have installed ownCloud from a tarball, you can safely backup the entire installation, with the exception of your ownCloud database. Databases cannot be copied, instead you must use the database tools to make a correct backup.
 
-. You may also backup only the directories named above and the database. To avoid issues, you have to use the same tarball version as the ownCloud version when restoring.
+. You can also back up only the directories mentioned above and the database. To avoid issues, you have to use the same tarball version as the ownCloud version when restoring.
 
 Package Installation::
-If you have installed your ownCloud server from our {depr-repo-url}[Open Build Service] packages (or from distro packages, which is deprecated), *do not backup your ownCloud server files*, which are the other files in your `owncloud/` directory such as `core/`, `3rdparty/`, `lib/`, etc. If you restore these files from backup they may not be in sync with the current package versions, will fail the code integrity check and may also cause other errors.
+If you have installed your ownCloud server from our {depr-repo-url}[Open Build Service] packages (or from distro packages, which is deprecated), *do not back up your ownCloud server files*, which are the other files in your `owncloud/` directory such as `core/`, `3rdparty/`, `lib/`, etc. If you restore these files from backup they may not be in sync with the current package versions and in that case will fail the code integrity check and may also cause other errors.
 
 //missing docker...
 //If you are running ownCloud in a docker container, refer to //xref:installation/docker/index.adoc#upgrading-owncloud-on-docker[Upgrading ownCloud on docker].
 
 === Backup Directories
 
-If possible, simply copy the directories from your ownCloud installation to your backup location, for example by running the following command from the owncloud directory. The example copies all directories named above:
+If possible, simply copy the directories from your ownCloud installation to your backup location, for example by running the following command from the owncloud directory. The following example command copies all directories mentioned above:
 
 [source,console]
 ----
 rsync -Aax config data apps apps-external /oc-backupdir/
 ----
 
-You can also backup the full ownCloud directory which eases the restore as you do not need to install ownCloud first.
+You can also back up the full ownCloud directory which eases the restore as you do not need to install ownCloud first.
 
 There are many ways to backup normal files. Use whatever method you are accustomed to.
 
@@ -73,7 +73,7 @@ NOTE: This guide uses a backup file name like `owncloud-dbbackup_<timestamp>.bak
 
 === MySQL/MariaDB
 
-Depending on the database version and the setup, username and password may not be necessary. The general command to backup MySQL/MariaDB looks like:
+Depending on the database version and the setup, username and password may not be necessary. The general command to back up MySQL/MariaDB looks like this:
 
 [source,console]
 ----
@@ -109,7 +109,7 @@ PGPASSWORD="password" pg_dump [db_name] \
 
 == Backup Cron Jobs
 
-Use this if you want to protect against an accidental deletion of cron entries, plan to restore to a different server like a physical migration or you need to resetup a server from scratch.
+Use this if you want to protect against an accidental deletion of cron entries, plan to restore to a different server like a physical migration or you need to set up a server from scratch.
 
 [source,console,subs="attributes+"]
 ----
@@ -120,7 +120,7 @@ sudo crontab -u www-data -l > www-data_crontab.bak
 
 === Reactivate Your Instance
 
-Take the following tasks to reactivate your ownCloud instance:
+Perform the following tasks to reactivate your ownCloud instance:
 
 .Bring back ownCloud into normal operation mode
 [source,console,subs="attributes+"]
@@ -129,7 +129,7 @@ Take the following tasks to reactivate your ownCloud instance:
 ----
 
 .Enable browser access
-Start your web server, or alternatively re-enable the virtual host serving ownCloud:
+Start your web server, or alternatively enable the virtual host serving ownCloud:
 [source,console]
 ----
 sudo service apache2 start
