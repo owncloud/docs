@@ -1,7 +1,6 @@
 = DAV Commands
 
-A set of commands to create address books, calendars, and to migrate
-address books:
+A set of commands to create and sync address books and calendars:
 
 [source,console]
 ----
@@ -15,11 +14,36 @@ dav
 
 NOTE: These commands are not available in xref:maintenance-commands[single-user (maintenance) mode].
 
-`dav:cleanup-chunks` cleans up outdated chunks (uploaded files) more than a certain number of days old. 
-By default, the command cleans up chunks more than 2 days old. 
-However, by supplying the number of days to the command, the range can be increased. 
-For example, in the example below, chunks older than 10 days will be removed.
+== Cleanup Chunks
 
+`dav:cleanup-chunks` cleans up outdated chunks (uploaded files) more than a certain number of days old. By default, the command cleans up chunks more than 2 days old. However, by supplying the number of days to the command, the range can be increased.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} dav:cleanup-chunks [options] [--] [<minimum-age-in-days>]
+----
+
+=== Arguments
+
+[width="100%",cols="25%,70%",]
+|====
+| `minimum-age-in-days`
+| Minimum age of uploads to cleanup (in days - minimum 2 days - maximum 100) [default: 2]
+|====
+
+=== Options
+
+[width="100%",cols="25%,70%",]
+|====
+| `-l` +
+`--local`
+| Only delete chunks that exist on the local filesystem. This applies to setups with multiple servers connected to the same database and chunk folder is not shared among them.
+|====
+
+=== Example
+
+In the example below, chunks older than 10 days will be removed.
+ 
 [source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} dav:cleanup-chunks 10
@@ -30,40 +54,90 @@ Cleaning chunks for admin
    0 [>---------------------------]
 ----
 
-The syntax for `dav:create-addressbook` and `dav:create-calendar` is `dav:create-addressbook [user] [name]`. 
-This example creates the addressbook `mollybook` for the user molly:
+== Create Addressbook
+
+Create a dav address book.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} dav:create-addressbook <user> <name>
+----
+
+=== Arguments
+
+[width="100%",cols="25%,70%",]
+|====
+| `user`
+| User for whom the address book will be created
+
+| `name`
+| Name of the addressbook
+|====
+ 
+=== Example
+
+This example creates the address book `mollybook` for the user molly:
 
 [source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} dav:create-addressbook molly mollybook
 ----
 
-This example creates a new calendar for molly:
+Molly will immediately see her address book.
+
+== Create Calendar
+
+Create a dav calendar.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} dav:create-calendar <user> <name>
+----
+
+=== Arguments
+
+[width="100%",cols="25%,70%",]
+|====
+| `user`
+| User for whom the calendar will be created
+
+| `name`
+| Name of the calendar
+|====
+ 
+=== Example
+
+This example creates a new calendar `mollycal` for user molly:
 
 [source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} dav:create-calendar molly mollycal
 ----
 
-Molly will immediately see these on her Calendar and Contacts pages.
-Your existing calendars and contacts should migrate automatically when you upgrade. 
-If something goes wrong you can try a manual migration.
-First delete any partially-migrated calendars or address books. 
-Then run this command to migrate user's contacts:
+Molly will immediately see her calendar.
+
+// NOTE: dav:migrate-addressbooks has been removed with: https://github.com/owncloud/core/pull/23976
+
+
+== Sync Birthday Calendar
+
+Synchronizes the birthday calendar. It adds all birthdays to your calendar from address books shared with you.
 
 [source,console,subs="attributes+"]
 ----
-{occ-command-example-prefix} dav:migrate-addressbooks [user]
+{occ-command-example-prefix} dav:sync-birthday-calendar [<user>]
 ----
 
-Run this command to migrate calendars:
+=== Arguments
 
-[source,console,subs="attributes+"]
-----
-{occ-command-example-prefix} dav:migrate-calendars [user]
-----
+[width="100%",cols="25%,70%",]
+|====
+| `user`
+| User for whom the birthday calendar will be synchronized
+|====
+ 
+=== Example
 
-`dav:sync-birthday-calendar` adds all birthdays to your calendar from address books shared with you. 
 This example syncs to your calendar from user `bernie`:
 
 [source,console,subs="attributes+"]
@@ -71,10 +145,11 @@ This example syncs to your calendar from user `bernie`:
 {occ-command-example-prefix} dav:sync-birthday-calendar bernie
 ----
 
-`dav:sync-system-addressbook` synchronizes all users to the system addressbook.
+== Sync System Addressbook
+
+Synchronizes all users to the system addressbook.
 
 [source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} dav:sync-system-addressbook
 ----
-
