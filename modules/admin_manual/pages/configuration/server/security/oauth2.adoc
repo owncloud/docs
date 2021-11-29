@@ -1,4 +1,4 @@
-= OAuth2
+= Open Authentication (OAuth2)
 :toc: right
 :mod_headers-url: http://httpd.apache.org/docs/current/mod/mod_headers.html
 :mod_rewrite-url: http://httpd.apache.org/docs/current/mod/mod_rewrite.html
@@ -13,9 +13,9 @@
 :official-access-token-response-rfc-url: https://tools.ietf.org/html/rfc6749#section-4.1.4
 :stackoverflow-url: https://stackoverflow.com/a/16341985/222011
 
-== Inroduction
+== Introduction
 
-OAuth2 is summarized in https://tools.ietf.org/html/rfc6749#section-4.1.1[RFC 6749] as follows:
+OAuth2 (OpenAuthentication) is summarized in https://tools.ietf.org/html/rfc6749#section-4.1.1[RFC 6749] as follows:
 
 [quote,OAuth2 Overview]
 The OAuth 2.0 authorization framework enables a third-party application to obtain limited access to an HTTP service, either on behalf of a resource owner by orchestrating an approval interaction between the resource owner and the HTTP service, or by allowing the third-party application to obtain access on its own behalf.
@@ -67,24 +67,26 @@ OAuth2 support is available in ownCloud via the {oc-marketplace-url}/apps/oauth2
 To use the OAuth2 app, your ownCloud installation will need to meet the following dependencies:
 
 * *Apache:* If you are hosting your ownCloud installation using the Apache web server, then {mod_rewrite-url}[mod_rewrite] and {mod_headers-url}[mod_headers] modules must be installed and enabled.
-* *Redis:* You will need to have a Redis server available, ideally the latest, stable, version.
+* *Redis:* You will need to have a Redis server available, ideally the latest, stable version.
 * *PHP-Redis:* You PHP installation must have the php-redis extension (>= 4.2) installed and enabled.
 
 See the xref:installation/manual_installation/manual_installation.adoc[Detailed Installation Guide] for how to install Redis and PHP-Redis.
 
 === Installation
 
-To install the application, place the content of the OAuth2 app inside your installation's `app` directory, or use the Market application.
+To install the application, download the {oc-marketplace-url}/apps/oauth2[OAuth2 app] from the marketplace to the ownCloud `app` directory or use the Market app.
 
 === Basic Configuration
 
-To enable token-only based app or client logins in `config/config.php` set `token_auth_enforced` to `true`, see xref:configuration/server/config_sample_php_parameters.adoc[config sample file] for more details.
+To enable token-only based app or client logins in `config/config.php`, set `token_auth_enforced` to `true`. See xref:configuration/server/config_sample_php_parameters.adoc[config sample file] for more details.
+
+TIP: The OAuth2 app comes with a set of ´occ´ commands to configure clients. For more information on usage of ´occ´ for OAuth2, see section xref:server/occ_commands/app_commands/_oauth2_commands.adoc[OAuth2 Commands].
 
 ==== Trusting Clients
 
 Since version 0.5.0 of the OAuth2 app, you can mark clients as trusted. This will have the effect that the consent step in the authentication process will be skipped for this client.
 
-CAUTION: Only mark confidential clients and web apps under your control as trusted. Apps which can not keep the `Client Identifier (ID)` secret or have `redirect URIs` which can not be fully controlled should not be marked as trusted. +
+CAUTION: Only mark trustworthy clients and web apps under your control as trusted. Apps which cannot keep the `Client Identifier (ID)` secret or have `redirect URIs` which can not be fully controlled should not be marked as trusted. +
 Refer to the {official-oauth2-rfc-url}[official OAuth2 RFC sections 10.1 and 10.2] for further information about the risks.
 
 image:configuration/server/security/oauth2_configuration.png[image]
@@ -96,11 +98,11 @@ If you want to mark an existing client as trusted, you have to:
 * And finally add it again with the xref:configuration/server/occ_command.adoc#oauth2[occ oauth2 add comand] with the trusted setting enabled. +
 When deleting in the web UI, you might need to scroll horizontally to see the delete buttons. Follow this link regarding xref:configuration/user/oidc/oidc.adoc#client-ids-secrets-and-redirect-uris[Client IDs, Secrets and Redirect URIs] for ownCloud clients.
 
-=== Restricting Usage
+==== Restricting Usage
 
 - Enterprise installations can limit the access of authorized clients, preventing unwanted clients from connecting.
 
-=== Endpoints
+==== Endpoints
 
 [width="60%",cols="30%,70%",options="header",]
 |==========================
@@ -118,7 +120,7 @@ When deleting in the web UI, you might need to scroll horizontally to see the de
 
 ==== Client Registration
 
-The clients first have to be registered in the web-UI menu:Settings[Admin > Authentication]. You need to specify a name for the client (the name is unrelated to the OAuth 2.0 protocol and is just used to recognize it later) and the redirection URI. A _client identifier_ and _client secret_ are generated when adding a new client, which both consist of 64 characters.
+Clients first have to be registered in the web-UI menu:Settings[Admin > Authentication]. You need to specify a name for the client (the name is unrelated to the OAuth 2.0 protocol and is just used to recognize it later) and the redirection URI. A _client identifier_ and _client secret_ are generated when adding a new client, which both consist of 64 characters.
 
 Refer to the
 {official-client-registration-rfc-url}[official client registration RFC from the IETF]
@@ -223,6 +225,7 @@ check out this {stackoverflow-url}[answer on StackOverflow].
 - Since the app does not handle user passwords, only master key encryption works (similar to the {shibboleth-app-url}[Shibboleth app]).
 - Clients cannot migrate accounts from Basic Authorization to OAuth2, if they are currently using the `user_ldap` backend.
 - It is not possible to explicitly end user sessions when using OAuth2. Have a read through {oauth2-user-auth-url}[User Authentication with OAuth 2.0] to find out more.
+- Do not attempt to log in with a disabled user.
 
 == Further Reading
 
