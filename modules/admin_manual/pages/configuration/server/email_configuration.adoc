@@ -12,29 +12,21 @@ ownCloud is capable of sending emails for a range of reasons. These include:
 * Changes in files
 * Activity notifications
 
-To make use of them, users need to configure which notifications they
-want to receive. They can do this on their Personal pages.
+To make use of them, users need to configure which notifications they want to receive. They can do this on their Personal pages.
 
-NOTE: To be able to send emails, a functioning mail server must be available, 
-whether locally in your network, or remotely.
+NOTE: To be able to send emails, a functioning mail server must be available, whether locally in your network, or remotely.
 
-== Configuring an SMTP Server
+== The Graphical Email Configuration Wizard
 
-To configure ownCloud to interact with an SMTP server, you can either
-update `config/config.php` by hand, or use the graphical Email
-Configuration Wizard, which updates `config/config.php` for you.
+The wizard supports two mail server types: _SMTP_ and _PHP_. Use SMTP for a remote email server, and PHP when your mail server is on the same machine as ownCloud.
 
-=== The Graphical Email Configuration Wizard
+In most cases the `smtp` option is best, because it removes the extra step of passing through PHP, and you can control all of your mail server options in one place, in your ownCloud's email server configuration.
 
-The wizard supports three mail server types: _SMTP_, _PHP_, and
-_Sendmail_. Use SMTP for a remote email server, and either PHP or
-Sendmail when your mail server is on the same machine as ownCloud.
+=== Configuring an SMTP Server
 
-NOTE: The Sendmail option refers to the Sendmail SMTP server, and any drop-in Sendmail replacement such as 
-Postfix, Exim, or Courier. All of these include a `sendmail` binary, and are freely-interchangeable.
+To configure ownCloud to interact with an SMTP server, you can either update `config/config.php` by hand, or use the xref:the-graphical-email-configuration-wizard[Graphical Email Configuration Wizard], which updates `config/config.php` for you.
 
-You need the following information from your mail server administrator
-to connect ownCloud to a remote SMTP server:
+You need the following information from your email server administrator to connect ownCloud to a remote SMTP server:
 
 * Encryption type: `None`, `SSL/TLS` or `STARTTLS`.
 * The From address you want your outgoing ownCloud mails to use.
@@ -43,11 +35,9 @@ to connect ownCloud to a remote SMTP server:
 * The server’s IP address or fully-qualified domain name (FQDN).
 * Login credentials, if required.
 
-image:smtp-config-smtp.png[image]
+image:configuration/server/email-configuration/smtp-config-smtp.png[image]
 
-Your changes are saved immediately, and you can click the btn:[Send Email]
-button to test your configuration. This sends a test message to the
-email address you configured on your Personal page. The test message says:
+Your changes are saved immediately, and you can click the btn:[Send Email] button to test your configuration. This sends a test message to the email address you configured on your Personal page. The test message says:
 
 ----
 If you received this email, the settings seem to be correct.
@@ -57,275 +47,165 @@ ownCloud
 web services under your control
 ----
 
-==== Configuring PHP and Sendmail
+=== Configuring PHP for sending Emails
 
-Configuring PHP or Sendmail requires only that you select one of them,
-and then enter your desired return address.
+To configure PHP select it and enter your desired return address.
 
-image:smtp-config-php-sendmail.png[image]
+image:configuration/server/email-configuration/smtp-config-php.png[image]
 
-How do you decide which one to use? PHP mode uses your local `sendmail`
-binary. Use this if you want to use `php.ini` to control some of your
-mail server functions, such as setting _paths_, _headers_, or passing
-extra command options to the `sendmail` binary. These vary according to
-which server you are using, so consult your server’s documentation to
-see what your options are.
+NOTE: PHP mode uses your local `sendmail` binary. and any drop-in Sendmail replacement such as Postfix, Exim, or Courier. All of these include a `sendmail` binary, and are freely-interchangeable. Use this if you want to use `php.ini` to control some of your mail server functions, such as setting _paths_, _headers_, or passing extra command options to the `sendmail` binary. These vary according to which server you are using, so consult your server’s documentation to see what your options are.
 
-In most cases the `smtp` option is best, because it removes the extra
-step of passing through PHP, and you can control all of your mail server
-options in one place, in your mail server configuration.
+== Setting Mail Server Parameters via config.php
 
-=== Setting Mail Server Parameters in config.php
-
-If you prefer, you may set your mail server parameters in
-`config/config.php`. 
+If you prefer, you may set your email server parameters directly in `config/config.php`. 
 
 === Supported SMTP sending modes 
 
 * xref:configuration/server/email_configuration.adoc#smtp[SMTP]
 * xref:configuration/server/email_configuration.adoc#php-mail[PHP Mail]
-* xref:configuration/server/email_configuration.adoc#sendmail[Sendmail]
-* xref:configuration/server/email_configuration.adoc#qmail[Qmail]
 
-IMPORTANT: Compatibility of _sending modes_ might depend on the installation environment. 
-In case of problems with a _sending mode_, it is recommended to try other mode configurations.
+IMPORTANT: Compatibility of _sending modes_ might depend on the installation environment. In case of problems with a _sending mode_, it is recommended to try other mode configurations.
 
 ==== SMTP
 
-If you want to send email using a local or remote SMTP server it is
-necessary to enter the name or IP address of the server, optionally
-followed by a colon separated port number, e.g. *:425*. If this value is
-not given the default port `25/tcp` will be used unless you change that
-by modifying the *mail_smtpport* parameter. Multiple servers can be
-entered, separated by semicolons:
+If you want to send email using a local or remote SMTP server it is necessary to enter the name or IP address of the server, optionally followed by a colon and port number, e.g. *:425*. If this value is not given the default port `25/tcp` will be used unless you change that by modifying the *mail_smtpport* parameter. Multiple servers can be entered, separated by semicolons:
 
 [source,php]
 ----
-<?php
-
-"mail_smtpmode"     => "smtp",
-"mail_smtphost"     => "smtp-1.server.dom;smtp-2.server.dom:425",
-"mail_smtpport"     => 25,
+'mail_smtpmode'     => 'smtp',
+'mail_smtphost'     => 'smtp-1.server.dom;smtp-2.server.dom:425',
+'mail_smtpport'     => 25,
 ----
 
 Or:
 
 [source,php]
 ----
-<?php
-
-"mail_smtpmode"     => "smtp",
-"mail_smtphost"     => "smtp.server.dom",
-"mail_smtpport"     => 425,
+'mail_smtpmode'     => 'smtp',
+'mail_smtphost'     => 'smtp.server.dom',
+'mail_smtpport'     => 425,
 ----
 
-If a malware or SPAM scanner is running on the SMTP server it might be
-necessary that you increase the SMTP timeout to e.g., 30s:
+If a malware or SPAM scanner is running on the SMTP server it might be necessary that you increase the SMTP timeout to e.g., 30s:
 
 [source,php]
 ----
-<?php
-
-"mail_smtptimeout"  => 30,
+'mail_smtptimeout'  => 30,
 ----
 
-If the SMTP server accepts insecure connections, the default setting can
-be used:
+If the SMTP server accepts insecure connections, the default setting can be used:
 
 [source,php]
 ----
-<?php
-
-"mail_smtpsecure"   => '',
+'mail_smtpsecure'   => '',
 ----
 
-If the SMTP server only accepts secure connections you can choose
-between the following two variants:
+If the SMTP server only accepts secure connections you can choose between the following two variants:
 
 SSL/TLS
 +++++++
 
-A secure connection will be initiated using SSL/TLS via SMTPS on the
-default port `465/tcp`:
+A secure connection will be initiated using SSL/TLS via SMTPS on the default port `465/tcp`:
 
 [source,php]
 ----
-<?php
-
-"mail_smtphost"     => "smtp.server.dom:465",
-"mail_smtpsecure"   => 'ssl',
+'mail_smtphost'     => 'smtp.server.dom:465',
+'mail_smtpsecure'   => 'ssl',
 ----
 
 STARTTLS
 ++++++++
 
-A secure connection will be initiated using STARTTLS via SMTP on the
-default port `25/tcp`:
+A secure connection will be initiated using STARTTLS via SMTP on the default port `25/tcp`:
 
 [source,php]
 ----
-<?php
-
-"mail_smtphost"     => "smtp.server.dom",
-"mail_smtpsecure"   => 'tls',
+'mail_smtphost'     => 'smtp.server.dom',
+'mail_smtpsecure'   => 'tls',
 ----
 
 An alternative is the port `587/tcp` (recommended):
 
 [source,php]
 ----
-<?php
-
-"mail_smtphost"     => "smtp.server.dom:587",
-"mail_smtpsecure"   => 'tls',
+'mail_smtphost'     => 'smtp.server.dom:587',
+'mail_smtpsecure'   => 'tls',
 ----
 
 Authentication
 ++++++++++++++
 
-And finally it is necessary to configure if the SMTP server requires
-authentication, if not, the default values can be taken as is.
+And finally it is necessary to configure if the SMTP server requires authentication, if not, the default values can be taken as is.
 
 [source,php]
 ----
-<?php
-
-"mail_smtpauth"     => false,
-"mail_smtpname"     => "",
-"mail_smtppassword" => "",
+'mail_smtpauth'     => false,
+'mail_smtpname'     => '',
+'mail_smtppassword' => '',
 ----
 
-If SMTP authentication is required you have to set the required username
-and password and can optionally choose between the authentication types
-*LOGIN* (default) or *PLAIN*.
+If SMTP authentication is required you have to set the required username and password and can optionally choose between the authentication types *LOGIN* (default) or *PLAIN*.
 
 [source,php]
 ----
-<?php
-
-"mail_smtpauth"     => true,
-"mail_smtpauthtype" => "LOGIN",
-"mail_smtpname"     => "username",
-"mail_smtppassword" => "password",
+'mail_smtpauth'     => true,
+'mail_smtpauthtype' => 'LOGIN',
+'mail_smtpname'     => 'username',
+'mail_smtppassword' => 'password',
 ----
 
 ==== PHP Mail
 
-If you want to use PHP mail it is necessary to have an installed and
-working email system on your server. Which program in detail is used to
-send email is defined by the configuration settings in the *php.ini*
-file. On *nix systems this will most likely be Sendmail. ownCloud should
-be able to send email out of the box.
+If you want to use PHP mail it is necessary to have an installed and working email system on your server. Which program in detail is used to send email is defined by the configuration settings in the *php.ini* file. On *nix systems this will most likely be Sendmail. ownCloud should be able to send email out of the box.
 
 [source,php]
 ----
-<?php
-
-"mail_smtpmode"     => "php",
-"mail_smtphost"     => "127.0.0.1",
-"mail_smtpport"     => 25,
-"mail_smtptimeout"  => 10,
-"mail_smtpsecure"   => "",
-"mail_smtpauth"     => false,
-"mail_smtpauthtype" => "LOGIN",
-"mail_smtpname"     => "",
-"mail_smtppassword" => "",
+'mail_smtpmode'     => 'php',
+'mail_smtphost'     => '127.0.0.1',
+'mail_smtpport'     => 25,
+'mail_smtptimeout'  => 10,
+'mail_smtpsecure'   => '',
+'mail_smtpauth'     => false,
+'mail_smtpauthtype' => 'LOGIN',
+'mail_smtpname'     => '',
+'mail_smtppassword' => '',
 ----
 
-==== Sendmail
+== Send a Test Email
 
-If you want to use the well known Sendmail program to send email, it is
-necessary to have an installed and working email system on your *nix
-server. The Sendmail binary (`/usr/sbin/sendmail`) is usually part of
-that system. ownCloud should be able to send email out of the box.
+Regardless of how you have configured ownCloud to interact with an email server, to test your email configuration, save your email address in your personal settings and then use the *Send email* button in the _Email Server_ section of the Admin settings page.
+
+== Using Self-Signed Certificates
+
+When using self-signed certificates on the remote SMTP server, the certificate must be imported into ownCloud. Please refer to xref:configuration/server/import_ssl_cert.adoc[Importing System-wide and Personal SSL Certificates] for more information.
+
+== Troubleshooting
+
+If you are unable to send email, try turning on debugging. Do this by enabling the `mail_smtpdebug parameter` in `config/config.php`.
 
 [source,php]
 ----
-<?php
-
-"mail_smtpmode"     => "sendmail",
-"mail_smtphost"     => "127.0.0.1",
-"mail_smtpport"     => 25,
-"mail_smtptimeout"  => 10,
-"mail_smtpsecure"   => "",
-"mail_smtpauth"     => false,
-"mail_smtpauthtype" => "LOGIN",
-"mail_smtpname"     => "",
-"mail_smtppassword" => "",
-----
-
-==== Qmail
-
-If you want to use the qmail program to send email, it is necessary to
-have an installed and working qmail email system on your server. The
-Sendmail binary (*/var/qmail/bin/sendmail*) will then be used to send
-email. ownCloud should be able to send email out of the box.
-
-[source,php]
-----
-<?php
-
-"mail_smtpmode"     => "qmail",
-"mail_smtphost"     => "127.0.0.1",
-"mail_smtpport"     => 25,
-"mail_smtptimeout"  => 10,
-"mail_smtpsecure"   => "",
-"mail_smtpauth"     => false,
-"mail_smtpauthtype" => "LOGIN",
-"mail_smtpname"     => "",
-"mail_smtppassword" => "",
-----
-
-=== Send a Test Email
-
-Regardless of how you have configured ownCloud to interact with an email
-server, to test your email configuration, save your email address in
-your personal settings and then use the *Send email* button in the
-_Email Server_ section of the Admin settings page.
-
-=== Using Self-Signed Certificates
-
-When using self-signed certificates on the remote SMTP server the
-certificate must be imported into ownCloud. Please refer to
-import_ssl_cert for more information.
-
-=== Troubleshooting
-
-If you are unable to send email, try turning on debugging. Do this by
-enabling the `mail_smtpdebug parameter` in `config/config.php`.
-
-[source,php]
-----
-<?php
-
-"mail_smtpdebug" => true;
+'mail_smtpdebug' => true;
 ----
 
 NOTE: Immediately after pressing the *Send email* button, as described before, several *SMTP -> get_lines(): …* messages appear on the screen. This is expected behavior and can be ignored.
 
-==== Why is my web domain different from my mail domain?
+=== Why is my web domain different from my mail domain?
 
-The default domain name used for the sender address is the hostname
-where your ownCloud installation is served. If you have a different mail
-domain name you can override this behavior by setting the following
-configuration parameter:
+The default domain name used for the sender address is the hostname where your ownCloud installation is served. If you have a different mail domain name you can override this behavior by setting the following configuration parameter:
 
 [source,php]
 ----
-<?php
-
-"mail_domain" => "example.com",
+'mail_domain' => 'example.com',
 ----
 
-This setting results in every email sent by ownCloud (for example, the
-password reset email) having the domain part of the sender address
-appear as follows
+This setting results in every email sent by ownCloud (for example, the password reset email) having the domain part of the sender address appear as follows
 
 ----
 no-reply@example.com
 ----
 
-==== How can I find out if an SMTP server is reachable?
+=== How can I find out if an SMTP server is reachable?
 
 Use the ping command to check the server availability
 
@@ -338,13 +218,9 @@ PING smtp.server.dom (ip-address) 56(84) bytes of data.
 64 bytes from your-server.local.lan (192.168.1.10): icmp_req=1 ttl=64 time=3.64ms
 ----
 
-==== How can I find out if the SMTP server is listening on a specific TCP port?
+=== How can I find out if the SMTP server is listening on a specific TCP port?
 
-The best way to get mail server information is to ask your mail server
-admin. If you are the mail server admin, or need information in a hurry,
-you can use the `netstat` command. This example shows all active servers
-on your system, and the ports they are listening on. The SMTP server is
-listening on localhost port 25.
+The best way to get mail server information is to ask your mail server admin. If you are the mail server admin, or need information in a hurry, you can use the `netstat` command. This example shows all active servers on your system, and the ports they are listening on. The SMTP server is listening on localhost port 25.
 
 ----
 # netstat -pant
@@ -366,16 +242,14 @@ tcp    0      0    127.0.0.1:{std-port-mysql}  0.0.0.0:*        LISTEN   1524/my
 * 993/tcp/udp is encrypted imaps
 * 995/tcp/udp is encrypted pop3s
 
-==== How can I determine if the SMTP server supports SMTPS?
+=== How can I determine if the SMTP server supports SMTPS?
 
 A good indication that the SMTP server supports SMTPS is that it is
 listening on port *465*.
 
-==== How can I determine what authorization and encryption protocols the mail server supports?
+=== How can I determine what authorization and encryption protocols the mail server supports?
 
-SMTP servers usually announce the availability of STARTTLS immediately
-after a connection has been established. You can easily check this using
-the `telnet` command.
+SMTP servers usually announce the availability of STARTTLS immediately after a connection has been established. You can easily check this using the `telnet` command.
 
 NOTE: You must enter the marked lines to obtain the information displayed.
 
@@ -401,72 +275,77 @@ QUIT                                          # <<< enter this command
 Connection closed by foreign host.
 ----
 
-=== Enabling Debug Mode
+== Enabling Debug Mode
 
-If you are unable to send email, it might be useful to activate further
-debug messages by enabling the `mail_smtpdebug` parameter:
+If you are unable to send email, it might be useful to activate further debug messages by enabling the `mail_smtpdebug` parameter:
 
 [source,php]
 ----
-<?php
-
-"mail_smtpdebug" => true,
+'mail_smtpdebug' => true,
 ----
 
-NOTE: Immediately after pressing the btn:[Send email] button, as described before,
-several *SMTP -> get_lines(): …* messages appear on the screen.
-This is expected behavior and can be ignored.
+NOTE: Immediately after pressing the btn:[Send email] button, as described before, several *SMTP -> get_lines(): …* messages appear on the screen. This is expected behavior and can be ignored.
 
 == Using Email Templates
 
-Most emails sent from ownCloud are based on editable email templates,
-which are a mixture of PHP and HTML. The currently available templates
-are:
+Most emails sent from ownCloud are based on editable email templates, which are a mixture of PHP and HTML. The currently available templates are:
 
-[cols=",,,",options="header",]
+[cols="40%,15%,40%,50%",options="header",]
 |=======================================================================
-| Email | Format | Description | File Location
-| Activity notification mail | plain text | Notification of activities that
-users have | `core/templates/mail.php`
+| Email
+| Format
+| Description
+| File Location
 
-| | | enabled in the Notifications section of |
-
-| | | their Personal pages. |
-
-| Lost password mail | | Password reset email for users who lose
-| `core/templates/lostpassword/email.php`
-
-| | | their passwords. |
-
-| New user email | HTML | | `settings/templates/email.new_user.php`
-
-| | plain text | | `settings/templates/email.new_user_plain_text.php`
-
-| Public link share email | HTML | Notify users of new public link shares.
+| Activity notification mail
+| plain text
+| Notification of activities that users have enabled in the Notifications section of their Personal pages.
 | `core/templates/mail.php`
 
-| | plain text | | `core/templates/altmail.php`
+| Lost password mail
+| HTML
+| Password reset email for users who lose their passwords.
+| `core/templates/lostpassword/email.php`
 
-| New file share email | HTML | Notify users of new file shares.
+| New user email
+| HTML
+|
+| `settings/templates/email.new_user.php`
+
+|
+| plain text
+|
+| `settings/templates/email.new_user_plain_text.php`
+
+| Public link share email
+| HTML
+| Notify users of new public link shares.
+| `core/templates/mail.php`
+
+|
+| plain text
+|
+| `core/templates/altmail.php`
+
+| New file share email
+| HTML
+| Notify users of new file shares.
 | `core/templates/internalmail.php`
 
-| | plain text | | `core/templates/internalaltmail.php`
+|
+| plain text
+|
+| `core/templates/internalaltmail.php`
 |=======================================================================
 
-In addition to providing the email templates, this feature enables you
-to apply any pre-configured themes to the email. To modify an email
-template to users:
+In addition to providing the email templates, this feature enables you to apply any pre-configured themes to the email. To modify an email template to users:
 
 1.  Access the Admin page.
 2.  Scroll to the Mail templates section.
 3.  Select a template from the drop-down menu.
 4.  Make any desired modifications to the template.
 
-The templates are written in PHP and HTML, and are already loaded with
-the relevant variables such as _username_, _share links_, and
-_filenames_. You can, if you are careful, edit these — even without
-knowing PHP or HTML. Don’t touch any of the code, but it’s OK to edit
-the text portions of the messages.
+The templates are written in PHP and HTML, and are already loaded with the relevant variables such as _username_, _share links_, and _filenames_. You can, if you are careful, edit these — even without knowing PHP or HTML. Don’t touch any of the code, but it’s OK to edit the text portions of the messages.
 
 For example, this the lost password mail template:
 
@@ -481,18 +360,13 @@ echo str_replace(
 );
 ----
 
-You could change the text portion of the template,
-`Use the following link to reset your password:` to say something else,
-such as:
+You could change the text portion of the template, `Use the following link to reset your password:` to say something else, such as:
 
 ----
 Click the following link to reset your password.
 If you did not ask for a password reset, ignore this message.
 ----
 
-Again, be very careful to change nothing but the message text, because
-the tiniest coding error will break the template.
+Again, be very careful to change nothing but the message text, because the tiniest coding error will break the template.
 
-NOTE: You can edit the templates directly in the template text box, or you can copy and paste
-them to a text editor for modification and then copy and paste them back to the template text box
-for use when you are done.
+NOTE: You can edit the templates directly in the template text box, or you can copy and paste them to a text editor for modification and then copy and paste them back to the template text box for use when you are done.
