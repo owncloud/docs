@@ -6,68 +6,94 @@
 
 == Introduction
 
-Themes can be used to customize the look and feel of any aspect of an
-ownCloud installation. They can override the default _JavaScript_,
-_CSS_, _image_, and _template_ files, as well as the _user interface
-translations_ with custom versions.
-They can also affect both the web front-end and the ownCloud Desktop client.
-However, this documentation only covers customizing the web front-end, _so far_.
+Themes can be used to customize the look and feel of any aspect of an ownCloud installation. They can override the default _JavaScript_, _CSS_, _image_, and _template_ files, as well as the _user interface translations_ with custom versions. They can also affect both the web front-end and the ownCloud Desktop client. However, this documentation only covers customizing the web front-end, _so far_.
 
-NOTE: Before ownCloud 10, theming was done via the `config.php` entry `'theme' => ''`. 
-This is deprecated in ownCloud 10.
-Users who have this entry in their `config.php` should remove it and use a theme app to customize their ownCloud instance instead.
+NOTE: Before ownCloud 10, theming was done via the `config.php` entry `'theme' => ''`.  This is deprecated in ownCloud 10. Users who have this entry in their `config.php` should remove it and use a theme app to customize their ownCloud instance instead.
 
 == Quick Start
 
-For the impatient, who want to play with themes right away, the following 8 commands get a theme installed quickly. Adjust the names and paths according to your setup. For docker installations use the directory `/var/www/owncloud/custom`.
+For the impatient, who want to play with themes right away, the following commands get a theme installed quickly. Adjust the names and paths according to your setup. For docker installations use the directory `/var/www/owncloud/custom`.
 
+. Install unzip if not available
++
+[source,console]
+----
+sudo apt install unzip
+----
+
+. If it exists, go into your `apps-external` folder, else use `apps`
++
+[source,console]
+----
+cd /var/www/owncloud/apps-external
+----
+
+. Download the theme
+
++
+[source,console]
+----
+wget https://github.com/owncloud/theme-example/archive/master.zip
+----
+
+. Extract the theme
++
+[source,console]
+----
+unzip master.zip
+----
+
+. Remove the zip file
++
+[source,console]
+----
+rm master.zip
+----
+
+. Rename the theme
++
+[source,console]
+----
+mv theme-example-master mynewtheme
+----
+
+. Change the app id in info.xml
++
+[source,console]
+----
+sed -i "s#<id>theme-example<#<id>mynewtheme<#" "mynewtheme/appinfo/info.xml"
+----
+
+. Adjust the permissions
++
+[source,console]
+----
+sudo chown -R www-data: mynewtheme
+----
+
+. Activate your theme
++
 [source,console,subs="attributes+"]
 ----
-# 0 You need unzip
-sudo apt install unzip
-
-# 1. If it exists, go into your `apps-external` folder, else use `apps`
-cd /var/www/owncloud/apps-external
-
-# 2. Download the theme
-wget https://github.com/owncloud/theme-example/archive/master.zip
-
-# 3. Extract the theme
-unzip master.zip
-
-# 4. Rename it
-mv theme-example-master mynewtheme
-
-# 5. Change the app id in the info.xml
-sed -i "s#<id>theme-example<#<id>mynewtheme<#" "mynewtheme/appinfo/info.xml"
-
-# 6. Adjust the permissions
-sudo chown -R www-data. mynewtheme
-
-# 7. Activate your theme
 {occ-command-example-prefix} app:enable mynewtheme
+----
 
-# 8. Exclude your new theme from integrity checking
+. Exclude your new theme from integrity checking
++
+[source,php]
+----
 'integrity.ignore.missing.app.signature' => [
 	'mynewtheme',
-  ],
-
+ ],
 ----
 
 The last step is necessary since you're not likely to provide a signature.json file. The theme is treated like an app. The ID is usually the name of the subfolder for the theme, in this case mynewtheme.
 
-Throughout this section of the documentation, for sakes of simplicity,
-it will be assumed that your ownCloud installation directory is
-`/owncloud`. If you’re following this guide to create or customize a
-theme, make sure you change any references to match the location
-of your ownCloud installation.
+Throughout this section of the documentation, for sakes of simplicity, it will be assumed that your ownCloud installation directory is `/owncloud`. If you’re following this guide to create or customize a theme, make sure you change any references to match the location of your ownCloud installation.
 
-To save time and effort, you can use the shell script below to
-create the basis of a new theme from https://github.com/owncloud/theme-example[ownCloud's example theme].
+To save time and effort, you can use the shell script below to create the basis of a new theme from https://github.com/owncloud/theme-example[ownCloud's example theme].
 
-Using this script (and the following one, `read-config.php`), you will have a new theme, ready to go, in less than
-five seconds.
-You can execute this script with two variables; the first one is the *theme name* and the second one is your *ownCloud directory*.
+Using this script (and the following one, `read-config.php`), you will have a new theme, ready to go, in less than five seconds. You can execute this script with two variables; the first one is the *theme name* and the second one is your *ownCloud directory*.
 
 For example:
 
@@ -76,8 +102,7 @@ For example:
 theme-bootstrap.sh mynewtheme /var/www/owncloud
 ----
 
-IMPORTANT: Don't forget to create `read-config.php` from the included code below, before you attempt to run
-`theme-bootstrap.sh`, otherwise `theme-bootstrap.sh` will fail.
+IMPORTANT: Don't forget to create `read-config.php` from the included code below, before you attempt to run `theme-bootstrap.sh`, otherwise `theme-bootstrap.sh` will fail.
 
 *theme-bootstrap.sh*
 
@@ -97,24 +122,23 @@ include::{examplesdir}scripts/read-config.php[]
 
 Now in more detail for those who want to understand the procedures presented above and work on their new theme. To create a theme requires two basic steps:
 
-1.  Copy and extend https://github.com/owncloud/theme-example[ownCloud's example theme],
-or create one from scratch.
-2.  Enable the theme in the ownCloud Admin dashboard.
+1.  Copy and extend https://github.com/owncloud/theme-example[ownCloud's example theme], or create one from scratch.
+2.  Enable the theme which can be found in menu:Settings[Admin > Apps > Show disabled Apps]
 
 All themes, whether copied or new, must meet two key criteria, these are:
 
-1.  They must be store in an app directory of your ownCloud
-installation, whether that’s the core app directory (`apps`) or
-xref:admin_manual:installation/apps_management_installation.adoc#using-custom-app-directories[a custom app directory].
-2.  They require a configuration file called `appinfo/info.xml` to be present.
+1.  They must be stored in an app directory of your ownCloud installation, preferred in `apps-external` or a
+xref:admin_manual:installation/apps_management_installation.adoc#using-custom-app-directories[custom app directory]
++
+NOTE: To ensure that custom themes aren’t lost during upgrades, we strongly encourage you to store them in a custom app directory.
 
-NOTE: To ensure that custom themes aren’t lost during upgrades, we strongly encourage you to store them in
-xref:admin_manual:installation/apps_management_installation.adoc#using-custom-app-directories[a custom app directory].
+2.  They require a configuration file called `appinfo/info.xml` to be present.
 
 === appinfo/info.xml
 
 Here’s an example of the bare minimum which the file needs to contain:
 
+[source,xml]
 ----
 <?xml version="1.0"?>
 <info>
@@ -131,6 +155,7 @@ Here’s an example of the bare minimum which the file needs to contain:
 
 And here’s a longer, more complete example:
 
+[source,xml]
 ----
 <?xml version="1.0"?>
 <info>
@@ -149,33 +174,20 @@ And here’s a longer, more complete example:
 </info>
 ----
 
-The value of the `id` element needs to be the name of your theme’s
-folder. We recommend that it always be prefixed with `theme-`. The main
-reason for doing so, is that it is alphabetically sorted in a terminal
+The value of the `id` element needs to be the name of your theme’s folder. We recommend that it always be prefixed with `theme-`. The main reason for doing so, is that it is alphabetically sorted in a terminal
 when handling app folders.
 
-The `type` element needs to be the same as is listed above, so that
-ownCloud knows to handle the app as a theme. The dependencies element
-needs to be present to set the minimum and maximum versions of ownCloud
-which are supported. If it’s not present, a warning will be displayed in
-ownCloud 10 and an error will be thrown in the upcoming ownCloud 11.
+The `type` element needs to be the same as is listed above, so that ownCloud knows to handle the app as a theme. The dependencies element needs to be present to set the minimum and maximum versions of ownCloud which are supported. If it’s not present, a warning will be displayed in ownCloud 10 and an error will be thrown in the upcoming ownCloud 11.
 
-While the remaining elements are optional, they help when working with
-the theme in the ownCloud Admin dashboard. Please consider filling out
-as many as possible, as completely as possible.
+While the remaining elements are optional, they help when working with the theme in the ownCloud Admin dashboard. Please consider filling out as many as possible, as completely as possible.
 
 === Theme Signing
 
-If you are going to publish the theme as an app in the
-{oc-marketplace-url}[marketplace], you need to sign it.
-However, if you are only creating a private theme for your own ownCloud
-installation, then you do not need to.
+If you are going to publish the theme as an app in the {oc-marketplace-url}[marketplace], you need to sign it. However, if you are only creating a private theme for your own ownCloud installation, then you do not need to.
 
-That said, to avoid a signature warning in the ownCloud UI, you need to
-add it to the `integrity.ignore.missing.app.signature` list in
-`config/config.php`. The following example allows the app whose
-application id is `app-id` to have no signature.
+That said, to avoid a signature warning in the ownCloud UI, you need to add it to the `integrity.ignore.missing.app.signature` list in `config/config.php`. The following example allows the app whose application id is `app-id` to have no signature.
 
+[source,console]
 ----
 'integrity.ignore.missing.app.signature' => [
       'app-id',
@@ -184,22 +196,13 @@ application id is `app-id` to have no signature.
 
 == How to Override Images
 
-Any image, such as the default logo, can be overridden by including one
-with the same path structure in your theme. For example, let’s say that
-you want to replace the logo on the login-page above the credentials-box
-which, by default has the path: `owncloud/core/img/logo-icon.svg`. To
-override it, assuming that your custom theme was called `theme-example`
-(_which will be assumed for the remainder of the theming
-documentation_), add a new file with the following path:
-`owncloud/apps/theme-example/core/img/logo-icon.svg`. After the theme is
-activated, this image will override the default one.
+Any image, such as the default logo, can be overridden by including one with the same path structure in your theme. For example, let’s say that you want to replace the logo on the login-page above the credentials-box which, by default has the path: `owncloud/core/img/logo-icon.svg`. To override it, assuming that your custom theme was called `theme-example` (_which will be assumed for the remainder of the theming documentation_), add a new file with the following path: `owncloud/apps/theme-example/core/img/logo-icon.svg`. After the theme is activated, this image will override the default one.
 
 === Default Image Paths
 
-To make building a new theme that much easier, below is a list of a
-range of the image paths used in the default theme.
+To make building a new theme that much easier, below is a list of a range of the image paths used in the default theme.
 
-[cols=",,",options="header",]
+[cols="50%,20%,70%",options="header",]
 |===
 | Description            | Section | Location
 | The logo at the login-page above the credentials-box | General | `owncloud/core/img/logo-icon.svg`
@@ -227,12 +230,9 @@ range of the image paths used in the default theme.
 | Trash can image        | | `owncloud/core/img/actions/delete.svg`
 |===
 
-NOTE: When overriding the favicon, make sure your custom theme includes and override for both
-`owncloud/apps/core/img/favicon.svg` and `owncloud/apps/core/img/favicon.png`, to cover any
-future updates to favicon handling.
+NOTE: When overriding the favicon, make sure your custom theme includes and override for both `owncloud/apps/core/img/favicon.svg` and `owncloud/apps/core/img/favicon.png`, to cover any future updates to favicon handling.
 
-NOTE: When using custom filetype icons in a custom theme, it is necessary to run
-`occ maintenance:mimetype:update-js` to activate them.  For more information please refer to
+NOTE: When using custom filetype icons in a custom theme, it is necessary to run `occ maintenance:mimetype:update-js` to activate them.  For more information please refer to 
 xref:admin_manual:configuration/mimetypes/index.adoc[mimetypes management].
 
 === How to Change the Background Image
@@ -248,7 +248,7 @@ NOTE: This guide assumes that you are in the folder of your custom theme, for ex
 . Update `background-image` in `core/css/styles.css`.
 
 [source,css]
-....
+----
 #body-login {
      background-image: url("../img/background.jpg"); /* path to image */
      background-position: 50% 50%; /* ensure optimal scalability */
@@ -257,10 +257,9 @@ NOTE: This guide assumes that you are in the folder of your custom theme, for ex
      text-align: center; /* Center Entitlement text, copyright */
      background-color: #000000 !important; /* Fallback for old browsers */
 }
-....
+----
 
-If your image size is 1920px x 1680px, you don't need the lines below the path. 
-However, they ensure optimal positioning and scaling.
+If your image size is 1920px x 1680px, you don't need the lines below the path. However, they ensure optimal positioning and scaling.
 
 image::core/theming/3_cu_login.png[Set a custom login background image in ownCloud]
 
@@ -271,48 +270,46 @@ TIP: You can also change the background color, logo, and slogan.
 In `core/css/styles.css`, search for the following CSS code:
 
 [source,css]
-....
+----
 #body-login {
     background: #745bca; /* Old browsers */
     background: -moz-linear-gradient(top, #947bea 0%, #745bca 100%);
 }
-....
+----
 
 Then, replace it with the following:
 
 [source,css]
-....
+----
 #body-login {
     background: rgb(31,9,121);
     background: linear-gradient(90deg, rgba(31,9,121,1) 38%, rgba(2,0,36,1) 58%);
 }
-....
+----
 
 If you only want one color, replace the existing CSS code with this:
 
 [source,css]
-....
+----
 #body-login {
     background: rgb(31,9,121);
 }
-....
+----
 
 TIP: If you are not sure what color to pick, {css-gradient-url}[CSS Gradient] may be able to help.
 
-To change the icon, replace the files in `core/img` (`logo.png`, and `logo.svg`) with your icons. 
-The reason for the PNG files is to have a fallback option for older browsers.
+To change the icon, replace the files in `core/img` (`logo.png`, and `logo.svg`) with your icons. The reason for the PNG files is to have a fallback option for older browsers.
 
-If you keep the names - you don't need to change the path in `core/css/styles.css`. 
-If you change the names, adjust `styles.css` file accordingly, as in the following example:
+If you keep the names - you don't need to change the path in `core/css/styles.css`. If you change the names, adjust `styles.css` file accordingly, as in the following example:
 
 [source,css]
-....
+----
 #header .logo {
     background-image: url('../img/logo.svg');
     width: 250px;
     height: 121px;
 }
-....
+----
 
 === How to Change the Header
 
@@ -326,46 +323,42 @@ You can change it to a custom color with a custom logo.
 Search for `#body-public #header` in `core/css/styles.css`.
 
 [source,css]
-....
+----
 #body-public #header {
     background-color: #745bca;
 }
-....
+----
 
 You can also write your own, like the one from the login page, for example:
 
 [source,css]
-....
+----
 #body-public #header {
     background: rgb(31,9,121);
     background: linear-gradient(90deg, rgba(31,9,121,1) 38%, rgba(2,0,36,1) 58%);
 }
-....
+----
 
-Change the logo by replacing `logo-icon.png` and `logo-icon.svg` with your logos, in `core/img`. 
-If you change the names of the logos, adjust the path accordingly in `core/css/styles.css`.
+Change the logo by replacing `logo-icon.png` and `logo-icon.svg` with your logos, in `core/img`. If you change the names of the logos, adjust the path accordingly in `core/css/styles.css`.
 
 [source,css]
-....
+----
 #header .logo-icon {
     background-image: url('../img/logo-icon.svg');
     height: 34px;
 }
-....
+----
 
 === How to Override Settings Page Icons
 
-ownCloud provides the ability to override Personal and Admin settings page icons.
-To do so requires two things:
+ownCloud provides the ability to override Personal and Admin settings page icons. To do so requires two things:
 
 . A custom (SVG) icon; and
 . Refactoring `SettingsManager.php`
 
-For example, say that you wanted to override the Admin Encryption settings icon.
-To do that, first add a custom icon to an app's `img` directory (ideally one that makes sense) e.g., `</path/to/owncloud>/apps/encryption/img/gnu.svg`.
+For example, say that you wanted to override the Admin Encryption settings icon. To do that, first add a custom icon to an app's `img` directory (ideally one that makes sense) e.g., `</path/to/owncloud>/apps/encryption/img/gnu.svg`.
 
-Then, update the `getBuiltInSections` function of `lib/private/Settings/SettingsManager.php`.
-There, you need to change the final argument to the relevant call to `new Section`, for the settings section that you want to change, as in the example below.
+Then, update the `getBuiltInSections` function of `lib/private/Settings/SettingsManager.php`. There, you need to change the final argument to the relevant call to `new Section`, for the settings section that you want to change, as in the example below.
 
 [source,php]
 ----
@@ -374,13 +367,11 @@ new Section('encryption', $this->l->t('Encryption'), 85, 'gnu'),
 
 In the example above, I've changed the encryption section's icon, by changing the final argument to be the custom icon's name — _minus the file extension_.
 
-TIP: Icons *must* be in SVG format.
-No other file formats are supported.
+TIP: Icons *must* be in SVG format. No other file formats are supported.
 
 == How to Override the Default Colors
 
-To override the default style sheet, create a new CSS style sheet in
-your theme, in the theme’s `css` directory, called `styles.css`.
+To override the default style sheet, create a new CSS style sheet in your theme, in the theme’s `css` directory, called `styles.css`.
 
 == How to Override Translations
 
@@ -389,11 +380,7 @@ You can override the translation of any string in your theme. To do so:
 1.  Create the `l10n` folder inside your theme, for the app that you want to override.
 2.  In the `l10n` folder, create the translation file for the language that you want to customize.
 
-For example, if you want to overwrite the German translation of
-_`Download`_ in the files app, you would create the file
-`owncloud/apps/theme-example/apps/files/l10n/de_DE.js`. Note that the
-structure is the same as for images. You just mimic the original file
-location inside your theme. You would then put the following code in the file:
+For example, if you want to overwrite the German translation of _`Download`_ in the files app, you would create the file `owncloud/apps/theme-example/apps/files/l10n/de_DE.js`. Note that the structure is the same as for images. You just mimic the original file location inside your theme. You would then put the following code in the file:
 
 [source,js]
 ----
@@ -406,9 +393,7 @@ OC.L10N.register(
 );
 ----
 
-You then need to create a second translation file,
-`owncloud/apps/theme-example/apps/files/l10n/de_DE.json`, which looks
-like this:
+You then need to create a second translation file, `owncloud/apps/theme-example/apps/files/l10n/de_DE.json`, which looks like this:
 
 [source,json]
 ----
@@ -420,19 +405,11 @@ like this:
 }
 ----
 
-Both files (`.js` and `.json`) are needed. The first is needed to enable
-translations in the JavaScript code and the second one is read by the
-PHP code and provides the data for translated terms.
+Both files (`.js` and `.json`) are needed. The first is needed to enable translations in the JavaScript code and the second one is read by the PHP code and provides the data for translated terms.
 
 == How to Override Names, Slogans, and URLs
 
-In addition to translations, the ownCloud theme allows a lot of the
-names that are shown on the web interface to be changed. This is done in
-`defaults.php`, which needs to be located within the theme’s root
-folder. You can find a sample version in
-`owncloud/app/theme-example/defaults.php`. In there, you need to define
-a class named `OC_Theme` and implement the methods that you want to
-overwrite.
+In addition to translations, the ownCloud theme allows a lot of the names that are shown on the web interface to be changed. This is done in `defaults.php`, which needs to be located within the theme’s root folder. You can find a sample version in `owncloud/app/theme-example/defaults.php`. In there, you need to define a class named `OC_Theme` and implement the methods that you want to overwrite.
 
 [source,php]
 ----
@@ -449,7 +426,7 @@ class OC_Theme {
 
 Each method must return a string. The following methods are available:
 
-[cols=",",options="header",]
+[cols="30%,60%",options="header",]
 |===
 | Method             | Description
 | `getAndroidClientUrl` | Returns the URL to Google Play for the Android Client.
@@ -469,12 +446,9 @@ Each method must return a string. The following methods are available:
 | `getSlogan`        | Returns the slogan.
 |===
 
-Only these methods are available in the templates, because we internally
-wrap around hardcoded method names.
+Only these methods are available in the templates, because we internally wrap around hardcoded method names.
 
-One exception is the method `buildDocLinkToKey` which gets passed in a
-key as its first parameter. For core we do something like this to build
-the documentation
+One exception is the method `buildDocLinkToKey` which gets passed in a key as its first parameter. For core we do something like this to build the documentation
 
 [source,php]
 ----
@@ -487,20 +461,15 @@ public function buildDocLinkToKey($key) {
 
 There are different options for testing themes:
 
-* If you’re using a tool like the Inspector tools inside Mozilla you can test out the CSS-Styles
-immediately inside the css-attributes, while you’re looking at the page.
+* If you’re using a tool like the Inspector tools inside Mozilla you can test out the CSS-Styles immediately inside the css-attributes, while you’re looking at the page.
 * If you have a development server, you can test out the effects in a live environment.
 
 == Settings Page Registration
 
 === How Can an App Register a Section in the Admin or Personal Section?
 
-As of ownCloud 10.0, apps must register admin and personal section
-settings in `info.xml`. As a result, all calls to
-`OC_App::registerPersonal` and `OC_App::registerAdmin` should now be
-removed. The settings panels of any apps that are still using these
-calls will now be rendered in the `Additional` section of the
-dashboard .
+As of ownCloud 10.0, apps must register admin and personal section settings in `info.xml`. As a result, all calls to
+`OC_App::registerPersonal` and `OC_App::registerAdmin` should now be removed. The settings panels of any apps that are still using these calls will now be rendered in the `Additional` section of the dashboard.
 
 For each panel an app wishes to register, two things are required:
 
@@ -509,12 +478,9 @@ For each panel an app wishes to register, two things are required:
 
 ==== Updating info.xml
 
-First, an entry must be added into the `<settings>` element in
-`info.xml`, specifying the class name responsible for rendering the
-panel. These will be loaded automatically when an app is enabled. For
-example, to register an admin and a personal section would require the
-following configuration..
+First, an entry must be added into the `<settings>` element in `info.xml`, specifying the class name responsible for rendering the panel. These will be loaded automatically when an app is enabled. For example, to register an admin and a personal section would require the following configuration..
 
+[source,xml]
 ----
 <settings>
       <personal>OCA\MyApp\PersonalPanel::class</personal>
@@ -524,38 +490,27 @@ following configuration..
 
 ==== The Controller Class
 
-Next, a controller class which implements the `OCP\Settings\ISettings`
-interface must be created to represent the panel. Doing so enforces that
-the necessary settings panel information is returned. The interface
-specifies three methods:
+Next, a controller class which implements the `OCP\Settings\ISettings` interface must be created to represent the panel. Doing so enforces that the necessary settings panel information is returned. The interface specifies three methods:
 
 
 * getSectionID
 * getPanel
 * getPriority
 
-*getSectionID:* This method returns the identifier of the section that
-this panel should be shown under. ownCloud Server comes with a
-predefined list of sections which group related settings together; the
-intention of which is to improve the user experience. This can be found
-here in
+*getSectionID:* This method returns the identifier of the section that this panel should be shown under. ownCloud Server comes with a predefined list of sections which group related settings together; the intention of which is to improve the user experience. This can be found here in
 https://github.com/owncloud/core/blob/master/lib/private/Settings/SettingsManager.php#L195[this example]:
 
-*getPanel:* This method returns the `OCP\Template` or
-`OCP\TemplateReponse` which is used to render the panel. The method may
-also return `null` if the panel should not be shown to the user.
+*getPanel:* This method returns the `OCP\Template` or `OCP\TemplateReponse` which is used to render the panel. The method may also return `null` if the panel should not be shown to the user.
 
-*getPriority:* An integer between 0 and 100 representing the importance
-of the panel (higher is more important). Most apps should return a
-value:
+*getPriority:* An integer between 0 and 100 representing the importance of the panel (higher is more important). Most apps should return a value:
 
 * between 20 and 50 for general information.
 * greater than 50 for security information and notices.
 * lower than 20 for tips and debug output.
 
-Here’s an example implementation of a controller class for creating a
-personal panel in the security section.
+Here’s an example implementation of a controller class for creating a personal panel in the security section.
 
+[source,php]
 ----
 <?php
 
@@ -585,9 +540,4 @@ class PersonalPanel extends ISettings {
 
 === Create Custom Sections
 
-At the moment, there is no provision for apps creating their own
-settings sections. This is to encourage sensible and intelligent
-grouping of the settings panels which in turn should improve the overall
-user experience. If you think a new section should be added to core
-however, please create a PR with the appropriate changes to
-`OC\Settings\SettingsManager`.
+At the moment, there is no provision for apps creating their own settings sections. This is to encourage sensible and intelligent grouping of the settings panels which in turn should improve the overall user experience. If you think a new section should be added to core however, please create a PR with the appropriate changes to `OC\Settings\SettingsManager`.
