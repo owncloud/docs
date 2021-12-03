@@ -162,7 +162,7 @@ An `image` is written in following example style: `image:<path>/image_name[Alter
 
 Please use the comma as separator for one or more options.
 
-The `, options` part is optional. Here you can define eg. the sizing of an image like `, width=40%`
+The `, options` part is optional. Here you can define e.g. the sizing of an image like `, width=40%`
 
 Example: `image:configuration/files/encryption1.png[Encryption]`
 
@@ -717,7 +717,7 @@ If you want to make a headline above a table which does not render as table head
 
 References: [Conditionals](https://docs.asciidoctor.org/asciidoc/latest/directives/conditionals/)
 
-Antora can render conditionally. This is eg. needed, when content can be rendered to html but not to pdf.
+Antora can render conditionally. This is e.g. needed, when content can be rendered to html but not to pdf.
 In these cases, you have to use a conditional render directive which renders content based on an attribute
 which defines the type to be rendered. ownCloud has created predefined site wide attributes for this
 case when the documentation is built for html or pdf.
