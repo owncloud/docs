@@ -127,7 +127,7 @@ fi
 newBranch="${targetBranch}-${commit}-${pullId}"
 message="[${targetBranch}] [PR ${pullId}] ${pullTitle}"
 
-# first check, if the source branch is clean and has no uncommited changes
+# first check, if the source branch is clean and has no uncommitted changes
 # in case this is true, checkout does not succeed and nothing needs to be done/switched
 # xargs removes any possible leading and trailing whitespaces
 is_source_branch_clean=$(git status --porcelain=v1 2>/dev/null | xargs)
