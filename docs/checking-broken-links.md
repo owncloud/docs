@@ -112,7 +112,7 @@ server/10.8/admin_manual/maintenance/export_import_instance_data.html
   hash does not exist --- server/10.8/admin_manual/maintenance/export_import_instance_data.html --> #known_limitations
 ```
 
-As you can see in the example above, the file `admin_manual/maintenance/export_import_instance_data.html` has broken anchors. To fix the links, open `admin_manual/pages/maintenance/export_import_instance_data.adoc` (the `pages` directory has to be included in the path, `.html` replaced by `.adoc`), search for the item reported (eg. `#what_is_exported` and correct it. When searching, replace any references to doc internal pages from `.html` to `.adoc` like `configuration/server/occ_command.html#data_exporter` --> `configuration/server/occ_command.adoc#data_exporter`
+As you can see in the example above, the file `admin_manual/maintenance/export_import_instance_data.html` has broken anchors. To fix the links, open `admin_manual/pages/maintenance/export_import_instance_data.adoc` (the `pages` directory has to be included in the path, `.html` replaced by `.adoc`), search for the item reported (e.g. `#what_is_exported` and correct it. When searching, replace any references to doc internal pages from `.html` to `.adoc` like `configuration/server/occ_command.html#data_exporter` --> `configuration/server/occ_command.adoc#data_exporter`
 
 
 ### Linkcheck by Filip Hracek

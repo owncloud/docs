@@ -254,7 +254,7 @@ The WND listener for ownCloud 10 includes two different commands that need to be
 
 ===== wnd:listen
 
-This command listens to changes for each  host and share configured and stores all notifications gathered in the database. _It is intended to run this command as a service_. The command requires the Windows/Samba account and the host/share the listener will listen to. The command does not produce any output by default, unless an error happens. Each stored notification will be further processed by the `wnd:process-queue` and will removed from the database after processing.
+This command listens to changes for each  host and share configured and stores all notifications gathered in the database. _It is intended to run this command as a service_. The command requires the Windows/Samba account and the host/share the listener will listen to. The command does not produce any output by default, unless an error happens. Each stored notification will be further processed by the `wnd:process-queue` and will be removed from the database after processing.
 
 NOTE: You can increase the command's verbosity by using `-vvv`. Doing so displays the listeners activities including a timestamp and the notifications received. A _read-only_ permission for the used account should be enough, but may need to be increased.
 
@@ -393,7 +393,7 @@ If you need to serialize the execution of the `wnd:process-queue`, check the fol
 flock -n /opt/my-lock-file {occ-command-example-prefix} wnd:process-queue <host> <share>
 ----
 
-In that case, flock will try get the lock of that file and won't run the command if it isn't possible. For
+In that case, flock will try to get the lock of that file and won't run the command if it isn't possible. For
 our case, and considering that file isn't being used by any other process, it will run only one
 `wnd:process-queue` at a time. If someone tries to run the same command a second time while the previous
 one is running, the second will fail and won't be executed.
@@ -413,7 +413,7 @@ Check {flock-docs-url}[flock's documentation] for details and more options.
 
 From version 2.0.0 the Windows Network Drive app includes an extension of the Activity app. This extension will allow the app to send events to the Activity app so the users know what happened in the Windows Network Drive storage.
 
-Please see Figure 4 how a notification can look like. In this example, one user accessing the same host/share has changed a file. Other users will now get a activity notification about this change.
+Please see Figure 4 how a notification can look like. In this example, one user accessing the same host/share has changed a file. Other users will now get an activity notification about this change.
 
 .Figure 4. Activity Notification for a Changed File
 image:enterprise/external_storage/windows_network_drive/activity_file_change_notification.png[Activity notification for a Changed File]
@@ -555,7 +555,7 @@ Take the example of attempting to connect to the host MyHost, the share named `M
 {occ-command-example-prefix} wnd:listen MyHost MyData user password
 ----
 
-NOTE: The command is case sensitive, and that it must match the information from the mount point configuration.
+NOTE: The command is case-sensitive, and that it must match the information from the mount point configuration.
 
 === libsmbclient Issues
 
@@ -653,7 +653,7 @@ There are several ways to supply a password:
 ----
 . Read from a file, using the `--password-file` switch to specify the file to read from. Note, that the
 password must be in plain text inside the file, and neither spaces nor newline characters will be removed
-from the file by default, unless the `--pasword-trim` option is added. The password file must be readable
+from the file by default, unless the `--password-trim` option is added. The password file must be readable
 by the apache user (or www-data)
 +
 [source,console,subs="attributes+"]
