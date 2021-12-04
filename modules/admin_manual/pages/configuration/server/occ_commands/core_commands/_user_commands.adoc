@@ -1,5 +1,4 @@
 = User Commands
-:page-noindex: yes
 
 The `user` commands provide a range of functionality for managing ownCloud users. 
 This includes: creating and removing users, resetting user passwords, displaying a report which shows how many users you have, and when a user was last logged in.
@@ -18,6 +17,7 @@ user
  user:list                           List users
  user:list-groups                    List groups for a user
  user:modify                         Modify user details
+ user:move                           Move a user's home folder to a new location
  user:report                         Shows how many users have access
  user:resetpassword                  Resets the password of the named user
  user:setting                        Read and modify user application settings
@@ -59,7 +59,8 @@ It cannot be set to `0`.
 | Email address for the user (optional).
 The user will be emailed a link to set their password, _if_ email is configured correctly.
 
-| `-g [GROUP]` `--group=[GROUP]`
+| `-g [GROUP]` +
+`--group=[GROUP]`
 | The groups the user should be added to.
 The group will be created if it does not exist.
 Multiple values are allowed.
@@ -109,15 +110,25 @@ To delete a user, you use the `user:delete` command.
 
 [source,console,subs="attributes+"]
 ----
-{occ-command-example-prefix} user:delete <uid>
+{occ-command-example-prefix} user:delete [options] [--] <uid>
 ----
 
 === Arguments
 
 [width="100%",cols="20%,70%",]
 |====
-| `uid` | The username.
+| `uid`
+| The username.
 |====
+
+=== Options
+
+[width="100%",cols="20%,70%",]
+|===
+| `-f` +
+`--force`
+| Try to force the deletion of the user data even if the user is missing.
+|===
 
 [source,console,subs="attributes+"]
 ----
@@ -130,18 +141,33 @@ Admins can disable users via the occ command too:
 
 [source,console,subs="attributes+"]
 ----
-{occ-command-example-prefix} user:disable <username>
+{occ-command-example-prefix} user:disable <uid>
 ----
 
-NOTE: Once users are disabled, their connected browsers will be disconnected.
-Use the following command to enable the user again:
+=== Arguments
+
+[width="100%",cols="20%,70%",]
+|====
+| `uid`
+| The user name.
+|====
+
+NOTE: Once users are disabled, their connected browsers will be disconnected. Use the following command to enable the user again:
 
 == Enable Users
 
 [source,console,subs="attributes+"]
 ----
-{occ-command-example-prefix} user:enable <username>
+{occ-command-example-prefix} user:enable <uid>
 ----
+
+=== Arguments
+
+[width="100%",cols="20%,70%",]
+|====
+| `uid`
+| The user name.
+|====
 
 == Finding Inactive Users
 
@@ -156,17 +182,19 @@ To view a list of users who've not logged in for a given number of days, use the
 
 [width="100%",cols="20%,70%",]
 |===
-| `<days>`  | The number of days (integer) that the user has not logged in since.
+| `<days>`
+| The number of days (integer) that the user has not logged in since.
 |===
 
 === Options
 
 [width="100%",cols="20%,70%",]
 |===
-| `--output=[OUTPUT]`  | Output format (plain, json or json_pretty, default is plain) [default: "plain"].
+| `--output=[OUTPUT]`
+| Output format (plain, json or json_pretty, default is plain) [default: "plain"].
 |===
 
-The example below searches for users inactive for five days, or more.
+The example below searches for users inactive for five days or more:
 
 [source,console,subs="attributes+"]
 ----
@@ -182,9 +210,7 @@ By default, this will generate output in the following format:
   - inactiveSinceDays: 5
 ----
 
-You can see a counting number starting with `0`, the user's user id, display name, and the number of days they've been inactive. 
-If you're passing or piping this information to another application for further processing, you can also use the `--output` switch to change its format.
-Using the output option `json` will render the output formatted as follows.
+You can see a counting number starting with `0`, the user's user ID, display name and the number of days they've been inactive. If you're passing or piping this information to another application for further processing, you can also use the `--output` switch to change its format. Using the output option `json` will render the output formatted as follows.
 
 [source,json]
 ----
@@ -217,7 +243,8 @@ To view a user's most recent login, use the `user:lastseen` command:
 
 [width="100%",cols="20%,70%",]
 |====
-| `uid`   | The username.
+| `uid`
+| The user name.
 |====
 
 Example
@@ -245,12 +272,20 @@ If you do not provide a search-pattern then all users are listed.
 
 [width="90%",cols="40%,80%",]
 |====
-| `--output=[OUTPUT]`       | Output format (plain, json or json-pretty, default is plain).
-| `-a [ATTRIBUTES] +
---attributes=[ATTRIBUTES]` | Adds more details to the output. +
+| `--output=[OUTPUT]`
+| Output format (plain, json or json-pretty, default is plain).
+
+| `-a [ATTRIBUTES]` +
+`--attributes=[ATTRIBUTES]`
+| Adds more details to the output. +
 Allowed attributes, multiple values possible: +
 `uid`, `displayName`, `email`, `quota`, `enabled`, `lastLogin`, `home`, +
 `backend`, `cloudId`, `searchTerms` [default: [`displayName`]]
+
+| `-s` +
+`--show-all-attributes`
+| All attributes to include from `uid`, `displayName`, `email`, `quota`, +
+`enabled`, `lastLogin`, `home`, `backend`, `cloudId`, `searchTerms`
 |====
 
 This example lists user IDs containing the string `ron`
@@ -295,14 +330,16 @@ You can list the group membership of a user with the `user:list-groups` command.
 
 [width="100%",cols="20%,70%",]
 |====
-| `uid` | User ID.
+| `uid`
+| User ID.
 |====
 
 === Options
 
 [width="100%",cols="20%,70%",]
 |====
-| `--output=[OUTPUT]` | Output format (plain, json or json-pretty, default is plain).
+| `--output=[OUTPUT]`
+| Output format (plain, json or json-pretty, default is plain).
 |====
 
 === Examples
@@ -340,13 +377,17 @@ This command modifies either the users username or email address.
 
 [width="100%",cols="20%,70%",]
 |====
-| `uid`   | User ID used to login.
-| `key`   | Key to be changed. Valid keys are: `displayname` and `email`.
-| `value` | The new value of the key.
+| `uid`
+| User ID used to login.
+
+| `key`
+| Key to be changed. Valid keys are: `displayname` and `email`.
+
+| `value`
+| The new value of the key.
 |====
 
-All three arguments are mandatory and can not be empty.
-Example to set the email address:
+All three arguments are mandatory and can not be empty. Example to set the email address:
 
 [source,console,subs="attributes+"]
 ----
@@ -354,6 +395,35 @@ Example to set the email address:
 ----
 
 The email address of `carla` is updated to `foobar@foo.com`.
+
+== Move a Users Home Folder
+
+This command moves a user's home folder to a new location. For details see xref:configuration/user/user_management.adoc#moving-the-user-home[Moving the User Home] documentation. Note that moving a users home is only possible for posix file systems.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:move-home <user_id> <new_location>
+----
+
+=== Arguments
+
+[width="100%",cols="20%,70%",]
+|====
+| `user_id`
+| ID of the user whose home folder is to be moved.
+
+| `new_location`
+| Absolute path to the parent folder of the new location of the home folder.
+|====
+
+Example:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:move-home lisa /mnt/newhome_1
+----
+
+This command moves the home directory of user `lisa` to the new location `/mnt/newhome_1`
 
 == Generating a User Count Report
 
@@ -384,9 +454,11 @@ There are no arguments and no options beside the default once to parametrize the
 +--------------------------+-----+
 ----
 
-NOTE: A user directory is created, when a local user has logged on the first time after creation. Therefore the differnce between `OC\User\Database` and `user directories` equals all users which have been created locally, but  have not logged on at least once.
+NOTE: A user directory is created, when a local user has logged on the first time after creation. Therefore the difference between `OC\User\Database` and `user directories` equals all users which have been created locally, but  have not logged on at least once.
 
 == Setting a User's Password
+
+Resets the password of the named user.
 
 [source,console,subs="attributes+"]
 ----
@@ -399,22 +471,26 @@ include::{partialsdir}configuration/user/update-password-note.adoc[]
 
 [width="100%",cols="25%,70%",]
 |====
-| `uid` | The user's name.
+| `uid`
+| The user's name.
 |====
 
 === Options
 
 [width="100%",cols="25%,70%",]
 |====
-| `--password-from-env` | Read the password from the OC_PASS environment variable.
-| `--send-email`        | The email-id set while creating the user, will be used to send
+| `--password-from-env`
+| Read the password from the OC_PASS environment variable.
+
+| `--send-email`
+| The email ID set while creating the user, will be used to send.
 link for password reset. This option will also display the link sent to user.
-| `--output-link`       | The link to reset the password will be displayed.
+
+| `--output-link`
+| The link to reset the password will be displayed.
 |====
 
-`password-from-env` allows you to set the user's password from an environment variable. 
-This prevents the password from being exposed to all users via the process list, and will only be visible in the history of the user (root) running the command. 
-This also permits creating scripts for adding multiple new users.
+`password-from-env` allows you to set the user's password from an environment variable. This prevents the password from being exposed to all users via the process list and will only be visible in the history of the user (root) running the command. This also permits creating scripts for adding multiple new users.
 
 NOTE: To use `password-from-env` you must run as "real" root, rather than `sudo`, because `sudo` strips environment variables.
 
@@ -465,7 +541,6 @@ Additionally, when the command completes, it outputs the password reset link to 
 The password reset link is: http://localhost:{std-port-http}/index.php/lostpassword/reset/form/rQAlCjNeQf3aphA6Hraq2/layla
 ----
 
-
 If the specified user does not have a valid email address set, then the following error will be output to the console, and the email will not be sent:
 
 ----
@@ -474,8 +549,7 @@ Email address is not set for the user layla
 
 == User Application Settings
 
-To manage application settings for a user, use the `user:setting` command. 
-This command provides the ability to:
+To manage application settings for a user, use the `user:setting` command. This command provides the ability to:
 
 * Retrieve all settings for an application
 * Retrieve a single setting
@@ -484,26 +558,69 @@ This command provides the ability to:
 
 [source,console,subs="attributes+"]
 ----
-{occ-command-example-prefix} user:setting [options] [--] <uid> [<app>] [<key>]
+{occ-command-example-prefix} user:setting [options] [--] <uid> [[<app> [<key>]]
 ----
 
-If you're new to the `user:setting` command, the descriptions for the `app` and `key` arguments may not be completely transparent. 
-So, here's a lengthier description of both.
+=== Arguments
+
+[width="100%",cols="20%,40%",]
+|====
+| `uid`
+| User ID used to login.
+
+| `app`
+| Restrict listing the settings for a given app. [default: ""].
+
+| `key`
+| Setting key to set, get or delete [default: ""].
+|====
+
+=== Options
+
+[width="100%",cols="20%,40%",]
+|====
+| `--output=[OUTPUT]`
+| Output format (plain, json or json-pretty, default is plain).
+
+| `--ignore-missing-user`
+| Use this option to ignore errors when the user does not exist.
+
+| `--default-value=[DEFAULT-VALUE]`
+| If no default value is set and the config does not exist, the command +
+will exit with 1. Only applicable on get.
+
+| `--value=[VALUE]`
+| The new value of the setting.
+
+| `--update-only`
+| Only updates the value, if it is not set before, it is not being added.
+
+| `--delete`
+| Specify this option to delete the config.
+
+| `--error-if-not-exists`
+| Checks whether the setting exists before deleting it.
+|====
+
+The descriptions for the `app` and `key` arguments may not be completely transparent. Here's a description of both.
 
 [width="100%",cols="20%,70%",options="header",]
 |====
-| Argument | Description
+| Argument
+| Description
+
 | `app` 
-| When an value is supplied, `user:setting` limits the settings displayed, to those for that, specific, application - assuming that the application is installed, and that there are settings available for it. 
+| When a value is supplied, `user:setting` limits the settings displayed to those for that specific application - assuming that the application is installed and that there are settings available for it. 
 Some example applications are `core`, `files_trashbin`, and `user_ldap`. 
-A complete list, unfortunately, cannot be supplied, as it is impossible to know the entire list of applications which a user could, potentially, install.
+A complete list cannot be supplied as it is impossible to know the entire list of applications a user could potentially install.
+
 | `key` 
 | This value specifies the setting key to be manipulated (set, retrieved, or deleted) by the `user:setting` command.
 |====
 
 === Retrieving User Settings
 
-To retrieve all settings for a user, you need to call the `user:setting` command and supply at least the user's username.
+To retrieve settings for a user, you need to call the `user:setting` command and supply at least the user's user name. You can drill down restricting results to a particular app and a key in the app.
 
 [source,console,subs="attributes+"]
 ----
@@ -514,13 +631,20 @@ To retrieve all settings for a user, you need to call the `user:setting` command
 
 [width="100%",cols="20%,70%",]
 |====
-| `uid`   | User ID used to login.
-| `app`   | Restrict listing the settings for a given app. [default: ""].
-| `key`   | Setting key to set, get or delete [default: ""].
+| `uid`
+| User ID used to log in.
+
+| `app`
+| Restrict listing the settings for a given app. [default: ""].
+
+| `key`
+| Setting key to set, get or delete [default: ""].
 |====
 
-Example for all settings set for a given user
+*Examples:*
 
+. Retrieve all settings set for a given user:
++
 [source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} user:setting layla
@@ -531,25 +655,27 @@ Example for all settings set for a given user
   - settings:
     - email: layla@example.tld
 ----
-
++
 Here we see that the user has settings for the application `core`, when they last logged in, and what their email address is.
-Example for all settings set restricted to application `core` for a given user
 
+. Retrieve all settings set restricted to application `core` for a given user:
++
 [source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} user:setting layla core
  - core:
     - lang: en
 ----
-
++
 In the output, you can see that one setting is in effect, `lang`, which is set to `en`.
-Example for all settings set restricted to application `core`, key `lang` for a given user
 
+. Retrieve all settings set restricted to application `core`, key `lang` for a given user
++
 [source,console,subs="attributes+"]
 ----
-{occ-command-example-prefix} user:setting layla core lang en
+{occ-command-example-prefix} user:setting layla core lang
 ----
-
++
 This will display the value for that setting, such as `en`.
 
 === Setting and Deleting a Setting
@@ -558,29 +684,6 @@ This will display the value for that setting, such as `en`.
 ----
 {occ-command-example-prefix} user:setting [options] [--] <uid> [<app>] [<key>]
 ----
-
-=== Arguments
-
-[width="100%",cols="20%,70%",]
-|====
-| `uid`   | User ID used to login.
-| `app`   | Restrict the settings to a given app. [default: ""].
-| `key`   | Setting key to set, get or delete [default: ""].
-|====
-
-=== Options
-
-[width="100%",cols="20%,40%",]
-|====
-| `--output=[OUTPUT]`               | Output format (plain, json or json-pretty, default is plain).
-| `--ignore-missing-user`           | Use this option to ignore errors when the user does not exist.
-| `--default-value=[DEFAULT-VALUE]` | If no default value is set and the config does not exist, the command +
-will exit with 1. Only applicable on get.
-| `--value=[VALUE]`                 | The new value of the setting.
-| `--update-only`                   | Only updates the value, if it is not set before, it is not being added.
-| `--delete`                        | Specify this option to delete the config.
-| `--error-if-not-exists`           | Checks whether the setting exists before deleting it.
-|====
 
 IMPORTANT: In case you want to change the email address, use xref:modify-user-details[the `user:modify` command].
 
@@ -622,9 +725,10 @@ Synchronize users from a given backend to the accounts table.
 
 === Arguments:
 
-[width="90%",cols="40%,80%",]
+[width="90%",cols="50%,80%",]
 |===
-| `backend-class` | The quoted PHP class name for the backend, e.g., +
+| `backend-class`
+| The quoted PHP class name for the backend, e.g., +
 - LDAP:        `"OCA\User_LDAP\User_Proxy"` +
 - Samba:       `"OCA\User\SMB"` +
 - Shibboleth:  `"OCA\User_Shibboleth\UserBackend"` +
@@ -632,21 +736,33 @@ Synchronize users from a given backend to the accounts table.
 
 === Options
 
-[width="90%",cols="40%,80%",]
+[width="90%",cols="50%,80%",]
 |===
-| `-l, --list`      | List all enabled backend classes.
+| `-l` +
+`--list`
+| List all enabled backend classes.
+
 | `-u [UID]` +
-`--uid=[UID]` | Sync only the user with the given user id.
-| `-s, --seenOnly`  | Sync only seen users.
-| `-c, --showCount` | Calculate user count before syncing.
+`--uid=[UID]`
+| Sync only the user with the given user id.
+
+| `-s` +
+`--seenOnly`
+| Sync only seen users.
+
+| `-c` +
+`--showCount`
+| Calculate user count before syncing.
+
 | `-m [MISSING-ACCOUNT-ACTION]` +
- +
-`--missing-account-action[=MISSING-ACCOUNT-ACTION]` | Action to take if the account isn't
-connected to a backend any longer. +
+`--missing-account-action[=MISSING-ACCOUNT-ACTION]`
+| Action to take if the account isn't connected to a backend any longer. +
 Options are `disable` and `remove`. +
 Note that removing the account will also remove the stored data and files for that account
-| `-r, --re-enable` | When syncing multiple accounts re-enable accounts that are disabled in ownCloud
-but available in the synced backend.
+
+| `-r` +
+`--re-enable`
+| When syncing multiple accounts re-enable accounts that are disabled in ownCloud but available in the synced backend.
 |===
 
 Below are examples of how to use the command with an _LDAP_, _Samba_,

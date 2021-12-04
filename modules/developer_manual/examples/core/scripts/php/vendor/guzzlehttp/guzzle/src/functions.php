@@ -293,7 +293,7 @@ function is_host_in_noproxy($host, array $noProxyArray)
  *
  * @return mixed
  * @throws \InvalidArgumentException if the JSON cannot be decoded.
- * @link http://www.php.net/manual/en/function.json-decode.php
+ * @link https://www.php.net/manual/en/function.json-decode.php
  */
 function json_decode($json, $assoc = false, $depth = 512, $options = 0)
 {
@@ -315,7 +315,7 @@ function json_decode($json, $assoc = false, $depth = 512, $options = 0)
  *
  * @return string
  * @throws \InvalidArgumentException if the JSON cannot be encoded.
- * @link http://www.php.net/manual/en/function.json-encode.php
+ * @link https://www.php.net/manual/en/function.json-encode.php
  */
 function json_encode($value, $options = 0, $depth = 512)
 {
