@@ -1,37 +1,35 @@
 = Manual ownCloud Upgrade
 :toc: right
 :toclevels: 1
+:page-aliases: maintenance/manual_upgrade.adoc
 
 == Introduction
 
-This section describes how to manually upgrade your ownCloud installation.
+This document describes how to manually upgrade your ownCloud installation. After preparing the upgrade, you can decide between two ways of upgrading your instance:
 
-== Preparation
+.Script-Guided Upgrade
+This upgrade automates most of the tasks to be done including setting the correct ownership and permissions.
 
-There are several steps necessary before you can start with upgrading your owncloud instance.
+.Manual Step-by-Step Upgrade 
+Using this type of upgrade, you have to do all the steps manually but you can also handle special setups.
+
+NOTE: In this description we assume that your ownCloud installation was located in the default directory: `/var/www/owncloud` and the new release will reside there as well. 
+The path might differ, depending on your installation.
+
+== General Preparation
+
+There are several steps necessary before you can start with upgrading your ownCloud instance.
 
 === Enable Maintenance Mode
 
-Put your server in xref:configuration/server/occ_command.adoc#maintenance-commands[maintenance mode] and *disable xref:configuration/server/background_jobs_configuration.adoc#cron-jobs[Cron jobs]*.
+Put your server in xref:maintenance/enable_maintenance.adoc[maintenance mode] and *disable xref:configuration/server/background_jobs_configuration.adoc#cron-jobs[Cron jobs]*.
 Doing so prevents new logins, locks the sessions of logged-in users, and displays a status screen so that users know what is happening.
-
-There are two ways to enable maintenance mode.
-
-. The *preferred* method is to use xref:configuration/server/occ_command#maintenance-commands[the occ command] — which you must run as your webserver user.
-+
-[source,console,subs="attributes+"]
-----
-# Enable maintenance mode using the occ command.
-{occ-command-example-prefix} maintenance:mode --on
-----
-
-. The other way is by changing the value in your `config.php` file and replacing `'maintenance' => false,` with `'maintenance' => true,`.
 
 TIP: In a clustered environment, check that all nodes are in maintenance mode.
 
-=== Stop the Webserver
+=== Prevent Browser Access
 
-With those steps completed, stop your webserver.
+With those steps completed, stop your webserver to prevent users trying to access ownCloud via the web. As an alternative, you can stop serving the virtual host for ownCloud.
 
 [source,console]
 ----
@@ -41,7 +39,7 @@ sudo service apache2 stop
 
 === Backup the Database
 
-First, backup ownCloud and the server database as described in section xref:maintenance/backup.adoc[Backing up ownCloud]. This is independent of the next upgrade steps but important in case something goes wrong.
+First, backup ownCloud and the server database as described in section xref:maintenance/backup_and_restore/backup.adoc[Backing up ownCloud]. This is independent of the next upgrade steps but important in case something goes wrong.
 
 === Review Third-Party Apps
 
@@ -50,7 +48,7 @@ Ensure that they are all disabled before beginning the upgrade.
 Third party apps are all apps that are not distributed by {oc-marketplace-url}/publishers/owncloud[ownCloud]
 or not listed in xref:installation/apps_supported.adoc[Supported Apps in ownCloud].
 
-. Disable via Command Line
+. Disable Apps via Command Line
 +
 [source,console,subs="attributes+"]
 ----
@@ -64,6 +62,33 @@ or not listed in xref:installation/apps_supported.adoc[Supported Apps in ownClou
 . Disable via Browser +
 Go to menu:Settings[Admin > Apps] and disable all third-party apps.
 
+=== Backup Manual Changes in `.htaccess`
+
+If you have made changes in `.htaccess` located at the webroot of ownCloud, you must backup these changes. Only backup the changes made but not the complete file as this file will be recreated on upgrades and may contain different settings provided by ownCloud. Manual changes in `.htaccess` can be necessary when you e.g. xref:configuration/integration/ms-teams.adoc[Integrate ownCloud into Microsoft Teams].
+
+=== Download the Latest Release
+
+Download the latest https://owncloud.org/download/[ownCloud server release] to where your previous installation was, in this example the default directory `/var/www/`.
+[source,console,subs="attributes+"]
+----
+cd /var/www/
+sudo wget https://download.owncloud.org/community/owncloud-{latest-server-download-version}.tar.bz2
+----
+
+== Script-Guided Upgrade
+
+When using the script-guided upgrade, the script from the xref:installation/manual_installation/manual_installation.adoc#script-guided-installation[Script-Guided Installation] is used. The script xref:installation/manual_installation/script_guided_install.adoc#script-questions[asks questions] and beside other parameters, the *upgrade an existing installation* is selected.
+
+Follow the script documentation for details on how to install and use it.
+
+NOTE: The script is most convenient if you use links for your `apps`, `apps-external` and your `data` directory, as it takes care of recreating the links. You will be asked about this when you run the script. If you're using regular directories, these are created, but content must be moved or copied manually before finalizing the upgrade. If you aren't using the `apps-external` directory, you must manually take care of copying only those apps which are not part of the new source.
+
+When the script has finished, continue with the xref:upgrade[Upgrade] step described below.
+
+After the upgrade is finished, you can re-run this script to secure the `.htaccess` files.
+
+== Manual Step-by-Step Upgrade
+
 === Move Current ownCloud Directory
 
 Although you have already made a backup, move your current ownCloud directory to a different location for easy access later:
@@ -74,22 +99,6 @@ Although you have already made a backup, move your current ownCloud directory to
 # Rename ownCloud directory
 sudo mv /var/www/owncloud /var/www/backup_owncloud
 ----
-
-=== Download the Latest Release
-
-Download the latest https://owncloud.org/download/#owncloud-server-tar-ball[ownCloud server release] to where your previous installation was, in this example the default directory `/var/www/`.
-[source,console,subs="attributes+"]
-----
-cd /var/www/
-sudo wget https://download.owncloud.org/community/owncloud-{latest-server-download-version}.tar.bz2
-----
-
-== Upgrade
-
-If you have configured a script for xref:installation/manual_installation/script_guided_install.adoc[guided installations], you can use it for the upgrade as well. If not, proceed with the manual upgrade.
-
-NOTE: In this description we assume that your ownCloud installation was located in the default directory: `/var/www/owncloud` and the new release will reside there as well. 
-The path might differ, depending on your installation.
 
 === Extract the New Source
 
@@ -116,6 +125,10 @@ sudo mv /var/www/backup_owncloud/data /var/www/owncloud/data
 
 If you keep your `data` **outside** of your `owncloud` directory, then you don’t have to do anything with it, because its location is configured in your original `config.php`, and none of the upgrade steps touch it.
 
+=== Copy Relevant config.php Content
+
+Copy, or make sure that all relevant `config.php` content from the backup is present in the new installation.
+
 === Market and Marketplace App Upgrades
 
 Before getting too far into the upgrade process, consider how the Market app and its configuration options affect the upgrade process. The Market app — and other apps from the Marketplace — will not be updated when you upgrade ownCloud if `upgrade.automatic-app-update` is set to `true` in config.php.
@@ -124,23 +137,33 @@ In addition, if there are installed apps (whether compatible or incompatible wit
 
 === Copy Old Apps
 
-If you are using third party or enterprise applications, look in your new `/var/www/owncloud/apps/` directory to see if they are present. 
-If not, copy them from your old `apps/` directory to your new one.
+If you are using third party or enterprise applications, look in your new `/var/www/owncloud/apps/` or `/var/www/owncloud/apps-external/` directory to see if they are present. If not, copy them from your old instance to your new one.
 
 NOTE: Make sure that all app directories that are defined in the `apps_paths` section of your `config.php` file do exist in your new `/var/www/owncloud/` directory.
 
 === Permissions
 
-To finalize the preparation of the upgrade, you need to set the correct ownership of the new ownCloud files and folders. 
+To finalize the preparation of the upgrade, you need to set the correct ownership and permissions of the new ownCloud files and folders.
 
+.Set correct ownership
 [source,console]
 ----
 sudo chown -R www-data:www-data /var/www/owncloud
 ----
 
+.Set correct permissions
+Use `chmod` on files and directories with different permissions:
+
+* For all files use `0640` +
+* For all directories use `0750`
+
+If you have configured a script for xref:installation/manual_installation/script_guided_install.adoc[guided installations], you can use it for this step as well.
+
+== Finalize the Upgrade
+
 === Start the Upgrade
 
-With the apps disabled and ownCloud in maintenance mode, start xref:configuration/server/occ_command.adoc#command-line-upgrade[the upgrade process] from the command line:
+With the apps disabled and ownCloud in maintenance mode, start the xref:configuration/server/occ_command.adoc#command-line-upgrade[upgrade process] from the command line:
 
 [source,console,subs="attributes+"]
 ----
@@ -149,8 +172,16 @@ With the apps disabled and ownCloud in maintenance mode, start xref:configuratio
 {occ-command-example-prefix} upgrade
 ----
 
-The upgrade operation can take anywhere from a few minutes to a few hours, depending on the size of your installation.
-When it is finished you will see either a success message or an error message that indicates why the process did not complete successfully.
+The upgrade operation can take anywhere from a few minutes to a few hours, depending on the size of your installation. When it is finished you will see either a success message or an error message that indicates why the process did not complete successfully.
+
+Reapply any manual changes made to the `.htaccess` file located in the owncloud webroot. 
+
+=== Strong Permissions for .htaccess
+
+.Set strong permissions for the .htaccess files
+* Use `chmod` with `0640` for the .htaccess files.
+
+If you have configured a script for xref:installation/manual_installation/script_guided_install.adoc[guided installations], you can use it for this step as well.
 
 === Disable Maintenance Mode
 
@@ -162,18 +193,18 @@ Assuming your upgrade succeeded, disable maintenance mode.
 {occ-command-example-prefix} maintenance:mode --off
 ----
 
-=== Restart the Web Server
+=== Enable Browser Access
 
-With all that done, restart your web server:
+With all that done, restart your web server, or alternatively re-enable the virtual host serving ownCloud:
 
 [source,console]
 ----
 sudo service apache2 start
 ----
 
-=== Finalize the Upgrade
+=== Check the Upgrade
 
-With maintenance mode disabled and the web server running, login via the web interface and perform the following steps:
+With maintenance mode disabled and the web server running, log in via the web interface and perform the following steps:
 
 . Check that the version number reflects the new installation. +
 It can be reviewed at the bottom of menu:Settings[Admin > General].
@@ -185,7 +216,7 @@ WARNING: Install or enable unsupported apps at your own risk.
 
 == Rollback
 
-If you need to rollback your upgrade, see the xref:maintenance/restore.adoc[Restoring ownCloud] documentation.
+If you need to rollback your upgrade, see the xref:maintenance/backup_and_restore/restore.adoc[Restoring ownCloud] documentation.
 
 == Troubleshooting
 

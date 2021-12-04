@@ -1,0 +1,202 @@
+= Restoring ownCloud
+:toc: right
+:page-aliases: maintenance/restore.adoc
+
+== Introduction
+
+Depending how the ownCloud instance has been installed, you may need slightly different steps to restore it from a backup.
+
+In any case, you need the following components from your backup:
+
+.  The `config/` directory.
+.  The `data/` directory. +
+Note that the `data/` directory may not only contain user files, but also keys for encryption.
+.  The `apps/` directory. +
+Note that this is only necessary if you are not using the `apps-external/` directory and have added own apps or themes.
+.  The `apps-external/` directory. +
+Note that this is only necessary if it exists and is in use.
+.  The ownCloud database.
+.  The custom theme files, if you had any. See xref:developer_manual:core/theming.adoc[Theming ownCloud]. +
+Note that theme files are usually located in either the `apps/` or `apps-external/` directory.
+
+IMPORTANT: If you have customized user home directories or a custom location for encryption keys, you have to manually take care of backing them up and restoring them to the same location.
+
+== Prerequisites
+
+To ensure a secure restore process, stop your web server to prevent users from accessing ownCloud via the web. As an alternative, you can stop serving the virtual host for ownCloud:
+
+[source,console,subs="attributes+"]
+----
+sudo service apache2 stop
+----
+
+== Restore Scenarios
+
+Tarball Installation::
+. If you have installed ownCloud from a tarball, you can safely restore the entire installation from the backup, with the exception of your ownCloud database. Databases cannot be copied, instead you must use the database tools to make a correct restoration.
+
+. You may also install a new instance from a tarball and restore the directories named above and the database. To avoid issues, use the same tarball version as the ownCloud version from the backup.
+
+Package Installation::
+If you have installed ownCloud from packages, start with a fresh ownCloud package installation in a new, empty directory. Then restore the above items from your xref:maintenance/backup_and_restore/backup.adoc[Backup].
++
+NOTE: Only copy those files and folders from the `apps/` backup directory which are NOT present after the installation. Do not overwrite items of the `apps/` directory in the new installation. This will prevent a failing code integrity check and other errors.
+
+After you have completed restoring files, see how to xref:installation/manual_installation/manual_installation.adoc#script-guided-installation[Set Correct Permissions].
+
+//missing docker...
+
+=== Restore Directories
+
+If possible, simply copy the directories from your backup to your new ownCloud environment, for example by running the following command from the backup directory. The following example command copies all directories mentioned above:
+
+[source,console]
+----
+sudo rsync -Aax config data apps apps-external /var/www/owncloud/
+----
+
+There are many ways to restore normal files from backup. Use whatever method you are accustomed to.
+
+== Restore the Database
+
+Before restoring the database, set your ownCloud instance into maintenance mode:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} maintenance:mode --on
+----
+
+NOTE: This guide assumes that your previous backup is called `owncloud-dbbackup.bak`, though the file may have a timestamp added in the filename.
+
+=== MySQL/MariaDB
+
+Depending on the database version and the setup, username and password may not be necessary. To restore MySQL/MariaDB:
+
+[source,console,subs="attributes+"]
+----
+sudo mysql -h [server] -u [username] -p[password] [db_name] < owncloud-dbbackup.bak
+----
+
+=== SQLite
+
+[source,console]
+----
+sudo rm data/owncloud.db
+sudo sqlite3 data/owncloud.db < owncloud-dbbackup.bak
+----
+
+=== PostgreSQL
+
+[source,console]
+----
+PGPASSWORD="password" pg_restore -c -d owncloud -h [server] -U [username] owncloud-dbbackup.bak
+----
+
+== Restoring Files From a Backup When Encryption Is Enabled
+
+If you need to restore files from a backup during which encryption was enabled, proceed as follows with caution.
+
+WARNING: This is *not officially supported*. ownCloud officially supports either restoring the full backup or restoring nothing — not restoring individual parts of it.
+
+* Restore the file from backup.
+* Restore the file's encryption keys from your backup.
+* Run `occ files:scan`, which makes the scanner find it.
+
+[NOTE]
+====
+In the DB it will:
+
+- Have the "size" set to the encrypted size, which is wrong (and bigger).
+- The "encrypted" flag will be set to 0.
+====
+
+* Retrieve the encrypted flag value
+* Update the encrypted flag.
+
+NOTE: There's no need to update the encrypted flag for files in either `files_versions` or `files_trashbin`
+because these aren't scanned or found by `occ files:scan`.
+
+* Download the file once as the user; the file's size will be corrected automatically.
+
+This process might not be suitable across all environments.
+If it's not suitable for yours, you might need to run an OCC command that does the scanning.
+
+=== Retrieve the Encrypted Flag Value
+
+1. In the backup database, retrieve the `numeric_id` value for https://github.com/owncloud/core/wiki/Storage-IDs[the storage]
+   where the file was located from the `oc_storages` table and store the value
+   for later reference.
+   For example, if you have the following in your `oc_storages` table, the
+   `numeric_id` you should use is `3` if you need to restore a file for `user1`.
+
+   +--------------------------------+------------+-----------+--------------+
+   | id                             | numeric_id | available | last_checked |
+   +--------------------------------+------------+-----------+--------------+
+   | home::admin                    |          1 |         1 |         NULL |
+   | local::/var/www/owncloud/data/ |          2 |         1 |         NULL |
+   | home::user1                    |          3 |         1 |         NULL |
+   +--------------------------------+------------+-----------+--------------+
+
+2. In the live database instance, find the `fileid` of the file to restore by
+   running the query below, substituting the placeholders for the retrieved
+   values, and store the value for later reference.
+
+   SELECT fileid
+   FROM oc_filecache
+   WHERE path = 'path/to/the/file/to/restore'
+     AND storage = <numeric_id>
+
+3. Retrieve the backup, which includes the data folder and database.
+
+4. Retrieve the required file from your backup and copy it to the real instance.
+
+5. In the backup database, retrieve the file's `encrypted` value by running
+   the query below and store the value for later reference.
+   The example query assumes the storage was the same and the file was in the same location.
+   If not, you will need to track down where the file was before.
+
+   SELECT encrypted
+   FROM oc_filecache
+   WHERE path = 'path/to/the/file/to/restore'
+     AND storage = <numeric_id>
+
+6. Update the live database instance with the retrieved information, by running the
+   following query, substituting the placeholders with the retrieved values:
+
+   UPDATE oc_filecache
+     SET encrypted = <encrypted>
+     WHERE fileid = <fileid>.
+
+== Final Tasks
+
+=== Reactivate Your Instance
+
+Perform the following tasks to reactivate your ownCloud instance:
+
+.Update the systems data-fingerprint after a backup is restored
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} maintenance:data-fingerprint
+----
+
+.Bring back ownCloud into normal operation mode
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} maintenance:mode --off
+----
+
+.Enable browser access
+Start your web server, or alternatively enable the virtual host serving ownCloud:
+[source,console]
+----
+sudo service apache2 start
+----
+
+=== Restore Cron Jobs
+
+This is only necessary if you accidentally deleted the crontab entries, or you're restoring to a different server to carry out a physical migration or you need to set up a server from scratch.
+
+[source,console,subs="attributes+"]
+----
+sudo crontab -u www-data < www-data_crontab.bak
+----

@@ -93,8 +93,10 @@ You must first put your ownCloud server into xref:maintenance-commands[single-us
 
 [width="100%",cols="20%,70%",]
 |===
-| `-y` or `--yes` 
-| Answer yes to all questions. This argument automatically answers, potential, questions with "yes", which is particularly important for automated deployments with Ansible or similar tools.
+| `-y` +
+`--yes` 
+| Answer yes to all questions. +
+This argument automatically answers, potential, questions with "yes", which is particularly important for automated deployments with Ansible or similar tools.
 |===
 
 == Decrypt All
@@ -106,39 +108,27 @@ You must first put your ownCloud server into xref:maintenance-commands[single-us
 {occ-command-example-prefix} encryption:decrypt freda
 ----
 
-Users must have enabled recovery keys on their Personal pages. 
-You must first put your ownCloud server into single-user mode, using xref:maintenance-commands[the maintenance commands], to prevent any user activity until decryption is completed.
+Users must have enabled recovery keys on their Personal pages. You must first put your ownCloud server into single-user mode, using xref:maintenance-commands[the maintenance commands], to prevent any user activity until decryption is completed.
 
 === Arguments
 
 [width="100%",cols="20%,70%",]
 |===
-| `-m=[METHOD]` | Accepts the methods: +
+| `-m=[METHOD]`
+| Accepts the methods: +
 `recovery` or `password` +
 If the _recovery_ method is chosen, then the recovery password will be used to decrypt files. +
 If the _password_ method is chosen, then individual user passwords will be used to decrypt files.
-| `-c=[COMMAND]` | Accepts  the commands: +
-`yes` or `no` +
 
+| `-c=[COMMAND]`
+| Accepts  the commands: +
+`yes` or `no` +
 This lets the command know whether to ask for permission to continue or not.
 |===
 
-== Fix Encrypted Version
+=== Method Descriptions
 
-`encryption:fix-encrypted-version` fixes the encrypted version of files if the encrypted file(s) are not downloadable for a given user. You only need this command if you get an "Invalid Signature" message in the browser or the clients.
-
-Background: the `oc_filecache` database table contains the integer columns "version" and "encryptedVersion" which start with 1 and are incremented on every file modification. When using encryption, those values are used together with the ciphertext to generate a cryptographic signature for the file. The version value is required to verify the signature. In some very rare cases like timeouts or bugs etc, the value might not get updated accordingly or get lost. The brute-force approach is to use the `fix:encrypted:version` command until the file can be decrypted. Starting with ownCloud 10.8, the behavior of the command got improved so that the encryptedVersion value is reset to its original value if no correct version was found. Before that fix, the last tried value was stored in the database thus modifying the state of the system and making further rescue attempts non-deterministic.
-
-=== Arguments
-
-[width="100%",cols="20%,70%",]
-|===
-| `user` | The id of the user whose files need fixing.
-|===
-
-== Method Descriptions
-
-=== Recovery method
+==== Recovery method
 
 This method reads the value from the environment variable `OC_RECOVERY_PASSWORD`. 
 This variable bounds the value of recovery password set in the encryption page. 
@@ -146,16 +136,16 @@ If this variable is not set the recovery process will be halted.
 This has to be used for decrypting all users. 
 While opting recovery method user should not forget to set `OC_RECOVERY_PASSWORD` in the shell.
 
-=== Password method
+==== Password method
 
 This method reads the value from the environment variable `OC_PASSWORD`. 
 This variable bounds the value of user password. 
 The password which user uses to login to oC account. 
 When password method is opted the user needs to set this variable in the shell.
 
-== Continue Option Description
+==== Continue Option Description
 
-The continue option can be used to by pass the permissions asked like `yes` or `no` while decrypting the file system. 
+The continue option can be used to bypass the permissions asked like `yes` or `no` while decrypting the file system.
 If the user is sure about what he/she is doing with the command and would like to proceed, then `-c yes` when provided to the command would not ask permissions. 
 If `-c no` is passed to the command, then permissions would be asked to the user. It becomes interactive.
 
@@ -171,6 +161,40 @@ Given the size of your ownCloud filesystem, this may take some time to complete.
 However, if your filesystem is quite small, then it will complete quite quickly. 
 The `-y` switch can be supplied to automate acceptance of user input.
 
+== Fix Encrypted Version
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} encryption:fix-encrypted-version [options] [--] <user>
+----
+
+`encryption:fix-encrypted-version` fixes the encrypted version of files if the encrypted file(s) are not downloadable for a given user. You only need this command if you get an "Invalid Signature" message in the browser or the clients.
+
+Background: the `oc_filecache` database table contains the integer columns "version" and "encryptedVersion" which start with 1 and are incremented on every file modification. When using encryption, those values are used together with the ciphertext to generate a cryptographic signature for the file. The version value is required to verify the signature. In some very rare cases like timeouts or bugs etc., the value might not get updated accordingly or get lost. The brute-force approach is to use the `fix:encrypted:version` command until the file can be decrypted. Starting with ownCloud 10.8, the behavior of the command got improved so that the encryptedVersion value is reset to its original value if no correct version was found. Before that fix, the last tried value was stored in the database thus modifying the state of the system and making further rescue attempts non-deterministic.
+
+=== Arguments
+
+[width="100%",cols="30%,70%",]
+|===
+| `user`
+| The id of the user whose files need fixing.
+|===
+
+=== Options
+
+[width="100%",cols="30%,70%",]
+|===
+| `-p` +
+`--path=PATH`
+| Limit files to fix with path, e.g., --path="/Music/Artist". +
+If path indicates a directory, all the files inside directory will be fixed.
+
+| `-i` +
+`--increment-range=INCREMENT-RANGE`
+| Find the correct version of the file to verify the signature. +
+Searches in increments from -n to +n. [default: "5"]
+|===
+
 == HSM Related Commands
 
 === Export or Import the Masterkey
@@ -182,16 +206,19 @@ The `-y` switch can be supplied to automate acceptance of user input.
 
 === Options
 
-[width="100%",cols="20%,70%",]
+[width="100%",cols="30%,70%",]
 |===
-| `--export-masterkey` | Export the private master key in base64
+| `--export-masterkey`
+| Export the private master key in base64
+
 | `--import-masterkey= +
-IMPORT-MASTERKEY`     | Import a base64 encoded private masterkey.
+IMPORT-MASTERKEY`
+| Import a base64 encoded private masterkey.
 |===
 
 `--export-masterkey` prints the base64_encode of the file `data/files_encryption/OC_DEFAULT_MODULE/master_*.privateKey`.
 
-The private key file in the directory may named like `master_08ea43b7.privateKey`.
+The private key file in the directory may be named like `master_08ea43b7.privateKey`.
 
 
 === Test to Decrypt a String
@@ -205,17 +232,21 @@ Allows to test the `hsmdaemon` setup by providing an encrypted string to ownClou
 
 === Arguments
 
-[width="100%",cols="20%,70%",]
+[width="100%",cols="30%,70%",]
 |===
-| `decrypt` | The string to decrypt
+| `decrypt`
+| The string to decrypt
 |===
 
 === Options
 
-[width="100%",cols="20%,70%",]
+[width="100%",cols="30%,70%",]
 |===
-| `--username[=USERNAME]` | The name of the user who is able to decrypt the provided string
-| `--keyId[=KEYID]`       | The keyId which was used to encrypt the provided string
+| `--username[=USERNAME]`
+| The name of the user who is able to decrypt the provided string
+
+| `--keyId[=KEYID]`
+| The keyId which was used to encrypt the provided string
 |===
 
 === Set the HSM URL
@@ -238,7 +269,7 @@ To access the `hsmdaemon` API, ownCloud must authenticate with a JWT (JSON Web T
 
 === Set the JWT Clockskew
 
-The JWT described above has an expiry timestamp. In case the time clocks on ownCloud and hsmdaemon system drift or skew appart, additional time is added to the expiry time to counteract this situation. Set or change the clockskew only if ownCloud advises to do so. Defaults to 120, value is in seconds.
+The JWT described above has an expiry timestamp. In case the time clocks on ownCloud and hsmdaemon system drift or skew apart, additional time is added to the expiry time to counteract this situation. Set or change the clockskew only if ownCloud advises to do so. Defaults to 120, value is in seconds.
 
 [source,console,subs="attributes+"]
 ----

@@ -1,0 +1,82 @@
+= Database Upgrade
+:toc: right
+:upgrade-mariadb-url: https://mariadb.com/kb/en/upgrading/
+:compressed-row-format-url: https://mariadb.com/kb/en/innodb-compressed-row-format/#read-only
+
+== Introduction
+
+Usually, when upgrading a database, follow the guides the vendor provides. You may also take a look at the xref:installation/manual_installation/manual_installation.adoc#install-a-database[Install a Database] section for general notes.
+
+This document supports an upgrade in case there are prerequisites and/or special steps to be taken to upgrade to a particular database version.
+
+== Upgrading to MariaDB 10.6
+
+ownCloud runs fine when using a MariaDB version lower than 10.6. You can upgrade ownCloud as usual without special considerations regarding the database.
+
+When planning to upgrade to MariaDB 10.6, some prerequisites have to be met and upgrade steps have to be taken. 
+
+This is mostly due to the fact that, unlike before, in MariaDB 10.6 _tables of the COMPRESSED row format are read-only by default_. For more information see the {compressed-row-format-url}[InnoDB COMPRESSED Row Format] document.
+
+NOTE: This process only needs to be carried out once.
+
+=== Prerequisites
+
+. You must have upgraded your ownCloud installation to version 10.9 or above. To do so, follow the
+xref:maintenance/upgrading/manual_upgrade.adoc[Manual ownCloud Upgrade] guide.
+
+. Backup your ownCloud installation, especially the database. To do so, follow the
+xref:maintenance/backup_and_restore/backup.adoc[Backing up ownCloud] guide.
+
+. When running a MariaDB release lower than 10.5, you have to upgrade step-by-step for each minor release up to 10.5.x. Follow the respective {upgrade-mariadb-url}[Upgrading MariaDB] guide.
++
+[WARNING]
+====
+You must not skip minor releases of MariaDB when upgrading like from 10.3 -> 10.5, you have to upgrade to each minor version in between step by step.
+====
++
+Have a backup of your database to rollback in case of issues.
+
+=== Upgrade Steps
+
+. Set ownCloud in maintenance mode
++
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} maintenance:mode --on
+----
+
+. Prevent browser access +
++
+Stop your web server to prevent users from trying to access ownCloud via the web. As an alternative, you can stop serving the virtual host for ownCloud.
++
+[source,console]
+----
+# Stop the web server
+sudo service apache2 stop
+----
+
+. Run an occ command to prepare the database for the upgrade
++
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} db:restore-default-row-format
+----
+
+. Upgrade MariaDB to version 10.6.x
++
+Follow the instructions in the {upgrade-mariadb-url}[Upgrading MariaDB] guide.
+
+. Set ownCloud back to normal operation mode:
++
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} maintenance:mode --off
+----
+
+. Enable browser access +
+Start your web server, Alternatively, enable the virtual host serving ownCloud again:
++
+[source,console]
+----
+sudo service apache2 start
+----

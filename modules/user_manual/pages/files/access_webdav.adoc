@@ -1,6 +1,14 @@
 = Accessing ownCloud Files Using WebDAV
 :toc: right
 :ocsmount-url: https://apps.apple.com/de/app/ocsmount/id1411490371
+:webdav-navigator-url: http://seanashton.net/webdav/
+:schimera-url: https://play.google.com/store/apps/details?id=com.schimera.webdavnavlite
+:ios-webdav-navigator-url: https://itunes.apple.com/app/webdav-navigator/id382551345
+:sabre-finder-url: http://sabre.io/dav/clients/finder/
+:windows7-dav-url: https://support.microsoft.com/en-us/topic/349cb223-941f-03f1-d80c-3a9a2b9ffb72
+:office-opens-blank-url: https://docs.microsoft.com/en-us/office/troubleshoot/powerpoint/office-opens-blank-from-sharepoint
+:support-1-url: https://support.microsoft.com/kb/2123563
+:support-2-url: https://support.microsoft.com/kb/2668751
 :page-aliases: go/user-webdav.adoc
 
 == Introduction
@@ -37,11 +45,7 @@ example.com/owncloud
 
 In addition to the mobile apps provided by ownCloud, you can use other
 apps to connect to ownCloud from your mobile device using WebDAV.
-http://seanashton.net/webdav/[WebDAV Navigator] is a good (proprietary) app for
-https://play.google.com/store/apps/details?id=com.schimera.webdavnavlite[Android devices],
-https://itunes.apple.com/app/webdav-navigator/id382551345[iPhones], and
-http://appworld.blackberry.com/webstore/content/46816[BlackBerry devices].
-The URL to use on these is:
+{webdav-navigator-url}[WebDAV Navigator] is a good (proprietary) app for {schimera-url}[Android devices] and {ios-webdav-navigator-url}[iPhones]. The URL to use on these is:
 
 ----
 example.com/owncloud/remote.php/webdav
@@ -79,8 +83,7 @@ image:webdav_gnome3_nautilus.png[screenshot of configuring Nautilus file manager
 
 === Accessing Files with KDE and Dolphin File Manager
 
-To access your ownCloud files using the Dolphin file manager in KDE, use
-the `webdav://` protocol:
+To access your ownCloud files using the Dolphin file manager in KDE, use the `webdav://` protocol:
 
 ----
 webdav://example.com/owncloud/remote.php/webdav
@@ -90,7 +93,7 @@ image:webdav_dolphin.png[screenshot of configuring Dolphin file manager to use W
 
 You can create a permanent link to your ownCloud server:
 
-. Open Dolphin and click btn:[Network] in the left hand column.
+. Open Dolphin and click btn:[Network] in the left-hand column.
 +
 image:files/access_webdav/dolphin-add-network-folder.png[Dolphin File Explorer]
 . Click on the icon labeled btn:[Add a Network Folder]. +
@@ -206,8 +209,7 @@ servercert   /etc/davfs2/certs/mycertificate.pem
 
 == Accessing Files Using Mac OS X
 
-NOTE: The Mac OS X Finder suffers from a 
-http://sabre.io/dav/clients/finder/[series of implementation problems]
+NOTE: The Mac OS X Finder suffers from a {sabre-finder-url}[series of implementation problems]
 and should only be used if the ownCloud server runs on *Apache* and *mod_php*.
 You can use a tool like {ocsmount-url}[ocsmount] to mount without those issues.
 
@@ -246,9 +248,9 @@ your ownCloud to one or more directories of your local hard drive.
 
 NOTE: Prior to mapping your drive, you must permit the use of Basic Authentication in the
 Windows Registry. The procedure is documented in 
-http://support.microsoft.com/kb/841215[KB841215]https://support.microsoft.com/en-us/topic/349cb223-941f-03f1-d80c-3a9a2b9ffb72[Windows 7 cannot automatically reconnect a DAV share when Basic Authentication is used]
+{windows7-dav-url}[Windows 7 cannot automatically reconnect a DAV share when Basic Authentication is used]
 and
-https://docs.microsoft.com/en-us/office/troubleshoot/powerpoint/office-opens-blank-from-sharepoint[Office applications open blank from SharePoint WebDAV or sites].
+{office-opens-blank-url}[Office applications open blank from SharePoint WebDAV or sites].
 Please follow the Knowledge Base article before proceeding.
 
 === Mapping Drives With the Command Line
@@ -377,19 +379,18 @@ You receive the following error message: +
 ==== Solution
 
 Windows limits the maximum size a file transferred from or to a WebDAV
-share may have. You can increase the value *FileSizeLimitInBytes* in
-*HKEY_LOCAL_MacHINE\SYSTEM\CurrentControlSet\Services\WebClient\Parameters*
+share may have. You can increase the value `FileSizeLimitInBytes` in
+`HKEY_LOCAL_MacHINE\SYSTEM\CurrentControlSet\Services\WebClient\Parameters`
 by clicking on btn:[Modify].
 
 To increase the limit to the maximum value of 4GB, select *Decimal*, enter a value of
-*4294967295*, and reboot Windows or restart the *WebClient* service.
+`4294967295`, and reboot Windows or restart the `WebClient` service.
 
 === Problem: Accessing your files from Microsoft Office via WebDAV fails
 
 ==== Solution
 
-Known problems and their solutions are documented in the
-https://support.microsoft.com/kb/2123563[KB2123563] article.
+Known problems and their solutions are documented in the {support-1-url}[KB2123563] article.
 
 === Problem: WebDAV Drive in Windows Using Self-Signed Certificate
 
@@ -426,8 +427,7 @@ upload takes longer than 30 minutes using Web Client in Windows 7.
 
 ==== Solution
 
-Workarounds are documented in the
-https://support.microsoft.com/kb/2668751[KB2668751] article.
+Workarounds are documented in the {support-2-url}[KB2668751] article.
 
 === Problem: The Network Name Cannot be Found
 
@@ -570,11 +570,11 @@ which is part of libxml2. To format it as it is listed above, pipe the previous 
 
 == Uploading Files to a Public Link (File Drop) Using cURL
 
-To upload a file *file.txt* to a public link with token *70mX9s7KOZwfmdi* +
+To upload a file `file.txt` to a public link with token `70mX9s7KOZwfmdi` +
 \https://example.com/s/70mX9s7KOZwfmdi +
 having no password
 
 [source,bash]
 ----
-curl -k -T file.txt -u "70mX9s7KOZwfmdi:" -H 'X-Requested-With: XMLHttpRequest' https://example.com/public.php/webdav/file.txt
+curl -k -T file.txt -u "70mX9s7KOZwfmdi:" -H 'X-Requested-With: XMLHttpRequest' \https://example.com/public.php/webdav/file.txt
 ----
