@@ -1,5 +1,7 @@
 = User Commands
 
+:temp-dir-url: https://systemd.io/TEMPORARY_DIRECTORIES/
+
 The `user` commands provide a range of functionality for managing ownCloud users. 
 This includes: creating and removing users, resetting user passwords, displaying a report which shows how many users you have, and when a user was last logged in.
 The full list, of commands is:
@@ -398,7 +400,7 @@ The email address of `carla` is updated to `foobar@foo.com`.
 
 == Move a Users Home Folder
 
-This command moves a user's home folder to a new location. For details see xref:configuration/user/user_management.adoc#moving-the-user-home[Moving the User Home] documentation. Note that moving a users home is only possible for posix file systems.
+This command moves a user's home folder to a new location. For details see xref:configuration/user/user_management.adoc#moving-the-user-home[Moving the User Home] documentation. Note that moving a users home is only possible for POSIX file systems.
 
 [source,console,subs="attributes+"]
 ----
@@ -415,6 +417,14 @@ This command moves a user's home folder to a new location. For details see xref:
 | `new_location`
 | Absolute path to the parent folder of the new location of the home folder.
 |====
+
+[NOTE]
+====
+You must not use temp directories like `/tmp` and `/var/tmp` as target directory.
+
+* Any data located in one of the two directories will not survive a reboot
+* For systemd services, they are private sub-directories of the host’s real /tmp/ and /var/tmp/, and thus not system-wide locations anymore, but service-specific ones. For more details see {temp-dir-url}[Using /tmp/ and /var/tmp/ Safely]
+====
 
 Example:
 
