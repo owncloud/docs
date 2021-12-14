@@ -13,6 +13,7 @@ user
  user:delete                         Deletes the specified user
  user:disable                        Disables the specified user
  user:enable                         Enables the specified user
+ user:home                           List home directories and users in a particular home
  user:inactive                       Reports users who are known to owncloud,
                                      but have not logged in for a certain number of days
  user:lastseen                       Shows when the user was logged in last time
@@ -170,6 +171,89 @@ NOTE: Once users are disabled, their connected browsers will be disconnected. Us
 | `uid`
 | The user name.
 |====
+
+== List User Home Directories
+
+List all available root directories for user homes that are currently in use. For details see xref:configuration/user/user_management.adoc#moving-the-user-home[Moving the User Home] documentation.
+
+This command is complementary when using `user:move`.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:home:list-dirs [options]
+----
+
+=== Options
+
+[width="100%",cols="20%,70%"]
+|===
+| `--output=[OUTPUT]`
+| Output format (plain, json or json_pretty, default is plain) [default: "plain"].
+|===
+
+=== Examples
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:home:list-dirs
+  - /var/www/owncloud/data
+----
+
+== List all Users For a Given Home Directory
+
+List all users that have their home in a given path. For details see xref:configuration/user/user_management.adoc#moving-the-user-home[Moving the User Home] documentation.
+
+This command is complementary when using `user:move`.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:home:list-users [options] [--] [<path>]
+----
+
+=== Arguments
+
+[width="100%",cols="20%,70%"]
+|===
+| `path`
+| Path where the user home must be located
+|===
+
+=== Options
+
+[width="100%",cols="20%,70%"]
+|===
+| `--all`
+| List all users for every home path.
+
+| `--output=[OUTPUT]`
+| Output format (plain, json or json_pretty, default is plain) [default: "plain"].
+|===
+
+=== Examples
+
+Note for the example below, some user accounts originated from LDAP.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:home:list-users /var/www/owncloud/data
+  - admin
+  - aca4c3ec-691d-103b-8380-55a4da3d3a76
+  - 9918b614-6a2e-103b-89a7-f5edf5d332f5
+  - c298ae18-6a2e-103b-89a8-f5edf5d332f5
+  - dbcca7b4-7306-103b-813a-19652cf0a9d2
+----
+
+Run the following command to list all users from all available home directories. The example shows, that user `lisa` has been moved to a different home directory with `user:move`.
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:home:list-users --all
+  - /mnt/newhome_1
+    - lisa
+  - /var/www/owncloud/data 
+    - admin
+    - user01
+----
 
 == Finding Inactive Users
 
@@ -400,7 +484,7 @@ The email address of `carla` is updated to `foobar@foo.com`.
 
 == Move a Users Home Folder
 
-This command moves a user's home folder to a new location. For details see xref:configuration/user/user_management.adoc#moving-the-user-home[Moving the User Home] documentation. Note that moving a users home is only possible for POSIX file systems.
+This command moves a user's home folder to a new location. For details see xref:configuration/user/user_management.adoc#moving-the-user-home[Moving the User Home] documentation. Note that moving a users home is only possible for POSIX file systems. Also see the `user:home` commands for additional support.
 
 [source,console,subs="attributes+"]
 ----
