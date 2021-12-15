@@ -3,20 +3,47 @@
 
 == Introduction
 
-Starting with ownCloud Server 10.5 a new enhancement is provided for content collaboration. Manual file locking allows users to lock files in shared areas while working on them in order to prevent concurrent changes from other users (check-in/check-out). 
+Manual file locking allows users, if enabled, to lock files in shared areas while working on them in order to prevent concurrent changes from other users (check-in/check-out). 
 
 The feature builds on the WebDAV Locks backend which has been introduced with Server 10.1 and is now available in the ownCloud Web Interface. All storages are supported as locking takes place on the WebDAV level. The locks will only be available via ownCloud, not when a user works directly on the storage. Using the context menu of files, every user who has access can lock them. Users can recognize locked files by the means of a new lock indicator. While a file is locked, other users can still access it but they can not make any changes. Locked files can manually be unlocked by the lock owner (the user who locked the file; exclusive locking) using the "Locks" tab in the file details view (right sidebar).
 
-== Installation
+== Enable or Disable the UI Component
 
-By default, locks set in the web interface will expire after 30 minutes. The maximum lock time by default is 24 hours.
+NOTE: The _user-facing_ components in the web interface are disabled by default because this feature allows users to lock other users' files *exclusively*. Even the owner of the file can't unlock them, only the locking user can unlock until the lock expires.
 
-NOTE: The user-facing components in the web interface are disabled by default because this feature allows users to lock other user's files *exclusively*. Even the owner of the file can't unlock them.
+By default, locks set by the user in the web interface will expire after 30 minutes. The maximum lock time by default is 24 hours.
 
-Administrators can enable the feature by executing the following occ command: 
+The main user-facing component in the web interface looks like in the following screenshots. If _Manual File Locking_ is disabled, the additional user-facing components are not present:
 
-**Make the user-facing components visible**
+[width="100%",cols="50%,50%",options="header"]
+|===
+^| Manual Locking Disabled
+^| Manual Locking Enabled
 
+a|image::configuration/files/manual_file_locking/lock-file-not-visible.png[File locking not visible]
+a|image::configuration/files/manual_file_locking/lock-file-visible.png[File locking visible]
+|===
+
+If manual locking is enabled, the following additional user-facing components are present:
+
+[width="100%",cols="50%,50%"]
+|===
+a|image::configuration/files/manual_file_locking/file-locked-symbol.png[File locked symbol]
+a|image::configuration/files/manual_file_locking/file-locked-hint.png[File locking hint]
+
+a|image::configuration/files/manual_file_locking/file-locked-details.png[File locking details]
+a|image::configuration/files/manual_file_locking/file-locked-unlock-symbol.png[File unlocking]
+
+|===
+
+Administrators can enable _Manual File Locking_ for users either via the web interface or by executing an occ command: 
+
+Web interface::
+Go to menu:Settings[Admin > Additional]
++
+image::configuration/files/manual_file_locking/manual-file-locking-without-lock-breaker.png[Enable file locking]
+
+Using the occ command::
 [source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} config:app:set files enable_lock_file_action --value yes
@@ -24,17 +51,28 @@ Administrators can enable the feature by executing the following occ command:
 
 == Configuration
 
-To prevent files being locked infinitely, there is a mechanism that automatically expires locks after a certain time. The expiration time of locks can be configured via the "Manual File Locking" section in the Admin -> Additional settings or using occ commands:
+To prevent files being locked infinitely, there is a mechanism that automatically expires locks after a certain time. The expiration time of locks can either be configured via the web interface or using occ commands:
 
-Default timeout for the locks is if not specified (in seconds): Maximum lifetime of a lock set via the web interface (or by not specifying a timeout value when calling the WebDAV Locks API)
+.The default timeout for the locks is, if not specified (in seconds):
+Maximum lifetime of a lock set via the web interface (or by not specifying a timeout value when calling the WebDAV Locks API).
 
+.The maximum timeout for the locks (in seconds):
+Maximum lifetime of locks which is allowed to be set by calling the WebDAV Locks API.
+
+Web interface::
+Go to menu:Settings[Admin > Additional] +
+The image is the same as shown above when enabling or disabling _Manual File Locking_.
+
+Using the occ command::
+* Default locks timeout
++
 [source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} config:app:set files lock_timeout_default --value 1800
 ----
-
-Maximum timeout for the locks (in seconds): Maximum lifetime of locks which is allowed to be set by calling the WebDAV Locks API
-
++
+* Maximum locks timeout
++
 [source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} config:app:set files lock_timeout_max --value 86400
