@@ -3,8 +3,6 @@
 :page-aliases: enterprise/external_storage/s3_swift_as_primary_object_store_configuration.adoc
 :files_primary_s3-url: https://github.com/owncloud/files_primary_s3
 :creating-a-bucket-url: https://docs.aws.amazon.com/AmazonS3/latest/gsg/CreatingABucket.html
-:occ-files_transfer-ownership-link: 
-xref:configuration/server/occ_command.adoc#the-filestransfer-ownership-command
 
 == Introduction
 
@@ -16,11 +14,11 @@ Administrators can configure Amazon S3 compatible object storages as the primary
 NOTE: Even if the ownCloud log file is stored in an alternate location (by changing the location in `config.php`),
 `owncloud/data` may still be required for backward compatibility with some apps.
 
-That said, {oc-marketplace-url}/apps/objectstore[Object Storage Support] (`objectstore`) is still available, but the {oc-marketplace-url}/apps/files_primary_s3[S3 Primary Object Storage] app is the preferred and only supported way to provide S3 storage support as primary storage. ownCloud provides consulting for migrations from `objectstore` --> `files_primary_s3`.
+That said, {oc-marketplace-url}/apps/objectstore[Object Storage Support] (`objectstore`) is still available, but the {oc-marketplace-url}/apps/files_primary_s3[S3 Primary Object Storage] app is the preferred and only supported way to provide S3 storage support as primary storage. ownCloud provides consulting for migrations from `objectstore` -> `files_primary_s3`.
 
 [NOTE] 
 ====
-Consider the following differenciation:
+Consider the following differentiation:
 
 {oc-marketplace-url}/apps/files_external_s3[External Storage: S3]::
 Integrate S3 object storages as external storages
@@ -31,24 +29,32 @@ Leverage object storage via S3 as primary storage
 
 NOTE: OpenStack Swift has been deprecated.
 
-When using `files_primary_s3`, the Amazon S3 bucket needs to be created manually according to the {creating-a-bucket-url}[developer documentation] and versioning needs to be enabled.
+When using `files_primary_s3`, the Amazon S3 bucket to be used needs to be created manually first, according to the {creating-a-bucket-url}[Amazon S3 developer documentation] and versioning needs to be enabled for this bucket.
 
 == Implications
 
-Read the following implications carfully **BEFORE** you start using `files_primary_s3`:
+Read the following implications carefully **BEFORE** you start using `files_primary_s3`:
 
-1. Apply this configuration before the first login of any user – including the admin user; otherwise, ownCloud can no longer find the user's files.
-2. In "object store" mode as primary storage access, ownCloud expects exclusive access to the object store container, because it only stores the binary data for each file. While in this mode, ownCloud stores the metadata in the local database for performance reasons.
-3. The current implementation is incompatible with any app that uses direct file I/O (input/output) as it circumvents the ownCloud virtual filesystem. An excellent example is the xref:configuration/files/encryption/encryption_configuration.adoc[Encryption app], which fetches critical files in addition to any requested file, which results in significant overhead. +
-**Therefore encrypting the S3 primary storage has been disabled and can not be enabled**
-4. When using S3 primary storage with multiple buckets, it is not recommended to use the command to transfer file ownership between users
+. Apply this configuration before the first login of any user – including the admin user; otherwise, ownCloud can no longer find the user's files.
+
+. In "object store" mode as primary storage access, ownCloud expects exclusive access to the object store container, because it only stores the binary data for each file. While in this mode, ownCloud stores the metadata in the local database for performance reasons.
+
+. The current implementation is _incompatible_ with any app that uses direct file I/O (input/output) as it circumvents the ownCloud virtual file system. An excellent example is the xref:configuration/files/encryption/encryption_configuration.adoc[Encryption app], which fetches critical files in addition to any requested file, which results in significant overhead. +
+**Therefore encrypting the S3 primary storage via ownCloud has been disabled and can not be enabled**
+
+. When requiring encryption for the bucket containing the primary storage, use the bucket built-in encryption provided by the S3 API. See the configuration examples below how to enable it.
+
+. When using S3 primary storage with multiple buckets, it is _not recommended_ to use the command to transfer file ownership between users
 (xref:configuration/server/occ_command.adoc#the-filestransfer-ownership-command[occ files:transfer-ownership])
-as shares on the files can get lost. The reason for this is that file ids are changed during such cross-storage move operations.
+as shares on the files can get lost. The reason for this is that file IDs are changed during such cross-storage move operations.
 
 == Configuration
 
-Copy the following relevant part to your `config.php` file.
-Technical note, any object store needs to implement `\\OCP\\Files\\ObjectStore\\IObjectStore`, and can be passed parameters in the constructor with the `arguments` key, as in the following example:
+Copy the following relevant example part to your `config.php` file.
+
+[NOTE]
+====
+Any object store needs to implement `\\OCP\\Files\\ObjectStore\\IObjectStore` and can be passed parameters in the constructor with the `arguments` key, as in the following example:
 
 [source,php]
 ----
@@ -62,6 +68,7 @@ $CONFIG = [
     ],
 ];
 ----
+====
 
 === Amazon S3
 
@@ -109,6 +116,8 @@ $CONFIG = [
         'arguments' => [
             // replace with your bucket
             'bucket' => 'owncloud',
+            // uncomment to enable server side encryption
+            //'serversideencryption' => 'AES256',
             'options' => [
                 // version and region are required
                 'version' => '2006-03-01',

@@ -90,3 +90,67 @@ OC.Plugins.register('OCA.Files.NewFileMenu', myFileMenuPlugin);
 This will register a new menu entry in the `New` menu of the files
 app. The method `attach()` is called once the menu is built. This
 usually happens right after the click on the button.
+
+== Registering file actions
+
+[source,js]
+----
+var myFileListPlugin = {
+    attach: function(fileList) {
+        var fileActions = fileList.fileActions;
+        fileActions.registerAction({
+            name: 'exampleActionName',
+            displayName: 'Action display name',
+            altText: 'Alt Text',
+            mime: 'text/plain',
+            permissions: OC.PERMISSION_READ,
+            iconClass: 'icon-details',
+            type: OCA.Files.FileActions.TYPE_DROPDOWN,
+            actionHandler: function(fileName) {
+                // handle action
+            },
+            render: function(actionSpec, isDefault, context) {
+                // handle rendering
+            }
+        });
+    }
+};
+OC.Plugins.register('OCA.Files.FileList', myFileListPlugin);
+----
+
+This will register an action for all files having the mime type
+`text/plain`.
+
+The `permissions` property defines which permissions are needed
+to perform this action. The following permissions are available:
+
+* `OC.PERMISSION_READ`
+* `OC.PERMISSION_CREATE`
+* `OC.PERMISSION_UPDATE`
+* `OC.PERMISSION_DELETE`
+* `OC.PERMISSION_SHARE`
+* `OC.PERMISSION_ALL`
+
+The `type` property defines where the action will be displayed.
+There are currently two options available:
+
+* `OCA.Files.FileActions.TYPE_DROPDOWN` in the 3-dots-menu of the file
+* `OCA.Files.FileActions.TYPE_INLINE` in the table row
+
+=== Setting file actions as default
+
+A file action can be set as default action that will be triggered
+when clicking on the file. The next example sets the action from
+above as default:
+
+[source,js]
+----
+fileActions.setDefault('text/plain', 'exampleActionName');
+----
+
+As the example shows, this is also possible for specific
+mime types only.
+
+In case multiple actions have been set as default for one
+mime type, ownCloud will show a context menu when clicking
+on the file.
