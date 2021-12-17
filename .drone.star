@@ -6,7 +6,7 @@ def main(ctx):
     # Version shown as latest in generated documentations
     # It's fine that this is out of date in version branches, usually just needs
     # adjustment in master/deployment_branch when a new version is added to site.yml
-    latest_version = "10.8"
+    latest_version = "10.9"
     default_branch = "master"
 
     # Current version branch (used to determine when changes are supposed to be pushed)
@@ -19,7 +19,7 @@ def main(ctx):
     deployment_branch = default_branch
     pdf_branch = default_branch
 
-    return [
+    return cancelPreviousBuilds() + [
         checkStarlark(),
         build(ctx, environment, latest_version, deployment_branch, base_branch, pdf_branch),
         trigger(ctx, environment, latest_version, deployment_branch, base_branch, pdf_branch),
@@ -287,3 +287,27 @@ def from_secret(name):
     return {
         "from_secret": name,
     }
+
+def cancelPreviousBuilds():
+    return [{
+        "kind": "pipeline",
+        "type": "docker",
+        "name": "cancel-previous-builds",
+        "clone": {
+            "disable": True,
+        },
+        "steps": [{
+            "name": "cancel-previous-builds",
+            "image": "owncloudci/drone-cancel-previous-builds",
+            "settings": {
+                "DRONE_TOKEN": {
+                    "from_secret": "drone_token",
+                },
+            },
+        }],
+        "trigger": {
+            "ref": [
+                "refs/pull/**",
+            ],
+        },
+    }]

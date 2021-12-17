@@ -1,11 +1,24 @@
 = SAML 2.0 Based SSO with Active Directory Federation Services (ADFS) and mod-shib
 :toc: right
 :toclevels: 1
+:adfs-url: https://docs.microsoft.com/en-us/previous-versions/windows/server-2008/bb897402(v=msdn.10)
+:adfs-step-by-step-url: https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2008-R2-and-2008/gg317734(v=ws.10)
+:adfs-step-by-step-II-url: https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2008-R2-and-2008/gg317734(v=ws.10)
+:adfs-shibboleth-url: https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2008-R2-and-2008/gg317734(v=ws.10)
+:libapache2-mod-shib-url: https://packages.ubuntu.com/search?keywords=libapache2-mod-shib
+:saml-chrome-panel-url: https://chrome.google.com/webstore/detail/saml-chrome-panel/paijfdbeoenhembfhkhllainmocckace
+:saml-tracer-url: https://addons.mozilla.org/de/firefox/addon/saml-tracer/
+:ws-federation-url: https://social.technet.microsoft.com/wiki/contents/articles/1439.ad-fs-how-to-invoke-a-ws-federation-sign-out.aspx
+:shibboleth-service-provider-url: https://blog.kloud.com.au/2014/10/29/shibboleth-service-provider-integration-with-adfs/
+:adfs2fed-python-script-url: https://github.com/rohe/pysfemma/blob/master/tools/adfs2fed.py
+:shibboleth-basic-configuration-url: https://shibboleth.atlassian.net/wiki/spaces/SHIB2/pages/2577072249/NativeSPApplication#NativeSPApplication-BasicConfiguration(Version2.4andAbove)
+:shibboleth-xml-metadata-provider-url: https://shibboleth.atlassian.net/wiki/spaces/SHIB2/pages/2577072307/NativeSPMetadataProvider
+:shibboleth-nativespservicesso-url: https://shibboleth.atlassian.net/wiki/spaces/SHIB2/pages/2577072444/NativeSPServiceSSO
 
 == Preparation
 
 Before you can setup SAML 2.0 based Single Sign-On with
-https://msdn.microsoft.com/en-us/library/bb897402.aspx[Active Directory Federation Services (ADFS)]
+{adfs-url}[Active Directory Federation Services (ADFS)]
 and mod-shib, ask your ADFS admin for the relevant server URLs. These are:
 
 - The SAML 2.0 single sign-on service URL, e.g., `\https://<ADFS server FQDN>/ADFS/ls`
@@ -22,8 +35,7 @@ sudo service apache2 restart
 
 == Installation
 
-Firstly, install https://packages.ubuntu.com/search?keywords=libapache2-mod-shib[mod-shib].
-You can do this using the following command:
+Firstly, install {libapache2-mod-shib-url}[mod-shib]. You can do this using the following command:
 
 [source,console]
 ----
@@ -40,10 +52,9 @@ sudo shib-keygen
 
 == Download and Filter the ADFS Metadata
 
-The metadata provided by ADFS cannot be automatically imported, and must be cleaned up before using it with the file based `MetadataProvider`.
-To do so, use `adfs2fed.php`, as in the following command:
+The metadata provided by ADFS cannot be automatically imported, and must be cleaned up before using it with the file based `MetadataProvider`. To do so, use `adfs2fed.php`, as in the following command:
 
-[source,console]
+[source,php]
 ----
 php apps/user_shibboleth/tools/adfs2fed.php \
    https://<ADFS server FQDN>/FederationMetadata/2007-06/FederationMetadata.xml \
@@ -101,7 +112,7 @@ Let him do his job while you continue with the Apache configuration below.
 
 === Add a Relying Party Using Metadata
 
-See step 2 in https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2008-R2-and-2008/gg317734(v=ws.10)[AD FS 2.0 Step-by-Step Guide].
+See step 2 in {adfs-step-by-step-url}[AD FS 2.0 Step-by-Step Guide].
 
 === Configure ADFS to Send the userPrincipalName in the SAML Token
 
@@ -128,9 +139,7 @@ xref:admin_manual:enterprise/user_management/user_auth_shibboleth.adoc#the-apach
 
 === user_shibboleth
 
-When the app is enabled and ownCloud is protected by mod-shib, due to the Apache 2 configuration, you should be forced to authenticate against an ADFS.
-After a successful authentication you will be redirected to the ownCloud login page, where you can login as the administrator.
-Double check you have a valid SAML session by browsing to `https://<owncloud server FQDN>/Shibboleth.sso/Session`.
+When the app is enabled and ownCloud is protected by mod-shib, due to the Apache 2 configuration, you should be forced to authenticate against an ADFS. After a successful authentication you will be redirected to the ownCloud login page, where you can login as the administrator. Double check you have a valid SAML session by browsing to `\https://<owncloud server FQDN>/Shibboleth.sso/Session`.
 
 In the "User Authentication" settings for Shibboleth the `upn` environment variables will be filled with the authenticated user’s `userPrincipalName` in the "Server Environment" section.
 
@@ -214,15 +223,13 @@ After a restart `/var/log/shibbloeth/shibd.log` will show the parsed SAML reques
 
 == Browsers
 
--  For Chrome there is a https://chrome.google.com/webstore/detail/saml-chrome-panel/paijfdbeoenhembfhkhllainmocckace[SAML Chrome Panel] that allows checking the SAML messages in the developer tools reachable via F12.
--  For Firefox there is https://addons.mozilla.org/de/firefox/addon/saml-tracer/[SAML tracer]
+-  For Chrome there is a {saml-chrome-panel-url}[SAML Chrome Panel] that allows checking the SAML messages in the developer tools reachable via F12.
+-  For Firefox there is {saml-tracer-url}[SAML tracer]
 -  In the Network tab of the developer extension make sure that "preserve logs" is enabled in order to see the redirects without wiping the existing network requests
 
 == Logout
 
-In SAML scenarios the session is held on the SP as well as the IdP.
-Killing the SP session will redirect you to the IdP where you are still logged in, causing another redirect that creates a new SP session, making logout impossible.
-Killing only the IdP session will allow you to use the SP session until it expires.
+In SAML scenarios the session is held on the SP as well as the IdP. Killing the SP session will redirect you to the IdP where you are still logged in, causing another redirect that creates a new SP session, making logout impossible. Killing only the IdP session will allow you to use the SP session until it expires.
 
 There are multiple ways to deal with this:
 
@@ -235,11 +242,11 @@ In upcoming versions the clients will use OAuth2 to obtain a device specific tok
 
 == Further Reading
 
-- https://technet.microsoft.com/en-us/library/gg317734%28v=ws.10%29.aspx[ADFS 2.0 Step-by-Step Guide: Federation with Shibboleth 2 and the InCommon Federation]
-- https://social.technet.microsoft.com/wiki/contents/articles/1439.ad-fs-how-to-invoke-a-ws-federation-sign-out.aspx[ADFS: How to Invoke a WS-Federation Sign-Out]
-- https://blog.kloud.com.au/2014/10/29/shibboleth-service-provider-integration-with-adfs/[Shibboleth Service Provider Integration with ADFS]
-- https://github.com/rohe/pysfemma/blob/master/tools/adfs2fed.py[adfs2fed Python Script]
-- https://technet.microsoft.com/de-de/library/gg317734(v=ws.10).aspx#BKMK_EditClaimRulesforRelyingPartyTrust[AD FS 2.0 Step-by-Step Guide: Federation with Shibboleth 2 and the InCommon Federation]
-- https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPApplication#NativeSPApplication-BasicConfiguration(Version2.4andAbove)[Shibboleth Basic Configuration (Version 2.4 and Above)]
-- https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPMetadataProvider#NativeSPMetadataProvider-XMLMetadataProvider[Shibboleth XML MetadataProvider]
-- https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPServiceSSO[Shibboleth NativeSPServiceSSO]
+- {adfs-shibboleth-url}[ADFS 2.0 Step-by-Step Guide: Federation with Shibboleth 2 and the InCommon Federation]
+- {ws-federation-url}[ADFS: How to Invoke a WS-Federation Sign-Out]
+- {shibboleth-service-provider-url}[Shibboleth Service Provider Integration with ADFS]
+- {adfs2fed-python-script-url}[adfs2fed Python Script]
+- {adfs-step-by-step-II-url}[AD FS 2.0 Step-by-Step Guide: Federation with Shibboleth 2 and the InCommon Federation]
+- {shibboleth-basic-configuration-url}[Shibboleth Basic Configuration (Version 2.4 and Above)]
+- {shibboleth-xml-metadata-provider-url}[Shibboleth XML MetadataProvider]
+- {shibboleth-nativespservicesso-url}[Shibboleth NativeSPServiceSSO]

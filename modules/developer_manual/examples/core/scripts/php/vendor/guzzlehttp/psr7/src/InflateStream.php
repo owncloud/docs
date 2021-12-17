@@ -12,7 +12,7 @@ use Psr\Http\Message\StreamInterface;
  * to a Guzzle stream resource to be used as a Guzzle stream.
  *
  * @link http://tools.ietf.org/html/rfc1952
- * @link http://php.net/manual/en/filters.compression.php
+ * @link https://www.php.net/manual/en/filters.compression.php
  */
 class InflateStream implements StreamInterface
 {

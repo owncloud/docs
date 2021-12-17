@@ -12,7 +12,7 @@
 :smbclient-manpage-url: https://www.samba.org/samba/docs/man/manpages-3/smbclient.1.html
 :wannacry-ransomware-attack-url: https://en.wikipedia.org/wiki/WannaCry_ransomware_attack
 :acl-url: https://en.wikipedia.org/wiki/Access-control_list
-:password-lockout-policies-url: https://technet.microsoft.com/en-us/library/dd277400.aspx
+:password-lockout-policies-url: https://docs.microsoft.com/en-us/previous-versions/tn-archive/dd277400(v=technet.10)
 :manage-systemd-services-url: https://www.digitalocean.com/community/tutorials/how-to-use-systemctl-to-manage-systemd-services-and-units
 :base64-url: https://www.base64decode.org/
 :vaultproject-url: https://www.vaultproject.io
@@ -40,7 +40,7 @@ Compared to standard SMB access, WND has advanced features like:
 .Brief Description of Advanced Features:
 
 User lockout prevention and password reset::
-Depending on the Windows or Samba policy, users could get locked out of their account if they enter a wrong password a number of times. The lockout prevention tries to avoid this from happening by resetting the password if it is wrong. In the case of ownCloud's standard SMB connector the password won't be reset. It could happen that users get locked out of the file server.
+Depending on the Windows or Samba policy, users could get locked out of their account if they enter a wrong password a number of times. The lockout prevention tries to avoid this from happening by resetting the password if it is wrong. This is also true for Collaborative WND when using `login credentials saved in database` and a repeatedly running files-scan job which may use outdated credentials. In the case of ownCloud's standard SMB connector, the password won't be reset. It could happen that users get locked out of the file server.
 
 More authentication mechanisms against the backend::
 Please see the details about the xref:enterprise/external_storage/enterprise_only_auth.adoc[Enterprise-Only Authentication Options]
@@ -114,7 +114,7 @@ if your distribution does not provide it.
 * `which` and `stdbuf`. These should be included in most Linux distributions.
 
 To install and configure the necessary packages, see the
-xref:installation/manual_installation/manual_installation.html#prepare-your-server[Prepare Your Server]
+xref:installation/manual_installation/manual_installation.adoc#prepare-your-server[Prepare Your Server]
 section of the manual installation documentation.
 
 TIP: For more information on SMB/CIFS in ownCloud, refer to the
@@ -131,7 +131,7 @@ ownCloud server, when:
 . The remote Windows/Samba file server requires at least {smb2-url}[version 2.0 of the SMB protocol].
 
 The
-xref:enterprise/external_storage/windows-network-drive_configuration.adoc[Windows Network Drive Listener] only supports version 1 of the SMB protocol (SMB1) with _earlier_ Samba versions.
+xref:wnd-listener-setup[Windows Network Drive Listener] only supports version 1 of the SMB protocol (SMB1) with _earlier_ Samba versions.
 
 *Background*
 
@@ -154,10 +154,11 @@ To enable external storage, as the ownCloud administrator go to menu:Settings[St
 
 === Creating a New Share
 
-.When you create a new WND share, you need three things:
+.When you create a new WND share, you need multiple things:
 
 * the login credentials for the share,
-* the server address, the share name and
+* the server address,
+* the share name and
 * the folder you want to connect to.
 
 [CAUTION]
@@ -170,19 +171,19 @@ if the case is not respected.
 .Follow this procedure to create a new mount point based on WND
 
 . Enter the ownCloud mount point for your new WND share. This _must not_ be an existing folder.
-. Select your authentication method. See xref:enterprise/external_storage/enterprise_only_auth.adoc[Enterprise-Only Authentication Options] for complete information on the five available authentication methods.
+. Select your authentication method. See xref:enterprise/external_storage/enterprise_only_auth.adoc[Enterprise-Only Authentication Options] for complete information on the available authentication methods.
 +
 .Figure 2. WND mountpoint and authorization credentials
 image:enterprise/external_storage/windows_network_drive/wnd-2.png[WND mountpoint and authorization credentials, width=60%]
 . Enter the address of the server that contains the WND share.
-. The Windows share name.
-. The root folder of the share. This is can be the subfolder name, or the `$user` variable for the user's home directory. Note that the LDAP `Internal Username Attribute` must be set to the `samaccountname` for either the share or the root to work, and the user's home directory needs to match the `samaccountname`.
+. The share name provided by Windows or Samba.
+. The root folder of the share. This is can be a subfolder name, or the `$user` variable for the user's home directory. Note that the LDAP `Internal Username Attribute` must be set to the `samaccountname` for either the share or the root to work, and the user's home directory needs to match the `samaccountname`.
 (See xref:configuration/user/user_auth_ldap.adoc[User Authentication with LDAP].)
 . Login credentials.
 . Select users or groups with access to the share. The default is all users.
 . Click the gear icon for additional mount options. Note that previews are enabled by default, while
 sharing is not (see Figure 3). Sharing is not available for all authorization methods. For details please see the
-xref:enterprise/external_storage/enterprise_only_auth.adoc[Enterprise-Only Authentication Options]. When using large storages with many files, you may want to disable previews, because this can significantly increase performance.
+xref:enterprise/external_storage/enterprise_only_auth.adoc#authentication-option-details[Enterprise-Only Authentication Options]. When using large storages with many files, you may want to disable previews, because this can significantly increase performance.
 +
 .Figure 3. WND server, credentials, and additional mount options
 image:enterprise/external_storage/windows_network_drive/wnd-3.png[WND server, credentials, and additional mount options, width=50%]
@@ -249,12 +250,12 @@ NOTE: The capability of the listener depends on the ability of the used SMB/CIFS
 
 The WND listener for ownCloud 10 includes two different commands that need to be executed:
 
-* xref:wnd-listen[wnd:listen] Listen to changes and save them in the database
+* xref:wndlisten[wnd:listen] Listen to changes and save them in the database
 * xref:wndprocess-queue[wnd:process-queue] Process saved listener changes from the database 
 
 ===== wnd:listen
 
-This command listens to changes for each  host and share configured and stores all notifications gathered in the database. _It is intended to run this command as a service_. The command requires the Windows/Samba account and the host/share the listener will listen to. The command does not produce any output by default, unless an error happens. Each stored notification will be further processed by the `wnd:process-queue` and will removed from the database after processing.
+This command listens to changes for each  host and share configured and stores all notifications gathered in the database. _It is intended to run this command as a service_. The command requires the Windows/Samba account and the host/share the listener will listen to. The command does not produce any output by default, unless an error happens. Each stored notification will be further processed by the `wnd:process-queue` and will be removed from the database after processing.
 
 NOTE: You can increase the command's verbosity by using `-vvv`. Doing so displays the listeners activities including a timestamp and the notifications received. A _read-only_ permission for the used account should be enough, but may need to be increased.
 
@@ -393,7 +394,7 @@ If you need to serialize the execution of the `wnd:process-queue`, check the fol
 flock -n /opt/my-lock-file {occ-command-example-prefix} wnd:process-queue <host> <share>
 ----
 
-In that case, flock will try get the lock of that file and won't run the command if it isn't possible. For
+In that case, flock will try to get the lock of that file and won't run the command if it isn't possible. For
 our case, and considering that file isn't being used by any other process, it will run only one
 `wnd:process-queue` at a time. If someone tries to run the same command a second time while the previous
 one is running, the second will fail and won't be executed.
@@ -413,7 +414,7 @@ Check {flock-docs-url}[flock's documentation] for details and more options.
 
 From version 2.0.0 the Windows Network Drive app includes an extension of the Activity app. This extension will allow the app to send events to the Activity app so the users know what happened in the Windows Network Drive storage.
 
-Please see Figure 4 how a notification can look like. In this example, one user accessing the same host/share has changed a file. Other users will now get a activity notification about this change.
+Please see Figure 4 how a notification can look like. In this example, one user accessing the same host/share has changed a file. Other users will now get an activity notification about this change.
 
 .Figure 4. Activity Notification for a Changed File
 image:enterprise/external_storage/windows_network_drive/activity_file_change_notification.png[Activity notification for a Changed File]
@@ -527,7 +528,7 @@ Take the example of attempting to connect to the host MyHost, the share named `M
 {occ-command-example-prefix} wnd:listen MyHost MyData user password
 ----
 
-NOTE: The command is case sensitive, and that it must match the information from the mount point configuration.
+NOTE: The command is case-sensitive, and that it must match the information from the mount point configuration.
 
 === libsmbclient Issues
 
@@ -625,7 +626,7 @@ There are several ways to supply a password:
 ----
 . Read from a file, using the `--password-file` switch to specify the file to read from. Note, that the
 password must be in plain text inside the file, and neither spaces nor newline characters will be removed
-from the file by default, unless the `--pasword-trim` option is added. The password file must be readable
+from the file by default, unless the `--password-trim` option is added. The password file must be readable
 by the apache user (or www-data)
 +
 [source,console,subs="attributes+"]
@@ -803,9 +804,9 @@ Windows supports {password-lockout-policies-url}[password lockout policies].
 If one is enabled on the server where an ownCloud share is located, and a user fails to enter their
 password correctly several times, they may be locked out and unable to access the share.
 
-This is a https://github.com/owncloud/Windows_network_drive/issues/94[known issue]
-that prevents these two inter-operating correctly. Currently, the only viable solution is to ignore that
-feature and use the `wnd:listen` and `wnd:process-queue`, without the serializer options.
+//https://github.com/owncloud/Windows_network_drive/issues/94 [known issue]
+
+This is a known issue that prevents these two inter-operating correctly. Currently, the only viable solution is to ignore that feature and use the `wnd:listen` and `wnd:process-queue`, without the serializer options.
 
 === Multiple Server Setup
 
@@ -865,7 +866,7 @@ refresh the data.
 
 It's intended to be run in a different schedule, so there are several executions of the `wnd:process-queue` fetching the data from the file. Note that the file can be removed manually at any time if it's needed (for example, in case the admin has reset some passwords or has been notified about password changes).
 
-=== Perfomance on High Number of ACL Targeting Users
+=== Performance on High Number of ACL Targeting Users
 
 The WND app doesn’t know about the users or groups associated with ACLs. This means that an ACL containing "admin" might refer to a user called "admin" or a group called "admin". By default, the group membership component considers the ACLs to target groups, and as such, it will try to get the information for such a group. This works fine if the majority of the ACLs target groups. If the majority of the ACLs contain users, this might be problematic. The cost of getting information on a group is usually higher than getting information on a user. This option makes the group membership component assume the ACL contains a user and checks whether there is a user in ownCloud with such a name first. If the name doesn’t refer to a user, it will get the group information. Note that this will have performance implications if the group membership component can’t discard users in a large number of cases. It is recommended to enable this option only if there are a high number of ACLs targeting users. In order to enable this setting, you can edit the `config/config.php` file and add the following configuration:
 

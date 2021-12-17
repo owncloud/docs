@@ -1,7 +1,7 @@
 = User Management
 :toc: right
 :toclevels: 1
-:file-sharing-configuration-url: configuration/files/file_sharing_configuration.adoc
+:page-aliases: configuration/user/user_configuration.adoc
 
 == Default View
 
@@ -14,7 +14,7 @@ their group memberships, and create new groups.
 
 image:configuration/user/users-page-group-tab.png[image]
 
-Click the btn:[gear] icon on the lower left sidebar to view the avaiable settings.
+Click the btn:[gear] icon on the lower left sidebar to view the available settings.
 
 image:configuration/user/users-page-gear.png[image]
 
@@ -30,7 +30,7 @@ _Password_::
   The admin sets the new user’s first password. Both the user and the
   admin can change the user’s password at anytime.
 _E-Mail_::
-  The admin sets the new user’s E-Mail. The user then get's an E-Mail to set his Password.
+  The admin sets the new user’s E-Mail. The user then gets an E-Mail to set his Password.
   Both the user and the admin can change the user’s E-Mail at anytime.
 _Groups_::
   You may create groups, and assign group memberships to users. By
@@ -99,7 +99,7 @@ If you need to preserve the user’s files and shares, you must first download t
 Alternatively, you can use a sync client to copy them to your local computer.
 If you click btn:[No], the confirmation dialog will disappear and the user is not deleted.
 
-TIP: See xref:{file-sharing-configuration-url}[File Sharing Configuration] to learn how to create persistent file shares that survive user deletions.
+TIP: See xref:configuration/files/file_sharing_configuration.adoc[File Sharing Configuration] to learn how to create persistent file shares that survive user deletions.
 
 == Granting Administrator Privileges
 
@@ -242,3 +242,88 @@ against quotas.
 
 When a user creates a public link share via URL, and allows uploads, any
 uploaded files count against that user’s quota.
+
+== Moving the User Home
+
+Usually, a user's home folder is located in the `data/` directory, the location of which is defined in `config.php` and defaults to `/var/www/owncloud/data`. Usually in smaller installations, the data directory mounts to a physical drive of the server and in bigger installations the data directory is mounted via NFS. This can be less than optimal for very big installations with thousands of users and/or users with very big space consumption. This can result in a high load on a single mount point.
+
+ownCloud offers moving the home folder location of single users from the default location to another path outside the data directory to distribute the load to different mount points. You can also move back a user's home to the location defined in config.php.
+
+NOTE: In general, moving a user's home should be the last step after all optimizations of the mount point have been done. Carefully monitor over a period of time the changes made before moving a user's home.
+
+NOTE: Consider that these new home mount points also need to be part of a xref:maintenance/backup_and_restore/backup.adoc[backup] and xref:maintenance/backup_and_restore/restore.adoc[restore] plan.
+
+=== Steps to Move a User's Home
+
+For details of the occ user commands used below, see the xref:configuration/server/occ_command.adoc#user-commands[User Commands] section of the occ command reference. The examples use the user ID `lisa` and the mount for the new home is `/mnt/newhome_1`. 
+
+. To report a users home, use the following command:
++
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:list lisa -a home
+  - lisa: /var/www/owncloud/data/lisa
+----
++
+Here you can see, that the home of user `lisa` is located in `/var/www/owncloud/data/lisa`
+
+. Prepare new mounts *in advance* for one or more users:
++
+Use the OS methods to create one or more new mount points for users home directories not located as defined in config.php. You can create as many new homes as required containing as many new user homes as wanted - there is no ownCloud limitation. The mounts must be fully accessible by the webserver user (usually www-data).
+
+. Move the users home:
++
+[NOTE]
+====
+* To move a users home, the target folder *must not contain* a subfolder with the user's ID.
+* The target folder *can contain* other user folders.
+====
++
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:move-home lisa /mnt/newhome_1
+----
++
+The user gets disconnected and the user's home is now moved which may take a while depending on the load of the server and the bandwidth available on the mount points. When the move operation has finished, 
++
+--
+* all data from the user is _copied_ to the new home,
+* the new path is set in the ownCloud database and 
+* the user gets enabled again.
+--
++
+After checking, the old user's home location can safely be deleted manually.
++
+NOTE: If you are using LDAP and the xref:enterprise/external_storage/ldap_home_connector_configuration.adoc[LDAP Home Connector] app, update the user's home mount in the attribute used accordingly.
+
+. To check the user's new home, use the following command:
++
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:list lisa -a home
+  - lisa: /mnt/newhome_1/lisa
+----
++
+Here you can see that the home of user `lisa` is now located in `/mnt/newhome_1/lisa`.
+
+. To list the available user home root directories, use the following command:
++
+The following command lists all available user homes. Note a home only gets listed, if it contains at least one user.
++
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:home:list-dirs
+  - /var/www/owncloud/data
+  - /mnt/newhome_1/lisa
+----
+
+. To list all users from a users home root directory, use the following command:
++
+The following command lists all users from a given home.
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} user:home:list-users /var/www/owncloud/data
+  - admin
+  - user01
+----
+

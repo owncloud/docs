@@ -1,5 +1,9 @@
 = ownCloud Server Tuning
 :toc: right
+:memcached-url: https://memcached.org
+:thp-url: https://www.kernel.org/doc/Documentation/vm/transhuge.txt
+:redis-guide: https://redis.io/topics/latency
+:sql-lite-limits-url: http://www.sqlite.org/whentouse.html
 :page-aliases: go/admin-performance.adoc
 
 == Using Cron to Perform Background Jobs
@@ -13,8 +17,8 @@ Caching improves performance by storing data, code, and other objects in
 memory. Memory cache configuration for ownCloud is no longer
 automatically available from ownCloud 8.1 but must be installed and
 configured separately. ownCloud supports https://redis.io[Redis],
-http://php.net/manual/en/intro.apcu.php[APCu], and
-https://memcached.org[Memcached] as memory caching backends. See
+{php-net-url}/manual/en/intro.apcu.php[APCu], and
+{memcached-url}[Memcached] as memory caching backends. See
 xref:configuration/server/caching_configuration.adoc[Memory Caching], for further details.
 
 == Use Redis-based Transactional File Locking
@@ -72,8 +76,7 @@ WARNING you have Transparent Huge Pages (THP) support enabled in your kernel.
 This creates both latency and memory usage issues with Redis.
 ----
 
-If so, unfortunately, when a Linux kernel has
-https://www.kernel.org/doc/Documentation/vm/transhuge.txt[Transparent Huge Pages]
+If so, unfortunately, when a Linux kernel has {thp-url}[Transparent Huge Pages]
 enabled, Redis incurs a significant latency penalty after
 the fork call is used, to persist information to disk. Transparent Huge
 Pages are the cause of the following issue:
@@ -92,16 +95,13 @@ echo never > /sys/kernel/mm/transparent_hugepage/enabled
 
 === Redis Latency Problems
 
-If you are having issues with Redis latency, please refer to
-https://redis.io/topics/latency[the official Redis guide] on how to handle them.
+If you are having issues with Redis latency, please refer to the {redis-guide}[official Redis guide] on how to handle them.
 
 == Database Tuning
 
 === Using MariaDB/MySQL Instead of SQLite
 
-MySQL or MariaDB are preferred because of the
-http://www.sqlite.org/whentouse.html[performance limitations of SQLite
-with highly concurrent applications], like ownCloud.
+MySQL or MariaDB are preferred because of the {sql-lite-limits-url}[performance limitations of SQLite with highly concurrent applications], like ownCloud.
 
 See the section xref:configuration/database/linux_database_configuration.adoc[Linux Database Configuration] for how to configure ownCloud for MySQL or MariaDB.
 If your installation is already running on SQLite then it is possible to convert to MySQL or MariaDB using the steps provided in xref:configuration/database/db_conversion.adoc[database conversion].
@@ -123,8 +123,7 @@ ownCloud documentation. However, here are three links that can help you
 find further information:
 
 * http://de.slideshare.net/PGExperts/five-steps-perform2013[Five Steps to PostgreSQL Performance]
-* http://grokbase.com/t/postgresql/pgsql-admin/103qcpdrpf/tuning-auto-vacuum-for-highly-active-tables#20100323hfs3jtjuaywwufukoqtexkpjti[Tuning
-the autovacuum proceff for tables with huge update workloads (oc_filecache)]
+* https://grokbase.com/t/postgresql/pgsql-admin/103qcpdrpf/tuning-auto-vacuum-for-highly-active-tables#20100323hfs3jtjuaywwufukoqtexkpjti[Tuning the autovacuum process for tables with huge update workloads (oc_filecache)]
 
 == SSL / Encryption App
 
@@ -139,14 +138,14 @@ the AES-NI extension:
 * For each CPU core present: `grep flags /proc/cpuinfo` or as a summary
 for all cores: `grep -m 1 ^flags /proc/cpuinfo` If the result contains
 any `aes`, the extension is present.
-* Search eg. on the Intel web if the processor used supports the
+* Search e.g. on the Intel web if the processor used supports the
 extension http://ark.intel.com/MySearch.aspx?AESTech=true[Intel Processor Feature Filter].
 You may set a filter by `"AES New Instructions"` to get a reduced result set.
 * For versions of openssl >= 1.0.1, AES-NI does not work via an engine
 and will not show up in the `openssl engine` command. It is active by
 default on the supported hardware. You can check the openssl version via
 `openssl  version -a`
-* If your processor supports AES-NI but it does not show up eg via grep
+* If your processor supports AES-NI but it does not show up e.g. via grep
 or coreinfo, it is maybe disabled in the BIOS.
 * If your environment runs virtualized, check the virtualization vendor
 for support.
@@ -160,7 +159,7 @@ for support.
 If you want to improve the speed of an ownCloud installation, while at
 the same time increasing its security, you can
 https://httpd.apache.org/docs/2.4/howto/http2.html[enable HTTP/2 support for Apache].
-Please be aware that https://caniuse.com/#feat=http2[most browsers require HTTP/2 to be used with SSL enabled].
+Please be aware that https://caniuse.com/http2[most browsers require HTTP/2 to be used with SSL enabled].
 
 ==== Apache Processes
 
