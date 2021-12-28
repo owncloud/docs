@@ -393,5 +393,5 @@ In case CI needs to be restarted, which can happen in the rare case it was not t
 
 ```
 git commit --allow-empty -m "restart ci"
-gip push -f
+git push
 ```
