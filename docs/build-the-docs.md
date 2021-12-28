@@ -188,8 +188,6 @@ info Project commands
       antora --stacktrace generate --cache-dir cache --redirect-facility static --generator ./generator/generate-site.js --clean --fetch --attribute format=html --url http://localhost:8080 site.yml
    - linkcheck
       broken-link-checker --filter-level 3 --recursive --verbose
-   - prose
-      write-good --parse **/*.adoc
    - serve
       http-server public/ -d -i
    - validate
@@ -238,13 +236,13 @@ To build the documentation using the Docker container, from the command line, in
 docker run -ti --rm \
     -v $(pwd):/antora/ \
     -w /antora/ \
-    owncloudci/nodejs:11 \
+    owncloudci/nodejs:14 \
     yarn install
 
 docker run -ti --rm \
     -v $(pwd):/antora/ \
     -w /antora/ \
-    owncloudci/nodejs:11 \
+    owncloudci/nodejs:14 \
     yarn antora
 ```
 
@@ -254,7 +252,7 @@ If you want to serve your changes locally you have to overwrite the default URL,
 docker run -ti --rm \
     -v $(pwd):/antora/ \
     -w /antora/ \
-    owncloudci/nodejs:11 \
+    owncloudci/nodejs:14 \
     yarn antora --url http://localhost:8080
 ```
 
@@ -264,11 +262,11 @@ These commands:
 - Run Antora's `generate` command, which regenerates the documentation
 - You can add the `--fetch` option to update the dependent repositories, or any other available flag.
 
-If all goes well, you will _not_ see any console output. If a copy of the container doesn't exist locally, you can pull down a copy, by running `docker pull owncloudci/nodejs:11`. Otherwise, you should see output similar to the following:
+If all goes well, you will _not_ see any console output. If a copy of the container doesn't exist locally, you can pull down a copy, by running `docker pull owncloudci/nodejs:14`. Otherwise, you should see output similar to the following:
 
 ```console
-Unable to find image 'owncloudci/nodejs:11' locally
-11: Pulling from owncloudci/nodejs
+Unable to find image 'owncloudci/nodejs:14' locally
+14: Pulling from owncloudci/nodejs
 3b37166ec614: Already exists
 504facff238f: Already exists
 ebbcacd28e10: Already exists
@@ -281,7 +279,7 @@ cec1230fab6b: Pull complete
 08e882bea23f: Pull complete
 78bc608ac308: Pull complete
 Digest: sha256:d7706c693242c65b36b3205a52483d8aa567d09a1465707795d9273c0a99c0c2
-Status: Downloaded newer image for owncloudci/nodejs:11
+Status: Downloaded newer image for owncloudci/nodejs:14
 ```
 
 ## Viewing the HTML Documentation
@@ -387,4 +385,13 @@ to delete the `cache` directory with the command below (use the error path print
 
 ```
 rm -r /var/owncloud/docs/cache
+```
+
+### Manually Restarting CI
+
+In case CI needs to be restarted, which can happen in the rare case it was not triggered post pushing automatically, you need to manually (re)start the CI. This can be done by creating an empty commit and pushing it. To do so, change to the branch in question and follow the git commands below:
+
+```
+git commit --allow-empty -m "restart ci"
+git push
 ```
