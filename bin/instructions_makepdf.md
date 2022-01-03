@@ -71,7 +71,7 @@ In most cases it is a good idea to copy the contents of an existing repo and ado
  
 - Provide book template(s) .adoc file in the `book_templates` directory, adapted them to the requirements.
 - Copy the `pdf_web`, `fonts` and `resources` directory.
-- Make a copy of an existing `manual_config` file which must reside on the same level of the makepdf file and adopt its contents according the setup of the new repo. See the description inside the file. It will define the parameters the makepdf script will run for this repo.
+- Make a copy of an existing `manual_config_pdf` file which must reside on the same level of the makepdf file and adopt its contents according the setup of the new repo. See the description inside the file. It will define the parameters the makepdf script will run for this repo.
 
 ### Debugging
 
