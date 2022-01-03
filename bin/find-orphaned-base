@@ -1,0 +1,116 @@
+#!/usr/bin/env bash
+
+#
+# This script checks the ownCloud documentation manual(s) to 
+# see if attachment/example/image files are orphaned.
+# The file is included by another script which defines the variables needed !
+#
+# Note that filenames MUST NOT contain blanks
+
+# check if directly called and exit in case
+	if (( ! ${#AVAILABLE_MANUALS[@]} )); then
+		echo -e "\e[1;31m This script must be called via another script defining the environment.\n Exiting\e[1;37m"
+		exit
+	fi
+
+function start_scan()
+{
+	local list
+	local manual_postfix=
+	local found_find=()
+	local found_fixed=()
+	local found_grep=()
+	local grep_list=
+	local not_linked=()
+	local count_not_linked=
+	local is_image=
+
+	list=$(echo ${AVAILABLE_MANUALS[@]} | sed -r 's/[ ]+/, /g')
+
+	echo
+	echo "Checking for orphaned ${TASK} files in manual: ${list}."
+	echo "Please run this script from your docs root"
+	echo
+
+	for manual in "${AVAILABLE_MANUALS[@]}"; do
+
+		unset found_find
+		unset found_fixed
+		unset found_grep
+
+		# the base directory name depends if there is a single or are multiple manuals available
+		if [[ ${manual} = ${ROOT_NAME} ]]; then
+			BASE_DIR="./modules/${manual}"
+		else
+			BASE_DIR="./modules/${manual}${MANUAL_POSTFIX}"
+		fi
+
+		#echo "${BASE_DIR}"
+		#echo "${BASE_DIR}/${TARGET_DIR}"
+		#echo "${BASE_DIR}/pages"
+		#exit
+
+		[[ ! -e "${BASE_DIR}" ]] && echo "Cannot find ${manual} manual." && continue
+
+		echo -e "\e[1;32mChecking the ${manual} manual \e[0m"
+
+		# return all files found, but omit an error message if TARGET_DIR is not present 
+		found_find=($(find "${BASE_DIR}/${TARGET_DIR}" \
+			-type f \( ! -iname ".DS_Store" ! -iname ".gitkeep" \) 2>/dev/null | \
+			sed "s|${BASE_DIR}/${TARGET_DIR}/||" | sort))
+
+		#echo "${found_find[@]}" | tr ' ' '\n'
+		#exit
+
+		found_fixed=("${found_find[@]/#/${SEARCH_PATTERN}}")
+		#echo "${found_fixed[@]}" | tr ' ' '\n'
+		#exit
+
+		# create a grep-able list in the form of a|b|c...
+		# but remove the pipe symbol from the last position
+		grep_list=$(echo "${found_fixed[@]/%/\|}" | sed "s/| /|/g" | sed 's/.$//')
+		#echo "$grep_list"
+		#exit
+
+		# find any element in all files of the pages directory
+		found_grep=($(grep -rEow "${grep_list}" "${BASE_DIR}/pages" | sed "s|.*${SEARCH_PATTERN}||g" | sed -e 's/^\///' | sort | uniq))
+		#echo "${found_grep[@]}" | tr ' ' '\n'
+		#exit
+
+		# image needs special treatment because of the possibility of "image::" (double colon)
+		is_image=$(grep "image:" <<< ${SEARCH_PATTERN})
+		if [[ ! -z "$is_image" ]]; then
+			#echo ${is_image}
+			grep_list=$(echo "${grep_list}" | sed "s|${SEARCH_PATTERN}|${SEARCH_PATTERN}:|g")
+			#echo "$grep_list"
+			#exit
+
+			# extend the result list
+			found_grep+=($(grep -rEow "${grep_list}" "${BASE_DIR}/pages" | sed "s|.*${SEARCH_PATTERN}:||g" | sed -e 's/^\///' | sort | uniq))
+			#echo "${found_grep[@]}" | tr ' ' '\n'
+			#exit
+		fi
+
+		# create an array diff and print to output
+		not_linked=($(echo ${found_find[@]} ${found_grep[@]} | tr ' ' '\n' | sort | uniq -u))
+		echo ${not_linked[@]} | tr ' ' '\n'
+
+		# count the number of occurrences
+		count_not_linked=$(( $count_not_linked + ${#not_linked[@]} ))
+		#exit
+
+		echo
+	done
+
+	# print only if there was a match
+	if (( ${count_not_linked} )); then
+		echo -e "\e[1;32mCheck completed. \e[0m"
+		echo
+		echo "Please consider that files may have been added intentionally but have currently not been included in the documentation."
+		echo
+		echo "You may want to check the orphan history via:"
+		echo
+		echo "git log --full-history -- full_path_file_from_above"
+		echo
+	fi
+}
