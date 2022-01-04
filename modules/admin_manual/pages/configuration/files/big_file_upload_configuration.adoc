@@ -12,12 +12,12 @@
 
 == Introduction
 
-When expecting big file uploads, some considerations have to taken into account and setups based on your needs can be configured. See this document for the details.
+If you're expecting big file uploads, some considerations have to be taken into account. Setups based on your needs can be configured.
 
 == General Considerations
 
-* Make sure that the latest version of PHP, xref:installation/system_requirements.adoc[supported by ownCloud], is installed.
-* Consider that user quotas may prevent big file uploads due to reaching the users space limitation.
+* Make sure that a version of PHP xref:installation/system_requirements.adoc[supported by ownCloud] is installed.
+* Consider that user quotas may prevent big file uploads due to a user reaching the space limitation.
 * PHP *Output Buffering* must be turned off in either the `.htaccess` or `.user.ini` or `php.ini`, or `VirtualHosts` to prevent PHP memory-related errors.
 * The directory used for `upload_tmp_dir` must be fully accessible by PHP / the webserver user, usually `www-data`.
 * Your temp file or partition has to be big enough to hold multiple parallel uploads from multiple users. The formula for this is `temp_space = 2 * concurrent_uploads * average_upload_size` +
@@ -26,8 +26,8 @@ For example, if the average upload file size is *4GB* and the average number of 
 ----
 2 x 4 GB x 25 users = 200 GB required temp space
 ----
-The factor two is required, because the file chunks will be put together into a new file before it is finally moved into the user's folder.
-* In Centos and RHEL, Apache has a few more default configurations within systemd
+A factor two is required because large files will be split up and the pieces put together in new files before they are moved into the user's folder.
+* In Centos and RHEL, Apache has a few more default configurations within systemd.
 +
 [NOTE]
 ====
@@ -75,7 +75,7 @@ php_value	upload_max_filesize=16G
 php_value	upload_tmp_dir=/mnt/php_big_temp/
 ----
 
-If you see PHP timeouts in your logfiles, increase the timeout values, which are in seconds, as in the example below, use the `php_value` prefix liek above when configuring the `{htaccess}` file:
+If you see PHP timeouts in your log files, increase the timeout values, which are in seconds, as in the example below. Use the `php_value` prefix like above when configuring the `{htaccess}` file:
 
 [source,php]
 ----
@@ -87,8 +87,8 @@ NOTE: Consider that any settings made in `{htaccess}` or `{userini}` may need to
 
 == Configuring via PHP Global Settings
 
-If you don't want to use the ownCloud `.htaccess` or `.user.ini` file, you may configure PHP globally instead, if you have access to. 
-Make sure to comment out or remove any lines in `.htaccess` added like in the section above, if you entered any.
+If you don't want to use the ownCloud `.htaccess` or `.user.ini` file, you may configure PHP globally instead. 
+Make sure to comment out or remove any lines in `.htaccess` if you added any like in the section above.
 
 NOTE: If you are running ownCloud on a 32-bit system, any `open_basedir` directive in your `php.ini` file needs to be commented out.
 
@@ -104,7 +104,7 @@ upload_max_filesize=16G
 upload_tmp_dir=/mnt/php_big_temp/
 ----
 
-If you see PHP timeouts in your logfiles, increase the timeout values, which are in seconds, as in the example below:
+If you see PHP timeouts in your log files, increase the timeout values, which are in seconds, as in the example below:
 
 [source,php]
 ----
@@ -114,7 +114,7 @@ max_execution_time=3600
 
 == Configuring via a Virtual Host
 
-You can configure php parameters also per virtual host - if you have access to the Apache configuration file. This eliminates the need maintaining custom settings in a `{userini}` or `{htaccess}` file especially on upgrades. Note the mandatory prefix `php_admin_value` before the php parameter.
+You can configure php parameters also per virtual host - if you have access to the Apache configuration file. This eliminates the need to maintain custom settings in a `{userini}` or `{htaccess}` file especially on upgrades. Note the mandatory prefix `php_admin_value` before the php parameter.
 
 [source,apache]
 ----
@@ -131,7 +131,7 @@ You can configure php parameters also per virtual host - if you have access to t
 	...
 ----
 
-If you see PHP timeouts in your logfiles, increase the timeout values, which are in seconds, as in the example below:
+If you see PHP timeouts in your log files, increase the timeout values, which are in seconds, as in the example below:
 
 [source,php]
 ----
@@ -154,7 +154,7 @@ Various environmental factors could cause a restriction of the upload size. Exam
 * The `LVE Manager` of `CloudLinux` which sets an `I/O limit`.
 * Some services like `Cloudflare` are also known to cause uploading issues.
 * Upload limits enforced by proxies used by your clients.
-* Other webserver modules like described in xref:configuration/general_topics/general_troubleshooting.adoc[General Troubleshooting].
+* Other web server modules like described in xref:configuration/general_topics/general_troubleshooting.adoc[General Troubleshooting].
 
 === Apache Directives
 
@@ -163,9 +163,9 @@ Various environmental factors could cause a restriction of the upload size. Exam
 
 === Apache with mod_reqtimeout
 
-The {mod_reqtimeout-url}[mod_reqtimeout] Apache module could also stop large uploads from completing. If you're using this module and getting failed uploads of large files, either disable it in your Apache config or raise the configured `RequestReadTimeout` timeouts.
+The {mod_reqtimeout-url}[mod_reqtimeout] Apache module could also stop large uploads from completing. If you're using this module and uploads of large files fail, either disable it in your Apache config or increase the configured `RequestReadTimeout` values.
 
-Disable mod_reqtimeout On Ubuntu::
+Disable mod_reqtimeout on Ubuntu::
 +
 On Ubuntu, you can disable the module by running the following command:
 +
@@ -174,7 +174,7 @@ On Ubuntu, you can disable the module by running the following command:
 sudo a2dismod reqtimeout
 ----
 
-Disable mod_reqtimeout On CentOS::
+Disable mod_reqtimeout on CentOS::
 +
 On CentOS, comment out the following line in `/etc/httpd/conf/httpd.conf`:
 +
@@ -183,16 +183,16 @@ On CentOS, comment out the following line in `/etc/httpd/conf/httpd.conf`:
 LoadModule reqtimeout_module modules/mod_reqtimeout.so
 ----
 +
-When you have done run `asdismod` or updated `/etc/httpd/conf/httpd.conf`, restart Apache.
+When you have run `asdismod` or updated `/etc/httpd/conf/httpd.conf`, restart Apache.
 +
-TIP: There are also several other configuration options in your web server config which could prevent the upload of larger files. Please see your web server's manual, for how to configure those values correctly:
+TIP: There are also several other configuration options in your web server config which could prevent the upload of larger files. Refer to your web server's manual for how to configure those values correctly:
 
 === Apache with mod_fcgid
 
 * {fcgidmaxrequestinmem-url}[FcgidMaxRequestInMem]
 * {fcgidmaxrequestlen-url}[FcgidMaxRequestLen]
 
-WARNING: If you are using Apache/2.4 with mod_fcgid, as of February/March 2016, `FcgidMaxRequestInMem` still needs to be significantly increased from its default value to avoid the occurrence of segmentation faults when uploading big files. This is not a regular setting but serves as a workaround for {mod_fcgid_bug_51747-url}[Apache with mod_fcgid bug #51747].
+WARNING: If you are using Apache 2.4 with mod_fcgid, as of February/March 2016, `FcgidMaxRequestInMem` still needs to be significantly increased from its default value to avoid the occurrence of segmentation faults when uploading big files. This is not a regular setting but serves as a workaround for {mod_fcgid_bug_51747-url}[Apache with mod_fcgid bug #51747].
 
 Setting `FcgidMaxRequestInMem` significantly higher than usual may no longer be necessary, once bug #51747 is fixed.
 
