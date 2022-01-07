@@ -5,9 +5,7 @@
 
 == Upgrade Steps
 
-The alternative to a manual upgrade is add the
-https://software.opensuse.org//download.html?project=isv%3AownCloud%3Aserver%3A10&package=owncloud-complete-files[ownCloud repository] to your system's installation sources.
-Then stay current by using your Linux package manager to install fresh ownCloud packages. However, you should exclude the ownCloud package during system upgrades. For more information, check out the section on xref:installation/linux_packetmanager_install.adoc[Linux Package Manager Installation]
+The alternative to a manual upgrade is add the {oc-install-package-url}[ownCloud package repository] to your system's installation sources. Then stay current by using your Linux package manager to install fresh ownCloud packages. However, you should exclude the ownCloud package during system upgrades. For more information, check out the section on xref:installation/linux_packetmanager_install.adoc[Linux Package Manager Installation]
 
 IMPORTANT: This approach should not be used unattended nor in clustered setups.
 
@@ -20,7 +18,8 @@ Before installing upgraded packages, perform the following steps:
 * Disable all xref:maintenance/manual_upgrade.adoc#review-third-party-apps[third-party apps].
 * Make xref:maintenance/backup_and_restore/backup.adoc[a fresh backup].
 
-Now you can upgrade your ownCloud packages, then run xref:configuration/server/occ_command.adoc#command-line-upgrade[{occ-command-example-prefix} upgrade].
+Now you can upgrade your ownCloud packages, then run +
+xref:configuration/server/occ_command.adoc#command-line-upgrade[{occ-command-example-prefix} upgrade].
 
 NOTE: The optional parameter to skip migration tests was removed in ownCloud 10.0. See xref:maintenance/upgrade.adoc[Testing a Migration] for background information.
 
@@ -32,22 +31,21 @@ After the upgrade is finished, perform the following actions:
 
 include::{partialsdir}maintenance/major_release_note.adoc[]
 
-IMPORTANT: When upgrading from oC 9.0 to 9.1 with existing Calendars or Address books please have a look at 
-the xref:ROOT:server_release_notes.adoc#changes-in-9-1[release notes] for important information about the needed 
-migration steps during that upgrade.
+IMPORTANT: When upgrading from oC 9.0 to 9.1 with existing Calendars or Address books please have a look at the
+xref:ROOT:server_release_notes.adoc#changes-in-9-1[release notes] for important information about the needed migration steps during that upgrade.
 
 == Upgrading Only ownCloud or the Complete System
 
-Upgrading ownCloud from our
-https://software.opensuse.org//download.html?project=isv%3AownCloud%3Aserver%3A10&package=owncloud-complete-files[repositories] works like any normal Linux upgrade. For example, on Debian or Ubuntu Linux the
-standard system upgrade command is:
+Upgrading ownCloud from our {oc-install-package-url}[package repositories] works like any normal Linux upgrade. For example, on Debian or Ubuntu Linux the standard system upgrade command is:
 
+[source,console]
 ----
 sudo apt-get update && apt-get upgrade
 ----
 
 Or you can upgrade just ownCloud with this command:
 
+[source,console]
 ----
 sudo apt-get update && apt-get install owncloud-files
 ----
@@ -55,30 +53,30 @@ sudo apt-get update && apt-get install owncloud-files
 On Fedora, CentOS, and Red Hat Linux use `yum` to see all available
 updates:
 
+[source,console]
 ----
 sudo yum check-update
 ----
 
 You can apply all available updates with this command:
 
+[source,console]
 ----
 sudo yum update
 ----
 
 Or update only ownCloud:
 
+[source,console]
 ----
 sudo yum update owncloud-files
 ----
 
-Your Linux package manager only downloads the current ownCloud packages.
-Then your ownCloud server is immediately put into maintenance mode. You
-may not see this until you refresh your ownCloud page.
+Your Linux package manager only downloads the current ownCloud packages. Then your ownCloud server is immediately put into maintenance mode. You may not see this until you refresh your ownCloud page.
 
 image:upgrade-1.png[image]
 
-Then use `occ` to complete the upgrade. You must run `occ` as your HTTP
-user. This example is for Debian/Ubuntu as well as CentOS/RHEL/Fedora:
+Then use `occ` to complete the upgrade. You must run `occ` as your HTTP user. This example is for Debian/Ubuntu as well as CentOS/RHEL/Fedora:
 
 [source,console,subs="attributes+"]
 ----
@@ -94,10 +92,7 @@ xref:installation/manual_installation/manual_installation.adoc#script-guided-ins
 
 == Upgrading Across Skipped Releases
 
-It is best to update your ownCloud installation with every new point
-release (e.g., 8.1.10) and to never skip any major release (e.g., don’t
-skip 8.2.x between 8.1.x and 9.0.x). If you have skipped any major
-release, you should upgrade your ownCloud step by step:
+It is best to update your ownCloud installation with every new point release (e.g., 8.1.10) and to never skip any major release (e.g., don’t skip 8.2.x between 8.1.x and 9.0.x). If you have skipped any major release, you should upgrade your ownCloud step by step:
 
 1.  Add the repository of your current version (e.g., 8.1.x)
 2.  Upgrade your current version to the latest point release (e.g., 8.1.10) via your package manager
@@ -106,5 +101,3 @@ release, you should upgrade your ownCloud step by step:
 5.  Upgrade your current version to the next major release (e.g., 8.2.8) via your package manager
 6.  Run the `occ upgrade` routine
 7.  Repeat from step 4 until you reach the last available major release (e.g., 9.1.x)
-
-You’ll find repositories of previous ownCloud major releases on the {packages-url}[Server Packages page].
