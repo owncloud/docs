@@ -1,16 +1,18 @@
 #!/usr/bin/env bash
 
 #
-# This script checks which .adoc files are possibly orphaned.
+# This script checks which .adoc files are possibly orphaned
 # It can cover single and multi manual environments
 #
 # Note that filenames MUST NOT contain blanks
 
-AVAILABLE_MANUALS=( admin developer user ROOT )
+AVAILABLE_MANUALS=( ROOT )
+# dependend of root or not, the manual name gets a postfix added, name see below
 ROOT_NAME="ROOT"
+# all main nav files from the modules have the name nav.adoc
 NAV_FILENAME="nav.adoc"
-NAV_ROOT_FILENAME="nav_root.adoc"
-PARTIALS_NAME="_partials"
+PARTIALS_NAME="partials"
+# https://docs.antora.org/antora/2.3/page/resource-id/#id-coordinates
 FAMILY='{partialsdir}'
 #FAMILY="partial$"
 MANUAL_NAME=
@@ -70,7 +72,12 @@ function usage()
 
 function find_orphans()
 {
+	local search_pattern=
+	
 	validate_manual "$MANUAL_NAME"
+
+	# escape the dollar sign in the search pattern if exists
+	search_pattern="include::${FAMILY//$/\\$}"
 
 	# define the global variables
 	# the base directory name depends if there is a single or are multiple manuals available
@@ -81,25 +88,12 @@ function find_orphans()
 	fi
 	#
 	PAGES_DIR="${BASE_DIR}/pages"
-	#
-	# the nav file name and location depends if there are single or multiple manuals available
-	# and if the ROOT manual has been selected or not
-	#
-	# single manual
-	NAV_FILE="${BASE_DIR}/${NAV_FILENAME}"
-	#
-	# multi manual (overwrites the variable)
-	if [[ ${#AVAILABLE_MANUALS[@]} -gt 1 ]]; then
-		if [[ ${MANUAL_NAME} = ${ROOT_NAME} ]]; then
-			# ROOT selected
-			NAV_FILE="${BASE_DIR}/${NAV_ROOT_FILENAME}"
-		else
-			# another module selected
-			NAV_FILE="${PAGES_DIR}/${PARTIALS_NAME}/${NAV_FILENAME}"
-		fi
-	fi
+
+	# define the navigation file
+	NAV_FILE="${BASE_DIR}/${PARTIALS_NAME}/${NAV_FILENAME}"
+
 	# --> important: the partials dir may change to base_dir/partials_name
-	PARTIALS_DIR="${PAGES_DIR}/${PARTIALS_NAME}"
+	PARTIALS_DIR="${BASE_DIR}/${PARTIALS_NAME}"
 
 	# get content for all partials but exclude the nav file, however we call it
 	# partials directory may not be present
@@ -221,7 +215,7 @@ function find_orphans_for_manual()
 	# now check if there are orphaned partials files
 
 	# get all files which have an include + family statement
-	include_list=($(cat "${PAGES_FILES[@]/#/${PAGES_DIR}/}" | grep "include::${FAMILY}" | sort | uniq))
+	include_list=($(cat "${PAGES_FILES[@]/#/${PAGES_DIR}/}" | grep "${search_pattern}" | sort | uniq))
 	#echo ${include_list[@]} | tr ' ' '\n'
 	#exit
 
