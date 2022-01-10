@@ -6,8 +6,6 @@
 # If called from the command line, the script user the term "master" as branch reference.
 # The script uses another script to provide the attribute list of the yaml files dynamically.
 
-# Note that the nav.adoc file has to be in {modulesdir}/pages/_partials
-
 set -e
 set -u
 set -o noclobber
@@ -36,6 +34,9 @@ ACTUAL_BRANCH_NAME=
 # this is due to that master does not create a URL component when building
 DEFAULT_NAME="next"
 MASTER_BRANCH="master"
+
+# the name of the partials directory
+PARTIALS_NAME="partials"
 
 DRY_RUN=false
 
@@ -127,7 +128,6 @@ function clean_build_dir()
 # the nav file is handed over as parameter used as stream
 function convert_antora_nav_to_asciidoc_list()
 {
-
 	local level_offset=
 	local nav_filename="$1"
 
@@ -143,7 +143,8 @@ function convert_antora_nav_to_asciidoc_list()
 			  # on single manual repos, the level offset is corrected with 1 (NF-1)
 			  level_offset=$(echo "$line" | awk -F"*" '{print NF-1}')
 			fi
-			# the last sed in the line below is to remove the manual component (:manual_name:) from the string
+			# when having multi manual repos, the last sed in the line below is to remove
+			# the manual component (:manual_name:) from the string
 			# this is because we have moved the nav.adoc file into partials and therefore need to add the module
 			revised_line=$(echo "$line" | sed 's/xref:/include::{module_base_path}/' | sed 's/\[.*\]//g' | sed -r 's/^\*{1,} //' | sed -e 's/\(module_base_path}\)\(.*:\)/\1/')
 			echo "${revised_line}[leveloffset=+${level_offset}]"
@@ -216,7 +217,7 @@ function build_pdf_manual()
 	local book_file="${BOOKS_DIRECTORY}/ownCloud_${manual_infix}_Manual.adoc"
 
 	# the navigation file for the manual to be built
-	local nav_file="modules/${source_root}/pages/_partials/nav.adoc"
+	local nav_file="modules/${source_root}/${PARTIALS_NAME}/nav.adoc"
 
 	# Get the dynamic list of attributes from yml files
 	# The output after sed is a string like -a key=value -a key=value ...
@@ -266,8 +267,8 @@ function build_pdf_manual()
 	param+='-a format="pdf" '
 #	param+='-a experimental="" ' #   experimental already set in site.yml
 	param+='-a examplesdir='$(pwd)/modules/${source_root}/examples/' '
-	param+='-a imagesdir='$(pwd)/modules/${source_root}/assets/images/' '
-	param+='-a partialsdir='$(pwd)/modules/${source_root}/pages/_partials/' '
+	param+='-a imagesdir='$(pwd)/modules/${source_root}/images/' '
+	param+='-a partialsdir='$(pwd)/modules/${source_root}/partials/' '
 	param+='-a revnumber='${branch}' '
 	param+='-a revdate="'${release_date}'" '
 	param+='-a allow-uri-read="" '

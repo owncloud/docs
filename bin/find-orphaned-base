@@ -13,6 +13,9 @@
 		exit
 	fi
 
+# escape the dollar sign in the search pattern if exists
+SEARCH_PATTERN="${SEARCH_PATTERN//$/\\$}"
+
 function start_scan()
 {
 	local list
@@ -92,8 +95,9 @@ function start_scan()
 		fi
 
 		# create an array diff and print to output
+		# the output contains the full relative path
 		not_linked=($(echo ${found_find[@]} ${found_grep[@]} | tr ' ' '\n' | sort | uniq -u))
-		echo ${not_linked[@]} | tr ' ' '\n'
+		echo "${not_linked[@]/#/${BASE_DIR}/${TARGET_DIR}/}" | tr ' ' '\n'
 
 		# count the number of occurrences
 		count_not_linked=$(( $count_not_linked + ${#not_linked[@]} ))
