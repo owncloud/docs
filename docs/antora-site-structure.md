@@ -63,7 +63,7 @@ The reason why you cannot access the above is because `docs-client-ios-app` has 
 
 All doc repositories have an identical directory structure. This helps maintaining and accessing content easily.
 
-### The Antora Directory Stucture
+### The Antora Directory Structure
 
 ```
 modules/named-module-1/attachment
@@ -84,7 +84,7 @@ The navigation file `nav.adoc` is under the `partials` directory and not at the 
 
 ### Other Necessary Directories
 
-Beside the necessay directories for node, other important directories are:
+Beside the necessary directories for node, other important directories are:
 ```
 bin/               helper scripts to maintain the documentation
 book_templates/    template file(s) to create the pdf file
@@ -122,5 +122,5 @@ To manage versions in docs, we use branches. This means that any content based o
 2. The scope of attributes defined in `antora.yml` is limited to the branch and component where it is defined. This is also true for attributes used in the UI-Template.
 3. The scope of attributes defined in `site.yml` is _global_. The term global has two flavours:
     1. When used in a level-2 repo, it stays at that level when you do a local build but becomes globally available when running a master build.
-    2. When used in the master repo (level-1), it is super global and valid over all repos when running a build. This is because all the content sources are definied here and included when running the build process.
-4. Attributes starting with `page-` are also available to the UI-Template when running a build. The rules above apply. This is important when defining UI content based on attributes. To acess these attributes in the UI-Template use `page.attribute.name` where `name` is without leading `page-` For details see [AsciiDoc Attributes in Antora][custom-attrib-link].
+    2. When used in the master repo (level-1), it is super global and valid over all repos when running a build. This is because all the content sources are defined here and included when running the build process.
+4. Attributes starting with `page-` are also available to the UI-Template when running a build. The rules above apply. This is important when defining UI content based on attributes. To access these attributes in the UI-Template use `page.attribute.name` where `name` is without leading `page-` For details see [AsciiDoc Attributes in Antora][custom-attrib-link].
