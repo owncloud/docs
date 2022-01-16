@@ -12,10 +12,9 @@
 **Table of Contents**
 1. [Why Antora](#why-antora)
 2. [Scope of Documentation Repositories](#scope-of-documentation-repositories)
-3. [Scope of Antora Definitions](#scope-of-antora-definitions)
-4. [Scope of Content Accessibility](#scope-of-content-accessibility)
-5. [Structure of Directories](#structure-of-directories)
-6. [Scope of Antora Definitions](#scope-of-antora-definitions)
+3. [Scope of Content Accessibility](#scope-of-content-accessibility)
+4. [Structure of Directories](#structure-of-directories)
+5. [Scope of Antora Definitions](#scope-of-antora-definitions)
 
 ## Why Antora
 
