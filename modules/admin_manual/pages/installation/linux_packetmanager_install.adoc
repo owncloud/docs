@@ -2,46 +2,39 @@
 :toc: right
 :apt-mark-hold-url: https://manpages.debian.org/stretch/apt/apt-mark.8.en.html#PREVENT_CHANGES_FOR_A_PACKAGE
 :yum-versionlock-plugin-url: https://man7.org/linux/man-pages/man1/yum-versionlock.1.html
-:owncloud-repositories-url: https://download.owncloud.org/download/repositories/stable/owncloud/
+:archlinux-packages-url: https://www.archlinux.org/packages/community/x86_64/owncloud-client/
+:arch-user-url: https://aur.archlinux.org/packages/?O=0&K=owncloud
 
 == Introduction
 
-You can use the packetmanager installation, but it is not recommended to do so. This is because
-sometimes dependencies are acting against each other like ownCloud version, minimum PHP version
-and Linux distribution restrictions. Anyone who runs a package manager installation should consider
-migrating to a manual installation to overcome this situation.
+You can use the packetmanager installation, but it is not recommended to do so. This is because sometimes dependencies are acting against each other like ownCloud version, minimum PHP version and Linux distribution restrictions. Anyone who runs a package manager installation should consider migrating to a manual installation to overcome this situation.
 
 == Add the ownCloud Repository
 
-Before you can install `owncloud-files`, you need to add {owncloud-repositories-url}[ownCloud's repository] to your distribution's package manager.
+Before you can install `owncloud-files`, you need to add {oc-install-package-url}[ownCloud's package repository] to your distribution's package manager.
 
-NOTE: Package managers should only be used for single-server setups. For production environments, we recommend installing from the
-https://owncloud.org/download/[tar archive].
+NOTE: Package managers should only be used for single-server setups. For production environments, we recommend installing from the https://owncloud.org/download/[tar archive].
 
 == Available Packages
 
-The recommended package to use is `owncloud-complete-files`. 
-It only installs ownCloud, and does not install Apache, a database, or any of the required PHP dependencies.
+The recommended package to use is `owncloud-complete-files`. It only installs ownCloud, and does not install Apache, a database, or any of the required PHP dependencies.
 
 == Avoid Automatic Upgrades
 
-If you are installing ownCloud using one of the various Linux package managers, we *strongly* recommend that you avoid automatically updating the `owncloud-complete-files` package, when running a system update or upgrade and when upgrading other packages.
-That way, there are no surprise changes (whether positive or negative) to your ownCloud installation.
+If you are installing ownCloud using one of the various Linux package managers, we *strongly* recommend that you avoid automatically updating the `owncloud-complete-files` package, when running a system update or upgrade and when upgrading other packages. That way, there are no surprise changes (whether positive or negative) to your ownCloud installation.
 
 Here are the ways to do so for xref:apt[APT], xref:yum[Yum], and xref:zypper[Zypper].
 
 === APT
 
-If you are using APT, use {apt-mark-hold-url}[apt-mark hold] to  mark the `owncloud-complete-files` package as held.
-Here’s an example of how to do so:
+If you are using APT, use {apt-mark-hold-url}[apt-mark hold] to  mark the `owncloud-complete-files` package as held. Here’s an example of how to do so:
 
 [source,console]
 ----
 apt-mark hold owncloud-complete-files
 ----
 
-To see if owncloud-complete-files has already been held, use the `showhold` command, as in the following example.
-If it’s printed out to the console, then it’s being held.
+To see if owncloud-complete-files has already been held, use the `showhold` command, as in the following example. If it’s printed out to the console, then it’s being held.
 
 [source,console]
 ----
@@ -57,8 +50,7 @@ apt-mark unhold owncloud-complete-files
 
 === Yum
 
-If you are using Yum, there are two options that you can take to lock packages from being upgraded.
-You can:
+If you are using Yum, there are two options that you can take to lock packages from being upgraded. You can:
 
 . Add `exclude=owncloud-complete-files` to `/etc/yum.conf`
 . Use {yum-versionlock-plugin-url}[the versionlock plugin] for Yum.
@@ -67,46 +59,47 @@ You can:
 
 If the `versionlock` plugin is not installed, install it by running:
 
+[source,console]
 ----
 yum install yum-plugin-versionlock
 ----
 
 When it is installed, you can lock `owncloud-complete-files` run:
 
+[source,console]
 ----
 yum versionlock add owncloud-complete-files
 ----
 
 To confirm that it is locked, run: 
 
+[source,console]
 ----
 yum versionlock list
 ----
 
 To unlock `owncloud-complete-files`, run: 
 
+[source,console]
 ----
 yum versionlock delete owncloud-complete-files
 ----
 
 === Zypper
 
-If you are using Zypper, use the `addlock` or `al` commands.
-Similar to `apt-mark hold` these add a package lock that prevents the package from being modified.
-The example below shows how to use the command to lock `owncloud-complete-files`.
+If you are using Zypper, use the `addlock` or `al` commands. Similar to `apt-mark hold` these add a package lock that prevents the package from being modified. The example below shows how to use the command to lock `owncloud-complete-files`.
 
 [source,console]
 ----
 zypper addlock owncloud-complete-files
 ----
 
-To see if the package has already been locked, use the `locks` command. 
-If `owncloud-complete-files` is already locked, then you will see output similar to the below example.
+To see if the package has already been locked, use the `locks` command.  If `owncloud-complete-files` is already locked, then you will see output similar to the below example.
 
 [source,console]
 ----
-# | Name           | Type    | Repository
---+----------------+---------+-----------
+# | Name                    | Type    | Repository
+--+-------------------------+---------+-----------
 1 | owncloud-complete-files | package | (any)
 ----
 
@@ -119,90 +112,54 @@ zypper removelock owncloud-complete-files
 
 == Installing ownCloud Community Edition
 
-First, install your own LAMP stack, as doing so allows you to create
-your own custom LAMP stack without dependency conflicts with the
-ownCloud package. Then download and install from
-http://download.owncloud.org/download/repositories/production/owncloud/.
+The package comes without dependencies which means, that the server will not directly run after installing it.
 
-The ownCloud server is designed to work with different databases and
-different web-servers, in a large range of configurations.
-
-This package comes without dependencies so that the installation
-is most likely to succeed. It also means unfortunately, that the
-server will not directly run after installing this package.
-
-To get started, try:
-
-apt install apache2 libapache2-mod-php mariadb-server openssl
-apt install php-imagick php-common php-curl php-gd php-imap php-intl
-apt install php-json php-mbstring php-mysql php-ssh2 php-xml php-zip
-apt install php-apcu php-redis redis-server wget
-
-mysql -e "CREATE DATABASE IF NOT EXISTS owncloud"
-mysql -e "GRANT ALL PRIVILEGES ON owncloud.* TO owncloud@localhost IDENTIFIED BY 'password'";
-cp /usr/share/doc/*/owncloud-config-apache.conf.default /etc/apache2/sites-available/owncloud.conf
-a2ensite owncloud; systemctl reload apache2
-
-For more details see:
-xref:installation/quick_guides/ubuntu_20_04.adoc[Quick Installation Guide]
+To get the dependencies installed and configured, follow one of the guides provided in section 
+xref:installation/manual_installation/index.adoc[Manual Installation on Linux]
 
 NOTE: See the system_requirements for the recommended ownCloud setup and supported platforms.
+
+First, install your own LAMP stack, as doing so allows you to create your own custom LAMP stack without dependency conflicts with the ownCloud package. Then download and install from {oc-install-package-url}[ownCloud's package repository]
+
+The ownCloud server is designed to work with different databases and different web-servers, in a large range of configurations.
 
 IMPORTANT: Do not move the folders provided by these packages after the installation, as this will break updates.
 
 === What is the Correct Version?
 
-Package versions are composed of a major, a minor, and a patch number,
-such as 9.0, 9.1, 10.0, 10.0.1, and 10.0.2. The second number represents
-a major release, and the third number represents a minor release.
+Package versions are composed of a major, a minor, and a patch number, such as 9.0, 9.1, 10.0, 10.0.1, and 10.9.1. The second number represents a major release, and the third number represents a minor release.
 
 ==== Major Releases
 
-If you want to follow either of the most recent major releases, then
-substitute `version` with either 9.0 or 10.0.
+If you want to follow either of the most recent major releases, then substitute `version` with either 9.0 or 10.0.
 
 ==== Minor Releases
 
-If you want to follow any of the four most recent patch releases, then
-substitute `version` with one of 10.0.1, 10.0.2, 10.0.3, or 10.0.4.
-Following a minor release avoids you accidentally upgrading to the next
-major release before you’re ready.
+If you want to follow any of the four most recent patch releases, then substitute `version` with one of 10.0.2, 10.0.3, 10.0.4 or 10.9.1. Following a minor release avoids you accidentally upgrading to the next major release before you’re ready.
 
 ==== The Latest Stable Version
 
-Alternatively you can use `stable` for the latest stable version. If you
-do, you never have to change it as it always tracks the current stable
-ownCloud version through all major releases.
+Alternatively you can use `stable` for the latest stable version. If you do, you never have to change it as it always tracks the current stable ownCloud version through all major releases.
 
 == Installing ownCloud Enterprise Edition
 
-See xref:enterprise/installation/install.adoc[the enterprise installation guide]
-for instructions on installing ownCloud Enterprise edition.
+See xref:enterprise/installation/install.adoc[the enterprise installation guide] for instructions on installing ownCloud Enterprise edition.
 
 == Downgrading
 
-Downgrading is not supported and risks corrupting your data! If you want
-to revert to an older ownCloud version, install it from scratch and then
-restore your data from backup. Before doing this, file a support ticket
-(https://owncloud.com/pricing/[if you have paid support]) or ask for
-help in the ownCloud forums to see if your issue can be resolved without
-downgrading.
+Downgrading is not supported and risks corrupting your data! If you want to revert to an older ownCloud version, install it from scratch and then restore your data from backup. Before doing this, file a support ticket (https://owncloud.com/pricing/[if you have paid support]) or ask for help in the ownCloud forums to see if your issue can be resolved without downgrading.
 
 == Additional Guides and Notes
 
-See installation_wizard for important steps, such as choosing the best
-database and setting correct directory permissions. See the
-xref:installation/selinux_configuration.adoc[SELinux Configuration Guide]
-for a suggested configuration for SELinux-enabled distributions such as _Fedora_ and _CentOS_.
+See installation_wizard for important steps, such as choosing the best database and setting correct directory permissions. See the xref:installation/selinux_configuration.adoc[SELinux Configuration Guide] for a suggested configuration for SELinux-enabled distributions such as _Fedora_ and _CentOS_.
 
-If your distribution is not listed, your Linux distribution may maintain
-its own ownCloud packages or you may prefer to xref:installation/manual_installation/manual_installation.adoc[install from source].
+If your distribution is not listed, your Linux distribution may maintain its own ownCloud packages or you may prefer to xref:installation/manual_installation/manual_installation.adoc[install from source].
 
 === Archlinux
 
 The current 
-https://www.archlinux.org/packages/community/x86_64/owncloud-client/[client stable version] is in the official community repository,
-more packages are in the https://aur.archlinux.org/packages/?O=0&K=owncloud[Arch User Repository].
+{archlinux-packages-url}[client stable version] is in the official community repository,
+more packages are in the {arch-user-url}[Arch User Repository].
 
 === Note for MySQL/MariaDB environments
 

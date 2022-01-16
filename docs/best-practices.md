@@ -66,7 +66,7 @@ macro (in other words, http(s): is recognized as a macro prefix of an implicit l
 
 Example: `https://github.com/owncloud-docker/server#launch-with-plain-docker[in the GitHub repository]`
 
-A URL may not display correctly when it contains characters such as underscores (\_) or carets (\^)
+A URL may not display correctly when it contains characters such as underscores (\_), carets (\^) or double quotes (\")
 Please see [Troubleshooting Complex URLs](https://asciidoctor.org/docs/user-manual/#complex-urls) how to solve that.
 
 This is an example of an URL containing problematic characters which needs special treatment:
@@ -80,6 +80,8 @@ This is an example of an URL containing problematic characters which needs speci
 
 Text {internal-link-name-url}[highlighted text] text.
 ```
+
+For the special case when the URL also contains double quotes (\"), you must additionally replace them manually with `%22` (utf-8 encoding) in the attribute used.
 
 It is important that `:internal-link-name-url:` is placed directly below the page header.
 Any number of these link attributes can be added. Without being mandatory, it has turned
