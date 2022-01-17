@@ -40,6 +40,7 @@ docs    --> docs-client-ios-app
             ...
 
 ```
+Note that the arrow from level-1 to level-2 is intentionally unidirectional and should be respected. See more details about the reason below. 
 
 ## Scope of Content Accessibility
 
@@ -50,14 +51,18 @@ Because Antora is capable of defining additional resources, you can access conte
 docs    --> docs-client-ios-app
             └> index.adoc
 ```
+Note that the direction of the arrow is important.
+
+Level-1 (docs) can access content from level-2 (docs-client-ios-app) _at any time_ because docs has referenced the repo (content source).
+
+Level-2 (docs-client-ios-app) can reference content from level-1 (docs) only during a level-1 build and not during a level-2 build (eg a local test build). This is to avoid circular content sourcing. Depending on the type of content being accessed from level-1, a warning or an error will be thrown. To overcome this situation, use .html references to level-1.
+
 **Impossible**
 ```
 docs-client-ios-app    --> docs-client-desktop
                            └> index.adoc
 ```
-The reason why you cannot access the above is because `docs-client-ios-app` has no reference to `docs-client-desktop`. Only `docs` has this info defined in its playbook `site.yml`.
-
-
+The reason why you cannot access the above is because `docs-client-ios-app` has no reference to `docs-client-desktop`. Only `docs` has this info defined in its playbook `site.yml`. This means, that referencing content from another repo at the same level cant be done using antora methods and must be done using html links.
 
 ## Structure of Directories
 
