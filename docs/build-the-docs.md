@@ -86,14 +86,15 @@ nvm ls-remote | grep "Latest LTS"
         v6.17.1   (Latest LTS: Boron)
         v8.17.0   (Latest LTS: Carbon)
        v10.24.1   (Latest LTS: Dubnium)
-       v12.22.1   (Latest LTS: Erbium)
-       v14.17.0   (Latest LTS: Fermium)
+       v12.22.9   (Latest LTS: Erbium)
+       v14.18.3   (Latest LTS: Fermium)
+       v16.13.2   (Latest LTS: Gallium)
 ```
 Then install a suitable LTS version. You can install as many versions as you like or need, see example below.
 
 ```
-nvm install 10.23.0
-nvm install 14.17.0
+nvm install 14.18.3
+nvm install 16.13.2
 ```
 
 List the installed versions
@@ -102,10 +103,11 @@ List the installed versions
 nvm ls
        v10.23.0
        v12.18.2
-->     v14.17.0
+       v14.18.3
         v15.5.1
+->     v16.13.2
          system
-default -> 10.23.0 (-> v10.23.0)
+default -> 14.17.0 (-> v14.17.0)
 ...
 ```
 
@@ -116,14 +118,14 @@ default -> 10.23.0 (-> v10.23.0)
 Switch to a specific installed version of Node at any time, use the following command:
 
 ```
-nvm use 14.17.0
+nvm use 14.18.3
 ```
 **Important:** If you have additional concurrent terminals open, you must close these terminals first and reopen them to use the new setup.
 
 To make a particular Node version default in new terminals, type:
 
 ```
-nvm alias default 14.17.0
+nvm alias default 16.13.2
 ```
 
 #### Yarn
