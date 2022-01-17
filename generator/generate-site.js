@@ -3,7 +3,7 @@
 const _ = require('lodash')
 const cheerio = require('cheerio')
 const Entities = require('html-entities')
-const Elasticsearch = require('elasticsearch')
+const { Client } = require('@elastic/elasticsearch')
 
 const aggregateContent = require('@antora/content-aggregator')
 const buildNavigation = require('@antora/navigation-builder')
@@ -17,11 +17,13 @@ const produceRedirects = require('@antora/redirect-producer')
 const publishSite = require('@antora/site-publisher')
 const { resolveConfig: resolveAsciiDocConfig } = require('@antora/asciidoc-loader')
 
-async function generateSite (args, env) {
+async function generateSite(args, env) {
   const playbook = buildPlaybook(args, env)
   const [contentCatalog, uiCatalog] = await Promise.all([
-    aggregateContent(playbook).then((contentAggregate) => classifyContent(playbook, enforceEditurl(contentAggregate))),
-    loadUi(playbook),
+    aggregateContent(playbook).then((contentAggregate) =>
+      classifyContent(playbook, enforceEditurl(contentAggregate))
+    ),
+    loadUi(playbook)
   ])
   const asciidocConfig = resolveAsciiDocConfig(playbook)
   const pages = convertDocuments(contentCatalog, asciidocConfig)
@@ -35,7 +37,7 @@ async function generateSite (args, env) {
   return publishSite(playbook, [contentCatalog, uiCatalog, siteCatalog])
 }
 
-async function generateIndex (playbook, pages) {
+async function generateIndex(playbook, pages) {
   if ((process.env.BUILD_SEARCH_INDEX || 'true') !== 'true') {
     console.log('elastic: search index generation skipped')
     return
@@ -67,7 +69,7 @@ async function generateIndex (playbook, pages) {
     })
 
     let text = Entities.decode($('article').text())
-      .replace(/(<([^>]+)>)/ig, '')
+      .replace(/(<([^>]+)>)/gi, '')
       .replace(/\n/g, ' ')
       .replace(/\r/g, ' ')
       .replace(/\s+/g, ' ')
@@ -84,13 +86,18 @@ async function generateIndex (playbook, pages) {
     }
   })
 
-  if (process.env.UPDATE_SEARCH_INDEX == 'true' && process.env.ELASTICSEARCH_HOST && process.env.ELASTICSEARCH_INDEX) {
+  if (
+    process.env.UPDATE_SEARCH_INDEX == 'true' &&
+    process.env.ELASTICSEARCH_NODE &&
+    process.env.ELASTICSEARCH_INDEX &&
+    process.env.ELASTICSEARCH_WRITE_AUTH
+  ) {
     console.log('elastic: rebuild search index')
     let result = []
 
     documents.forEach((document, index) => {
       result.push({
-        index:  {
+        index: {
           _index: process.env.ELASTICSEARCH_INDEX,
           _type: 'page',
           _id: index
@@ -100,35 +107,36 @@ async function generateIndex (playbook, pages) {
       result.push(document)
     })
 
-    const client = new Elasticsearch.Client({
-      host: [{
-        host: process.env.ELASTICSEARCH_HOST,
-        port: process.env.ELASTICSEARCH_PORT || 443,
-        protocol: process.env.ELASTICSEARCH_PROTOCOL || 'https',
-        auth: process.env.ELASTICSEARCH_WRITE_AUTH,
-      }]
+    const client = new Client({
+      node: process.env.ELASTICSEARCH_NODE,
+      auth: {
+        username: process.env.ELASTICSEARCH_WRITE_AUTH.split(':')[0],
+        password: process.env.ELASTICSEARCH_WRITE_AUTH.split(':')[1]
+      }
     })
 
     try {
-      console.log("elastic: remove old search index");
+      console.log('elastic: remove old search index')
       await indexDelete(client)
-      console.log("elastic: create empty search index");
+      console.log('elastic: create empty search index')
       await indexCreate(client)
       console.log('elastic: upload search index')
       await indexBulk(client, result)
     } catch (err) {
-      console.log("elastic: ERROR: " + err.status + " - " + err.displayName);
-      process.exit(1);
+      const errObj = JSON.parse(err)
+      console.log('elastic: ERROR: ' + errObj.status + ' - ' + errObj.error.reason)
+      process.exit(1)
     }
   }
 }
 
-function enforceEditurl (contentAggregate) {
+function enforceEditurl(contentAggregate) {
   _.map(contentAggregate, (source) => {
     _.map(source.files, (file) => {
       if (_.startsWith(file.src.editUrl, 'file://')) {
         if (source.name === 'server') {
-          file.src.editUrl = 'https://github.com/owncloud/docs/edit/' + source.version + '/' + file.src.path
+          file.src.editUrl =
+            'https://github.com/owncloud/docs/edit/' + source.version + '/' + file.src.path
         }
       }
 
@@ -146,53 +154,54 @@ function indexDelete(client) {
     client.indices
       .delete({
         index: process.env.ELASTICSEARCH_INDEX,
-        ignore_unavailable: true,
+        ignore_unavailable: true
       })
       .then((resp) => {
-        resolve(resp);
+        resolve(resp)
       })
       .catch((err) => {
-        reject(err);
-      });
-  });
+        reject(err)
+      })
+  })
 }
 
 function indexCreate(client) {
   return new Promise((resolve, reject) => {
     client.indices
       .create({
-        index: process.env.ELASTICSEARCH_INDEX,
+        index: process.env.ELASTICSEARCH_INDEX
       })
       .then((resp) => {
-        resolve(resp);
+        resolve(resp)
       })
       .catch((err) => {
-        reject(err);
-      });
-  });
+        reject(err)
+      })
+  })
 }
 
 function indexBulk(client, result) {
   return new Promise((resolve, reject) => {
-    client.bulk({
-      body: result
-    })
+    client
+      .bulk({
+        body: result
+      })
       .then((resp) => {
-        resolve(resp);
+        resolve(resp)
       })
       .catch((err) => {
-        reject(err);
-      });
-  });
+        reject(err)
+      })
+  })
 }
 
-function create404Page () {
+function create404Page() {
   return {
     title: 'Page Not Found',
     mediaType: 'text/html',
     src: { stem: '404' },
     out: { path: '404.html' },
-    pub: { url: '/404.html', rootPath: '' },
+    pub: { url: '/404.html', rootPath: '' }
   }
 }
 
