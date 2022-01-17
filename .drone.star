@@ -106,10 +106,8 @@ def build(ctx, environment, latest_version, deployment_branch, base_branch, pdf_
                 "environment": {
                     "BUILD_SEARCH_INDEX": ctx.build.branch == deployment_branch,
                     "UPDATE_SEARCH_INDEX": ctx.build.branch == deployment_branch,
-                    "ELASTICSEARCH_HOST": from_secret("elasticsearch_host"),
+                    "ELASTICSEARCH_NODE": from_secret("elasticsearch_node"),
                     "ELASTICSEARCH_INDEX": from_secret("elasticsearch_index"),
-                    "ELASTICSEARCH_PORT": from_secret("elasticsearch_port"),
-                    "ELASTICSEARCH_PROTO": from_secret("elasticsearch_proto"),
                     "ELASTICSEARCH_READ_AUTH": from_secret("elasticsearch_read_auth"),
                     "ELASTICSEARCH_WRITE_AUTH": from_secret("elasticsearch_write_auth"),
                     "latestVersion": latest_version,
