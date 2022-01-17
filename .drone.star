@@ -86,7 +86,7 @@ def build(ctx, environment, latest_version, deployment_branch, base_branch, pdf_
             {
                 "name": "docs-deps",
                 "pull": "always",
-                "image": "owncloudci/nodejs:14",
+                "image": "owncloudci/nodejs:16",
                 "commands": [
                     "yarn install",
                 ],
@@ -94,7 +94,7 @@ def build(ctx, environment, latest_version, deployment_branch, base_branch, pdf_
             {
                 "name": "docs-validate",
                 "pull": "always",
-                "image": "owncloudci/nodejs:14",
+                "image": "owncloudci/nodejs:16",
                 "commands": [
                     "yarn validate --fetch",
                 ],
@@ -102,7 +102,7 @@ def build(ctx, environment, latest_version, deployment_branch, base_branch, pdf_
             {
                 "name": "docs-build",
                 "pull": "always",
-                "image": "owncloudci/nodejs:14",
+                "image": "owncloudci/nodejs:16",
                 "environment": {
                     "BUILD_SEARCH_INDEX": ctx.build.branch == deployment_branch,
                     "UPDATE_SEARCH_INDEX": ctx.build.branch == deployment_branch,
