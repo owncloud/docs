@@ -8,6 +8,8 @@
 [link-antora-yml]: https://docs.antora.org/antora/latest/component-version-descriptor/
 [link-site-yml]: https://docs.antora.org/antora/latest/playbook/#whats-an-antora-playbook
 [custom-attrib-link]: https://docs.antora.org/antora/latest/page/attributes/#custom-attributes
+[antora-ui-link]: https://docs.antora.org/antora-ui-default/
+[docs-ui-link]: https://github.com/owncloud/docs-ui
 
 **Table of Contents**
 1. [Why Antora](#why-antora)
@@ -15,6 +17,7 @@
 3. [Scope of Content Accessibility](#scope-of-content-accessibility)
 4. [Structure of Directories](#structure-of-directories)
 5. [Scope of Antora Definitions](#scope-of-antora-definitions)
+6. [The Antora UI Template](#the-antora-ui-template)
 
 ## Why Antora
 
@@ -91,25 +94,25 @@ The navigation file `nav.adoc` is under the `partials` directory and not at the 
 
 Beside the necessary directories for node, other important directories are:
 ```
-bin/               helper scripts to maintain the documentation
-book_templates/    template file(s) to create the pdf file
-generator/         scripts needed by antora for the build process
-lib/               extension for antora like tabs or kroki etc.
-pdf_web/           output directory of generated pdf files, only used locally!
-public/            output directory of generated html files, only used locally!
-resources/         themes necessary for creating pdf files
-tmp/               temp directory used for htmltest (broken link checking)
+bin/              helper scripts to maintain the documentation
+book_templates/   template file(s) to create the pdf file
+generator/        scripts needed by antora for the build process
+lib/              extension for antora not delivered by node like tabs or remote-include-processor
+pdf_web/          output directory of generated pdf files, only used locally!
+public/           output directory of generated html files, only used locally!
+resources/        themes necessary for creating pdf files
+tmp/              temp directory used for htmltest (broken link checking)
 ```
 ### Important files
 
 The following files are important to run a build properly; note that node related stuff is not mentioned explicitly:
 
 ```
-.drone.star        define the build process when running via github
-antora.yml         contains source files and attributes that only belong
-                   to the component (version dependent!)
-package.json       define the antora environment und scripts to run at the cli
-site.yml           global site definitions including attributes (version independent!)
+.drone.star       define the build process when running via github
+antora.yml        contains source files and attributes that only belong
+                  to the component (version dependent!)
+package.json      define the antora environment und scripts to run at the cli
+site.yml          global site definitions including attributes (version independent!)
 
 ```
 
@@ -129,3 +132,7 @@ To manage versions in docs, we use branches. This means that any content based o
     1. When used in a level-2 repo, it stays at that level when you do a local build but becomes globally available when running a master build.
     2. When used in the master repo (level-1), it is super global and valid over all repos when running a build. This is because all the content sources are defined here and included when running the build process.
 4. Attributes starting with `page-` are also available to the UI-Template when running a build. The rules above apply. This is important when defining UI content based on attributes. To access these attributes in the UI-Template use `page.attribute.name` where `name` is without leading `page-` For details see [AsciiDoc Attributes in Antora][custom-attrib-link].
+
+## The Antora UI Template
+
+As described on top, Antora separates the writing of text and the [presentation design][antora-ui-link]. Our presentation design is defined in the [docs-ui][docs-ui-link] repository. Any change made in the UI affects the complete documentation, careful tests are mandatory.
