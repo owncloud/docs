@@ -16,23 +16,22 @@ visualizations and to set alerts for certain events of interest. They can be per
 ownCloud Audit Logs (provided by the {oc-marketplace-url}/apps/admin_audit[Auditing App]) to gather time
 series data and to create a reporting engine for ownCloud.
 
+NOTE: Internet Explorer 11 is not compatible with Metrics, because new web technologies have been used that are not supported by IE 11.
+
 If you want to use Splunk in addition, check out xref:configuration/integration/splunk.adoc[ownCloud App for Splunk].
 
 Specifically, the Metrics extension adds:
 
-- an API endpoint which allows querying snapshot values of the system data as well as per-user data
-- an API endpoint for downloading the data in the CSV format
-- a dashboard that displays the snapshot data in the ownCloud Web UI and offers a CSV download
-(accessible by ownCloud administrators via the app launcher)
+- an API endpoint which allows querying snapshot values of the system data as well as per-user metrics
+- API endpoints for downloading metrics as CSV files
+- a dashboard that displays the snapshot data in the ownCloud Web UI and offers a CSV download in the system view and the user view.
 
-TIP: Please note: If you're operating very large instances (users/files/shares,) it is recommended to use a
-special setup in order to not put the production database under huge load when gathering the values. For
-this, please replicate your installation (application server + read-only database) and install/use the
-Metrics App on the replica.
+TIP: If you're operating very large instances with regard to users, files or shares, better use a
+special setup so you won't put the production database under huge load when gathering the values. For
+this, replicate your installation (application server and read-only database) and install and use the
+Metrics app on the replica.
 
-NOTE: Internet Explorer 11 is not compatible with Metrics, because new web technologies have been used that are not supported by IE 11.
-
-Here are two screenshots to give you an impression of the Metrics app.
+The following screenshots give you an impression of the Metrics app.
 
 .Figure 1. Metrics System Overview
 image:enterprise/reporting/metrics/metrics-system.png[Metrics System Overview]
@@ -42,7 +41,7 @@ image:enterprise/reporting/metrics/metrics-user.png[Metrics User Overview]
 
 == Available Data
 
-The following data is available:
+The following data is available for analysis:
 
 .**System data**
 * Date/Time stamp - Server time of the request
@@ -85,18 +84,24 @@ The following data is available:
 
 To get started, you have to set a secret for authenticating requests at the endpoint.
 
-See the following example on how to set it:
+See the following occ command on how to set it. Make up a passphrase, referred to as `<your-metrics-secret>` in the example below. The Metrics secret is necessary to use the dashboard.
 
 [source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} config:system:set "metrics_shared_secret" --value "<your-metrics-secret>"
 ----
 
-TIP: Please make up a passphrase here referred to as `<your-metrics-secret>`. You have to set the Metrics
-secret to use the dashboard.
-
 TIP: This token gets stored in config.php as `metrics_shared_secret`, which could also be done manually
-instead of using this occ command.
+instead of using the occ command.
+
+=== Dashboard User Interface
+
+The dashboard is enabled by default. You can disable it with the following command:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} config:app:set metrics disable_dashboard --value=yes
+----
 
 === Endpoints and Parameters
 
@@ -125,30 +130,39 @@ curl -H "OC-MetricsApiKey: <your-metrics-secret>" \
      "https://<your owncloud>/ocs/v1.php/apps/metrics/api/v1/metrics?users=true&files=true&shares=true&quota=true&userData=true&format=json"
 ----
 
-TIP: Please replace `<your-metrics-secret>` with your respective system config value and `<your owncloud>`
+TIP: Replace `<your-metrics-secret>` with your respective system config value and `<your owncloud>`
 with the URL of your ownCloud instance.
 
-==== CSV Download Endpoint
+==== CSV Download Endpoints
 
-Downloading the current user metrics as a CSV file is possible through the Web UI. However, if you want to
-set up a cronjob for downloading the metrics regularly without admin permissions, there is also a public
-endpoint that requires the configured token instead of admin privileges.
+Downloading the current user and system metrics as CSV files is possible via the Web UI. If you want to
+set up cron jobs for downloading the metrics regularly without admin permissions, there are also public
+endpoints that require the configured token instead of admin privileges.
 
-See the `curl` example to request a CSV file:
+TIP: In the following `curl` examples, replace `<your-metrics-secret>` with your respective system config value and `<your owncloud>` with the URL of your ownCloud instance.
+
+To receive user metrics, use:
 
 [source,console]
 ----
-curl -H "OC-MetricsApiKey: <your-metrics-secret>"  \
-     -H "Content-Type: application/csv" \
-     -X GET https://<your owncloud>/index.php/apps/metrics/download-api > \
-     /path/to/download/metrics.csv
+curl -H "Content-Type: application/csv" \
+     -H "OC-MetricsApiKey: <your-metrics-secret>" \
+     -X GET https://<your owncloud>/index.php/apps/metrics/download-api/users > \
+     /path/to/download/storage/user-metrics.csv
 ----
 
-TIP: Please replace `<your-metrics-secret>` with your respective system config value and `<your owncloud>`
-with the URL of your ownCloud instance.
+For system metrics, use:
+
+[source,console]
+----
+curl -H "Content-Type: application/csv" \
+     -H "OC-MetricsApiKey: <your-metrics-secret>" \
+     -X GET https://<your owncloud>/index.php/apps/metrics/download-api/system > \
+     /path/to/download/storage/system-metrics.csv
+----
 
 == Limitations
 
 The Metrics app was designed for ownCloud deployments up to 250 users.
 On deployments with more than 250 users, it can take considerably longer to gather the requested data.
-To reduce the time needed, exclude _userData_ and _quota_. 
+To reduce the time needed, exclude _userData_ and _quota_.
