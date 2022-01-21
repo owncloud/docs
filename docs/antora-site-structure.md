@@ -33,7 +33,7 @@ The main reasons for using [Antora][link-antora] is the following:
 
 The ownCloud documentation consists of a main repo named `docs` and additional product repos like the clients or others which are included as content sources defined in `site.yml`.
 
-Our setup is made in a way, where each repo can build it's own content individually for testing and checking validity. Only the build of main repo `docs` creates documentation which is pushed to the web. There is one exeption, pdf's are created AND pushed via the CI from _each_ content source.
+Our setup is made in a way, where each repo can build it's own content individually for testing and checking validity. Only the build of main repo `docs` creates documentation which is pushed to the web. There is one exception, PDF's are created AND pushed via the CI from _each_ content source.
 
 
 ```
@@ -59,9 +59,9 @@ Note that this behaviour is relevant for the playbook `site.yml` files only and 
 
 ## Scope of Content Accessibility
 
-Because Antora is capable of defining additional content sources, you can access content from these resources. The setup is flat, no main/child environment. To access ressources, follow the [Resource ID Coordinates][link-resource-id] scheme.
+Because Antora is capable of defining additional content sources, you can access content from these resources. The setup is flat, no main/child environment. To access resources, follow the [Resource ID Coordinates][link-resource-id] scheme.
 
-Because the setup we have made regarding testing, the direction of the arrow is important.
+Because of the setup we have made regarding testing, the direction of the arrow is important.
 
 
 **Possible**
@@ -69,7 +69,7 @@ Because the setup we have made regarding testing, the direction of the arrow is 
 docs    --> docs-client-ios-app
             └> index.adoc
 ```
-Main (docs) can access content from any conten source (like docs-client-ios-app) and vice versa *at build time* , because docs has referenced the repo (content source) and made it available to all.
+Main (docs) can access content from any content source (like docs-client-ios-app) and vice versa *at build time* , because docs has referenced the repo (content source) and made it available to all.
 
 **Impossible**
 ```
@@ -80,7 +80,7 @@ docs-client-ios-app    --> docs
                            └> index.adoc
 
 ```
-When doing a build of a content source (like the docs-client-ios-app) which is neccesary for testing purposes, any references to another content source or to docs will fail as the referenced content source is unknown. Those references will throw an error/warning. Even not the best approach, use .html references to any other source outside the working repo.
+When doing a build of a content source (like the docs-client-ios-app) which is neccesary for testing purposes, any references to another content source or to docs will fail as the referenced content source is unknown. Those references will throw an error/warning. Even if it is not the best approach, use .html references to any other source outside the working repo.
 
 ## Structure of Directories
 
@@ -138,7 +138,7 @@ site.yml          global site definitions including attributes (version independ
 
 While you can read more details about [What is antora.yml?][link-antora-yml] and [What is site.yml (the playbook)][link-site-yml], here are some important items:
 
-To manage versions in docs, we use branches. This means that any content based on a variable (attribute) limited to a branch must go into teh component descripto file `antora.yml` and be maintained accordingly. Any attribute that can be used in any branch of a component must be defined in `site.yml`
+To manage versions in docs, we use branches. This means that any content based on a variable (attribute) limited to a branch must go into the component description file `antora.yml` and be maintained accordingly. Any attribute that can be used in any branch of a component must be defined in `site.yml`
 
 ### Accessibility and Availability of Attributes 
 
