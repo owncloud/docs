@@ -14,63 +14,82 @@ xref:enterprise/collaboration/collabora_secure_view.adoc[Collabora Online / Secu
  richdocuments secure_view_option  Enable Secure View
  richdocuments watermark_text      Watermark pattern displayed in the document
  richdocuments open_in_new_tab     Open documents in a new tab
- richdocuments secure_view_open_action_default  Open documents in Secure View with watermark by default
+ richdocuments secure_view_can_print_default    Define if documents can be printed or exported
+ richdocuments secure_view_open_action_default  Enforce displaying the watermark by default
 ----
 
 == App Configuration
 
-All app configurations are set and queried with the `config:app` command set. The examples below set a value. To query a value use `config:app:get` and the corresponding key without any options or attributes.
+All app configurations are set and queried with the `config:app` command set. The examples below set a value. To query a value use `config:app:get` and the corresponding key without any options or attributes. Note that values have to be set in single quotes.
 
-== Set the WOPI URL
+== Define the WOPI Server URL
 
 WOPI Server URL
 
 This command sets the WOPI Server to `[IP/URL]:port` +
-`[IP/URL]:port` can be any IP/URL plus the port on which the WOPI server can be accessed like `'a.b.c.d'` or `'http:\\a.b.c.d:8098'` or `'https:\\rd.yourdomain.com'` etc. Adding the port is only necessary when not using standard ports.
+`[IP/URL]:port` can be any IP/URL plus the port on which the WOPI server can be accessed like:
+
+- `a.b.c.d`
+- `http:\\a.b.c.d:8098`
+- `https:\\rd.yourdomain.com`
+- ...
+
+Adding the port is only necessary when not using standard ports.
 
 [source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} config:app:set richdocuments wopi_url --value='[IP/URL]:port'
 ----
 
-== Set the secure_view_option
+== Enable Secure View
 
-Enable Secure View (possible values: true/false, default: false)
+Enable Secure View (possible values: true/false, default: false).
 
-The following example command enables secure view globally in the system
+The following example command enables Secure View globally in the system:
 
 [source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} config:app:set richdocuments secure_view_option --value='true'
 ----
 
-== Set the watermark_text
+== Define the Watermark Pattern Displayed
 
-A watermark pattern is displayed in the document when it is viewed. It can be an arbitrary string. The keyword \{viewer-email} will be replaced with the current user's email address in the document watermark. If an email address is not set then the user's display name will be used.
+A watermark pattern is displayed in the document when it is viewed. It can be an arbitrary string. The keyword \{viewer-email} will be replaced with the current user's email address in the document watermark. If an email address is not set, then the user's display name will be used.
 
-The following example command sets the watermark pattern displayed in the document.
+The following example command sets the watermark pattern displayed in the document:
 
 [source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} config:app:set richdocuments watermark_text --value='Restricted to \{viewer-email}'
 ----
 
-== Edit Documents in a New Tab
+== Open Documents in a New Tab
 
-By default, documents will open in a new tab if not otherwise defined. You can change this behaviour with a command.
+By default, documents will open in a new tab if not otherwise defined. You can change this behaviour with a command (possible values: true/false, default: false).
 
-The following example command makes documents open in the same tab.
+The following example command makes documents open in the same tab:
 
 [source,console,subs="attributes+"]
 ----
 {occ-command-example-prefix} config:app:set richdocuments open_in_new_tab --value='false'
 ----
 
-== Set the secure_view_open_action_default
+== Define the Print and Exporting Option
 
-Open documents in Secure View with watermark by default (possible values: true/false, default: false)
+Enable documents in Secure View to be printed and exported (possible values: true/false, default: false).
 
-The following example command enables the option to globally enforce displaying the watermark when documents are viewed
+The following example command enables the option to globally print and export Secure View enabled documents:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} config:app:set secure_view_can_print_default --value='true'
+----
+
+== Enforce Displaying the Watermark
+
+Open documents in Secure View with watermark by default (possible values: true/false, default: false).
+
+The following example command enables the option to globally enforce displaying the watermark when documents are viewed:
 
 [source,console,subs="attributes+"]
 ----
