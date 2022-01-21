@@ -6,77 +6,41 @@
 :backport-request-url: https://github.com/owncloud/core/labels/Backport-Request
 :git-alias-url: https://git-scm.com/book/en/v2/Git-Basics-Git-Aliases
 
-== General
+== Introduction
 
-We backport important fixes and improvements from the current master
-release to get them to our users faster.
+We backport important fixes and improvements from the current master release to get them to our users faster.
 
 == Process
 
-We mostly consider bug fixes for backporting. Occasionally, important
-changes to the API can be backported to make it easier for developers to
-keep their apps working between major releases. If you think a pull
-request (PR) is relevant for the stable release, go through these steps:
+We mostly consider bug fixes for backporting. Occasionally, important changes to the API can be backported to make it easier for developers to keep their apps working between major releases. If you think a pull request (PR) is relevant for the stable release, go through these steps:
 
 . Make sure the PR is merged to master
-. Ask the feature maintainer if the code should be backported and add
-the label {backport-request-url}[backport-request]
+. Ask the feature maintainer if the code should be backported and add the label {backport-request-url}[backport-request]
 to the PR
-. If the maintainer agrees, create a new branch based on the
-respective stable branch, cherry-pick the needed commits to that branch
-and create a PR on GitHub.
-. Specify the corresponding milestone for that series to this PR and
-reference the original PR in there. This enables the QA team to find the
-backported items for testing and having the original PR with detailed
-description linked.
+. If the maintainer agrees, create a new branch based on the respective stable branch, cherry-pick the needed commits to that branch and create a PR on GitHub.
+. Specify the corresponding milestone for that series to this PR and reference the original PR in there. This enables the QA team to find the backported items for testing and having the original PR with detailed description linked.
 
-NOTE: Before each patch release there is a freeze to be able to test
-everything as a whole without pulling in new changes.
-While this freeze is active a backport isn’t allowed and
-has to wait for the next patch release.
+NOTE: Before each patch release there is a freeze to be able to test everything as a whole without pulling in new changes. While this freeze is active a backport isn’t allowed and has to wait for the next patch release.
 
-The QA team will try to reproduce all the issues with the
-X.Y.Z-next-maintenance milestone on the relevant release and verify it
-is fixed by the patch release (and doesn’t cause new problems). Once the
-patch release is out, the post-fix -next-maintenance is removed and a
-new -next-maintenance milestone is created for that series.
+The QA team will try to reproduce all the issues with the X.Y.Z-next-maintenance milestone on the relevant release and verify it is fixed by the patch release (and doesn’t cause new problems). Once the patch release is out, the post-fix -next-maintenance is removed and a new -next-maintenance milestone is created for that series.
 
 == Backporting Steps
 
-Because pushing directly to particular ownCloud branches is forbidden
-(e.g., `origin/stable-xx`), you need to create your own remote branch,
-based off of the branch that you wish to backport to. However, doing so
-can involve a number of manual steps. To reduce the effort and time
-involved, use the script below instead.
+Because pushing directly to particular ownCloud branches is forbidden (e.g., `origin/stable-xx`), you need to create your own remote branch, based off of the branch that you wish to backport to. However, doing so can involve a number of manual steps. To reduce the effort and time involved, use the script below instead.
 
 === Backporting Notes
 
-NOTE: The script relies on a recent version of `grep`. macOS users may find on
-their system a version provided from Apple which is outdated and lacking needed
-options. Use {homebrew-url}[homebrew] to install a recent version of `grep`.
+NOTE: The script relies on a recent version of `grep`. macOS users may find on their system a version provided from Apple which is outdated and lacking needed options. Use {homebrew-url}[homebrew] to install a recent version of `grep`.
 
-NOTE: The script uses `curl` and the `jq` (lightweight and flexible
-command-line JSON processor) package. Please install them before first usage.
-Please see this {json-processor-url}[link] for installation
-details of `jq` covering various OS.
+NOTE: The script uses `curl` and the `jq` (lightweight and flexible command-line JSON processor) package. Please install them before first usage. Please see this {json-processor-url}[link] for installation details of `jq` covering various OS.
 
-NOTE: This script uses the github API. For unauthenticated requests, the rate
-limit allows for up to 60 requests per hour. Unauthenticated requests are
-associated with the originating IP address, and not the user making requests.
-Please see this {rate-limit-url}[link] for more
-information about github rate limiting.
+NOTE: This script uses the github API. For unauthenticated requests, the rate limit allows for up to 60 requests per hour. Unauthenticated requests are associated with the originating IP address, and not the user making requests. Please see this {rate-limit-url}[link] for more information about github rate limiting.
 
-NOTE: The script requires that you have checked out the branch containing the merge SHA1 hash.
-The script will not proceed if either the merge SHA1 hash is not present or the branch containing the
-merge SHA1 hash is not checked out.
+NOTE: The script requires that you have checked out the branch containing the merge SHA1 hash. The script will not proceed if either the merge SHA1 hash is not present or the branch containing the merge SHA1 hash is not checked out.
 
-NOTE: In case of conflicts, the script exits. The merge conflicts will need
-to be resolved before manually continuing the backport. When done, we suggest
-that you use the printed subject title from the script for the Pull Request.
+NOTE: In case of conflicts, the script exits. The merge conflicts will need to be resolved before manually continuing the backport. When done, we suggest that you use the printed subject title from the script for the Pull Request.
 
-WARNING: While adding, renaming or changing files has no issues for backporting,
-the script will fail if files have been deleted. You need to manually finalize the
-backport using git commands.
+WARNING: While adding, renaming or changing files has no issues for backporting, the script will fail if files have been deleted. You need to manually finalize the backport using git commands.
 
 === Backporting Script
 
@@ -85,21 +49,19 @@ backport using git commands.
 include::{examplesdir}scripts/backport.sh[]
 ----
 
-TIP: It is highly recommended to use the merge SHA1 hash when backporting a Pull Request.
-The merge commit includes all PR sub commits to be backported. With that, no individual
-sub commit backporting is necessary.
+TIP: It is highly recommended to use the merge SHA1 hash when backporting a Pull Request. The merge commit includes all PR sub commits to be backported. With that, no individual sub commit backporting is necessary.
 
 The following example assumes that:
 
 - You save the script in a file called `<path>/backport.sh` and marked it executable
 - You have checked out the branch containing the merge SHA1 hash (like `master`)
-- Your Pull Request merge SHA1 hash = 1234567 and your target branch = stable10
+- Your Pull Request merge SHA1 hash = 1234567 and your target branch = 10.9
 
 The command to backport this Pull Request would be called as follows:
 
 [source,console]
 ----
-<path>/backport.sh 1234567 stable10
+<path>/backport.sh 1234567 10.9
 4 commits beeing cherry picked:
 
 2e03d938
@@ -107,9 +69,9 @@ fef19729
 61ac3f09
 0528601f
 ...
-Switched to a new branch ‘stable10-1234567-34654‘
+Switched to a new branch ‘10.9-1234567-34654‘
 ...
-[stable10] [PR 34654] Each generated birthday or death event gets a new UID
+[10.9] [PR 34654] Each generated birthday or death event gets a new UID
 ...
 Cherry picking commit 1: 2e03d938
 Cherry picking commit 1: fef19729
@@ -118,34 +80,26 @@ Pushing: ...
 ...
 ----
 
-NOTE: Please keep in mind that this is an example and you have to adapt the commit hash and the
-target branch accordingly.
+NOTE: Please keep in mind that this is an example and you have to adapt the commit hash and the target branch accordingly.
 
-The script lists quantity and commits to be backported and the current commit in process.
-This can be helpful in case there is a conflict and you manually continue after the
-conflict has been resolved.
+The script lists quantity and commits to be backported and the current cherry-pick in process. This can be helpful in case there is a conflict and you manually continue after the conflict has been resolved.
 
-When the script completes, go to GitHub, where it will suggest that you
-make a PR from pushed branch. Even the script tries to automate, you may need
-to set the Pull Request subject and message text manually via copy/paste.
+When the script completes, go to GitHub, where it will suggest that you make a PR from pushed branch.
 
-IMPORTANT: Change the base branch to be committed against,
-from `master` to your target branch (in our example `stable10`) and continue.
+Even the script tries to automate the following steps by adding predefined messages, you may need to set the Pull Request subject and message text manually via copy/paste based on the script output. This is not a bug in the script but depends on GitHub. It is highly suggested to use these messages as it eases finding and referencing a lot.
 
-In case you have installed the `xdg-utils` package, you can add at the
-end of the script above following code which opens the PR to be
-finalized in your browser. macOS does not need this package. Use the
-command `open` instead of `xdg-open`:
+IMPORTANT: When not using the browser supported PR creation below, change the base branch to be committed against, from `master` to your target branch (in our example `10.9`) and continue.
+
+In case you have installed the `xdg-utils` package, you can add at the end of the script above following code which opens the PR to be finalized in your browser. macOS does not need this package. Use the command `open` instead of `xdg-open`:
 
 [source,console]
 ----
 # open the browser and prepare the pull request
-echo "Creating pull request for branch $targetBranch in $repository"
-xdg-open "https://github.com/$repository/pull/new/$targetBranch...$newBranch" &>/dev/null
+echo "Creating pull request for branch ${targetBranch} in ${repository}"
+xdg-open "https://github.com/${repository}/pull/new/${targetBranch}...${newBranch}" &>/dev/null
 ----
 
-NOTE: This command opens the Pull Request and sets the target branch
-(in our example `stable10`) for the backport automatically.
+NOTE: This command opens the Pull Request and sets the target branch (in our example `10.9`) for the backport automatically.
 
 === Backporting Alias
 
@@ -153,16 +107,17 @@ You can also create a {git-alias-url}[git alias] for backporting, making it simp
 
 Open the `~/.gitconfig` file with the editor of your choice and add the following:
 
+[source,text]
 ----
 [alias]
 	backport = !bash -c '<path_to_script>/backport.sh $1 $2' -
 ----
 
-Create a backport by invoking following command
+You can create a backport by invoking following command:
 
 [source,console]
 ----
-git backport 1234567 stable10
+git backport 1234567 10.9
 ----
 
 NOTE: Please keep in mind that this is an example and you have to adapt the commit hash and the target branch accordingly.
