@@ -199,7 +199,3 @@ echo
 
 git push --quiet -u origin "${newBranch}"
 git checkout --quiet "${sourceBranch}"
-
-# open the browser and prepare the pull request
-echo "Creating pull request for branch ${targetBranch} in ${repository}"
-xdg-open "https://github.com/${repository}/pull/new/${targetBranch}...${newBranch}" &>/dev/null
