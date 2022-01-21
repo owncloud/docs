@@ -1,5 +1,5 @@
 #!/bin/bash
-# version 2021.07.31
+# version 2022.01.21
 
 if ! [ -x "$(command -v jq)" ]; then
   echo
@@ -32,27 +32,27 @@ sourceBranch=$(git rev-parse --abbrev-ref HEAD)
 
 # check if the target branch exists on remote to avoid backporting to a non existing remote branch
 exists_in_remote=$(git ls-remote --heads origin ${targetBranch})
-if [ -z "$exists_in_remote" ]; then
+if [ -z "${exists_in_remote}" ]; then
     echo
-    echo "Branch $targetBranch does not exist on remote. Create it first. Exiting"
+    echo "Branch ${targetBranch} does not exist on remote. Create it first. Exiting"
     echo
     exit 1
 fi
 
 # check if the target branch already exists locally
 exists_in_local=$(git branch --list ${targetBranch})
-if [ -z "$exists_in_local" ]; then
+if [ -z "${exists_in_local}" ]; then
     echo
-    echo "Branch $targetBranch does not exist locally. Make it available first. Exiting"
+    echo "Branch ${targetBranch} does not exist locally. Make it available first. Exiting"
     echo
     exit 1
 fi
 
 # check if the given merge commit exists in the actual checked out branch
 is_merged=$(git branch --contains $1 2>/dev/null | grep -oP '(?<=\*).*')
-if [ -z "$is_merged" ]; then
+if [ -z "${is_merged}" ]; then
     echo
-    echo "$commit does not exist because:"
+    echo "${commit} does not exist because:"
     echo "- the PR has not been merged yet or"
     echo "- your actual backporting base branch ${sourceBranch} is not pulled/rebased."
     echo "Exiting"
@@ -91,34 +91,34 @@ now=$(date +%s)
 ((remaining=rateLimitReset-now))
 
 # time remaining in HMS
-remaining=$(date -u -d @$remaining +%H:%M:%S)
+remaining=$(date -u -d @${remaining} +%H:%M:%S)
 
 # echo one time for a good rendering
 echo
 
 # check if there are commits to cherry pick and list them if present
-if [[ -z "$commitList" ]]; then
+if [[ -z "${commitList}" ]]; then
   echo "There are no commit(s) to cherry pick. Exiting"
   echo
   exit 1
 else
-  lineCount=$(echo "$commitList" | grep '' | wc -l)
-  echo "$lineCount commit(s) to be cherry picked:"
+  lineCount=$(echo "${commitList}" | grep '' | wc -l)
+  echo "${lineCount} commit(s) to be cherry picked:"
   echo
-  echo "$commitList"
+  echo "${commitList}"
   echo
 fi
 
-if [ $rateLimitRemaining -le 0 ]; then
+if [ ${rateLimitRemaining} -le 0 ]; then
   # do not continue if there are no remaining github requests available
   echo
   echo "You do not have enough github requests available to backport"
-  echo "The current rate limit window resets in $remaining"
+  echo "The current rate limit window resets in ${remaining}"
   echo
   exit 1 
 else
   # get the PR title, this is the only automated valid way to get the title 
-  pullTitle=$(curl https://api.github.com/repos/$repository/pulls/$pullId 2>/dev/null | jq '.title' | sed 's/^.//' | sed 's/.$//')
+  pullTitle=$(curl https://api.github.com/repos/"${repository}"/pulls/"${pullId}" 2>/dev/null | jq '.title' | sed 's/^.//' | sed 's/.$//')
   # remove possible line breaks on any location in the string
   pullTitle=${pullTitle//$'\n'/}
 fi
@@ -131,8 +131,8 @@ message="[${targetBranch}] [PR ${pullId}] ${pullTitle}"
 # in case this is true, checkout does not succeed and nothing needs to be done/switched
 # xargs removes any possible leading and trailing whitespaces
 is_source_branch_clean=$(git status --porcelain=v1 2>/dev/null | xargs)
-if [[ ! -z "$is_source_branch_clean" ]]; then
-  echo "Source branch $sourceBranch has probably uncommitted changes. Aborting."
+if [[ ! -z "${is_source_branch_clean}" ]]; then
+  echo "Source branch ${sourceBranch} has probably uncommitted changes. Aborting."
   echo
   exit 1
 fi
@@ -146,53 +146,60 @@ set -e
 git fetch -p --quiet
 
 # checkout and rebase the target branch
-git checkout "$targetBranch" --quiet
+git checkout "${targetBranch}" --quiet
 
 # if everything is ok, then rebase the target branch
 git pull --rebase --quiet
 
 # create a new branch based on the target branch
 # the new branch name equals the new commit name
-git checkout -b "$newBranch" "$targetBranch" 
+git checkout -b "${newBranch}" "${targetBranch}" 
 
 echo
 
 # cherry pick all commits from commitList
 lC=1
-echo "$commitList" | while IFS= read -r line; do
+echo "${commitList}" | while IFS= read -r line; do
   # start cherry-picking
-  echo "Cherry picking commit $lC: $line"
+  echo "Cherry picking commit ${lC}: ${line}"
 
   # check if the commit to be cherry picked is already in the branch
   # this only works if the commit was cherry picked before!
   # else it will just try and continue.
-  is_cherry_picked=$(git log --grep $line 2>/dev/null)
-  if [[ ! -z "$is_cherry_picked" ]]; then
+  is_cherry_picked=$(git log --grep "${line}" 2>/dev/null)
+  if [[ ! -z "${is_cherry_picked}" ]]; then
     echo
-    echo "Commit $line has aready been cherry picked, abort backporting."
+    echo "Commit ${line} has aready been cherry picked, abort backporting."
     # go back to the base branch and delete the new branch with all its contents.
-    git checkout --quiet "$sourceBranch"
-    git branch -D --quiet $newBranch
+    git checkout --quiet "${sourceBranch}"
+    git branch -D --quiet "${newBranch}"
     echo
     exit 1
   fi
 
+  # pull this commit into the new branch
   # if you do not want to use a default conflict resolution to take theirs
   # (help fix missing cherry picked commits or file renames)
-  #git cherry-pick $line > /dev/null 
-  git cherry-pick -Xtheirs $line > /dev/null 
-  lC=$(( $lC + 1 ))
+  #git cherry-pick ${line} > /dev/null 
+  git cherry-pick -Xtheirs "${line}" > /dev/null 
+  lC=$(( ${lC} + 1 ))
 done
 
 echo
-
-# the first amend creates the PR headline text
-# the second amend creates the PR message text
-git commit --quiet --amend -m "$message" -m "Backport of PR #$pullId"
-
-echo "Pushing: $message"
+echo "Committing changes"
 echo
 
-git push --quiet -u origin "$newBranch"
-git checkout --quiet "$sourceBranch"
+## rewrite the most recent commit message
+## the first -m creates the PR headline text
+## the second -m creates the PR message text
+git commit --quiet --amend -m "${message}" -m "Backport of PR #${pullId}"
 
+echo "Pushing: ${message}"
+echo
+
+git push --quiet -u origin "${newBranch}"
+git checkout --quiet "${sourceBranch}"
+
+# open the browser and prepare the pull request
+echo "Creating pull request for branch ${targetBranch} in ${repository}"
+xdg-open "https://github.com/${repository}/pull/new/${targetBranch}...${newBranch}" &>/dev/null
