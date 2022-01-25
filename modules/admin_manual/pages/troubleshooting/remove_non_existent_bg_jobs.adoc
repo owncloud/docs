@@ -1,0 +1,81 @@
+= Remove Non-Existent Background Jobs
+:toc: right
+
+== Introduction
+
+During the lifecycle of ownCloud, some background jobs may get removed as they are either superseded by another job or completely obsolete. It can also happen, that an app providing a background job was removed and the job therefore is no longer present. These jobs can be removed manually. 
+
+== Identification
+
+If the ownCloud log files contain errors like:
+
+[source,text]
+----
+"Exception: {"Exception":"OCP\AppFramework\QueryException","Message":"Could not resolve OCA\User_LDAP\Jobs\UpdateGroups! Class OCA\User_LDAP\Jobs\UpdateGroups does not exist","Code":0,"Trace":"
+
+"Exception: {"Exception":"OCP\AppFramework\QueryException","Message":"Could not resolve OCA\User_LDAP\Jobs\CleanUp! Class OCA\User_LDAP\Jobs\CleanUp does not exist","Code":0,"Trace":"
+
+"Exception: {"Exception":"OCP\AppFramework\QueryException","Message":"Could not resolve OCA\Federation\SyncJob! Class OCA\Federation\SyncJob does not exist","Code":0,"Trace":"
+----
+
+these background jobs can safely be removed as they no longer exist.
+
+== Removal Process
+
+There is an xref:configuration/server/occ_command.adoc#managing-background-jobs[occ command set] for managing background jobs _triggered by ownCloud_. The following steps are necessary to remove a background job:
+
+. Identify the `Job-ID` of the background job to be removed
+. Remove the background job based on the `Job-ID`
+
+It is also possible that a background job is triggered manually by the admin when the job has been added to eg. `crontab`.
+
+=== Identify the Job-ID of the Background Job to Be Removed
+
+Use the following command to list all active background jobs triggered by ownCloud:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} background:queue:status
+----
+
+The output may look like the following:
+
+[source,console]
+----
++----+---------------------------------------------------+---------------------------+---------------+
+| Id | Job                                               | Last run                  | Job Arguments |
++----+---------------------------------------------------+---------------------------+---------------+
+| 1  | OCA\Files\BackgroundJob\ScanFiles                 | 2022-01-23T14:00:02+00:00 |               |
+| 2  | OCA\Files\BackgroundJob\DeleteOrphanedItems       | 2022-01-23T14:00:02+00:00 |               |
+| 3  | OCA\Files\BackgroundJob\CleanupFileLocks          | 2022-01-23T14:00:02+00:00 |               |
+| 4  | OCA\DAV\CardDAV\SyncJob                           | 2022-01-23T14:00:02+00:00 |               |
+...
++----+---------------------------------------------------+---------------------------+---------------+
+----
+
+=== Remove the Background Job
+
+When you have identified the `ID` of the background job to  be removed, run following command to remove it, replace `ID` with the job number of the list:
+
+[source,console,subs="attributes+"]
+----
+{occ-command-example-prefix} background:queue:status ID
+----
+
+WARNING: Deleting a job cannot be undone. Be sure that you want to delete the job before doing so.
+
+=== Remove Jobs Manually Added via Crontab
+
+If an erroring job as been added manually in `crontab`, remove the job from the crontab queue list. First, list the entries of crontab for the web server user:
+
+[source,console]
+----
+sudo -uwww-data crontab -l
+----
+
+Then edit the crontab job list to remove the job by invoking following command:
+
+[source,console]
+----
+sudo -uwww-data crontab -e
+----
