@@ -39,8 +39,9 @@ Our setup is made in a way, where each repo can build it's own content individua
 ```
 main        content source
 
+docs   --> docs-server
             docs-client-desktop
-docs    --> docs-client-ios-app 
+            docs-client-ios-app 
             docs-client-android
             ...
 
