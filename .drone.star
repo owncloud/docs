@@ -1,12 +1,12 @@
 def main(ctx):
     # Config
 
-    environment = "server"
+    environment = "docs"
 
     # Version shown as latest in generated documentations
     # It's fine that this is out of date in version branches, usually just needs
     # adjustment in master/deployment_branch when a new version is added to site.yml
-    latest_version = "10.9"
+    latest_version = "master"
     default_branch = "master"
 
     # Current version branch (used to determine when changes are supposed to be pushed)
@@ -117,14 +117,16 @@ def build(ctx, environment, latest_version, deployment_branch, base_branch, pdf_
                     "bin/optimize_crawl -x",
                 ],
             },
-            {
-                "name": "docs-pdf",
-                "pull": "always",
-                "image": "owncloudci/asciidoctor:latest",
-                "commands": [
-                    "bin/makepdf -m",
-                ],
-            },
+            # there is no pdf creation for the main page of docs necessary
+            # but keeping these lines remarked in case this changes
+            # {
+            #     "name": "docs-pdf",
+            #     "pull": "always",
+            #     "image": "owncloudci/asciidoctor:latest",
+            #     "commands": [
+            #         "bin/makepdf -m",
+            #     ],
+            # },
             {
                 "name": "cache-rebuild",
                 "pull": "always",
