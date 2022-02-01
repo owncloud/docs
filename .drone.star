@@ -1,28 +1,13 @@
 def main(ctx):
     # Config
 
-    environment = "docs"
-
     # Version shown as latest in generated documentations
-    # It's fine that this is out of date in version branches, usually just needs
-    # adjustment in master/deployment_branch when a new version is added to site.yml
     latest_version = "master"
-    default_branch = "master"
-
-    # Current version branch (used to determine when changes are supposed to be pushed)
-    # pushes to base_branch will trigger a build in deployment_branch but pushing
-    # to fix-typo branch won't
-    base_branch = latest_version
-
-    # Version branches never deploy themselves, but instead trigger a deployment in deployment_branch
-    # This must not be changed in version branches
-    deployment_branch = default_branch
-    pdf_branch = default_branch
+    deployment_branch = "master"
 
     return cancelPreviousBuilds() + [
         checkStarlark(),
-        build(ctx, environment, latest_version, deployment_branch, base_branch, pdf_branch),
-        trigger(ctx, environment, latest_version, deployment_branch, base_branch, pdf_branch),
+        build(ctx, latest_version, deployment_branch),
     ]
 
 def checkStarlark():
@@ -62,7 +47,7 @@ def checkStarlark():
         },
     }
 
-def build(ctx, environment, latest_version, deployment_branch, base_branch, pdf_branch):
+def build(ctx, latest_version, deployment_branch):
     return {
         "kind": "pipeline",
         "type": "docker",
@@ -117,16 +102,6 @@ def build(ctx, environment, latest_version, deployment_branch, base_branch, pdf_
                     "bin/optimize_crawl -x",
                 ],
             },
-            # there is no pdf creation for the main page of docs necessary
-            # but keeping these lines remarked in case this changes
-            # {
-            #     "name": "docs-pdf",
-            #     "pull": "always",
-            #     "image": "owncloudci/asciidoctor:latest",
-            #     "commands": [
-            #         "bin/makepdf -m",
-            #     ],
-            # },
             {
                 "name": "cache-rebuild",
                 "pull": "always",
@@ -162,29 +137,6 @@ def build(ctx, environment, latest_version, deployment_branch, base_branch, pdf_
                     "event": [
                         "push",
                         "cron",
-                    ],
-                },
-            },
-            {
-                "name": "upload-pdf",
-                "pull": "always",
-                "image": "plugins/s3-sync",
-                "settings": {
-                    "bucket": "uploads",
-                    "endpoint": from_secret("docs_s3_server"),
-                    "access_key": from_secret("docs_s3_access_key"),
-                    "secret_key": from_secret("docs_s3_secret_key"),
-                    "path_style": "true",
-                    "source": "pdf_web/",
-                    "target": "/pdf/%s" % environment,
-                },
-                "when": {
-                    "event": [
-                        "push",
-                        "cron",
-                    ],
-                    "branch": [
-                        pdf_branch,
                     ],
                 },
             },
@@ -238,48 +190,10 @@ def build(ctx, environment, latest_version, deployment_branch, base_branch, pdf_
             "ref": {
                 "include": [
                     "refs/heads/%s" % deployment_branch,
-                    "refs/heads/%s" % pdf_branch,
                     "refs/tags/**",
                     "refs/pull/**",
                 ],
             },
-        },
-    }
-
-def trigger(ctx, environment, latest_version, deployment_branch, base_branch, pdf_branch):
-    return {
-        "kind": "pipeline",
-        "type": "docker",
-        "name": "trigger",
-        "platform": {
-            "os": "linux",
-            "arch": "amd64",
-        },
-        "clone": {
-            "disable": True,
-        },
-        "steps": [
-            {
-                "name": "trigger-%s" % deployment_branch,
-                "pull": "always",
-                "image": "plugins/downstream",
-                "settings": {
-                    "server": "https://drone.owncloud.com",
-                    "token": from_secret("drone_token"),
-                    "fork": "true",
-                    "repositories": [
-                        "owncloud/docs@%s" % deployment_branch,
-                    ],
-                },
-            },
-        ],
-        "depends_on": [
-            "documentation",
-        ],
-        "trigger": {
-            "ref": [
-                "refs/heads/%s" % base_branch,
-            ],
         },
     }
 
