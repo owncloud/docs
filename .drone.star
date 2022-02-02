@@ -1,13 +1,12 @@
 def main(ctx):
     # Config
 
-    # Version shown as latest in generated documentations
-    latest_version = "master"
+    # There is only one branch to be deployed
     deployment_branch = "master"
 
     return cancelPreviousBuilds() + [
         checkStarlark(),
-        build(ctx, latest_version, deployment_branch),
+        build(ctx, deployment_branch),
     ]
 
 def checkStarlark():
@@ -47,7 +46,7 @@ def checkStarlark():
         },
     }
 
-def build(ctx, latest_version, deployment_branch):
+def build(ctx, deployment_branch):
     return {
         "kind": "pipeline",
         "type": "docker",
@@ -95,7 +94,6 @@ def build(ctx, latest_version, deployment_branch):
                     "ELASTICSEARCH_INDEX": from_secret("elasticsearch_index"),
                     "ELASTICSEARCH_READ_AUTH": from_secret("elasticsearch_read_auth"),
                     "ELASTICSEARCH_WRITE_AUTH": from_secret("elasticsearch_write_auth"),
-                    "latestVersion": latest_version,
                 },
                 "commands": [
                     "yarn antora --fetch --attribute format=html",
