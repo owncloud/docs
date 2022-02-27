@@ -263,7 +263,7 @@ Reference: [`Listing and source code blocks`](https://asciidoctor.org/docs/ascii
 Reference: [`Building blocks in AsciiDoc`](https://asciidoctor.org/docs/asciidoc-writers-guide/#building-blocks-in-asciidoc)
 
 ```
-[source, <language>]
+[source,<language>]
 ----
 text
   text
@@ -273,7 +273,7 @@ Optional define the `<language>`
 
 Example:
 ```
-[source,console]
+[source,bash]
 ----
 subscription-manager repos --enable rhel-server-rhscl-7-rpms
 ----
@@ -282,11 +282,17 @@ You can also use `include` in code blocks to include an example.
 
 Example:
 ```
-[source,console]
+[source,bash]
 ----
 include::example$installation/post-installation-steps.sh[]
 ----
 ```
+
+**IMPORTANT** For highlighting `bash` commands properly, distinct when to use `console` and when to use `bash` as source language:
+
+* Use `console` whenever there is a bash prompt with one of the following prompt characters `> % $ #` where there can also be up to 3 whitespaces _before_ the bash prompt, or a bash prompt like `[test@ubuntu~]$`. The bash prompt will be visible, rendered differently but cant be selected with the mouse manually. `bash` commands post the bash prompt will be highlighted. Note that if there is no bash prompt upfront, no highlighting will take place!
+* Use `bash` whenever there is no bash prompt upfront and you either show shell commands or bash scripts.
+* Note that you can copy a source block via clicking the copy symbol at the right of the language at any time without the bash prompt, if any is present.
 
 ### OCC Examples
 
