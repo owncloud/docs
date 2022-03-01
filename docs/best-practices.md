@@ -288,11 +288,11 @@ include::example$installation/post-installation-steps.sh[]
 ----
 ```
 
-**IMPORTANT** For highlighting `bash` commands properly, distinct when to use `console` and when to use `bash` as source language:
+**IMPORTANT** For highlighting `bash` commands properly, you need to distinguish between `console` and `bash` as source language:
 
-* Use `console` whenever there is a bash prompt with one of the following prompt characters `> % $ #` where there can also be up to 3 whitespaces _before_ the bash prompt, or a bash prompt like `[test@ubuntu~]$`. The bash prompt will be visible, rendered differently but cant be selected with the mouse manually. `bash` commands post the bash prompt will be highlighted. Note that if there is no bash prompt upfront, no highlighting will take place!
+* Use `console` whenever there is a bash prompt with one of the following prompt characters `> % $ #` where there can also be up to 3 whitespaces _before_ the bash prompt, or a bash prompt like `[test@ubuntu~]$`. The bash prompt will be visible, rendered differently but can't be selected with the mouse manually. `bash` commands after the bash prompt will be highlighted. Note that if there is no bash prompt upfront, no highlighting will take place!
 * Use `bash` whenever there is no bash prompt upfront and you either show shell commands or bash scripts.
-* Note that you can copy a source block via clicking the copy symbol at the right of the language at any time without the bash prompt, if any is present.
+* Note that you can copy a source block by clicking the copy symbol to the right of the example without the bash prompt if one is present.
 
 ### OCC Examples
 
