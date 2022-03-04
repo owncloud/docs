@@ -305,9 +305,9 @@ Doing so will keep all examples of its use consistent throughout the documentati
 
 ```asciidoc
 [source,bash,subs="attributes+"]
-....
+----
 {occ-command-example-prefix} -h
-....
+----
 ```
 
 This will print out the following when rendered in the docs:
