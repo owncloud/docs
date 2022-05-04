@@ -4,6 +4,7 @@ When doing a new release of ownCloud Server like `10.x`, a new version branch mu
 
 **Step 1: This will create and configure the new `10.x` branch properly**
 
+0.  Use https://github.com:owncloud/docs-server (not this docs repo)
 1.  Create a new `10.x` branch based on latest `origin/master`
 2.  Copy the `.drone.star` file from the _former_ `10.x-1` branch
     (it contains the correct branch specific setup rules and replaces the current one coming from master)
