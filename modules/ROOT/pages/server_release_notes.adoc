@@ -4,6 +4,7 @@
 :page-aliases: {latest-server-version}@server:admin_manual:whats_new_admin.adoc, \
 {latest-server-version}@server:ROOT:server_release_notes.adoc
 
+* xref:changes-in-10-10-0[Changes in 10.10.0]
 * xref:changes-in-10-9-1[Changes in 10.9.1]
 * xref:changes-in-10-9-0[Changes in 10.9.0]
 * xref:changes-in-10-8-0[Changes in 10.8.0]
@@ -35,6 +36,51 @@
 * xref:changes-in-8-1[Changes in 8.1]
 * xref:changes-in-8-0[Changes in 8.0]
 * xref:changes-in-7-0[Changes in 7.0]
+
+== Changes in 10.10.0
+
+Dear ownCloud administrator, find below the changes and known issues in ownCloud Server 10.10 that need your attention. You can also read {oc-changelog-url}[the full ownCloud Server changelog] for further details on what has changed.
+
+=== Migrations
+
+When upgrading from ownCloud Server 10.9, the following migrations will run as part of the upgrade procedure:
+
+* A migration step takes care of converting external storage parameters to the new format (see below). This step is expected to be quick and should not impact upgrade duration significantly. https://github.com/owncloud/core/pull/39935[#39935]
+
+=== Session lifetime and expiration improvements
+
+ownCloud Server 10.10 comes with a couple of stability and security improvements around session lifetime and expiration https://github.com/owncloud/core/pull/39916[#39916]:
+
+* The configured session lifetime (`session_lifetime` in `config.php`) will now be reset each time a page is loaded or when a "heartbeat" request is sent.
+* If the session keepalive config option (`session_keepalive` in `config.php`) is set to `true`, a periodic "heartbeat" request will be made automatically regardless of any activity going on. This will reset the session lifetime preventing its expiration.
+* If the session_keepalive config option (`session_keepalive` in `config.php`) is set to `false`, a "heartbeat" request will be sent based on activity in order to extend the session lifetime. If there's no activity, the session might expire, and the user will need to login again.
+* A new config option `session_forced_logout_timeout` has been introduced in `config.php`. For advanced security, this option can be used to expire user sessions a configurable amount of seconds after they close the ownCloud browser tab or the whole browser, respectively, forcing the the user to log in again when they access ownCloud the next time. This option is disabled by default.
+
+=== Notable changes
+
+* The feature _Resend invitation mail_ in user management does not apply to guest users anymore as those have a different invitation flow than regular users (user-based vs. admin-based). https://github.com/owncloud/core/pull/40032[#40032]
+* Group administrators will now only see the groups they are an administrator of in user management (previously they also so other groups but were unable to manage them). https://github.com/owncloud/core/pull/39752[#39752]
+* ownCloud Server 10.9 introduced a new feature to xref:server_release_notes.adoc#highly-improved-initial-sync-and-discovery-performance[improve initial sync and discovery performance] which has been enabled by default. As there have been performance issues in certain environments, 10.10 disables the feature by default. It is recommended to enable the feature based on evaluations with test systems. https://github.com/owncloud/core/pull/40016[#40016]
+* Storage encryption: Restoring a received shared file now also restores its versions correctly. https://github.com/owncloud/core/pull/39822[#39822]
+* Storage encryption: Moving a file out of a share now also takes care of versions correctly (previously they were corrupted under certain circumstances). https://github.com/owncloud/core/pull/39829[#39829]
+* The external storage administration user interface has been improved to avoid unnecessary credential exposure https://github.com/owncloud/core/pull/39841[#39841] https://github.com/owncloud/core/pull/39935[#39935]
+* The mail server configuration user interface has been improved to avoid unnecessary credential exposure https://github.com/owncloud/core/pull/39833[#39833]
+* The 'External Storage' feature (`files_external`) can now be disabled. https://github.com/owncloud/core/pull/39856[#39856]
+* General performance and stability improvements have been made. [#39847]https://github.com/owncloud/core/pull/39847 https://github.com/owncloud/core/pull/40031[#40031]
+* The File Drop view for Upload-only public links has been visually improved to provide a better user experience. https://github.com/owncloud/core/pull/39900[#39900]
+* ownCloud Web: Guest users will now be explicitly listed as "Guests" (instead of "User") https://github.com/owncloud/core/pull/40013[#40013]
+
+=== Updated app versions
+
+TBC
+
+=== For developers
+
+* The Capabilities API now exposes the product name. [#39851]https://github.com/owncloud/core/pull/39851
+
+=== Known issues
+
+Currently there are no known issues with ownCloud Server 10.10.0. This section will be updated if issues are discovered.
 
 == Changes in 10.9.1
 
