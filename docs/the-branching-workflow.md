@@ -1,10 +1,5 @@
 # The Branching Workflow
 
-Only two branches are maintained at any one time; these are `master` and one for [the current ownCloud release].
-Any change to the documentation is made in a branch based off of `master`.
-Once the branch's PR is approved and merged, the PR is backported to the branch for the **current** ownCloud release if it applies to that release.
+The Docs repo itself is not versioned as it assembles other doc repos and other doc repos might use versioning. For any repo that uses versioning, changes in that repo must be made in master and backported to the corresponding branch if applicapable. Usually only 2 working branches and master named `next` are maintained. Any documentation that is versioned can use `latest` in the URL instead a branch number which points automatically to the latest stable branch of the corresponding documentation.
 
-When a new ownCloud major or minor version is released, a new branch is created to track the changes for that release, and the branch for the previous release is no longer maintained.
-That said, changes for patches and bugfixes to _some_ earlier versions are backported.
-
-[the current ownCloud release]: https://github.com/owncloud/core/wiki/Maintenance-and-Release-Schedule
+See the "Create a New Version Branch documentation" link in each doc repo readme at the bottom for details how to do versioning if applicapable.
