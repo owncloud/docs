@@ -37,9 +37,7 @@ To check if they are installed on a Linux system, run the following command:
 dependencies=( git node npm yarn ruby ) && for i in "${dependencies[@]}"; do command -v $i; done;
 ```
 
-You will see the path to each binary displayed, if it is installed.
-For any that you do not see displayed, follow the instructions below to install it.
-This is an example output if you have everything installed. Please consider that the home directory, root in this example, is dependent on the user you used during installing and can be different in your installation.
+You will see the path to each binary displayed, if it is installed. For any that you do not see displayed, follow the instructions below to install it. This is an example output if you have everything installed. Please consider that the home directory, root in this example, is dependent on the user you used during installing and can be different in your installation.
 
 ```
 /usr/bin/git
@@ -51,8 +49,7 @@ This is an example output if you have everything installed. Please consider that
 
 ### Install Prerequisites
 
-If one or more of these commands reports an error, then that prerequisite is not installed.
-For any prerequisite that is not installed, follow the instructions below to install it.
+If one or more of these commands reports an error, then that prerequisite is not installed. For any prerequisite that is not installed, follow the instructions below to install it.
 
 #### git
 
@@ -74,8 +71,7 @@ ruby --version
 
 #### Node
 
-While you can install Node from the official packages, we strongly recommend that you use [NVM][link-nvm] (Node Version Manager) to install and manage Node.
-Follow the [NVM installation instructions][link-nvm-installation-instructions] to set up NVM on your machine. Once you've installed NVM, use a terminal and install a Node LTS version:
+While you can install Node from the official packages, we strongly recommend that you use [NVM][link-nvm] (Node Version Manager) to install and manage Node. Follow the [NVM installation instructions][link-nvm-installation-instructions] to set up NVM on your machine. Once you've installed NVM, use a terminal and install a Node LTS version:
 
 The following gives you an output of the latest available LTS versions.
 
@@ -93,7 +89,6 @@ nvm ls-remote | grep "Latest LTS"
 Then install a suitable LTS version. You can install as many versions as you like or need, see example below.
 
 ```
-nvm install 14.18.3
 nvm install 16.13.2
 ```
 
@@ -107,13 +102,13 @@ nvm ls
         v15.5.1
 ->     v16.13.2
          system
-default -> 14.17.0 (-> v14.17.0)
+default -> 16.13.2 (-> v16.13.2)
 ...
 ```
 
 **Important:** For docs, DO NOT use a version _above_ v10.23.0 and _below_ v14.17.0 as it may later conflict with other dependencies especially with the `yarn serve` command where you will get warnings and it may not work as expected.
 
-**Info:** The backend to push to the web also uses node v14, see the `.drone.star` file. It is recommended to stay with the same release if possible.
+**Info:** The backend to push to the web also uses node v16, see the `.drone.star` file. It is recommended to stay with the same release if possible.
 
 Switch to a specific installed version of Node at any time, use the following command:
 
@@ -134,13 +129,11 @@ To [install yarn](https://yarnpkg.com/lang/en/docs/install) following the instal
 
 ## Install Build Dependencies
 
-Before you can build the documentation, you must install Antora's dependencies.
-To install them, you just need to run `yarn install` on the command line at the top level of the `docs` directory.
-This will install all the dependencies specified in `package.json`, which is located at the top level of the `docs` directory.
+Before you can build the documentation, you must install Antora's dependencies. To install them, you just need to run `yarn install` on the command line at the top level of the `docs` directory. This will install all the dependencies specified in `package.json`, which is located at the top level of the `docs` directory.
 
 It is recommended that you regularly run `yarn install` as from time to time packages are bumped to newer versions.
 
-To generate the documentation in PDF format locally, you need to have `asciidoctor-pdf`. To install `asciidoctor-pdf`, please refer to the [official installation instructions](https://asciidoctor.org/docs/asciidoctor-pdf/#getting-started) or by typing:
+To generate the documentation in PDF format locally, you need to have `asciidoctor-pdf`. To install or update `asciidoctor-pdf`, please refer to the [official installation instructions](https://asciidoctor.org/docs/asciidoctor-pdf/#getting-started) or by typing:
 
 ```
 sudo gem install asciidoctor-pdf
@@ -153,8 +146,8 @@ whereis asciidoctor-pdf
 asciidoctor-pdf: /usr/local/bin/asciidoctor-pdf
 
 asciidoctor-pdf --version
-Asciidoctor PDF 1.6.0 using Asciidoctor 2.0.12 [https://asciidoctor.org]
-Runtime Environment (ruby 2.5.1p57 (2018-03-29 revision 63029) [x86_64-linux-gnu]) (lc:UTF-8 fs:UTF-8 in:UTF-8 ex:UTF-8)
+Asciidoctor PDF 2.0.3 using Asciidoctor 2.0.16 [https://asciidoctor.org]
+Runtime Environment (ruby 2.7.0p0 (2019-12-25 revision 647ee6f091) [x86_64-linux-gnu]) (lc:UTF-8 fs:UTF-8 in:UTF-8 ex:UTF-8)
 ```
 
 When running a pdf build, you may get an error when using particular image formats or image formats with can contain special features like interlaced png, gif or tiff ect. To overcome this, you need to install [prawn-gmagick][link-prawn-gmagick]. Use the following commands to do so:
@@ -199,8 +192,7 @@ question Which command would you like to run?:
 Please see the [documentation](https://yarnpkg.com/lang/en/docs/cli/run/)
 for more information about the the `yarn run` command.
 
-The difference when running `antora` versus `antora-local` is that the latter command already defines 
-localhost as URL where the documentation is displayed. See also: [Overwrite the Default URL](#overwrite-the-default-url) below.
+The difference when running `antora` versus `antora-local` is that the latter command already defines localhost as URL where the documentation is displayed. See also: [Overwrite the Default URL](#overwrite-the-default-url) below.
 
 ## Generating the Documentation
 
@@ -351,8 +343,7 @@ There, you can see:
 
 ### Additional Command Line Parameters
 
-You can add additional parameters to the current defined ones. For example, defining the default URL
-or additional global attributes. Just add them after the `yarn antora` command. 
+You can add additional parameters to the current defined ones. For example, defining the default URL or additional global attributes. Just add them after the `yarn antora` command. 
 
 ### Overwrite the Default URL
 If you want to serve your changes locally, you have to overwrite the default URL, which points to https://doc.owncloud.com. You can append a custom URL to the command like this:
@@ -366,8 +357,7 @@ Overwriting the default URL to local is especially helpful if you also want to c
 
 ### Searching and Fixing Attribute Errors
 
-It is very beneficial to use command line attributes when searching and fixing attribute errors. This can be
-necessary when you get warnings like: `WARNING: skipping reference to missing attribute: <attribute-name>`
+It is very beneficial to use command line attributes when searching and fixing attribute errors. This can be necessary when you get warnings like: `WARNING: skipping reference to missing attribute: <attribute-name>`
 
 - First, you may want to check if the attribute name is used as an attribute at all. Run at the top level of the docs repo:
 `grep -rn --exclude-dir={public,.git,node_modules} \{attribute-name`\
@@ -382,8 +372,7 @@ Having done that, re-running `yarn antora` should eliminate that particular miss
 
 ### Fixing a Directory Not Found Error
 
-If you get an error like: `Error: ENOENT: no such file or directory, lstat '/var/owncloud/docs/cache/`, you just need
-to delete the `cache` directory with the command below (use the error path printed) and restart the build process.
+If you get an error like: `Error: ENOENT: no such file or directory, lstat '/var/owncloud/docs/cache/`, you just need to delete the `cache` directory with the command below (use the error path printed) and restart the build process.
 
 ```
 rm -r /var/owncloud/docs/cache
