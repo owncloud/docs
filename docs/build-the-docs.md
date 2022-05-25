@@ -343,7 +343,7 @@ There, you can see:
 
 ### Additional Command Line Parameters
 
-You can add additional parameters to the current defined ones. For example, defining the default URL or additional global attributes. Just add them after the `yarn antora` command. 
+You can add additional parameters to the currently defined ones, for example, defining the default URL or additional global attributes. Just add them after the `yarn antora` command. 
 
 ### Overwrite the Default URL
 If you want to serve your changes locally, you have to overwrite the default URL, which points to https://doc.owncloud.com. You can append a custom URL to the command like this:
@@ -357,7 +357,7 @@ Overwriting the default URL to local is especially helpful if you also want to c
 
 ### Searching and Fixing Attribute Errors
 
-It is very beneficial to use command line attributes when searching and fixing attribute errors. This can be necessary when you get warnings like: `WARNING: skipping reference to missing attribute: <attribute-name>`
+It is very beneficial to use command-line attributes when searching and fixing attribute errors. This can be necessary when you get warnings like: `WARNING: skipping reference to missing attribute: <attribute-name>`.
 
 - First, you may want to check if the attribute name is used as an attribute at all. Run at the top level of the docs repo:
 `grep -rn --exclude-dir={public,.git,node_modules} \{attribute-name`\
