@@ -94,7 +94,7 @@ A [System-wide Install](https://github.com/wjdp/htmltest#system-wide-install) is
 
 To check docs, you first need to build the actual docs running ``yarn antora-local``. This creates all necessary files in the ``public`` directory.
 
-Then run ``htmltest -s public`` in the root of docs/ to check the build. Note that it is not mandatory to have a webserver running like ``yarn serve``. The ``-s`` option skips external link checks which speeds up time a lot and reduces the output. To include external links, omit the ``-s`` option.
+Then run ``htmltest -s public`` in the root of docs/ to check the build. Note that it is not mandatory to have a webserver running like ``yarn serve``. The ``-s`` option skips external link checks which speeds up time a lot and reduces the output. To include external links, omit the ``-s`` option. If you are running the check from another repo than `docs` you may want to add `| grep -v '\|manifest.json\|apple-touch-icon.png\|favicon.svg\|favicon-32x32.png\|favicon-16x16.png\|safari-pinned-tab.svg'` to omit any output regarding missing favicons as they are only added in the full docs build but not in local builds. 
 
 Note that ``htmltest`` checks the complete public/ directory including all products and all branches built. Due to this fact, you possibly get the same entries for each product/branch affected. As a rule of thumb, first look for `next` or latest branch entries like 10.8, fix the issue, backport it if necessary and restart the procedure.
 
