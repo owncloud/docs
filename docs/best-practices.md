@@ -313,7 +313,7 @@ Doing so will keep all examples of its use consistent throughout the documentati
 This will print out the following when rendered in the docs:
 
 ```html
-sudo -u www-data php occ -h
+sudo -u www-data occ -h
 ```
 
 ## Literal Text and Blocks
@@ -402,7 +402,7 @@ We strongly encourage you to put your server in single user mode before setting 
 To do so, run the following command:
 
 ....
-sudo -u www-data php occ maintenance:singleuser --on
+sudo -u www-data occ maintenance:singleuser --on
 ....
 ====
 ```
