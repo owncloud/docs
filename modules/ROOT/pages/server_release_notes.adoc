@@ -4,6 +4,7 @@
 :page-aliases: {latest-server-version}@server:admin_manual:whats_new_admin.adoc, \
 {latest-server-version}@server:ROOT:server_release_notes.adoc
 
+* xref:changes-in-10-10-0[Changes in 10.11.0]
 * xref:changes-in-10-10-0[Changes in 10.10.0]
 * xref:changes-in-10-9-1[Changes in 10.9.1]
 * xref:changes-in-10-9-0[Changes in 10.9.0]
@@ -37,6 +38,52 @@
 * xref:changes-in-8-0[Changes in 8.0]
 * xref:changes-in-7-0[Changes in 7.0]
 
+== Changes in 10.11.0
+
+Dear ownCloud administrator, find below the changes and known issues in ownCloud Server 10.11 that need your attention. You can also read {oc-changelog-url}[the full ownCloud Server changelog] for further details on what has changed.
+
+=== Migrations
+
+When upgrading from ownCloud Server 10.10, there will be no migrations steps impacting the upgrade duration. The upgrade is expected to finish quickly, therefore.
+
+=== Edit Permission for Public Links on Single Files
+
+In previous versions of ownCloud Server, public links on single files could only be created with read-only permissions (`Download / View`). If users wanted to share a file enabling recipients to change it, they had to put that file into a folder and share that with permissions for editing (`Download / View / Edit`). Server 10.11 introduces the `Download / View / Edit` role for public link shares on single files to make a user's life easier. Especially when using ownCloud in combination with web office solutions like ONLYOFFICE, Collabora Online or Microsoft Office Online, users can now quickly and conveniently collaborate on documents with external parties. https://github.com/owncloud/core/pull/40264[#40264]
+
+=== Sharing with Multiple Users at once
+
+Server 10.11 introduces the ability to share with multiple users/groups at once by entering their identifiers (e.g., display name, user ID, email address, federated cloud ID) as a comma-separated list in the sharing dialog (e.g., `alice,bob@example.org,carol,teachers`. Based on the inputs, ownCloud will decide how to create the shares (e.g., share with an internal user, invite a new guest, create a federated share). This way, users can easily invite many recipients at once to their files and folders. With Custom Groups version 0.7.0 onwards the same behavior also applies to adding users to Custom Groups. https://github.com/owncloud/core/pull/40155[#40155] https://github.com/owncloud/customgroups/pull/522[customgroups#522] https://github.com/owncloud/guests/pull/506[guests#506]
+
+=== Inviting New Guests to Custom Groups
+
+Server 10.11 in combination with Custom Groups 0.7.0 and Guests 0.11.0 allows to invite new guest users directly into a Custom Group. Previously this was only possible by sharing files with new guests first and creating their user account thereby. New guests will not have access to any files nor will they be able to create/upload own files unless there is a share with the respective Custom Group or with the guest user itself. https://github.com/owncloud/customgroups/pull/521[#521] https://github.com/owncloud/guests/pull/506[guests#506]
+
+=== Notable Changes
+
+* The default app on login can now be set per individual user. ownCloud Web will use this to remember the which UI the user has used in their last session. This way, users are always redirected to their preferred UI after logging in. https://github.com/owncloud/core/pull/39600[#39600]
+* ownCloud Web will now respect the user's language setting. https://github.com/owncloud/core/pull/40087[#40087]
+* The command `occ background:queue:status` will now output more information about background jobs. https://github.com/owncloud/core/pull/40113[#40113]
+* Quota handling has been improved (e.g., when copying or uploading files into shared folders). https://github.com/owncloud/core/pull/39895[#39895]
+* The context menu for multiple file actions in public links (e.g., "Open with PDF Viewer") works again. https://github.com/owncloud/core/pull/40143[#40143]
+* Storage encryption has received stability improvements. https://github.com/owncloud/core/pull/40240[#40240] 
+* Guest users will not see settings sections anymore if they are not allowed to use them. https://github.com/owncloud/core/pull/40257[#40257]
+* The process for the first login of a new user is now more stable. https://github.com/owncloud/core/pull/40091[#40091]
+* App passwords now continue to work even when an LDAP connection is temporary not available. https://github.com/owncloud/core/pull/40152[#40152]
+* App passwords now work with case-insensitive user names. https://github.com/owncloud/core/pull/40281[#40281]
+* The SAML/SSO login flow is now more stable, making features like the Microsoft Office Online / WOPI integration work better in combination with SAML. https://github.com/owncloud/core/pull/40161[#40161]
+* The comments feature now works better on small screens. https://github.com/owncloud/core/pull/40142[#40142]
+* A new setting `proxy_ignore` has been introduced to exclude requests to certain domains from using the configured `proxy`. 
+
+=== Updated App Versions
+
+Find below a list of updated apps in comparison with the 10.10.0 complete bundle. More information on the changes can be found in the respective changelogs on ownCloud Marketplace.
+
+* 
+
+=== Known Issues
+
+Currently there are no known issues with ownCloud Server 10.11.0. This section will be updated if issues are discovered.
+
 == Changes in 10.10.0
 
 Dear ownCloud administrator, find below the changes and known issues in ownCloud Server 10.10 that need your attention. You can also read {oc-changelog-url}[the full ownCloud Server changelog] for further details on what has changed.
@@ -47,7 +94,7 @@ When upgrading from ownCloud Server 10.9, the following migrations will run as p
 
 * A migration step takes care of converting external storage parameters to the new format (see below). This step is expected to be quick and should not impact upgrade duration significantly. https://github.com/owncloud/core/pull/39935[#39935]
 
-=== Session lifetime and expiration improvements
+=== Session Lifetime and Expiration Improvements
 
 ownCloud Server 10.10 comes with a couple of stability and security improvements around session lifetime and expiration in the Classic web interface https://github.com/owncloud/core/pull/39916[#39916]:
 
@@ -56,7 +103,7 @@ ownCloud Server 10.10 comes with a couple of stability and security improvements
 * If the session_keepalive config option (`session_keepalive` in `config.php`) is set to `false`, a "heartbeat" request will be sent based on activity in order to extend the session lifetime. If there's no activity, the session might expire, and the user will need to login again.
 * A new config option `session_forced_logout_timeout` has been introduced in `config.php`. For advanced security, this option can be used to expire user sessions a configurable amount of seconds after they close the ownCloud browser tab or the whole browser, respectively, forcing the user to log in again when they access ownCloud the next time. This option is disabled by default.
 
-=== Notable changes
+=== Notable Changes
 
 * The feature _Resend invitation mail_ in user management does not apply to guest users anymore as those have a different invitation flow than regular users (user-based vs. admin-based). https://github.com/owncloud/core/pull/40032[#40032]
 * Group administrators will now only see the groups they are an administrator of in user management (previously they also saw other groups but were unable to manage them). https://github.com/owncloud/core/pull/39752[#39752]
@@ -71,7 +118,7 @@ ownCloud Server 10.10 comes with a couple of stability and security improvements
 * ownCloud Web: Guest users will now be explicitly listed as "Guests" (instead of "User") https://github.com/owncloud/core/pull/40013[#40013]
 * The config report now provides a https://github.com/owncloud/configreport/releases[dedicated guest user count]
 
-=== Updated app versions
+=== Updated App Versions
 
 Find below a list of updated apps in comparison with the 10.9.1 complete bundle. More information on the changes can be found in the respective changelogs on ownCloud Marketplace.
 
@@ -86,12 +133,12 @@ Find below a list of updated apps in comparison with the 10.9.1 complete bundle.
 * https://marketplace.owncloud.com/apps/workflow[Workflow] 0.5.4
 * https://marketplace.owncloud.com/apps/windows_network_drive[External Storage: Windows Network Drive] 2.1.1
 
-=== For developers
+=== For Developers
 
 * The Capabilities API now exposes the product name. [#39851]https://github.com/owncloud/core/pull/39851
 * The OCS Share API now also exposes the user type (e.g., guest) [#40013](https://github.com/owncloud/core/pull/40013)
 
-=== Known issues
+=== Known Issues
 
 Currently there are no known issues with ownCloud Server 10.10.0. This section will be updated if issues are discovered.
 
