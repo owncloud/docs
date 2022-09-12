@@ -23,6 +23,50 @@ You can read more about the Infinite Scale beta phase on https://owncloud.com
 - https://owncloud.com/infinite-scale-beta[Infinite Scale Beta Page]
 - https://owncloud.com/news/infinite-scale-beta/[Infinite Scale Beta is coming]
 
+=== Beta 8
+
+Infinite Scale 2.0.0 Beta 8 includes a huge number of smaller bug fixes and round-offs all around. It introduces a more efficient and scalable way to store share information and improves the performance of ownCloud Web in many areas very noticeable. Furthermore it is now possible to set user quotas in the UI and administrators can now delete orphaned Spaces.
+
+IMPORTANT: When updating from Infinite Scale Beta 7 or lower to Beta 8 it is necessary to run two migration steps from the previous to the new share manager **before** starting the system again regularly.
+
+**Migration for User/Group Shares**
+
+`OCIS_LOG_LEVEL="debug" OCIS_LOG_PRETTY="true" OCIS_LOG_COLOR="true" ocis migrate shares --from cs3 --to jsoncs3`
+
+**Migration for Public Links**
+
+`OCIS_LOG_LEVEL="debug" OCIS_LOG_PRETTY="true" OCIS_LOG_COLOR="true" ocis migrate publicshares --from cs3 --to jsoncs3`
+
+If you have set up your system with Docker, you can just use the same syntax as with https://doc.owncloud.com/ocis/next/deployment/container/container-setup.html#first-time-start[ocis init]:
+
+```
+docker run --rm -it \
+    --mount type=bind,source=$PWD/ocis/ocis-config,target=/etc/ocis \
+    owncloud/ocis migrate shares
+```
+
+The most prominent changes in **Infinite Scale 2.0.0 beta8** and ownCloud Web 5.7.0 comprise:
+
+* A new share manager implementation has been added that will store share information in a more efficient and scalable way. https://github.com/owncloud/ocis/issues/4431[ocis#4431] https://github.com/cs3org/reva/pull/3199[reva#3199]
+* The performance of loading the file list has been drastically improved. https://github.com/owncloud/web/issues/7038[web#7038]
+* Further improvements to the web upload performance have been made. https://github.com/owncloud/web/issues/7177[web#7177]
+* It is now possible to set/modify user quotas (for personal spaces) in the user management UI. https://github.com/owncloud/web/pull/7182[web#7182]
+* A new permission to 'Delete all spaces' has been added to allow the deletion of orphaned Spaces for users with certain roles. This permission has been added to the default 'Admin' role. https://github.com/cs3org/reva/pull/3180 https://github.com/cs3org/reva/pull/3203 https://github.com/owncloud/ocis/issues/4196
+* Deleting a user will now also delete their personal space. https://github.com/owncloud/ocis/issues/4195[ocis#4195]
+* Space members can now modify shares other members created. https://github.com/cs3org/reva/pull/3192[reva#3192]
+* Some translations have been fixed/improved. https://github.com/owncloud/web/issues/7550[web#7550]
+* The design of the default login screen has been improved for better consistency with ownCloud Web. https://github.com/owncloud/ocis/pull/4500[ocis#4500]
+* Creating duplicate shares with the same recipient (e.g., via group shares or in resharing) will now be prevented. https://github.com/cs3org/reva/pull/3176[reva#3176]
+* EXIF orientation information will now be properly used for images. https://github.com/owncloud/ocis/issues/4477[ocis#4477]
+* Improvements for quota handling have been made. https://github.com/owncloud/web/pull/7522[web#7522]
+* The right sidebar has been improved for smaller screens. https://github.com/owncloud/web/issues/7498[web#7498]
+* The visual appearance and usability of the file search feature has been improved. https://github.com/owncloud/web/pull/7586[web#7586]
+* The known issue about wrong file paths in file search results has been fixed. https://github.com/owncloud/web/issues/7391[web#7391] https://github.com/owncloud/ocis/pull/4485[ocis#4485]
+* The file search now also works properly with shares. https://github.com/owncloud/web/pull/7560[web#7560]
+* Creating a new file will now propose a unique file name. https://github.com/owncloud/web/pull/7555[web#7555]
+
+You can also read the full https://github.com/owncloud/ocis/releases/tag/v2.0.0-beta.8[Infinite Scale changelog] and https://github.com/owncloud/web/releases/tag/v5.7.0[ownCloud Web changelog] for further details on what has changed.
+
 === Beta 7
 
 Infinite Scale 2.0.0 beta7 includes stability, security and performance improvements. ownCloud Web has been condensed a bit and the cut/copy/paste feature has been reworked. Web Office can now be configured to use a certain language and system administrators can recover a lost admin password.
@@ -155,8 +199,6 @@ You can also read the full https://github.com/owncloud/ocis/releases/tag/v2.0.0-
 === Known issues
 
 This section will be updated if known issues are discovered.
-
-* The path of search results is currently wrong which prevents the user from browsing to the content https://github.com/owncloud/web/issues/7391[web#7391]
 
 == Infinite Scale 1.20.0 Technology Preview
 
