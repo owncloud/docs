@@ -33,6 +33,14 @@ IMPORTANT: When updating from Infinite Scale Beta 7 or lower to Beta 8 it is nec
 
 `OCIS_LOG_LEVEL="debug" OCIS_LOG_PRETTY="true" OCIS_LOG_COLOR="true" ocis migrate shares --from cs3 --to jsoncs3`
 
+If you have set up your system with Docker, you can just use the same syntax as with https://doc.owncloud.com/ocis/next/deployment/container/container-setup.html#first-time-start[ocis init]:
+
+```
+docker run --rm -it \
+    --mount type=bind,source=$PWD/ocis/ocis-config,target=/etc/ocis \
+    owncloud/ocis migrate shares
+```
+
 **Migration for Public Links**
 
 `OCIS_LOG_LEVEL="debug" OCIS_LOG_PRETTY="true" OCIS_LOG_COLOR="true" ocis migrate publicshares --from cs3 --to jsoncs3`
@@ -42,13 +50,13 @@ If you have set up your system with Docker, you can just use the same syntax as 
 ```
 docker run --rm -it \
     --mount type=bind,source=$PWD/ocis/ocis-config,target=/etc/ocis \
-    owncloud/ocis migrate shares
+    owncloud/ocis migrate publicshares
 ```
 
 The most prominent changes in **Infinite Scale 2.0.0 beta8** and ownCloud Web 5.7.0 comprise:
 
 * A new share manager implementation has been added that will store share information in a more efficient and scalable way. https://github.com/owncloud/ocis/issues/4431[ocis#4431] https://github.com/cs3org/reva/pull/3199[reva#3199]
-* The performance of loading the file list has been drastically improved. https://github.com/owncloud/web/issues/7038[web#7038]
+* The number of items per page for pagination has been limited to 100 or 500. The options `1000` and `All` have been removed. https://github.com/owncloud/web/issues/7038[web#7038]
 * Further improvements to the web upload performance have been made. https://github.com/owncloud/web/issues/7177[web#7177]
 * It is now possible to set/modify user quotas (for personal spaces) in the user management UI. https://github.com/owncloud/web/pull/7182[web#7182]
 * A new permission to 'Delete all spaces' has been added to allow the deletion of orphaned Spaces for users with certain roles. This permission has been added to the default 'Admin' role. https://github.com/cs3org/reva/pull/3180 https://github.com/cs3org/reva/pull/3203 https://github.com/owncloud/ocis/issues/4196
@@ -67,19 +75,19 @@ The most prominent changes in **Infinite Scale 2.0.0 beta8** and ownCloud Web 5.
 
 You can also read the full https://github.com/owncloud/ocis/releases/tag/v2.0.0-beta.8[Infinite Scale changelog] and https://github.com/owncloud/web/releases/tag/v5.7.0[ownCloud Web changelog] for further details on what has changed.
 
-Latest Infinite Scale features are also supported in the latest prerelease versions of the ownCloud desktop and iOS apps. We are especially interested in feedback about the new spaces feature and the new upload protocol.
+**Note on native client support**
 
-For the desktop sync client, the team is working on the big 3.0 release, and you can test-drive prerelease builds for all desktop platforms here:
+The latest Infinite Scale features are also supported in the latest pre-release versions of the ownCloud desktop and iOS apps. We are especially interested in feedback about the new Spaces feature and the new upload protocol.
+
+For the desktop sync client, the team is working on the big 3.0 release, and you can test-drive pre-release builds for all desktop platforms here:
 https://owncloud.com/beta-testing/#desktop-beta
 
-You can find the full desktop changelog here:
-https://github.com/owncloud/client/blob/master/CHANGELOG.md
+You can find the full desktop changelog here: https://github.com/owncloud/client/blob/master/CHANGELOG.md
 
 On the iOS platform, the team is preparing the big 12.0 release, and it's available in our public TestFlight beta program:
 https://owncloud.com/beta-testing/#ios
 
-You can find the full iOS app changelog here:
-https://github.com/owncloud/ios-app/blob/master/CHANGELOG.md
+You can find the full iOS app changelog here: https://github.com/owncloud/ios-app/blob/master/CHANGELOG.md
 
 === Beta 7
 
