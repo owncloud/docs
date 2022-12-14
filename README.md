@@ -34,7 +34,7 @@ Please read how to test un-merged [docs-ui](./docs/test-ui-bundle.md) changes wi
 
 Refer to [Best Practices and Tips for writing in AsciiDoc](./docs/best-practices.md) for more information.
 
-To check for broken links manually, see [install and use a broken-link-checker](./checking-broken-links.md).
+To check for broken links manually, see [install and use a broken-link-checker](./docs/checking-broken-links.md).
 
 ## Target Branch and Backporting
 
