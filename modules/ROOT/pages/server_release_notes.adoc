@@ -55,6 +55,10 @@ Support for security fixes for PHP 7.3 ended in December 2021. ownCloud Server n
 
 NOTE: Before upgrading to ownCloud Server 10.12, you MUST upgrade to PHP 7.4. ownCloud Server 10.12 will not start when using PHP 7.3.
 
+=== Add support for login policies
+
+Support for login policies has been added in order to block the login of users under some circumstances. By default, there isn't any restriction, so any user can login normally (assuming the password is correct). A group login policy has been added. This policy allows or denies the user from login based on the login type being used by the user (username + password, openidconnect, etc) and whether he belongs to specific groups. This can be used to ensure a group of users is always authenticated using a determined authentication mechanism. https://github.com/owncloud/core/pull/40574 [#40574]
+
 === Properly remove file versions from the trashbin
 
 Previously, restoring or removing a file from inside a folder that was deleted (so the folder and the contents were in the trashbin) didn't remove the versions of the file. Those versions were left in both the DB and the FS, taking space and degrading the performance.This is now being handled properly, so no additional resource is consumed due to the versions being left stranded. https://github.com/owncloud/core/pull/40291[#40291]
@@ -95,6 +99,10 @@ This change is targeted mostly at tightly federated setups. Currently, if a fede
 * We now expect a not found error instead of permission denied error for some trash interactions. https://github.com/owncloud/core/pull/40406[#40406]
 * Mime type of hidden files are now properly detected. https://github.com/owncloud/core/pull/40427[#40427]
 * Unused Google SDK services are removed to reduce package size. https://github.com/owncloud/core/pull/40444[#40444]
+* Added account creation time in the oc_accounts table so that this info can be displayed over the Users page. Also extended the users provisioning API and the "user:list" occ command to display this info. https://github.com/owncloud/core/pull/40588[#40588]
+* For easy access of files through WebDAV the url is now displayed right under the app password section. https://github.com/owncloud/core/pull/40509[#40509]
+* The username as well as the full name of a user is now shown on their personal general settings page. https://github.com/owncloud/core/pull/40510[#40510]
+* Changed the RewriteCond rules in the .htaccess file to match the expected paths. https://github.com/owncloud/core/pull/40584[#40584]
 
 === Updated App Versions
 
