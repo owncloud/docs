@@ -91,6 +91,10 @@ In the files apps, the "shared with others" and "shared by link" sections allowe
 
 This change is targeted mostly at tightly federated setups. Currently, if a federated share is invalid or the API endpoint returns not found, an availability check would validate whether this is a problem with a server, and that given share is removed. However, in some cases these checks might not be enough (e.g. complex migrations in tightly federated setups). In that case the invalidation behaviour can be disabled by using the app setting: "occ config:app:set files_sharing enable_cleanup_invalid_external_shares --value no". https://github.com/owncloud/core/pull/40503[#40503]
 
+=== Fix orientation of images with exif data
+
+Some images with a large exif data had problems with the orientation when they were shown. This was caused by the native function failing to retrieve the exif data. Images with small exif data didn't have this problem. By making the chunk size of the stream bigger, the native function is now able to load the exif data properly and return the information, and with such information we can fix the orientation of the image. https://github.com/owncloud/core/pull/40600[#40600]
+
 === Notable Changes
 
 * The suggested host name and port syntax for the database host on the installation has been corrected. https://github.com/owncloud/core/pull/40348[#40348]
