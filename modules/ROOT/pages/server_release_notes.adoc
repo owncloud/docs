@@ -48,6 +48,7 @@ Dear ownCloud administrator, find below the changes and known issues in ownCloud
 When upgrading from ownCloud Server 10.11.0, the following migrations will run as part of the upgrade procedure:
 
 * A migration step takes care of setting the length of the "oc_calendars.components" column to 255 (see below). This step is expected to be quick and should not impact upgrade duration significantly. https://github.com/owncloud/core/pull/40563[#40563]
+* An index is going to be added on the oc_filecache table which should help to speed-up bulk file operations. https://github.com/owncloud/core/pull/40633[#40633]
 
 === Drop PHP 7.3 support across the platform
 
@@ -55,13 +56,17 @@ Support for security fixes for PHP 7.3 ended in December 2021. ownCloud Server n
 
 NOTE: Before upgrading to ownCloud Server 10.12, you MUST upgrade to PHP 7.4. ownCloud Server 10.12 will not start when using PHP 7.3.
 
+=== Persistent major file versions workflow
+
+Restore operation logic changed. Now restore is creating new current version of the file from one of past noncurrent versions of the file. Current version also receives incremented mtime for the file, and author of the files is the user who restored the file. The old noncurrent version is no longer removed upon restore and current version no longer receives mtime of the version. The current version of the file is now shown in the Versions Tab, highlighted with "gray" background. Versions now persist additional extended metadata on versioning tags, that allow easier identification of the versions. Each update increases minor version for the file. Current version of the file now can be published, which increases major version tag. Each new edit of the file would create noncurrent versions - the ones tagged with major version due to publishing, will be persisted long term and wont be subject to any retention policies. Migrate from deprecated save_version_author to save_version_metadata. https://github.com/owncloud/core/pull/40531[#40531]
+
 === Add support for login policies
 
 Support for login policies has been added in order to block the login of users under some circumstances. By default, there isn't any restriction, so any user can login normally (assuming the password is correct). A group login policy has been added. This policy allows or denies the user from login based on the login type being used by the user (username + password, openidconnect, etc) and whether he belongs to specific groups. This can be used to ensure a group of users is always authenticated using a determined authentication mechanism. https://github.com/owncloud/core/pull/40574[#40574]
 
 === Properly remove file versions from the trashbin
 
-Previously, restoring or removing a file from inside a folder that was deleted (so the folder and the contents were in the trashbin) didn't remove the versions of the file. Those versions were left in both the DB and the FS, taking space and degrading the performance.This is now being handled properly, so no additional resource is consumed due to the versions being left stranded. https://github.com/owncloud/core/pull/40291[#40291]
+Previously, restoring or removing a file from inside a folder that was deleted (so the folder and the contents were in the trashbin) didn't remove the versions of the file. Those versions were left in both the DB and the FS, taking space and degrading the performance. This is now being handled properly, so no additional resource is consumed due to the versions being left stranded. https://github.com/owncloud/core/pull/40291[#40291]
 
 === "available for" select in the mount point configuration now shows the displaynames
 
@@ -99,6 +104,10 @@ Some images with a large exif data had problems with the orientation when they w
 
 Empty directories were left when the contained versions were deleted or moved. Large installations might end up with too many of these empty directories. Now, when a version is deleted, the containing directory will also be deleted if there aren't any more versions inside. https://github.com/owncloud/core/pull/40499[#40499]
 
+=== Use correct themed l10n app folder when app lives outside of server root
+
+When an app_path is pointing outside of the ownCloud server root or uses an symlink under certain conditions the l10n folder points to an invalid location and results in a crash of the server. This happened due to the assumption that app paths always start with the server root path. https://github.com/owncloud/core/pull/40607[#40607]
+
 === Notable Changes
 
 * The suggested host name and port syntax for the database host on the installation has been corrected. https://github.com/owncloud/core/pull/40348[#40348]
@@ -112,6 +121,8 @@ Empty directories were left when the contained versions were deleted or moved. L
 * The username as well as the full name of a user is now shown on his personal general settings page. https://github.com/owncloud/core/pull/40510[#40510]
 * Changed the RewriteCond rules in the .htaccess file to match the expected paths. https://github.com/owncloud/core/pull/40584[#40584]
 * Two factor authentication can now be enabled using the provisioning API. https://github.com/owncloud/core/pull/40617[#40617]
+* Detecting unused thumbnails is now using a better optimized SQL statements which consumes less database and web server resources. https://github.com/owncloud/core/pull/40514[#40514]
+* Backend class aliases have been added to improve usability of the occ user:sync command. https://github.com/owncloud/core/pull/40640[#40640]
 
 === Updated App Versions
 
