@@ -58,21 +58,21 @@ NOTE: Before upgrading to ownCloud Server 10.12, you MUST upgrade to PHP 7.4. ow
 
 === Persistent major file versions workflow
 
-Restore operation logic changed. Now restore is creating new current version of the file from one of past noncurrent versions of the file. Current version also receives incremented mtime for the file, and author of the files is the user who restored the file. The old noncurrent version is no longer removed upon restore and current version no longer receives mtime of the version. The current version of the file is now shown in the Versions Tab, highlighted with "gray" background. Versions now persist additional extended metadata on versioning tags, that allow easier identification of the versions. Each update increases minor version for the file. Current version of the file now can be published, which increases major version tag. Each new edit of the file would create noncurrent versions - the ones tagged with major version due to publishing, will be persisted long term and wont be subject to any retention policies. Migrate from deprecated save_version_author to save_version_metadata. https://github.com/owncloud/core/pull/40531[#40531]
+Restore operation logic changed. Now restore creates a new current version of the file from one of past the noncurrent versions of the file. The current version also receives incremented mtime for the file, and author of the file is the user who restored it. The old noncurrent version is no longer removed upon restore and the current version no longer receives mtime of that version. The current version of the file is now shown in the Versions Tab, highlighted with "gray" background. Versions now persist additional extended metadata on versioning tags, that allow easier identification of the versions. Each update increases the minor version for the file. The current version of the file now can be published, which increases the major version tag. Each new edit of the file creates noncurrent versions - the ones tagged with major version due to publishing will persist long term and won't be subject to any retention policies. Migrate from deprecated save_version_author to save_version_metadata. https://github.com/owncloud/core/pull/40531[#40531]
 
 === Add support for login policies
 
-Support for login policies has been added in order to block the login of users under some circumstances. By default, there isn't any restriction, so any user can login normally (assuming the password is correct). A group login policy has been added. This policy allows or denies the user from login based on the login type being used by the user (username + password, openidconnect, etc) and whether he belongs to specific groups. This can be used to ensure a group of users is always authenticated using a determined authentication mechanism. https://github.com/owncloud/core/pull/40574[#40574]
+Support for login policies has been added in order to block the login of users under some circumstances. By default, there isn't any restriction, so any user can login normally (assuming the password is correct). A group login policy has been added. This policy allows or denies users to log in based on the login type being used (username + password, openidconnect, etc) and whether they belong to specific groups. This can be used to ensure a group of users is always authenticated using a determined authentication mechanism. https://github.com/owncloud/core/pull/40574[#40574]
 
 === Properly remove file versions from the trashbin
 
-Previously, restoring or removing a file from inside a folder that was deleted (so the folder and the contents were in the trashbin) didn't remove the versions of the file. Those versions were left in both the DB and the FS, taking space and degrading the performance. This is now being handled properly, so no additional resource is consumed due to the versions being left stranded. https://github.com/owncloud/core/pull/40291[#40291]
+Previously, restoring or removing a file from inside a folder that was deleted (the folder and the contents were in the trashbin) didn't remove the versions of the file. Those versions were left in both the database and the file system, taking up space and degrading the performance. This is now being handled properly, so no resources are consumed due to the versions being left stranded. https://github.com/owncloud/core/pull/40291[#40291]
 
-=== "available for" select in the mount point configuration now shows the displaynames
+=== "available for" selection in the mount point configuration now shows the display names
 
-The "available for" select of the mount configuration of external storages was using the group id. This wasn't a problem because for local groups the group id matches the group displayname, and for ldap groups the group id was the "cn" attribute. Due to recent changes, the ldap group will now use the "objectuid" attribute (or a similar attribute) as group id by default. This was causing the "available for" select to show that "objectuid", so identifying the right group was problematic. Now, the "available for" select will show the group displayname, which for ldap is the "cn" attribute by default. Note that this happens on new installations. There is an automatic migration in place, so for upgrades, the "cn" attribute will be set as groupname in order to keep the old behavior. https://github.com/owncloud/core/pull/40412[#40412]
+The "available for" selection of the mount configuration of external storages was using the group ID. This wasn't a problem because for local groups the group ID matches the group display name, and for ldap groups the group ID was the "cn" attribute. Due to recent changes, the ldap group will now use the "objectuid" attribute (or a similar attribute) as group ID by default. This was causing the "available for" selection to show that "objectuid", so identifying the right group was problematic. Now, the "available for" selection will show the group display name, which for ldap is the "cn" attribute by default. Note that this happens on new installations. There is an automatic migration in place, so for upgrades, the "cn" attribute will be set as group name in order to keep the old behavior. https://github.com/owncloud/core/pull/40412[#40412]
 
-=== Skip public links when updating permissions of share's children
+=== Skip public links when updating permissions of a share's children
 
 Updates to permissions of a share were wrongly propagated to public links children. This has now been fixed and public links are being skipped. https://github.com/owncloud/core/pull/40420[#40420]
 
@@ -82,11 +82,11 @@ Previously, range downloads (or downloads requesting a specific byte range) woul
 
 === Fix the dav:cleanup-chunks command to work with a configured folder
 
-The ownCloud's FS was initialized partially to prevent contacting the LDAP server if it was configured. This was causing problems because the upload folder where the chunks were expected was a mountpoint, and due to the partial FS initialization such mountpoint was missing, so we were checking a different folder (the default one). Now, the ownCloud's FS will be fully initialized instead, so the mountpoint will be present and we check the right location. https://github.com/owncloud/core/pull/40571[#40571]
+ownCloud's file system was initialized partially to prevent contacting the LDAP server if it was configured. This was causing problems because the upload folder where the chunks were expected was a mount point, and due to the partial file system initialization such a mount point was missing, so we were checking a different folder (the default one). Now, ownCloud's file system will be fully initialized instead, so that the mount point will be present and we check the right location. https://github.com/owncloud/core/pull/40571[#40571]
 
 === Copy the encryption keys first and then rename the files
 
-Having encryption enabled, when a file was renamed, first the actual file was renamed, and then the encryption keys were moved to the new location. If something went wrong, it was possible that the keys weren't moved. This caused the file to become inaccessible because we couldn't decrypt the file due to the missing keys (which weren't in the right place). Now, when a file is renamed, the encryption keys will be copied first, and then the file will be renamed. If the encryption keys fail to be copied, the rename will fail. After the encryption keys are copied, the file could fail to be renamed. In this case, the copied keys will be removed, but the file will still be accessible because we still keep the old keys. The original keys (not the copy) will be removed if the file is renamed successfully. https://github.com/owncloud/core/pull/40433[#40433]
+With encryption enabled when a file was renamed, first the actual file was renamed, and then the encryption keys were moved to the new location. If something went wrong, it was possible that the keys weren't moved. This caused the file to become inaccessible because we couldn't decrypt the file due to the missing keys (which weren't in the right place). Now, when a file is renamed, the encryption keys will be copied first, and then the file will be renamed. If the encryption keys fail to be copied, the rename will fail. After the encryption keys are copied, the file could fail to be renamed. In this case, the copied keys will be removed, but the file will still be accessible because we still keep the old keys. The original keys (not the copy) will be removed if the file is successfully renamed successfully. https://github.com/owncloud/core/pull/40433[#40433]
 
 === Delete action is removed from sharing sections
 
@@ -94,11 +94,11 @@ In the files apps, the "shared with others" and "shared by link" sections allowe
 
 === Allow to temporarily ignore invalid federated shares
 
-This change is targeted mostly at tightly federated setups. Currently, if a federated share is invalid or the API endpoint returns not found, an availability check would validate whether this is a problem with a server, and that given share is removed. However, in some cases these checks might not be enough (e.g. complex migrations in tightly federated setups). In that case the invalidation behaviour can be disabled by using the app setting: "occ config:app:set files_sharing enable_cleanup_invalid_external_shares --value no". https://github.com/owncloud/core/pull/40503[#40503]
+This change is targeted mostly at tightly federated setups. Currently, if a federated share is invalid or the API endpoint returns not found, an availability check would validate whether this is a problem with a server, and that given share is removed. However, in some cases these checks might not be enough (e.g. complex migrations in tightly federated setups). In that case the invalidation behavior can be disabled by using the app setting: "occ config:app:set files_sharing enable_cleanup_invalid_external_shares --value no". https://github.com/owncloud/core/pull/40503[#40503]
 
 === Fix orientation of images with exif data
 
-Some images with a large exif data had problems with the orientation when they were shown. This was caused by the native function failing to retrieve the exif data. Images with small exif data didn't have this problem. By making the chunk size of the stream bigger, the native function is now able to load the exif data properly and return the information, and with such information we can fix the orientation of the image. https://github.com/owncloud/core/pull/40600[#40600]
+Some images with large exif data had problems with the orientation when they were shown. This was caused by the native function failing to retrieve the exif data. Images with small exif data didn't have this problem. By making the chunk size of the stream bigger, the native function is now able to load the exif data properly and return the information, and with such information we can fix the orientation of the image. https://github.com/owncloud/core/pull/40600[#40600]
 
 === Remove empty directories from the files_versions
 
@@ -106,34 +106,34 @@ Empty directories were left when the contained versions were deleted or moved. L
 
 === Use correct themed l10n app folder when app lives outside of server root
 
-When an app_path is pointing outside of the ownCloud server root or uses an symlink under certain conditions the l10n folder points to an invalid location and results in a crash of the server. This happened due to the assumption that app paths always start with the server root path. https://github.com/owncloud/core/pull/40607[#40607]
+When an app_path is pointing outside of the ownCloud server root or uses an symlink, under certain conditions the l10n folder points to an invalid location and results in a crash of the server. This happened due to the assumption that app paths always start with the server root path. https://github.com/owncloud/core/pull/40607[#40607]
 
 === Fix share-into-share move scenario
 
-Public links were lost upon moving share into another share as the share owner was not correctly set. This has been now partially fixed. https://github.com/owncloud/core/pull/40612[#40612]
+Public links were lost upon moving a share into another share as the share owner was not correctly set. This has now been partially fixed. https://github.com/owncloud/core/pull/40612[#40612]
 
-=== Prevent creation of empty files/folders when no available quota
+=== Prevent creation of empty files/folders when no quota is available
 
-Until now it was possible for users having 0 quota or who already reached the limit of their assigned quota to still create empty files/folders, which generated confusion. The PR fixes this behaviour. https://github.com/owncloud/core/pull/40567[#40567]
+Until now it was possible for users with 0 quota or who already reached the limit of their assigned quota to still create empty files/folders, which generated confusion. This behavior has been fixed. https://github.com/owncloud/core/pull/40567[#40567]
 
-=== Drag & Drop folders into public file upload
+=== Drag & drop folders into public file upload
 
 Previously only files were accepted via drag & drop. Users can now also drag folders into a public link that has the filedrop flag. When adding a folder, the hierarchy is flattened out and all files are added without any subfolders. Name collisons are avoided as usual. https://github.com/owncloud/core/pull/40643[#40643]
 
 === Notable Changes
 
 * The suggested host name and port syntax for the database host on the installation has been corrected. https://github.com/owncloud/core/pull/40348[#40348]
-* Without this change, server-side Apache Auth (e.g. Shibboleth) resulted in redirect to default owncloud page, instead of last visited page. We now correctly handle redirect_url. https://github.com/owncloud/core/pull/40470[#40470] https://github.com/owncloud/core/pull/40161[#40161]
+* Without this change, server-side Apache Auth (e.g. Shibboleth) resulted in a redirect to the default ownCloud page instead of the last visited page. We now correctly handle redirect_url. https://github.com/owncloud/core/pull/40470[#40470] https://github.com/owncloud/core/pull/40161[#40161]
 * Before this change, objectstorages were reporting only infinite storage space. This could have caused problems in other apps that rely on this storage method, e.g. metrics app that monitors available space. https://github.com/owncloud/core/pull/40192[#40192]
-* We now expect a not found error instead of permission denied error for some trash interactions. https://github.com/owncloud/core/pull/40406[#40406]
-* Mime type of hidden files are now properly detected. https://github.com/owncloud/core/pull/40427[#40427]
+* We now expect a not found error instead of a permission denied error for some trash interactions. https://github.com/owncloud/core/pull/40406[#40406]
+* Mime types of hidden files are now properly detected. https://github.com/owncloud/core/pull/40427[#40427]
 * Unused Google SDK services are removed to reduce package size. https://github.com/owncloud/core/pull/40444[#40444]
 * Added account creation time in the oc_accounts table so that this info can be displayed over the Users page. Also extended the users provisioning API and the "user:list" occ command to display this info. https://github.com/owncloud/core/pull/40588[#40588]
-* For easy access of files through WebDAV the url is now displayed right under the app password section. https://github.com/owncloud/core/pull/40509[#40509]
+* For easy access of files through WebDAV the URL is now displayed right under the app password section. https://github.com/owncloud/core/pull/40509[#40509]
 * The username as well as the full name of a user is now shown on his personal general settings page. https://github.com/owncloud/core/pull/40510[#40510]
-* Changed the RewriteCond rules in the .htaccess file to match the expected paths. https://github.com/owncloud/core/pull/40584[#40584]
+* The RewriteCond rules in the .htaccess file have been changed to match the expected paths. https://github.com/owncloud/core/pull/40584[#40584]
 * Two factor authentication can now be enabled using the provisioning API. https://github.com/owncloud/core/pull/40617[#40617]
-* Detecting unused thumbnails is now using a better optimized SQL statements which consumes less database and web server resources. https://github.com/owncloud/core/pull/40514[#40514]
+* Detecting unused thumbnails is now using a better optimized SQL statement which consumes less database and web server resources. https://github.com/owncloud/core/pull/40514[#40514]
 * Backend class aliases have been added to improve usability of the occ user:sync command. https://github.com/owncloud/core/pull/40640[#40640]
 * In Guzzle major version 7 the body option of a request must be a string or similar. Requests that send arrays of items have been adjusted to use the form_params option. Developers of apps that use lib/private/Http/Client/IClient.php
 should check any calls to ensure that arrays of items are not passed in the body option. See the diffs of PHP docs in the linked PR for examples. https://github.com/owncloud/core/pull/40652[#40652]
