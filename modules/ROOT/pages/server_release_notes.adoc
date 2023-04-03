@@ -63,6 +63,10 @@ Since version 2.5.0 of the files_texteditor app we use Firebase\JWT\JWT, but thi
 Referencing xref:known-issues-10-12-0[Known Issues of 10.12.0].
 In previous core versions, the setting of the `htaccess.RewriteBase` config.php option was not added to the generated .htaccess file. The use of a more hardened .htaccess file in version 10.12.0, introduced by https://github.com/owncloud/core/pull/40584[#40584], caused the files view in the web UI to be empty in setups described in the referenced known issue. Additionally, the desktop app was not be able to sync and an error 405 (Method not allowed) was returned. The `htaccess.RewriteBase` is now correctly added to the .htaccess file, see the fix at https://github.com/owncloud/core/pull/40697[#40697].
 
+==== Respect User Home Folder Naming Rule for Chunks Uploads
+
+When using the User Home Folder Naming Rule (configurable in the Advanced tab of the LDAP wizard), which allows to specify the home folder by means of an LDAP attribute, chunks of users' uploads were wrongly created under the default data directory rather than inside the configured home directory. We are now using the getHome() method for getting the user's home so that chunks uploads respect the configured home directory. https://github.com/owncloud/core/pull/40693 [#40693] https://github.com/owncloud/core/pull/40719[#40719]
+
 == Changes in 10.12.0
 
 Dear ownCloud administrator, find below the changes and known issues in ownCloud Server 10.12 that need your attention. You can also read the {oc-changelog-url}[full ownCloud Server changelog] for further details on what has changed.
