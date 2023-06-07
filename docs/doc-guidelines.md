@@ -6,7 +6,7 @@ It is important that proper documentation also helps developers in all stages of
 
 Our documentation is hosted on GitHub in various repositories targeting different audiences. Currently, these are undergoing a major reconstruction. An overview and description will follow later. In the following description, we assume familiarity with GitHub and git commands. Text is written in AsciiDoc and generated via Antora. For further information on how to format your text, check out: https://asciidoctor.org/docs/asciidoc-recommended-practices/.
 
-If you're new to writing or editing ownCloud documentation, we recommend the [Getting Started Guide](https://github.com/owncloud/docs/blob/master/docs/getting-started.md) and [Building the Documentation](https://github.com/owncloud/docs/blob/master/docs/build-the-docs.md) so you get a good understanding of what awaits you. (Just don't let it discourage you!). Keep the [Best Practices Guide](https://github.com/owncloud/docs/blob/master/docs/best-practices.md) collection in mind.
+If you're new to writing or editing ownCloud documentation, we recommend the [Getting Started Guide](https://github.com/owncloud/docs/blob/master/docs/getting-started.md) and [Building the Documentation](https://github.com/owncloud/docs/blob/master/docs/build-the-docs.md) to get a good understanding of what awaits you. (Just don't let it discourage you!). Keep the [Best Practices Guide](https://github.com/owncloud/docs/blob/master/docs/best-practices.md) collection in mind.
 
 To contribute to the documentation by providing content or fixing issues in the existing documentation:
 
