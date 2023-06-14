@@ -13,6 +13,221 @@
 
 toc::[]
 
+== Infinite Scale 3.0.0
+
+[discrete]
+=== General
+
+We are pleased to announce the availability of Infinite Scale 3.0.0 along with its clients for Web, Windows, MacOS, Linux, iOS and Android.
+
+Please find the full list of changes here:
+
+* Infinite Scale: https://github.com/owncloud/ocis/releases/tag/v3.0.0[Changes in 3.0.0]
+* Web: https://github.com/owncloud/web/releases/tag/v7.0.0[Changelog for ownCloud Web 7.0.0]
+
+[discrete]
+=== Antivirus (ICAP)
+
+The Antivirus interface ensures secure file sharing by protecting against Trojans, viruses, and other malicious software. It scans files using an external antivirus scanning engine before storing them, preventing the spread of infected files. The integration of antivirus scanners through ICAP (Internet Content Adaptation Protocol) allows offloading of scanning to a dedicated service, improving performance and scalability. The interface works, for example, with ClamAV, a comprehensive virus scanner that detects various forms of malware in different file types. Read more: xref:{latest-ocis-version}@ocis:ROOT:deployment/services/s-list/antivirus.adoc[Antivirus Service]
+
+Note: Because Infinite Scale is capable of asynchronous post-processing, the system can efficiently handle a large number of simultaneous file scans without causing delays or bottlenecks that keep end users waiting. Read more: xref:{latest-ocis-version}@ocis:ROOT:deployment/services/s-list/postprocessing.adoc#virus-scanning[Postprocessing Service].
+
+[discrete]
+=== File Firewall
+
+The file firewall adds an additional layer of security to the file-level. With definable rules and criteria, the admin can restrict file uploads based, for example, on file extensions, mime types or even content. This granular control helps prevent unwanted or unauthorized uploads. 
+
+Note: The file firewall utilizes Infinite Scale's policies service to check whether a requested operation is allowed or not. To do so, Open Policy Agent (OPA) is used to define the set of rules of what is permitted and what is not.
+Policies are written in the Rego query language. Read more: xref:{latest-ocis-version}@ocis:ROOT:deployment/services/s-list/policies.adoc[Policies Service].
+
+[discrete]
+=== Tags
+
+Tags provide a flexible and intuitive way to categorize files. By assigning relevant tags to files, users can easily locate specific documents through powerful search functions. This eliminates the need to remember precise file names or navigate through complex folder structures, saving valuable time and effort. Unlike traditional folder-based systems, tags offer a flexible way to organize files that transcends rigid hierarchies. Users can assign multiple tags to a single file, enabling them to classify and retrieve documents using different criteria simultaneously. This adaptability allows for personalized organization methods that align with individual preferences and working styles.
+
+Tags are saved as metadata on the storage without the need for a dedicated database to assure resilience and scalability of the system.
+
+[discrete]
+=== Fulltext Search
+
+Fulltext search revolutionizes the way you search and retrieve files, making it easier and more efficient to find the information you need. It enables you to search for files based on their content, not just their titles or metadata. This means you can enter keywords or phrases related to the actual text within documents, spreadsheets, presentations, and more. Say goodbye to manually scanning through countless files and folders — finding the right document is now just a search away.
+Fulltext search utilizes Apache Tika for more advanced content extraction. Apache Tika ensures lightning-fast search results, delivering near-instantaneous responses to your queries. Whether you have a large document repository or a vast number of files, full text search will provide you with swift and accurate results, enabling you to access the information you need without delay.
+With Apache Tika you can search the contents of files of the types: PDF, DOCX, XLSX, PPTX, ODF, HTML, XML, EPUB, RTF, Tar, RAR, AR, CPIO, Zip, 7Zip, Gzip, BZip2 and many more... Read more: xref:{latest-ocis-version}@ocis:ROOT:deployment/services/s-list/search.adoc#tika-extractor[Search Service].
+
+[discrete]
+=== Space Templates
+
+Applying a template is a breeze. When creating a new project space, simply right-click on a folder of your choice, select "Create Space from selection" and the entire folder structure, complete with subfolders and files, will be instantly generated for a project space. Save time and ensure consistency by eliminating the need to manually create folders and subfolders every time you start a new project or onboard a new team. Space templates ensure a consistent folder structure across projects providing a standardized, efficient, and customizable approach to organizing your documents. Space Templates are only available to users with the permission to create spaces.
+
+[discrete]
+=== Custom User Roles
+
+Infinite Scale ships with the default user roles admin, space admin, user and user light. Each role has different permissions. For example, only space admins can create spaces, but people with the role "User" cannot create a space. With custom roles, you can now configure roles that fit the needs of your organization. For example, if you need custom roles for your school, you can configure the roles "Teacher" and "Pupil" and not give pupils the permission to create public links. If you are interested in creating custom roles, reach out to us on https://talk.owncloud.com/channel/infinitescale[Talk].
+
+[discrete]
+=== File Versions: Design Overhaul
+
+File versions received a design overhaul so that you can go back easily in the version history of a file. With the new design of the file versions feature, you now have even easier access to a comprehensive version history for each file. Every time a file is modified or updated, a new version is created and stored, preserving a complete timeline of changes. This allows you to track and revert to previous versions as needed, ensuring data integrity and eliminating the risk of accidental data loss.
+
+[discrete]
+=== Administration Settings
+
+This update brings a range of functions to streamline user, group, and space administration, enhancing the overall management experience. Let's explore the exciting new capabilities:
+
+[discrete]
+==== Users Administration:
+
+* Filter Chips for Groups and Role: +
+https://m2.material.io/components/chips#filter-chips[Filter chips] use tags or descriptive words to filter content. With that, you can now conveniently filter users based on groups and roles, making it easier to locate and manage specific user segments efficiently.
+
+* Batch Actions:
+** Quota: +
+Administrators can now modify the storage quota for multiple users at once, simplifying the management of storage allocations.
+** Add to Group: +
+Administrators can add multiple users to a group simultaneously, streamlining the process of assigning users to specific teams or projects.
+** Remove from Group: +
+Administrators can remove multiple users from a group in one go, ensuring efficient group membership management.
+** Disable Login: +
+Administrators can now disable login access for multiple users simultaneously, providing better control over user accounts.
+** Edit Login (Dis/-allow): +
+Administrators can enable or disable login access for multiple users, providing greater flexibility in managing user authentication.
+
+* Edit Username: +
+Administrators have the ability to edit the usernames, which is very important if users change their last name. Remember: In ownCloud Server, users where not allowed to marry and/or change names due to technical limitations. With Infinite Scale, marriage and name changes are now possible.
+
+[discrete]
+==== Groups Administration:
+
+* Rename Group: +
+Administrators can now rename groups, enabling them to update group names to better reflect their purpose or current project.
+* Show Members of a Group: +
+You can easily view a list of members belonging to a specific group, facilitating better oversight and management of group memberships.
+* Filter Members of a Group: +
+Administrators can filter group members, making it effortless to locate specific users within a group.
+
+[discrete]
+==== Spaces Administration:
+
+List All Spaces: With appropriate permissions, administrators can now view a comprehensive list of all spaces within the organization. The following attributes are visible:
+
+* Space Name
+* Managers of the Space
+* Amount of Members in the Space
+* Remaining Quota
+* Last Modified Date
+* Status
+// *Not visible:*
+* View Contents of a Space: Please note that this update does not enable the viewing of contents within a space, including files, space images, or descriptions. This limitation ensures the security and privacy of space contents even from the eyes of an administrator.
+
+[discrete]
+=== GDPR Export
+
+This update focuses on fulfilling the legal requirements of Article 20 of the General Data Protection Regulation (GDPR) - the Right to Data Portability. This feature empowers users to exercise greater control over their personal data and ensures compliance with GDPR guidelines.
+
+The GDPR Export feature enables users to easily export where and which personal data stored within Infinite Scale, in compliance with the Right to Data Portability outlined in Article 20 of the GDPR.
+Users can now request and receive an export of their personal data in a JSON file, saved to the users' personal files.
+The export can be requested at any time in self-service by the user.
+
+[discrete]
+=== Secret File Drop
+
+The feature formerly known as "Uploader" has been renamed to "Secret File Drop", but the functionality stays the same: The Secret File Drop feature allows users to generate unique links that can be shared with external parties. Recipients can anonymously drop files through these links without the need for a registered account or visibility into other submissions. This ensures data privacy and eliminates the risk of unauthorized access.
+
+Effortless File Collection: With Secret File Drop, collecting files becomes a seamless process. Simply create a file drop link, share it with recipients, and let them submit files directly without any additional steps or complications. This feature saves time and eliminates the need for manual file collection methods, such as email attachments or physical hand-ins.
+
+[discrete]
+=== 3 View Modes
+
+Users can now choose three distinct view modes, enhancing file browsing and navigation options:
+
+* *Compact List View* +
+The Compact List View provides a condensed and space-efficient representation of your files and folders, designed for users who prefer a streamlined view.
+* *Regular List View* +
+The Regular List View offers a familiar and comprehensive approach to file organization.
+* *Tiles View* +
+The Tiles View introduces a visually appealing and intuitive way to browse your files and folders. In this mode, files and folders are displayed as colorful and resizable tiles, providing a visually engaging experience. Users can preview file contents and relevant details directly within the tiles, allowing for quick identification and navigation. This is particularly beneficial for users who prioritize visual recognition and prefer a visually rich interface.
+
+[discrete]
+=== Trash Bins for Spaces
+
+The Separate Trash Bin for Spaces introduces individual trash bins for each space within your organization's file system. A space represents a dedicated area where teams collaborate on specific projects, departments, or initiatives. With this feature, accidental file deletions are a thing of the past, as files deleted within a space are now moved to a separate trash bin specific to that space.
+
+[discrete]
+=== Deny Access
+The Deny Access feature, which is *experimental and not ready for production environments*, allows users to share folders with groups, but deny access to a single person in that group. Example: If you share the "Birthday Present" folder with all users in the organization, you want to exclude the one person whose birthday is coming up. This use case is now possible, but not yet production ready and disabled by default. To enable this feature, the xref:{latest-ocis-version}@ocis:ROOT:deployment/services/s-list/frontend.adoc#environment-variables[variable] `FRONTEND_OCS_ENABLE_DENIALS` needs to be set to to `true`. Please contact {oc-support-url}[ownCloud Support] or give us your feedback via {oc-central-url}[ownCloud Central] so that we can finalize this long-awaited feature with the help of your testing.
+
+[discrete]
+=== Other Notable Changes
+
+- We added a config option for cross-origin resource sharing (CORS) which, for example, allows running the Web UI on another domain. https://github.com/owncloud/ocis/pull/5987[#5987]
+
+- We changed the default behavior of shares: Share receivers have no access to versions. People in spaces with the "Editor" or "Manager" role can still see versions and work with them. https://github.com/owncloud/ocis/pull/5531[#5531]
+
+- With ownCloud Web having transitioned to Vue 3 recently, we would have had to port the settings ui as well. The decision was made to discontinue the settings ui instead. As a result all traces of the settings ui have been removed. The only user facing setting that ever existed in the settings service is now integrated into the `account` page of ownCloud Web (click on top right user menu, then on your username to reach the account page). https://github.com/owncloud/ocis/pull/5463[#5463]
+
+- We changed the default behavior of shares: Share receivers have no access to versions. People in spaces with the "Can edit" or "Can manage" role can still see versions and work with them. https://github.com/owncloud/ocis/pull/5531[#5531]
+
+- To provide more monitoring metrics, we added a debug server to the services "audit", "idm", "userlog", "eventhistory" and "postprocessing". https://github.com/owncloud/ocis/pull/6178[#6178], https://github.com/owncloud/ocis/pull/6153[#6153], https://github.com/owncloud/ocis/pull/6203[#6203], https://github.com/owncloud/ocis/pull/6202[#6202], https://github.com/owncloud/ocis/pull/6204[#6204]
+
+- You can now send prettier notification emails with HTML templates https://github.com/owncloud/ocis/pull/6147[#6147]
+
+- Webfinger: If your deployment consists of multiple instances, the webfinger service offers the right instances for the right users so that they can login without having to rember instance specific urls. https://github.com/owncloud/ocis/pull/5373[#5373], https://github.com/owncloud/ocis/pull/6110[#6110]
+
+- Async postprocessing allows the system to do postprocessing tasks like virusscan, copying of bytes to their final destination, etc. asynchronous to the users request. This is a huge enhancement only available with Infinite Scale!  https://github.com/owncloud/ocis/pull/5207[#5207]
+
+- We introduced a new setting to disable email notifications https://github.com/owncloud/ocis/pull/6137[#6137]
+
+- The LDAP base DN for new groups is now configurable: The LDAP backend for the Graph service introduced a new config option for setting the Parent DN for new groups created via the `/groups/` endpoint. (`GRAPH_LDAP_GROUP_CREATE_BASE_DN`). It defaults to the value of `GRAPH_LDAP_GROUP_BASE_DN`. If set to a different value the `GRAPH_LDAP_GROUP_CREATE_BASE_DN` needs to be a subordinate DN of `GRAPH_LDAP_GROUP_BASE_DN`. All existing groups with a DN outside the `GRAPH_LDAP_GROUP_CREATE_BASE_DN` tree will be treated as read-only groups. So it is not possible to edit these groups. In the UI this is indicated via a lock-icon in the administration settings. https://github.com/owncloud/ocis/pull/5974[#5974]
+
+- Disable login for specific users: This new option in the administration settings allows login to be disabled / enabled for specific users. By setting the `accountEnabled` property to `false` for a user via the graph API, users can be disabled (i.e. they can no longer login). https://github.com/owncloud/ocis/pull/5588[#5588]
+
+- New service `eventhistory`: It is a service that stores events and provides a grpc API to retrieve them. Users will notice this enhancement by the bell on the top right in the Web UI and the corresponding notifications (ex: if a user receives a share or becomes a member of a space). 
+
+- New service `policies`: The policies-service provides a new grpc api which can be used to return whether a requested operation is allowed or not. Open Policy Agent is used to determine the set of rules of what is permitted and what is not.
++
+--
+2 further levels of authorization build on this:
+
+* *Proxy Authorization* +
+The simplest authorization layer is in the proxy, since every request is processed here, only simple decisions that can be processed quickly are made here, more complex queries such as file evaluation are explicitly excluded in this layer.
+
+* *Event Authorization* (needs async post-processing enabled) +
+The next layer is event-based as a pipeline step in asynchronous post-processing, since processing at this point is asynchronous, the operations there can also take longer and be more expensive, the bytes of a file can be examined here as an example.
+
+Since the base block is a GRPC API, it is also possible to use it directly. Policies are written in the https://www.openpolicyagent.org/docs/latest/policy-language/[rego query language]. https://github.com/owncloud/ocis/pull/5714[#5714]
+--
+
+- Enforce passwords on public links: Added a new config option to enforce passwords on public links with "Uploader,Editor,Contributor" roles. The new options are: `OCIS_SHARING_PUBLIC_WRITEABLE_SHARE_MUST_HAVE_PASSWORD`,`SHARING_PUBLIC_WRITEABLE_SHARE_MUST_HAVE_PASSWORD` and `FRONTEND_OCS_PUBLIC_WRITEABLE_SHARE_MUST_HAVE_PASSWORD`. Check the docs on how to properly set them. https://github.com/owncloud/ocis/pull/5848[#5848]
+
+- We added the possibility to restrict the creation of public links based on user roles (permission). https://github.com/owncloud/ocis/pull/5690[#5690]
+
+- Added possibility to assign roles based on OIDC claims: https://github.com/owncloud/ocis/pull/6048[#6048]
+
+- Default quota based on user role: With this enhancement roles can now be configured with a default quota (eg. Admins should have a default quota of 100GB, Users should have a default quota of 50GB). https://github.com/owncloud/ocis/pull/5616[#5616]
+
+- Set default quota for project spaces: Additionally to `set-space-quota` for setting quota on personal spaces we now have `Drive.ReadWriteQuota.Project` for setting project spaces quota. https://github.com/owncloud/ocis/pull/5660[#5660]
+
+- Automatically emtpy the trashbin (off per default): Introduction of a new cli command to purge old trash-bin items. https://github.com/owncloud/ocis/pull/5500[#5500]
+
+=== Known Issues
+
+- The environment variable xref:{latest-ocis-version}@ocis:ROOT:deployment/services/env-vars-special-scope.adoc[OCIS_LDAP_DISABLE_USER_MECHANISM] is an option to control the behavior for disabling users. The default value is `attribute` and requires configuration on the LDAP server. Enabling and disabling users is LDAP implementation specific.
++
+--
+- If you are using an external LDAP server you can either set `OCIS_LDAP_DISABLE_USER_MECHANISM` to `none` to disable it completely or to `attribute` in which case you need to set `OCIS_LDAP_USER_ENABLED_ATTRIBUTE` according to your external LDAP server's requirements.
+- Additionally and due to a bug recently discovered in the xref:{latest-ocis-version}@ocis:ROOT:deployment/services/s-list/idp.adoc[IDP] service, you must set `OCIS_LDAP_USER_ENABLED_ATTRIBUTE=""` to overwrite the default setting when `OCIS_LDAP_DISABLE_USER_MECHANISM` is set to `none`. This bug will be fixed in a subsequent release.
+--
+
+=== Migrations
+
+- Please note the xref:{latest-ocis-version}@ocis:ROOT:migration/upgrading-ocis.adoc#version-2-0-0-to-3-0-0[Upgrading Infinite Scale] documentation.
+
+=== Breaking Changes
+
+- Metadata in MessagePack: Metadata are no longer stored in the xattr of a file, but in a dedicated, more scalable and robust file in the binary `MessagePack` format. https://github.com/cs3org/reva/pull/3728[cs3org/reva#3728]
+- The Web UI was updated from Vue.js 2 to Vue.js 3. https://github.com/owncloud/web/issues/7948[#7948]
+
+
 == Infinite Scale 2.0.0
 
 Infinite Scale 2.0.0 is the first stable release, ready for production scenarios. Infinite Scale bundles with ownCloud Web.
