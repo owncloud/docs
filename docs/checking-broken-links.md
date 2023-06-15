@@ -121,7 +121,7 @@ This is an extremely fast and very comfortable / configurable link checker writt
 
 A description of ``linkcheck`` can be found [here](https://github.com/filiph/linkcheck#linkcheck).
 Follow [this](https://github.com/filiph/linkcheck#step-1-install-dart) procedure,
-to install ``linkcheck``, which needs ``dart``:
+to install or update ``linkcheck``, which needs ``dart``:
 
 To run it, you must have one terminal open and run `yarn serve` to start a http server and in another terminal the ``linkcheck`` command:
 
@@ -132,18 +132,9 @@ Adapt the content to your needs.
 
 ```console
 # exclude check to sub-pages of owncloud
-https://owncloud.org/news
-https://owncloud.org/support
-https://owncloud.org/install
-
-# do not crawl branches or client repositories
-http://localhost:8080/server/10.2
-http://localhost:8080/server/10.3
-http://localhost:8080/server/10.4
-http://localhost:8080/branded_clients
-http://localhost:8080/desktop
-http://localhost:8080/android
-http://localhost:8080/ios
+https://owncloud.com/news
+https://owncloud.com/support
+https://owncloud.com/install
 
 # exclude because these are denied by robots.txt anyway
 https://github.com
@@ -154,6 +145,21 @@ https://mycloud.org
 https://www.google.de
 https://www.tscp.org
 
+# do not crawl branches or client repositories
+http://localhost:8080/server/10.11
+http://localhost:8080/server/10.12
+http://localhost:8080/branded_clients
+http://localhost:8080/desktop
+http://localhost:8080/android
+http://localhost:8080/ios
+
+# no missing favicons when localhost
+http://localhost:8080/manifest.json
+http://localhost:8080/apple-touch-icon.png
+http://localhost:8080/favicon.svg
+http://localhost:8080/favicon-32x32.png
+http://localhost:8080/favicon-16x16.png
+http://localhost:8080/safari-pinned-tab.svg
 ```
 
 It is good practice to first start checking excluding external pages / sites.
