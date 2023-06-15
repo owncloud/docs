@@ -121,7 +121,7 @@ This is an extremely fast and very comfortable / configurable link checker writt
 
 A description of ``linkcheck`` can be found [here](https://github.com/filiph/linkcheck#linkcheck).
 Follow [this](https://github.com/filiph/linkcheck#step-1-install-dart) procedure,
-to install ``linkcheck``, which needs ``dart``:
+to install or update ``linkcheck``, which needs ``dart``:
 
 To run it, you must have one terminal open and run `yarn serve` to start a http server and in another terminal the ``linkcheck`` command:
 
@@ -131,21 +131,12 @@ the file is named ``my_skip_file.txt`` and saved one level below the local docs 
 Adapt the content to your needs.
 
 ```console
-# exclude check to sub-pages of owncloud
-https://owncloud.org/news
-https://owncloud.org/support
-https://owncloud.org/install
+# exclude check to particular sub-pages of owncloud.com
+https://owncloud.com/news
+https://owncloud.com/support
+https://owncloud.com/install
 
-# do not crawl branches or client repositories
-http://localhost:8080/server/10.2
-http://localhost:8080/server/10.3
-http://localhost:8080/server/10.4
-http://localhost:8080/branded_clients
-http://localhost:8080/desktop
-http://localhost:8080/android
-http://localhost:8080/ios
-
-# exclude because these are denied by robots.txt anyway
+# because of denied by robots.txt
 https://github.com
 https://gist.github.com
 https://www.samba.org
@@ -154,6 +145,24 @@ https://mycloud.org
 https://www.google.de
 https://www.tscp.org
 
+# known false positives
+https://www.cyberciti.biz/faq/upgrade-ubuntu-18-04-to-20-04-lts-using-command-line/
+https://www.technetexperts.com/mobile/creating-static-library-in-ios-app-development/
+
+# no missing favicons when localhost
+http://localhost:8080/manifest.json
+http://localhost:8080/apple-touch-icon.png
+http://localhost:8080/favicon.svg
+http://localhost:8080/favicon-32x32.png
+http://localhost:8080/favicon-16x16.png
+http://localhost:8080/safari-pinned-tab.svg
+
+# example links like: https://<your-owncloud-server>/ or https://{{.preferred_username}}
+# or image generation (kroki)
+https://%3C
+https://%7B%7B
+https://www.example.com
+https://kroki.io
 ```
 
 It is good practice to first start checking excluding external pages / sites.
