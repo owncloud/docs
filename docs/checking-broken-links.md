@@ -160,6 +160,9 @@ http://localhost:8080/favicon.svg
 http://localhost:8080/favicon-32x32.png
 http://localhost:8080/favicon-16x16.png
 http://localhost:8080/safari-pinned-tab.svg
+
+# example links like: https://<your-owncloud-server>/
+https://%3Cyour-owncloud-server%3E
 ```
 
 It is good practice to first start checking excluding external pages / sites.
