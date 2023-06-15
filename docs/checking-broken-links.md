@@ -161,8 +161,9 @@ http://localhost:8080/favicon-32x32.png
 http://localhost:8080/favicon-16x16.png
 http://localhost:8080/safari-pinned-tab.svg
 
-# example links like: https://<your-owncloud-server>/
-https://%3Cyour-owncloud-server%3E
+# example links like: https://<your-owncloud-server>/ or https://{{.preferred_username}}
+https://%3C
+https://%7B%7B
 ```
 
 It is good practice to first start checking excluding external pages / sites.
