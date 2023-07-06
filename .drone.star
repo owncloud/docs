@@ -4,7 +4,7 @@ def main(ctx):
     # There is only one branch to be deployed
     deployment_branch = "master"
 
-    return cancelPreviousBuilds() + [
+    return [
         checkStarlark(),
         build(ctx, deployment_branch),
     ]
@@ -61,7 +61,7 @@ def build(ctx, deployment_branch):
                 "pull": "always",
                 "image": "plugins/s3-cache:1",
                 "settings": {
-                    "endpoint": from_secret("cache_s3_endpoint"),
+                    "endpoint": from_secret("cache_s3_server"),
                     "access_key": from_secret("cache_s3_access_key"),
                     "secret_key": from_secret("cache_s3_secret_key"),
                     "restore": "true",
@@ -105,7 +105,7 @@ def build(ctx, deployment_branch):
                 "pull": "always",
                 "image": "plugins/s3-cache:1",
                 "settings": {
-                    "endpoint": from_secret("cache_s3_endpoint"),
+                    "endpoint": from_secret("cache_s3_server"),
                     "access_key": from_secret("cache_s3_access_key"),
                     "secret_key": from_secret("cache_s3_secret_key"),
                     "rebuild": "true",
@@ -125,7 +125,7 @@ def build(ctx, deployment_branch):
                 "pull": "always",
                 "image": "plugins/s3-cache:1",
                 "settings": {
-                    "endpoint": from_secret("cache_s3_endpoint"),
+                    "endpoint": from_secret("cache_s3_server"),
                     "access_key": from_secret("cache_s3_access_key"),
                     "secret_key": from_secret("cache_s3_secret_key"),
                     "flush": "true",
@@ -167,7 +167,7 @@ def build(ctx, deployment_branch):
                 "pull": "if-not-exists",
                 "image": "plugins/slack",
                 "settings": {
-                    "webhook": from_secret("slack_webhook_private"),
+                    "webhook": from_secret("rocketchat_talk_webhook"),
                     "channel": "documentation",
                 },
                 "when": {
@@ -199,27 +199,3 @@ def from_secret(name):
     return {
         "from_secret": name,
     }
-
-def cancelPreviousBuilds():
-    return [{
-        "kind": "pipeline",
-        "type": "docker",
-        "name": "cancel-previous-builds",
-        "clone": {
-            "disable": True,
-        },
-        "steps": [{
-            "name": "cancel-previous-builds",
-            "image": "owncloudci/drone-cancel-previous-builds",
-            "settings": {
-                "DRONE_TOKEN": {
-                    "from_secret": "drone_token",
-                },
-            },
-        }],
-        "trigger": {
-            "ref": [
-                "refs/pull/**",
-            ],
-        },
-    }]
