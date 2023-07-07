@@ -127,7 +127,7 @@ and all special characters including an underscore are converted to a dash (`_`)
 
 You can create anchors manually anywhere in the page by using following methods:
 
-* text `[[anchor-name]]` text (anchor-name will not be printed, it is only the reference point)
+* text `[#anchor-name]` text (anchor-name will not be printed, it is only the reference point)
 * text `[#anchor-name]#Anchor text to be referenced to#` text (Anchor text will be printed)
 
 Reference Examples:
