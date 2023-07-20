@@ -4,6 +4,7 @@
 :page-aliases: {latest-server-version}@server:admin_manual:whats_new_admin.adoc, \
 {latest-server-version}@server:ROOT:server_release_notes.adoc
 
+* xref:changes-in-10-12-2[Changes in 10.13.0]
 * xref:changes-in-10-12-2[Changes in 10.12.2]
 * xref:changes-in-10-12-1[Changes in 10.12.1]
 * xref:changes-in-10-12-0[Changes in 10.12.0]
@@ -40,6 +41,110 @@
 * xref:changes-in-8-1[Changes in 8.1]
 * xref:changes-in-8-0[Changes in 8.0]
 * xref:changes-in-7-0[Changes in 7.0]
+
+== Changes in 10.13.0
+
+Dear ownCloud administrator, find below the changes and known issues in ownCloud Server 10.13.0 that need your attention. You can also read the {oc-changelog-url}[full ownCloud Server changelog] for further details on what has changed.
+
+=== Update Symfony from 4.4.* to 5.4.*
+
+Symfony framework has been updated to LTS major version 5.4. This also affected a number of apps which required a new release and have been now included in the complete bundle.
+
+=== Drop setup of User Key encryption
+
+User Key encryption has been already deprecated in core versions later than 10.7. For this reason, the command line interface and web UI to enable User Key encryption is no longer available. If you are operating an ownCloud installation with User Key encryption enabled, please get in contact with support@owncloud.com to plan a migration to Master Key encryption. https://github.com/owncloud/encryption/pull/389[encryption#389]
+
+=== User Key encryption is no longer auto-enabled
+
+Executing the "encryption:encrypt-all" occ command will no longer auto-enable User Key encryption. https://github.com/owncloud/core/pull/40702[#40702]
+
+=== Added occ command to remove obsolete storages
+
+Metadata coming from storages are stored in the DB. Previously, when a storage has been removed from ownCloud that metadata remained in the DB. The new occ command allows to remove that metadata stored, reducing the amount of space used by the DB as well as slightly improving the performance since there will be less entries. https://github.com/owncloud/core/pull/40779[#40779]
+
+=== Enforce 2-factor authentication
+
+2-factor authentication can be enforced now. The feature requires at least an app implementing the 2-factor, otherwise no enforcement will be done. If the 2-factor authentication is enforced, all users will be required to use a 2-factor authentication app. Some specific groups selected by the admin can be excluded to let those users bypass the 2-factor authentication. https://github.com/owncloud/core/pull/40830[#40830]
+
+=== Setting up federation sharing over the WebUI is again possible
+
+After update of guzzle, it was no longer possible to request format of response to be json when adding in query parameter with the consequence that setting up federation sharing over the WebUI was not possible. One of the "OCSAuthAPIController" federated instances was receiving requests without a hint that JSON needs to be used, and returned XML. On the other hand, "OCSAuthAPIController" expects only JSON for exchange, and thus failed to parse the message. Now the exchange is correctly done. https://github.com/owncloud/core/pull/40815[#40815]
+
+=== Add commands to handle the trusted servers from command line
+
+New occ commands have been added to handle the trusted servers for federation from command line. These commands will allow the admin to add list and remove trusted servers. https://github.com/owncloud/core/pull/40796[#40796]
+
+=== Skip share_folder for guest users
+
+In https://github.com/owncloud/core/pull/40378 we have fixed the case of (not) moving the share target when the backend storage becomes temporary unavailable but we had the collateral effect that guests did not see anymore their received shares as we were forcing the creation of the target which failed for them as their storage is read-only. We now skip the share_folder config.php option for guests and default to root. https://github.com/owncloud/core/pull/40864[#40864]
+
+=== Bump files app version
+
+Files app version was not properly increased when the "OCA\Files\BackgroundJob\CleanupPersistentFileLock" and "OCA\Files\BackgroundJob\PreviewCleanupJob" background jobs were originally added. As a result, those two jobs were not correctly inserted into the "oc_jobs" table upon a core upgrade. First time installations are not affected as there jobs are correctly added. https://github.com/owncloud/core/pull/40878[#40878]
+
+=== Explicitly set open mode in the checksum wrapper
+
+Uploading files to some external storages through the desktop client was causing issues due to the checksum wrapper. We are using additional wrappers and the mode wasn't being detected correctly in some cases. Using the right mode in the checksum wrapper was required in order to decide whether we should have discarded the final checksum or not; in this case, the checksum was being discarded so it was causing a checksum mismatch. Now the open mode in the checksum wrapper is set explicitly. https://github.com/owncloud/core/pull/40832[#40832]
+
+=== Align to new accounts.google.com authorization URI
+
+Core 10.12.1 brought an update of the google/apiclient from version 2.12.6 to 2.13.1. However, in version 2.13.0 the accounts.google.com authorization URI has been updated. This change broke old code that uses the "setApprovalPrompt('force')" instead of the newer "setPrompt('consent')" method, as this endpoint does not support the legacy approval prompt parameter. This has been now fixed. https://github.com/owncloud/core/pull/40783[#40783]
+
+=== Fix query used to delete thumbnails
+
+Fixed query that detects unused thumbnails to prevent unnecessary deletes and potential recreations. https://github.com/owncloud/core/pull/40801[#40801]
+
+=== Automatically disable online updater for enterprise
+
+Online updater is not recommended for Enterprise installations and is now automatically disabled in such cases. https://github.com/owncloud/core/pull/40841[#40841]
+
+=== Versions expire job does not anymore error with federated shares
+
+Versions expire job does not anymore error with federated shares when versioning metadata is enabled. https://github.com/owncloud/core/pull/40847[#40847]
+
+
+=== Notable Changes
+
+* Setup checks now allow other values other than "none" for X-Robots-Tag header. If "none" or "noindex" and "nofollow" are missing, a security warning is raised. Previously a header value with "noindex" and "nofollow" wasn't allowed even though it was valid. https://github.com/owncloud/core/pull/40715[#40715]
+* The Last Login column on the Users page is now correctly hidden if the setting is initially unchecked. https://github.com/owncloud/core/pull/40771[#40771]
+* User input is validated now in UserController. https://github.com/owncloud/core/pull/40769[#40769]
+* A system tag with a too long name resulted in potentially inaccessible data. https://github.com/owncloud/core/pull/40804[#40804]
+* A federated share with a too long name resulted in inaccessible data. https://github.com/owncloud/core/pull/40726[#40726]
+* Due to Apache rewrite rules originally not existing headers could hold an empty string. https://github.com/owncloud/core/pull/40856[#40856]
+* Verbose command output of "background:queue:execute" is now displayed. https://github.com/owncloud/core/pull/40844[#40844]
+* There have been rare cases where deleting a file from a Google Drive mount could have thrown an undefined variable error. Though the process completed without further issues, no errors should have been thrown. This fix initializes the variables for these cases properly making the error go away. https://github.com/owncloud/core/pull/40822[#40822]
+* Some occ commands could have returned an invalid exit status when executed. This has been corrected and occ commands will now always return an integer exit status. Zero (0) is success, any other value indicates a problem. https://github.com/owncloud/core/pull/40793[#40793]
+
+
+=== Updated App Versions
+
+Find below a list of updated apps in comparison with the 10.12.2 complete bundle. More information on the changes can be found in the respective changelogs on ownCloud Marketplace.
+
+* https://marketplace.owncloud.com/apps/activity [Activity] 2.7.2
+* https://marketplace.owncloud.com/apps/admin_audit [Auditing] 2.1.4
+* https://marketplace.owncloud.com/apps/customgroups [Custom Groups] 0.7.2
+* https://marketplace.owncloud.com/apps/diagnostics [Diagnostics] 0.2.0
+* https://marketplace.owncloud.com/apps/files_classifier [Document Classification] 1.4.0
+* https://marketplace.owncloud.com/apps/files_lifecycle [File Lifecycle Management] 1.3.4
+* https://marketplace.owncloud.com/apps/files_primary_s3 [S3 Primary Object Storage] 1.5.0
+* https://marketplace.owncloud.com/apps/files_texteditor [Text Editor] 2.5.2
+* https://marketplace.owncloud.com/apps/impersonate [Impersonate] 0.5.3
+* https://marketplace.owncloud.com/apps/market [Market] 0.8.0
+* https://marketplace.owncloud.com/apps/oauth2 [OAuth2] 0.6.0
+* https://marketplace.owncloud.com/apps/password_policy [Password Policy] 2.2.0
+* https://marketplace.owncloud.com/apps/ransomware_protection [Ransomware Protection] 1.7.0
+* https://marketplace.owncloud.com/apps/richdocuments [Collabora Online] 4.0.0
+* https://marketplace.owncloud.com/apps/search_elastic [Full Text Search] 2.4.0
+* https://marketplace.owncloud.com/apps/twofactor_totp [2-Factor Authentication] 0.8.0
+* https://marketplace.owncloud.com/apps/user_ldap [LDAP Integration] 0.18.0
+* https://marketplace.owncloud.com/apps/user_shibboleth [SAML/SSO Integration] 3.6.0
+* https://marketplace.owncloud.com/apps/windows_network_drive [External Storage: Windows Network Drives] 2.3.0
+* https://marketplace.owncloud.com/apps/wopi [Microsoft Office Online] 1.7.0
+* https://marketplace.owncloud.com/apps/workflow [Workflows] 0.6.0
+
+=== Known Issues
+
+Currently there are no known issues with ownCloud Server 10.13.0. This section will be updated if issues are discovered.
 
 == Changes in 10.12.2
 
