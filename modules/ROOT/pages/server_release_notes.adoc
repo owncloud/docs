@@ -68,7 +68,7 @@ Metadata coming from storages are stored in the DB. Previously, when a storage h
 
 === Setting up federation sharing over the WebUI is again possible
 
-After update of guzzle, it was no longer possible to request format of response to be json when adding in query parameter with the consequence that setting up federation sharing over the WebUI was not possible. One of the "OCSAuthAPIController" federated instances was receiving requests without a hint that JSON needs to be used, and returned XML. On the other hand, "OCSAuthAPIController" expects only JSON for exchange, and thus failed to parse the message. Now the exchange is correctly done. https://github.com/owncloud/core/pull/40815[#40815]
+After an update of the guzzle library in previous core versions, it was no longer possible to set up federation sharing over the WebUI because of the wrong format used during the token exchange phase. We now explicitly set the format to be json so that the exchange is correctly done. https://github.com/owncloud/core/pull/40815[#40815]
 
 === Add commands to handle the trusted servers from command line
 
@@ -76,7 +76,7 @@ New occ commands have been added to handle the trusted servers for federation fr
 
 === Skip share_folder for guest users
 
-In https://github.com/owncloud/core/pull/40378 we have fixed the case of (not) moving the share target when the backend storage becomes temporary unavailable but we had the collateral effect that guests did not see anymore their received shares as we were forcing the creation of the target which failed for them as their storage is read-only. We now skip the share_folder config.php option for guests and default to root. https://github.com/owncloud/core/pull/40864[#40864]
+When the "share_folder" config.php option was set, guest users could not see anymore their received shares. We now skip the "share_folder" config.php option for guest users and default to root. https://github.com/owncloud/core/pull/40864[#40864]
 
 === Bump files app version
 
