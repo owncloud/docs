@@ -49,7 +49,7 @@ We are excited to announce our new extension - Cloud Importer, designed to impor
 
 Effortlessly transfer your work documents, shared files, or entire project folders from these popular cloud storage platforms to your account. Whether you're moving a single document or a large batch of files, the Cloud Importer ensures a smooth, fast, and reliable transfer. Note that the Cloud Importer only imports files, not shares or tags. Think of it as uploading a file, but from a cloud service instead from your local drive.
 
-The Cloud Importer is disabled by default. To enable this extension, please refer to the WOPI Docker Compose Deployment Example: https://github.com/owncloud/ocis/pull/6702
+The Cloud Importer is disabled by default. To enable this extension, please refer to the WOPI Docker Compose Deployment Example: https://github.com/owncloud/ocis/pull/6702[6702]
 
 [discrete]
 === Simplified Sharing Links
@@ -80,20 +80,49 @@ When you share a document that has a standard associated application, the link w
 For instance, if you share a Word document, the recipient can click on the link and the document will open directly in their associated application, such as Only Office or Microsoft Word, depending on their settings.
 
 [discrete]
+=== Drop files to the breadcrumb
+
+You can now move files to a parent folder through a simple drag and drop action. Instead of navigating through multiple steps to move files, you can now simply grab the files you want to move, and then drop them onto the breadcrumb trail representing the parent folders.
+
+For example, if you're in a subfolder and want to move a file up one level, you can drag the file to the breadcrumb link representing the parent folder. The file will be moved instantly, eliminating the need for traditional cut-and-paste or move-to operations.
+
+[discrete]
 === Context Menu on whitespace
 
 This feature allows you to right-click on any empty space (whitespace) within your file view to access the context menu. This action was previously limited to direct file or folder interaction, but we've expanded its functionality to utilize the whitespace as well, enhancing your control over the workspace. This new context menu provides quick access to commonly used operations. For instance, you can create a new folder directly from the menu, offering an expedited process for organizing your files. In addition, you can easily view details for the current folder, including its contents, shared status, and more, all from the same context menu.
 
 [discrete]
+=== View Spaces as List
+
+Previously, viewing your spaces was limited to a tiles format. You can now switch to a list view that presents your projects in a clean, streamlined manner. This new view offers an overview of all your spaces, allowing for easy navigation and a concise visual of your work environment.
+
+This list view provides additional information as name of the manager, ammount of members, total quota, used quota, remainig quota, status and las modfied date in a more compact and organized manner. This is particularly useful for users who manage multiple spaces, as it allows for efficient scanning and selection. https://github.com/owncloud/web/pull/9195[9195]
+
+[discrete]
 === Other Notable Changes
+- Bugfix - Fixes ocis postprocessing restart command: Restarts complete postprocessing pipeline if there is no active postprocessing https://github.com/owncloud/ocis/pull/6753
+- Enhancement - Add 'ocis decomposedfs check-treesize' maintenance command: Verify the treesize metadata of a Space in decomposedfs: [#6556](https://github.com/owncloud/ocis/pull/6556)
+- Enhancement - Add Server-sent events Endpoint for Notifications: [#5998](https://github.com/owncloud/ocis/pull/5998)
+- Enhancement - Use reva client selectors to improve performance and scalability: [#6452](https://github.com/owncloud/ocis/pull/6452)
+- Enhancement - Allow disabling wopi chat to disable the inline chat in ONly Office: [#6544](https://github.com/owncloud/ocis/pull/6544)
+- Enhancement - Download a whole Space as Archive: [#9056](https://github.com/owncloud/web/issues/9056)
+- Enhancement - We've implemented a new solution to deal with long breadcrumbs even with long folder names: [#8984](https://github.com/owncloud/web/pull/8984)
+- Enhancement - Respect archiver limits. The archiver service announces a limit for the accumulated filesize of the currently selected resources. The web UI now respects those limits and shows a disabled download button once the limit has been reached. [#9055](https://github.com/owncloud/web/pull/9055)
+- Enhancement - Privacy statement in account menu. We've added the option to add an imprint and privacy statement via the config:
+ [#9174](https://github.com/owncloud/web/issues/9174)
+- Enhancement - Allow local storage for auth token. We've introduced a new env var `WEB_OPTION_TOKEN_STORAGE_LOCAL``, when set to true(default), the auth token will be stored in the browser's local storage instead the session storage, this will effect in a persisted login state across multiple browser tabs. [#9386](https://github.com/owncloud/web/pull/9386)
+- Enhancement - Add login button to top bar. We've added a login button to the top bar, this might be handy if a user receives a public link, and they want to login with their user account. [#9178](https://github.com/owncloud/web/pull/9178)
+- Enhancement - Add pagination options to admin settings: [#9199](https://github.com/owncloud/web/pull/9199)
+- Enhancement - Add batch actions to search result list: [#9200](https://github.com/owncloud/web/pull/9200)
 
 === Known Issues
 
 === Migrations
-
+- The space index of the decomposedFS will be migrated from symlinks to messagepack. This is an auto migration. Ocis should not be restarted during that time. We always need a snapshot before upgrading.
+- If you use a customized theme you need to add 3 new color tokens to the theme.json: `swatch-passive-hover-outline``, `swatch-primary-muted-hover` and `swatch-primary-gradient-hover`. These colors ensure, that the primary and outlined buttons (eg. "Upload" and "New") have a proper hover state.
 
 === Breaking Changes
-- Usage of Web UI and ownCloud 10 as backend is not recommended starting with version 7.1.0. of the Web UI. If you want to use the Web UI with ownCloud 10, please use version 7.0.2 where we'll fix critical bugs upon request.  
+- Usage of Web UI and ownCloud 10 as backend is not recommended starting with version 7.1.0. of the Web UI. If you want to use the Web UI with ownCloud 10, please use version 7.0.2 . Critical bugs can be fixed upon request. 
 
 //==============================================================================================================================
 == Infinite Scale 3.0.0
