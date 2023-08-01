@@ -78,6 +78,10 @@ New occ commands have been added to handle the trusted servers for federation fr
 
 When the "share_folder" config.php option was set, guest users could not longer see their received shares. We now skip the "share_folder" config.php option for guest users and default to root. https://github.com/owncloud/core/pull/40864[#40864]
 
+=== Apply same restrictions for all the shares
+
+Remote shares will have the same restrictions as user and group shares. This means that, in order for a remote user to show up as sharee, the search term length must be greater than the minimum configured otherwise only exact matches will be shown. https://github.com/owncloud/core/pull/40885[#40885]
+
 === Bump Files App Version
 
 Files app version was not properly increased when the "OCA\Files\BackgroundJob\CleanupPersistentFileLock" and "OCA\Files\BackgroundJob\PreviewCleanupJob" background jobs were originally added. As a result, those two jobs were not correctly inserted into the "oc_jobs" table upon a core upgrade. First time installations are not affected as their jobs are correctly added. https://github.com/owncloud/core/pull/40878[#40878]
@@ -102,6 +106,10 @@ Online updater is not recommended for Enterprise installations and is now automa
 
 The versions expire job does not report errors anymore with federated shares when versioning metadata is enabled. https://github.com/owncloud/core/pull/40847[#40847]
 
+=== Rely on server to sort the user list
+
+Previously, the user list was sorted in the browser. This was causing confusion because the sorting happened without taking into account all the items, so there were some weird effects. There is no sorting in the browser now. The server is expected to return the list of users already sorted, so the browser just needs to show the list. https://github.com/owncloud/core/pull/40840[#40840]
+
 
 === Notable Changes
 
@@ -114,7 +122,8 @@ The versions expire job does not report errors anymore with federated shares whe
 * Verbose command output of "background:queue:execute" is now displayed. https://github.com/owncloud/core/pull/40844[#40844]
 * There have been rare cases where deleting a file from a Google Drive mount could have thrown an undefined variable error. Since the process completed without further issues, no errors should have been thrown. This fix initializes the variables for these cases properly, making the error go away. https://github.com/owncloud/core/pull/40822[#40822]
 * Some occ commands could have returned an invalid exit status when executed. This has been corrected and occ commands will now always return an integer exit status. Zero (0) is success, any other value indicates a problem. https://github.com/owncloud/core/pull/40793[#40793]
-
+* Do not correct parent folders if the target isn't fully scanned. https://github.com/owncloud/core/pull/40730[#40730]
+* Extend height of the sharing dialog. https://github.com/owncloud/core/issues/40872[#40872]
 
 === Updated App Versions
 
