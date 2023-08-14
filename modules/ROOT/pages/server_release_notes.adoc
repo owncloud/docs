@@ -74,6 +74,10 @@ After an update of the guzzle library in previous core versions, it was no longe
 
 New occ commands have been added to handle the trusted servers for federation from the command line. These commands will allow the admin to add, list and remove trusted servers. https://github.com/owncloud/core/pull/40796[#40796]
 
+=== Implement App Registry
+
+By using a new option "Open in.." in the iOS (version 12.0.3+) or Desktop client (version 4.0+) it is now possible to directly open a file in the Office Suite being installed on the ownCloud server. https://github.com/owncloud/core/pull/40843[#40843]    
+
 === Skip share_folder for Guest Users
 
 When the "share_folder" config.php option was set, guest users could not longer see their received shares. We now skip the "share_folder" config.php option for guest users and default to root. https://github.com/owncloud/core/pull/40864[#40864]
@@ -81,6 +85,10 @@ When the "share_folder" config.php option was set, guest users could not longer 
 === Apply same restrictions for all the shares
 
 Remote shares will have the same restrictions as user and group shares. This means that, in order for a remote user to show up as sharee, the search term length must be greater than the minimum configured otherwise only exact matches will be shown. https://github.com/owncloud/core/pull/40885[#40885]
+
+=== Clean up storage and database after failed files uploads
+
+Storage and database are now cleaned up of any remaining items in case a files upload fails. https://github.com/owncloud/core/pull/40892[#40892]
 
 === Bump Files App Version
 
@@ -106,10 +114,21 @@ Online updater is not recommended for Enterprise installations and is now automa
 
 The versions expire job does not report errors anymore with federated shares when versioning metadata is enabled. https://github.com/owncloud/core/pull/40847[#40847]
 
+=== Display and delete invalid background jobs
+
+Background jobs can be no longer valid because they are from an old version of an app, or from an app that has been disabled. These jobs can now be listed with the command "occ background:queue:status --display-invalid-jobs" and can be deleted with the command "occ background:queue:delete <Job ID>". https://github.com/owncloud/core/pull/40846[#40846]
+
 === Rely on server to sort the user list
 
 Previously, the user list was sorted in the browser. This was causing confusion because the sorting happened without taking into account all the items, so there were some weird effects. There is no sorting in the browser now. The server is expected to return the list of users already sorted, so the browser just needs to show the list. https://github.com/owncloud/core/pull/40840[#40840]
 
+=== Remove the "add group" button from the dropdowns in the users page
+
+The "add group" button has been removed from the dropdowns because the behavior was confusing. You can still create new groups in the users page by using the "add group" button in the top left corner of the users page. The dropdowns will only select existing groups, but they won't add new groups. https://github.com/owncloud/core/pull/40770[#40770]
+
+=== Require firebase/php-jwt in core
+
+firebase/php-jwt version 6 is now part of core and all apps can rely on it. https://github.com/owncloud/core/pull/40901[#40901]
 
 === Notable Changes
 
@@ -124,6 +143,8 @@ Previously, the user list was sorted in the browser. This was causing confusion 
 * Some occ commands could have returned an invalid exit status when executed. This has been corrected and occ commands will now always return an integer exit status. Zero (0) is success, any other value indicates a problem. https://github.com/owncloud/core/pull/40793[#40793]
 * Do not correct parent folders if the target isn't fully scanned. https://github.com/owncloud/core/pull/40730[#40730]
 * Extend height of the sharing dialog. https://github.com/owncloud/core/issues/40872[#40872]
+* Trying to connect an external WebDAV storage to a non-WebDAV server will now fail when trying to initiate the first connection. This prevents connecting to an invalid server, and thus prevents problems for users. https://github.com/owncloud/core/pull/40861[#40861]
+* We have added an if-statement in the ShareesController code of the files_sharing app that searches for remote sharees. When the "sciencemesh" app is installed, it will be used instead of the federatedfilesharing app to find sharee matches for OCM sharing. https://github.com/owncloud/core/pull/40886[#40886]
 
 === Updated App Versions
 
