@@ -56,7 +56,7 @@ User key encryption has been already deprecated in core versions later than 10.7
 
 === User Key Encryption Is No Longer Auto-Enabled
 
-Executing the "encryption:encrypt-all" occ command will no longer auto-enable user key encryption. https://github.com/owncloud/core/pull/40702[#40702]
+Executing the `encryption:encrypt-all` occ command will no longer auto-enable user key encryption. https://github.com/owncloud/core/pull/40702[#40702]
 
 === Added occ command to remove obsolete storages
 
@@ -76,11 +76,11 @@ New occ commands have been added to handle the trusted servers for federation fr
 
 === Implement App Registry
 
-By using a new option "Open in.." in the iOS (version 12.0.3+) or Desktop client (version 4.0+) it is now possible to directly open a file in the Office Suite being installed on the ownCloud server. https://github.com/owncloud/core/pull/40843[#40843]    
+By using a new option `Open in..` in the iOS (version 12.0.3+) or Desktop client (version 4.0+) it is now possible to directly open a file in the Office Suite being installed on the ownCloud server. https://github.com/owncloud/core/pull/40843[#40843]    
 
-=== Skip share_folder for Guest Users
+=== Skip `share_folder` for Guest Users
 
-When the "share_folder" config.php option was set, guest users could not longer see their received shares. We now skip the "share_folder" config.php option for guest users and default to root. https://github.com/owncloud/core/pull/40864[#40864]
+When the `share_folder` config.php option was set, guest users could not longer see their received shares. We now skip the `share_folder` config.php option for guest users and default to root. https://github.com/owncloud/core/pull/40864[#40864]
 
 === Apply same restrictions for all the shares
 
@@ -92,7 +92,7 @@ Storage and database are now cleaned up of any remaining items in case a files u
 
 === Bump Files App Version
 
-Files app version was not properly increased when the "OCA\Files\BackgroundJob\CleanupPersistentFileLock" and "OCA\Files\BackgroundJob\PreviewCleanupJob" background jobs were originally added. As a result, those two jobs were not correctly inserted into the "oc_jobs" table upon a core upgrade. First time installations are not affected as their jobs are correctly added. https://github.com/owncloud/core/pull/40878[#40878]
+Files app version was not properly increased when the `OCA\Files\BackgroundJob\CleanupPersistentFileLock` and `OCA\Files\BackgroundJob\PreviewCleanupJob` background jobs were originally added. As a result, those two jobs were not correctly inserted into the `oc_jobs` table upon a core upgrade. First time installations are not affected as their jobs are correctly added. https://github.com/owncloud/core/pull/40878[#40878]
 
 === Explicitly Set Open Mode in the Checksum Wrapper
 
@@ -100,7 +100,7 @@ Uploading files to some external storages via the desktop client was causing iss
 
 === Align to New accounts.google.com Authorization URI
 
-Core 10.12.1 brought an update of the google/apiclient from version 2.12.6 to 2.13.1. However, in version 2.13.0 the accounts.google.com authorization URI has been updated. This change broke old code that uses the "setApprovalPrompt('force')" instead of the newer "setPrompt('consent')" method, as this endpoint does not support the legacy approval prompt parameter. This has been now fixed. https://github.com/owncloud/core/pull/40783[#40783]
+Core 10.12.1 brought an update of the google/apiclient from version 2.12.6 to 2.13.1. However, in version 2.13.0 the accounts.google.com authorization URI has been updated. This change broke old code that uses the `setApprovalPrompt('force')` instead of the newer `setPrompt('consent')` method, as this endpoint does not support the legacy approval prompt parameter. This has been now fixed. https://github.com/owncloud/core/pull/40783[#40783]
 
 === Fix for Query Unnecessarily Deleting Thumbnails
 
@@ -116,35 +116,41 @@ The versions expire job does not report errors anymore with federated shares whe
 
 === Display and delete invalid background jobs
 
-Background jobs can be no longer valid because they are from an old version of an app, or from an app that has been disabled. These jobs can now be listed with the command "occ background:queue:status --display-invalid-jobs" and can be deleted with the command "occ background:queue:delete <Job ID>". https://github.com/owncloud/core/pull/40846[#40846]
+Background jobs can be no longer valid because they are from an old version of an app, or from an app that has been disabled. These jobs can now be listed with the command `occ background:queue:status --display-invalid-jobs` and can be deleted with the command `occ background:queue:delete <Job ID>`. https://github.com/owncloud/core/pull/40846[#40846]
 
 === Rely on server to sort the user list
 
 Previously, the user list was sorted in the browser. This was causing confusion because the sorting happened without taking into account all the items, so there were some weird effects. There is no sorting in the browser now. The server is expected to return the list of users already sorted, so the browser just needs to show the list. https://github.com/owncloud/core/pull/40840[#40840]
 
-=== Remove the "add group" button from the dropdowns in the users page
+=== Remove the `add group` button from the dropdowns in the users page
 
-The "add group" button has been removed from the dropdowns because the behavior was confusing. You can still create new groups in the users page by using the "add group" button in the top left corner of the users page. The dropdowns will only select existing groups, but they won't add new groups. https://github.com/owncloud/core/pull/40770[#40770]
+The `add group` button has been removed from the dropdowns because the behavior was confusing. You can still create new groups in the users page by using the `add group` button in the top left corner of the users page. The dropdowns will only select existing groups, but they won't add new groups. https://github.com/owncloud/core/pull/40770[#40770]
 
 === Require firebase/php-jwt in core
 
 firebase/php-jwt version 6 is now part of core and all apps can rely on it. https://github.com/owncloud/core/pull/40901[#40901]
 
+=== New Default Minimum Supported Desktop Client Version
+
+To ensure clean and reliable operation of the ownCloud platform it is important to stay up-to-date with the latest releases of the server as well as the clients. To take care of compatibility between the server and desktop clients, the minimum version the server will accept connections from has been raised to version `3.2.1`.
+
+While it’s recommended to keep up with later versions, this is the new default value. https://github.com/owncloud/core/pull/40876[#40876]
+
 === Notable Changes
 
-* Setup checks now allow values other than "none" for X-Robots-Tag header. If "none" or "noindex" and "nofollow" are missing, a security warning is raised. Previously a header value with "noindex" and "nofollow" wasn't allowed even though it was valid. https://github.com/owncloud/core/pull/40715[#40715]
-* The Last Login column on the Users page is now correctly hidden if the setting is initially unchecked. https://github.com/owncloud/core/pull/40771[#40771]
+* Setup checks now allow values other than `none` for X-Robots-Tag header. If `none` or `noindex` and `nofollow` are missing, a security warning is raised. Previously a header value with `noindex` and `nofollow` wasn't allowed even though it was valid. https://github.com/owncloud/core/pull/40715[#40715]
+* The `Last Login` column on the Users page is now correctly hidden if the setting is initially unchecked. https://github.com/owncloud/core/pull/40771[#40771]
 * User input is validated now in UserController. https://github.com/owncloud/core/pull/40769[#40769]
 * A system tag with a too long name resulted in potentially inaccessible data. https://github.com/owncloud/core/pull/40804[#40804]
 * A federated share with a too long name resulted in inaccessible data. https://github.com/owncloud/core/pull/40726[#40726]
 * Due to Apache rewrite rules originally not existing headers could hold an empty string. https://github.com/owncloud/core/pull/40856[#40856]
-* Verbose command output of "background:queue:execute" is now displayed. https://github.com/owncloud/core/pull/40844[#40844]
+* Verbose command output of `background:queue:execute` is now displayed. https://github.com/owncloud/core/pull/40844[#40844]
 * There have been rare cases where deleting a file from a Google Drive mount could have thrown an undefined variable error. Since the process completed without further issues, no errors should have been thrown. This fix initializes the variables for these cases properly, making the error go away. https://github.com/owncloud/core/pull/40822[#40822]
 * Some occ commands could have returned an invalid exit status when executed. This has been corrected and occ commands will now always return an integer exit status. Zero (0) is success, any other value indicates a problem. https://github.com/owncloud/core/pull/40793[#40793]
 * Do not correct parent folders if the target isn't fully scanned. https://github.com/owncloud/core/pull/40730[#40730]
-* Extend height of the sharing dialog. https://github.com/owncloud/core/issues/40872[#40872]
 * Trying to connect an external WebDAV storage to a non-WebDAV server will now fail when trying to initiate the first connection. This prevents connecting to an invalid server, and thus prevents problems for users. https://github.com/owncloud/core/pull/40861[#40861]
-* We have added an if-statement in the ShareesController code of the files_sharing app that searches for remote sharees. When the "sciencemesh" app is installed, it will be used instead of the federatedfilesharing app to find sharee matches for OCM sharing. https://github.com/owncloud/core/pull/40886[#40886]
+* We have added an `if-statement` in the ShareesController code of the files_sharing app that searches for remote sharees. When the `sciencemesh` app is installed, it will be used instead of the federatedfilesharing app to find sharee matches for OCM sharing. https://github.com/owncloud/core/pull/40886[#40886]
+* Changed the share dropdown to expand to the page bottom if there are more entries. https://github.com/owncloud/core/pull/40873[#40873]
 
 === Updated App Versions
 
