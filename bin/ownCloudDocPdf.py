@@ -4,17 +4,20 @@ import requests
 import subprocess
 from urllib.parse import urljoin
 import sys
+import tempfile
+import shutil
 
-# Default URL
-default_url = "https://doc.owncloud.com/webui/next/classic_ui/"
+# Check if any argument is passed, if not print usage and exit
+if len(sys.argv) < 2:
+    print("Usage: python script_name.py <URL>")
+    print("Example: python script_name.py https://doc.owncloud.com/webui/next/classic_ui/")
+    sys.exit()
 
-# Check if any argument is passed, if not use default URL
-url = sys.argv[1] if len(sys.argv) > 1 else default_url
+url = sys.argv[1]
 urls = []
 
-# Creating a temporary subdirectory in the /tmp folder
-temp_directory = "/tmp/tmp/"
-os.makedirs(temp_directory, exist_ok=True)
+# Creating a temporary directory
+temp_directory = tempfile.mkdtemp()
 
 while url:
     response = requests.get(url)
@@ -49,6 +52,5 @@ while os.path.exists(output_pdf):  # check if file already exists
 
 subprocess.run(["pdftk", *pdf_files, "cat", "output", output_pdf])
 
-# Optionally, remove individual PDF files after merging
-for pdf_file in pdf_files:
-    os.remove(pdf_file)
+# Optionally, remove individual PDF files and the temporary directory after merging
+shutil.rmtree(temp_directory)
