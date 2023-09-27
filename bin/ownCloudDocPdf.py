@@ -9,8 +9,8 @@ import shutil
 
 # Check if any argument is passed, if not print usage and exit
 if len(sys.argv) < 2:
-    print("Usage: python script_name.py <URL>")
-    print("Example: python script_name.py https://doc.owncloud.com/webui/next/classic_ui/")
+    print(f"Usage: python {sys.argv[0]} <URL>")
+    print(f"Example: python {sys.argv[0]} https://doc.owncloud.com/webui/next/classic_ui/")
     sys.exit()
 
 url = sys.argv[1]
@@ -50,6 +50,7 @@ while os.path.exists(output_pdf):  # check if file already exists
     output_pdf = f"output({counter}).pdf"
     counter += 1
 
+print(f"Writing {output_pdf} ...")
 subprocess.run(["pdftk", *pdf_files, "cat", "output", output_pdf])
 
 # Optionally, remove individual PDF files and the temporary directory after merging
