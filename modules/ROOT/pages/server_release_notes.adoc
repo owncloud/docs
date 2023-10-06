@@ -48,10 +48,6 @@
 
 Dear ownCloud administrator, find below the changes and known issues in ownCloud Server 10.13.2 that need your attention. You can also read the {oc-changelog-url}[full ownCloud Server changelog] for further details on what has changed.
 
-=== Improve Query to Clean up the Previews ===
-
-The database query used to identify the previews that need cleaning up has been enhanced for optimal performance. As a result, the background job responsible for this task will have significant performance improvements. https://github.com/owncloud/core/pull/40974[#40974]
-
 === Fix View on Users Page for Subadmins ===
 
 Previously, subadmins couldn't read app config values. This caused problems in the users page because some of the functionalities were depending on the config values that subadmins couldn't read. These problems are now solved. https://github.com/owncloud/core/pull/40961[#40961]
@@ -68,9 +64,29 @@ The legacy "OC\Repair\FillETags" repair step, executed during upgrades, had prol
 
 We removed the regular expression related to HEIC and HEIF files from the preview manager list as this was preventing the files_mediaviewer app from correctly interpreting these mime types. The app is now able to open such files. https://github.com/owncloud/core/pull/40990[#40990]
 
+=== Prevent mounting of shares with failed underlying storages ===
+
+Some mounts use a shared storage which is pointing to a different storage. In case the underlying storage was removed (removal of the external mount from the web UI), the share mount was still being present as if the underlying storage could still be accessed. This was causing problems with the "files:remove-storage --show-candidates" occ command because the removed storage wasn't shown as possible candidate. Now that shared storage won't be mounted and the underlying storage will be detected as a candidate to be removed with the mentioned command. https://github.com/owncloud/core/pull/41014[#41014]
+
 === Check if Account Creation Time Exists for Migrations ===
 
 In some rare scenarios it could have happened that the migration responsible for adding the creation time in the oc_accounts table was not correctly inserted into the oc_migrations one with the consequence that it was reattempted i.e. when upgrading apps, even if the column was already present. This has been fixed. https://github.com/owncloud/core/pull/40991[#40991]
+
+=== Solved Known Issues
+
+All xref:server_release_notes.adoc#known-issues-10-13-1[known issues] in Server 10.13.1 have been fixed:
+
+* The database query used to identify the previews that need cleaning up has been enhanced for optimal performance. As a result, the background job responsible for this task will have significant performance improvements. https://github.com/owncloud/core/pull/40974[#40974]
+
+=== Updated App Versions
+
+Find below a list of updated apps in comparison with the 10.13.1 complete bundle. More information on the changes can be found in the respective changelogs on ownCloud Marketplace.
+
+* https://marketplace.owncloud.com/apps/wopi [Microsoft Office Online]: 1.8.1
+
+=== Known Issues
+
+Currently there are no known issues with ownCloud Server 10.13.2. This section will be updated if issues are discovered. 
 
 == Changes in 10.13.1
 
@@ -97,6 +113,7 @@ Find below a list of updated apps in comparison with the 10.13.0 complete bundle
 * {oc-marketplace-url}/apps/guests [Guests]: 0.12.3
 * {oc-marketplace-url}/apps/oauth2 [OAuth2]: v0.6.1
 
+[#known-issues-10-13-1]
 === Known Issues
 
 * Two cron jobs related to cleaning up left over thumbnails were not properly enabled in the past (`PreviewCleanupJob`). In 10.13.0 the code was fixed, and the jobs started running. However, in certain cases with an exceptionally high number of potential cleanups, these jobs can now take up a substantial amount of database resources. We propose to temporarily disable the offending job until we have a fix.
