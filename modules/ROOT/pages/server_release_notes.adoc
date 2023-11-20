@@ -49,15 +49,15 @@
 
 Dear ownCloud administrator, find below the changes and known issues in ownCloud Server 10.13.3 that need your attention. You can also read the {oc-changelog-url}[full ownCloud Server changelog] for further details on what has changed.
 
-=== Fix Potential Issue with the PreviewCleanup Job in PostgreSQL
+=== Fix Potential Issue with the Preview Cleanup Job in PostgreSQL
 
-One of the filters of the preview cleanup job requires casting a filename, which is supposed to contain only digits, to an integer. The expected execution of the DB query should filter the results so the condition above should be true, but the DB's query planner might choose to apply the filters in a different way, so we could potentially cast random strings to integer. For the case of PostgreSQL, the cast function will cause an error if the string can't be cast to an integer (because it has non-digit chars, for example). This situation is fixed for all the supported DBs, so we don't require the query planner to execute the query in any particular way. https://github.com/owncloud/core/pull/41051[#41051]
+One of the filters of the preview cleanup job requires casting a filename, which is supposed to contain only digits, to an integer. The expected execution of the DB query should filter the results so the condition above should be true, but the DB's query planner might choose to apply the filters in a different way, so we could potentially cast random strings to integer. In the case of PostgreSQL, the cast function will cause an error if the string can't be cast to an integer (because it has non-digit chars, for example). This situation is fixed for all the supported DBs, so we don't require the query planner to execute the query in any particular way. https://github.com/owncloud/core/pull/41051[#41051]
 
 === Revert [#41014] for Performance
 
 The https://github.com/owncloud/core/pull/41014[#41014] PR introduced performance problems for large installations. We are therefore reverting that change. https://github.com/owncloud/core/pull/41059[#41059]
 
-=== Users Can Only Delete their own External Storage Configurations
+=== Users Can Only Delete Their Own External Storage Configurations
 
 Ensure that users can only delete their own external storage configurations. https://github.com/owncloud/core/pull/41092[#41092]
 
