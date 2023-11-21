@@ -4,6 +4,7 @@
 :page-aliases: {latest-server-version}@server:admin_manual:whats_new_admin.adoc, \
 {latest-server-version}@server:ROOT:server_release_notes.adoc
 
+* xref:changes-in-10-13-3[Changes in 10.13.3]
 * xref:changes-in-10-13-2[Changes in 10.13.2]
 * xref:changes-in-10-13-1[Changes in 10.13.1]
 * xref:changes-in-10-13-0[Changes in 10.13.0]
@@ -43,6 +44,41 @@
 * xref:changes-in-8-1[Changes in 8.1]
 * xref:changes-in-8-0[Changes in 8.0]
 * xref:changes-in-7-0[Changes in 7.0]
+
+== Changes in 10.13.3
+
+Dear ownCloud administrator, find below the changes and known issues in ownCloud Server 10.13.3 that need your attention. You can also read the {oc-changelog-url}[full ownCloud Server changelog] for further details on what has changed.
+
+=== Fix Potential Issue with the Preview Cleanup Job in PostgreSQL
+
+One of the filters of the preview cleanup job requires casting a filename, which is supposed to contain only digits, to an integer. The expected execution of the DB query should filter the results so the condition above should be true, but the DB's query planner might choose to apply the filters in a different way, so we could potentially cast random strings to integer. In the case of PostgreSQL, the cast function will cause an error if the string can't be cast to an integer (because it has non-digit chars, for example). This situation is fixed for all the supported DBs, so we don't require the query planner to execute the query in any particular way. https://github.com/owncloud/core/pull/41051[#41051]
+
+=== Revert [#41014] for Performance
+
+The https://github.com/owncloud/core/pull/41014[#41014] PR introduced performance problems for large installations. We are therefore reverting that change. https://github.com/owncloud/core/pull/41059[#41059]
+
+=== Users Can Only Delete Their Own External Storage Configurations
+
+Ensure that users can only delete their own external storage configurations. https://github.com/owncloud/core/pull/41092[#41092]
+
+=== Update config.apps.sample.php
+
+Comments describing the configuration variables related to the Kerberos and Windows Network Drive app are now updated and in sync with published online documentation. https://github.com/owncloud/core/pull/41109[#41109]
+
+=== Updated App Versions
+
+Find below a list of updated apps in comparison with the 10.13.2 complete bundle. More information on the changes can be found in the respective changelogs on ownCloud Marketplace.
+
+* {oc-marketplace-url}/apps/customgroups[Custom Groups]: 0.8.0
+* {oc-marketplace-url}/apps/kerberos[Kerberos Integration]: 1.0.1
+* {oc-marketplace-url}/apps/files_primary_s3[S3 Primary Object Storage]: 1.6.0
+* {oc-marketplace-url}/apps/files_texteditor[Text Editor]: 2.6.1
+* {oc-marketplace-url}/apps/password_policy[Password Policy]: 2.2.1
+* {oc-marketplace-url}/apps/windows_network_drive[External Storage: Windows Network Drives]: 2.3.2
+
+=== Known Issues
+
+Since we reverted https://github.com/owncloud/core/pull/41014[#41014], upon removing a mount point configuration from the web UI, the occ command `files:remove-storage` is currently not able to properly find the candidates to delete in case shares have been created for files/folders located on those mountpoints.
 
 == Changes in 10.13.2
 
