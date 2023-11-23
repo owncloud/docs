@@ -6,6 +6,19 @@
 2. The file format that the documentation is written in is [AsciiDoc](./docs/what-is-asciidoc.md).
 3. The <abbr title="User Interface">UI</abbr> & <abbr title="User Experience">UX</abbr> of the documentation can be found at [docs-ui](https://github.com/owncloud/docs-ui)
 
+**Table of Contents**
+
+* [Antora Site Structure for Docs](#antora-site-structure-for-docs)
+* [Documentation Guidelines](#documentation-guidelines)
+* [Contributing to the Documentation](#contributing-to-the-documentation)
+* [Generating the Documentation](#generating-the-documentation)
+* [Common Content and Styling the Documentation](#common-content-and-styling-the-documentation)
+* [Best Practices and Tips](#best-practices-and-tips)
+* [Target Branch and Backporting](#target-branch-and-backporting)
+* [When Does a Change Get Published to the Docs Web Site?](#when-does-a-change-get-published-to-the-docs-web-site)
+* [Create a New Version Branch for Docs](#create-a-new-version-branch-for-docs)
+* [HTML to PDF](#html-to-pdf)
+
 ## Antora Site Structure for Docs
 
 Refer to the [Antora Site Structure for Docs](./docs/antora-site-structure.md) for more information. 
@@ -22,7 +35,7 @@ With regard to language and style issues, consult the [Style Guide](./docs/style
 
 ## Generating the Documentation
 
-To generate the documentation, whether in HTML or PDF format, please refer to the [Building the Documentation guide](./docs/build-the-docs.md).
+To generate the documentation locally or planning major changes, refer to the [Building the Documentation guide](./docs/build-the-docs.md).
 
 ## Common Content and Styling the Documentation
 
@@ -51,11 +64,8 @@ extended code provided, because a clear naming structure of the backport PR is g
 
 Changes made will get published to the web under the following conditions:
 
-1. A nightly running drone job pulls the documentation from the Client, IOS and Android repo.
-This pull will also be used for any builds triggered by the scenarios outlined below. This means for changes made in one of these
-repos, a merge to master or one of the used branches in docs the next day is necessary to get them published.
-2. A merge to one of the defined version branches triggers as a last step a master branch build.
-3. A merge to master triggers a site build which then pushes all versions defined in site.yml.
+1. A merge in a component to one of the defined version branches triggers as a last step a master branch build.
+2. A merge to master triggers a site build which then pushes all versions defined in site.yml.
 
 ## Create a New Version Branch for Docs
 
