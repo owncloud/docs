@@ -35,7 +35,7 @@ With regard to language and style issues, consult the [Style Guide](./docs/style
 
 ## Generating the Documentation
 
-To generate the documentation locally or planning major changes, refer to the [Building the Documentation guide](./docs/build-the-docs.md).
+To generate and view the documentation locally or planning major changes, refer to the [Building the Documentation guide](./docs/build-the-docs.md).
 
 ## Common Content and Styling the Documentation
 
