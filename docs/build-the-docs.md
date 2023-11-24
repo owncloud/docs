@@ -17,7 +17,8 @@
 4. [Generating the Documentation](#generating-the-documentation)
 5. [Using the Docker Container](#using-the-docker-container)
 6. [Viewing The HTML Documentation](#viewing-the-html-documentation)
-7. [Generating PDF Documentation](#generating-pdf-documentation)
+<!-- 7. [Generating PDF Documentation](#generating-pdf-documentation) -->
+7. [Setting up an Antora Development Environment](#setting-up-an-antora-development-environment)
 8. [TIPS](#tips)
 
 ## Install the Prerequisites
@@ -41,8 +42,8 @@ You will see the path to each binary displayed, if it is installed. For any that
 
 ```
 /usr/bin/git
-/home/your_user/.nvm/versions/node/v14.17.0/bin/node
-/home/your_user/.nvm/versions/node/v14.17.0/bin/npm
+/home/<your-user>/.nvm/versions/node/v16.13.2/bin/node
+/home/<your-user>/.nvm/versions/node/v16.13.2/bin/npm
 /usr/bin/yarn
 /usr/bin/ruby
 ```
@@ -82,9 +83,11 @@ nvm ls-remote | grep "Latest LTS"
         v6.17.1   (Latest LTS: Boron)
         v8.17.0   (Latest LTS: Carbon)
        v10.24.1   (Latest LTS: Dubnium)
-       v12.22.9   (Latest LTS: Erbium)
-       v14.18.3   (Latest LTS: Fermium)
-       v16.13.2   (Latest LTS: Gallium)
+      v12.22.12   (Latest LTS: Erbium)
+       v14.21.3   (Latest LTS: Fermium)
+       v16.20.2   (Latest LTS: Gallium)
+       v18.18.2   (Latest LTS: Hydrogen)
+       v20.10.0   (Latest LTS: Iron)
 ```
 Then install a suitable LTS version. You can install as many versions as you like or need, see example below.
 
@@ -113,7 +116,7 @@ default -> 16.13.2 (-> v16.13.2)
 Switch to a specific installed version of Node at any time, use the following command:
 
 ```
-nvm use 14.18.3
+nvm use 16.13.2
 ```
 **Important:** If you have additional concurrent terminals open, you must close these terminals first and reopen them to use the new setup.
 
@@ -129,10 +132,16 @@ To [install yarn](https://yarnpkg.com/lang/en/docs/install) following the instal
 
 ## Install Build Dependencies
 
-Before you can build the documentation, you must install Antora's dependencies. To install them, you just need to run `yarn install` on the command line at the top level of the `docs` directory. This will install all the dependencies specified in `package.json`, which is located at the top level of the `docs` directory.
+Before you can build the documentation, you must install Antora's dependencies. To install them, you just need to run:
 
-It is recommended that you regularly run `yarn install` as from time to time packages are bumped to newer versions.
+```
+yarn install
+```
+on the command line at the top level of the `docs` directory. This will install all the dependencies specified in `package.json`, which is located at the top level of the `docs` directory.
 
+It is recommended that you **regularly** run `yarn install` as from time to time packages are bumped to newer versions.
+
+<!--
 To generate the documentation in PDF format locally, you need to have `asciidoctor-pdf`. To install or update `asciidoctor-pdf`, please refer to the [official installation instructions](https://asciidoctor.org/docs/asciidoctor-pdf/#getting-started) or by typing:
 
 ```
@@ -158,45 +167,51 @@ sudo apt-get install libgraphicsmagick1-dev
 sudo apt-get install ruby-dev
 sudo gem install prawn-gmagick
 ```
+-->
 
 With the dependencies installed, you are now ready to build (generate) the ownCloud documentation.
 
 ## Prepare Your Browser
 
-It is very helpful to see how changes to a section will render. Therefore you can install a plugin for your browser to render .adoc files. You may use the `Asciidoctor.js Live Preview` or any other that is available for your browser - just search and install a suitable one. Post installing, check that accessing local files in the plugin settings is allowed.
+It is very helpful to see how changes to a page will render without running a build - without including other data  images or attributes defined somewhere else, etc. Therefore you can install a plugin for your browser to render `.adoc` files. You may use the `Asciidoctor.js Live Preview` or any other that is available for your browser - just search and install a suitable one. Post installing, check that _accessing local files_ in the plugin settings is allowed.
 
-Note, that rendering in the browser will not properly resolve global variables declared in e.g. `site.yml` or references to other .adoc files. The result shown in the browser may therefore look slightly different to a version that is built via ` yarn antora-local`, but is a good start to catch first typos.  
+The result shown in the browser may look slightly different to a version that is built via ` yarn antora-local`, but is a good start to get an impression and to catch typos made.
 
 ## Prepared Yarn Commands
 
-To see all, prepared yarn commands run the following command:
+To see all prepared yarn commands, run the following command `yarn run`. This will ouptput all commands with their settings, though this makes readability not easy. See the [yarn documentation](https://yarnpkg.com/lang/en/docs/cli/run/) for more information.
 
-```
-yarn run
+Here is the list of commands and when to use them
 
-yarn run v1.22.5
-info Commands available from binary scripts: antora, blc, broken-link-checker, crc32, ecstatic, errno, esparse, esvalidate, handlebars, he, hs, http-server, isogit, js-yaml, json5, mime, mkdirp, nopt, opener, os-name, osx-release, printj, semver, sha.js, strip-ansi, supports-color, uglifyjs, write-good, writegood
-info Project commands
-   - antora
-      antora --stacktrace generate --cache-dir cache --redirect-facility disabled --generator ./generator/generate-site.js --clean --fetch --attribute format=html site.yml
-   - antora-local
-      antora --stacktrace generate --cache-dir cache --redirect-facility static --generator ./generator/generate-site.js --clean --fetch --attribute format=html --url http://localhost:8080 site.yml
-   - linkcheck
-      broken-link-checker --filter-level 3 --recursive --verbose
-   - serve
-      http-server public/ -d -i
-   - validate
-      antora --stacktrace generate --cache-dir cache --redirect-facility disabled --generator ./generator/xref-validator.js --clean --fetch --attribute format=html site.yml
-question Which command would you like to run?:
-```
-Please see the [documentation](https://yarnpkg.com/lang/en/docs/cli/run/)
-for more information about the the `yarn run` command.
+**For Production Environments**
 
-The difference when running `antora` versus `antora-local` is that the latter command already defines localhost as URL where the documentation is displayed. See also: [Overwrite the Default URL](#overwrite-the-default-url) below.
+The following build commands are used when regular content changes are made or small fixes to the UI are incorporated:
+
+* `yarn antora`  
+Used when you want to build the documentation where internal links have as base `doc.owncloud.com`. The  documentation is built for the live environment. Clicking on particular links will then direct to the docs homepage. Use only when you want to check these links or have the CI use them when building. 
+
+* `yarn antora-local`  
+**This is the command which you will use the most.** It is used when you want to build the documentation locally where internal links have as base `http://localhost:8080`. The  documentation is fully sourced locally. Ideal for checking with `yarn serve` after content has been updated or added.
+
+* `yarn antora-staging`  
+Used when you want to build the documentation where internal links have as base `doc.staging.owncloud.com`. The  documentation is built for the staging environment. Note that you manually have to move the content created in `/public` to the staging web page to access it. Note that you can also view locally with `yarn serve` which is ideal as first preview step.
+
+* `yarn antora-bundle`  
+Used when you want to build the documentation where internal links have as base `doc.staging.owncloud.com`. Compared to `antora-staging`, this uses a locally built `ui-bundle`. This build command should be used when you want to test a changed UI before rolling it out.
+
+**For Development Environments**
+
+The following build commands are used when bigger refactoring, changes or major upgrades including the UI are made:
+
+* `yarn antora-dev-local`  
+Used when you want to build the documentation where internal links have as base `http://localhost:8080`. Compared to `antora-staging`, it uses a different site.yml file named `site-dev.yml` which sources manuals not from GitHub but locally.
+
+* `yarn antora-dev-bundle`  
+Used when you want to build the documentation where internal links have as base `http://localhost:8080`. Compared to `antora-dev-local`, it uses a different site.yml file `site-dev.yml` which sources manuals not from GitHub but locally and uses a locally built `ui-bundle`.
 
 ## Generating the Documentation
 
-The documentation can be generated in HTML and PDF formats.
+The documentation can be generated in HTML format. <!-- and PDF formats -->
 
 ### Generating HTML Documentation
 
@@ -204,7 +219,6 @@ There are two ways to generate the documentation in HTML format:
 
 - Running Antora from the Command-Line
 - Using ownCloud's custom Antora Docker Container
-
 
 #### Using Antora from the Command-Line
 
@@ -230,13 +244,13 @@ To build the documentation using the Docker container, from the command line, in
 docker run -ti --rm \
     -v $(pwd):/antora/ \
     -w /antora/ \
-    owncloudci/nodejs:14 \
+    owncloudci/nodejs:16 \
     yarn install
 
 docker run -ti --rm \
     -v $(pwd):/antora/ \
     -w /antora/ \
-    owncloudci/nodejs:14 \
+    owncloudci/nodejs:16 \
     yarn antora
 ```
 
@@ -246,7 +260,7 @@ If you want to serve your changes locally you have to overwrite the default URL,
 docker run -ti --rm \
     -v $(pwd):/antora/ \
     -w /antora/ \
-    owncloudci/nodejs:14 \
+    owncloudci/nodejs:16 \
     yarn antora --url http://localhost:8080
 ```
 
@@ -256,25 +270,7 @@ These commands:
 - Run Antora's `generate` command, which regenerates the documentation
 - You can add the `--fetch` option to update the dependent repositories, or any other available flag.
 
-If all goes well, you will _not_ see any console output. If a copy of the container doesn't exist locally, you can pull down a copy, by running `docker pull owncloudci/nodejs:14`. Otherwise, you should see output similar to the following:
-
-```console
-Unable to find image 'owncloudci/nodejs:14' locally
-14: Pulling from owncloudci/nodejs
-3b37166ec614: Already exists
-504facff238f: Already exists
-ebbcacd28e10: Already exists
-c7fb3351ecad: Already exists
-2e3debadcbf7: Already exists
-a5aa5acbbb21: Already exists
-fec54bf92721: Already exists
-37568f2dfa71: Pull complete
-cec1230fab6b: Pull complete
-08e882bea23f: Pull complete
-78bc608ac308: Pull complete
-Digest: sha256:d7706c693242c65b36b3205a52483d8aa567d09a1465707795d9273c0a99c0c2
-Status: Downloaded newer image for owncloudci/nodejs:14
-```
+If all goes well, you will _not_ see any console output. If a copy of the container doesn't exist locally, you can pull down a copy, by running `docker pull owncloudci/nodejs:16`.
 
 ## Viewing the HTML Documentation
 
@@ -296,6 +292,7 @@ If you're happy with your changes, create a set of meaningful commits and push t
 
 We hope that you can see that contributing to the documentation using Antora is a pretty straight-forward process, and not _that_ demanding.
 
+<!--
 ## Generating PDF Documentation
 
 Run the command below in the top-level directory of the repository to generate PDF versions of the _administration_, _developer_ and _user_ manuals.
@@ -304,7 +301,6 @@ Run the command below in the top-level directory of the repository to generate P
 ./bin/makepdf -m
 Generating version 'master' of the admin manual, dated: March 12, 2021
 Generating version 'master' of the developer manual, dated: March 12, 2021
-Generating version 'master' of the user manual, dated: March 12, 2021
 ```
 
 `./bin/makepdf` invokes [asciidoctor-pdf](https://github.com/asciidoctor/asciidoctor-pdf) and passes:
@@ -325,6 +321,8 @@ Generating version 'master' of the user manual, dated: March 12, 2021
 
 See the link for more in depth technical and background information about [makepdf][link-makepdf].
 
+-->
+
 ### Viewing Build Errors
 
 If an aspect of your change contains invalid AsciiDoc, then you'll see output similar to the example below.
@@ -338,6 +336,41 @@ There, you can see:
 - That an error was found
 - The file it was found in
 - The line of that file where it is located
+
+## Setting up an Antora Development Environment
+
+Setting up an Antora development environment can be necessary when doing tasks outside of classical content addition or updating. It is essential when starting a refactoring, UI changes or implementing new functionalities.
+
+Note that all doc repositories must be local on the same filesystem level. Use any path that fits your needs like:
+
+```
+/dev/docs
+/dev/docs-ocis
+/dev/docs-client-desktop
+...
+```
+
+There are some important steps when starting such a task. The following steps have to be done for the doc repo you are testing. Note that only the `site.yml` file of the respective repo is used for building the respective component. Other site.yml files are not used in the build process, though they may exist for testing purposes.
+
+* Make a branch in the respective doc repos where you will do the changes necessary and check the output.  
+**Do not** create pull requests before you are sure a build returns the correct results.
+
+* If there are more repos affected by the changes intended, you need to select the one repo for building, that includes all repos (components) that will be changed. That repo is the source for the next step.  
+
+* Run `bin/prepare_site_yml` in the repo you are developing on or the one that includes all required repos to get a `site-dev.yml`.  
+This file **will not** get published and will always stay local. It is a mirror of the current `site.yml` but the URLs formerly pointing to GitHub and the respective repos will get changed to fetch the content locally.
+
+* Before you start changing, run `yarn install` to have the dependencies updated.
+ 
+* Depending on what you are developing on, either run: `yarn antora-dev-local` or `yarn antora-dev-bundle` from the repo you have created `site-dev.yml`.
+
+* Finally, run `yarn serve` to see the result of the build.
+
+* If the changes are fine, create a PR from the respective branches and continue as usual.
+
+* If the changes need to be dropped, run `yarn install` from the master branch in the repos with changes again to revert any dependencies that may have changed.
+
+Note that you may need changes and testing in more than one component like `docs` or `docs-ocis` to get a correct final result.
 
 ## TIPS
 
@@ -360,7 +393,7 @@ Overwriting the default URL to local is especially helpful if you also want to c
 It is very beneficial to use command-line attributes when searching and fixing attribute errors. This can be necessary when you get warnings like: `WARNING: skipping reference to missing attribute: <attribute-name>`.
 
 - First, you may want to check if the attribute name is used as an attribute at all. Run at the top level of the docs repo:
-`grep -rn --exclude-dir={public,.git,node_modules} \{attribute-name`\
+`grep -rn --exclude-dir={public,.git,node_modules} \{attribute-name}`\
 If found, check if the attribute definition is made or passed or needs exclusion. 
 - If no result is found, it may be the case that the error-causing attribute is not in the master
 branch but in another one. This can be identified by adding a custom attribute to the yarn antora command like:\
