@@ -173,7 +173,7 @@ With the dependencies installed, you are now ready to build (generate) the ownCl
 
 ## Prepare Your Browser
 
-It is very helpful to see how changes to a page will render without running a build - without inlcuding other data  images or attributes defined somewhere else etc. Therefore you can install a plugin for your browser to render `.adoc` files. You may use the `Asciidoctor.js Live Preview` or any other that is available for your browser - just search and install a suitable one. Post installing, check that _accessing local files_ in the plugin settings is allowed.
+It is very helpful to see how changes to a page will render without running a build - without including other data  images or attributes defined somewhere else, etc. Therefore you can install a plugin for your browser to render `.adoc` files. You may use the `Asciidoctor.js Live Preview` or any other that is available for your browser - just search and install a suitable one. Post installing, check that _accessing local files_ in the plugin settings is allowed.
 
 The result shown in the browser may look slightly different to a version that is built via ` yarn antora-local`, but is a good start to get an impression and to catch typos made.
 
@@ -181,33 +181,33 @@ The result shown in the browser may look slightly different to a version that is
 
 To see all prepared yarn commands, run the following command `yarn run`. This will ouptput all commands with their settings, though this makes readability not easy. See the [yarn documentation](https://yarnpkg.com/lang/en/docs/cli/run/) for more information.
 
-Here is the list of commands with and when to use them
+Here is the list of commands and when to use them
 
 **For Production Environments**
 
-The following build commands are used when regular content changes are made or small fixes to the UI is incorporated:
+The following build commands are used when regular content changes are made or small fixes to the UI are incorporated:
 
 * `yarn antora`  
-Used when you want to build the documentation where internal links have as base to `doc.owncloud.com`. The  documentation is built for the live environment. Clicking on particular links will then direct to the docs homepage. Use only when you want to check these links, respectively used by the CI when building. 
+Used when you want to build the documentation where internal links have as base `doc.owncloud.com`. The  documentation is built for the live environment. Clicking on particular links will then direct to the docs homepage. Use only when you want to check these links or have the CI use them when building. 
 
 * `yarn antora-local`  
-**This is the command which you will use the most.** It is used when you want to build the documentation locally where internal links have as base `http://localhost:8080`. The  documentation is fully sourced locally. Ideal for content updating and new content and checking with `yarn serve`.
+**This is the command which you will use the most.** It is used when you want to build the documentation locally where internal links have as base `http://localhost:8080`. The  documentation is fully sourced locally. Ideal for checking with `yarn serve` after content has been updated or added.
 
 * `yarn antora-staging`  
 Used when you want to build the documentation where internal links have as base `doc.staging.owncloud.com`. The  documentation is built for the staging environment. Note that you manually have to move the content created in `/public` to the staging web page to access it. Note that you can also view locally with `yarn serve` which is ideal as first preview step.
 
 * `yarn antora-bundle`  
-Used when you want to build the documentation where internal links have as base `doc.staging.owncloud.com`. Compared to `antora-staging`, this uses a local built `ui-bundle`. This build command shoud be used when you want to test a changed UI before rolling it out.
+Used when you want to build the documentation where internal links have as base `doc.staging.owncloud.com`. Compared to `antora-staging`, this uses a locally built `ui-bundle`. This build command should be used when you want to test a changed UI before rolling it out.
 
 **For Development Environments**
 
-The following build commands are used when there are bigger refactorings, changes or major upgrades including the UI are made:
+The following build commands are used when bigger refactoring, changes or major upgrades including the UI are made:
 
 * `yarn antora-dev-local`  
-Used when you want to build the documentation where internal links have as base `http://localhost:8080`. Compared to `antora-staging`, it uses a different site.yml file named `site-dev.yml` which sources manuals not from github but locally.
+Used when you want to build the documentation where internal links have as base `http://localhost:8080`. Compared to `antora-staging`, it uses a different site.yml file named `site-dev.yml` which sources manuals not from GitHub but locally.
 
 * `yarn antora-dev-bundle`  
-Used when you want to build the documentation where internal links have as base `http://localhost:8080`. Compared to `antora-dev-local`, it uses a diffrent site.yml file `site-dev.yml` which sources manuals not from the github but locally and uses a local built `ui-bundle`.
+Used when you want to build the documentation where internal links have as base `http://localhost:8080`. Compared to `antora-dev-local`, it uses a different site.yml file `site-dev.yml` which sources manuals not from GitHub but locally and uses a locally built `ui-bundle`.
 
 ## Generating the Documentation
 
@@ -339,9 +339,9 @@ There, you can see:
 
 ## Setting up an Antora Development Environment
 
-The reason for setting up an Antora development environment can be necessary when doing tasks outside of classical content addition or updating. It is essential when starting a refactoring, UI changes or implementing new functionalities.
+Setting up an Antora development environment can be necessary when doing tasks outside of classical content addition or updating. It is essential when starting a refactoring, UI changes or implementing new functionalities.
 
-Note that all doc repositories must be local on the same filesystem level, take any path that fits your needs like:
+Note that all doc repositories must be local on the same filesystem level. Use any path that fits your needs like:
 
 ```
 /dev/docs
@@ -350,25 +350,25 @@ Note that all doc repositories must be local on the same filesystem level, take 
 ...
 ```
 
-There are some important steps when starting such a task. The following steps have to be done for the doc repo you are testing. Note that only the `site.yml` file of the respective repo is used for building the respective component. Other site.yml files are not used in the build process, though they may exist for testing them.
+There are some important steps when starting such a task. The following steps have to be done for the doc repo you are testing. Note that only the `site.yml` file of the respective repo is used for building the respective component. Other site.yml files are not used in the build process, though they may exist for testing purposes.
 
-* Make a branch in the respective doc repos where you will do the changes necessary and check the out.  
-**Do not** create Pull Requests before you are sure a build returns the correct results.
+* Make a branch in the respective doc repos where you will do the changes necessary and check the output.  
+**Do not** create pull requests before you are sure a build returns the correct results.
 
-* If there are more repos affected by the changes intended, you need to select that repo for building, that includes all repos (components) that will be changed. That repo is the source for the next step.  
+* If there are more repos affected by the changes intended, you need to select the one repo for building, that includes all repos (components) that will be changed. That repo is the source for the next step.  
 
 * Run `bin/prepare_site_yml` in the repo you are developing on or the one that includes all required repos to get a `site-dev.yml`.  
-This file **will not** get published and will always stay locally. It is a mirror of the current `site.yml` but the URLs former pointing to github to the respective repos will get changed to fetch the content locally.
+This file **will not** get published and will always stay local. It is a mirror of the current `site.yml` but the URLs formerly pointing to GitHub and the respective repos will get changed to fetch the content locally.
 
 * Before you start changing, run `yarn install` to have the dependencies updated.
  
 * Depending on what you are developing on, either run: `yarn antora-dev-local` or `yarn antora-dev-bundle` from the repo you have created `site-dev.yml`.
 
-* Finally run `yarn serve` to see the built result.
+* Finally, run `yarn serve` to see the result of the build.
 
-* If the changes are fine, create PR from the respective branches and continue normally
+* If the changes are fine, create a PR from the respective branches and continue as usual.
 
-* If the changes need to be dropped, run `yarn install` from the master branch again from repos with changes to revert any dependencies that may have changed.
+* If the changes need to be dropped, run `yarn install` from the master branch in the repos with changes again to revert any dependencies that may have changed.
 
 Note that you may need changes and testing in more than one component like `docs` or `docs-ocis` to get a correct final result.
 
