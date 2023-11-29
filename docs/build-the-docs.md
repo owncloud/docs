@@ -389,7 +389,7 @@ Note that ownCloud currently uses Elasticsearch version 7.x. All internal script
 
 Follow this procedure to show and use search and populate an index:
 
-1. Create an `es-docker-compose.yml` file with the following content. Note that no security or passwords is needed to be setup as it is only used locally:
+1. Create an `es-docker-compose.yml` file with the following content. Note that no security or passwords is needed to be set up as it is only used locally:
 
     ```
     version: '3'
@@ -459,7 +459,7 @@ Follow this procedure to show and use search and populate an index:
 
 7. Open the build via the browser and enter any search term as required into the search field to see matches returned.
 
-8. Note that building against ownCloud's hosted ElasticSearch is not possible locally though you can use it for previewing the build. To do so, type the following:
+8. Note that building against ownCloud's hosted Elasticsearch is not possible locally though you can use it for previewing the build. To do so, type the following:
     ```
     ELASTICSEARCH_NODE=https://search.owncloud.com \
     ELASTICSEARCH_INDEX=docs \
