@@ -377,17 +377,17 @@ Note that you may need changes and testing in more than one component like `docs
 
 **IMPORTANT**
 
-Though components get sourced locally when running `yarn antora-dev-xxx`, some content will still get pulled from external sources when defined in a page. This means, that for development, you still must have, like when doing normals builds, an internet connection. If an internet connection is not present, errors will be thrown and the build stops.
+Though components get sourced locally when running `yarn antora-dev-xxx`, some content will still get pulled from external sources when defined in a page. This means that, for development, you still must have an internet connection, like when doing normal builds. If an internet connection is not present, errors will be thrown and the build stops.
 
 ## Using Search in Production or Development
 
-The search bar is the component on the top right of the documentation where one can enter a term and gets matches if something is found as suggestion that can be clicked.
+The search bar is the component on the top right of the documentation where one can enter a term and get matches. If something is found, the matches are displayed as suggestions that can be clicked.
 
-For "nomal" changes, search is not necessary and may only complicate building commands and delay building times. To use the search functionality during production or development, see [Prepared Yarn Commands](#prepared-yarn-commands) for details, some prerequisites apply. This is not only true for changes in the documentation, but also for UI changes.
+For "normal" changes, search is not necessary and may only complicate building commands and delay building times. To use the search functionality during production or development, see [Prepared Yarn Commands](#prepared-yarn-commands) for details, some prerequisites apply. This is not only true for changes in the documentation, but also for UI changes.
 
 Note that ownCloud currently uses Elasticsearch version 7.x. All internal scripts and builds are therefore aligned to it and *must not* be changed, though you can use any latest minor/patch release.
 
-Take the following procedure to show and use search respectively populate an index:
+Follow this procedure to show and use search and populate an index:
 
 1. Create an `es-docker-compose.yml` file with the following content. Note that no security or passwords is needed to be setup as it is only used locally:
 
@@ -424,7 +424,7 @@ Take the following procedure to show and use search respectively populate an ind
     ELASTICSEARCH_WRITE_AUTH=x:y \
     yarn antora-dev-local
     ```
-    Note that `ELASTICSEARCH_WRITE_AUTH` is necessary for building though it does not do any authentication. A value for that envvar must not be omitted but can be any dummy as you like in the format of at minimum two characters separated by a colon.
+    Note that `ELASTICSEARCH_WRITE_AUTH` is necessary for building though it does not do any authentication. A value for that envvar must not be omitted but can be any dummy value you like in the format of at minimum two characters separated by a colon.
 
     Running the build now also returns on the console:
     ```
@@ -459,7 +459,7 @@ Take the following procedure to show and use search respectively populate an ind
 
 7. Open the build via the browser and enter any search term as required into the search field to see matches returned.
 
-8. Note that building against ownClouds hosted ElasticSearch is not possible locally though you can use it for previewing the build. To do so, type the following:
+8. Note that building against ownCloud's hosted ElasticSearch is not possible locally though you can use it for previewing the build. To do so, type the following:
     ```
     ELASTICSEARCH_NODE=https://search.owncloud.com \
     ELASTICSEARCH_INDEX=docs \
