@@ -13,14 +13,14 @@
 1. [Install the Prerequisites](#install-the-prerequisites)
 2. [Install Build Dependencies](#install-build-dependencies)
 3. [Prepare Your Browser](#prepare-your-browser)
-3. [Prepared Yarn Commands](#prepared-yarn-commands)
-4. [Generating the Documentation](#generating-the-documentation)
-5. [Using the Docker Container](#using-the-docker-container)
-6. [Viewing The HTML Documentation](#viewing-the-html-documentation)
-<!-- 7. [Generating PDF Documentation](#generating-pdf-documentation) -->
-7. [Setting up an Antora Development Environment](#setting-up-an-antora-development-environment)
-8. [Using Search in Production or Development](#using-search-in-production-or-development)
-8. [TIPS](#tips)
+4. [Prepared Yarn Commands](#prepared-yarn-commands)
+5. [Generating the Documentation](#generating-the-documentation)
+6. [Using the Docker Container](#using-the-docker-container)
+7. [Viewing The HTML Documentation](#viewing-the-html-documentation)
+<!-- 8. [Generating PDF Documentation](#generating-pdf-documentation) -->
+8. [Setting up an Antora Development Environment](#setting-up-an-antora-development-environment)
+9. [Using Search in Production or Development](#using-search-in-production-or-development)
+10. [TIPS](#tips)
 
 ## Install the Prerequisites
 
