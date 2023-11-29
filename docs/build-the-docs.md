@@ -19,6 +19,7 @@
 6. [Viewing The HTML Documentation](#viewing-the-html-documentation)
 <!-- 7. [Generating PDF Documentation](#generating-pdf-documentation) -->
 7. [Setting up an Antora Development Environment](#setting-up-an-antora-development-environment)
+8. [Using Search in Production or Development](#using-search-in-production-or-development)
 8. [TIPS](#tips)
 
 ## Install the Prerequisites
@@ -213,6 +214,8 @@ Used when you want to build the documentation where internal links have as base 
 
 The documentation can be generated in HTML format. <!-- and PDF formats -->
 
+**IMPORTANT** To build the documentation locally, you must have internet access to get any referenced components or external sources.
+
 ### Generating HTML Documentation
 
 There are two ways to generate the documentation in HTML format:
@@ -358,11 +361,11 @@ There are some important steps when starting such a task. The following steps ha
 * If there are more repos affected by the changes intended, you need to select the one repo for building, that includes all repos (components) that will be changed. That repo is the source for the next step.  
 
 * Run `bin/prepare_site_yml` in the repo you are developing on or the one that includes all required repos to get a `site-dev.yml`.  
-This file **will not** get published and will always stay local. It is a mirror of the current `site.yml` but the URLs formerly pointing to GitHub and the respective repos will get changed to fetch the content locally.
+This file **will not** get published and will always stay local. It is a mirror of the current `site.yml` but the URLs formerly pointing to GitHub and the respective repos will get changed to fetch the components locally.
 
 * Before you start changing, run `yarn install` to have the dependencies updated.
  
-* Depending on what you are developing on, either run: `yarn antora-dev-local` or `yarn antora-dev-bundle` from the repo you have created `site-dev.yml`.
+* Depending on what you are developing on, either run: `yarn antora-dev-local` or `yarn antora-dev-bundle` from the repo you want to buid from which will use the formerly created `site-dev.yml`.
 
 * Finally, run `yarn serve` to see the result of the build.
 
@@ -372,21 +375,103 @@ This file **will not** get published and will always stay local. It is a mirror 
 
 Note that you may need changes and testing in more than one component like `docs` or `docs-ocis` to get a correct final result.
 
+**IMPORTANT**
+
+Though components get sourced locally when running `yarn antora-dev-xxx`, some content will still get pulled from external sources when defined in a page. This means, that for development, you still must have, like when doing normals builds, an internet connection. If an internet connection is not present, errors will be thrown and the build stops.
+
+## Using Search in Production or Development
+
+The search bar is the component on the top right of the documentation where one can enter a term and gets matches if something is found as suggestion that can be clicked.
+
+For "nomal" changes, search is not necessary and may only complicate building commands and delay building times. To use the search functionality during production or development, see [Prepared Yarn Commands](#prepared-yarn-commands) for details, some prerequisites apply. This is not only true for changes in the documentation, but also for UI changes.
+
+Note that ownCloud currently uses Elasticsearch version 7.x. All internal scripts and builds are therefore aligned to it and *must not* be changed, though you can use any latest minor/patch release.
+
+Take the following procedure to show and use search respectively populate an index:
+
+1. Create an `es-docker-compose.yml` file with the following content. Note that no security or passwords is needed to be setup as it is only used locally:
+
+    ```
+    version: '3'
+    services:
+      elasticsearch:
+        image: elasticsearch:7.17.15
+        ports:
+          - 9200:9200
+          - 9300:9300
+        environment:
+          - discovery.type=single-node
+          - xpack.security.enabled=false
+    ```
+
+2. Start the container with the `up -d` command, use `down` to stop it.
+
+    ```
+    docker compose -f es-docker-compose.yml up -d
+    ```
+
+3. To avoid a CORS Policy error, the browser must be prepared to allow access to the local Elasticsearch container. If this is not prepared, no search is possible and the browser console will return the following error:
+    ```
+    Access to XMLHttpRequest at 'http://localhost:9200/' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+    ```
+    There are several ways to fix this, only one is shown when using Chrome browsers. Install the plugin named [Allow CORS: Access-Control-Allow-Origin](https://chrome.google.com/webstore/detail/lhobafahddgcelffkeicbaginigeejlf).
+
+4. When building docs, the following environment variables must be added to the build process. Note that you can use any `yarn antora-xxx` command:
+    ```
+    UPDATE_SEARCH_INDEX=true \
+    ELASTICSEARCH_NODE=http://localhost:9200 \
+    ELASTICSEARCH_INDEX=docs \
+    ELASTICSEARCH_WRITE_AUTH=x:y \
+    yarn antora-dev-local
+    ```
+    Note that `ELASTICSEARCH_WRITE_AUTH` is necessary for building though it does not do any authentication. A value for that envvar must not be omitted but can be any dummy as you like in the format of at minimum two characters separated by a colon.
+
+    Running the build now also returns on the console:
+    ```
+    elastic: generate search index
+    elastic: rebuild search index
+    elastic: remove old search index
+    elastic: create empty search index
+    elastic: upload search index
+    ```
+
+5. Optionally, the status of Elasticsearch can be monitored:  
+   `http://localhost:9200/_cat/indices?v=`
+   ```
+   green  open .geoip_databases Ygj4WI-STGmJrSeCfep7Tg 1 0  41 0 38.3mb 38.3mb
+   yellow open docs             oag2dCMnS4CiSXX0Ul8plA 1 1 163 0  1.4mb  1.4mb
+   ```
+   To make a dummy query after the index has been created, type the following as URL in the browser and replace `term` with what you want to search for:
+   `http://localhost:9200/_search?q=term`
+   ```
+   {"took":45,"timed_out":false,"_shards":{"total":1,"successful":1,"skipped":0,"failed":0}, ...
+   ```
+
+6. To view the build result either with `yarn serve` (Antora build) or `yarn preview` (UI build) run:
+    ```
+    ELASTICSEARCH_NODE=http://localhost:9200 \
+    ELASTICSEARCH_INDEX=docs \
+    ELASTICSEARCH_READ_AUTH=x:y \
+    yarn serve
+    ```
+
+    Note that for `ELASTICSEARCH_READ_AUTH`, the same applies as for `ELASTICSEARCH_WRITE_AUTH`.
+
+7. Open the build via the browser and enter any search term as required into the search field to see matches returned.
+
+8. Note that building against ownClouds hosted ElasticSearch is not possible locally though you can use it for previewing the build. To do so, type the following:
+    ```
+    ELASTICSEARCH_NODE=https://search.owncloud.com \
+    ELASTICSEARCH_INDEX=docs \
+    ELASTICSEARCH_READ_AUTH=docs:cADL6DDAKEBrkFMrvfxXEtYm \
+    yarn serve
+    ```
+
 ## TIPS
 
 ### Additional Command Line Parameters
 
-You can add additional parameters to the currently defined ones, for example, defining the default URL or additional global attributes. Just add them after the `yarn antora` command. 
-
-### Overwrite the Default URL
-If you want to serve your changes locally, you have to overwrite the default URL, which points to https://doc.owncloud.com. You can append a custom URL to the command like this:
-
-```
-yarn antora --url http://localhost:8080
- or use
-yarn antora-local
-```
-Overwriting the default URL to local is especially helpful if you also want to check for broken links.
+You can add additional parameters to the currently defined ones or overwrite existing ones, for example, defining the default URL or additional global attributes. Just add them to the `yarn antora` command. 
 
 ### Searching and Fixing Attribute Errors
 
