@@ -73,4 +73,4 @@ Please refer to [Create a New Version Branch for Docs](./docs/new-version-branch
 
 ## HTML to PDF
 
-At the moment, the native generation creating pdf from a component is broken and will be fixed when updating to Antora 3. In the meanwhile a workaround is provided, see the [HTML to PDF](./docs/html-to-pdf.md) description.
+At the moment, creating a pdf from a component via Antora is broken and will be fixed when updating to Antora 3. In the meanwhile a workaround is provided, see the [HTML to PDF](./docs/html-to-pdf.md) description.
