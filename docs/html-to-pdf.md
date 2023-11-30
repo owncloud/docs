@@ -1,10 +1,10 @@
 # HTML to PDF
 
-The script `bin/ownCloudDocPdf.py`, temporarily necessary until Antora is upgraded to Version 3, allows users to convert a sequence of web pages to the PDF format. It navigates through pages of a manual by following a "next" link on each page and converts each page to a PDF. The PDFs are then merged into a single PDF file for further use. Note that this script has a chance to miss pages as it is based on continuous chains of "next" links compared to Antora generated pdf which accesses a full content catalogue.
+The script `bin/ownCloudDocPdf.py`, temporarily necessary until Antora is upgraded to version 3, allows users to convert a sequence of web pages to the PDF format. It navigates through pages of a manual by following a "next" link on each page and converts each page to a PDF. The PDFs are then merged into a single PDF file for further use. Note that this script has a chance to miss pages as it is based on continuous chains of "next" links compared to Antora generated pdf which accesses a full content catalogue.
 
 ## How to Use
 
-The script requires Python to be installed and some libraries provided by th OS and is executed from the command line. It accepts a URL as an argument.
+The script requires Python to be installed and some libraries provided by the OS and is executed from the command line. It accepts a URL as an argument.
 
 ```bash
 python bin/ownCloudDocPdf.py [URL]
