@@ -4,6 +4,7 @@
 :page-aliases: {latest-server-version}@server:admin_manual:whats_new_admin.adoc, \
 {latest-server-version}@server:ROOT:server_release_notes.adoc
 
+* xref:changes-in-10-13-4[Changes in 10.13.4]
 * xref:changes-in-10-13-3[Changes in 10.13.3]
 * xref:changes-in-10-13-2[Changes in 10.13.2]
 * xref:changes-in-10-13-1[Changes in 10.13.1]
@@ -44,6 +45,24 @@
 * xref:changes-in-8-1[Changes in 8.1]
 * xref:changes-in-8-0[Changes in 8.0]
 * xref:changes-in-7-0[Changes in 7.0]
+
+== Changes in 10.13.4
+
+Dear ownCloud administrator, find below the changes and known issues in ownCloud Server 10.13.4 that need your attention. You can also read the {oc-changelog-url}[full ownCloud Server changelog] for further details on what has changed.
+
+=== Show Alert about IoC Scanner to All Customers on Upgrade
+
+We now display IoC scanner instructions to all customers (a valid license key needs to be present) during upgrade (console as well as Web Updater) and in the admin settings. Additionally, a new config.php option `indicators-of-compromise-scanner.confirmation` has been introduced which gives admins the possibility to suppress the instructions once the script has been correctly run on ALL ownCloud servers. https://github.com/owncloud/core/pull/41137[#41137]
+
+Background: The Indicators of Compromise (IoC) tool plays a vital role in identifying potential security threats or breaches. The tool analyzes your ownCloud 10 deployments and determines whether they have possibly been compromised via the known vulnerabilities. It collects information from the Apache logs and identifies the signatures of potential exploits. As mentioned above, the tool has to be run on ALL ownCloud servers in case of a clustered setup.
+
+=== 2FA Check on Controllers Which Are Annotated as @PublicPage and Also Authenticated
+
+Some controllers define methods which are publicly accessible and accessible for authenticated users at the same time. In such situations the 2FA handling was bypassed because of the @PublicPage annotation. We now check 2FA on controllers which are publicly accessible and authenticated. https://github.com/owncloud/core/pull/41123[#41123]
+
+=== Known Issues
+
+Since we reverted https://github.com/owncloud/core/pull/41014[#41014], upon removing a mountpoint configuration from the web UI, the occ command `files:remove-storage` is currently not able to properly find the candidates to delete in case shares have been created for files/folders located on those mountpoints.
 
 == Changes in 10.13.3
 
