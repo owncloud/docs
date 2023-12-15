@@ -13,6 +13,401 @@
 
 toc::[]
 
+== Infinite Scale 5.0.0
+
+[discrete]
+=== General
+
+This release brings significant enhancements in performance and stabilit. It is also designed to provide an optimized experience for both end users and administrators. Please find the most important changes described here or refer to the changelog for a complete list of changes:
+
+* Infinite Scale: https://github.com/owncloud/ocis/releases/tag/v5.0.0[Changes in 5.0.0]
+* Web: https://github.com/owncloud/web/releases/tag/v8.0.0[Changelog for ownCloud Web 8.0.0]
+
+[discrete]
+=== Federated Cloud Sharing (Feature Preview)
+
+Federated Cloud Sharing allows users to access and collaborate on files stored on connected external servers, as if they were stored on the user's instance. This creates a fluid and efficient workflow, eliminating the need for multiple file versions or complex file transfer processes. With Federated Cloud Sharing data can reside on its original server, ensuring compliance with regional data sovereignty laws and organizational data policies.
+
+To enable file sharing with a user on a different, connected server, an initial invitation needs to be sent. Once this is completed, files can be shared with that user as usual by entering their username, just like with internal users. The only difference is that users from connected instances will be marked as `Federated Users` for easy identification and management.
+
+*Technical Note:* +
+Federated Cloud Sharing in Infinite Scale is based on the Open Cloud Mesh protocol version 1.1 (OCM 1.1) https://cs3org.github.io/OCM-API/docs.html?branch=v1.1.0&repo=OCM-API&user=cs3org#/paths/~1shares/post[Learn more about OCM 1.1]
+
+Kudos to all members of the CS3-Community who contributed to this project. A special thanks is owed to CERN for their contribution of the Science Mesh App. Thank You!
+
+[discrete]
+=== Password Policy for Sharing Links
+
+The Password Policy for Sharing Links allows administrators to set specific requirements for password strength. This feature ensures that your sharing practices align seamlessly with existing security policies.
+
+The customizable settings for the password are minimum amount of:
+
+* uppercase characters
+* lowercase characters
+* numbers
+* the special characters: "!#\$%&'()*+,-./:;<=>?@[\]^_`{|}~
+* and password length
+
+**Banned Passwords List** +
+To further bolster security, this update includes the ability to define a banned password list. This feature prevents users from using overly common or simplistic passwords, like `Password123!`, thereby reducing the risk of unauthorized access.
+
+**Integrated Password Generator** +
+Accompanying this new password policy is a built-in password generator. It automatically creates passwords that comply with your defined requirements, simplifying the process for users while maintaining a high standard of security.
+
+[discrete]
+=== Default Link Permission
+
+With this new capability we've introduced a new configuration option that allows administrators to set the default permissions for sharing links. This feature is tailored to meet the varying security needs of different organizations.
+
+As an administrator, you now have the flexibility to define what the standard permissions for a link should be. This means you can choose whether to create a sharing link that is accessible to external parties with just a click, or opt for a more secure link that requires user authentication for access.
+
+The default link permissions is communicated through capabilities. The default setting for this config option is set to `default_link_permissions:1`, meaning that by default, anyone can access the link with viewer permissions. This enhancement is geared towards providing administrators with greater control over their organizations data sharing and security protocols.
+
+[discrete]
+=== Filter Chips: Type and Last Modified
+
+[discrete]
+==== Type Filter Chip
+
+Easily narrow down your search by file type. Whether you're looking for documents, images, spreadsheets, or any other file types, the Type Filter Chip allows you to quickly filter results to match your specific needs. The Type filter groups the following MIME types. (The usual file extension is indicated in parentheses after the MIME type for ease of reference. However, it is the MIME type of a file that is decisive, not the file extension.)
+
+* **Document Filter:**
+
+** .doc (Microsoft Word Document)
+** .docx (Microsoft Word Open XML Document)
+** .odt (OpenDocument Text Document)
+** .txt (Plain Text File)
+** .md (Markdown Documentation File)
+** .rtf (Rich Text Format File)
+** .pages (Apple Pages Document)
+
+* **Spreadsheet Filter:**
+
+** .xls (Microsoft Excel Spreadsheet)
+** .xlsx (Microsoft Excel Open XML Spreadsheet)
+** .ods (OpenDocument Spreadsheet)
+** .csv (Comma-Separated Values)
+** .numbers (Apple Numbers Spreadsheet)
+
+* **Presentation Filter:**
+
+** .pptx (PowerPoint Presentation, Open XML)
+** .ppt (PowerPoint Presentation)
+** .odp (OpenDocument Presentation)
+** .key (Apple Keynote Presentation)
+
+* **PDF Filter:**
+
+** .pdf (Portable Document Format)
+
+* **Image Filter:**
+
+** .jpg or .jpeg (JPEG image)
+** .png (Portable Network Graphics)
+** .gif (Graphics Interchange Format)
+** .bmp (Bitmap Image File)
+** .tif or .tiff (Tagged Image File Format)
+** .svg (Scalable Vector Graphics)
+** .webp (WebP image)
+** .psd (Adobe Photoshop Document)
+** .raw (Raw Image Formats, various camera manufacturers)
+** .heif or .heic (High Efficiency Image File Format)
+** .ico (Icon File)
+** .tga (Targa Graphic)
+** .pcx (Paintbrush Bitmap Image)
+** .ai (Adobe Illustrator File)
+** .eps (Encapsulated PostScript)
+** .wmf (Windows Metafile)
+** .emf (Enhanced Metafile)
+** .xcf (eXperimental Computing Facility, native GIMP file format)
+** .indd (Adobe InDesign)
+** .cr2 (Canon Raw 2nd Edition)
+** .nef (Nikon Electronic Format)
+** .orf (Olympus Raw Format)
+** .sr2 (Sony Raw Format 2)
+** .pef (Pentax Electronic File)
+** .arw (Sony Alpha Raw)
+** .rw2 (Panasonic RAW 2)
+** .dng (Digital Negative)
+** .exr (OpenEXR)
+** .apng (Animated Portable Network Graphics)
+** .avif (AV1 Image File Format)
+** .jxr (JPEG XR)
+** .hdp (HD Photo, also known as JPEG XR)
+** .cpt (Corel Photo-Paint image)
+** .dds (DirectDraw Surface)
+** .jp2 or .j2k (JPEG 2000)
+** .jng (JPEG Network Graphics)
+** .pbm (Portable Bitmap Format)
+** .pgm (Portable Graymap Format)
+** .ppm (Portable Pixmap Format)
+** .pnm (Portable Any Map)
+** .pfm (Portable Float Map)
+** .pam (Pluggable Authentication Module)
+** .hdr (High Dynamic Range Image)
+** .ras (Sun Raster Graphic)
+** .sgi or .rgb (Silicon Graphics Image)
+** .tiff (Tagged Image File Format, alternative spelling)
+** .xbm (X Bitmap)
+** .xpm (X Pixmap)
+** .ico (Windows Icon)
+** .cur (Windows Cursor)
+
+// do not remove
+
+[none]
+** ... and all other types that are included within the MIME Types of image/*
+
+// do not remove
+
+* **Video Filter:**
+
+** video/* 
+
+** .mp4 (MPEG-4 Part 14)
+** .avi (Audio Video Interleave)
+** .mov (Apple QuickTime Movie)
+** .wmv (Windows Media Video)
+** .flv (Flash Video)
+** .mkv (Matroska Video)
+** .webm (WebM Video)
+** .mpeg or .mpg (MPEG Video)
+** .vob (DVD Video Object)
+** .ogv (Ogg Video)
+** .m4v (MPEG-4 Video File)
+** .3gp (3GPP Multimedia File)
+** .3g2 (3GPP2 Multimedia File)
+** .asf (Advanced Systems Format)
+** .h264 (H.264 Encoded Video File)
+** .rm (RealMedia File)
+** .rmvb (RealMedia Variable Bitrate)
+** .ts (MPEG Transport Stream)
+** .mts (AVCHD Video File)
+** .m2ts (MPEG-2 Transport Stream)
+** .divx (DivX-Encoded Movie File)
+** .xvid (Xvid-Encoded Video File)
+** .dvr-ms (Microsoft Digital Video Recording)
+** .f4v (Flash MP4 Video File)
+** .m2v (MPEG-2 Video)
+** .mxf (Material Exchange Format)
+** .svi (Samsung Video File)
+** .m4p (MPEG-4 Protected File)
+** .qt (QuickTime Movie)
+** .nsv (Nullsoft Streaming Video File)
+** .amv (Anime Music Video File)
+** .flh (FLIC Animation File)
+** .roq (Id Software Game Video)
+** .mpe (MPEG Movie File)
+** .smk (Smacker Video File)
+** .bik (Bink Video File)
+** .ayuv (Uncompressed YUV Video File)
+
+// do not remove
+
+[none]
+** ... and all other types that are included within the MIME Types of video/*
+
+{empty}
+
+* **Audio Filter:**
+** audio/* +
+(e.g. **.mp3, .wav, .aac, .flac, .ogg, .m4a, .wma, .opus, .alac, .mid, .midi, .mp2, .amr, .aiff, .au, .ra, .ape, .ac3, .dts, .mka**)
+
+* **Archive Filter:**
+
+** .mp3 (MPEG Audio Layer III)
+** .wav (Waveform Audio File Format)
+** .aac (Advanced Audio Coding)
+** .flac (Free Lossless Audio Codec)
+** .ogg (Ogg Vorbis)
+** .m4a (MPEG-4 Audio)
+** .wma (Windows Media Audio)
+** .opus (Opus Audio Codec)
+** .alac (Apple Lossless Audio Codec)
+** .mid or .midi (Musical Instrument Digital Interface)
+** .mp2 (MPEG Audio Layer II)
+** .amr (Adaptive Multi-Rate)
+** .aiff or .aif (Audio Interchange File Format)
+** .au (Sun Microsystems Audio)
+** .ra or .ram (Real Audio)
+** .dts (Digital Theater Systems)
+** .ac3 (Audio Codec 3)
+** .ape (Monkey's Audio)
+** .mka (Matroska Audio)
+** .gsm (Global System for Mobile Audio)
+** .vox (Dialogic ADPCM)
+** .tta (True Audio Codec)
+** .voc (Creative Labs Audio)
+** .qcp (Qualcomm PureVoice)
+** .vqf (TwinVQ)
+** .paf (Ensoniq PARIS Audio File)
+** .spx (Speex)
+** .wv (WavPack)
+** .oga (Ogg Audio)
+** .mogg (Multitrack Ogg)
+
+// do not remove
+
+[none]
+** ... and all other types that are included within the MIME Types of audio/*
+
+{empty}
+
+[discrete]
+==== Last Modified Filter Chip
+
+Find the most relevant files in no time. This filter enables users to search for files based on the time they were last modified. Whether you're looking for the latest versions or need to access files from a specific time period, this filter streamlines your search process.
+
+* **Modified Filter:**
+** today
+** last 7 days
+** last 30 days
+** this year
+** last year
+
+[discrete]
+=== Simplified Shared with me Page
+
+We made significant improvements to the `Shared with me` section to make your file-sharing experience more efficient and user-friendly.
+
+Previously divided into three parts, the `Shared with me` section has now been consolidated into a single, simplified section. This change provides a more streamlined view of all shared files, making it easier to navigate and manage your shared content.
+
+[discrete]
+==== Auto-Accept Feature for Shares:
+
+In an effort to simplify your workflow, we have implemented an auto-accept feature for shares which is enabled per default. This means that any files shared with you will automatically appear in your `Shared with me` section without the need for manual acceptance, saving you time and effort.
+
+[discrete]
+==== Filter by People:
+
+If you remember only the name of the person who shared a file with you, our new filter option comes to the rescue. You can now filter the shares by the name of people, making it easier to find files shared by specific individuals.
+
+[discrete]
+==== Option to Hide Unwanted Shares:
+
+We understand that sometimes you may receive shares that are not relevant or wanted. To address this, we have introduced a feature that allows you to hide such shares. By hiding a share, you can maintain a clear view of the shares that are important to you, ensuring your `Shared with me` section remains organized and clutter-free.
+
+**Access to Hidden Shares:** +
+If you change your mind and wish to view a hidden share, you can easily do so. A dedicated area for hidden shares has been added, allowing you to revisit and manage any shares you have previously hidden.
+
+[discrete]
+==== Enhanced Search Filter:
+
+To help you quickly find specific shares, we have improved the search functionality within the `Shared with me` section. This enhanced search filter enables you to efficiently locate files based on various criteria.
+
+[discrete]
+==== Sync Feature for Better Control:
+
+Gain control over which shared files are available for sync on your mobile and desktop devices. This feature is especially useful for managing large files. You can now choose to exclude certain files from syncing right from the start.
+
+[discrete]
+=== Shortcuts
+
+This new feature is designed to improve navigation and access within the platform, making your experience more efficient and integrated. Creating shortcuts is a new option in the 'New' menu, where you can also create new files.
+
+**Link to External: Webpage:** +
+You can now create shortcuts that link directly to external websites. This feature allows for quick access to frequently used online resources, right from within ownCloud Infinite Scale.
+
+**Internal Linking to File, Folder or a Space** +
+The Shortcut feature also allows you to create links to internal files, folders, or Spaces. This improves organization and accessibility to important documents and areas within ownCloud, which is especially useful in collaborative scenarios.
+
+[discrete]
+=== Improved Tags
+
+You can now add tags to files directly from the files details panel in the right sidebar. This update eliminates the need to navigate away from the details panel, streamlining the process of organizing and categorizing your documents. With tagging now integrated into the details panel, the process becomes more intuitive and user-friendly.
+
+[discrete]
+=== New action: Duplicate a Space
+
+This action is designed to enhance the flexibility and efficiency of space management for our users. You now have the option to create a copy of an existing Space. This duplication includes all files and folder structures within the Space. The duplicated Space will be free of any existing members, shares, sharing links or tags. This precaution is taken to prevent accidental data leakage and to ensure that the Space Manager can start from scratch, setting up a new Space for team collaboration as needed. This feature saves time and effort in setting up new Spaces that require similar content and structure to existing ones, but with different sharing.
+
+[discrete]
+=== Show WebDAV Path
+
+Advanced users now have the ability to view the WebDav Path and URL for each file, folder or Space. This is particularly beneficial for users who prefer to interact through alternative methods, such as command-line interfaces or other third-party tools that support WebDav. It offers a direct and powerful way to interact with resources, especially for scripting, automation, or programmatic access.
+
+[discrete]
+=== Realtime Events (Server Sent Events)
+
+This new feature brings the ability to display events in real-time, a shift from the traditional time series (polling mechanism). This advancement is made possible through the implementation of Server Sent Events (SSE). By leveraging SSE, Infinite Scale now provides an instantaneous update mechanism. This means that events like notifications and file locking status changes are communicated to users in real-time.
+
+**Real-Time Notifications:** +
+You will receive notifications instantly ensuring that you don't have to wait for important information.
+
+**Immediate File Locking Visibility:** +
+The status of file locking and unlocking is now displayed in real-time. This feature is crucial for collaborative environments, as it allows team members to see when a file is being used or becomes available, preventing conflicts and enhancing collaboration efficiency.
+
+[discrete]
+=== Keyword Query Language (KQL)
+
+To streamline and enhance the development process, we have standardized the search syntax across server-client search requests using the Keyword Query Language (KQL). By adopting KQL, a well-known and widely used standard, we significantly simplify the development process for client applications. Developers can now rely on a familiar syntax, reducing complexity and accelerating development.
+
+[discrete]
+=== NATS.js as Registry
+
+To enhance the robustness of Infinite Scale we integrated NATS.js as our primary registry mechanism. This update is particularly beneficial for large-scale deployments. With NATS.js, Infinite Scale is better equipped to handle large-scale deployments efficiently. NATS.js facilitates smoother and more stable operations even as the number of services and nodes increases. The goal is to provide a resilient and fault-tolerant framework, ensuring continuous and uninterrupted service even in demanding scenarios.
+
+[discrete]
+=== Web Embed Mode
+
+The Web UI now provides an Embed Mode for easier integration into other applications. The Embed Mode allows external applications to integrate the Web UI directly. This means that users can now access and interact with Infinite Scale within the context of other applications.
+
+Example: Imagine you're using a chat application and want to send a sharing link. With the Embed Mode, you can open the Web UI in a file picker-like interface, select files from Infinite Scale, and share them without ever having to leave the chat tab.
+
+The Embed Mode streamlines workflows and eliminates the need to switch between different applications to manage files.
+
+[discrete]
+=== Focused "New" Menu
+
+The `New` menu items have been reorganized with the most frequently used items placed at the top. This rearrangement is based on user feedback, ensuring that the most important filetypes are readily accessible. In our commitment to Open Source and universal accessibility, we've revised the wording for Document labels to be more vendor-neutral. This change reflects our dedication to providing a user-friendly interface that caters to a universal user base.
+
+[discrete]
+=== Open the Sidebar From Everywhere
+We have relocated the button to open the sidebar, positioning it now in the global top bar. This move allows users to access the right sidebar not just in the Files app, but also in a variety of other applications. This change provides a way for integrating features like file details and sharing options into other applications, beyond the Files app.
+
+[discrete]
+=== 400% Faster Upload Preparation Time
+
+In the latest update, we've implemented significant improvements in the efficiency of folder tree creation during file uploads. By optimizing the process to run asynchronously and reducing the number of PROPFIND requests on nested folders, we've managed to substantially speed up this operation. In a test scenario with a folder containing 155 subfolders, the time to create these folders has been reduced from 20-30 seconds to just 5-7 seconds. While this duration may still be noticeable, it represents a considerable improvement, especially considering the limitations of client-side operations.
+
+Additionally, we've massively enhanced the upload preparation time. Rather than setting file data individually for each file, we now collect all necessary data first and then apply it in a single batch using Uppy's setState method. This approach streamlines the upload process, making it much quicker and more efficient for users
+
+
+[discrete]
+=== Experimental: Support of ADFS
+
+
+[discrete]
+=== Enhanced Extension Capabilities
+
+
+=== Known Issues
+
+=== Migrations
+
+[discrete]
+==== Cache Stores
+
+* Some cache stores as defined in `OCIS_CACHE_STORE` are now marked for deprication. These are `ocmem`, `redis`, `etcd` and `nats-js`. A new cache store has been added: `nats-js-kv`. If you have used one of the deprecated stores, you should reconfigure to one of the supported ones as the deprecated stores will be removed in a later version. https://github.com/owncloud/ocis/pull/7979[#7979]
+
+[discrete]
+==== Web Config Keys
+
+* The environment variables `WEB_OPTION_IMPRINT_URL`, `WEB_OPTION_PRIVACY_URL` and `WEB_OPTION_ACCESS_DENIED_HELP_URL` have been removed and the settings are now avaialble as part of the https://owncloud.dev/clients/web/theming/#common-section[Web Theming]. For details see the referenced developer documentation. https://github.com/owncloud/ocis/pull/7970[#7970] and https://github.com/owncloud/ocis/pull/7938[#7938]
+
+=== Breaking Changes
+
+[discrete]
+==== Async Uploads
+
+This change sets the default for async uploads to true. https://github.com/owncloud/ocis/pull/7416[#7416]
+
+[discrete]
+==== Service Accounts for Microservices
+
+* For existing installations you need to set the `OCIS_SERVICE_ACCOUNT_ID` and `OCIS_SERVICE_ACCOUNT_SECRET` envvars.
+* For new installations `ocis init` sets the values automatically and no envvars are needed.  https://github.com/owncloud/ocis/pull/6427[#6427]
+
 == Infinite Scale 4.0.4
 
 [discrete]
