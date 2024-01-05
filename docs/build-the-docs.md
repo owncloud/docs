@@ -365,7 +365,7 @@ This file **will not** get published and will always stay local. It is a mirror 
 
 * Before you start changing, run `yarn install` to have the dependencies updated.
  
-* Depending on what you are developing on, either run: `yarn antora-dev-local` or `yarn antora-dev-bundle` from the repo you want to buid from which will use the formerly created `site-dev.yml`.
+* Depending on what you are developing on, either run: `yarn antora-dev-local` or `yarn antora-dev-bundle` from the repo you want to build from which will use the formerly created `site-dev.yml`.
 
 * Finally, run `yarn serve` to see the result of the build.
 
