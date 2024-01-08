@@ -20,7 +20,8 @@
 <!-- 8. [Generating PDF Documentation](#generating-pdf-documentation) -->
 8. [Setting up an Antora Development Environment](#setting-up-an-antora-development-environment)
 9. [Using Search in Production or Development](#using-search-in-production-or-development)
-10. [TIPS](#tips)
+10. [Resolving Edit-this-page in Development](#resolving-edit-this-page-in-development)
+11. [TIPS](#tips)
 
 ## Install the Prerequisites
 
@@ -466,6 +467,15 @@ Follow this procedure to show and use search and populate an index:
     ELASTICSEARCH_READ_AUTH=docs:cADL6DDAKEBrkFMrvfxXEtYm \
     yarn serve
     ```
+
+## Resolving Edit-this-page in Development
+
+When doing a local build, the link `Edit this page` on the top right resolves to the local file system. If you want to make Antora to resolve to where the files are sorced on github, you need to build using the envvar `CI=true`. This can be done like with the following command:
+
+```
+CI=true \
+yarn antora-local
+```
 
 ## TIPS
 
