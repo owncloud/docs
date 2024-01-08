@@ -470,7 +470,7 @@ Follow this procedure to show and use search and populate an index:
 
 ## Resolving Edit-this-page in Development
 
-When doing a local build, the link `Edit this page` on the top right resolves to the local file system. If you want to make Antora to resolve to where the files are sorced on github, you need to build using the envvar `CI=true`. This can be done like with the following command:
+When doing a local build, the link `Edit this page` on the top right resolves to the local file system. If you want to make Antora to resolve to where the files are sourced on github, you need to build using the envvar `CI=true`. This can be done like with the following command:
 
 ```
 CI=true \
