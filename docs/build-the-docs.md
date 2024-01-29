@@ -88,13 +88,13 @@ nvm ls-remote | grep "Latest LTS"
       v12.22.12   (Latest LTS: Erbium)
        v14.21.3   (Latest LTS: Fermium)
        v16.20.2   (Latest LTS: Gallium)
-       v18.18.2   (Latest LTS: Hydrogen)
+       v18.19.2   (Latest LTS: Hydrogen)
        v20.10.0   (Latest LTS: Iron)
 ```
 Then install a suitable LTS version. You can install as many versions as you like or need, see example below.
 
 ```
-nvm install 16.13.2
+nvm install 18.19.2
 ```
 
 List the installed versions
@@ -105,27 +105,36 @@ nvm ls
        v12.18.2
        v14.18.3
         v15.5.1
-->     v16.13.2
+       v16.13.2
+->     v18.19.0
          system
-default -> 16.13.2 (-> v16.13.2)
+
+default -> 18.19.0 (-> v18.19.0)
 ...
 ```
 
-**Important:** For docs, DO NOT use a version _above_ v10.23.0 and _below_ v14.17.0 as it may later conflict with other dependencies especially with the `yarn serve` command where you will get warnings and it may not work as expected.
+**Important:**  
+For docs, DO NOT use a version _above_ v10.23.0 and _below_ v14.17.0 as it may later conflict with other dependencies especially with the `yarn serve` command where you will get warnings and it may not work as expected.
 
-**Info:** The backend to push to the web also uses node v16, see the `.drone.star` file. It is recommended to stay with the same release if possible.
+**Info:**  
+The backend to push to the web uses node v18, see the `.drone.star` file. It is recommended to stay with the same release if possible.
+
+**Important:**  
+If you have used a lower node version like 16.13.2, you now must upgrade **ALL** your doc repos to use v18. See the next steps to do so.
+
+#### Use a Particular Node Version
 
 Switch to a specific installed version of Node at any time, use the following command:
 
 ```
-nvm use 16.13.2
+nvm use 18.19.0
 ```
 **Important:** If you have additional concurrent terminals open, you must close these terminals first and reopen them to use the new setup.
 
 To make a particular Node version default in new terminals, type:
 
 ```
-nvm alias default 16.13.2
+nvm alias default 18.19.0
 ```
 
 #### Yarn

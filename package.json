@@ -2,7 +2,7 @@
   "private": true,
   "name": "owncloud-docs",
   "description": "The ownCloud documentation",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "license": "AGPL-3.0",
   "author": "The ownCloud Team",
   "homepage": "https://github.com/owncloud/docs#readme",
@@ -25,19 +25,25 @@
     }
   ],
   "scripts": {
+    "antora": "antora --stacktrace --cache-dir cache --redirect-facility static --clean --fetch site.yml",
+
+    "antora-local": "antora --stacktrace --cache-dir cache --redirect-facility static --clean --fetch --url http://localhost:8080 site.yml",
+
+    "antora-staging": "antora --stacktrace --cache-dir cache --redirect-facility static --clean --fetch --url https://doc.staging.owncloud.com site.yml",
+
+    "antora-bundle": "antora --stacktrace --cache-dir cache --redirect-facility static --clean --fetch --ui-bundle-url ../docs-ui/build/ui-bundle.zip --url https://doc.staging.owncloud.com site.yml",
+
+    "antora-dev-local": "antora --stacktrace --cache-dir cache --redirect-facility static --clean --fetch --url http://localhost:8080 site-dev.yml",
+
+    "antora-dev-bundle": "antora --stacktrace --cache-dir cache --redirect-facility static --clean --fetch --ui-bundle-url ../docs-ui/build/ui-bundle.zip --url http://localhost:8080 site-dev.yml",
+
     "serve": "http-server public/ -d -i",
-    "antora": "antora --stacktrace generate --cache-dir cache --redirect-facility static --generator ./generator/generate-site.js --clean --fetch --attribute format=html site.yml",
-    "antora-local": "antora --stacktrace generate --cache-dir cache --redirect-facility static --generator ./generator/generate-site.js --clean --fetch --attribute format=html --url http://localhost:8080 site.yml",
-    "antora-staging": "antora --stacktrace generate --cache-dir cache --redirect-facility static --generator ./generator/generate-site.js --clean --fetch --attribute format=html --url https://doc.staging.owncloud.com site.yml",
-    "antora-bundle": "antora --stacktrace generate --cache-dir cache --redirect-facility static --generator ./generator/generate-site.js --clean --fetch --attribute format=html --ui-bundle-url ../docs-ui/build/ui-bundle.zip --url https://doc.staging.owncloud.com site.yml",
-    "antora-dev-local": "antora --stacktrace generate --cache-dir cache --redirect-facility static --generator ./generator/generate-site.js --clean --fetch --attribute format=html --url http://localhost:8080 site-dev.yml",
-    "antora-dev-bundle": "antora --stacktrace generate --cache-dir cache --redirect-facility static --generator ./generator/generate-site.js --clean --fetch --attribute format=html --ui-bundle-url ../docs-ui/build/ui-bundle.zip --url http://localhost:8080 site-dev.yml",
-    "validate": "antora --stacktrace generate --cache-dir cache --redirect-facility disabled --generator ./generator/xref-validator.js --clean --fetch --attribute format=html site.yml",
+
     "linkcheck": "broken-link-checker --filter-level 3 --recursive --verbose"
   },
   "dependencies": {
-    "@antora/cli": "^2.3",
-    "@antora/site-generator-default": "^2.3",
+    "@antora/cli": "^3.1",
+    "@antora/site-generator-default": "^3.1",
     "@asciidoctor/core": "^3.0.3",
     "@elastic/elasticsearch": "^7.17.13",
     "asciidoctor-kroki": "^0.18.1",
@@ -56,6 +62,7 @@
     "antora",
     "asciidoc",
     "documentation",
-    "owncloud"
+    "owncloud",
+    "kiteworks"
   ]
 }

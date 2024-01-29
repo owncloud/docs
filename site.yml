@@ -3,6 +3,8 @@ site:
   url: https://doc.owncloud.com
   start_page: docs_main::index.adoc
 
+# define all content sources
+# note that branches must already exist if changed here
 content:
   sources:
   - url: https://github.com/owncloud/docs-main.git
@@ -62,7 +64,7 @@ asciidoc:
     page-pagination: true
     # Custom attribute page-component-build-list
     # Only embed named opengraph images in docs-ui via src/partials/head-meta-opengraph.hbs sourced from docs/overlay
-    page-component-build-list: 'android, branding, desktop, docs, ios-app, ocis, server, user, webui'
+    page-component-build-list: 'docs, docs-main, ocis, server, webui, desktop, android, ios-app, branding'
 #   common
     docs-base-url: 'https://doc.owncloud.com'
     oc-complete-base-url: 'https://download.owncloud.com/server/stable'
@@ -71,14 +73,18 @@ asciidoc:
     oc-marketplace-url: 'https://marketplace.owncloud.com'
     oc-central-url: 'https://central.owncloud.org'
     oc-support-url: 'https://owncloud.com/support'
+#
+# note that all attributes ending with '@' are used for versioned docs. the content can be
+# overwritten by the build process from the corresponding antory.yml file if populated - do not change
+#
 #   docs
     latest-docs-version: 'next'
     previous-docs-version: 'next'
 #   server
-    latest-server-version: '10.13'
-    latest-server-download-version: '10.13.4'
-    previous-server-version: '10.12'
-    current-server-version: '10.13'
+    latest-server-version: '10.13@'
+    latest-server-download-version: '10.13.4@'
+    previous-server-version: '10.12@'
+    current-server-version: '10.13@'
     oc-changelog-url: 'https://owncloud.com/changelog/server/'
     oc-install-package-url: 'https://download.owncloud.com/server/stable/?sort=time&order=asc'
     oc-examples-server-url: 'https://owncloud.install.com/owncloud'
@@ -96,9 +102,10 @@ asciidoc:
     std-port-mysql: '3306'
     std-port-redis: '6379'
 #   ocis
-    latest-ocis-version: 'next'
-    previous-ocis-version: 'next'
+    latest-ocis-version: 'next@'
+    previous-ocis-version: 'next@'
     # these versions are just for printing like in releases but not used for referencing
+    # needs to be changed here and not in the docs-ocis repo to be properly shown on the web
     ocis-actual-version: '4.0.4'
     ocis-former-version: '3.0.0'
     ocis-compiled: '2023-10-06 00:00:00 +0000 UTC'
@@ -107,19 +114,23 @@ asciidoc:
     latest-webui-version: 'next'
     previous-webui-version: 'next'
 #   desktop
-    latest-desktop-version: '5.2'
-    previous-desktop-version: '5.1'
+    latest-desktop-version: '5.2@'
+    previous-desktop-version: '5.1@'
 #   ios-app
-    latest-ios-version: '12.0'
-    previous-ios-version: '11.11'
+    latest-ios-version: '12.0@'
+    previous-ios-version: '11.11@'
 #   android
-    latest-android-version: '4.1'
-    previous-android-version: '4.0'
+    latest-android-version: '4.1@'
+    previous-android-version: '4.0@'
 #   branded
     latest-branded-version: 'next'
     previous-branded-version: 'next'
   extensions:
-    - ./lib/extensions/tabs.js
-    - ./lib/extensions/remote-include-processor.js
-    - ./node_modules/asciidoctor-kroki/src/asciidoctor-kroki.js
+    - ./ext-asciidoc/tabs.js
+    - ./ext-asciidoc/remote-include-processor.js
+    - asciidoctor-kroki
+
+antora:
+  extensions:
+    - ./ext-antora/generate-index.js
 
