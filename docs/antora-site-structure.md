@@ -21,40 +21,43 @@
 
 ## Why Antora
 
-The main reasons for using [Antora][link-antora] is the following:
+The main reasons for using [Antora][link-antora] are the following:
 
-1. It uses and extends the [asciidoc][link-asciidoc] text writing format
+1. It uses and extends the [asciidoc][link-asciidoc] text writing format.
 
-2. It extends asciidoc with [multi-repo][link-playbook] capabilities. Thus, the writer does not need to care about repos anymore as this is virtualized by Antora and content can be accessed in a standardized way.
+2. It extends asciidoc with [multi-repo][link-playbook] capabilities.
 
-3. Antora separates between writing the documentation and the [UI-Template][link-ui] defining how the content is presented.
+3. The writer does not need to care about repos, or content locations, etc. anymore as this is virtualized by Antora and content can be accessed in a standardized way via [Resource ID Coordinates](https://docs.antora.org/antora/latest/page/resource-id-coordinates/).
+
+4. Antora distincts writing the documentation and the [UI-Template][link-ui] defining how the content is presented.
 
 ## Scope of Documentation Repositories
 
-The ownCloud documentation consists of a main repo named `docs` and additional product repos like the clients or others which are included as content sources defined in `site.yml`.
+The ownCloud documentation consists of a building repo named `docs` which has NO content and additional repos like ocis or the clients which are included as content sources defined in `site.yml`.
 
-Our setup is made in a way, where each repo can build it's own content individually for testing and checking validity. Only the build of main repo `docs` creates documentation which is pushed to the web. There is one exception, PDF's are created AND pushed via the CI from _each_ content source.
+Our setup is made in a way, where each repo can build it's own content individually for local testing and checking validity. Only the build of the `docs` repo creates documentation which is pushed to the web. There is one exception, when reenabled, PDF's are created AND pushed via the CI from the content source where it applies.
+
+Note that the `docs-main` repo only contains the entry page but no detailed product description. 
 
 
 ```
-main        content source
+repo        content source
 
-docs   --> docs-server
+docs   -->  docs-main
+            docs-ocis
             docs-client-desktop
             docs-client-ios-app 
             docs-client-android
             ...
 
 ```
-Note that the arrow from main to content source is intentionally unidirectional in our setup and should be respected. See more details about the reason below. 
+Note that the arrow from repo to content source is intentionally unidirectional in our setup and should be respected. See more details about the reason below. 
 
 ### Scope of the playbook files (site.yml)
 
-In general, only one `site.yml` file is neccessary for the whole environment and its definitions are **available to the whole site**. This `site.yml` file is located in the main repo `docs`. We have additionally for each content source its own `site.yml` for testing purposes only. The scope of these local `site.yml` files is restricted to the respective content source and any definitions made are not availabe outside. 
+In general, only one `site.yml` file is neccessary for the whole environment and its definitions are **available to the whole site**. This `site.yml` file is located in the `docs` repo. We have additionally for each content source its own `site.yml` for testing purposes only. The scope of these local `site.yml` files is restricted to the respective content source and any definitions made are not availabe outside. 
 
-Due to this fact, you need to re-add all relevant attributes of the main `site.yml` file in the `site.yml` file of the content source which accesses it, else a local build will return warnings about unresolved attributes.
-
-If you have added an attribute in a content source `site.yml` file, you must add this attibute to the main `site.yml` file to avoid a build warning (unresolved attribute) during a build of the entire documentation.
+Due to this fact, you need to re-add all relevant attributes to the `site.yml` file as defined in the sourced `site.yml` file which accesses it, else a local build will return warnings about unresolved attributes. This is also valid for the building repo.
 
 Note that this behaviour is relevant for the playbook `site.yml` files only and does not apply to the component descriptor files `antora.yml`.
 
@@ -110,26 +113,26 @@ The navigation file `nav.adoc` is under the `partials` directory and not at the 
 
 Beside the necessary directories for node, other important directories are:
 ```
-bin/              helper scripts to maintain the documentation
-book_templates/   template file(s) to create the pdf file
-generator/        scripts needed by antora for the build process
-lib/              extension for antora not delivered by node like tabs or remote-include-processor
-pdf_web/          output directory of generated pdf files, only used locally!
-public/           output directory of generated html files, only used locally!
-resources/        themes necessary for creating pdf files
-tmp/              temp directory used for htmltest (broken link checking)
+bin/              Helper scripts to maintain the documentation
+book_templates/   Template file(s) to create the pdf file
+ext-antora/       Antora extensions necessary for the build process
+ext-asciidoc/     Asciidoc extensions necessary for the build process
+pdf_web/          Output directory of generated pdf files, only used locally!
+public/           Output directory of generated html files, only used locally!
+resources/        Themes necessary for creating pdf files
+tmp/              Temp directory used for htmltest (broken link checking)
 ```
 ### Important files
 
 The following files are important to run a build properly; note that node related stuff is not mentioned explicitly:
 
 ```
-.drone.star       define the build process steps when triggered by a PR
+.drone.star       Define the build process steps when triggered by a PR
                   necessary for the creation of the pdf file 
-antora.yml        contains source files and attributes that only belong
+package.json      Define the antora environment und scripts to run at the cli
+antora.yml        Contains source files and attributes that only belong
                   to the component (version dependent!)
-package.json      define the antora environment und scripts to run at the cli
-site.yml          global site definitions including attributes (version independent!)
+site.yml          Global site definitions including attributes (version independent!)
 
 ```
 
@@ -146,9 +149,12 @@ To manage versions in docs, we use branches. This means that any content based o
 1. The scope of attributes defined in a page is limited to that page only.
 2. The scope of attributes defined in `antora.yml` is limited to the branch and component where it is defined. This is also true for attributes that should be accessed from the UI-Template.
 3. The scope of attributes defined in `site.yml` is _global_. The term global has two flavours in our setup:
-    1. When used in the main repo `docs`, it becomes available to all sources at any time.
-    2. When used in a content source, it is only availabe to the content source during a test build.
+    1. When used in the building repo `docs`, it becomes available to all sources at any time.
+    2. When used in a content source, it is only availabe to the content source during a local test build.
 4. Attributes starting with `page-` are also available to the UI-Template when running a build. The rules above apply. This is important when defining UI content based on attributes. To access these attributes in the UI-Template use `page.attribute.name` where `name` is without leading `page-` For details see [AsciiDoc Attributes in Antora][custom-attrib-link].
+
+**IMPORTANT**  
+If used attributes are not defined during build time, Antora hard stops and files an error. You must fix those issues BEFORE creating the PR - else it never will get green. Also see the CI log for details.
 
 ## The Antora UI Template
 

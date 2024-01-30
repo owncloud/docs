@@ -35,6 +35,9 @@ With regard to language and style issues, consult the [Style Guide](./docs/style
 
 ## Generating the Documentation
 
+**IMPORTANT**  
+We recently have upgraded to `node 18.19.0`. In case you used a lower node version for your local doc repos, you must upgrade them **all**. See the link below for details. 
+
 To generate and view the documentation locally or planning major changes, refer to the [Building the Documentation guide](./docs/build-the-docs.md).
 
 ## Common Content and Styling the Documentation
@@ -73,4 +76,4 @@ Please refer to [Create a New Version Branch for Docs](./docs/new-version-branch
 
 ## HTML to PDF
 
-At the moment, creating a pdf from a component via Antora is broken and will be fixed when updating to Antora 3. In the meanwhile a workaround is provided, see the [HTML to PDF](./docs/html-to-pdf.md) description.
+At the moment, creating a pdf from a component via Antora is broken and will be fixed past updating to Antora 3. In the meanwhile a workaround is provided, see the [HTML to PDF](./docs/html-to-pdf.md) description.
