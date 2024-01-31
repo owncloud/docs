@@ -36,7 +36,10 @@ With regard to language and style issues, consult the [Style Guide](./docs/style
 ## Generating the Documentation
 
 **IMPORTANT**  
-We recently have upgraded to `node 18.19.0`. In case you used a lower node version for your local doc repos, you must upgrade them **all**. See the link below for details. 
+We recently have upgraded to `node 18.19.0`. In case you used a lower node version for your local doc repos, you must upgrade them **all**. See the link below for details.
+
+**IMPORTANT**  
+We recently have upgraded to `Antora 3.1.7`. In case you used a lower Antora version for your local doc repos, you must upgrade them **all** by running `yarn install` in each doc repo.
 
 To generate and view the documentation locally or planning major changes, refer to the [Building the Documentation guide](./docs/build-the-docs.md).
 
