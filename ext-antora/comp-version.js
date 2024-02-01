@@ -5,10 +5,11 @@
 module.exports.register = function () {
   this.once('contentAggregated', ({ contentAggregate }) => {
     console.log('\nProcessing the following components and versions\n')
-    contentAggregate.forEach((bucket) => {
-      console.log(`name: ${bucket.name}, version: ${bucket.version || '~'}, files: ${bucket.files.length}`)
-    })
+    const component_table = []
+      contentAggregate.forEach((bucket) => {
+        component_list.push ({Name: bucket.name, Version: bucket.version || '~', Files: bucket.files.length})
+      })
+    console.table(component_table)
     console.log() // do not delete, else we get a double empty line
   })
 }
-
