@@ -7,7 +7,7 @@ module.exports.register = function () {
     console.log('\nProcessing the following components and versions\n')
     const component_table = []
       contentAggregate.forEach((bucket) => {
-        component_list.push ({Name: bucket.name, Version: bucket.version || '~', Files: bucket.files.length})
+        component_table.push ({Name: bucket.name, Version: bucket.version || '~', Files: bucket.files.length})
       })
     console.table(component_table)
     console.log() // do not delete, else we get a double empty line
