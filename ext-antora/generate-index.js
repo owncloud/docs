@@ -51,6 +51,13 @@ async function generateIndex(playbook, pages) {
 
   // index the documents available
   const documents = pages.map((page) => {
+    // a document like '_email-config.adoc' gets excluded from the catalog
+    // because it has a leading '_' which will result in an undefined
+    // 'page.pub.url' variable breaking generating the index
+    if (page.pub === undefined) {
+      return
+    }
+
     const titles = []
 
     const html = page.contents.toString()
