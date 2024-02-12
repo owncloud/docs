@@ -155,7 +155,8 @@ function indexDelete(client) {
         resolve(resp)
       })
       .catch((err) => {
-        reject(err)
+        console.warning(err)
+        resolve(true)
       })
   })
 }
