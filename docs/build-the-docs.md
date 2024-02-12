@@ -432,7 +432,7 @@ Follow this procedure to show and use search and populate an index:
     ELASTICSEARCH_NODE=http://localhost:9200 \
     ELASTICSEARCH_INDEX=docs \
     ELASTICSEARCH_WRITE_AUTH=x:y \
-    yarn antora-dev-local
+    yarn antora-local
     ```
     Note that `ELASTICSEARCH_WRITE_AUTH` is necessary for building though it does not do any authentication. A value for that envvar must not be omitted but can be any dummy value you like in the format of at minimum two characters separated by a colon.
 
