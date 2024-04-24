@@ -6,6 +6,19 @@
 2. The file format that the documentation is written in is [AsciiDoc](./docs/what-is-asciidoc.md).
 3. The <abbr title="User Interface">UI</abbr> & <abbr title="User Experience">UX</abbr> of the documentation can be found at [docs-ui](https://github.com/owncloud/docs-ui)
 
+**Table of Contents**
+
+* [Antora Site Structure for Docs](#antora-site-structure-for-docs)
+* [Documentation Guidelines](#documentation-guidelines)
+* [Contributing to the Documentation](#contributing-to-the-documentation)
+* [Generating the Documentation](#generating-the-documentation)
+* [Common Content and Styling the Documentation](#common-content-and-styling-the-documentation)
+* [Best Practices and Tips](#best-practices-and-tips)
+* [Target Branch and Backporting](#target-branch-and-backporting)
+* [When Does a Change Get Published to the Docs Web Site?](#when-does-a-change-get-published-to-the-docs-web-site)
+* [Create a New Version Branch for Docs](#create-a-new-version-branch-for-docs)
+* [HTML to PDF](#html-to-pdf)
+
 ## Antora Site Structure for Docs
 
 Refer to the [Antora Site Structure for Docs](./docs/antora-site-structure.md) for more information. 
@@ -22,7 +35,13 @@ With regard to language and style issues, consult the [Style Guide](./docs/style
 
 ## Generating the Documentation
 
-To generate the documentation, whether in HTML or PDF format, please refer to the [Building the Documentation guide](./docs/build-the-docs.md).
+**IMPORTANT**  
+We recently have upgraded to `node 18.19.0`. In case you used a lower node version for your local doc repos, you must upgrade them **all**. See the link below for details.
+
+**IMPORTANT**  
+We recently have upgraded to `Antora 3.1.7`. In case you used a lower Antora version for your local doc repos, you must upgrade them **all** by running `yarn install` in each doc repo.
+
+To generate and view the documentation locally or planning major changes, refer to the [Building the Documentation guide](./docs/build-the-docs.md).
 
 ## Common Content and Styling the Documentation
 
@@ -51,11 +70,8 @@ extended code provided, because a clear naming structure of the backport PR is g
 
 Changes made will get published to the web under the following conditions:
 
-1. A nightly running drone job pulls the documentation from the Client, IOS and Android repo.
-This pull will also be used for any builds triggered by the scenarios outlined below. This means for changes made in one of these
-repos, a merge to master or one of the used branches in docs the next day is necessary to get them published.
-2. A merge to one of the defined version branches triggers as a last step a master branch build.
-3. A merge to master triggers a site build which then pushes all versions defined in site.yml.
+1. A merge in a component to one of the defined version branches triggers as a last step a master branch build.
+2. A merge to master triggers a site build which then pushes all versions defined in site.yml.
 
 ## Create a New Version Branch for Docs
 
@@ -63,47 +79,4 @@ Please refer to [Create a New Version Branch for Docs](./docs/new-version-branch
 
 ## HTML to PDF
 
-The script `bin/ownCloudDocPdf.py`, temporarily necessary until Antora is upgraded to Version 3, allows users to convert a sequence of web pages to the PDF format. It navigates through pages of a manual by following a "next" link on each page and converts each page to a PDF. The PDFs are then merged into a single PDF file for further use. Note that this script has a chance to miss pages as it is based on continuous chains of "next" links compared to Antora generated pdf which accesses a full content catalogue.
-
-### How to Use
-
-The script requires Python to be installed and some libraries provided by th OS and is executed from the command line. It accepts a URL as an argument.
-
-```bash
-python bin/ownCloudDocPdf.py [URL]
-```
-
-### Example
-
-```python
-python bin/ownCloudDocPdf.py https://doc.owncloud.com/webui/next/classic_ui/
-```
-
-### Dependencies
-
-- `Python (Script developed and tested with version 3.10)`
-- `wkhtmltopdf`
-- `pdftk`
-- `requests`
-
-### Installing Dependencies
-
-Install the Python requests library:
-
-```bash
-python -m pip install requests
-```
-On Debian-based systems, install `wkhtmltopdf` and `pdftk` using:
-
-```bash
-sudo apt-get install wkhtmltopdf pdftk
-```
-On other systems, please refer to the documentation for `wkhtmltopdf` and `pdftk` for installation instructions.
-
-**Output**
-The script will output a PDF file named output.pdf in the current directory. If a file with that name already exists, the script will increment a number in parentheses until it finds an unused filename (like output(1).pdf, output(2).pdf, etc.).
-
-**Notes**
-The temporary PDF files generated for each page are stored under /tmp/ and are deleted after the final PDF is merged.
-Ensure that you have write permissions in the directory where the script is run, as it will attempt to save the output PDF in that location.
-
+At the moment, creating a pdf from a component via Antora is broken and will be fixed past updating to Antora 3. In the meanwhile a workaround is provided, see the [HTML to PDF](./docs/html-to-pdf.md) description.

@@ -199,7 +199,7 @@ $ git push {username} :<branchname>
 
 ## The Branching Workflow
 
-Please refer to [the branching workflow](./the-branching-workflow.md) to learn about how git branches are used to manage and build the documentation.
+The branching workflow is only necessary for versioned repos (documentations). Please refer to the [branching workflow](./the-branching-workflow.md) to learn about how git branches are used to manage and build the documentation.
 
 ## Backporting
 

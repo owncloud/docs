@@ -1,3 +1,6 @@
+# Environment variables needed to generate the search index are only provided here in the docs repo in .drone.star
+# Also see the documentation for more details.
+
 def main(ctx):
     # Config
 
@@ -70,25 +73,16 @@ def build(ctx, deployment_branch):
             {
                 "name": "docs-deps",
                 "pull": "always",
-                "image": "owncloudci/nodejs:16",
+                "image": "owncloudci/nodejs:18",
                 "commands": [
                     "yarn install",
                 ],
             },
             {
-                "name": "docs-validate",
-                "pull": "always",
-                "image": "owncloudci/nodejs:16",
-                "commands": [
-                    "yarn validate --fetch",
-                ],
-            },
-            {
                 "name": "docs-build",
                 "pull": "always",
-                "image": "owncloudci/nodejs:16",
+                "image": "owncloudci/nodejs:18",
                 "environment": {
-                    "BUILD_SEARCH_INDEX": ctx.build.branch == deployment_branch,
                     "UPDATE_SEARCH_INDEX": ctx.build.branch == deployment_branch,
                     "ELASTICSEARCH_NODE": from_secret("elasticsearch_node"),
                     "ELASTICSEARCH_INDEX": from_secret("elasticsearch_index"),
@@ -96,7 +90,8 @@ def build(ctx, deployment_branch):
                     "ELASTICSEARCH_WRITE_AUTH": from_secret("elasticsearch_write_auth"),
                 },
                 "commands": [
-                    "yarn antora --fetch --attribute format=html",
+                    # the build attribute is only necessary for the docs-server repo
+                    "yarn antora --attribute format=html",
                     "bin/optimize_crawl -x",
                 ],
             },

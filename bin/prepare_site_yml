@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+#
+# This script creates a site-dev.yml from an existing site.yml
+# You need to run this script from the root of the repo via bin/prepare_site_yml
+# once you are starting development. This ensures you have the latest version as base.
+
+source_file="./site.yml"
+target_file="./site-dev.yml"
+
+# check that the source exists
+if [ ! -f "$source_file" ]; then
+	echo "$source_file not found. Exiting."
+	exit
+fi
+
+echo "$source_file found."
+echo "copying $source_file to $target_file"
+
+cp $source_file $target_file
+
+# - url: https://github.com/owncloud/docs-ocis.git --> - url: ../docs-ocis.git
+echo "Replacing component URL paths to local paths"
+sed -i 's#- url: https://github.com/owncloud#- url: ..#g' $target_file
+
+# creating three caption groups
+# 1 ... - url: ../
+# 2 ... docs-ocis
+# 3 ... .git
+# only taking 1 and 2
+# - url: ../docs-ocis.git --> - url: ../docs-ocis
+sed -i -r 's#(- url: \.\.\/)(.*)(.git)#\1\2#g' $target_file
+
+# Result
+echo "Done"
+echo

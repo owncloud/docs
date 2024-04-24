@@ -37,7 +37,7 @@ Commit all changed files and push the branch to GitHub. Now, log in to Github an
 
 3. Include Support
 
-   If there is a change that might have effects on support, add `@cdamken` either as reviewer or in the PR description.
+   If there is a change that might have effects on support, add a note in the PR description.
 
 4. The main branch for changes is `master`. Any changes start there. Exception:
 

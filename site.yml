@@ -1,39 +1,48 @@
 site:
-  title: ownCloud Documentation
+  title: Documentation for ownCloud (A Kiteworks Company)
   url: https://doc.owncloud.com
-  start_page: docs::index.adoc
+  # the site's landing page resides in the docs_main repository/component
+  # but it MUST be named ROOT to get a component/version less than the  landing page
+  # this now makes the landing page reside in the url given above WITHOUT getting redirected
+  # see: https://docs.antora.org/antora/latest/page/start-page/
+  # see: https://docs.antora.org/antora/latest/component-name-key/#root-component
+  start_page: ROOT::index.adoc
 
+# define all content sources
+# note that branches must already exist if changed here
 content:
   sources:
-  - url: .
+  - url: https://github.com/owncloud/docs-main.git
     branches:
-    - HEAD
+    - master
   - url: https://github.com/owncloud/docs-server.git
     branches:
     - master
+    - '10.14'
     - '10.13'
-    - '10.12'
   - url: https://github.com/owncloud/docs-ocis.git
     branches:
     - master
+    - '5.0'
+    - '4.0'
   - url: https://github.com/owncloud/docs-webui.git
     branches:
     - master
   - url: https://github.com/owncloud/docs-client-desktop.git
     branches:
     - master
-    - '4.2'
-    - '4.1'
+    - '5.2'
+    - '5.1'
   - url: https://github.com/owncloud/docs-client-ios-app.git
     branches:
     - master
-    - '12.0'
-    - '11.11'
+    - '12.2'
+    - '12.1'
   - url: https://github.com/owncloud/docs-client-android.git
     branches:
     - master
+    - '4.2'
     - '4.1'
-    - '4.0'
   - url: https://github.com/owncloud/docs-client-branding.git
     branches:
     - master
@@ -62,7 +71,7 @@ asciidoc:
     page-pagination: true
     # Custom attribute page-component-build-list
     # Only embed named opengraph images in docs-ui via src/partials/head-meta-opengraph.hbs sourced from docs/overlay
-    page-component-build-list: 'android, branding, desktop, docs, ios-app, ocis, server, user, webui'
+    page-component-build-list: 'docs, docs-main, ocis, server, webui, desktop, android, ios-app, branding'
 #   common
     docs-base-url: 'https://doc.owncloud.com'
     oc-complete-base-url: 'https://download.owncloud.com/server/stable'
@@ -71,16 +80,20 @@ asciidoc:
     oc-marketplace-url: 'https://marketplace.owncloud.com'
     oc-central-url: 'https://central.owncloud.org'
     oc-support-url: 'https://owncloud.com/support'
+#
+# note that all attributes ending with '@' are used for versioned docs. the content can be
+# overwritten by the build process from the corresponding antory.yml file if populated - do not change
+#
 #   docs
     latest-docs-version: 'next'
     previous-docs-version: 'next'
 #   server
-    latest-server-version: '10.13'
-    latest-server-download-version: '10.13.0'
-    previous-server-version: '10.12'
-    current-server-version: '10.13'
+    latest-server-version: '10.14'
+    latest-server-download-version: '10.14.0'
+    previous-server-version: '10.13'
+    current-server-version: '10.14'
     oc-changelog-url: 'https://owncloud.com/changelog/server/'
-    oc-install-package-url: 'https://software.opensuse.org//download.html?project=isv%3AownCloud%3Aserver%3A10&package=owncloud-complete-files'
+    oc-install-package-url: 'https://download.owncloud.com/server/stable/?sort=time&order=asc'
     oc-examples-server-url: 'https://owncloud.install.com/owncloud'
     oc-examples-server-ip: '127.0.0.1'
     oc-examples-username: 'username'
@@ -96,30 +109,40 @@ asciidoc:
     std-port-mysql: '3306'
     std-port-redis: '6379'
 #   ocis
-    latest-ocis-version: 'next'
-    previous-ocis-version: 'next'
-    # these versions are just for printing like in releases but not used for referencing
-    ocis-actual-version: '4.0.1'
-    ocis-former-version: '3.0.0'
-    ocis-compiled: '2023-09-01 00:00:00 +0000 UTC'
+    latest-ocis-version: '5.0'
+    previous-ocis-version: '4.0'
+    # These versions are just for printing like in docs-main release info, but not used in docs-ocis.
+    # Versions in the ocis docs need to be defined in the branch specific docs-ocis/antora.yaml file.
+    # To do so, change the values in docs-ocis/antora.yml like compose_tab_1_tab_text.
+    ocis-actual-version: '5.0.2'
+    ocis-former-version: '4.0.7'
+    ocis-compiled: '2024-04-17 00:00:00 +0000 UTC'
     ocis-downloadpage-url: 'https://download.owncloud.com/ocis/ocis/stable/'
 #   webui
     latest-webui-version: 'next'
     previous-webui-version: 'next'
 #   desktop
-    latest-desktop-version: '4.2'
-    previous-desktop-version: '4.1'
+    latest-desktop-version: '5.2'
+    previous-desktop-version: '5.1'
 #   ios-app
-    latest-ios-version: '12.0'
-    previous-ios-version: '11.11'
+    latest-ios-version: '12.2'
+    previous-ios-version: '12.1'
 #   android
-    latest-android-version: '4.1'
-    previous-android-version: '4.0'
+    latest-android-version: '4.2'
+    previous-android-version: '4.1'
 #   branded
     latest-branded-version: 'next'
     previous-branded-version: 'next'
   extensions:
-    - ./lib/extensions/tabs.js
-    - ./lib/extensions/remote-include-processor.js
-    - ./node_modules/asciidoctor-kroki/src/asciidoctor-kroki.js
+    - ./ext-asciidoc/tabs.js
+    - ./ext-asciidoc/remote-include-processor.js
+    - asciidoctor-kroki
 
+antora:
+  extensions:
+    - ./ext-antora/generate-index.js
+    - ./ext-antora/comp-version.js
+    # for testing only, prints out attributes used
+    # use only one or the other 
+    #- ./ext-antora/attributes-used-in-site-yml.js
+    #- ./ext-antora/attributes-used-in-antora-yml.js
