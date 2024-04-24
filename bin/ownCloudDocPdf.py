@@ -11,6 +11,7 @@
 # v0.1  2023-09-27       Initial draft
 # v0.2  2024-04-24, jw   Output PDF name is derived from the given URL,
 #                        EndIndex introduced, so that e.g. the admin manual does not continue into the developer manual.
+#                        Default format is A4, but changing this to Legal avoids empty pages. Somehting is odd with our footer.
 
 import os
 import re
@@ -22,6 +23,7 @@ import tempfile
 import shutil
 
 next_search_pattern = r'<span class="next"><a href="(.*?)"'
+page_format='A4'        # FIXME: changing this to 'Legal' avoids empty pages. Why?
 
 # Check if any argument is passed, if not print usage and exit
 if len(sys.argv) < 2:
@@ -92,7 +94,7 @@ pdf_files = []
 for i, url in enumerate(urls):
     output_filename = os.path.join(temp_directory, f"output_{i}.pdf")
     pdf_files.append(output_filename)
-    subprocess.run(["wkhtmltopdf", url, output_filename])
+    subprocess.run(["wkhtmltopdf", "-s", page_format, url, output_filename])
     print(f"{i+1}/{len(urls)}")
 
 # Step 4: Merge all PDFs into one
