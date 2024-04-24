@@ -36,7 +36,7 @@ Examples:
 
 Starting with the given URL, a list of "next" URLs is generated, by searching for {next_search_pattern}
 The list ends, when the page content does not contain a next url.
-You can optionally specify an EndIndex, this is limits how many urls will be processed in total.
+You can optionally specify an EndIndex, this limits how many URLs will be processed in total.
 
 The resulting PDF file will be named like the given URL with https:// removed and some characters replaced.
 """)
