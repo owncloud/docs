@@ -3,15 +3,15 @@
 # ownCloudDocPDF.py
 #
 # Generate a PDF version by traversing the web rendering.
-# this is a workaround for missing PDF export in antora 2.
+# This is a workaround for the currently not implemented PDF export of Antora 3.
 #
 # (c) 2023 Elcin Asgarov, 2024 Jürgen Weigert
 # Distribute under GPLv2 or ask.
 
-# v0.1  2023-09-27       Initial draft
 # v0.2  2024-04-24, jw   Output PDF name is derived from the given URL,
 #                        EndIndex introduced, so that e.g. the admin manual does not continue into the developer manual.
 #                        Default format is A4, but changing this to Legal avoids empty pages. Somehting is odd with our footer.
+# v0.1  2023-09-27       Initial draft
 
 import os
 import re
