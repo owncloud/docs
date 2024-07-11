@@ -24,12 +24,16 @@
 The main reasons for using [Antora][link-antora] are the following:
 
 1. It uses and extends the [asciidoc][link-asciidoc] text writing format.
+   * As an example, defining tables is so much easier in asciidoc compared to using markdown.
+   * Using attributes (variables), which scope can be easily determined, content can be dynamically defined.
 
 2. It extends asciidoc with [multi-repo][link-playbook] capabilities.
 
-3. The writer does not need to care about repos, or content locations, etc. anymore as this is virtualized by Antora and content can be accessed in a standardized way via [Resource ID Coordinates](https://docs.antora.org/antora/latest/page/resource-id-coordinates/).
+3. The doc writer does not need to care about repos, or content locations, etc. anymore as this is virtualized by Antora and content can be accessed in a standardized way via [Resource ID Coordinates](https://docs.antora.org/antora/latest/page/resource-id-coordinates/).
 
-4. Antora distincts writing the documentation and the [UI-Template][link-ui] defining how the content is presented.
+4. You can quite easily extend functionalities with extensions added via `site.yml`.
+
+5. Antora distincts writing the documentation and the [UI-Template][link-ui] defining how the content is presented.
 
 ## Scope of Documentation Repositories
 
@@ -55,11 +59,11 @@ Note that the arrow from repo to content source is intentionally unidirectional 
 
 ### Scope of the playbook files (site.yml)
 
-In general, only one `site.yml` file is neccessary for the whole environment and its definitions are **available to the whole site**. This `site.yml` file is located in the `docs` repo. We have additionally for each content source its own `site.yml` for testing purposes only. The scope of these local `site.yml` files is restricted to the respective content source and any definitions made are not availabe outside. 
+In general, only one `site.yml` file is neccessary building the **complete site**. This `site.yml` file is located in the `docs` repo. Additionally, we have for each content source its own `site.yml` for local building, development and testing  purposes only. The scope of these local `site.yml` files are restricted to the respective content source and any definitions made in these are not availabe outside. 
 
-Due to this fact, you need to re-add all relevant attributes to the `site.yml` file as defined in the sourced `site.yml` file which accesses it, else a local build will return warnings about unresolved attributes. This is also valid for the building repo.
+Due to this fact, you must re-add all relevant attributes to the local `site.yml` file as defined in this main file , else a local build will return warnings or even errors about unresolved attributes. This is also valid for sourced repos when developing new attributes that must find their way into this `site.yml` file.
 
-Note that this behaviour is relevant for the playbook `site.yml` files only and does not apply to the component descriptor files `antora.yml`.
+Note that this behaviour is relevant for the playbook `site.yml` files only and does not apply to the component descriptor files `antora.yml`!
 
 ## Scope of Content Accessibility
 
@@ -73,7 +77,7 @@ Because of the setup we have made regarding testing, the direction of the arrow 
 docs    --> docs-client-ios-app
             └> index.adoc
 ```
-Main (docs) can access content from any content source (like docs-client-ios-app) and vice versa *at build time* , because docs has referenced the repo (content source) and made it available to all.
+This docs master repo can access content from any content source (like docs-client-ios-app) and vice versa *at build time* , because docs has referenced the repo and made it available as content source to all.
 
 **Impossible**
 ```
@@ -84,7 +88,9 @@ docs-client-ios-app    --> docs
                            └> index.adoc
 
 ```
-When doing a build of a content source (like the docs-client-ios-app) which is neccesary for testing purposes, any references to another content source or to docs will fail as the referenced content source is unknown. Those references will throw an error/warning. Even if it is not the best approach, use .html references to any other source outside the working repo.
+When doing a build of a content source (like the `docs-client-ios-app`) which is neccesary for testing purposes, any references to another content source or to docs will fail as the referenced content source is unknown. Those references will throw an error/warning. Even if it is not the best approach, use .html references to any other source outside the working repo.
+
+With a futuer release of Antora, it will be possible to use a kind of map to make references in local repos at build time which are not physically included and would return errors or warnings otherwise.
 
 ## Structure of Directories
 
@@ -122,9 +128,9 @@ public/           Output directory of generated html files, only used locally!
 resources/        Themes necessary for creating pdf files
 tmp/              Temp directory used for htmltest (broken link checking)
 ```
-### Important files
+### Important Files
 
-The following files are important to run a build properly; note that node related stuff is not mentioned explicitly:
+The following files are important to run a build properly; note that Node related stuff is not mentioned explicitly:
 
 ```
 .drone.star       Define the build process steps when triggered by a PR
