@@ -77,7 +77,7 @@ Because of the setup we have made regarding testing, the direction of the arrow 
 docs    --> docs-client-ios-app
             └> index.adoc
 ```
-Main (docs) can access content from any content source (like docs-client-ios-app) and vice versa *at build time* , because docs has referenced the repo (content source) and made it available as content source to all.
+This docs master repo can access content from any content source (like docs-client-ios-app) and vice versa *at build time* , because docs has referenced the repo and made it available as content source to all.
 
 **Impossible**
 ```
