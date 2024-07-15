@@ -491,7 +491,7 @@ yarn antora-local
 
 Packages and dependencies are managed by the setup automatically.
 
-In case it is necessary to add or remove packages, you need to do this in the `package.json` file. Then you delete the `yarn.lock` file and run `yarn install`. All dependencies are resolved automatically and a new lock file is created. You then need to push both changed files and create a PR.
+In case it is necessary to add or remove packages, you need to do this in the `package.json` file. Add new packages issuing `yarn add <package-name>`. Then you delete the `yarn.lock` file and run `yarn install`. All dependencies are resolved automatically and a new lock file is created. You then need to push both changed files and create a PR.
 
 **IMPORTANT:** This procedure is also true when "backporting" a change of the package file to the target branch. A normal backport process will break the lockfile and you will get errors reported from the CI.
 
