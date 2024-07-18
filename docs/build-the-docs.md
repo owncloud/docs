@@ -21,7 +21,8 @@
 8. [Setting up an Antora Development Environment](#setting-up-an-antora-development-environment)
 9. [Using Search in Production or Development](#using-search-in-production-or-development)
 10. [Resolving Edit-this-page in Development](#resolving-edit-this-page-in-development)
-11. [TIPS](#tips)
+11. [Package and Dependency Management](#package-and-dependency-management)
+12. [TIPS](#tips)
 
 ## Install the Prerequisites
 
@@ -485,6 +486,15 @@ When doing a local build, the link `Edit this page` on the top right resolves to
 CI=true \
 yarn antora-local
 ```
+
+## Package and Dependency Management
+
+Packages and dependencies are managed by the setup automatically.
+
+In case it is necessary to add or remove packages, you need to do this in the `package.json` file. Add new packages issuing `yarn add <package-name>`. Then you delete the `yarn.lock` file and run `yarn install`. All dependencies are resolved automatically and a new lock file is created. You then need to push both changed files and create a PR.
+
+**IMPORTANT:** This procedure is also true when "backporting" a change of the package file to the target branch. A normal backport process will break the lockfile and you will get errors reported from the CI.
+
 
 ## TIPS
 
