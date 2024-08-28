@@ -1,4 +1,5 @@
 # Building the Documentation
+[link-curl]: https://manpages.ubuntu.com/manpages/noble/man1/curl.1.html
 [link-git]: https://git-scm.com
 [link-ruby]: https://www.ruby-lang.org
 [link-node]: https://nodejs.org
@@ -28,6 +29,7 @@
 
 Before you can build the ownCloud documentation, you need to install the following software:
 
+- [curl][link-curl] (command: `curl`)
 - [git][link-git] (command: `git`)
 - [ruby][link-ruby] (command: `ruby`)
 - [Node][link-node] (command: `node`)
@@ -38,12 +40,13 @@ Before you can build the ownCloud documentation, you need to install the followi
 To check if they are installed on a Linux system, run the following command:
 
 ```
-dependencies=( git node npm yarn ruby ) && for i in "${dependencies[@]}"; do command -v $i; done;
+dependencies=( curl git node npm yarn ruby ) && for i in "${dependencies[@]}"; do command -v $i; done;
 ```
 
 You will see the path to each binary displayed, if it is installed. For any that you do not see displayed, follow the instructions below to install it. This is an example output if you have everything installed. Please consider that the home directory, root in this example, is dependent on the user you used during installing and can be different in your installation.
 
 ```
+/usr/bin/curl
 /usr/bin/git
 /home/<your-user>/.nvm/versions/node/v16.13.2/bin/node
 /home/<your-user>/.nvm/versions/node/v16.13.2/bin/npm
@@ -54,6 +57,14 @@ You will see the path to each binary displayed, if it is installed. For any that
 ### Install Prerequisites
 
 If one or more of these commands reports an error, then that prerequisite is not installed. For any prerequisite that is not installed, follow the instructions below to install it.
+
+#### curl
+
+To install curl, which may not be present on a fresh installed OS, run the following command:
+
+```bash
+sudo apt install curl
+```
 
 #### git
 
