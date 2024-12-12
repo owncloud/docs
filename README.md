@@ -33,6 +33,8 @@ To get started contributing to the documentation, please refer to the [Getting S
 
 With regard to language and style issues, consult the [Style Guide](./docs/style-guide.md).
 
+Note that the documentation provides a setting for the [IntelliJ AsciiDoc-Antora Plugin](https://intellij-asciidoc-plugin.ahus1.de) to preview a page using the css sourced from `doc.owncloud.com`.
+
 ## Generating the Documentation
 
 **IMPORTANT**  
