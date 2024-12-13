@@ -65,7 +65,7 @@ _only_ present in that particular branch! When creating a PR and it is necessary
 document in the PR to which branches a backport is needed.
 
 When backporting, consider using the [backport script](https://doc.owncloud.com/server/developer_manual/general/backporting.html)
-which eases life a lot and speeds up the process. It is also very benificial when using the
+which eases life a lot and speeds up the process. It is also very beneficial when using the
 extended code provided, because a clear naming structure of the backport PR is generated automatically.
 
 ## When Does a Change Get Published to the Docs Web Site?
