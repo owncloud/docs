@@ -59,25 +59,6 @@ def build(ctx, deployment_branch):
             "arch": "amd64",
         },
         "steps": [
-            #{
-                #"name": "cache-restore",
-                #"pull": "always",
-                #"image": "plugins/s3-cache:1",
-                #"settings": {
-                    #"endpoint": from_secret("cache_s3_server"),
-                    #"access_key": from_secret("cache_s3_access_key"),
-                    #"secret_key": from_secret("cache_s3_secret_key"),
-                    #"restore": "true",
-                #},
-            #},
-            #{
-                #"name": "docs-deps",
-                #"pull": "always",
-                #"image": "owncloudci/nodejs:18",
-                #"commands": [
-                #    "yarn install",
-                #],
-            #},
             {
                 "name": "docs-build",
                 "pull": "always",
@@ -96,44 +77,6 @@ def build(ctx, deployment_branch):
                     "bin/optimize_crawl -x",
                 ],
             },
-            #{
-                #"name": "cache-rebuild",
-                #"pull": "always",
-                #"image": "plugins/s3-cache:1",
-                #"settings": {
-                    #"endpoint": from_secret("cache_s3_server"),
-                    #"access_key": from_secret("cache_s3_access_key"),
-                    #"secret_key": from_secret("cache_s3_secret_key"),
-                    #"rebuild": "true",
-                    #"mount": [
-                        #"node_modules",
-                    #],
-                #},
-                #"when": {
-                    #"event": [
-                        #"push",
-                        #"cron",
-                    #],
-                #},
-            #},
-            #{
-                #"name": "cache-flush",
-                #"pull": "always",
-                #"image": "plugins/s3-cache:1",
-                #"settings": {
-                    #"endpoint": from_secret("cache_s3_server"),
-                    #"access_key": from_secret("cache_s3_access_key"),
-                    #"secret_key": from_secret("cache_s3_secret_key"),
-                    #"flush": "true",
-                    #"flush_age": "14",
-                #},
-                #"when": {
-                    #"event": [
-                        #"push",
-                        #"cron",
-                    #],
-                #},
-            #},
             {
                 "name": "upload-html",
                 "pull": "always",
