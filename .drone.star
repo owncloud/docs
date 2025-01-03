@@ -60,6 +60,17 @@ def build(ctx, deployment_branch):
         },
         "steps": [
             {
+                "name": "cache-restore",
+                "pull": "always",
+                "image": "plugins/s3-cache:1",
+                "settings": {
+                    "endpoint": from_secret("cache_s3_server"),
+                    "access_key": from_secret("cache_s3_access_key"),
+                    "secret_key": from_secret("cache_s3_secret_key"),
+                    "restore": "true",
+                },
+            },
+            {
                 "name": "docs-build",
                 "pull": "always",
                 "image": "owncloudci/nodejs:18",
