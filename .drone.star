@@ -81,6 +81,14 @@ def build(ctx, deployment_branch):
                     "ELASTICSEARCH_READ_AUTH": from_secret("elasticsearch_read_auth"),
                     "ELASTICSEARCH_WRITE_AUTH": from_secret("elasticsearch_write_auth"),
                 },
+            {
+                "name": "docs-deps",
+                "pull": "always",
+                "image": "owncloudci/nodejs:18",
+                "commands": [
+                    "ln -s node_test node_modules",
+                ],
+            },
                 "commands": [
                     # the build attribute is only necessary for the docs-server repo
                     #"yarn antora --attribute format=html",
