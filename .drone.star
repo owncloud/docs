@@ -92,7 +92,7 @@ def build(ctx, deployment_branch):
                 "commands": [
                     # the build attribute is only necessary for the docs-server repo
 #                    "yarn antora --attribute format=html",
-                     "npx antora --stacktrace --cache-dir cache --redirect-facility static --clean --fetch site.yml"
+                    "npx antora --stacktrace --cache-dir cache --redirect-facility static --clean --fetch site.yml",
                     "bin/optimize_crawl -x",
                 ],
             },
