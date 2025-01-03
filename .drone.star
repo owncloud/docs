@@ -75,7 +75,7 @@ def build(ctx, deployment_branch):
                 "pull": "always",
                 "image": "owncloudci/nodejs:18",
                 "commands": [
-                    "yarn install",
+                    "npm install",
                 ],
             },
             {

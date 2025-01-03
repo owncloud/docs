@@ -3,7 +3,6 @@
 [link-git]: https://git-scm.com
 [link-ruby]: https://www.ruby-lang.org
 [link-node]: https://nodejs.org
-[link-yarn]: https://yarnpkg.com
 [link-git-package]: https://git-scm.com/downloads
 [link-nvm]: https://github.com/creationix/nvm
 [link-nvm-installation-instructions]: https://github.com/creationix/nvm#installation
@@ -14,7 +13,7 @@
 1. [Install the Prerequisites](#install-the-prerequisites)
 2. [Install Build Dependencies](#install-build-dependencies)
 3. [Prepare Your Browser](#prepare-your-browser)
-4. [Prepared Yarn Commands](#prepared-yarn-commands)
+4. [Prepared npm Commands](prepared-npm-commands)
 5. [Generating the Documentation](#generating-the-documentation)
 6. [Using the Docker Container](#using-the-docker-container)
 7. [Viewing The HTML Documentation](#viewing-the-html-documentation)
@@ -33,14 +32,13 @@ Before you can build the ownCloud documentation, you need to install the followi
 - [git][link-git] (command: `git`)
 - [ruby][link-ruby] (command: `ruby`)
 - [Node][link-node] (command: `node`)
-- [Yarn][link-yarn] (command: `yarn`)
 
 ### Checking for the Prerequisites on Linux
 
 To check if they are installed on a Linux system, run the following command:
 
 ```
-dependencies=( curl git node npm yarn ruby ) && for i in "${dependencies[@]}"; do command -v $i; done;
+dependencies=( curl git node npm ruby ) && for i in "${dependencies[@]}"; do command -v $i; done;
 ```
 
 You will see the path to each binary displayed, if it is installed. For any that you do not see displayed, follow the instructions below to install it. This is an example output if you have everything installed. Please consider that the home directory, root in this example, is dependent on the user you used during installing and can be different in your installation.
@@ -48,9 +46,8 @@ You will see the path to each binary displayed, if it is installed. For any that
 ```
 /usr/bin/curl
 /usr/bin/git
-/home/<your-user>/.nvm/versions/node/v16.13.2/bin/node
-/home/<your-user>/.nvm/versions/node/v16.13.2/bin/npm
-/usr/bin/yarn
+/home/<your-user>/.nvm/versions/node/v18.20.4/bin/node
+/home/<your-user>/.nvm/versions/node/v18.20.4/bin/npm
 /usr/bin/ruby
 ```
 
@@ -100,13 +97,13 @@ nvm ls-remote | grep "Latest LTS"
       v12.22.12   (Latest LTS: Erbium)
        v14.21.3   (Latest LTS: Fermium)
        v16.20.2   (Latest LTS: Gallium)
-       v18.19.2   (Latest LTS: Hydrogen)
+       v18.20.4   (Latest LTS: Hydrogen)
        v20.10.0   (Latest LTS: Iron)
 ```
 Then install a suitable LTS version. You can install as many versions as you like or need, see example below.
 
 ```
-nvm install 18.19.2
+nvm install 18.20.4
 ```
 
 List the installed versions
@@ -118,15 +115,12 @@ nvm ls
        v14.18.3
         v15.5.1
        v16.13.2
-->     v18.19.0
+->     v18.20.4
          system
 
-default -> 18.19.0 (-> v18.19.0)
+default -> 18.20.4 (-> v18.20.4)
 ...
 ```
-
-**Important:**  
-For docs, DO NOT use a version _above_ v10.23.0 and _below_ v14.17.0 as it may later conflict with other dependencies especially with the `yarn serve` command where you will get warnings and it may not work as expected.
 
 **Info:**  
 The backend to push to the web uses node v18, see the `.drone.star` file. It is recommended to stay with the same release if possible.
@@ -139,30 +133,26 @@ If you have used a lower node version like 16.13.2, you now must upgrade **ALL**
 Switch to a specific installed version of Node at any time, use the following command:
 
 ```
-nvm use 18.19.0
+nvm use 18.20.4
 ```
 **Important:** If you have additional concurrent terminals open, you must close these terminals first and reopen them to use the new setup.
 
 To make a particular Node version default in new terminals, type:
 
 ```
-nvm alias default 18.19.0
+nvm alias default 18.20.4
 ```
-
-#### Yarn
-
-To [install yarn](https://yarnpkg.com/lang/en/docs/install) following the installation instructions for your operating system.
 
 ## Install Build Dependencies
 
 Before you can build the documentation, you must install Antora's dependencies. To install them, you just need to run:
 
 ```
-yarn install
+npm install
 ```
 on the command line at the top level of the `docs` directory. This will install all the dependencies specified in `package.json`, which is located at the top level of the `docs` directory.
 
-It is recommended that you **regularly** run `yarn install` as from time to time packages are bumped to newer versions.
+It is recommended that you **regularly** run `npm install` as from time to time packages are bumped to newer versions.
 
 <!--
 To generate the documentation in PDF format locally, you need to have `asciidoctor-pdf`. To install or update `asciidoctor-pdf`, please refer to the [official installation instructions](https://asciidoctor.org/docs/asciidoctor-pdf/#getting-started) or by typing:
@@ -198,11 +188,11 @@ With the dependencies installed, you are now ready to build (generate) the ownCl
 
 It is very helpful to see how changes to a page will render without running a build - without including other data  images or attributes defined somewhere else, etc. Therefore you can install a plugin for your browser to render `.adoc` files. You may use the `Asciidoctor.js Live Preview` or any other that is available for your browser - just search and install a suitable one. Post installing, check that _accessing local files_ in the plugin settings is allowed.
 
-The result shown in the browser may look slightly different to a version that is built via ` yarn antora-local`, but is a good start to get an impression and to catch typos made.
+The result shown in the browser may look slightly different to a version that is built via ` npm antora-local`, but is a good start to get an impression and to catch typos made.
 
-## Prepared Yarn Commands
+## Prepared npm Commands
 
-To see all prepared yarn commands, run the following command `yarn run`. This will ouptput all commands with their settings, though this makes readability not easy. See the [yarn documentation](https://yarnpkg.com/lang/en/docs/cli/run/) for more information.
+To see all prepared npm commands, run the following command `npm run`. This will ouptput all commands with their settings, though this makes readability not easy. See the [npm documentation](https://docs.npmjs.com/cli/v11/using-npm/scripts) for more information.
 
 Here is the list of commands and when to use them
 
@@ -210,26 +200,26 @@ Here is the list of commands and when to use them
 
 The following build commands are used when regular content changes are made or small fixes to the UI are incorporated:
 
-* `yarn antora`  
+* `npm antora`  
 Used when you want to build the documentation where internal links have as base `doc.owncloud.com`. The  documentation is built for the live environment. Clicking on particular links will then direct to the docs homepage. Use only when you want to check these links or have the CI use them when building. 
 
-* `yarn antora-local`  
-**This is the command which you will use the most.** It is used when you want to build the documentation locally where internal links have as base `http://localhost:8080`. The  documentation is fully sourced locally. Ideal for checking with `yarn serve` after content has been updated or added.
+* `npm antora-local`  
+**This is the command which you will use the most.** It is used when you want to build the documentation locally where internal links have as base `http://localhost:8080`. The  documentation is fully sourced locally. Ideal for checking with `npm serve` after content has been updated or added.
 
-* `yarn antora-staging`  
-Used when you want to build the documentation where internal links have as base `doc.staging.owncloud.com`. The  documentation is built for the staging environment. Note that you manually have to move the content created in `/public` to the staging web page to access it. Note that you can also view locally with `yarn serve` which is ideal as first preview step.
+* `npm antora-staging`  
+Used when you want to build the documentation where internal links have as base `doc.staging.owncloud.com`. The  documentation is built for the staging environment. Note that you manually have to move the content created in `/public` to the staging web page to access it. Note that you can also view locally with `npm serve` which is ideal as first preview step.
 
-* `yarn antora-bundle`  
+* `npm antora-bundle`  
 Used when you want to build the documentation where internal links have as base `doc.staging.owncloud.com`. Compared to `antora-staging`, this uses a locally built `ui-bundle`. This build command should be used when you want to test a changed UI before rolling it out.
 
 **For Development Environments**
 
 The following build commands are used when bigger refactoring, changes or major upgrades including the UI are made:
 
-* `yarn antora-dev-local`  
+* `npm antora-dev-local`  
 Used when you want to build the documentation where internal links have as base `http://localhost:8080`. Compared to `antora-staging`, it uses a different site.yml file named `site-dev.yml` which sources manuals not from GitHub but locally.
 
-* `yarn antora-dev-bundle`  
+* `npm antora-dev-bundle`  
 Used when you want to build the documentation where internal links have as base `http://localhost:8080`. Compared to `antora-dev-local`, it uses a different site.yml file `site-dev.yml` which sources manuals not from GitHub but locally and uses a locally built `ui-bundle`.
 
 ## Generating the Documentation
@@ -247,18 +237,18 @@ There are two ways to generate the documentation in HTML format:
 
 #### Using Antora from the Command-Line
 
-Using Yarn, as in the example below, is the easiest way to build the documentation. This project has a predefined target (`antora`) which calls Antora, supplying all of the required options to build the docs, to build the documentation on any branch of the [ownCloud documentation repository](https://github.com/owncloud/docs).
+Using npm, as in the example below, is the easiest way to build the documentation. This project has a predefined target (`antora`) which calls Antora, supplying all of the required options to build the docs, to build the documentation on any branch of the [ownCloud documentation repository](https://github.com/owncloud/docs).
 
 Note that the build process is essential as it must run error free for a valid documentation. If you push a change with errors, the CI will complain in the Pull request and disallow any merging. For a quick view on the changes made and without having a full build, you can open the changed file in the browser and view it with the installed plug-in which helps finding typos and/or rendering issues quickly. 
 
 ```
-yarn antora-local
+npm antora-local
 ```
 
 Use the following command to view the results in the browser as they will appear on the web.
 
 ```
-yarn serve
+npm serve
 ```
 
 ## Using the Docker Container
@@ -269,14 +259,14 @@ To build the documentation using the Docker container, from the command line, in
 docker run -ti --rm \
     -v $(pwd):/antora/ \
     -w /antora/ \
-    owncloudci/nodejs:16 \
-    yarn install
+    owncloudci/nodejs:18 \
+    npm install
 
 docker run -ti --rm \
     -v $(pwd):/antora/ \
     -w /antora/ \
-    owncloudci/nodejs:16 \
-    yarn antora
+    owncloudci/nodejs:18 \
+    npm antora
 ```
 
 If you want to serve your changes locally you have to overwrite the default URL, which points to https://doc.owncloud.com. You can append a custom URL to the command like this:
@@ -285,8 +275,8 @@ If you want to serve your changes locally you have to overwrite the default URL,
 docker run -ti --rm \
     -v $(pwd):/antora/ \
     -w /antora/ \
-    owncloudci/nodejs:16 \
-    yarn antora --url http://localhost:8080
+    owncloudci/nodejs:18 \
+    npm antora --url http://localhost:8080
 ```
 
 These commands:
@@ -295,16 +285,16 @@ These commands:
 - Run Antora's `generate` command, which regenerates the documentation
 - You can add the `--fetch` option to update the dependent repositories, or any other available flag.
 
-If all goes well, you will _not_ see any console output. If a copy of the container doesn't exist locally, you can pull down a copy, by running `docker pull owncloudci/nodejs:16`.
+If all goes well, you will _not_ see any console output. If a copy of the container doesn't exist locally, you can pull down a copy, by running `docker pull owncloudci/nodejs:18`.
 
 ## Viewing the HTML Documentation
 
-Assuming that there are no errors, the next thing to do is to view the result in your browser. If you have already installed a webserver, you need to make the HTML documentation available pointing to subdirectory `public` or for easy handling use our predefined Yarn target so that you can view your changes, before committing and pushing the changes to the remote docs repository. You could also use [PHP's built-in webserver](https://secure.php.net/manual/en/features.commandline.webserver.php) as well.
+Assuming that there are no errors, the next thing to do is to view the result in your browser. If you have already installed a webserver, you need to make the HTML documentation available pointing to subdirectory `public` or for easy handling use our predefined npm target so that you can view your changes, before committing and pushing the changes to the remote docs repository. You could also use [PHP's built-in webserver](https://secure.php.net/manual/en/features.commandline.webserver.php) as well.
 
-The following example uses our Yarn target, to start it run the following command in the root of your docs repository:
+The following example uses our npm target, to start it run the following command in the root of your docs repository:
 
 ```
-yarn serve
+npm serve
 ```
 
 This starts a simple webserver, using the `public` directory, (re)generated by `antora`, as the document root, listening on `http://localhost:8080`. Open the URL in your browser of choice and you'll see two links, as below.
@@ -385,27 +375,27 @@ There are some important steps when starting such a task. The following steps ha
 * Run `bin/prepare_site_yml` in the repo you are developing on or the one that includes all required repos to get a `site-dev.yml`.  
 This file **will not** get published and will always stay local. It is a mirror of the current `site.yml` but the URLs formerly pointing to GitHub and the respective repos will get changed to fetch the components locally.
 
-* Before you start changing, run `yarn install` to have the dependencies updated.
+* Before you start changing, run `npm install` to have the dependencies updated.
  
-* Depending on what you are developing on, either run: `yarn antora-dev-local` or `yarn antora-dev-bundle` from the repo you want to build from which will use the formerly created `site-dev.yml`.
+* Depending on what you are developing on, either run: `npm antora-dev-local` or `npm antora-dev-bundle` from the repo you want to build from which will use the formerly created `site-dev.yml`.
 
-* Finally, run `yarn serve` to see the result of the build.
+* Finally, run `npm serve` to see the result of the build.
 
 * If the changes are fine, create a PR from the respective branches and continue as usual.
 
-* If the changes need to be dropped, run `yarn install` from the master branch in the repos with changes again to revert any dependencies that may have changed.
+* If the changes need to be dropped, run `npm install` from the master branch in the repos with changes again to revert any dependencies that may have changed.
 
 Note that you may need changes and testing in more than one component like `docs` or `docs-ocis` to get a correct final result.
 
 **IMPORTANT**
 
-Though components get sourced locally when running `yarn antora-dev-xxx`, some content will still get pulled from external sources when defined in a page. This means that, for development, you still must have an internet connection, like when doing normal builds. If an internet connection is not present, errors will be thrown and the build stops.
+Though components get sourced locally when running `npm antora-dev-xxx`, some content will still get pulled from external sources when defined in a page. This means that, for development, you still must have an internet connection, like when doing normal builds. If an internet connection is not present, errors will be thrown and the build stops.
 
 ## Using Search in Production or Development
 
 The search bar is the component on the top right of the documentation where one can enter a term and get matches. If something is found, the matches are displayed as suggestions that can be clicked.
 
-For "normal" changes, search is not necessary and may only complicate building commands and delay building times. To use the search functionality during production or development, see [Prepared Yarn Commands](#prepared-yarn-commands) for details, some prerequisites apply. This is not only true for changes in the documentation, but also for UI changes.
+For "normal" changes, search is not necessary and may only complicate building commands and delay building times. To use the search functionality during production or development, see [Prepared npm Commands](#prepared-npm-commands) for details, some prerequisites apply. This is not only true for changes in the documentation, but also for UI changes.
 
 Note that ownCloud currently uses Elasticsearch version 7.x. All internal scripts and builds are therefore aligned to it and *must not* be changed, though you can use any latest minor/patch release.
 
@@ -438,13 +428,13 @@ Follow this procedure to show and use search and populate an index:
     ```
     There are several ways to fix this, only one is shown when using Chrome browsers. Install the plugin named [Allow CORS: Access-Control-Allow-Origin](https://chrome.google.com/webstore/detail/lhobafahddgcelffkeicbaginigeejlf).
 
-4. When building docs, the following environment variables must be added to the build process. Note that you can use any `yarn antora-xxx` command:
+4. When building docs, the following environment variables must be added to the build process. Note that you can use any `npm antora-xxx` command:
     ```
     UPDATE_SEARCH_INDEX=true \
     ELASTICSEARCH_NODE=http://localhost:9200 \
     ELASTICSEARCH_INDEX=docs \
     ELASTICSEARCH_WRITE_AUTH=x:y \
-    yarn antora-local
+    npm antora-local
     ```
     Note that `ELASTICSEARCH_WRITE_AUTH` is necessary for building though it does not do any authentication. A value for that envvar must not be omitted but can be any dummy value you like in the format of at minimum two characters separated by a colon.
 
@@ -469,12 +459,12 @@ Follow this procedure to show and use search and populate an index:
    {"took":45,"timed_out":false,"_shards":{"total":1,"successful":1,"skipped":0,"failed":0}, ...
    ```
 
-6. To view the build result either with `yarn serve` (Antora build) or `yarn preview` (UI build) run:
+6. To view the build result either with `npm serve` (Antora build) or `npm preview` (UI build) run:
     ```
     ELASTICSEARCH_NODE=http://localhost:9200 \
     ELASTICSEARCH_INDEX=docs \
     ELASTICSEARCH_READ_AUTH=x:y \
-    yarn serve
+    npm serve
     ```
 
     Note that for `ELASTICSEARCH_READ_AUTH`, the same applies as for `ELASTICSEARCH_WRITE_AUTH`.
@@ -486,7 +476,7 @@ Follow this procedure to show and use search and populate an index:
     ELASTICSEARCH_NODE=https://search.owncloud.com \
     ELASTICSEARCH_INDEX=docs \
     ELASTICSEARCH_READ_AUTH=docs:cADL6DDAKEBrkFMrvfxXEtYm \
-    yarn serve
+    npm serve
     ```
 
 ## Resolving Edit-this-page in Development
@@ -495,14 +485,14 @@ When doing a local build, the link `Edit this page` on the top right resolves to
 
 ```
 CI=true \
-yarn antora-local
+npm antora-local
 ```
 
 ## Package and Dependency Management
 
 Packages and dependencies are managed by the setup automatically.
 
-In case it is necessary to add or remove packages, you need to do this in the `package.json` file. Add new packages issuing `yarn add <package-name>`. Then you delete the `yarn.lock` file and run `yarn install`. All dependencies are resolved automatically and a new lock file is created. You then need to push both changed files and create a PR.
+In case it is necessary to add or remove packages, you need to do this in the `package.json` file. Add new packages issuing `npm add <package-name>`. Then you delete the `package-lock.json` file and run `npm install`. All dependencies are resolved automatically and a new lock file is created. You then need to push both changed files and create a PR.
 
 **IMPORTANT:** This procedure is also true when "backporting" a change of the package file to the target branch. A normal backport process will break the lockfile and you will get errors reported from the CI.
 
@@ -511,7 +501,7 @@ In case it is necessary to add or remove packages, you need to do this in the `p
 
 ### Additional Command Line Parameters
 
-You can add additional parameters to the currently defined ones or overwrite existing ones, for example, defining the default URL or additional global attributes. Just add them to the `yarn antora` command. 
+You can add additional parameters to the currently defined ones or overwrite existing ones, for example, defining the default URL or additional global attributes. Just add them to the `npm antora` command. 
 
 ### Searching and Fixing Attribute Errors
 
@@ -521,12 +511,12 @@ It is very beneficial to use command-line attributes when searching and fixing a
 `grep -rn --exclude-dir={public,.git,node_modules} \{attribute-name}`\
 If found, check if the attribute definition is made or passed or needs exclusion. 
 - If no result is found, it may be the case that the error-causing attribute is not in the master
-branch but in another one. This can be identified by adding a custom attribute to the yarn antora command like:\
+branch but in another one. This can be identified by adding a custom attribute to the npm antora command like:\
 `--attribute the-erroring-attribute=HUGO` where HUGO can be anything that is not used and easy to grep.
 - Finally, run in the `public` directory: `grep -rn HUGO`. You will see exactly in which branch and file the issue occurs.
 If it is a branch other than `master` and an ongoing but not merged fix that targets this issue, you have to
 merge the changes first, and then backport them to the branch. Do not forget to sync the branch post merging too.
-Having done that, re-running `yarn antora` should eliminate that particular missing attribute warning.
+Having done that, re-running `npm antora` should eliminate that particular missing attribute warning.
 
 ### Fixing a Directory Not Found Error
 
