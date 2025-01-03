@@ -15,8 +15,8 @@ differentiate real broken links from false positives or to get results the other
 To check broken links, you need to prepare with the following steps:
 
 1. Make the compiled documentation available for browsing by using a webserver like
-   [our Yarn target](./build-the-docs.md#viewing-the-html-documentation), [PHP's built-in webserver](https://secure.php.net/manual/en/features.commandline.webserver.php), Apache or NGINX
-2. Build the local docs with ``yarn antora --url http://localhost:8080``
+   [our npm target](./build-the-docs.md#viewing-the-html-documentation), [PHP's built-in webserver](https://secure.php.net/manual/en/features.commandline.webserver.php), Apache or NGINX
+2. Build the local docs with ``npm antora --url http://localhost:8080``
 3. Use an already provided or install a Broken Link Checker
 
 Use the broken link checker of your choice, the following are usable examples. The command examples assume that the documentation built is accessible via `http://localhost:8080`.
@@ -28,14 +28,14 @@ Use the broken link checker of your choice, the following are usable examples. T
 ## Link Checkers provided by the Documentation
 ### Antora xref-validator
 
-The Antora ``xref-validator`` provided by the Antora core team, is able to check the [native Antora xref links](https://docs.antora.org/antora/1.0/asciidoc/page-to-page-xref/#xref-and-page-id-anatomy). It is automatically installed when you run `yarn install` for the Antora setup in the root of your local clone of the docs repository. It doesn't check external links, but it's still a good start.
+The Antora ``xref-validator`` provided by the Antora core team, is able to check the [native Antora xref links](https://docs.antora.org/antora/1.0/asciidoc/page-to-page-xref/#xref-and-page-id-anatomy). It is automatically installed when you run `npm install` for the Antora setup in the root of your local clone of the docs repository. It doesn't check external links, but it's still a good start.
 
-### Using Yarn Validate
+### Using npm Validate
 
 This is the easiest way and uses the ``xref-validator`` to validate the documentation, using predefined settings.
 
 ```console
-yarn validate
+npm validate
 ```
 
 ### Using the Validator with Own Settings
@@ -59,12 +59,12 @@ worktree: /var/www/owncloud/docs | component: server | version: master
   path: modules/admin_manual/pages/configuration/files/file_sharing_configuration.adoc | xref: server/configuration/server/security/password_policy.adoc
 ```
 
-### Yarn Linkcheck
+### npm Linkcheck
 
-If you installed the Antora dependencies via `yarn install`, then a broken link checker is available. To run it, you must have one terminal open and run `yarn serve` to start a http server and in another terminal using the following command:
+If you installed the Antora dependencies via `npm install`, then a broken link checker is available. To run it, you must have one terminal open and run `npm serve` to start a http server and in another terminal using the following command:
 
 ```console
-yarn linkcheck http://localhost:8080/server/next | grep "BROKEN"
+npm linkcheck http://localhost:8080/server/next | grep "BROKEN"
 ```
 
 #### Example Output
@@ -92,9 +92,9 @@ Follow [this](https://dart.dev/get-dart) procedure, to install ``dart`` and
 [this](https://github.com/wjdp/htmltest#floppy_disk-installation) link to install ``htmltest``.
 A [System-wide Install](https://github.com/wjdp/htmltest#system-wide-install) is recommended.
 
-To check docs, you first need to build the actual docs running ``yarn antora-local``. This creates all necessary files in the ``public`` directory.
+To check docs, you first need to build the actual docs running ``npm antora-local``. This creates all necessary files in the ``public`` directory.
 
-Then run ``htmltest -s public`` in the root of docs/ to check the build. Note that it is not mandatory to have a webserver running like ``yarn serve``. The ``-s`` option skips external link checks which speeds up time a lot and reduces the output. To include external links, omit the ``-s`` option. If you are running the check from another repo than `docs` you may want to add `| grep -v '\|manifest.json\|apple-touch-icon.png\|favicon.svg\|favicon-32x32.png\|favicon-16x16.png\|safari-pinned-tab.svg'` to omit any output regarding missing favicons as they are only added in the full docs build but not in local builds. 
+Then run ``htmltest -s public`` in the root of docs/ to check the build. Note that it is not mandatory to have a webserver running like ``npm serve``. The ``-s`` option skips external link checks which speeds up time a lot and reduces the output. To include external links, omit the ``-s`` option. If you are running the check from another repo than `docs` you may want to add `| grep -v '\|manifest.json\|apple-touch-icon.png\|favicon.svg\|favicon-32x32.png\|favicon-16x16.png\|safari-pinned-tab.svg'` to omit any output regarding missing favicons as they are only added in the full docs build but not in local builds. 
 
 Note that ``htmltest`` checks the complete public/ directory including all products and all branches built. Due to this fact, you possibly get the same entries for each product/branch affected. As a rule of thumb, first look for `next` or latest branch entries like 10.x, fix the issue, backport it if necessary and restart the procedure.
 
@@ -123,7 +123,7 @@ A description of ``linkcheck`` can be found [here](https://github.com/filiph/lin
 Follow [this](https://github.com/filiph/linkcheck#step-1-install-dart) procedure,
 to install or update ``linkcheck``, which needs ``dart``:
 
-To run it, you must have one terminal open and run `yarn serve` to start a http server and in another terminal the ``linkcheck`` command:
+To run it, you must have one terminal open and run `npm serve` to start a http server and in another terminal the ``linkcheck`` command:
 
 Because ``linkcheck`` provides the possibility to use a file to exclude search patterns,
 it is good advice to create a file with the following predefined content. In this example,
