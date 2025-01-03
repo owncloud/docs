@@ -90,9 +90,8 @@ def build(ctx, deployment_branch):
                     "ELASTICSEARCH_WRITE_AUTH": from_secret("elasticsearch_write_auth"),
                 },
                 "commands": [
-                    # the build attribute is only necessary for the docs-server repo
-                    "npx antora --stacktrace --cache-dir cache --redirect-facility static --clean --fetch site.yml",
-                    #"yarn antora --attribute format=html",
+                    # runs the antora script including config defined in package.json
+                    "npm run antora",
                     "bin/optimize_crawl -x",
                 ],
             },
