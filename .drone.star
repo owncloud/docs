@@ -74,9 +74,9 @@ def build(ctx, deployment_branch):
                 "name": "docs-deps",
                 "pull": "always",
                 "image": "owncloudci/nodejs:18",
-                "commands": [
-                    "yarn install",
-                ],
+#                "commands": [
+#                    "yarn install",
+#                ],
             },
             {
                 "name": "docs-build",
@@ -91,7 +91,8 @@ def build(ctx, deployment_branch):
                 },
                 "commands": [
                     # the build attribute is only necessary for the docs-server repo
-                    "yarn antora --attribute format=html",
+#                    "yarn antora --attribute format=html",
+                     "npx antora --stacktrace --cache-dir cache --redirect-facility static --clean --fetch site.yml"
                     "bin/optimize_crawl -x",
                 ],
             },

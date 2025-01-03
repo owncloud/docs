@@ -1,0 +1,18 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/node:8
+    steps:
+      - checkout
+      - run: npm install --quiet
+      - run: npm test
+      - deploy:
+          command: |
+            export PACKAGE_EXISTS="$(npm info robots-txt-guard@$(npm run -s version) version)"
+            echo "Existing version: ${PACKAGE_EXISTS}"
+            if [[ $CIRCLE_BRANCH == "master" && ! $PACKAGE_EXISTS ]]; then
+              echo "Publishing..."
+              echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+              npm publish
+            fi
