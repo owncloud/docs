@@ -1,5 +1,6 @@
 #!/bin/bash
 # version 2024.06.05
+# backport the given merge SHA to the branch provided
 
 if ! [ -x "$(command -v jq)" ]; then
   echo

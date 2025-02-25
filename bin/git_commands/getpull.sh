@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# try to identify the pull request that was created for the commit ID provided
+
 if [ -z "$1" ]; then
   echo "Usage: git getpull <SHA>"
   exit 1

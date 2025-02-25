@@ -1,5 +1,5 @@
 #!/bin/bash
-#
+# squash the number of commits to one with a defined commit message
 
 #get number of commits to squash
 squashCount=$1
