@@ -11,13 +11,12 @@ It's outside the scope of this file to discuss the process or [the `.drone.yml` 
 However, in essence, here is how the build pipeline works:
 
 1. The docs repository is cloned.
-2. All required dependencies are installed.
-3. The documentation is validated.
-4. The documentation is built.
-5. The documentation PDF manuals are built - if enabled.
-6. The PDF manuals are deployed.
-7. The HTML version of the documentation is deployed.
-8. A build notification is sent.
+1. All required dependencies are installed.
+1. All referenced content sources are added
+1. The documentation is validated.
+1. The documentation is built.
+1. The HTML version of the documentation is deployed.
+1. A build notification is sent.
 
 ## Build Notifications
 
