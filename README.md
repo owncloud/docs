@@ -9,6 +9,7 @@
 **Table of Contents**
 
 * [Antora Site Structure for Docs](#antora-site-structure-for-docs)
+* [Extensions](#extensions)
 * [Documentation Guidelines](#documentation-guidelines)
 * [Contributing to the Documentation](#contributing-to-the-documentation)
 * [Generating the Documentation](#generating-the-documentation)
@@ -23,6 +24,10 @@
 
 Refer to the [Antora Site Structure for Docs](./docs/antora-site-structure.md) for more information. 
 
+## Extensions
+
+The documentation intensively uses Antora/Asciidoc extensions. These extensions enrich the base functionality with additional and required capabilities. Read the [extensions](./docs/extensions.md) documentation for more information.
+
 ## Documentation Guidelines
 
 Refer to the [Documentation Guidelines](./docs/doc-guidelines.md) for more information about backgrounds and processes.
@@ -33,15 +38,15 @@ To get started contributing to the documentation, please refer to the [Getting S
 
 With regard to language and style issues, consult the [Style Guide](./docs/style-guide.md).
 
-Note that the documentation provides a setting for the [IntelliJ AsciiDoc-Antora Plugin](https://intellij-asciidoc-plugin.ahus1.de) to preview a page using the css sourced from `doc.owncloud.com`.
+Note that the documentation provides a setting for the [IntelliJ AsciiDoc-Antora Plugin](https://intellij-asciidoc-plugin.ahus1.de) to preview a page using the css sourced from `doc.owncloud.com`. The file required containing the necessary configuration is `.asciidoctorconfig`.
 
 ## Generating the Documentation
 
 **IMPORTANT**  
-We recently have upgraded to `node 18.19.0`. In case you used a lower node version for your local doc repos, you must upgrade them **all**. See the link below for details.
+We use `node 18.19.0`. In case you used a lower node version for your local doc repos, you must upgrade them **all**. See the link below for details.
 
 **IMPORTANT**  
-We recently have upgraded to `Antora 3.1.10` and use npm instead of yarn. In case you used a lower Antora version for your local doc repos, you must upgrade them **all** by syncing them and running `npm install` in each doc repo.
+We use `Antora 3.1.10` and use npm instead of yarn. In case you used a lower Antora version for your local doc repos, you must upgrade them **all** by syncing them and running `npm install` in each doc repo.
 
 To generate and view the documentation locally or planning major changes, refer to the [Building the Documentation guide](./docs/build-the-docs.md).
 
@@ -64,7 +69,7 @@ The **ONLY** reason for doing a PR in a branch directly is, to fix an issue whic
 _only_ present in that particular branch! When creating a PR and it is necessary to backport,
 document in the PR to which branches a backport is needed.
 
-When backporting, consider using the [backport script](https://doc.owncloud.com/server/developer_manual/general/backporting.html)
+When backporting, consider using the [backport script](./docs/getting-started.md#backporting)
 which eases life a lot and speeds up the process. It is also very beneficial when using the
 extended code provided, because a clear naming structure of the backport PR is generated automatically.
 
@@ -81,4 +86,4 @@ Please refer to [Create a New Version Branch for Docs](./docs/new-version-branch
 
 ## HTML to PDF
 
-At the moment, creating a pdf from a component via Antora is broken and will be fixed past updating to Antora 3. In the meanwhile a workaround is provided, see the [HTML to PDF](./docs/html-to-pdf.md) description.
+At the moment, creating a pdf is dropped from the build process but can be re-implemented if required.

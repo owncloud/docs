@@ -27,13 +27,13 @@ The main reasons for using [Antora][link-antora] are the following:
    * As an example, defining tables is so much easier in asciidoc compared to using markdown.
    * Using attributes (variables), which scope can be easily determined, content can be dynamically defined.
 
-2. It extends asciidoc with [multi-repo][link-playbook] capabilities.
+2. It extends asciidoc with [multi-repo][link-playbook] capabilities. This is done in a way where any issues identified can be easily tracked down to the sorce where this happens.
 
 3. The doc writer does not need to care about repos, or content locations, etc. anymore as this is virtualized by Antora and content can be accessed in a standardized way via [Resource ID Coordinates](https://docs.antora.org/antora/latest/page/resource-id-coordinates/).
 
-4. You can quite easily extend functionalities with extensions added via `site.yml`.
+4. You can easily extend functionalities with extensions added via `site.yml`.
 
-5. Antora distincts writing the documentation and the [UI-Template][link-ui] defining how the content is presented.
+5. Antora distincts writing the documentation and the [UI-Template][link-ui] defining how the content is presented. This is also done in a way where any change can be tracked down to its source.
 
 ## Scope of Documentation Repositories
 
@@ -55,19 +55,26 @@ docs   -->  docs-main
             ...
 
 ```
-Note that the arrow from repo to content source is intentionally unidirectional in our setup and should be respected. See more details about the reason below. 
+Note that the arrow from docs repo to a content source is intentionally unidirectional in our setup and should be respected. See more details about the reason below. 
 
-### Scope of the playbook files (site.yml)
+### Scope of playbook files (site.yml)
 
 In general, only one `site.yml` file is neccessary building the **complete site**. This `site.yml` file is located in the `docs` repo. Additionally, we have for each content source its own `site.yml` for local building, development and testing  purposes only. The scope of these local `site.yml` files are restricted to the respective content source and any definitions made in these are not availabe outside. 
 
-Due to this fact, you must re-add all relevant attributes to the local `site.yml` file as defined in this main file , else a local build will return warnings or even errors about unresolved attributes. This is also valid for sourced repos when developing new attributes that must find their way into this `site.yml` file.
+Note that this behaviour is relevant for the playbook `site.yml` files only and does not apply to the component descriptor files `antora.yml` in each content providing repo!
 
-Note that this behaviour is relevant for the playbook `site.yml` files only and does not apply to the component descriptor files `antora.yml`!
+### Scope of attributes (site.yml
+
+With the use of the `load-global-site-attributes` extension, common attributes are not needed to be maintained for each repo individually. These attributes are defined in the docs repo and are, if defined in the content providing repo, sourced from there. In addition, if necessary, you can re-define attributes in a repo which will then overwrite global attributes if exists. This makes local building very comftable. You can also source for testing 'global' attributes from a local file instead loading it from docs.
+
+If there are any global attributes that need to be updated after a merge of a particular content repo, an additional PR in the docs repo needs to be created to make that change globally available.  
 
 ## Scope of Content Accessibility
 
 Because Antora is capable of defining additional content sources, you can access content from these resources. The setup is flat, no main/child environment. To access resources, follow the [Resource ID Coordinates][link-resource-id] scheme.
+
+**IMPORTANT:**\
+The following scheme will be bidirectional and restrictions will go away when updating to Antora 3.2 and using the Antora Atlas extension wich will provide a content manifest.
 
 Because of the setup we have made regarding testing, the direction of the arrow is important.
 
@@ -123,23 +130,24 @@ bin/              Helper scripts to maintain the documentation
 book_templates/   Template file(s) to create the pdf file
 ext-antora/       Antora extensions necessary for the build process
 ext-asciidoc/     Asciidoc extensions necessary for the build process
-pdf_web/          Output directory of generated pdf files, only used locally!
+pdf_web/          Output directory of generated pdf files, currently unused!
 public/           Output directory of generated html files, only used locally!
-resources/        Themes necessary for creating pdf files
+resources/        Themes necessary for creating pdf files, currently unused!
 tmp/              Temp directory used for htmltest (broken link checking)
 ```
 ### Important Files
 
-The following files are important to run a build properly; note that Node related stuff is not mentioned explicitly:
+The following files are important to run a build properly.\
+Note that Node related stuff is not mentioned explicitly:
 
 ```
-.drone.star       Define the build process steps when triggered by a PR
-                  necessary for the creation of the pdf file 
-package.json      Define the antora environment und scripts to run at the cli
-antora.yml        Contains source files and attributes that only belong
-                  to the component (version dependent!)
-site.yml          Global site definitions including attributes (version independent!)
-
+.drone.star           Define the build process steps when triggered by a PR
+package.json          Define the antora environment und scripts to run at the cli
+antora.yml            Contains definitions and attributes that only belong
+                      to the respective component (version dependent!)
+site.yml              Global site definitions, attributes defined overwrite global ones
+global-attributes.yml The file containing global attributes used by the extension.
+                      Mandatory for the docs repo, optional otherwise (version dependent!)
 ```
 
 ## Scope of Antora Definitions
@@ -148,13 +156,13 @@ site.yml          Global site definitions including attributes (version independ
 
 While you can read more details about [What is antora.yml?][link-antora-yml] and [What is site.yml (the playbook)][link-site-yml], here are some important items:
 
-To manage versions in docs, we use branches. This means that any content based on a variable (attribute) limited to a branch must go into the component description file `antora.yml` and be maintained accordingly. Any attribute that can be used in any branch of a component must be defined in `site.yml`
+To manage versions in docs, we use branches. This means that any content based on a variable (attribute) limited to a branch must go into the component description file `antora.yml` and be maintained accordingly. Any attribute that is used in any branch of any component must be defined in the `global-attributes.yml` in the docs repo.
 
 ### Accessibility and Availability of Attributes 
 
 1. The scope of attributes defined in a page is limited to that page only.
 2. The scope of attributes defined in `antora.yml` is limited to the branch and component where it is defined. This is also true for attributes that should be accessed from the UI-Template.
-3. The scope of attributes defined in `site.yml` is _global_. The term global has two flavours in our setup:
+3. The scope of attributes defined in `site.yml` including defined via the `global-attributes.yml` file are _global_. The term global has two flavours in our setup:
     1. When used in the building repo `docs`, it becomes available to all sources at any time.
     2. When used in a content source, it is only availabe to the content source during a local test build.
 4. Attributes starting with `page-` are also available to the UI-Template when running a build. The rules above apply. This is important when defining UI content based on attributes. To access these attributes in the UI-Template use `page.attribute.name` where `name` is without leading `page-` For details see [AsciiDoc Attributes in Antora][custom-attrib-link].
