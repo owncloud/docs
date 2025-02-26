@@ -203,12 +203,31 @@ The branching workflow is only necessary for versioned repos (documentations). P
 
 ## Backporting
 
-If you want or need to backport a merged PR, you can easily do that by using this linked script:
-https://doc.owncloud.com/server/developer_manual/general/backporting.html#steps
+If you want or need to backport of a merged PR, you can easily do that by using the linked [backport](../bin/git_commands/backport.sh) script. In the repo where the backport is needed, update the branch containing the merged PR and copy the merge commit. Run the command using the merge commit ID with the target branch where the backport needs to be applied to. All individual commits of the merge will be backported.
+
+Note that it may occur that you have conflicts, resolve them first with standard git methods to proceed.
+
+The script requires the `xdg-utils` package which opens the PR to be finalized in your browser. macOS does not need this package. Replace the command `xdg-open` with `open` at the end of the script.
+
+If you want to make this script part of the git command set, create a git alias:
+
+Open the `~/.gitconfig` file with the editor of your choice and add the following:
+
+```
+[alias]
+  backport = !bash -c '<path_to_script>/backport.sh $1 $2' -
+```
+
+You can now create a backport by invoking following command:
+
+```
+git backport <merge ID> <target branch>
+```
+
 
 ## Build Pipeline and Web Deployment
 
-Please refer to [the documentation build pipeline](./the-build-pipeline.md) to learn about how the documentation is built and deployed to production.
+Please refer to the [documentation build pipeline](./the-build-pipeline.md) to learn about how the documentation is built and deployed to production.
 
 ## Getting Support
 

@@ -528,7 +528,7 @@ rm -r /var/owncloud/docs/cache
 
 ### Manually Restarting CI
 
-In case CI needs to be restarted, which can happen in the rare case it was not triggered post pushing automatically, you need to manually (re)start the CI. This can be done by creating an empty commit and pushing it. To do so, change to the branch in question and follow the git commands below:
+In case CI needs to be restarted, which can happen in the rare case it was not triggered post pushing automatically, you need to manually (re)start the CI. This can be done by either triggering drone from the CLI if you have access or by creating an empty commit and pushing it. To do so, change to the branch in question and follow the git commands below:
 
 ```
 git commit --allow-empty -m "restart ci"
