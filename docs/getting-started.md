@@ -203,7 +203,7 @@ The branching workflow is only necessary for versioned repos (documentations). P
 
 ## Backporting
 
-If you want or need to backport of a merged PR, you can easily do that by using the linked [backport](../bin/git_commands/backport.sh) script. In the repo where the backport is needed, update the branch containing the merged PR and copy the merge commit. Run the command using the merge commit ID with the target branch where the backport needs to be applied to. All individual commits of the merge will be backported.
+If you want or need to backport a merged PR, you can easily do that by using the linked [backport](../bin/git_commands/backport.sh) script. In the repo where the backport is needed, update the branch containing the merged PR and copy the merge commit. Run the command using the merge commit ID with the target branch where the backport needs to be applied to. All individual commits of the merge will be backported.
 
 Note that it may occur that you have conflicts, resolve them first with standard git methods to proceed.
 
@@ -218,7 +218,7 @@ Open the `~/.gitconfig` file with the editor of your choice and add the followin
   backport = !bash -c '<path_to_script>/backport.sh $1 $2' -
 ```
 
-You can now create a backport by invoking following command:
+You can now create a backport by invoking the following command:
 
 ```
 git backport <merge ID> <target branch>

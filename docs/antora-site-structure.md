@@ -27,7 +27,7 @@ The main reasons for using [Antora][link-antora] are the following:
    * As an example, defining tables is so much easier in asciidoc compared to using markdown.
    * Using attributes (variables), which scope can be easily determined, content can be dynamically defined.
 
-2. It extends asciidoc with [multi-repo][link-playbook] capabilities. This is done in a way where any issues identified can be easily tracked down to the sorce where this happens.
+2. It extends asciidoc with [multi-repo][link-playbook] capabilities. This is done in a way where any issues identified can be easily tracked down to the source where this happens.
 
 3. The doc writer does not need to care about repos, or content locations, etc. anymore as this is virtualized by Antora and content can be accessed in a standardized way via [Resource ID Coordinates](https://docs.antora.org/antora/latest/page/resource-id-coordinates/).
 
@@ -65,7 +65,7 @@ Note that this behaviour is relevant for the playbook `site.yml` files only and 
 
 ### Scope of attributes (site.yml
 
-With the use of the `load-global-site-attributes` extension, common attributes are not needed to be maintained for each repo individually. These attributes are defined in the docs repo and are, if defined in the content providing repo, sourced from there. In addition, if necessary, you can re-define attributes in a repo which will then overwrite global attributes if exists. This makes local building very comftable. You can also source for testing 'global' attributes from a local file instead loading it from docs.
+With the use of the `load-global-site-attributes` extension, common attributes are not needed to be maintained for each repo individually. These attributes are defined in the docs repo and are, if defined in the content providing repo, sourced from there. In addition, if necessary, you can re-define attributes in a repo which will then overwrite global attributes if exists. This makes local building very comfortable. You can also source for testing 'global' attributes from a local file instead loading it from docs.
 
 If there are any global attributes that need to be updated after a merge of a particular content repo, an additional PR in the docs repo needs to be created to make that change globally available.  
 
@@ -74,7 +74,7 @@ If there are any global attributes that need to be updated after a merge of a pa
 Because Antora is capable of defining additional content sources, you can access content from these resources. The setup is flat, no main/child environment. To access resources, follow the [Resource ID Coordinates][link-resource-id] scheme.
 
 **IMPORTANT:**\
-The following scheme will be bidirectional and restrictions will go away when updating to Antora 3.2 and using the Antora Atlas extension wich will provide a content manifest.
+The following scheme will be bidirectional and restrictions will go away when updating to Antora 3.2 and using the Antora Atlas extension which will provide a content manifest.
 
 Because of the setup we have made regarding testing, the direction of the arrow is important.
 
@@ -142,7 +142,7 @@ Note that Node related stuff is not mentioned explicitly:
 
 ```
 .drone.star           Define the build process steps when triggered by a PR
-package.json          Define the antora environment und scripts to run at the cli
+package.json          Define the antora environment and scripts to run at the cli
 antora.yml            Contains definitions and attributes that only belong
                       to the respective component (version dependent!)
 site.yml              Global site definitions, attributes defined overwrite global ones
