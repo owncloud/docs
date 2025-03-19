@@ -63,7 +63,7 @@ In general, only one `site.yml` file is neccessary building the **complete site*
 
 Note that this behaviour is relevant for the playbook `site.yml` files only and does not apply to the component descriptor files `antora.yml` in each content providing repo!
 
-### Scope of attributes (site.yml
+### Scope of attributes (site.yml)
 
 With the use of the `load-global-site-attributes` extension, common attributes are not needed to be maintained for each repo individually. These attributes are defined in the docs repo and are, if defined in the content providing repo, sourced from there. In addition, if necessary, you can re-define attributes in a repo which will then overwrite global attributes if exists. This makes local building very comfortable. You can also source for testing 'global' attributes from a local file instead loading it from docs.
 
