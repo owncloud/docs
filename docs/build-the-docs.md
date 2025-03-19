@@ -404,7 +404,6 @@ Follow this procedure to show and use search and populate an index:
 1. Create an `es-docker-compose.yml` file with the following content. Note that no security or passwords is needed to be set up as it is only used locally:
 
     ```
-    version: '3'
     services:
       elasticsearch:
         image: elasticsearch:7.17.15
