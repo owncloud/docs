@@ -188,7 +188,7 @@ With the dependencies installed, you are now ready to build (generate) the ownCl
 
 It is very helpful to see how changes to a page will render without running a build - without including other data  images or attributes defined somewhere else, etc. Therefore you can install a plugin for your browser to render `.adoc` files. You may use the `Asciidoctor.js Live Preview` or any other that is available for your browser - just search and install a suitable one. Post installing, check that _accessing local files_ in the plugin settings is allowed.
 
-The result shown in the browser may look slightly different to a version that is built via ` npm antora-local`, but is a good start to get an impression and to catch typos made.
+The result shown in the browser may look slightly different to a version that is built via ` npm run antora-local`, but is a good start to get an impression and to catch typos made.
 
 ## Prepared npm Commands
 
@@ -200,26 +200,26 @@ Here is the list of commands and when to use them
 
 The following build commands are used when regular content changes are made or small fixes to the UI are incorporated:
 
-* `npm antora`  
+* `npm run antora`  
 Used when you want to build the documentation where internal links have as base `doc.owncloud.com`. The  documentation is built for the live environment. Clicking on particular links will then direct to the docs homepage. Use only when you want to check these links or have the CI use them when building. 
 
-* `npm antora-local`  
+* `npm run antora-local`  
 **This is the command which you will use the most.** It is used when you want to build the documentation locally where internal links have as base `http://localhost:8080`. The  documentation is fully sourced locally. Ideal for checking with `npm serve` after content has been updated or added.
 
-* `npm antora-staging`  
+* `npm run antora-staging`  
 Used when you want to build the documentation where internal links have as base `doc.staging.owncloud.com`. The  documentation is built for the staging environment. Note that you manually have to move the content created in `/public` to the staging web page to access it. Note that you can also view locally with `npm serve` which is ideal as first preview step.
 
-* `npm antora-bundle`  
+* `npm run antora-bundle`  
 Used when you want to build the documentation where internal links have as base `doc.staging.owncloud.com`. Compared to `antora-staging`, this uses a locally built `ui-bundle`. This build command should be used when you want to test a changed UI before rolling it out.
 
 **For Development Environments**
 
 The following build commands are used when bigger refactoring, changes or major upgrades including the UI are made:
 
-* `npm antora-dev-local`  
+* `npm run antora-dev-local`  
 Used when you want to build the documentation where internal links have as base `http://localhost:8080`. Compared to `antora-staging`, it uses a different site.yml file named `site-dev.yml` which sources manuals not from GitHub but locally.
 
-* `npm antora-dev-bundle`  
+* `npm run antora-dev-bundle`  
 Used when you want to build the documentation where internal links have as base `http://localhost:8080`. Compared to `antora-dev-local`, it uses a different site.yml file `site-dev.yml` which sources manuals not from GitHub but locally and uses a locally built `ui-bundle`.
 
 ## Generating the Documentation
@@ -242,13 +242,13 @@ Using npm, as in the example below, is the easiest way to build the documentatio
 Note that the build process is essential as it must run error free for a valid documentation. If you push a change with errors, the CI will complain in the Pull request and disallow any merging. For a quick view on the changes made and without having a full build, you can open the changed file in the browser and view it with the installed plug-in which helps finding typos and/or rendering issues quickly. 
 
 ```
-npm antora-local
+npm run antora-local
 ```
 
 Use the following command to view the results in the browser as they will appear on the web.
 
 ```
-npm serve
+npm run serve
 ```
 
 ## Using the Docker Container
@@ -266,7 +266,7 @@ docker run -ti --rm \
     -v $(pwd):/antora/ \
     -w /antora/ \
     owncloudci/nodejs:18 \
-    npm antora
+    npm run antora
 ```
 
 If you want to serve your changes locally you have to overwrite the default URL, which points to https://doc.owncloud.com. You can append a custom URL to the command like this:
@@ -276,7 +276,7 @@ docker run -ti --rm \
     -v $(pwd):/antora/ \
     -w /antora/ \
     owncloudci/nodejs:18 \
-    npm antora --url http://localhost:8080
+    npm run antora --url http://localhost:8080
 ```
 
 These commands:
@@ -377,7 +377,7 @@ This file **will not** get published and will always stay local. It is a mirror 
 
 * Before you start changing, run `npm install` to have the dependencies updated.
  
-* Depending on what you are developing on, either run: `npm antora-dev-local` or `npm antora-dev-bundle` from the repo you want to build from which will use the formerly created `site-dev.yml`.
+* Depending on what you are developing on, either run: `npm run antora-dev-local` or `npm run antora-dev-bundle` from the repo you want to build from which will use the formerly created `site-dev.yml`.
 
 * Finally, run `npm serve` to see the result of the build.
 
@@ -389,7 +389,7 @@ Note that you may need changes and testing in more than one component like `docs
 
 **IMPORTANT**
 
-Though components get sourced locally when running `npm antora-dev-xxx`, some content will still get pulled from external sources when defined in a page. This means that, for development, you still must have an internet connection, like when doing normal builds. If an internet connection is not present, errors will be thrown and the build stops.
+Though components get sourced locally when running `npm run antora-dev-xxx`, some content will still get pulled from external sources when defined in a page. This means that, for development, you still must have an internet connection, like when doing normal builds. If an internet connection is not present, errors will be thrown and the build stops.
 
 ## Using Search in Production or Development
 
@@ -428,13 +428,13 @@ Follow this procedure to show and use search and populate an index:
     ```
     There are several ways to fix this, only one is shown when using Chrome browsers. Install the plugin named [Allow CORS: Access-Control-Allow-Origin](https://chrome.google.com/webstore/detail/lhobafahddgcelffkeicbaginigeejlf).
 
-4. When building docs, the following environment variables must be added to the build process. Note that you can use any `npm antora-xxx` command:
+4. When building docs, the following environment variables must be added to the build process. Note that you can use any `npm run antora-xxx` command:
     ```
     UPDATE_SEARCH_INDEX=true \
     ELASTICSEARCH_NODE=http://localhost:9200 \
     ELASTICSEARCH_INDEX=docs \
     ELASTICSEARCH_WRITE_AUTH=x:y \
-    npm antora-local
+    npm run antora-local
     ```
     Note that `ELASTICSEARCH_WRITE_AUTH` is necessary for building though it does not do any authentication. A value for that envvar must not be omitted but can be any dummy value you like in the format of at minimum two characters separated by a colon.
 
@@ -485,7 +485,7 @@ When doing a local build, the link `Edit this page` on the top right resolves to
 
 ```
 CI=true \
-npm antora-local
+npm run antora-local
 ```
 
 ## Package and Dependency Management
@@ -501,7 +501,7 @@ In case it is necessary to add or remove packages, you need to do this in the `p
 
 ### Additional Command Line Parameters
 
-You can add additional parameters to the currently defined ones or overwrite existing ones, for example, defining the default URL or additional global attributes. Just add them to the `npm antora` command. 
+You can add additional parameters to the currently defined ones or overwrite existing ones, for example, defining the default URL or additional global attributes. Just add them to the `npm run antora` command. 
 
 ### Searching and Fixing Attribute Errors
 
@@ -511,12 +511,12 @@ It is very beneficial to use command-line attributes when searching and fixing a
 `grep -rn --exclude-dir={public,.git,node_modules} \{attribute-name}`\
 If found, check if the attribute definition is made or passed or needs exclusion. 
 - If no result is found, it may be the case that the error-causing attribute is not in the master
-branch but in another one. This can be identified by adding a custom attribute to the npm antora command like:\
+branch but in another one. This can be identified by adding a custom attribute to the `npm run antora` command like:\
 `--attribute the-erroring-attribute=HUGO` where HUGO can be anything that is not used and easy to grep.
 - Finally, run in the `public` directory: `grep -rn HUGO`. You will see exactly in which branch and file the issue occurs.
 If it is a branch other than `master` and an ongoing but not merged fix that targets this issue, you have to
 merge the changes first, and then backport them to the branch. Do not forget to sync the branch post merging too.
-Having done that, re-running `npm antora` should eliminate that particular missing attribute warning.
+Having done that, re-running `npm run antora` should eliminate that particular missing attribute warning.
 
 ### Fixing a Directory Not Found Error
 
