@@ -91,13 +91,8 @@ The following gives you an output of the latest available LTS versions.
 nvm ls-remote | grep "Latest LTS"
 
          v4.9.1   (Latest LTS: Argon)
-        v6.17.1   (Latest LTS: Boron)
-        v8.17.0   (Latest LTS: Carbon)
-       v10.24.1   (Latest LTS: Dubnium)
-      v12.22.12   (Latest LTS: Erbium)
-       v14.21.3   (Latest LTS: Fermium)
-       v16.20.2   (Latest LTS: Gallium)
-       v18.20.4   (Latest LTS: Hydrogen)
+            ...
+       v18.20.8   (Latest LTS: Hydrogen)
        v20.10.0   (Latest LTS: Iron)
 ```
 Then install a suitable LTS version. You can install as many versions as you like or need, see example below.
@@ -110,15 +105,12 @@ List the installed versions
 
 ```
 nvm ls
-       v10.23.0
-       v12.18.2
-       v14.18.3
-        v15.5.1
-       v16.13.2
-->     v18.20.4
+       v18.20.8
+       v20.19.5
+->     v22.19.0
          system
 
-default -> 18.20.4 (-> v18.20.4)
+default -> 22.19.0 (-> v22.19.0)
 ...
 ```
 
@@ -127,6 +119,11 @@ The backend to push to the web uses node v18, see the `.drone.star` file. It is 
 
 **Important:**  
 If you have used a lower node version like 16.13.2, you now must upgrade **ALL** your doc repos to use v18. See the next steps to do so.
+
+#### Update Node and npm
+
+* Use `nvm install` as described above for a more recent version than the one you have currently installed.
+* use `npm install -g npm@latest` to update Nodes package manager.
 
 #### Use a Particular Node Version
 
@@ -143,16 +140,16 @@ To make a particular Node version default in new terminals, type:
 nvm alias default 18.20.4
 ```
 
-## Install Build Dependencies
+## Install or Update Build Dependencies
 
-Before you can build the documentation, you must install Antora's dependencies. To install them, you just need to run:
+Before you can build the documentation, you must install Antora's dependencies. To install them, you just need to run the following command on the command line at the top level of the `docs` directory. :
 
 ```
 npm install
 ```
-on the command line at the top level of the `docs` directory. This will install all the dependencies specified in `package.json`, which is located at the top level of the `docs` directory.
+This will install all the dependencies specified in `package.json`, which is located at the top level of the `docs` directory.
 
-It is recommended that you **regularly** run `npm install` as from time to time packages are bumped to newer versions.
+IMPORTANT: It is recommended that you **regularly** run `npm install` as from time to time packages are bumped to newer versions.
 
 <!--
 To generate the documentation in PDF format locally, you need to have `asciidoctor-pdf`. To install or update `asciidoctor-pdf`, please refer to the [official installation instructions](https://asciidoctor.org/docs/asciidoctor-pdf/#getting-started) or by typing:
