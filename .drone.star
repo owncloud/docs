@@ -73,7 +73,7 @@ def build(ctx, deployment_branch):
             {
                 "name": "docs-deps",
                 "pull": "always",
-                "image": "owncloudci/nodejs:18",
+                "image": "owncloudci/nodejs:22",
                 "commands": [
                     "npm install",
                 ],
@@ -81,7 +81,7 @@ def build(ctx, deployment_branch):
             {
                 "name": "docs-build",
                 "pull": "always",
-                "image": "owncloudci/nodejs:18",
+                "image": "owncloudci/nodejs:22",
                 "environment": {
                     "UPDATE_SEARCH_INDEX": ctx.build.branch == deployment_branch,
                     "ELASTICSEARCH_NODE": from_secret("elasticsearch_node"),
