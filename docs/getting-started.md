@@ -228,7 +228,3 @@ git backport <merge ID> <target branch>
 ## Build Pipeline and Web Deployment
 
 Please refer to the [documentation build pipeline](./the-build-pipeline.md) to learn about how the documentation is built and deployed to production.
-
-## Getting Support
-
-If you need any support when making changes to the documentation, you can always get it in the `#documentation` channel in https://talk.owncloud.com. We're there to help you.

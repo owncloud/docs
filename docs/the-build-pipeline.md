@@ -17,11 +17,3 @@ However, in essence, here is how the build pipeline works:
 1. The documentation is built.
 1. The HTML version of the documentation is deployed.
 1. A build notification is sent.
-
-## Build Notifications
-
-Build notifications are sent to the `#documentation` channel in https://talk.owncloud.com when a full docs build fails. Notifications are not sent for successful builds.
-
-No Pull Request notifications are sent to the `#documentation` channel, as this information is visible within the Pull Request details.
-
-If you're not already a member of the channel, please join, so that you know what's happening with the builds.
