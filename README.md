@@ -43,10 +43,10 @@ Note that the documentation provides a setting for the [IntelliJ AsciiDoc-Antora
 ## Generating the Documentation
 
 **IMPORTANT**  
-We use `node 18.19.0`. In case you used a lower node version for your local doc repos, you must upgrade them **all**. See the link below for details.
+We use `node 22 LTS`. In case you used a lower node version for your local doc repos, you must upgrade them **all**. See the link below for details.
 
 **IMPORTANT**  
-We use `Antora 3.1.10` and use npm instead of yarn. In case you used a lower Antora version for your local doc repos, you must upgrade them **all** by syncing them and running `npm install` in each doc repo.
+We use `Antora 3.1.14` and npm instead of yarn. In case you used a lower Antora version for your local doc repos, you must upgrade them **all** by syncing them and running `npm install` in each doc repo.
 
 To generate and view the documentation locally or planning major changes, refer to the [Building the Documentation guide](./docs/build-the-docs.md).
 
