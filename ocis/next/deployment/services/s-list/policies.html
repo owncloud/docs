@@ -1,0 +1,1542 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Policies Service Configuration :: Documentation for ownCloud (A Kiteworks Company)</title>
+
+    <link rel="canonical" href="https://doc.owncloud.com/ocis/next/deployment/services/s-list/policies.html">
+    <link rel="prev" href="ocs.html">
+    <link rel="next" href="postprocessing.html">
+    <meta name="description" content="The Infinite Scale policies service provides a new gRPC API which can be used to check whether a requested operation is allowed or not. To do so, Open Policy Agent (OPA) is used to define the set of rules of what is permitted and what is not.">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../../../assets/css/site.css">
+
+    <meta property="og:locale" content="en_us" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Policies Service Configuration" />
+    <meta property="og:description" content="Policies Service Configuration" />
+    <meta property="og:url" content="https://doc.owncloud.com/ocis/next/deployment/services/s-list/policies.html" />
+    <meta property="og:site_name" content="Documentation for ownCloud (A Kiteworks Company)" />
+    <meta property="og:image" content="https://doc.owncloud.com/opengraph-ocis.png" />
+    <meta property="og:image:alt" content="The Infinite Scale Documentation documentation" />
+    <meta name="twitter:site" content="@owncloud" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Policies Service Configuration" />
+    <meta name="twitter:description" content="The Infinite Scale policies service provides a new gRPC API which can be used to check whether a requested operation is allowed or not. To do so, Open Policy Agent (OPA) is used to define the set of rules of what is permitted and what is not." />
+
+    <script>var uiRootPath = '../../../../../assets'</script>
+
+
+    <title>Policies Service Configuration :: Documentation for ownCloud (A Kiteworks Company)</title>
+    <link rel="canonical" href="https://doc.owncloud.com/ocis/next/deployment/services/s-list/policies.html">
+    <meta name="description" content="The Infinite Scale policies service provides a new gRPC API which can be used to check whether a requested operation is allowed or not. To do so, Open Policy Agent (OPA) is used to define the set of rules of what is permitted and what is not.">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" href="/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="black">
+    <meta name="msapplication-TileColor" content="#001840">
+    <meta name="theme-color" content="#ffffff">
+  </head>
+
+  <body class="article">
+    <header class="header" role="banner">
+      <nav class="navbar">
+        <div class="navbar-brand">
+          <a class="navbar-item" href="https://doc.owncloud.com">Documentation for ownCloud (A Kiteworks Company)</a>
+          <!-- we do not have any hamburger stuff to show like links to external sites
+           <button class="navbar-burger" aria-controls="topbar-nav" aria-expanded="false" aria-label="Toggle main menu">
+           <span></span>
+           <span></span>
+           <span></span>
+           </button>
+          -->
+        </div>
+        <div id="topbar-nav" class="navbar-menu">
+          <div class="navbar-end"> </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="body">
+      <div class="nav-container" data-component="ocis" data-version="next">
+        <aside class="nav">
+          <div class="panels">
+            <div class="nav-panel-menu is-active" data-panel="menu">
+              <nav class="nav-menu">
+                <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+                <h3 class="title"><a href="../../../index.html">Infinite Scale Documentation</a></h3>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="0">
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="1">
+                      <a class="nav-link" href="../../../index.html">Introduction</a>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Infinite Scale Overview</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../architecture/architecture.html">Architecture and Concepts</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../availability_scaling/availability_scaling.html">Availability and Scalability</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../security/security.html">Security Aspects</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../index.html">Deployment</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../prerequisites/prerequisites.html">Prerequisites</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Storage</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../storage/general-considerations.html">General Storage Considerations</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../storage/nfs.html">Network File System</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../storage/s3.html">S3</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../storage/posixfs.html">PosixFS</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../general/general-info.html">General Information</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../general/ocis-init.html">The ocis init Command</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../wopi/wopi.html">Office Applications using WOPI</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../security/security.html">Securing oCIS</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../gdpr/gdpr.html">User Triggered GDPR Report</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../services.html">Services</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">General Information</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment-considerations.html">Deployment Considerations</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../env-var-note.html">Environment Variable Notes</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../env-vars-special-scope.html">Environment Variables with Special Scope</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../env-var-changes.html">Environment Variable Changes</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../registry.html">Registry</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../caching.html">Caching and Persistence</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../gateways.html">Gateways</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../logging.html">Logging</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../ports-used.html">Ports Used</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../tls.html">Transport Layer Security</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">List of Services</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="activitylog.html">Activitylog</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="antivirus.html">Antivirus</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="app-provider.html">App Provider</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="app-registry.html">App Registry</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="audit.html">Audit</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="auth-app.html">Auth App</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="auth-basic.html">Auth Basic</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="auth-bearer.html">Auth Bearer</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="auth-machine.html">Auth Machine</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="auth-service.html">Auth Service</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="clientlog.html">Clientlog</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="collaboration.html">Collaboration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="eventhistory.html">Eventhistory</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="frontend.html">Frontend</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="gateway.html">Gateway</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="graph.html">Graph</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="groups.html">Groups</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="idm.html">IDM</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="invitations.html">Invitations</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="idp.html">IDP</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="nats.html">NATS</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="notifications.html">Notifications</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="ocdav.html">OCDAV</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="ocm.html">OCM</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="ocs.html">OCS</a>
+                  </li>
+                    <li class="nav-item is-current-page" data-depth="4">
+                      <a class="nav-link" href="policies.html">Policies</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="postprocessing.html">Postprocessing</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="proxy.html">Proxy</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="search.html">Search</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="settings.html">Settings</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="sharing.html">Sharing</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="sse.html">SSE</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="store.html">Store</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="storage-publiclink.html">Storage-Publiclink</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="storage-shares.html">Storage-Shares</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="storage-system.html">Storage-System</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="storage-users.html">Storage-Users</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="thumbnails.html">Thumbnails</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="userlog.html">Userlog</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="users.html">Users</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="web.html">Web</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="webdav.html">WebDAV</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="webfinger.html">Webfinger</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Web UI</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../webui/webui-customisation.html">Custom Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../webui/webui-theming.html">Custom Theming</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Maintenance</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Backup and Restore</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../maintenance/b-r/backup_considerations.html">Backup Considerations</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../maintenance/b-r/backup.html">Backup</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../maintenance/b-r/restore.html">Restore</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../maintenance/commands/commands.html">Maintenance Commands</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../maintenance/m-mode/maintenance-mode.html">Maintenance Mode</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../maintenance/space-ids/space-ids.html">Listing Space IDs</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../maintenance/user-ids/user-ids.html">Listing User IDs</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Migration and Upgrades</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../migration/upgrading-ocis.html">Upgrading Infinite Scale</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Monitoring</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../monitoring/prometheus.html">Prometheus</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Configuration Examples</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../conf-examples/office/office-integration.html">Office Integration</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../conf-examples/search/configure-search.html">Search</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Deployment Examples</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Ubuntu with Docker Compose</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../depl-examples/ubuntu-compose/ubuntu-compose-prod.html">Local Production Setup</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../depl-examples/ubuntu-compose/ubuntu-compose-hetzner.html">Deployment on Hetzner</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Setup Federations</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../depl-examples/federation/sciencemesh.html">ScienceMesh Setup</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Additional Information</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../additional-information/knowledge-base.html">Knowledge Base</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+            <div class="nav-panel-explore" data-panel="explore">
+              <div class="context">
+                <span class="title">Infinite Scale Documentation</span>
+                <span class="version">next</span>
+              </div>
+              <ul class="components">
+                <li class="component">
+                  <div class="title"><a href="../../../../../desktop/next/index.html">Desktop App</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../../../desktop/next/index.html">next</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../desktop/6.0/index.html">6.0</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../desktop/5.3/index.html">5.3</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component is-current">
+                  <div class="title"><a href="../../../index.html">Infinite Scale Documentation</a></div>
+                  <ul class="versions">
+                    <li class="version is-current is-latest">
+                      <a href="../../../index.html">next</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../8.0/index.html">8.0</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../7.3/index.html">7.3</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../../android/next/index.html">Mobile App for Android</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../../../android/next/index.html">next</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../android/4.7/index.html">4.7</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../android/4.6/index.html">4.6</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../../ios-app/next/index.html">Mobile App for iOS</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../../../ios-app/next/index.html">next</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../ios-app/12.6/index.html">12.6</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../ios-app/12.5/index.html">12.5</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../../index.html">ownCloud Main Page</a></div>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../../server/next/index.html">ownCloud Server</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../../../server/next/index.html">next</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../server/10.16/index.html">10.16</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../server/10.15/index.html">10.15</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../../webui/next/index.html">ownCloud Web User Interfaces</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../../../webui/next/index.html">next</a>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <main class="article">
+        <div class="toolbar" role="navigation">
+          <button class="nav-toggle"></button>
+          <a href="../../../../../index.html" class="home-link"></a>
+          <nav class="breadcrumbs" aria-label="breadcrumbs">
+            <ul>
+              <li><a href="../../../index.html">Infinite Scale Documentation</a></li>
+              <li><a href="../../index.html">Deployment</a></li>
+              <li><a href="../services.html">Services</a></li>
+              <li>List of Services</li>
+              <li><a href="policies.html">Policies</a></li>
+            </ul>
+          </nav>
+      <div class="page-versions">
+        <button class="version-menu-toggle" title="Show other versions of page">next</button>
+        <div class="version-menu">
+          <a class="version is-current" href="policies.html">next</a>
+          <a class="version" href="../../../../8.0/deployment/services/s-list/policies.html">8.0</a>
+          <a class="version" href="../../../../7.3/deployment/services/s-list/policies.html">7.3</a>
+        </div>
+      </div>
+          <div class="edit-this-page"><a href="https://github.com/owncloud/docs-ocis/edit/master/modules/ROOT/pages/deployment/services/s-list/policies.adoc">Edit this Page</a></div>
+        </div>
+        <div class="content">
+          <aside class="toc sidebar" data-title="Contents" data-levels="2">
+            <div class="toc-menu"></div>
+          </aside>
+          <article class="doc">
+            <h1 class="page">Policies Service Configuration</h1>
+
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#default-values">Default Values</a></li>
+<li><a href="#general-information">General Information</a></li>
+<li><a href="#modules">Modules</a>
+<ul class="sectlevel2">
+<li><a href="#grpc-api">gRPC API</a></li>
+<li><a href="#proxy-middleware">Proxy Middleware</a></li>
+<li><a href="#event-service-postprocessing">Event Service (Postprocessing)</a></li>
+</ul>
+</li>
+<li><a href="#defining-policies-to-evaluate">Defining Policies to Evaluate</a></li>
+<li><a href="#setting-the-query-configuration">Setting the Query Configuration</a>
+<ul class="sectlevel2">
+<li><a href="#proxy">Proxy</a></li>
+<li><a href="#postprocessing">Postprocessing</a></li>
+</ul>
+</li>
+<li><a href="#example-policies">Example Policies</a></li>
+<li><a href="#extend-mime-type-file-extension-mapping">Extend Mime Type File Extension Mapping</a></li>
+<li><a href="#event-bus-configuration">Event Bus Configuration</a></li>
+<li><a href="#configuration">Configuration</a>
+<ul class="sectlevel2">
+<li><a href="#environment-variables">Environment Variables</a></li>
+<li><a href="#yaml-example">YAML Example</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="sect1">
+<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The Infinite Scale policies service provides a new gRPC API which can be used to check whether a requested operation is allowed or not. To do so, Open Policy Agent (OPA) is used to define the set of rules of what is permitted and what is not.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>The policies service does not start automatically and must be started manually. For more details see the <a href="../../general/general-info.html#start-infinite-scale" class="xref page">Start Infinite Scale</a> section.</p>
+</li>
+<li>
+<p>The reason for excluding the policies service from autostart is, that you must have a defined rulset available. If the ruleset is not available, the policies service will prevent other services from starting up.</p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Policies are written in the <a href="https://www.openpolicyagent.org/docs/latest/policy-language/" target="_blank" rel="noopener">Rego query language</a>. The location of the Rego files can be configured via yaml. A configuration using environment variables is not possible.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="default-values"><a class="anchor" href="#default-values"></a>Default Values</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>The policies service listens on port 9125 by default.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="general-information"><a class="anchor" href="#general-information"></a>General Information</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The policies service consists of the following modules:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Proxy authorization (middleware)</p>
+</li>
+<li>
+<p>Event authorization (async post-processing)</p>
+</li>
+<li>
+<p>gRPC API (can be used by other services)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>To configure the policies service, three environment variables need to be defined:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>POLICIES_ENGINE_TIMEOUT</code></p>
+</li>
+<li>
+<p><code>POLICIES_POSTPROCESSING_QUERY</code></p>
+</li>
+<li>
+<p><code>PROXY_POLICIES_QUERY</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Note that each query setting defines the <a href="https://www.openpolicyagent.org/docs/latest/#complete-rules" target="_blank" rel="noopener">Complete Rules</a> variable defined in the Rego rule set the corresponding step uses for the evaluation. If the variable is mistyped or not found, the evaluation defaults to deny. Individual query definitions can be defined for each module.</p>
+</div>
+<div class="paragraph">
+<p>To activate the policies service for a module, it must be started with a yaml configuration that points to at least one Rego file that contains the complete rule variable to be queried. Note that if the service is scaled horizontally, each instance should have access to the same Rego files to avoid unpredictable results. If a file path has been configured but the file is not present or accessible, the evaluation defaults to deny.</p>
+</div>
+<div class="paragraph">
+<p>When using async post-processing via the <a href="postprocessing.html" class="xref page">postprocessing service</a>, the value <code>policies</code> must be added to the <code>POSTPROCESSING_STEPS</code> configuration in the order in which the evaluation should take place. Example: First check if a file contains questionable content via policies. If it looks okay, continue to check for viruses.</p>
+</div>
+<div class="paragraph">
+<p>For configuration examples, the example policies provided by the <a href="#example-policies">Example Policies</a> are used.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="modules"><a class="anchor" href="#modules"></a>Modules</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="grpc-api"><a class="anchor" href="#grpc-api"></a>gRPC API</h3>
+<div class="paragraph">
+<p>The gRPC API can be used by any other internal service. It can also be used for example by third parties to find out if an action is allowed or not. This layer is already used by the proxy middleware. There is no configuration necessary, because the query setting (complete rule variable) must be part of the request.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="proxy-middleware"><a class="anchor" href="#proxy-middleware"></a>Proxy Middleware</h3>
+<div class="paragraph">
+<p>The <a href="proxy.html" class="xref page">proxy service</a> already includes a middleware which uses the internal <a href="#grpc-service">gRPC api</a> to evaluate the policies. Since the proxy is in heavy use and every HTTP request is processed here, only simple and quick decisions should be evaluated. More complex queries such as file content evaluation are <em>strongly</em> discouraged.</p>
+</div>
+<div class="paragraph">
+<p>If the evaluation in the proxy results in a <code>denied</code> outcome, the response will return a <code>403 Permission Denied</code> with the following response body:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "error":
+    {
+        "code": "deniedByPolicy",
+        "message": "Operation denied due to security policies",
+        "innererror":
+        {
+            "date": "2023-09-19T13:22:20Z",
+            "filename": "File",
+            "method": "POST",
+            "path": "/dav/spaces/some-space-id/Folder/",
+            "request-id": "9CFCE925-F9D9-4F26-AB3B-2C1C40A9CD0C"
+        }
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="event-service-postprocessing"><a class="anchor" href="#event-service-postprocessing"></a>Event Service (Postprocessing)</h3>
+<div class="paragraph">
+<p>This layer is event-based and part of the <a href="postprocessing.html" class="xref page">postprocessing service</a>. Since processing at this point is asynchronous, the operations can also take longer and be more expensive, like evaluating the contents of a file.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="defining-policies-to-evaluate"><a class="anchor" href="#defining-policies-to-evaluate"></a>Defining Policies to Evaluate</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Each module can have as many policy files as needed for evaluation. Files can also include other files if necessary. To use policies, they have to be saved to a location that is accessible to the policies service. As a good starting point, take the <a href="../../general/general-info.html#configuration-directory" class="xref page">config directory</a> and use a subdirectory collecting all the <code>.rego</code> files, though any other directory can be defined. The config directory is already accessible by all services and usually is included in a <a href="../../../maintenance/b-r/backup.html" class="xref page">backup</a> plan.</p>
+</div>
+<div class="paragraph">
+<p>If this is done, it&#8217;s required to configure the policies service to use these files:</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+It is important that <strong>all</strong> necessary files are added to the list of files the policies service uses.
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">policies:
+  engine:
+    policies:
+      - your_path_to_policies/proxy.rego
+      - your_path_to_policies/postprocessing.rego
+      - your_path_to_policies/util.rego</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Once the references to policy files are configured correctly, the <code>_QUERY</code> configuration needs to be defined for the proxy middleware and for the events service.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="setting-the-query-configuration"><a class="anchor" href="#setting-the-query-configuration"></a>Setting the Query Configuration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To define a value for the query evaluation, the following scheme is necessary:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-plaintext hljs" data-lang="plaintext">data.&lt;package-name&gt;.&lt;complete-rule-variable-name&gt;</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The keyword <code>data</code> is mandatory and must be present.</p>
+</li>
+<li>
+<p>The <code>package-name</code> is defined in one .rego file like <code>package postprocessing</code>. It is not related to the filename. For more details, see the <a href="https://www.openpolicyagent.org/docs/latest/policy-language/#packages" target="_blank" rel="noopener">packages</a> documentation.</p>
+</li>
+<li>
+<p>The <code>complete-rule-variable-name</code> is the variable providing the result of the evaluation.</p>
+</li>
+<li>
+<p>Exact one of the defined files, which is responsible for returning the evaluation result, must contain the combination of <code>&lt;package-name&gt;</code> and <code>&lt;complete-rule-variable-name&gt;</code>.</p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="proxy"><a class="anchor" href="#proxy"></a>Proxy</h3>
+<div class="paragraph">
+<p>Note that this setting has to be part of the <a href="proxy.html" class="xref page">proxy</a> configuration.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">proxy:
+  policies_middleware:
+    query: data.proxy.granted</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The same can be achieved by setting the following environment variable:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">PROXY_POLICIES_QUERY=data.proxy.granted</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="postprocessing"><a class="anchor" href="#postprocessing"></a>Postprocessing</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">policies:
+  postprocessing:
+    query: data.postprocessing.granted</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The same can be achieved by setting the following environment variable:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">POLICIES_POSTPROCESSING_QUERY=data.postprocessing.granted</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>As soon as that query is configured, the postprocessing service must be informed to use the policies step by setting the environment variable:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">POSTPROCESSING_STEPS=policies</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Note that additional steps can be configured and their position in the list defines the order of processing. For details see the <a href="postprocessing.html" class="xref page">postprocessing service</a> documentation.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="example-policies"><a class="anchor" href="#example-policies"></a>Example Policies</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The policies service contains a set of preconfigured example policies. See the deployment examples directory for details. The contained policies disallow Infinite Scale to create certain file types, both via the proxy middleware and the events service via postprocessing.</p>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset1_master"></a>master</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset1_master">
+<div class="paragraph">
+<p><a href="https://github.com/owncloud/ocis/tree/stable-8.0/deployments/examples" target="_blank" rel="noopener">Rego policies deployment example directory</a></p>
+</div>
+<div class="paragraph">
+<p>Using git branch name: <code>stable-8.0</code>, to point to the latest stable version that also includes patches</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="extend-mime-type-file-extension-mapping"><a class="anchor" href="#extend-mime-type-file-extension-mapping"></a>Extend Mime Type File Extension Mapping</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In the extended set of the rego query language, it is possible to get a list of associated file extensions based on a mime type, for example <code>ocis.mimetype.extensions("application/pdf")</code>.</p>
+</div>
+<div class="paragraph">
+<p>The list of mappings is restricted by default and is provided by the host system Infinite Scale is installed on.</p>
+</div>
+<div class="paragraph">
+<p>This list can be extended. To do so, Infinite Scale must be provided with the path to a custom <code>mime.types</code> file that maps mime types to extensions. The location of the file must be accessible by all instances of the policy service. As a rule of thumb, use the directory where the Infinite Scale configuration files are stored. Note that existing mappings from the host are extended by the definitions from the mime types file, but not replaced.</p>
+</div>
+<div class="paragraph">
+<p>The path to that file can be provided via a yaml configuration or an environment variable. Make sure to replace the <code>OCIS_CONFIG_DIR</code> string by an existing path. See the documentation of the <a href="../../general/general-info.html#configuration-directory" class="xref page">Configuration Directory</a> and the <a href="../env-vars-special-scope.html#extended-environment-variables" class="xref page">Extended Environment Variables</a> for predefined or manually defined config paths.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">POLICIES_ENGINE_MIMES=OCIS_CONFIG_DIR/mime.types</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">policies:
+  engine:
+    mimes: OCIS_CONFIG_DIR/mime.types</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A good example of how such a file should be formatted can be found in the <a href="https://svn.apache.org/repos/asf/httpd/httpd/trunk/docs/conf/mime.types">Apache svn repository</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="event-bus-configuration"><a class="anchor" href="#event-bus-configuration"></a>Event Bus Configuration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The Infinite Scale event bus can be configured by a set of environment variables.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>In case of an orchestrated installation like with Docker or Kubernetes, the event bus must be an external service for scalability like a <code>Redis Sentinel cluster</code> or a key-value-store <a href="https://docs.nats.io/nats-concepts/jetstream/key-value-store">NATS JetStream</a>. Both named stores are supported and also used in <a href="../caching.html" class="xref page">Caching and Persistence</a>. The store used is not part of the Infinite Scale installation and must be separately provided and configured.</p>
+</li>
+<li>
+<p>Note that from a configuration point of view, caching and persistence are independent of the event bus configuration.</p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Note that for each global environment variable, a service-based one might be available additionally. For precedences see <a href="../env-var-note.html" class="xref page">Environment Variable Notes</a>. Check the configuration section below.</p>
+</div>
+<div class="paragraph">
+<p>Without the aim of completeness, see the list of environment variables to configure the event bus:
+<br>
+<br></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 31.8181%;">
+<col style="width: 68.1819%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Envvar</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OCIS_EVENTS_ENDPOINT</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The address of the event system.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OCIS_EVENTS_CLUSTER</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The clusterID of the event system. Mandatory when using NATS as event system.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OCIS_EVENTS_ENABLE_TLS</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enable TLS for the connection to the events broker.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OCIS_INSECURE</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Whether to verify the server TLS certificates.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OCIS_EVENTS_AUTH_USERNAME</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The username to authenticate with the events broker.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OCIS_EVENTS_AUTH_PASSWORD</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The password to authenticate with the events broker.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="configuration"><a class="anchor" href="#configuration"></a>Configuration</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="environment-variables"><a class="anchor" href="#environment-variables"></a>Environment Variables</h3>
+<div class="paragraph">
+<p>The <code>policies</code> service is configured via the following environment variables. Read the <a href="../envvar-types-description.html" class="xref page">Environment Variable Types</a> documentation for important details. Column <code>IV</code> shows with which release the environment variable has been introduced.</p>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset2_master"></a>master</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset2_master">
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Environment variables for the policies service</caption>
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">IV</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Default Value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>POLICIES_GRPC_ADDR</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>127.0.0.1:9125 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The bind address of the GRPC service.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>POLICIES_DEBUG_ADDR</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>127.0.0.1:9129 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Bind address of the debug server, where metrics, health, config and debug endpoints will be exposed.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>POLICIES_DEBUG_TOKEN</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Token to secure the metrics endpoint.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>POLICIES_DEBUG_PPROF</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>bool </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>false </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Enables pprof, which can be used for profiling.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>POLICIES_DEBUG_ZPAGES</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>bool </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>false </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Enables zpages, which can be used for collecting and viewing in-memory traces.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_EVENTS_ENDPOINT</code><br>
+<code>POLICIES_EVENTS_ENDPOINT</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>127.0.0.1:9233 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The address of the event system. The event system is the message queuing service. It is used as message broker for the microservice architecture.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_EVENTS_CLUSTER</code><br>
+<code>POLICIES_EVENTS_CLUSTER</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ocis-cluster </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The clusterID of the event system. The event system is the message queuing service. It is used as message broker for the microservice architecture. Mandatory when using NATS as event system.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_INSECURE</code><br>
+<code>POLICIES_EVENTS_TLS_INSECURE</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>bool </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>false </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Whether the server should skip the client certificate verification during the TLS handshake.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_EVENTS_TLS_ROOT_CA_CERTIFICATE</code><br>
+<code>POLICIES_EVENTS_TLS_ROOT_CA_CERTIFICATE</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The root CA certificate used to validate the server&#8217;s TLS certificate. If provided POLICIES_EVENTS_TLS_INSECURE will be seen as false.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_EVENTS_ENABLE_TLS</code><br>
+<code>POLICIES_EVENTS_ENABLE_TLS</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>bool </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>false </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Enable TLS for the connection to the events broker. The events broker is the ocis service which receives and delivers events between the services.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_EVENTS_AUTH_USERNAME</code><br>
+<code>POLICIES_EVENTS_AUTH_USERNAME</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The username to authenticate with the events broker. The events broker is the ocis service which receives and delivers events between the services.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_EVENTS_AUTH_PASSWORD</code><br>
+<code>POLICIES_EVENTS_AUTH_PASSWORD</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The password to authenticate with the events broker. The events broker is the ocis service which receives and delivers events between the services.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_LOG_LEVEL</code><br>
+<code>POLICIES_LOG_LEVEL</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The log level. Valid values are: 'panic', 'fatal', 'error', 'warn', 'info', 'debug', 'trace'.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_LOG_PRETTY</code><br>
+<code>POLICIES_LOG_PRETTY</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>bool </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>false </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Activates pretty log output.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_LOG_COLOR</code><br>
+<code>POLICIES_LOG_COLOR</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>bool </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>false </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Activates colorized log output.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_LOG_FILE</code><br>
+<code>POLICIES_LOG_FILE</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The path to the log file. Activates logging to this file if set.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>POLICIES_ENGINE_TIMEOUT</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Duration </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>10s </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Sets the timeout the rego expression evaluation can take. Rules default to deny if the timeout was reached. See the Environment Variable Types description for more details.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>POLICIES_ENGINE_MIMES</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Sets the mimes file path which maps mimetypes to associated file extensions. See the text description for details.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>POLICIES_POSTPROCESSING_QUERY</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Defines the 'Complete Rules' variable defined in the rego rule set this step uses for its evaluation. Defaults to deny if the variable was not found.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_TRACING_ENABLED</code><br>
+<code>POLICIES_TRACING_ENABLED</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>bool </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>false </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Activates tracing.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_TRACING_TYPE</code><br>
+<code>POLICIES_TRACING_TYPE</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The type of tracing. Defaults to '', which is the same as 'jaeger'. Allowed tracing types are 'jaeger', 'otlp' and '' as of now.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_TRACING_ENDPOINT</code><br>
+<code>POLICIES_TRACING_ENDPOINT</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The endpoint of the tracing agent.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_TRACING_COLLECTOR</code><br>
+<code>POLICIES_TRACING_COLLECTOR</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The HTTP endpoint for sending spans directly to a collector, i.e. http://jaeger-collector:14268/api/traces. Only used if the tracing endpoint is unset.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="yaml-example"><a class="anchor" href="#yaml-example"></a>YAML Example</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Note the file shown below must be renamed and placed in the correct folder according to the <a href="../../general/general-info.html#configuration-file-naming" class="xref page">Configuration File Naming</a> conventions to be effective.</p>
+</li>
+<li>
+<p>See the <a href="../env-var-note.html" class="xref page">Notes for Environment Variables</a> if you want to use environment variables in the yaml file.</p>
+</li>
+</ul>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset3_master"></a>master</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset3_master">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml"># Autogenerated
+# Filename: policies-config-example.yaml
+
+grpc:
+  addr: 127.0.0.1:9125
+  tls: null
+debug:
+  addr: 127.0.0.1:9129
+  token: ""
+  pprof: false
+  zpages: false
+events:
+  endpoint: 127.0.0.1:9233
+  cluster: ocis-cluster
+  tls_insecure: false
+  tls_root_ca_certificate: ""
+  enable_tls: false
+  username: ""
+  password: ""
+grpc_client_tls: null
+log:
+  level: ""
+  pretty: false
+  color: false
+  file: ""
+engine:
+  timeout: 10s
+  policies: []
+  mimes: ""
+postprocessing:
+  query: ""
+tracing:
+  enabled: false
+  type: ""
+  endpoint: ""
+  collector: ""</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+        <nav class="pagination">
+              <span class="prev"><a href="ocs.html">OCS</a></span>
+              <span class="next"><a href="postprocessing.html">Postprocessing</a></span>
+        </nav>
+          </article>
+        </div>
+      </main>
+    </div>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="row-full">
+          <div class="col-third">
+            <div class="footer-nav">
+              <h4>About ownCloud</h4>
+              <ul id="menu-about" class="menu">
+                <li class="menu-landing"><a href="https://owncloud.com/">The Secure Collaboration Platform</a></li>
+                <li class="menu-news"><a href="https://owncloud.com/news/">News</a></li>
+                <li class="menu-privacy"><a href="https://owncloud.com/privacy-statement/">Privacy statement</a></li>
+                <li class="menu-imprint"><a href="https://owncloud.com/imprint/">Imprint</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-third">
+            <div class="footer-nav">
+              <h4>Resources</h4>
+              <ul id="menu-support-and-documentation" class="menu">
+                <li class="menu-faq"><a href="https://owncloud.com/faq/">FAQ</a></li>
+                <li class="menu-help"><a href="https://owncloud.com/docs-guides/">Help</a></li>
+                <li class="menu-security"><a href="https://owncloud.com/security/">Security</a></li>
+                <li class="menu-changelog"><a href="https://owncloud.com/changelog/">Changelog</a></li>
+                <li class="menu-get-started"><a href="https://owncloud.com/get-started/">Get started</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-third">
+            <div class="footer-nav">
+              <h4>Interact</h4>
+              <ul id="menu-interact" class="menu">
+                <li class="menu-forum"><a href="https://central.owncloud.org" class="oc-footer-nav-link">Forum</a></li>
+                <li class="menu-contribute"><a href="https://owncloud.com/contribute" class="oc-footer-nav-link">Contribute</a></li>
+                <li class="menu-customer-support"><a href="https://owncloud.com/support" class="oc-footer-nav-link">Customer support</a></li>
+
+              </ul>
+            </div>
+          </div>
+        </div>
+        <p>&copy; Copyright 2011-2026, The ownCloud developers.</p>
+      </div>
+    </footer>
+
+    <script id="site-script" src="../../../../../assets/js/site.js" data-ui-root-path="../../../../../assets"></script>
+    <script async src="../../../../../assets/js/vendor/highlight.js"></script>
+    <script async src="../../../../../assets/js/vendor/medium-zoom.js"></script>
+    <script async src="../../../../../assets/js/vendor/tabs-ui.js"></script>
+  </body>
+</html>

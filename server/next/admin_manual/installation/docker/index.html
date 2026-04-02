@@ -1,0 +1,2228 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Installing with Docker :: Documentation for ownCloud (A Kiteworks Company)</title>
+
+    <link rel="canonical" href="https://doc.owncloud.com/server/next/admin_manual/installation/docker/index.html">
+    <link rel="prev" href="../index.html">
+    <link rel="next" href="../manual_installation/manual_installation.html">
+    <meta name="description" content="ownCloud can be installed using the official ownCloud Docker image.">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../../../assets/css/site.css">
+
+    <meta property="og:locale" content="en_us" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Installing with Docker" />
+    <meta property="og:description" content="Installing with Docker" />
+    <meta property="og:url" content="https://doc.owncloud.com/server/next/admin_manual/installation/docker/index.html" />
+    <meta property="og:site_name" content="Documentation for ownCloud (A Kiteworks Company)" />
+    <meta property="og:image" content="https://doc.owncloud.com/opengraph-server.png" />
+    <meta property="og:image:alt" content="The ownCloud Server documentation" />
+    <meta name="twitter:site" content="@owncloud" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Installing with Docker" />
+    <meta name="twitter:description" content="ownCloud can be installed using the official ownCloud Docker image." />
+
+    <script>var uiRootPath = '../../../../../assets'</script>
+
+
+    <title>Installing with Docker :: Documentation for ownCloud (A Kiteworks Company)</title>
+    <link rel="canonical" href="https://doc.owncloud.com/server/next/admin_manual/installation/docker/index.html">
+    <meta name="description" content="ownCloud can be installed using the official ownCloud Docker image.">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" href="/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="black">
+    <meta name="msapplication-TileColor" content="#001840">
+    <meta name="theme-color" content="#ffffff">
+  </head>
+
+  <body class="article">
+    <header class="header" role="banner">
+      <nav class="navbar">
+        <div class="navbar-brand">
+          <a class="navbar-item" href="https://doc.owncloud.com">Documentation for ownCloud (A Kiteworks Company)</a>
+          <!-- we do not have any hamburger stuff to show like links to external sites
+           <button class="navbar-burger" aria-controls="topbar-nav" aria-expanded="false" aria-label="Toggle main menu">
+           <span></span>
+           <span></span>
+           <span></span>
+           </button>
+          -->
+        </div>
+        <div id="topbar-nav" class="navbar-menu">
+          <div class="navbar-end"> </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="body">
+      <div class="nav-container" data-component="server" data-version="next">
+        <aside class="nav">
+          <div class="panels">
+            <div class="nav-panel-menu is-active" data-panel="menu">
+              <nav class="nav-menu">
+                <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+                <h3 class="title"><a href="../../../index.html">ownCloud Server</a></h3>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="0">
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="1">
+                      <a class="nav-link" href="../../../index.html">Introduction</a>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Admin Manual</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../index.html">Introduction</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../useful_pages.html">Useful Pages</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../faq/index.html">FAQ</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../gdpr.html">GDPR</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Installation</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../deployment_considerations.html">Deployment Considerations</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../deployment_recommendations.html">Deployment Recommendations</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment_recommendations/nfs.html">NFS</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../system_requirements.html">System Requirements</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../configuration_notes_and_tips.html">Configuration Notes and Tips</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../index.html">Installation Options</a>
+                  <ul class="nav-list">
+                    <li class="nav-item is-current-page" data-depth="4">
+                      <a class="nav-link" href="index.html">Installing With Docker</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Manual Installation on Linux</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="5">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Detailed Installation Guide</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="6">
+                      <a class="nav-link" href="../manual_installation/manual_installation.html">Detailed Installation on Ubuntu (various versions)</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Quick Installation Guide</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="6">
+                      <a class="nav-link" href="../quick_guides/ubuntu_20_04.html">On Ubuntu 20.04</a>
+                  </li>
+                    <li class="nav-item" data-depth="6">
+                      <a class="nav-link" href="../quick_guides/ubuntu_22_04.html">On Ubuntu 22.04</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <span class="nav-text">Linux Package Manager</span>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../installation_wizard.html">The Installation Wizard</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../troubleshooting.html">Troubleshooting</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../changing_the_web_route.html">Changing Your ownCloud URL</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../apps_management_installation.html">Installing and Managing Apps</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../apps_supported.html">Supported Apps</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../apps/mediaviewer/index.html">Media Viewer</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../selinux_configuration.html">SELinux Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../letsencrypt/index.html">Using Let&#8217;s Encrypt SSL Certificates</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../letsencrypt/using_letsencrypt.html">Using Letsencrypt</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../letsencrypt/apache.html">Apache</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Configuration</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../configuration/database/index.html">Database</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/database/db_conversion.html">Database Conversion</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/database/linux_database_configuration.html">Database Configuration</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../configuration/files/encryption/index.html">Encryption</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/encryption/encryption_configuration.html">Encryption Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/encryption/encryption_configuration_quick_guide.html">Encryption Configuration Quick Guide</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../configuration/files/external_storage/index.html">External Storage</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/external_storage/configuration.html">External Storage Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/external_storage/auth_mechanisms.html">External Storage Authentication Mechanisms</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/external_storage/amazons3.html">AmazonS3</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/external_storage/dropbox.html">Dropbox</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/external_storage/ftp.html">FTP</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/external_storage/google.html">Google</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/external_storage/local.html">Local</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/external_storage/owncloud.html">ownCloud</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/external_storage/s3_compatible_object_storage_as_primary.html">S3 as Primary</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/external_storage/sftp.html">SFTP</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/external_storage/smb.html">SMB</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/external_storage/webdav.html">WebDAV</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../configuration/files/index.html">Files and Sharing</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/big_file_upload_configuration.html">Big File Upload Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/manual_file_locking.html">Manual File Locking</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/default_files_configuration.html">Default Files Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/federated_cloud_sharing_configuration.html">Federated Cloud Sharing Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/file_sharing_configuration.html">File Sharing Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/file_versioning.html">File Versioning</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/files_locking_transactional.html">Transactional File Locking</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/previews_configuration.html">Preview Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/mimetypes.html">Mimetypes</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/trashbin_options.html">Managing the Trashbin</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../configuration/integration/index.html">Integration</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/integration/ms-teams.html">Microsoft Teams</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/integration/splunk.html">ownCloud App for Splunk</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../configuration/general_topics/index.html">General Topics</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/general_topics/code_signing.html">Code Signing</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/general_topics/impersonate_users.html">Impersonate Users</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/general_topics/search.html">Full Text Search</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../configuration/server/index.html">Server</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/server/activity_configuration.html">Activity Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/server/background_jobs_configuration.html">Background Jobs Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/server/caching_configuration.html">Caching Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/server/config_sample_php_parameters.html">Config Sample PHP Parameters</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/server/config_apps_sample_php_parameters.html">Config Apps Sample PHP Parameters</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/server/custom_client_repos.html">Custom Client Repos</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/server/email_configuration.html">Email Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/server/excluded_blacklisted_files.html">Excluded Blacklisted Files</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/server/external_sites.html">External Sites</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/server/harden_server.html">Harden Server</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/server/import_ssl_cert.html">Import SSL Cert</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/server/index_php_less_urls.html">Index PHP Less URLs</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/server/occ_command.html">OCC Command</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/server/language_configuration.html">Language Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/server/legal_settings_configuration.html">Legal Settings Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Logging</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../configuration/server/logging/logging_configuration.html">Logging Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../configuration/server/logging/request_tracing.html">Request Tracing</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/server/reverse_proxy_configuration.html">Reverse Proxy Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../configuration/server/security/index.html">Security</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../configuration/server/security/brute_force_protection.html">Brute-Force Protection</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../configuration/server/security/oauth2.html">OAuth2</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../configuration/server/security/password_policy.html">Password policy</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../configuration/server/security_setup_warnings.html">Security Setup Warnings</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../configuration/server/security/hsmdaemon/index.html">The HSM (Hardware Security Module) Daemon</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../configuration/server/security/dependency_notes.html">Dependency Notes</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/server/oc_server_tuning.html">Server Tuning</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/server/thirdparty_php_configuration.html">Third Party PHP Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/server/virus-scanner-support.html">Virus Scanner Support</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/server/ui-configuration.html">UI Configuration</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">User</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/user/user_management.html">User Management</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/user/user_roles.html">User Roles</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/user/reset_admin_password.html">Reset Admin Password</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/user/reset_user_password.html">Reset User Password</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/user/user_auth_ftp_smb_imap.html">User Auth FTP SMB IMAP</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/user/user_auth_ldap.html">User Auth LDAP</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/user/user_auth_twofactor.html">User Auth Two-Factor</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/user/user_oauth2.html">User Auth OAuth2</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/user/user_provisioning_api.html">User Provisioning API</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/user/custom_groups_app.html">Custom Groups App</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/user/guests_app.html">Guests App</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/user/oidc/oidc.html">OpenID Connect (OIDC)</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/user/login_policies.html">Login Policies</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Maintenance</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../maintenance/upgrading/upgrade.html">Upgrading</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../maintenance/upgrading/manual_upgrade.html">Manual Upgrade</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../maintenance/upgrading/database_upgrade.html">Database Upgrade</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../maintenance/upgrading/upgrade_php.html">Upgrading PHP</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../maintenance/upgrading/marketplace_apps.html">Marketplace Apps</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Backup and Restore</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../maintenance/backup_and_restore/backup.html">Backup</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../maintenance/backup_and_restore/restore.html">Restore</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../maintenance/enable_maintenance.html">Maintenance Mode</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../maintenance/export_import_instance_data.html">Export and Import Instance Data</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../maintenance/manually-moving-data-folders.html">Manually Moving Data Folders</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Encryption</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../maintenance/encryption/migrating-from-user-key-to-master-key.html">Migrating from User Key to Master Key Encryption</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../maintenance/migrating.html">Migrating to a Different Server</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../maintenance/migrating_to_kiteworks.html">Migrating to Kiteworks PDN</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Enterprise</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Authentication</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/authentication/enterprise_only_auth.html">Enterprise Only Authentication</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/authentication/kerberos.html">Kerberos Authentication</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Clients</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/clients/custom_client_repos.html">Custom Client Repos</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Collaboration</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/collaboration/collabora_secure_view.html">Collabora Online / Secure View</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/collaboration/msoffice-wopi-integration.html">Microsoft Office Online / WOPI Integration</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Document Classification</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/document_classification/classification_and_policy_enforcement.html">Classify Documents and Enforce Policies</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">External Storage</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/external_storage/ldap_home_connector_configuration.html">LDAP Home Connector Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/external_storage/sharepoint-integration_configuration.html">Sharepoint integration Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/external_storage/windows-network-drive_configuration.html">Windows Network Drive Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/external_storage/wnd_quick_guide.html">WND Configuration Quick Guide</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">File Management</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/file_management/files_tagging.html">File Tagging</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/file_management/files_lifecycle.html">File Lifecycle Management</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Firewall</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/firewall/file_firewall.html">File Firewall</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Installation</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/installation/install.html">Installing &amp; Upgrading ownCloud Enterprise Edition</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/installation/oracle_db_configuration.html">Oracle DB Setup &amp; Configuration</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Logging</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/logging/admin_audit.html">Auditing</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Reporting</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/reporting/metrics.html">Metrics</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/reporting/config_report.html">Generate a Config Report</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Security</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/security/ransomware-protection.html">Ransomware Protection</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">User Management</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/user_management/user_auth_shibboleth.html">Shibboleth Integration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/user_management/saml_2.0_sso.html">SAML 2.0 Based SSO</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Troubleshooting</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../troubleshooting/general_troubleshooting.html">General Troubleshooting</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../troubleshooting/path_filename_length.html">Path and Filename Length Limitations</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../troubleshooting/providing_logs_and_config_files.html">Retrieve Log Files and Configuration Settings</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../troubleshooting/remove_non_existent_bg_jobs.html">Remove Non-Existent Background Jobs</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../found_a_mistake.html">Found a Mistake?</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Developer Manual</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../developer_manual/index.html">Introduction</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/general/index.html">General Contributor Guidelines</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/general/code-of-conduct.html">Community Code of Conduct</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/general/codingguidelines.html">Coding Style &amp; General Guidelines</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/general/debugging.html">Debugging</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/general/performance.html">Performance Considerations</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/general/security.html">Security Guidelines</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/general/backporting.html">Backporting</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../developer_manual/commun/help_and_communication.html">Help and Communication</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/core/index.html">Developing ownCloud Core</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/core/introduction.html">Introduction</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/general/devenv.html">Setup Your Development Environment</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/core/configfile.html">Application Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/core/theming.html">Theming</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/core/translation.html">Translation</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/core/code-standard.html">Code Standards Compliance</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/testing/index.html">Testing</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/testing/test-pilots.html">ownCloud Test Pilots</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/testing/drone.html">Drone Testing</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/testing/unit-testing.html">Unit Testing</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/testing/acceptance-tests.html">Acceptance Tests</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/testing/ui-testing.html">User Interface Testing</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/core/apis/index.html">Available APIs</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/core/apis/externalapi.html">The External API</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/core/apis/provisioning-api.html">The Provisioning API</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">OCS</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/core/apis/ocs-notification-endpoint-v1.html">The OCS Notifications API (v1)</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/core/apis/ocs-capabilities.html">The OCS REST API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/core/apis/ocs-recipient-api.html">The OCS Recipient API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/core/apis/ocs-share-api.html">The OCS Share API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/core/apis/ocs-totp-validation-api.html">The OCS TOTP Validation API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/core/apis/ocs-user-sync-api.html">The OCS User Sync API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/core/apis/ocs-notify-public-link-by-email.html">Notify Public Link By Email</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/core/apis/roles-api.html">The Roles API</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/webdav_api/index.html">WebDAV APIs</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/webdav_api/comments.html">The Comments API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/webdav_api/groups.html">The Custom Groups Management API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/webdav_api/files_versions.html">The Files Versions API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/webdav_api/meta.html">The Meta API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/webdav_api/search.html">The Search API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/webdav_api/tags.html">The Tags API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/webdav_api/trashbin.html">The Trash Bin API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/webdav_api/public_files.html">The Public Files API</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/app/introduction.html">Application Development</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/index.html">Fundamental Concepts</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/info.html">Application Metadata</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/classloader.html">The Classloader</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/configuration.html">Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/routes.html">Routing</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/controllers.html">Controllers</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/templates.html">Templates</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/js.html">JavaScript</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/css.html">CSS</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/middleware.html">Middleware</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/database.html">Database Connectivity</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/backgroundjobs.html">Background Jobs</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/logging.html">Logging</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/testing.html">Testing</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/container.html">The DI Container</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/filesystem.html">Filesystem</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/api.html">RESTful API</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/hooks.html">Hooks</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/publishing.html">Publishing in the ownCloud Marketplace</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/changelog.html">Changelog</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/market_app.html">Market App</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/app/advanced/index.html">Advanced Concepts</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/advanced/custom-cache-backend.html">Custom Filesystem Caches</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/advanced/custom-storage-backend.html">Custom Storage Backends</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/advanced/notifications.html">Notifications</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/advanced/storage-backend.html">Storage Backends</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/advanced/extstorage.html">External Storage Backends</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/advanced/l10n.html">Translation</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/advanced/two-factor-provider.html">Two-Factor Providers</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/advanced/users.html">User Management</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/advanced/code_signing.html">Code Signing</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/index.html">Tutorial</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/requirements.html">Minimum Requirements</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/request.html">The Request Life Cycle</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/development_environment.html">The Core Application Files</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/routes_and_controllers.html">Routes and Controllers</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/database_connectivity.html">Database Connectivity</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/template_content.html">Create Template Content</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/navigation.html">Create a Navigation Menu</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/javascript_and_css.html">Add JavaScript and CSS</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/wiring_it_up.html">Wiring it Up</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/finishing_touches.html">Apply the Finishing Touches</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/restful_api.html">Add a RESTful API</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/testing.html">Writing Tests</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/mobile_development/index.html">Mobile Development</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/mobile_development/android_library/index.html">Android</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/mobile_development/android_library/library_installation.html">Library Installation</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/mobile_development/android_library/examples.html">Examples</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/mobile_development/ios_library/index.html">iOS</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/mobile_development/ios_library/library_installation.html">Library Installation</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/mobile_development/ios_library/examples.html">Examples</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/bugtracker/index.html">Bugtracker</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/bugtracker/codereviews.html">Code Reviews</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/bugtracker/triaging.html">Bug Triaging</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../developer_manual/found_a_mistake.html">Found a Mistake?</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">ownCloud Server UI</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../classic_ui/index.html">Introduction</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../classic_ui/files/webgui/overview.html">The WebUI</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/webinterface.html">Web Interface</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/files/webgui/navigating.html">Navigating the WebUI</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../classic_ui/personal_settings/index.html">Personal Settings</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/personal_settings/general.html">General</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/personal_settings/storage.html">Storage</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/personal_settings/sharing.html">Sharing</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/personal_settings/security.html">Security</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/personal_settings/custom_groups.html">Custom Groups</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../classic_ui/files/index.html">Files</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/files/access_webdav.html">Access WebDAV</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/files/webgui/sharing.html">Sharing Files</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/files/webgui/search.html">Search &amp; Full Text Search</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/files/webgui/tagging.html">Tagging Files</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/files/webgui/comments.html">Comments</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/files/version_control.html">Version Control</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/files/encrypting_files.html">Encrypting Files</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/files/deleted_file_management.html">Managing Deleted Files</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/files/large_file_upload.html">Large File Uploads</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/files/manual_file_locking.html">Manual File Locking</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/files/files_lifecycle.html">File Lifecycle Management</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/files/public_link_shares.html">Public Link Shares</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/files/federated_cloud_sharing.html">Federated Cloud Sharing</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/session_management.html">Managing Connected Browsers and Devices</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/online_collaboration.html">Online Collaboration</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/files/webgui/quota.html">Storage Quotas</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/external_storage/external_storage.html">External Storage</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/external_storage/sharepoint_connecting.html">Connecting to SharePoint</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/files/desktop_mobile_sync.html">Desktop Mobile Sync</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../classic_ui/apps/index.html">Apps</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/apps/activity.html">Activity</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/apps/calendar.html">Calendar</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/apps/contacts.html">Contacts</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/apps/market.html">Market</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/apps/media_viewer_app.html">Media Viewer App</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../classic_ui/integration/index.html">Integration</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/integration/ms-teams.html">Microsoft Teams</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../classic_ui/pim/index.html">Synchronization Clients</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/pim/sync_ios.html">Sync iOS</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/pim/sync_kde.html">Sync KDE</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/pim/sync_osx.html">Sync OSX</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/pim/sync_thunderbird.html">Sync Thunderbird</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../classic_ui/troubleshooting.html">Troubleshooting</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../classic_ui/found_a_mistake.html">Found a Mistake?</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+            <div class="nav-panel-explore" data-panel="explore">
+              <div class="context">
+                <span class="title">ownCloud Server</span>
+                <span class="version">next</span>
+              </div>
+              <ul class="components">
+                <li class="component">
+                  <div class="title"><a href="../../../../../desktop/next/index.html">Desktop App</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../../../desktop/next/index.html">next</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../desktop/6.0/index.html">6.0</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../desktop/5.3/index.html">5.3</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../../ocis/next/index.html">Infinite Scale Documentation</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../../../ocis/next/index.html">next</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../ocis/8.0/index.html">8.0</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../ocis/7.3/index.html">7.3</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../../android/next/index.html">Mobile App for Android</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../../../android/next/index.html">next</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../android/4.7/index.html">4.7</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../android/4.6/index.html">4.6</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../../ios-app/next/index.html">Mobile App for iOS</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../../../ios-app/next/index.html">next</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../ios-app/12.6/index.html">12.6</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../ios-app/12.5/index.html">12.5</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../../index.html">ownCloud Main Page</a></div>
+                </li>
+                <li class="component is-current">
+                  <div class="title"><a href="../../../index.html">ownCloud Server</a></div>
+                  <ul class="versions">
+                    <li class="version is-current is-latest">
+                      <a href="../../../index.html">next</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../10.16/index.html">10.16</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../10.15/index.html">10.15</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../../webui/next/index.html">ownCloud Web User Interfaces</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../../../webui/next/index.html">next</a>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <main class="article">
+        <div class="toolbar" role="navigation">
+          <button class="nav-toggle"></button>
+          <a href="../../../../../index.html" class="home-link"></a>
+          <nav class="breadcrumbs" aria-label="breadcrumbs">
+            <ul>
+              <li><a href="../../../index.html">ownCloud Server</a></li>
+              <li>Admin Manual</li>
+              <li>Installation</li>
+              <li><a href="../index.html">Installation Options</a></li>
+              <li><a href="index.html">Installing With Docker</a></li>
+            </ul>
+          </nav>
+      <div class="page-versions">
+        <button class="version-menu-toggle" title="Show other versions of page">next</button>
+        <div class="version-menu">
+          <a class="version is-current" href="index.html">next</a>
+          <a class="version" href="../../../../10.16/admin_manual/installation/docker/index.html">10.16</a>
+          <a class="version" href="../../../../10.15/admin_manual/installation/docker/index.html">10.15</a>
+        </div>
+      </div>
+          <div class="edit-this-page"><a href="https://github.com/owncloud/docs-server/edit/master/modules/admin_manual/pages/installation/docker/index.adoc">Edit this Page</a></div>
+        </div>
+        <div class="content">
+          <aside class="toc sidebar" data-title="Contents" data-levels="2">
+            <div class="toc-menu"></div>
+          </aside>
+          <article class="doc">
+            <h1 class="page">Installing with Docker</h1>
+
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#database-notes">Database Notes</a></li>
+<li><a href="#getting-started">Getting Started</a></li>
+<li><a href="#quick-evaluation">Quick Evaluation</a></li>
+<li><a href="#docker-compose">Docker Compose</a>
+<ul class="sectlevel2">
+<li><a href="#logging-in">Logging In</a></li>
+<li><a href="#stopping-the-containers">Stopping the Containers</a></li>
+<li><a href="#running-occ-commands">Running occ commands</a></li>
+<li><a href="#upgrading-owncloud-on-docker">Upgrading ownCloud on Docker</a></li>
+<li><a href="#docker-compose-yaml-file">Docker Compose YAML File</a></li>
+</ul>
+</li>
+<li><a href="#troubleshooting">Troubleshooting</a>
+<ul class="sectlevel2">
+<li><a href="#admin-settings">Admin Settings</a></li>
+<li><a href="#raspberry-pi">Raspberry Pi</a></li>
+<li><a href="#terminating-containers">Terminating containers</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="sect1">
+<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>ownCloud can be installed using the official ownCloud Docker image. This <a href="https://hub.docker.com/r/owncloud/server">official image</a> works standalone for a quick evaluation but is designed to be used in a docker compose setup.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="database-notes"><a class="anchor" href="#database-notes"></a>Database Notes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>With the image provided, ownCloud has added database connectors for the following databases:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>MySQL / MariaDB</p>
+</li>
+<li>
+<p>Postgres</p>
+</li>
+<li>
+<p>SQLite</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If you need a different connector or a different version of a connector, you have to manually create your own image based on the ownCloud image provided here. This could also be done directly in the <a href="https://docs.docker.com/compose/compose-file/build/">docker compose file</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="getting-started"><a class="anchor" href="#getting-started"></a>Getting Started</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Grant docker command privileges to certain users by adding them to the group <code>docker</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo usermod -aG docker &lt;your-user&gt;</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The changes via <code>usermod</code> only take effect after the docker users log in. So you may have to log out and log in again or possibly reboot before you can run docker commands.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Users not added to the <code>docker</code> group can run docker commands with a preceding <code>sudo</code>. In this section <code>sudo</code> is generally omitted before docker commands since we assume you have created a docker user, which is also the only way to run ownCloud&#8217;s command-line interface <code>occ</code> in a docker container. For more information on <code>occ</code>, see section <a href="../../configuration/server/occ_command.html" class="xref page">Using the occ Command</a>.</p>
+</div>
+<div class="paragraph">
+<p>An example <code>occ</code> command looks like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-docker hljs" data-lang="docker">docker exec --user www-data &lt;owncloud-container-name&gt; occ &lt;your-command&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="quick-evaluation"><a class="anchor" href="#quick-evaluation"></a>Quick Evaluation</h2>
+<div class="sectionbody">
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The commands and links provided in the following descriptions are intended to showcase basic docker usage, but we cannot take responsibility for their proper functioning.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>For testing purposes or a quick hands-on to get familiar with the look and feel, ownCloud provides a container using the SQLite database. Note that SQLite is not supported by ownCloud for production purposes. To set up such a testing instance, run the following command:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-docker hljs" data-lang="docker">docker run --rm --name oc-eval -d -p8080:8080 owncloud/server</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This starts a docker container with the name "oc-eval" in the background (option <code>-d</code>). <code>owncloud/server</code> is the docker image downloaded from Docker Hub. If you don&#8217;t start the container with option <code>-d</code>, the logs will be displayed in the shell. If you are running it in the background as in the example above, you can display the logs with the command:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-docker hljs" data-lang="docker">docker logs oc-eval</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>With the command <code>docker ps</code> you can list your running docker containers and should see the entry for oc-eval.</p>
+</div>
+<div class="paragraph">
+<p>You can log in to your ownCloud instance via a browser at <code>http://localhost:8080</code> with the preconfigured user <code>admin</code> and password <code>admin</code>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Access only works locally with http, not https.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>If the outcome meets the expectations but a supported installation with MariaDB is targeted, remove the eval version before proceeding with the next section.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-docker hljs" data-lang="docker">docker kill oc-eval</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This removes the container if you used the option <code>--rm</code> as suggested in the example above. If you omitted that option, you need to first run the command:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-docker hljs" data-lang="docker">docker rm oc-eval</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When running <code>docker ps</code> again, the entry for <code>oc-eval</code> should be gone.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="docker-compose"><a class="anchor" href="#docker-compose"></a>Docker Compose</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The configuration:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Exposes ports 8080, allowing for HTTP connections.</p>
+</li>
+<li>
+<p>Uses separate <em>MariaDB</em> and <em>Redis</em> containers.</p>
+</li>
+<li>
+<p>Mounts the data and MySQL data directories on the host for persistent storage.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The following instructions assume you install locally. For remote access, the value of <a href="../../configuration/server/config_sample_php_parameters.html#override-cli-url" class="xref page">OWNCLOUD_DOMAIN</a> and <a href="../../configuration/server/config_sample_php_parameters.html#define-list-of-trusted-domains-that-users-can-log-into" class="xref page">OWNCLOUD_TRUSTED_DOMAINS</a> must be updated to represent the hostname(s) and/or IP addresses that the server is reachable at.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Create a new project directory.</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mkdir owncloud-docker-server
+cd owncloud-docker-server</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Then copy and paste the sample <code>docker-compose.yml</code> as base to derive from:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yml hljs" data-lang="yml">version: "3"
+
+volumes:
+  files:
+    driver: local
+  mysql:
+    driver: local
+  redis:
+    driver: local
+
+services:
+  owncloud:
+    image: owncloud/server:${OWNCLOUD_VERSION}
+    container_name: owncloud_server
+    restart: always
+    ports:
+      - ${HTTP_PORT}:8080
+    depends_on:
+      - mariadb
+      - redis
+    environment:
+      - OWNCLOUD_DOMAIN=${OWNCLOUD_DOMAIN}
+      - OWNCLOUD_TRUSTED_DOMAINS=${OWNCLOUD_TRUSTED_DOMAINS}
+      - OWNCLOUD_DB_TYPE=mysql
+      - OWNCLOUD_DB_NAME=owncloud
+      - OWNCLOUD_DB_USERNAME=owncloud
+      - OWNCLOUD_DB_PASSWORD=owncloud
+      - OWNCLOUD_DB_HOST=mariadb
+      - OWNCLOUD_ADMIN_USERNAME=${ADMIN_USERNAME}
+      - OWNCLOUD_ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - OWNCLOUD_MYSQL_UTF8MB4=true
+      - OWNCLOUD_REDIS_ENABLED=true
+      - OWNCLOUD_REDIS_HOST=redis
+    healthcheck:
+      test: ["CMD", "/usr/bin/healthcheck"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - files:/mnt/data
+
+  mariadb:
+    image: mariadb:10.11 # minimum required ownCloud version is 10.9
+    container_name: owncloud_mariadb
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=owncloud
+      - MYSQL_USER=owncloud
+      - MYSQL_PASSWORD=owncloud
+      - MYSQL_DATABASE=owncloud
+      - MARIADB_AUTO_UPGRADE=1
+    command: ["--max-allowed-packet=128M", "--innodb-log-file-size=64M"]
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-u", "root", "--password=owncloud"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - mysql:/var/lib/mysql
+
+  redis:
+    image: redis:6
+    container_name: owncloud_redis
+    restart: always
+    command: ["--databases", "1"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - redis:/data</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Create a <code>.env</code> configuration file, which contains the required configuration settings.</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cat &lt;&lt; EOF &gt; .env
+OWNCLOUD_VERSION=10.16
+OWNCLOUD_DOMAIN=localhost:8080
+OWNCLOUD_TRUSTED_DOMAINS=localhost
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=admin
+HTTP_PORT=8080
+EOF</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Only a few settings are required, these are:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25.7142%;">
+<col style="width: 28.5714%;">
+<col style="width: 45.7144%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Setting Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OWNCLOUD_VERSION</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The ownCloud version</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>latest</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OWNCLOUD_DOMAIN</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The ownCloud domain</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>localhost:8080</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OWNCLOUD_TRUSTED_DOMAINS</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The ownCloud trusted domains</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>localhost</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ADMIN_USERNAME</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The admin username</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>admin</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ADMIN_PASSWORD</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The admin user’s password</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>admin</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HTTP_PORT</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The HTTP port to bind to</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>8080</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<code>ADMIN_USERNAME</code> and <code>ADMIN_PASSWORD</code> will not change between deploys even if you change the
+values in the .env file. To change them, you&#8217;ll need to do <code>docker volume prune</code>, which
+<strong>will delete all your data</strong>.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Then, you can build and start the container, using your preferred Docker <em>command-line tool</em>.</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>The example below shows how to use <a href="https://docs.docker.com/compose/">Docker Compose</a>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-docker hljs" data-lang="docker">docker compose up -d</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>When the process completes:</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Check that all the containers have successfully started, by running <code>docker compose ps</code>. If they are all working correctly, you should see output similar to the one below:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 18.75%;">
+<col style="width: 31.25%;">
+<col style="width: 18.75%;">
+<col style="width: 31.25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Command</th>
+<th class="tableblock halign-left valign-top">State</th>
+<th class="tableblock halign-left valign-top">Ports</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">owncloud_mariadb</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">docker-entrypoint.sh --max &#8230;&#8203;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Up (healthy)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3306/tcp</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">owncloud_redis</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">docker-entrypoint.sh --dat &#8230;&#8203;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Up (healthy)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">6379/tcp</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">owncloud_server</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/usr/bin/entrypoint /usr/b &#8230;&#8203;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Up (healthy)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0.0.0.0:8080&#8594;8080/tcp</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>In it, you can see that the database, ownCloud and Redis containers are running, and that ownCloud
+is accessible via port 8080 on the host machine.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>All files stored in this setup are contained in Docker volumes rather than a physical filesystem tree.
+It is the admin&#8217;s responsibility to make the files persistent.</p>
+</div>
+<div class="paragraph">
+<p>To inspect the volumes run:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-docker hljs" data-lang="docker">docker volume ls | grep files</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The volume name depends on the project name which builds the first part of the volume and the name of the volume in the docker file. The naming pattern of the volume is <code>&lt;COMPOSE_PROJECT_NAME&gt;_&lt;VOLUME_NAME&gt;</code>. An environment variable for <code>COMPOSE_PROJECT_NAME</code> can be set and also be defined in a <code>.env</code> file. If not specified, the directory in which docker compose is executed will be used as a name.</p>
+</div>
+<div class="paragraph">
+<p>To export the files of the project "owncloud-docker-server" as a tar archive run:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-docker hljs" data-lang="docker">docker run -v &lt;YOUR_DOCKER_VOLUME&gt;:/mnt \
+       ubuntu tar cf - -C /mnt . &gt; files.tar</code></pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Although the containers are up and running, it may still take a few minutes until ownCloud is fully
+functional.<br>
+To inspect the log output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-docker hljs" data-lang="docker">docker compose logs --follow owncloud</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Wait until the output shows <strong>Starting apache daemon&#8230;&#8203;</strong> before you access the web UI.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Although all important data persists after:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-docker hljs" data-lang="docker">docker compose down; docker compose up -d</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>there are certain details that get lost, e.g., default apps may re-appear after they were uninstalled.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="sect2">
+<h3 id="logging-in"><a class="anchor" href="#logging-in"></a>Logging In</h3>
+<div class="paragraph">
+<p>To log in to the ownCloud UI, open <code>http://localhost:8080</code> in your browser
+of choice, where you see the standard ownCloud login screen as in the
+image below.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="../../_images/docker/owncloud-ui-login.png" alt="The ownCloud UI via Docker"></span></p>
+</div>
+<div class="paragraph">
+<p>The username and password are the credentials which you stored in <code>.env</code> earlier.
+Note that these will not change between deploys even if you change the values in .env.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="stopping-the-containers"><a class="anchor" href="#stopping-the-containers"></a>Stopping the Containers</h3>
+<div class="paragraph">
+<p>Again we assume you used <code>docker compose</code> like in the previous example.<br>
+To stop the containers use:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-docker hljs" data-lang="docker">docker compose stop</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To stop and remove containers along with the related networks, images and volumes:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-docker hljs" data-lang="docker">docker compose down --rmi all --volumes</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="running-occ-commands"><a class="anchor" href="#running-occ-commands"></a>Running occ commands</h3>
+<div class="paragraph">
+<p>If you want to run an occ command, first go to the directory where your <code>.yaml</code> or <code>.env</code> file is located.
+Here, you are able to run any command referring to
+<a href="../../configuration/server/occ_command.html" class="xref page">Using the occ Command</a> by entering:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-docker hljs" data-lang="docker">docker compose exec owncloud occ &lt;command&gt;</code></pre>
+</div>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Don&#8217;t use the <code>php</code> command prefix, this leads to several errors and is not intended to run in
+docker environments.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="upgrading-owncloud-on-docker"><a class="anchor" href="#upgrading-owncloud-on-docker"></a>Upgrading ownCloud on Docker</h3>
+<div class="paragraph">
+<p>When a new version of ownCloud gets released, you should update your instance. To do so, follow
+these simple steps:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Go to your docker directory where your <code>.yaml</code> and <code>.env</code> files exist.</p>
+</li>
+<li>
+<p>Put ownCloud into maintenance mode with the following command:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-docker hljs" data-lang="docker">docker compose exec owncloud occ maintenance:mode --on</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Create a backup of the database in case something goes wrong during the upgrade process, using the following command:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-docker hljs" data-lang="docker">docker compose exec mariadb \
+    /usr/bin/mysqldump \
+    -u root \
+    --password=owncloud \
+    --single-transaction \
+    owncloud &gt; owncloud_$(date +%Y%m%d).sql</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+You need to adjust the password and database name if you have changed it in your deployment.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>Shutdown the containers:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-docker hljs" data-lang="docker">docker compose down</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Update the version number of ownCloud in your <code>.env</code> file. You can use sed
+for it, as in the following example.</p>
+<div class="paragraph">
+<p>Make sure that you adjust the example to match your installation.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sed -i 's/^OWNCLOUD_VERSION=.*$/OWNCLOUD_VERSION=&lt;newVersion&gt;/' .env</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>View the file to ensure the change has been implemented.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cat .env</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Start your docker instance again.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-docker hljs" data-lang="docker">docker compose up -d</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now you should have the current ownCloud running with <code>docker compose</code>. Note that the container will
+automatically run <code>occ upgrade</code> when starting up. If you notice the container starting over and over again,
+you can check the update log with the following command:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-docker hljs" data-lang="docker">docker compose logs --timestamp owncloud</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>If all went well, end maintenance mode:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-docker hljs" data-lang="docker">docker compose exec owncloud occ maintenance:mode --off</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="docker-compose-yaml-file"><a class="anchor" href="#docker-compose-yaml-file"></a>Docker Compose YAML File</h3>
+<div class="paragraph">
+<p>The file <code>docker-compose.yml</code> contains the configuration of your ownCloud container.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Since ownCloud Server 10.5, the dedicated enterprise docker image <code>registry.owncloud.com/owncloud/enterprise</code> is deprecated. All supported enterprise features and apps are now included in the public image <code>owncloud/server</code> available on Docker Hub. A login to our registry <code>registry.owncloud.com</code> is no longer required.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">version: "3"
+
+volumes:
+  files:
+    driver: local
+  mysql:
+    driver: local
+  redis:
+    driver: local
+
+services:
+  owncloud:
+    image: owncloud/server:${OWNCLOUD_VERSION}
+    container_name: owncloud_server
+    restart: always
+    ports:
+      - ${HTTP_PORT}:8080
+    depends_on:
+      - mariadb
+      - redis
+    environment:
+      - OWNCLOUD_DOMAIN=${OWNCLOUD_DOMAIN}
+      - OWNCLOUD_TRUSTED_DOMAINS=${OWNCLOUD_TRUSTED_DOMAINS}
+      - OWNCLOUD_DB_TYPE=mysql
+      - OWNCLOUD_DB_NAME=owncloud
+      - OWNCLOUD_DB_USERNAME=owncloud
+      - OWNCLOUD_DB_PASSWORD=owncloud
+      - OWNCLOUD_DB_HOST=mariadb
+      - OWNCLOUD_ADMIN_USERNAME=${ADMIN_USERNAME}
+      - OWNCLOUD_ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - OWNCLOUD_MYSQL_UTF8MB4=true
+      - OWNCLOUD_REDIS_ENABLED=true
+      - OWNCLOUD_REDIS_HOST=redis
+    healthcheck:
+      test: ["CMD", "/usr/bin/healthcheck"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - files:/mnt/data
+
+  mariadb:
+    image: mariadb:10.11 # minimum required ownCloud version is 10.9
+    container_name: owncloud_mariadb
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=owncloud
+      - MYSQL_USER=owncloud
+      - MYSQL_PASSWORD=owncloud
+      - MYSQL_DATABASE=owncloud
+      - MARIADB_AUTO_UPGRADE=1
+    command: ["--max-allowed-packet=128M", "--innodb-log-file-size=64M"]
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-u", "root", "--password=owncloud"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - mysql:/var/lib/mysql
+
+  redis:
+    image: redis:6
+    container_name: owncloud_redis
+    restart: always
+    command: ["--databases", "1"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - redis:/data</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="troubleshooting"><a class="anchor" href="#troubleshooting"></a>Troubleshooting</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="admin-settings"><a class="anchor" href="#admin-settings"></a>Admin Settings</h3>
+<div class="paragraph">
+<p>When running under docker, the admin user cannot control certain settings in the WebUI, instead they are now controlled by environment variables. Changing these variables requires stopping and restarting the container with extra <code>docker -e &#8230;&#8203;</code> parameters or with new entries in the <code>.env</code> file for docker compose.</p>
+</div>
+<div class="sect3">
+<h4 id="logging"><a class="anchor" href="#logging"></a>Logging</h4>
+<div class="paragraph">
+<p>The loglevel is set to the fixed value 2: <em>"Warnings, errors, and fatal issues"</em>.</p>
+</div>
+<div class="listingblock">
+<div class="title">To get the highest log level "Everything" (including debug output), use:</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-plaintext hljs" data-lang="plaintext">OWNCLOUD_LOGLEVEL=0</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="raspberry-pi"><a class="anchor" href="#raspberry-pi"></a>Raspberry Pi</h3>
+<div class="paragraph">
+<p>If your container fails to start on Raspberry Pi or other ARM devices, you most likely have an old version of <code>libseccomp2</code> on your host. This should only affect distros based on Rasbian Buster 32 bit. Install a newer version with the following command:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd /tmp
+wget http://ftp.us.debian.org/debian/pool/main/libs/libseccomp/libseccomp2_2.5.1-1_armhf.deb
+sudo dpkg -i libseccomp2_2.5.1-1_armhf.deb</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Alternatively you can add the backports repo for Debian Buster:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo apt-key adv --keyserver keyserver.ubuntu.com \
+     --recv-keys 04EE7237B7D453EC 648ACFD622F3D138
+echo "deb http://deb.debian.org/debian buster-backports main" | \
+     sudo tee -a /etc/apt/sources.list.d/buster-backports.list
+sudo apt update
+sudo apt install -t buster-backports libseccomp2</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In any case, you should restart the container after confirming you have <code>libseccomp2.4.4</code> installed.</p>
+</div>
+<div class="paragraph">
+<p>For more information see: <a href="https://docs.linuxserver.io/faq">Linux Server Docs</a></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="terminating-containers"><a class="anchor" href="#terminating-containers"></a>Terminating containers</h3>
+<div class="paragraph">
+<p>If your container is terminating for whatever reason, you will not be able to run <code>docker(-compose) exec</code> to make investigations inside the container as there will be no running container. Instead you need to use <code>docker(-compose) run</code>. It&#8217;s important that you prefix any command to be run by <code>/usr/bin/owncloud</code>, otherwise the container will not be initialized correctly. See the example command below:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker( compose) run &lt;containername&gt; /usr/bin/owncloud bash</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+        <nav class="pagination">
+              <span class="prev"><a href="../index.html">Installation Options</a></span>
+              <span class="next"><a href="../manual_installation/manual_installation.html">Detailed Installation on Ubuntu (various versions)</a></span>
+        </nav>
+          </article>
+        </div>
+      </main>
+    </div>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="row-full">
+          <div class="col-third">
+            <div class="footer-nav">
+              <h4>About ownCloud</h4>
+              <ul id="menu-about" class="menu">
+                <li class="menu-landing"><a href="https://owncloud.com/">The Secure Collaboration Platform</a></li>
+                <li class="menu-news"><a href="https://owncloud.com/news/">News</a></li>
+                <li class="menu-privacy"><a href="https://owncloud.com/privacy-statement/">Privacy statement</a></li>
+                <li class="menu-imprint"><a href="https://owncloud.com/imprint/">Imprint</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-third">
+            <div class="footer-nav">
+              <h4>Resources</h4>
+              <ul id="menu-support-and-documentation" class="menu">
+                <li class="menu-faq"><a href="https://owncloud.com/faq/">FAQ</a></li>
+                <li class="menu-help"><a href="https://owncloud.com/docs-guides/">Help</a></li>
+                <li class="menu-security"><a href="https://owncloud.com/security/">Security</a></li>
+                <li class="menu-changelog"><a href="https://owncloud.com/changelog/">Changelog</a></li>
+                <li class="menu-get-started"><a href="https://owncloud.com/get-started/">Get started</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-third">
+            <div class="footer-nav">
+              <h4>Interact</h4>
+              <ul id="menu-interact" class="menu">
+                <li class="menu-forum"><a href="https://central.owncloud.org" class="oc-footer-nav-link">Forum</a></li>
+                <li class="menu-contribute"><a href="https://owncloud.com/contribute" class="oc-footer-nav-link">Contribute</a></li>
+                <li class="menu-customer-support"><a href="https://owncloud.com/support" class="oc-footer-nav-link">Customer support</a></li>
+
+              </ul>
+            </div>
+          </div>
+        </div>
+        <p>&copy; Copyright 2011-2026, The ownCloud developers.</p>
+      </div>
+    </footer>
+
+    <script id="site-script" src="../../../../../assets/js/site.js" data-ui-root-path="../../../../../assets"></script>
+    <script async src="../../../../../assets/js/vendor/highlight.js"></script>
+    <script async src="../../../../../assets/js/vendor/medium-zoom.js"></script>
+    <script async src="../../../../../assets/js/vendor/tabs-ui.js"></script>
+  </body>
+</html>

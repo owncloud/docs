@@ -1,0 +1,3232 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Proxy Service Configuration :: Documentation for ownCloud (A Kiteworks Company)</title>
+
+    <link rel="canonical" href="https://doc.owncloud.com/ocis/next/deployment/services/s-list/proxy.html">
+    <link rel="prev" href="postprocessing.html">
+    <link rel="next" href="search.html">
+    <meta name="description" content="The proxy service is an API-Gateway for the ownCloud Infinite Scale microservices.">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../../../assets/css/site.css">
+
+    <meta property="og:locale" content="en_us" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Proxy Service Configuration" />
+    <meta property="og:description" content="Proxy Service Configuration" />
+    <meta property="og:url" content="https://doc.owncloud.com/ocis/next/deployment/services/s-list/proxy.html" />
+    <meta property="og:site_name" content="Documentation for ownCloud (A Kiteworks Company)" />
+    <meta property="og:image" content="https://doc.owncloud.com/opengraph-ocis.png" />
+    <meta property="og:image:alt" content="The Infinite Scale Documentation documentation" />
+    <meta name="twitter:site" content="@owncloud" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Proxy Service Configuration" />
+    <meta name="twitter:description" content="The proxy service is an API-Gateway for the ownCloud Infinite Scale microservices." />
+
+    <script>var uiRootPath = '../../../../../assets'</script>
+
+
+    <title>Proxy Service Configuration :: Documentation for ownCloud (A Kiteworks Company)</title>
+    <link rel="canonical" href="https://doc.owncloud.com/ocis/next/deployment/services/s-list/proxy.html">
+    <meta name="description" content="The proxy service is an API-Gateway for the ownCloud Infinite Scale microservices.">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" href="/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="black">
+    <meta name="msapplication-TileColor" content="#001840">
+    <meta name="theme-color" content="#ffffff">
+  </head>
+
+  <body class="article">
+    <header class="header" role="banner">
+      <nav class="navbar">
+        <div class="navbar-brand">
+          <a class="navbar-item" href="https://doc.owncloud.com">Documentation for ownCloud (A Kiteworks Company)</a>
+          <!-- we do not have any hamburger stuff to show like links to external sites
+           <button class="navbar-burger" aria-controls="topbar-nav" aria-expanded="false" aria-label="Toggle main menu">
+           <span></span>
+           <span></span>
+           <span></span>
+           </button>
+          -->
+        </div>
+        <div id="topbar-nav" class="navbar-menu">
+          <div class="navbar-end"> </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="body">
+      <div class="nav-container" data-component="ocis" data-version="8.0">
+        <aside class="nav">
+          <div class="panels">
+            <div class="nav-panel-menu is-active" data-panel="menu">
+              <nav class="nav-menu">
+                <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+                <h3 class="title"><a href="../../../index.html">Infinite Scale Documentation</a></h3>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="0">
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="1">
+                      <a class="nav-link" href="../../../index.html">Introduction</a>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Infinite Scale Overview</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../architecture/architecture.html">Architecture and Concepts</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../availability_scaling/availability_scaling.html">Availability and Scalability</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../security/security.html">Security Aspects</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../index.html">Deployment</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../prerequisites/prerequisites.html">Prerequisites</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Storage</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../storage/general-considerations.html">General Storage Considerations</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../storage/nfs.html">Network File System</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../storage/s3.html">S3</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../storage/posixfs.html">PosixFS</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../general/general-info.html">General Information</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../general/ocis-init.html">The ocis init Command</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../wopi/wopi.html">Office Applications using WOPI</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../security/security.html">Securing oCIS</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../gdpr/gdpr.html">User Triggered GDPR Report</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../services.html">Services</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">General Information</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment-considerations.html">Deployment Considerations</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../env-var-note.html">Environment Variable Notes</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../env-vars-special-scope.html">Environment Variables with Special Scope</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../env-var-changes.html">Environment Variable Changes</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../registry.html">Registry</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../caching.html">Caching and Persistence</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../gateways.html">Gateways</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../logging.html">Logging</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../ports-used.html">Ports Used</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../tls.html">Transport Layer Security</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">List of Services</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="activitylog.html">Activitylog</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="antivirus.html">Antivirus</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="app-provider.html">App Provider</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="app-registry.html">App Registry</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="audit.html">Audit</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="auth-app.html">Auth App</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="auth-basic.html">Auth Basic</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="auth-bearer.html">Auth Bearer</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="auth-machine.html">Auth Machine</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="auth-service.html">Auth Service</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="clientlog.html">Clientlog</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="collaboration.html">Collaboration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="eventhistory.html">Eventhistory</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="frontend.html">Frontend</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="gateway.html">Gateway</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="graph.html">Graph</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="groups.html">Groups</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="idm.html">IDM</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="invitations.html">Invitations</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="idp.html">IDP</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="nats.html">NATS</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="notifications.html">Notifications</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="ocdav.html">OCDAV</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="ocm.html">OCM</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="ocs.html">OCS</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="policies.html">Policies</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="postprocessing.html">Postprocessing</a>
+                  </li>
+                    <li class="nav-item is-current-page" data-depth="4">
+                      <a class="nav-link" href="proxy.html">Proxy</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="search.html">Search</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="settings.html">Settings</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="sharing.html">Sharing</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="sse.html">SSE</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="store.html">Store</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="storage-publiclink.html">Storage-Publiclink</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="storage-shares.html">Storage-Shares</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="storage-system.html">Storage-System</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="storage-users.html">Storage-Users</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="thumbnails.html">Thumbnails</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="userlog.html">Userlog</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="users.html">Users</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="web.html">Web</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="webdav.html">WebDAV</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="webfinger.html">Webfinger</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Web UI</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../webui/webui-customisation.html">Custom Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../webui/webui-theming.html">Custom Theming</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Maintenance</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Backup and Restore</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../maintenance/b-r/backup_considerations.html">Backup Considerations</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../maintenance/b-r/backup.html">Backup</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../maintenance/b-r/restore.html">Restore</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../maintenance/commands/commands.html">Maintenance Commands</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../maintenance/m-mode/maintenance-mode.html">Maintenance Mode</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../maintenance/space-ids/space-ids.html">Listing Space IDs</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../maintenance/user-ids/user-ids.html">Listing User IDs</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Migration and Upgrades</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../migration/upgrading-ocis.html">Upgrading Infinite Scale</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Monitoring</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../monitoring/prometheus.html">Prometheus</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Configuration Examples</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../conf-examples/office/office-integration.html">Office Integration</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../conf-examples/search/configure-search.html">Search</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Deployment Examples</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Ubuntu with Docker Compose</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../depl-examples/ubuntu-compose/ubuntu-compose-prod.html">Local Production Setup</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../depl-examples/ubuntu-compose/ubuntu-compose-hetzner.html">Deployment on Hetzner</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Setup Federations</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../depl-examples/federation/sciencemesh.html">ScienceMesh Setup</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Additional Information</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../additional-information/knowledge-base.html">Knowledge Base</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+            <div class="nav-panel-explore" data-panel="explore">
+              <div class="context">
+                <span class="title">Infinite Scale Documentation</span>
+                <span class="version">8.0</span>
+              </div>
+              <ul class="components">
+                <li class="component">
+                  <div class="title"><a href="../../../../../desktop/next/index.html">Desktop App</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../../../desktop/next/index.html">next</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../desktop/6.0/index.html">6.0</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../desktop/5.3/index.html">5.3</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component is-current">
+                  <div class="title"><a href="../../../../next/index.html">Infinite Scale Documentation</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../../next/index.html">next</a>
+                    </li>
+                    <li class="version is-current">
+                      <a href="../../../index.html">8.0</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../7.3/index.html">7.3</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../../android/next/index.html">Mobile App for Android</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../../../android/next/index.html">next</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../android/4.7/index.html">4.7</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../android/4.6/index.html">4.6</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../../ios-app/next/index.html">Mobile App for iOS</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../../../ios-app/next/index.html">next</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../ios-app/12.6/index.html">12.6</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../ios-app/12.5/index.html">12.5</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../../index.html">ownCloud Main Page</a></div>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../../server/next/index.html">ownCloud Server</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../../../server/next/index.html">next</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../server/10.16/index.html">10.16</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../server/10.15/index.html">10.15</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../../webui/next/index.html">ownCloud Web User Interfaces</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../../../webui/next/index.html">next</a>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <main class="article">
+        <div class="toolbar" role="navigation">
+          <button class="nav-toggle"></button>
+          <a href="../../../../../index.html" class="home-link"></a>
+          <nav class="breadcrumbs" aria-label="breadcrumbs">
+            <ul>
+              <li><a href="../../../index.html">Infinite Scale Documentation</a></li>
+              <li><a href="../../index.html">Deployment</a></li>
+              <li><a href="../services.html">Services</a></li>
+              <li>List of Services</li>
+              <li><a href="proxy.html">Proxy</a></li>
+            </ul>
+          </nav>
+      <div class="page-versions">
+        <button class="version-menu-toggle" title="Show other versions of page">8.0</button>
+        <div class="version-menu">
+          <a class="version" href="../../../../next/deployment/services/s-list/proxy.html">next</a>
+          <a class="version is-current" href="proxy.html">8.0</a>
+          <a class="version" href="../../../../7.3/deployment/services/s-list/proxy.html">7.3</a>
+        </div>
+      </div>
+          <div class="edit-this-page"><a href="https://github.com/owncloud/docs-ocis/edit/8.0/modules/ROOT/pages/deployment/services/s-list/proxy.adoc">Edit this Page</a></div>
+        </div>
+        <div class="content">
+          <aside class="toc sidebar" data-title="Contents" data-levels="2">
+            <div class="toc-menu"></div>
+          </aside>
+          <article class="doc">
+            <h1 class="page">Proxy Service Configuration</h1>
+
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#default-values">Default Values</a></li>
+<li><a href="#authentication">Authentication</a></li>
+<li><a href="#automatic-assignments">Automatic Assignments</a>
+<ul class="sectlevel2">
+<li><a href="#automatic-user-and-group-provisioning">Automatic User and Group Provisioning</a>
+<ul class="sectlevel3">
+<li><a href="#prerequisites">Prerequisites</a></li>
+<li><a href="#configuration">Configuration</a></li>
+<li><a href="#how-it-works">How it Works</a></li>
+<li><a href="#claims">Claims</a>
+<ul class="sectlevel4">
+<li><a href="#claim-updates">Claim Updates</a></li>
+<li><a href="#claim-checks-and-step-up-authentication">Claim Checks and Step-up Authentication</a></li>
+<li><a href="#impacts">Impacts</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#quota-assignments">Quota Assignments</a></li>
+<li><a href="#role-assignments">Role Assignments</a></li>
+<li><a href="#space-management-through-oidc-claims">Space Management Through OIDC Claims</a></li>
+</ul>
+</li>
+<li><a href="#multi-instance-infinite-scale">Multi Instance Infinite Scale</a></li>
+<li><a href="#recommendations-for-production-deployments">Recommendations for Production Deployments</a>
+<ul class="sectlevel2">
+<li><a href="#content-security-policy">Content Security Policy</a></li>
+<li><a href="#strict-transport-security-header">Strict Transport Security Header</a></li>
+</ul>
+</li>
+<li><a href="#presigned-urls">Presigned Urls</a></li>
+<li><a href="#special-settings">Special Settings</a></li>
+<li><a href="#metrics">Metrics</a></li>
+<li><a href="#caching">Caching</a></li>
+<li><a href="#event-bus-configuration">Event Bus Configuration</a></li>
+<li><a href="#configuration-2">Configuration</a>
+<ul class="sectlevel2">
+<li><a href="#environment-variables">Environment Variables</a></li>
+<li><a href="#yaml-example">YAML Example</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="sect1">
+<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The proxy service is an API-Gateway for the ownCloud Infinite Scale microservices. Every HTTP request goes through this service. Authentication, logging and other preprocessing of requests also happens here. Mechanisms like request rate limiting or intrusion prevention are <strong>not</strong> included in the proxy service and must be set up in front of an external reverse proxy.</p>
+</div>
+<div class="paragraph">
+<p>See the <a href="https://owncloud.dev/services/proxy/">Developer Documentation</a> for details if you want to write your own extensions and need to change or add routes to endpoints.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="default-values"><a class="anchor" href="#default-values"></a>Default Values</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>The proxy listens on port 9200 by default.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="authentication"><a class="anchor" href="#authentication"></a>Authentication</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The following request authentication schemes are implemented:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Basic Auth (Only use in development, <strong>never in production</strong> setups!)</p>
+</li>
+<li>
+<p>OpenID Connect</p>
+</li>
+<li>
+<p>Signed URL</p>
+</li>
+<li>
+<p>Public Share Token</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="automatic-assignments"><a class="anchor" href="#automatic-assignments"></a>Automatic Assignments</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Some assignments can be automated using yaml files, environment variables and/or OIDC claims.</p>
+</div>
+<div class="sect2">
+<h3 id="automatic-user-and-group-provisioning"><a class="anchor" href="#automatic-user-and-group-provisioning"></a>Automatic User and Group Provisioning</h3>
+<div class="paragraph">
+<p>When using an external OpenID Connect IDP, the proxy can be configured to automatically provision users upon their first login.</p>
+</div>
+<div class="sect3">
+<h4 id="prerequisites"><a class="anchor" href="#prerequisites"></a>Prerequisites</h4>
+<div class="paragraph">
+<p>A number of prerequisites must be met for automatic user provisioning to work:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Infinite Scale must be configured to use an external OpenID Connect IDP.</p>
+</li>
+<li>
+<p>The <code>graph</code> service must be configured to allow updating users and groups (<code>GRAPH_LDAP_SERVER_WRITE_ENABLED</code>).</p>
+</li>
+<li>
+<p>One of the claim values returned by the IDP as part of the userinfo response or the access token must be unique and stable for the user. I.e. the value must not change for the whole lifetime of the user. This claim is configured via the <code>PROXY_USER_OIDC_CLAIM</code> environment variable (see below). A natural choice would e.g. be the <code>sub</code> claim which is guaranteed to be unique and stable per IDP. If a claim like <code>email</code> or <code>preferred_username</code> is used, you have to ensure that the user&#8217;s email address or username never changes.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="configuration"><a class="anchor" href="#configuration"></a>Configuration</h4>
+<div class="paragraph">
+<p>To enable automatic user provisioning, the following environment variables must be set for the proxy service:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>PROXY_AUTOPROVISION_ACCOUNTS</code><br>
+Set to <code>true</code> to enable automatic user provisioning.</p>
+</li>
+<li>
+<p><code>PROXY_AUTOPROVISION_CLAIM_USERNAME</code><br>
+The name of an OIDC claim whose value should be used as the username for the auto-provisioned user in ownCloud Infinite Scale. Defaults to <code>preferred_username</code>. Can also be set to e.g. <code>sub</code> to guarantee a unique and stable username.</p>
+</li>
+<li>
+<p><code>PROXY_AUTOPROVISION_CLAIM_EMAIL</code><br>
+The name of an OIDC claim whose value should be used for the <code>mail</code> attribute of the auto-provisioned user in ownCloud Infinite Scale. Defaults to <code>email</code>.</p>
+</li>
+<li>
+<p><code>PROXY_AUTOPROVISION_CLAIM_DISPLAYNAME</code><br>
+The name of an OIDC claim whose value should be used for the <code>displayname</code> attribute of the auto-provisioned user in ownCloud Infinite Scale. Defaults to <code>name</code>.</p>
+</li>
+<li>
+<p><code>PROXY_AUTOPROVISION_CLAIM_GROUPS</code><br>
+The name of an OIDC claim whose value should be used to maintain a user&#8217;s group membership. The claim value should contain a list of group names the user should be a member of. Defaults to <code>groups</code>.</p>
+</li>
+<li>
+<p><code>PROXY_USER_OIDC_CLAIM</code><br>
+When resolving an authenticated OIDC user, the value of this claim is used to lookup the user in the users service. For auto provisioning setups this usually is the same claims as set via <code>PROXY_AUTOPROVISION_CLAIM_USERNAME</code>.</p>
+</li>
+<li>
+<p><code>PROXY_USER_CS3_CLAIM</code><br>
+This is the name of the user attribute in ocis that is used to lookup the user by the value of the <code>PROXY_USER_OIDC_CLAIM</code>. For auto provisioning setups this usually needs to be set to <code>username</code>.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="how-it-works"><a class="anchor" href="#how-it-works"></a>How it Works</h4>
+<div class="paragraph">
+<p>When a user logs into ownCloud Infinite Scale for the first time, the proxy checks if that user already exists. This is done by querying the <code>users</code> service for users, where the attribute set in <code>PROXY_USER_CS3_CLAIM</code> matches the value of the OIDC claim configured in <code>PROXY_USER_OIDC_CLAIM</code>.</p>
+</div>
+<div class="paragraph">
+<p>If the user does not exist, the proxy will create a new user via the <code>graph</code> service using the claim values configured in
+<code>PROXY_AUTOPROVISION_CLAIM_USERNAME</code>, <code>PROXY_AUTOPROVISION_CLAIM_EMAIL</code> and <code>PROXY_AUTOPROVISION_CLAIM_DISPLAYNAME</code>.</p>
+</div>
+<div class="paragraph">
+<p>If the user does already exist, the proxy checks if the displayname has changed and updates that accordingly via <code>graph</code> service.</p>
+</div>
+<div class="paragraph">
+<p>Unless the claim configured via <code>PROXY_AUTOPROVISION_CLAIM_EMAIL</code> is the same as the one set via <code>PROXY_USER_OIDC_CLAIM</code> the proxy will also check if the email address has changed and update that as well.</p>
+</div>
+<div class="paragraph">
+<p>Next, the proxy will check if the user is a member of the groups configured in <code>PROXY_AUTOPROVISION_CLAIM_GROUPS</code>. It will add the user to the groups listed via the OIDC claim that holds the groups defined in the envvar and removes it from
+all other groups that he is currently a member of. Groups that do not exist in the external IDP yet will be created. Note: This can be a somewhat costly operation, especially if the user is a member of a large number of groups. If the group memberships of a user are changed in the IDP after the first login, it can take up to 5 minutes until the changes are reflected in Infinite Scale.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="claims"><a class="anchor" href="#claims"></a>Claims</h4>
+<div class="sect4">
+<h5 id="claim-updates"><a class="anchor" href="#claim-updates"></a>Claim Updates</h5>
+<div class="paragraph">
+<p>OpenID Connect (OIDC) scopes are used by an application during authentication to authorize access to a user&#8217;s detail, like name, email or picture information. A scope can also contain among other things groups, roles, and permissions data. Each scope returns a set of attributes, which are called claims. The scopes an application requests, depends on which  attributes the application needs. Once the user authorizes the requested scopes, the claims are returned in a token.</p>
+</div>
+<div class="paragraph">
+<p>These issued JWT tokens are immutable and integrity-protected. Which means, any change in the source requires issuing a new token containing updated claims. On the other hand side, there is no active synchronisation process between the identity provider (IDP) who issues the token and Infinite Scale. The earliest possible time that Infinite Scale will notice changes is, when the current access token has expired and a new access token is issued by the IDP, or the user logs out and relogs in.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>For resource optimisation, Infinite Scale skips any checks and updates on groupmemberships, if the last update happened less than 5min ago.</p>
+</li>
+<li>
+<p>Infinite Scale can&#8217;t differentiate between a group being renamed in the IDP and users being reassigned to a different group.</p>
+</li>
+<li>
+<p>Infinite Scale does not get aware when a group is being deleted in the IDP, a new claim will not hold any information from the deleted group. Infinite Scale does not track a claim history to compare.</p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect4">
+<h5 id="claim-checks-and-step-up-authentication"><a class="anchor" href="#claim-checks-and-step-up-authentication"></a>Claim Checks and Step-up Authentication</h5>
+<div class="paragraph">
+<p>Infinite Scale provides access control via the OpenID Connect (OIDC) "Authentication Class Reference" (ACR) claim. This can be used to enforce step-up authentication on specific routes. For instance, if a user logs in with basic authentication, they may need a higher level to access a sensitive route. If the user has not authenticated at the required level, access to the route will be denied.</p>
+</div>
+<div class="paragraph">
+<p>This is configurable via environment variables, such as:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">OCIS_MFA_ENABLED: true
+OCIS_MFA_AUTH_LEVEL_NAME: advanced</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This feature is disabled by default and requires an external Identity Provider (IDP) that supports step-up authentication and the ACR claim. Examples of such IDPs include Keycloak.</p>
+</div>
+<div class="paragraph">
+<p>If an authenticated user attempts to access a protected route without two-factor authentication (2FA), the server will respond with a 403 Forbidden error and an <code>X-OCIS-MFA-Required</code> header.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="impacts"><a class="anchor" href="#impacts"></a>Impacts</h5>
+<div class="paragraph">
+<p>For shares or space memberships based on groups, a renamed or deleted group will impact accessing the resource:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>There is no user notification about the inability accessing the resource.</p>
+</li>
+<li>
+<p>The user will only experience rejected access.</p>
+</li>
+<li>
+<p>This also applies for connected apps like the Desktop, iOS or Android app!</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>To give access for rejected users on a resource, one with rights to share must update the group information.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="quota-assignments"><a class="anchor" href="#quota-assignments"></a>Quota Assignments</h3>
+<div class="paragraph">
+<p>It is possible to automatically assign a specific quota to new users depending on their role. To do this, you need to configure a mapping between roles defined by their ID and the quota in bytes. The assignment can only be done via a <code>yaml</code> configuration and not via environment variables. See the following <code>proxy.yaml</code> config snippet for a configuration example.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">role_quotas:
+    &lt;role ID1&gt;: &lt;quota1&gt;
+    &lt;role ID2&gt;: &lt;quota2&gt;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="role-assignments"><a class="anchor" href="#role-assignments"></a>Role Assignments</h3>
+<div class="paragraph">
+<p>When users log in, they automatically get a role assigned. The automatic role assignment can be configured in different ways. The <code>PROXY_ROLE_ASSIGNMENT_DRIVER</code> environment variable (or the <code>driver</code> setting in the <code>role_assignment</code> section of the configuration file) selects which mechanism to use for the automatic role assignment.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>When <code>PROXY_ROLE_ASSIGNMENT_DRIVER</code> is set to <code>default</code>, all users that do not have a role assigned at the time of their first login will get the role 'user' assigned. (This is also the default behavior if <code>PROXY_ROLE_ASSIGNMENT_DRIVER</code> is unset.</p>
+</li>
+<li>
+<p>When <code>PROXY_ROLE_ASSIGNMENT_DRIVER</code> is set to <code>oidc</code>, the role assignment for a user will happen based on the values of an OpenID Connect Claim of that user. The name of the OpenID Connect Claim to be used for the role assignment can be configured via the <code>PROXY_ROLE_ASSIGNMENT_OIDC_CLAIM</code> environment variable. It is also possible to define a mapping of claim values to role names defined in ownCloud Infinite Scale via a <code>yaml</code> configuration. See the following <code>proxy.yaml</code> snippet for an example.</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">role_assignment:
+    driver: oidc
+    oidc_role_mapper:
+        role_claim: ocisRoles
+        role_mapping:
+            - role_name: admin
+              claim_value: myAdminRole
+            - role_name: spaceadmin
+              claim_value: mySpaceAdminRole
+            - role_name: user
+              claim_value: myUserRole
+            - role_name: guest
+              claim_value: myGuestRole</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This would assign the role <code>admin</code> to users with the value <code>myAdminRole</code> in the claim <code>ocisRoles</code>. The role <code>user</code> to users with the values <code>myUserRole</code> in the claim <code>ocisRoles</code> and so on.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Wildcard or Regex Claim Matching</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>The <code>claim_value</code> supports exact strings and regular expressions to map multiple claim values to a single role. Regexes are matched against the entire claim value (implicit start/end anchors).</p>
+</div>
+<div class="paragraph">
+<p>Examples:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">role_assignment:
+  driver: oidc
+  oidc_role_mapper:
+    role_claim: ocisRoles
+    role_mapping:
+      # exact match
+      - role_name: user
+        claim_value: ocisUser
+      # regex: match any value starting with "ocis-user-"
+      - role_name: user-light
+        claim_value: ocis-user-.*
+      # regex: single alphanumeric suffix
+      - role_name: guest
+        claim_value: ocis-guest-[a-zA-Z0-9]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Note: Regex patterns are treated as full matches. Typically you don&#8217;t need <code>^</code> or <code>$</code>.
+If a <code>claim_value</code> is an invalid regex, it only matches claim values that are exactly equal; otherwise it&#8217;s ignored.
+Ordering still applies, and the first matching mapping wins.</p>
+</div>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Claim values that are not mapped to a specific Infinite Scale role will be ignored.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>An Infinite Scale user can only have a single role assigned. If the configured <code>role_mapping</code> and a user&#8217;s claim values result in multiple possible roles for a user, the order in which the role mappings are defined in the configuration is important. The first role in the <code>role_mappings</code> where the <code>claim_value</code> matches a value from the user&#8217;s roles claim will be assigned to the user. So if e.g. a user&#8217;s <code>ocisRoles</code> claim has the values <code>myUserRole</code> and <code>mySpaceAdminRole</code> that user will get the ocis role <code>spaceadmin</code> assigned (because <code>spaceadmin</code> appears before <code>user</code> in the above sample configuration).</p>
+</div>
+<div class="paragraph">
+<p>If a user&#8217;s claim values don&#8217;t match any of the configured role mappings, an error will be logged and the user will not be able to log in.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The default <code>role_claim</code> (or <code>PROXY_ROLE_ASSIGNMENT_OIDC_CLAIM</code>) is <code>roles</code>. The default <code>role_mapping</code> is:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">- role_name: admin
+  claim_value: ocisAdmin
+- role_name: spaceadmin
+  claim_value: ocisSpaceAdmin
+- role_name: user
+  claim_value: ocisUser
+- role_name: guest
+  claim_value: ocisGuest</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="space-management-through-oidc-claims"><a class="anchor" href="#space-management-through-oidc-claims"></a>Space Management Through OIDC Claims</h3>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>This is an experimental/preview feature and may change.</p>
+</li>
+<li>
+<p>This feature only works using an external IDP. The embedded IDP does not support this.</p>
+</li>
+<li>
+<p>If you enable this feature, you can no longer use the Web UI to manually to assign or remove users to Spaces. The Web UI no longer displays related configuration options. Assigning or removing users from a Space can only be done by claims managed through the IDP.</p>
+</li>
+<li>
+<p>If enabled and a user is not assigned a claim with defined spaces and roles, the user can only access his personal space.</p>
+</li>
+<li>
+<p>When this functionality has been enabled via the envvar <code>OCIS_CLAIM_MANAGED_SPACES_ENABLED</code>, this environment variable must also be set in the <a href="frontend.html" class="xref page">frontend</a> service. This is necessary to block adding or removing users to or from spaces through the web UI.</p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>If required, users can be assigned or removed to Spaces via OIDC claims. This makes central user/Space management easy. Managed via environment variables, administrators can define the claim to use, a regex ruleset to extract the Space IDs and roles from a claim for provisioning. It is also possible to manually map OIDC roles to Infinite Scale Space roles. Note that assigning works both ways. Users can be added to Spaces as well as removed. Users must log out and log in again to activate any changes. The relevant environment variables that manage Spaces through OIDC claims follow the <code>OCIS_CLAIM_MANAGED_SPACES_xxx</code> pattern. See <a href="../../../maintenance/space-ids/space-ids.html" class="xref page">Listing Space IDs</a> for how to obtain the ID of a Space.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The following rules apply if enabled:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If the claim is not found, it is not considered but the incident is logged.</p>
+</li>
+<li>
+<p>A faulty regex prevents the proxy service from starting. By this, admins can immediately identify a major configuration issue. The incident is logged.</p>
+</li>
+<li>
+<p>Entries in a claim that do not match the regex are not considered, the incident is not logged <sup>(1)</sup>.</p>
+</li>
+<li>
+<p>Unknown Space IDs and unknown roles are not considered, the incident is not logged <sup>(1)</sup>.</p>
+</li>
+<li>
+<p>When multiple entries are created with the same Space ID but different roles, the role with the highest permission counts.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p></p>
+</div>
+<div class="paragraph">
+<p>(1) &#8230;&#8203; These incidents cannot be logged due to the fact that claims can have a variety of layouts and may also contain data unrelated to Infinite Scale.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Example Setup</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>The following is a simple setup of what space management through OIDC claims can look like. The way how a claim is setup depends on the IDP used. It is important to understand, that the claim setup and the corresponding regex must match.</p>
+</div>
+<div class="listingblock">
+<div class="title">A claim defined as <code>ocis-spaces</code> containing two entries:</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-JSON hljs" data-lang="JSON">"ocis-spaces": [
+    "spaceid=b622d44a-1747-4eda-8905-89f3605d5849:role=member",
+    "spaceid=129cb9b6-c579-41b5-9316-93c6543484e5:role=spectator",
+]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The environment variables to extract the data from the above claim look like this:</p>
+</div>
+<div class="listingblock">
+<div class="title">Environment variable definition</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-plaintext hljs" data-lang="plaintext">OCIS_CLAIM_MANAGED_SPACES_ENABLED=true
+OCIS_CLAIM_MANAGED_SPACES_CLAIMNAME=ocis-spaces
+OCIS_CLAIM_MANAGED_SPACES_REGEXP="spaceid=([a-zA-Z0-9-]+):role=(.*)",
+OCIS_CLAIM_MANAGED_SPACES_MAPPING="member:editor,spectator:viewer"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><br></p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Result</dt>
+<dd>
+<p>This would add a user, to which this claim is assigned, to the following Spaces with defined roles:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>b622d44a-1747-4eda-8905-89f3605d5849</code> with the role <code>editor</code> and to</p>
+</li>
+<li>
+<p><code>129cb9b6-c579-41b5-9316-93c6543484e5</code> with the role <code>viewer</code>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Note that <code>OCIS_CLAIM_MANAGED_SPACES_MAPPING</code> can be omitted if roles in the claim already match roles defined by Infinite Scale.</p>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="multi-instance-infinite-scale"><a class="anchor" href="#multi-instance-infinite-scale"></a>Multi Instance Infinite Scale</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Infinite Scale can be used to configure multi-instance environments. This allows multiple instances to connect to the same external IDP. Without this configuration, only one-to-one setups are possible. The environment variables to configure such a setup start with <code>OCIS_MULTI_INSTANCE_xxx</code>. Since this setup requires in-depth knowledge of the environment, only a configuration example can be provided, which can be found at: <a href="https://github.com/owncloud/ocis/tree/master/deployments/examples/ocis_multi" target="_blank" rel="noopener">Multi Instance Deployment Example</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="recommendations-for-production-deployments"><a class="anchor" href="#recommendations-for-production-deployments"></a>Recommendations for Production Deployments</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>The proxy service is the only service communicating to the outside and therefore needs the usual protection against DDOS, Slow Loris or other attack vectors. All other services are not exposed to the outside, but also need protective measures when it comes to distributed setups like when using container orchestration over various physical servers.</p>
+</li>
+<li>
+<p>In a production deployment, you want to have basic authentication (<code>PROXY_ENABLE_BASIC_AUTH</code>) <em>disabled</em> which is the default state. You should also set up a firewall to only allow requests to the proxy service or the reverse proxy if you have one. Requests to the other services should be blocked by the firewall.</p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="content-security-policy"><a class="anchor" href="#content-security-policy"></a>Content Security Policy</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">What is a Content Security Policy (CSP) and why is it used in Infinite Scale</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>A Content Security Policy (CSP) is a feature that helps to prevent or minimize the risk of certain types of security threats. It consists of a series of instructions from a website to a browser, which instruct the browser to place restrictions on the things that the code comprising site is allowed to do. It is mainly used as a defense against cross-site scripting (XSS) attacks, in which an attacker is able to inject malicious code into the victim&#8217;s site and includes defending against clickjacking, and helping to ensure that a site&#8217;s pages will be loaded over HTTPS.</p>
+</div>
+<div class="paragraph">
+<p>For Infinite Scale, external resources like an IDP (e.g. Keycloak) or when using web office documents or web apps, require defining a CSP. If not defined, the referenced services will not work.</p>
+</div>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>To create a Content Security Policy (CSP), you need to create a yaml file containing the CSP definitions. To activate the settings, reference the file as value in the <code>PROXY_CSP_CONFIG_FILE_LOCATION</code> environment variable. For each change, a restart of the Infinite Scale deployment or the proxy service is required.</p>
+</div>
+<div class="paragraph">
+<p>A working example for a CSP can be found in a sub path of the <code>config</code> directory of the <a href="https://github.com/owncloud/ocis/tree/stable-8.0/deployments/examples/ocis_full" target="_blank" rel="noopener">ocis_full</a> deployment example which is the base for our <a href="../../../depl-examples/ubuntu-compose/ubuntu-compose-prod.html" class="xref page">Local Production Setup</a> and the <a href="../../../depl-examples/ubuntu-compose/ubuntu-compose-hetzner.html" class="xref page">Deployment on Hetzner</a>.</p>
+</div>
+<div class="paragraph">
+<p>See the <a href="https://content-security-policy.com" target="_blank" rel="noopener">Content Security Policy (CSP) Quick Reference Guide</a> for a description of directives.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="strict-transport-security-header"><a class="anchor" href="#strict-transport-security-header"></a>Strict Transport Security Header</h3>
+<div class="paragraph">
+<p>Infinite Scale cannot always determine whether the entire communication chain between itself and the client is secure. Consider the following scenarios:</p>
+</div>
+<div class="imageblock kroki">
+<div class="content">
+<img src="../../../_images/diag-0cd12457f7f0008d72315b767cd0de1aa11079c6.svg" alt="Client - Webserver - Infinite Scale (incomplete)">
+</div>
+<div class="title">Figure 1. Client - Webserver - Infinite Scale (incomplete)</div>
+</div>
+<div class="imageblock kroki">
+<div class="content">
+<img src="../../../_images/diag-e6babdf90fe773a6491a4fb59d6f2a6d097e7313.svg" alt="Client - Webserver - Infinite Scale (complete)">
+</div>
+<div class="title">Figure 2. Client - Webserver - Infinite Scale (complete)</div>
+</div>
+<div class="imageblock kroki">
+<div class="content">
+<img src="../../../_images/diag-2b9a01b8bd4d6a3f50c72dfaa45a24af5b2c2d6e.svg" alt="Client - Loadbalancer - Webserver - Infinite Scale (incomplete)">
+</div>
+<div class="title">Figure 3. Client - Loadbalancer - Webserver - Infinite Scale (incomplete)</div>
+</div>
+<div class="paragraph">
+<p>As you can see in Figure 2, the entire chain is secured by HTTPS, and the headers will be sent accordingly. The other figures illustrate that, although the client has a secure connection, the subsequent connection is insecure. Because the Infinite Scale proxy service can only detect his connection, it sends back headers for an insecure connection.</p>
+</div>
+<div class="paragraph">
+<p>To mitigate this issue, set the environment variable <code>PROXY_FORCE_STRICT_TRANSPORT_SECURITY</code> to true. This forces the sending of Strict-Transport-Security headers on all responses.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="presigned-urls"><a class="anchor" href="#presigned-urls"></a>Presigned Urls</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Important, also see section <a href="#caching">caching</a> above.</p>
+</div>
+<div class="paragraph">
+<p>To authenticate presigned URLs, the <code>proxy</code> service needs to read the signing keys from a store that is populated by the <a href="ocs.html" class="xref page">ocs</a> service.</p>
+</div>
+<div class="paragraph">
+<p>The following stores can be configured via the <code>OCS_PRESIGNEDURL_SIGNING_KEYS_STORE</code> environment variable:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>nats-js-kv</code><br>
+Stores data using key-value-store feature of <a href="https://docs.nats.io/nats-concepts/jetstream/key-value-store">nats jetstream</a>.</p>
+</li>
+<li>
+<p><code>redis-sentinel</code><br>
+Stores data in a configured Redis Sentinel cluster.</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>The <code>memory</code> store cannot be used as they do not share the memory from the ocs service signing key memory store, even in a single process.</p>
+</li>
+<li>
+<p>Make sure to configure the same store for pre-signed URLs as here in the proxy service.</p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Store specific notes:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>When using <code>redis-sentinel</code><br>
+The Redis master to use is configured via e.g. <code>OCS_PRESIGNEDURL_SIGNING_KEYS_STORE_NODES</code> in the form of <code>&lt;sentinel-host&gt;:&lt;sentinel-port&gt;/&lt;redis-master&gt;</code> like <code>10.10.0.200:26379/mymaster</code>.</p>
+</li>
+<li>
+<p>When using <code>nats-js-kv</code><br>
+It is recommended to set <code>PROXY_PRESIGNEDURL_SIGNING_KEYS_STORE_NODES</code> to the same value as <code>OCS_PRESIGNEDURL_SIGNING_KEYS_STORE_NODES</code>. That way the <code>proxy</code> service uses the same nats instance as the <a href="ocs.html" class="xref page">ocs</a> service.</p>
+</li>
+<li>
+<p>When using <code>ocisstoreservice</code><br>
+The <code>OCS_PRESIGNEDURL_SIGNING_KEYS_STORE_NODES</code> must be set to the service name <code>com.owncloud.api.store</code>. It does not support TTL and stores the presigning keys indefinitely. Also, the <a href="store.html" class="xref page">store</a> service needs to be started.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="special-settings"><a class="anchor" href="#special-settings"></a>Special Settings</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When using the Infinite Scale <a href="idp.html" class="xref page">IDP service</a> instead of an external IDP:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Use the environment variable <a href="../env-vars-special-scope.html#global-environment-variables" class="xref page">OCIS_URL</a> to define how Infinite Scale can be accessed; <strong>mandatory</strong> is the use of <code>https</code> as protocol for the URL.</p>
+</li>
+<li>
+<p>If no reverse proxy is set up, the <code>PROXY_TLS</code> environment variable <strong>must</strong> be set to <code>true</code> because the embedded <code>libreConnect</code> shipped with the IDP service has a hard check if the connection is on TLS and uses the HTTPS protocol. If this mismatches, an error will be logged and no connection from the client can be established.</p>
+</li>
+<li>
+<p><code>PROXY_TLS</code> <strong>can</strong> be set to <code>false</code> if a reverse proxy is used and the https connection is terminated at the reverse proxy. When setting to <code>false</code>, the communication between the reverse proxy and Infinite Scale is not secured. If set to <code>true</code>, you must provide certificates.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="metrics"><a class="anchor" href="#metrics"></a>Metrics</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For details on monitoring see the <a href="../../../monitoring/prometheus.html" class="xref page">Metrics for Prometheus</a> documentation.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="caching"><a class="anchor" href="#caching"></a>Caching</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Important, also see section <a href="#presigned-urls">Presigned Urls</a> below.</p>
+</div>
+<div class="paragraph">
+<p>The proxy service can use a configured store via the global <code>OCIS_CACHE_STORE</code> environment variable.</p>
+</div>
+<div class="paragraph">
+<p>Note that for each global environment variable, an independent service-based one might be available additionally. For precedences see <a href="../env-var-note.html" class="xref page">Environment Variable Notes</a>. Check the configuration section below. Supported stores are:</p>
+</div>
+<div class="paragraph">
+<p></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 22.7272%;">
+<col style="width: 77.2728%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Store Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>memory</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Basic in-memory store. Will not survive a restart.<br>
+Usually the default for <em>caches</em>. See the store environment variable for which one is used.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>nats-js-kv</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Stores data using key-value-store feature of <a href="https://docs.nats.io/nats-concepts/jetstream/key-value-store">NATS JetStream</a>.<br>
+Usually the default for stores, see the store environment variable for which one is used.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>redis-sentinel</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Stores data in a configured Redis Sentinel cluster.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>noop</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Stores nothing. Useful for testing. Not recommended in production environments.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The proxy service can only be scaled if not using the <code>memory</code> store and the stores are configured identically over all instances!
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+If you have used one of the deprecated stores of a former version, you should reconfigure to use one of the supported ones as the deprecated stores will be removed in a later version.
+</td>
+</tr>
+</table>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Store specific notes</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>When using <code>redis-sentinel</code>:<br>
+The Redis master to use is configured via e.g. <code>OCIS_CACHE_STORE_NODES</code> in the form of <code>&lt;sentinel-host&gt;:&lt;sentinel-port&gt;/&lt;redis-master&gt;</code> like <code>10.10.0.200:26379/mymaster</code>.</p>
+</li>
+<li>
+<p>When using <code>nats-js-kv</code>:<br></p>
+<div class="ulist">
+<ul>
+<li>
+<p>It is recommended to set <code>OCIS_CACHE_STORE_NODES</code> to the same value as <code>OCIS_EVENTS_ENDPOINT</code>. That way the cache uses the same nats instance as the event bus. See the <a href="#event-bus-configuration">Event Bus Configuration</a> for more details.</p>
+</li>
+<li>
+<p>Authentication can be added, if configured, via <code>OCIS_CACHE_AUTH_USERNAME</code> and <code>OCIS_CACHE_AUTH_PASSWORD</code>.</p>
+</li>
+<li>
+<p>It is possible to set <code>OCIS_CACHE_DISABLE_PERSISTENCE</code> to instruct nats to not persist cache data on disc.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="event-bus-configuration"><a class="anchor" href="#event-bus-configuration"></a>Event Bus Configuration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The Infinite Scale event bus can be configured by a set of environment variables.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>In case of an orchestrated installation like with Docker or Kubernetes, the event bus must be an external service for scalability like a <code>Redis Sentinel cluster</code> or a key-value-store <a href="https://docs.nats.io/nats-concepts/jetstream/key-value-store">NATS JetStream</a>. Both named stores are supported and also used in <a href="../caching.html" class="xref page">Caching and Persistence</a>. The store used is not part of the Infinite Scale installation and must be separately provided and configured.</p>
+</li>
+<li>
+<p>Note that from a configuration point of view, caching and persistence are independent of the event bus configuration.</p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Note that for each global environment variable, a service-based one might be available additionally. For precedences see <a href="../env-var-note.html" class="xref page">Environment Variable Notes</a>. Check the configuration section below.</p>
+</div>
+<div class="paragraph">
+<p>Without the aim of completeness, see the list of environment variables to configure the event bus:
+<br>
+<br></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 31.8181%;">
+<col style="width: 68.1819%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Envvar</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OCIS_EVENTS_ENDPOINT</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The address of the event system.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OCIS_EVENTS_CLUSTER</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The clusterID of the event system. Mandatory when using NATS as event system.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OCIS_EVENTS_ENABLE_TLS</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enable TLS for the connection to the events broker.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OCIS_INSECURE</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Whether to verify the server TLS certificates.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OCIS_EVENTS_AUTH_USERNAME</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The username to authenticate with the events broker.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OCIS_EVENTS_AUTH_PASSWORD</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The password to authenticate with the events broker.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="configuration-2"><a class="anchor" href="#configuration-2"></a>Configuration</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="environment-variables"><a class="anchor" href="#environment-variables"></a>Environment Variables</h3>
+<div class="paragraph">
+<p>The <code>proxy</code> service is configured via the following environment variables. Read the <a href="../envvar-types-description.html" class="xref page">Environment Variable Types</a> documentation for important details. Column <code>IV</code> shows with which release the environment variable has been introduced.</p>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset1_8-0-0"></a>8.0.0</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset1_8-0-0">
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Environment variables for the proxy service</caption>
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">IV</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Default Value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_TRACING_ENABLED</code><br>
+<code>PROXY_TRACING_ENABLED</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>bool </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>false </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Activates tracing.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_TRACING_TYPE</code><br>
+<code>PROXY_TRACING_TYPE</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The type of tracing. Defaults to '', which is the same as 'jaeger'. Allowed tracing types are 'jaeger', 'otlp' and '' as of now.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_TRACING_ENDPOINT</code><br>
+<code>PROXY_TRACING_ENDPOINT</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The endpoint of the tracing agent.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_TRACING_COLLECTOR</code><br>
+<code>PROXY_TRACING_COLLECTOR</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The HTTP endpoint for sending spans directly to a collector, i.e. http://jaeger-collector:14268/api/traces. Only used if the tracing endpoint is unset.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_LOG_LEVEL</code><br>
+<code>PROXY_LOG_LEVEL</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The log level. Valid values are: 'panic', 'fatal', 'error', 'warn', 'info', 'debug', 'trace'.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_LOG_PRETTY</code><br>
+<code>PROXY_LOG_PRETTY</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>bool </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>false </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Activates pretty log output.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_LOG_COLOR</code><br>
+<code>PROXY_LOG_COLOR</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>bool </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>false </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Activates colorized log output.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_LOG_FILE</code><br>
+<code>PROXY_LOG_FILE</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The path to the log file. Activates logging to this file if set.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PROXY_DEBUG_ADDR</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>127.0.0.1:9205 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Bind address of the debug server, where metrics, health, config and debug endpoints will be exposed.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PROXY_DEBUG_TOKEN</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Token to secure the metrics endpoint.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PROXY_DEBUG_PPROF</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>bool </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>false </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Enables pprof, which can be used for profiling.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PROXY_DEBUG_ZPAGES</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>bool </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>false </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Enables zpages, which can be used for collecting and viewing in-memory traces.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PROXY_HTTP_ADDR</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>0.0.0.0:9200 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The bind address of the HTTP service.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PROXY_HTTP_ROOT</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>/ </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Subdirectory that serves as the root for this HTTP service.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PROXY_TRANSPORT_TLS_CERT</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>/var/lib/ocis/proxy/server.crt </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Path/File name of the TLS server certificate (in PEM format) for the external http services. If not defined, the root directory derives from $OCIS_BASE_DATA_PATH/proxy.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PROXY_TRANSPORT_TLS_KEY</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>/var/lib/ocis/proxy/server.key </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Path/File name for the TLS certificate key (in PEM format) for the server certificate to use for the external http services. If not defined, the root directory derives from $OCIS_BASE_DATA_PATH/proxy.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PROXY_TLS</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>bool </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>true </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Enable/Disable HTTPS for external HTTP services. Must be set to 'true' if the built-in IDP service an no reverse proxy is used. See the text description for details.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PROXY_FORCE_STRICT_TRANSPORT_SECURITY</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>8.0.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>bool </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>false </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Force emission of the Strict-Transport-Security header on all responses, including plain HTTP requests. See also: PROXY_TLS</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_REVA_GATEWAY</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>com.owncloud.api.gateway </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The CS3 gateway endpoint.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_GRPC_CLIENT_TLS_MODE</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>TLS mode for grpc connection to the go-micro based grpc services. Possible values are 'off', 'insecure' and 'on'. 'off': disables transport security for the clients. 'insecure' allows using transport security, but disables certificate verification (to be used with the autogenerated self-signed certificates). 'on' enables transport security, including server certificate verification.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_GRPC_CLIENT_TLS_CACERT</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Path/File name for the root CA certificate (in PEM format) used to validate TLS server certificates of the go-micro based grpc services.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_URL</code><br>
+<code>OCIS_OIDC_ISSUER</code><br>
+<code>PROXY_OIDC_ISSUER</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>https://localhost:9200 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>URL of the OIDC issuer. It defaults to URL of the builtin IDP.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_INSECURE</code><br>
+<code>PROXY_OIDC_INSECURE</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>bool </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>false </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Disable TLS certificate validation for connections to the IDP. Note that this is not recommended for production environments.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PROXY_OIDC_ACCESS_TOKEN_VERIFY_METHOD</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>jwt </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Sets how OIDC access tokens should be verified. Possible values are 'none' and 'jwt'. When using 'none', no special validation apart from using it for accessing the IPD&#8217;s userinfo endpoint will be done. When using 'jwt', it tries to parse the access token as a jwt token and verifies the signature using the keys published on the IDP&#8217;s 'jwks_uri'.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PROXY_OIDC_SKIP_USER_INFO</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>bool </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>false </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Do not look up user claims at the userinfo endpoint and directly read them from the access token. Incompatible with 'PROXY_OIDC_ACCESS_TOKEN_VERIFY_METHOD=none'.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_CACHE_STORE</code><br>
+<code>PROXY_OIDC_USERINFO_CACHE_STORE</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>memory </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The type of the cache store. Supported values are: 'memory', 'redis-sentinel', 'nats-js-kv', 'noop'. See the text description for details.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_CACHE_STORE_NODES</code><br>
+<code>PROXY_OIDC_USERINFO_CACHE_STORE_NODES</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>[]string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>[127.0.0.1:9233] </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>A list of nodes to access the configured store. This has no effect when 'memory' store is configured. Note that the behaviour how nodes are used is dependent on the library of the configured store. See the Environment Variable Types description for more details.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_CACHE_DATABASE</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>cache-userinfo </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The database name the configured store should use.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PROXY_OIDC_USERINFO_CACHE_TABLE</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The database table the store should use.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_CACHE_TTL</code><br>
+<code>PROXY_OIDC_USERINFO_CACHE_TTL</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Duration </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>10s </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Default time to live for user info in the user info cache. Only applied when access tokens has no expiration. See the Environment Variable Types description for more details.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_CACHE_DISABLE_PERSISTENCE</code><br>
+<code>PROXY_OIDC_USERINFO_CACHE_DISABLE_PERSISTENCE</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>bool </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>false </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Disables persistence of the cache. Only applies when store type 'nats-js-kv' is configured. Defaults to false.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_CACHE_AUTH_USERNAME</code><br>
+<code>PROXY_OIDC_USERINFO_CACHE_AUTH_USERNAME</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The username to authenticate with the cache. Only applies when store type 'nats-js-kv' is configured.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_CACHE_AUTH_PASSWORD</code><br>
+<code>PROXY_OIDC_USERINFO_CACHE_AUTH_PASSWORD</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The password to authenticate with the cache. Only applies when store type 'nats-js-kv' is configured.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PROXY_OIDC_JWKS_REFRESH_INTERVAL</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>uint64 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>60 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The interval for refreshing the JWKS (JSON Web Key Set) in minutes in the background via a new HTTP request to the IDP.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PROXY_OIDC_JWKS_REFRESH_TIMEOUT</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>uint64 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>10 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The timeout in seconds for an outgoing JWKS request.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PROXY_OIDC_JWKS_REFRESH_RATE_LIMIT</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>uint64 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>60 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Limits the rate in seconds at which refresh requests are performed for unknown keys. This is used to prevent malicious clients from imposing high network load on the IDP via ocis.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PROXY_OIDC_JWKS_REFRESH_UNKNOWN_KID</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>bool </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>true </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>If set to 'true', the JWKS refresh request will occur every time an unknown KEY ID (KID) is seen. Always set a 'refresh_limit' when enabling this.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PROXY_OIDC_REWRITE_WELLKNOWN</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>bool </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>false </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Enables rewriting the /.well-known/openid-configuration to the configured OIDC issuer. Needed by the Desktop Client, Android Client and iOS Client to discover the OIDC provider.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_SERVICE_ACCOUNT_ID</code><br>
+<code>PROXY_SERVICE_ACCOUNT_ID</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The ID of the service account the service should use. See the 'auth-service' service description for more details.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_SERVICE_ACCOUNT_SECRET</code><br>
+<code>PROXY_SERVICE_ACCOUNT_SECRET</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The service account secret.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PROXY_ROLE_ASSIGNMENT_DRIVER</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>default </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The mechanism that should be used to assign roles to user upon login. Supported values: 'default' or 'oidc'. 'default' will assign the role 'user' to users which don&#8217;t have a role assigned at the time they login. 'oidc' will assign the role based on the value of a claim (configured via PROXY_ROLE_ASSIGNMENT_OIDC_CLAIM) from the users OIDC claims.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PROXY_ROLE_ASSIGNMENT_OIDC_CLAIM</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>roles </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The OIDC claim used to create the users role assignment.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PROXY_ENABLE_PRESIGNEDURLS</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>bool </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>true </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Allow OCS to get a signing key to sign requests.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_CACHE_STORE</code><br>
+<code>PROXY_PRESIGNEDURL_SIGNING_KEYS_STORE</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>nats-js-kv </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The type of the signing key store. Supported values are: 'redis-sentinel', 'nats-js-kv' and 'ocisstoreservice' (deprecated). See the text description for details.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_CACHE_STORE_NODES</code><br>
+<code>PROXY_PRESIGNEDURL_SIGNING_KEYS_STORE_NODES</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>[]string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>[127.0.0.1:9233] </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>A list of nodes to access the configured store. Note that the behaviour how nodes are used is dependent on the library of the configured store. See the Environment Variable Types description for more details.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_CACHE_TTL</code><br>
+<code>PROXY_PRESIGNEDURL_SIGNING_KEYS_STORE_TTL</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Duration </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>12h0m0s </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Default time to live for signing keys. See the Environment Variable Types description for more details.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_CACHE_DISABLE_PERSISTENCE</code><br>
+<code>PROXY_PRESIGNEDURL_SIGNING_KEYS_STORE_DISABLE_PERSISTENCE</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>bool </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>true </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Disables persistence of the store. Only applies when store type 'nats-js-kv' is configured. Defaults to true.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_CACHE_AUTH_USERNAME</code><br>
+<code>PROXY_PRESIGNEDURL_SIGNING_KEYS_STORE_AUTH_USERNAME</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The username to authenticate with the store. Only applies when store type 'nats-js-kv' is configured.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_CACHE_AUTH_PASSWORD</code><br>
+<code>PROXY_PRESIGNEDURL_SIGNING_KEYS_STORE_AUTH_PASSWORD</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The password to authenticate with the store. Only applies when store type 'nats-js-kv' is configured.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PROXY_ACCOUNT_BACKEND_TYPE</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>cs3 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Account backend the PROXY service should use. Currently only 'cs3' is possible here.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PROXY_USER_OIDC_CLAIM</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>preferred_username </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The name of an OpenID Connect claim that is used for resolving users with the account backend. The value of the claim must hold a per user unique, stable and non re-assignable identifier. The availability of claims depends on your Identity Provider. There are common claims available for most Identity providers like 'email' or 'preferred_username' but you can also add your own claim.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PROXY_USER_CS3_CLAIM</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>username </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The name of a CS3 user attribute (claim) that should be mapped to the 'user_oidc_claim'. Supported values are 'username', 'mail' and 'userid'.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_MACHINE_AUTH_API_KEY</code><br>
+<code>PROXY_MACHINE_AUTH_API_KEY</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Machine auth API key used to validate internal requests necessary to access resources from other services.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PROXY_AUTOPROVISION_ACCOUNTS</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>bool </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>false </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Set this to 'true' to automatically provision users that do not yet exist in the users service on-demand upon first sign-in. To use this a write-enabled libregraph user backend needs to be setup an running.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PROXY_AUTOPROVISION_CLAIM_USERNAME</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>6.0.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>preferred_username </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The name of the OIDC claim that holds the username.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PROXY_AUTOPROVISION_CLAIM_EMAIL</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>6.0.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>email </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The name of the OIDC claim that holds the email.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PROXY_AUTOPROVISION_CLAIM_DISPLAYNAME</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>6.0.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>name </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The name of the OIDC claim that holds the display name.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PROXY_AUTOPROVISION_CLAIM_GROUPS</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>6.1.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>groups </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The name of the OIDC claim that holds the groups.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PROXY_ENABLE_BASIC_AUTH</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>bool </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>false </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Set this to true to enable 'basic authentication' (username/password).</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PROXY_INSECURE_BACKENDS</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>bool </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>false </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Disable TLS certificate validation for all HTTP backend connections.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PROXY_HTTPS_CACERT</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Path/File for the root CA certificate used to validate the server’s TLS certificate for https enabled backend services.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PROXY_ENABLE_APP_AUTH</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>7.0.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>bool </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>false </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Allow app authentication. This can be used to authenticate 3rd party applications. Note that auth-app service must be running for this feature to work.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PROXY_POLICIES_QUERY</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Defines the 'Complete Rules' variable defined in the rego rule set this step uses for its evaluation. Rules default to deny if the variable was not found.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PROXY_CSP_CONFIG_FILE_LOCATION</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>6.0.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The location of the CSP configuration file.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_EVENTS_ENDPOINT</code><br>
+<code>PROXY_EVENTS_ENDPOINT</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>7.0.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>127.0.0.1:9233 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The address of the event system. The event system is the message queuing service. It is used as message broker for the microservice architecture. Set to a empty string to disable emitting events.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_EVENTS_CLUSTER</code><br>
+<code>PROXY_EVENTS_CLUSTER</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>7.0.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ocis-cluster </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The clusterID of the event system. The event system is the message queuing service. It is used as message broker for the microservice architecture.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_INSECURE</code><br>
+<code>PROXY_EVENTS_TLS_INSECURE</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>7.0.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>bool </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>false </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Whether to verify the server TLS certificates.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_EVENTS_TLS_ROOT_CA_CERTIFICATE</code><br>
+<code>PROXY_EVENTS_TLS_ROOT_CA_CERTIFICATE</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>7.0.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The root CA certificate used to validate the server&#8217;s TLS certificate. If provided PROXY_EVENTS_TLS_INSECURE will be seen as false.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_EVENTS_ENABLE_TLS</code><br>
+<code>PROXY_EVENTS_ENABLE_TLS</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>7.0.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>bool </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>false </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Enable TLS for the connection to the events broker. The events broker is the ocis service which receives and delivers events between the services.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_EVENTS_AUTH_USERNAME</code><br>
+<code>PROXY_EVENTS_AUTH_USERNAME</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>7.0.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The username to authenticate with the events broker. The events broker is the ocis service which receives and delivers events between the services.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_EVENTS_AUTH_PASSWORD</code><br>
+<code>PROXY_EVENTS_AUTH_PASSWORD</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>7.0.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The password to authenticate with the events broker. The events broker is the ocis service which receives and delivers events between the services.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_CLAIM_MANAGED_SPACES_ENABLED</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>7.2.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>bool </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>false </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Enables Space management through OIDC claims. See the text description for more details.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_CLAIM_MANAGED_SPACES_CLAIMNAME</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>7.2.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The name of the claim used to manage Spaces.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_CLAIM_MANAGED_SPACES_REGEXP</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>7.2.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The regular expression that extracts Space IDs and roles from a claim.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_CLAIM_MANAGED_SPACES_MAPPING</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>7.2.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>[]string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>[] </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>(Optional) Mapping of OIDC roles to ocis Space roles. Example: 'oidcroleA:viewer,oidcroleB:manager'</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_MFA_ENABLED</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Balch </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>bool </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>false </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Enable MFA enforcement. If enabled users need to complete MFA before they can access specific paths</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_MFA_AUTH_LEVEL_NAMES</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>7.3.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>[]string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>[advanced] </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>This authentication level name indicates that multi-factor authentication was performed. The name must match the ACR claim in the access token received. Note: If multiple names are required, use a comma-separated list. The front-end service will use the first name in the list when requesting multi-factor authentication (MFA).</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_MULTI_INSTANCE_ENABLED</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>8.0.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>bool </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>false </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Enable multiple instances of Infinite Scale.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_MULTI_INSTANCE_INSTANCEID</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>8.0.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The unique id of this instance</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_MULTI_INSTANCE_MASTER_ID</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>NEXT </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The master ID that grants access to all instances. Users with this ID in their memberOf or guestOf claims can access any instance. Leave empty to disable.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_MULTI_INSTANCE_MEMBER_CLAIM</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>8.0.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The claim name for the 'memberOf' property</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_MULTI_INSTANCE_GUEST_CLAIM</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>8.0.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The claim name for the 'guestOf' property</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_MULTI_INSTANCE_GUEST_ROLE</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>8.0.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The role that should be assigned to a guest user</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="yaml-example"><a class="anchor" href="#yaml-example"></a>YAML Example</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Note the file shown below must be renamed and placed in the correct folder according to the <a href="../../general/general-info.html#configuration-file-naming" class="xref page">Configuration File Naming</a> conventions to be effective.</p>
+</li>
+<li>
+<p>See the <a href="../env-var-note.html" class="xref page">Notes for Environment Variables</a> if you want to use environment variables in the yaml file.</p>
+</li>
+</ul>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset2_8-0-0"></a>8.0.0</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset2_8-0-0">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml"># Autogenerated
+# Filename: proxy-config-example.yaml
+
+tracing:
+  enabled: false
+  type: ""
+  endpoint: ""
+  collector: ""
+log:
+  level: ""
+  pretty: false
+  color: false
+  file: ""
+debug:
+  addr: 127.0.0.1:9205
+  token: ""
+  pprof: false
+  zpages: false
+http:
+  addr: 0.0.0.0:9200
+  root: /
+  tls_cert: /var/lib/ocis/proxy/server.crt
+  tls_key: /var/lib/ocis/proxy/server.key
+  tls: true
+  force_strict_transport_security: false
+reva:
+  address: com.owncloud.api.gateway
+  tls:
+    mode: ""
+    cacert: ""
+grpc_client_tls: null
+role_quotas: {}
+policies:
+- name: ocis
+  routes:
+  - endpoint: /
+    service: com.owncloud.web.web
+    unprotected: true
+  - endpoint: /.well-known/ocm
+    service: com.owncloud.web.ocm
+    unprotected: true
+  - endpoint: /.well-known/webfinger
+    service: com.owncloud.web.webfinger
+    unprotected: true
+  - endpoint: /.well-known/openid-configuration
+    service: com.owncloud.web.idp
+    unprotected: true
+  - endpoint: /branding/logo
+    service: com.owncloud.web.web
+  - endpoint: /konnect/
+    service: com.owncloud.web.idp
+    unprotected: true
+  - endpoint: /signin/
+    service: com.owncloud.web.idp
+    unprotected: true
+  - endpoint: /archiver
+    service: com.owncloud.web.frontend
+  - endpoint: /ocs/v2.php/apps/notifications/api/v1/notifications/sse
+    service: com.owncloud.sse.sse
+  - endpoint: /ocs/v2.php/apps/notifications/api/v1/notifications
+    service: com.owncloud.web.userlog
+  - type: regex
+    endpoint: /ocs/v[12].php/cloud/user/signing-key
+    service: com.owncloud.web.ocs
+  - type: regex
+    endpoint: /ocs/v[12].php/config
+    service: com.owncloud.web.frontend
+    unprotected: true
+  - endpoint: /sciencemesh/
+    service: com.owncloud.web.ocm
+  - endpoint: /ocm/
+    service: com.owncloud.web.ocm
+  - endpoint: /ocs/
+    service: com.owncloud.web.frontend
+  - type: query
+    endpoint: /remote.php/?preview=1
+    service: com.owncloud.web.webdav
+  - type: query
+    endpoint: /?preview=1
+    service: com.owncloud.web.webdav
+  - type: regex
+    method: REPORT
+    endpoint: (/remote.php)?/(web)?dav
+    service: com.owncloud.web.webdav
+  - type: query
+    endpoint: /dav/?preview=1
+    service: com.owncloud.web.webdav
+  - type: query
+    endpoint: /webdav/?preview=1
+    service: com.owncloud.web.webdav
+  - endpoint: /remote.php/
+    service: com.owncloud.web.ocdav
+  - endpoint: /dav/
+    service: com.owncloud.web.ocdav
+  - endpoint: /webdav/
+    service: com.owncloud.web.ocdav
+  - endpoint: /webdav
+    service: com.owncloud.web.ocdav
+  - endpoint: /status
+    service: com.owncloud.web.ocdav
+    unprotected: true
+  - endpoint: /status.php
+    service: com.owncloud.web.ocdav
+    unprotected: true
+  - endpoint: /index.php/
+    service: com.owncloud.web.ocdav
+  - endpoint: /apps/
+    service: com.owncloud.web.ocdav
+  - endpoint: /data
+    service: com.owncloud.web.frontend
+    unprotected: true
+  - endpoint: /app/list
+    service: com.owncloud.web.frontend
+    unprotected: true
+  - endpoint: /app/
+    service: com.owncloud.web.frontend
+  - endpoint: /graph/v1beta1/extensions/org.libregraph/activities
+    service: com.owncloud.web.activitylog
+  - endpoint: /graph/v1.0/invitations
+    service: com.owncloud.web.invitations
+  - endpoint: /graph/
+    service: com.owncloud.web.graph
+  - endpoint: /api/v0/settings
+    service: com.owncloud.web.settings
+  - endpoint: /auth-app/tokens
+    service: com.owncloud.web.auth-app
+additional_policies: []
+oidc:
+  issuer: https://localhost:9200
+  insecure: false
+  access_token_verify_method: jwt
+  skip_user_info: false
+  user_info_cache:
+    store: memory
+    addresses:
+    - 127.0.0.1:9233
+    database: cache-userinfo
+    table: ""
+    ttl: 10s
+    disable_persistence: false
+    username: ""
+    password: ""
+  jwks:
+    refresh_interval: 60
+    refresh_timeout: 10
+    refresh_limit: 60
+    refresh_unknown_kid: true
+  rewrite_well_known: false
+service_account:
+  service_account_id: ""
+  service_account_secret: ""
+role_assignment:
+  driver: default
+  oidc_role_mapper:
+    role_claim: roles
+    role_mapping:
+    - role_name: admin
+      claim_value: ocisAdmin
+    - role_name: spaceadmin
+      claim_value: ocisSpaceAdmin
+    - role_name: user
+      claim_value: ocisUser
+    - role_name: user-light
+      claim_value: ocisGuest
+policy_selector:
+  static:
+    policy: ocis
+  claims: null
+  regex: null
+pre_signed_url:
+  allowed_http_methods:
+  - GET
+  enabled: true
+  signing_keys:
+    store: nats-js-kv
+    addresses:
+    - 127.0.0.1:9233
+    ttl: 12h0m0s
+    disable_persistence: true
+    username: ""
+    password: ""
+account_backend: cs3
+user_oidc_claim: preferred_username
+user_cs3_claim: username
+machine_auth_api_key: ""
+auto_provision_accounts: false
+auto_provision_claims:
+  username: preferred_username
+  email: email
+  display_name: name
+  groups: groups
+enable_basic_auth: false
+insecure_backends: false
+backend_https_cacert: ""
+auth_middleware:
+  credentials_by_user_agent: {}
+  allow_app_auth: false
+policies_middleware:
+  query: ""
+csp_config_file_location: ""
+events:
+  endpoint: 127.0.0.1:9233
+  cluster: ocis-cluster
+  tls_insecure: false
+  tls_root_ca_certificate: ""
+  enable_tls: false
+  username: ""
+  password: ""
+claim_space_management:
+  enabled: false
+  claim: ""
+  regexp: ""
+  mapping: []
+mfa:
+  enabled: false
+  auth_level_name:
+  - advanced
+multi_instance:
+  enabled: false
+  instanceid: ""
+  master_id: ""
+  member_claim: ""
+  guest_claim: ""
+  guest_role: ""</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+        <nav class="pagination">
+              <span class="prev"><a href="postprocessing.html">Postprocessing</a></span>
+              <span class="next"><a href="search.html">Search</a></span>
+        </nav>
+          </article>
+        </div>
+      </main>
+    </div>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="row-full">
+          <div class="col-third">
+            <div class="footer-nav">
+              <h4>About ownCloud</h4>
+              <ul id="menu-about" class="menu">
+                <li class="menu-landing"><a href="https://owncloud.com/">The Secure Collaboration Platform</a></li>
+                <li class="menu-news"><a href="https://owncloud.com/news/">News</a></li>
+                <li class="menu-privacy"><a href="https://owncloud.com/privacy-statement/">Privacy statement</a></li>
+                <li class="menu-imprint"><a href="https://owncloud.com/imprint/">Imprint</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-third">
+            <div class="footer-nav">
+              <h4>Resources</h4>
+              <ul id="menu-support-and-documentation" class="menu">
+                <li class="menu-faq"><a href="https://owncloud.com/faq/">FAQ</a></li>
+                <li class="menu-help"><a href="https://owncloud.com/docs-guides/">Help</a></li>
+                <li class="menu-security"><a href="https://owncloud.com/security/">Security</a></li>
+                <li class="menu-changelog"><a href="https://owncloud.com/changelog/">Changelog</a></li>
+                <li class="menu-get-started"><a href="https://owncloud.com/get-started/">Get started</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-third">
+            <div class="footer-nav">
+              <h4>Interact</h4>
+              <ul id="menu-interact" class="menu">
+                <li class="menu-forum"><a href="https://central.owncloud.org" class="oc-footer-nav-link">Forum</a></li>
+                <li class="menu-contribute"><a href="https://owncloud.com/contribute" class="oc-footer-nav-link">Contribute</a></li>
+                <li class="menu-customer-support"><a href="https://owncloud.com/support" class="oc-footer-nav-link">Customer support</a></li>
+
+              </ul>
+            </div>
+          </div>
+        </div>
+        <p>&copy; Copyright 2011-2026, The ownCloud developers.</p>
+      </div>
+    </footer>
+
+    <script id="site-script" src="../../../../../assets/js/site.js" data-ui-root-path="../../../../../assets"></script>
+    <script async src="../../../../../assets/js/vendor/highlight.js"></script>
+    <script async src="../../../../../assets/js/vendor/medium-zoom.js"></script>
+    <script async src="../../../../../assets/js/vendor/tabs-ui.js"></script>
+  </body>
+</html>

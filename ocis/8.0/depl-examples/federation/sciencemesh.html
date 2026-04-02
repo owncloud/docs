@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Setting Up Federations Using ScienceMesh :: Documentation for ownCloud (A Kiteworks Company)</title>
+
+    <link rel="canonical" href="https://doc.owncloud.com/ocis/next/depl-examples/federation/sciencemesh.html">
+    <link rel="prev" href="../ubuntu-compose/ubuntu-compose-hetzner.html">
+    <link rel="next" href="../../additional-information/knowledge-base.html">
+    <meta name="description" content="This document will guide you through setting up a federation between users of Infinite Scale instances using the ScienceMesh framework, which includes the Open Cloud Mesh (OCM) technology.">
+    <meta name="keywords" content="federation, sciencemesh, ocm">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../../assets/css/site.css">
+
+    <meta property="og:locale" content="en_us" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Setting Up Federations Using ScienceMesh" />
+    <meta property="og:description" content="Setting Up Federations Using ScienceMesh" />
+    <meta property="og:url" content="https://doc.owncloud.com/ocis/next/depl-examples/federation/sciencemesh.html" />
+    <meta property="og:site_name" content="Documentation for ownCloud (A Kiteworks Company)" />
+    <meta property="og:image" content="https://doc.owncloud.com/opengraph-ocis.png" />
+    <meta property="og:image:alt" content="The Infinite Scale Documentation documentation" />
+    <meta name="twitter:site" content="@owncloud" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Setting Up Federations Using ScienceMesh" />
+    <meta name="twitter:description" content="This document will guide you through setting up a federation between users of Infinite Scale instances using the ScienceMesh framework, which includes the Open Cloud Mesh (OCM) technology." />
+
+    <script>var uiRootPath = '../../../../assets'</script>
+
+
+    <title>Setting Up Federations Using ScienceMesh :: Documentation for ownCloud (A Kiteworks Company)</title>
+    <link rel="canonical" href="https://doc.owncloud.com/ocis/next/depl-examples/federation/sciencemesh.html">
+    <meta name="description" content="This document will guide you through setting up a federation between users of Infinite Scale instances using the ScienceMesh framework, which includes the Open Cloud Mesh (OCM) technology.">
+    <meta name="keywords" content="federation, sciencemesh, ocm">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" href="/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="black">
+    <meta name="msapplication-TileColor" content="#001840">
+    <meta name="theme-color" content="#ffffff">
+  </head>
+
+  <body class="article">
+    <header class="header" role="banner">
+      <nav class="navbar">
+        <div class="navbar-brand">
+          <a class="navbar-item" href="https://doc.owncloud.com">Documentation for ownCloud (A Kiteworks Company)</a>
+          <!-- we do not have any hamburger stuff to show like links to external sites
+           <button class="navbar-burger" aria-controls="topbar-nav" aria-expanded="false" aria-label="Toggle main menu">
+           <span></span>
+           <span></span>
+           <span></span>
+           </button>
+          -->
+        </div>
+        <div id="topbar-nav" class="navbar-menu">
+          <div class="navbar-end"> </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="body">
+      <div class="nav-container" data-component="ocis" data-version="8.0">
+        <aside class="nav">
+          <div class="panels">
+            <div class="nav-panel-menu is-active" data-panel="menu">
+              <nav class="nav-menu">
+                <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+                <h3 class="title"><a href="../../index.html">Infinite Scale Documentation</a></h3>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="0">
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="1">
+                      <a class="nav-link" href="../../index.html">Introduction</a>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Infinite Scale Overview</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../architecture/architecture.html">Architecture and Concepts</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../availability_scaling/availability_scaling.html">Availability and Scalability</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../security/security.html">Security Aspects</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../deployment/index.html">Deployment</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../prerequisites/prerequisites.html">Prerequisites</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Storage</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../deployment/storage/general-considerations.html">General Storage Considerations</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../deployment/storage/nfs.html">Network File System</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../deployment/storage/s3.html">S3</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../deployment/storage/posixfs.html">PosixFS</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../deployment/general/general-info.html">General Information</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../deployment/general/ocis-init.html">The ocis init Command</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../deployment/wopi/wopi.html">Office Applications using WOPI</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../deployment/security/security.html">Securing oCIS</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../deployment/gdpr/gdpr.html">User Triggered GDPR Report</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../deployment/services/services.html">Services</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">General Information</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/deployment-considerations.html">Deployment Considerations</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/env-var-note.html">Environment Variable Notes</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/env-vars-special-scope.html">Environment Variables with Special Scope</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/env-var-changes.html">Environment Variable Changes</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/registry.html">Registry</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/caching.html">Caching and Persistence</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/gateways.html">Gateways</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/logging.html">Logging</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/ports-used.html">Ports Used</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/tls.html">Transport Layer Security</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">List of Services</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/activitylog.html">Activitylog</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/antivirus.html">Antivirus</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/app-provider.html">App Provider</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/app-registry.html">App Registry</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/audit.html">Audit</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/auth-app.html">Auth App</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/auth-basic.html">Auth Basic</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/auth-bearer.html">Auth Bearer</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/auth-machine.html">Auth Machine</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/auth-service.html">Auth Service</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/clientlog.html">Clientlog</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/collaboration.html">Collaboration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/eventhistory.html">Eventhistory</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/frontend.html">Frontend</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/gateway.html">Gateway</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/graph.html">Graph</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/groups.html">Groups</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/idm.html">IDM</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/invitations.html">Invitations</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/idp.html">IDP</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/nats.html">NATS</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/notifications.html">Notifications</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/ocdav.html">OCDAV</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/ocm.html">OCM</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/ocs.html">OCS</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/policies.html">Policies</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/postprocessing.html">Postprocessing</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/proxy.html">Proxy</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/search.html">Search</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/settings.html">Settings</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/sharing.html">Sharing</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/sse.html">SSE</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/store.html">Store</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/storage-publiclink.html">Storage-Publiclink</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/storage-shares.html">Storage-Shares</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/storage-system.html">Storage-System</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/storage-users.html">Storage-Users</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/thumbnails.html">Thumbnails</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/userlog.html">Userlog</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/users.html">Users</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/web.html">Web</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/webdav.html">WebDAV</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/webfinger.html">Webfinger</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Web UI</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../deployment/webui/webui-customisation.html">Custom Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../deployment/webui/webui-theming.html">Custom Theming</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Maintenance</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Backup and Restore</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../maintenance/b-r/backup_considerations.html">Backup Considerations</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../maintenance/b-r/backup.html">Backup</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../maintenance/b-r/restore.html">Restore</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../maintenance/commands/commands.html">Maintenance Commands</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../maintenance/m-mode/maintenance-mode.html">Maintenance Mode</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../maintenance/space-ids/space-ids.html">Listing Space IDs</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../maintenance/user-ids/user-ids.html">Listing User IDs</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Migration and Upgrades</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../migration/upgrading-ocis.html">Upgrading Infinite Scale</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Monitoring</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../monitoring/prometheus.html">Prometheus</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Configuration Examples</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../conf-examples/office/office-integration.html">Office Integration</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../conf-examples/search/configure-search.html">Search</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Deployment Examples</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Ubuntu with Docker Compose</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../ubuntu-compose/ubuntu-compose-prod.html">Local Production Setup</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../ubuntu-compose/ubuntu-compose-hetzner.html">Deployment on Hetzner</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Setup Federations</span>
+                  <ul class="nav-list">
+                    <li class="nav-item is-current-page" data-depth="3">
+                      <a class="nav-link" href="sciencemesh.html">ScienceMesh Setup</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Additional Information</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../additional-information/knowledge-base.html">Knowledge Base</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+            <div class="nav-panel-explore" data-panel="explore">
+              <div class="context">
+                <span class="title">Infinite Scale Documentation</span>
+                <span class="version">8.0</span>
+              </div>
+              <ul class="components">
+                <li class="component">
+                  <div class="title"><a href="../../../../desktop/next/index.html">Desktop App</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../../desktop/next/index.html">next</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../desktop/6.0/index.html">6.0</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../desktop/5.3/index.html">5.3</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component is-current">
+                  <div class="title"><a href="../../../next/index.html">Infinite Scale Documentation</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../next/index.html">next</a>
+                    </li>
+                    <li class="version is-current">
+                      <a href="../../index.html">8.0</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../7.3/index.html">7.3</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../android/next/index.html">Mobile App for Android</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../../android/next/index.html">next</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../android/4.7/index.html">4.7</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../android/4.6/index.html">4.6</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../ios-app/next/index.html">Mobile App for iOS</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../../ios-app/next/index.html">next</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../ios-app/12.6/index.html">12.6</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../ios-app/12.5/index.html">12.5</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../index.html">ownCloud Main Page</a></div>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../server/next/index.html">ownCloud Server</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../../server/next/index.html">next</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../server/10.16/index.html">10.16</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../server/10.15/index.html">10.15</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../webui/next/index.html">ownCloud Web User Interfaces</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../../webui/next/index.html">next</a>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <main class="article">
+        <div class="toolbar" role="navigation">
+          <button class="nav-toggle"></button>
+          <a href="../../../../index.html" class="home-link"></a>
+          <nav class="breadcrumbs" aria-label="breadcrumbs">
+            <ul>
+              <li><a href="../../index.html">Infinite Scale Documentation</a></li>
+              <li>Deployment Examples</li>
+              <li>Setup Federations</li>
+              <li><a href="sciencemesh.html">ScienceMesh Setup</a></li>
+            </ul>
+          </nav>
+      <div class="page-versions">
+        <button class="version-menu-toggle" title="Show other versions of page">8.0</button>
+        <div class="version-menu">
+          <a class="version" href="../../../next/depl-examples/federation/sciencemesh.html">next</a>
+          <a class="version is-current" href="sciencemesh.html">8.0</a>
+          <a class="version" href="../../../7.3/depl-examples/federation/sciencemesh.html">7.3</a>
+        </div>
+      </div>
+          <div class="edit-this-page"><a href="https://github.com/owncloud/docs-ocis/edit/8.0/modules/ROOT/pages/depl-examples/federation/sciencemesh.adoc">Edit this Page</a></div>
+        </div>
+        <div class="content">
+          <aside class="toc sidebar" data-title="Contents" data-levels="2">
+            <div class="toc-menu"></div>
+          </aside>
+          <article class="doc">
+            <h1 class="page">Setting Up Federations Using ScienceMesh</h1>
+
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><span class="image"><img src="../../_images/depl-examples/federation/science_mesh/sm_OpenCloudMesh_min.png" alt="Teaser Image" width="500"></span></p>
+</div>
+<div class="paragraph">
+<p><br></p>
+</div>
+<div id="toc" class="toc">
+<div id="toctitle" class="title">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#one-time-setup">One Time Setup</a>
+<ul class="sectlevel2">
+<li><a href="#setup-a-trust-relationship">Setup a Trust Relationship</a></li>
+<li><a href="#setup-a-federation-between-users">Setup a Federation Between Users</a></li>
+</ul>
+</li>
+<li><a href="#share-resources">Share Resources</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This document will guide you through setting up a federation between users of Infinite Scale instances using the ScienceMesh framework, which includes the Open Cloud Mesh (OCM) technology.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://sciencemesh.io" target="_blank" rel="noopener">ScienceMesh</a> <span class="image"><img src="../../_images/depl-examples/federation/science_mesh/sm_science_mesh_logo.svg" alt="ScienceMesh Logo" width="60"></span> is the Federated Science Cloud Mesh that connects existing and heterogeneous sites in a transparent way. It provides a managed white list of trusted federated sites.</p>
+</li>
+<li>
+<p>The <a href="https://github.com/cs3org/OCM-API" target="_blank" rel="noopener">Open Cloud Mesh Protocol</a> (OCM) provides the disovery and use of the RESTful API endpoints, request and response headers, possible response codes, request and response formats, hypermedia controls, error handling etc. Using this protocol, consumers do not need to accept a share, the shared resource will be available to them immediately.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Both API&#8217;s have their roots in CERN where providing resources to trusted partners in an easy way is a key for their daily scientific work.</p>
+</div>
+<div class="paragraph">
+<p>To setup a federation using ScienceMesh, only a view steps are necessary:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Setup a trust</strong> between instances involved.<br>
+This is only required one time between instances.</p>
+</li>
+<li>
+<p><strong>Setup the federation</strong> between users using generated tokens.<br>
+This is only required one time between users who want to federate.</p>
+</li>
+<li>
+<p><strong>Share resources</strong> between users of the federation.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="one-time-setup"><a class="anchor" href="#one-time-setup"></a>One Time Setup</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The following description only needs to be done once per instance involved to establish a trust relationship, and requires sysadmins with access to the Infinite Scale configuration files. If a trust relationship has not been established, you must ask your sysadmin to establish one.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+For security, privacy, and data protection reasons, federation invitations are restricted to trusted instances.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Once a trust relationship is established, the user can create a federation with another user from the trusted instance to share resources. Each federation only needs to be established once.</p>
+</div>
+<div class="sect2">
+<h3 id="setup-a-trust-relationship"><a class="anchor" href="#setup-a-trust-relationship"></a>Setup a Trust Relationship</h3>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+For security reasons, only the instance <strong>admins (sysadmins)</strong> can establish a trust relationship.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>In the example below, a trust relationship is established between the <code>ocis.owncloud.test</code> and <code>host.docker.internal</code> instances.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">The following requires sysadmin privileges on both parties sharing a trust</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>To prepare the Infinite Scale instances involved for federation, a trust relationship must be established. This is done by creating an <code>ocmproviders.json</code> file according to the description in <a href="../../deployment/services/s-list/ocm.html#trust-between-instances" class="xref page">Trust Between Instances</a>.</p>
+</div>
+<div class="paragraph">
+<p>Once the file is properly set up, <code>OpenCloudMesh</code> must be enabled via an environment variable. See <a href="../../deployment/services/s-list/ocm.html#enable-ocm" class="xref page">Enable OCM</a> for more details.</p>
+</div>
+<div class="paragraph">
+<p>Finally, depending on the deployment, either all trusted instances or each OCM service must be restarted for the changes to take effect.</p>
+</div>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="setup-a-federation-between-users"><a class="anchor" href="#setup-a-federation-between-users"></a>Setup a Federation Between Users</h3>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+After trust is established between instances, <strong>users</strong> can now establish a federation with users from another instance, the federation partner.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Before sharing resources, a sharer must first invite a partner to join a federation. This only needs to be done once per inviter/acceptor pair. This pair is now called a federation. After the federation is set up, resources can be shared with each other.</p>
+</div>
+<div class="paragraph">
+<p>The following can be done by any user of the trusted instances. If <a href="../../deployment/general/general-info.html#demo-users-and-groups" class="xref page">demo users</a> are set up that should not exist in production, one federation partner must be a manually created, non-demo user.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Generate an invite token for a user on another instance</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>In our example, user <code>vlad</code> from instance <code>ocis.owncloud.test</code> generates the invite token.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Select the <strong>ScienceMesh</strong> application, the app selector can be opened by clicking the square icon in the upper left corner:</p>
+<div class="paragraph">
+<p><span class="image"><img src="../../_images/depl-examples/federation/science_mesh/sm_select_app.png" alt="Select the ScienceMesh App" width="250"></span></p>
+</div>
+</li>
+<li>
+<p>The <strong>Invitations</strong> screen opens:</p>
+<div class="paragraph">
+<p><span class="image"><img src="../../_images/depl-examples/federation/science_mesh/sm_invitations.png" alt="Invitations Screen" width="250"></span></p>
+</div>
+</li>
+<li>
+<p>In <strong>Invite Users</strong> click <b class="button">Generate new invitation</b>, the following window will appear. Optionally, enter a description and an email address of the partner user for the federation you want to create and click <b class="button">Generate</b>. If an email address is entered, a preformed URL containing the token will be sent to the invited user for easy acceptance. Note that you cannot edit a generated token. You must either recreate it or send it manually.</p>
+<div class="paragraph">
+<p><span class="image"><img src="../../_images/depl-examples/federation/science_mesh/sm_user_generate_invite.png" alt="Generate new invitation" width="250"></span></p>
+</div>
+</li>
+<li>
+<p>Back in <strong>Invite users</strong>, the generated token is displayed. The remaining time to accept the invitation before it expires is also displayed.</p>
+<div class="paragraph">
+<p><span class="image"><img src="../../_images/depl-examples/federation/science_mesh/sm_user_token_generated.png" alt="Show Generated Token" width="250"></span></p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">Accept the invitation token from the federation partner</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>In our example, user <code>ludmilla</code> from the <code>host.docker.internal</code> instance is the federation partner and will accept the invite token.</p>
+</div>
+<div class="paragraph">
+<p>When the federation partner has received an email to accept the invitation, click on the <b class="button">link</b> provided in the email to open the <strong>Invitations</strong> screen with the pre-populated data in the <strong>Accept invitations</strong> window.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Select the <strong>ScienceMesh</strong> application, the selector can be opened by clicking the square icon in the upper left corner:</p>
+<div class="paragraph">
+<p><span class="image"><img src="../../_images/depl-examples/federation/science_mesh/sm_select_app.png" alt="Select the ScienceMesh App" width="250"></span></p>
+</div>
+</li>
+<li>
+<p>The <strong>Invitations</strong> screen opens:</p>
+<div class="paragraph">
+<p><span class="image"><img src="../../_images/depl-examples/federation/science_mesh/sm_invitations.png" alt="Invitations Screen" width="250"></span></p>
+</div>
+</li>
+<li>
+<p>In the <strong>Accept invitations</strong> field, if not pre-populated by the email link, enter the token and select the institution of the user who sent the invitation from the drop-down box. Token and institution must match to be accepted. When finished, click <b class="button">Accept invitation</b>:</p>
+<div class="paragraph">
+<p><span class="image"><img src="../../_images/depl-examples/federation/science_mesh/sm_user_accept_token.png" alt="Invitation Data" width="250"></span></p>
+</div>
+</li>
+<li>
+<p>In the <strong>Federated connections</strong> window, the established federation is now displayed and ready to share resources between the federation partners. This information is also displayed on the inviter side of the federation:</p>
+<div class="paragraph">
+<p><strong>Invitor:</strong></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="../../_images/depl-examples/federation/science_mesh/sm_federation_b_setup.png" alt="Federated Connections Sharer" width="250"></span></p>
+</div>
+<div class="paragraph">
+<p><strong>Acceptor:</strong></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="../../_images/depl-examples/federation/science_mesh/sm_federation_a_setup.png" alt="Federated Connections Sharee" width="250"></span></p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="share-resources"><a class="anchor" href="#share-resources"></a>Share Resources</h2>
+<div class="sectionbody">
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+An invited user must have accepted the invitation to be selected in the sharing dialog.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Once the federation is complete, federated users can share resources.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>In the <span class="menuseq"><b class="menu">Files App</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="submenu">Inside a Space / File or Folder</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="menuitem">Sharing Icon</b></span>, switch to <code>external</code> and start typing the user name. When found, select it:</p>
+<div class="paragraph">
+<p><span class="image"><img src="../../_images/depl-examples/federation/science_mesh/sm_user_share_resource_search.png" alt="Search Federation User" width="250"></span></p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>As rule of thumb:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>You <strong>cannot</strong> share your personal space.</p>
+</li>
+<li>
+<p>You <strong>cannot</strong> share a project space.</p>
+</li>
+<li>
+<p>You <strong>should not</strong> share files from your personal space for security reasons.</p>
+</li>
+<li>
+<p><strong>Only share</strong> files and folders inside project spaces.</p>
+</li>
+<li>
+<p>You <strong>can</strong> edit shared files with Web Office, but you <strong>can&#8217;t</strong> work on the same file at the same time (collaborative editing) because of locking.<br>
+Collaborative editing would work if both instances were using the same Web Office backend.</p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>If you have more federations, you can add more users. Use the three vertical dots to select additional options. When you are done, click <b class="button">Share</b>:</p>
+<div class="paragraph">
+<p><span class="image"><img src="../../_images/depl-examples/federation/science_mesh/sm_user_share_resource_selected.png" alt="Select More Users" width="250"></span></p>
+</div>
+</li>
+<li>
+<p>In <span class="menuseq"><b class="menu">Files App</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="menuitem">Shares</b></span>, you can see all the shares that are:<br>
+<code>Shared with me</code> or <code>Shared with others</code></p>
+<div class="paragraph">
+<p><span class="image"><img src="../../_images/depl-examples/federation/science_mesh/sm_user_resource_shared.png" alt="Sharing Overview" width="250"></span></p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+        <nav class="pagination">
+              <span class="prev"><a href="../ubuntu-compose/ubuntu-compose-hetzner.html">Deployment on Hetzner</a></span>
+              <span class="next"><a href="../../additional-information/knowledge-base.html">Knowledge Base</a></span>
+        </nav>
+          </article>
+        </div>
+      </main>
+    </div>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="row-full">
+          <div class="col-third">
+            <div class="footer-nav">
+              <h4>About ownCloud</h4>
+              <ul id="menu-about" class="menu">
+                <li class="menu-landing"><a href="https://owncloud.com/">The Secure Collaboration Platform</a></li>
+                <li class="menu-news"><a href="https://owncloud.com/news/">News</a></li>
+                <li class="menu-privacy"><a href="https://owncloud.com/privacy-statement/">Privacy statement</a></li>
+                <li class="menu-imprint"><a href="https://owncloud.com/imprint/">Imprint</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-third">
+            <div class="footer-nav">
+              <h4>Resources</h4>
+              <ul id="menu-support-and-documentation" class="menu">
+                <li class="menu-faq"><a href="https://owncloud.com/faq/">FAQ</a></li>
+                <li class="menu-help"><a href="https://owncloud.com/docs-guides/">Help</a></li>
+                <li class="menu-security"><a href="https://owncloud.com/security/">Security</a></li>
+                <li class="menu-changelog"><a href="https://owncloud.com/changelog/">Changelog</a></li>
+                <li class="menu-get-started"><a href="https://owncloud.com/get-started/">Get started</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-third">
+            <div class="footer-nav">
+              <h4>Interact</h4>
+              <ul id="menu-interact" class="menu">
+                <li class="menu-forum"><a href="https://central.owncloud.org" class="oc-footer-nav-link">Forum</a></li>
+                <li class="menu-contribute"><a href="https://owncloud.com/contribute" class="oc-footer-nav-link">Contribute</a></li>
+                <li class="menu-customer-support"><a href="https://owncloud.com/support" class="oc-footer-nav-link">Customer support</a></li>
+
+              </ul>
+            </div>
+          </div>
+        </div>
+        <p>&copy; Copyright 2011-2026, The ownCloud developers.</p>
+      </div>
+    </footer>
+
+    <script id="site-script" src="../../../../assets/js/site.js" data-ui-root-path="../../../../assets"></script>
+    <script async src="../../../../assets/js/vendor/highlight.js"></script>
+    <script async src="../../../../assets/js/vendor/medium-zoom.js"></script>
+    <script async src="../../../../assets/js/vendor/tabs-ui.js"></script>
+  </body>
+</html>

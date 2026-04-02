@@ -1,0 +1,2228 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>The HSM (Hardware Security Module) Daemon (hsmdaemon) :: Documentation for ownCloud (A Kiteworks Company)</title>
+
+    <link rel="canonical" href="https://doc.owncloud.com/server/next/admin_manual/configuration/server/security/hsmdaemon/index.html">
+    <link rel="prev" href="../../security_setup_warnings.html">
+    <link rel="next" href="../dependency_notes.html">
+    <meta name="description" content="Learn how to install ownCloud’s custom HSM (Hardware Security Module) and configure ownCloud to delegate encryption to it.">
+    <meta name="keywords" content="hsmdaemon, hardware security module, security, pkcs11, softhsm2">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../../../../../assets/css/site.css">
+
+    <meta property="og:locale" content="en_us" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="The HSM (Hardware Security Module) Daemon (hsmdaemon)" />
+    <meta property="og:description" content="The HSM (Hardware Security Module) Daemon (hsmdaemon)" />
+    <meta property="og:url" content="https://doc.owncloud.com/server/next/admin_manual/configuration/server/security/hsmdaemon/index.html" />
+    <meta property="og:site_name" content="Documentation for ownCloud (A Kiteworks Company)" />
+    <meta property="og:image" content="https://doc.owncloud.com/opengraph-server.png" />
+    <meta property="og:image:alt" content="The ownCloud Server documentation" />
+    <meta name="twitter:site" content="@owncloud" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="The HSM (Hardware Security Module) Daemon (hsmdaemon)" />
+    <meta name="twitter:description" content="Learn how to install ownCloud’s custom HSM (Hardware Security Module) and configure ownCloud to delegate encryption to it." />
+
+    <script>var uiRootPath = '../../../../../../../assets'</script>
+
+
+    <title>The HSM (Hardware Security Module) Daemon (hsmdaemon) :: Documentation for ownCloud (A Kiteworks Company)</title>
+    <link rel="canonical" href="https://doc.owncloud.com/server/next/admin_manual/configuration/server/security/hsmdaemon/index.html">
+    <meta name="description" content="Learn how to install ownCloud’s custom HSM (Hardware Security Module) and configure ownCloud to delegate encryption to it.">
+    <meta name="keywords" content="hsmdaemon, hardware security module, security, pkcs11, softhsm2">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" href="/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="black">
+    <meta name="msapplication-TileColor" content="#001840">
+    <meta name="theme-color" content="#ffffff">
+  </head>
+
+  <body class="article">
+    <header class="header" role="banner">
+      <nav class="navbar">
+        <div class="navbar-brand">
+          <a class="navbar-item" href="https://doc.owncloud.com">Documentation for ownCloud (A Kiteworks Company)</a>
+          <!-- we do not have any hamburger stuff to show like links to external sites
+           <button class="navbar-burger" aria-controls="topbar-nav" aria-expanded="false" aria-label="Toggle main menu">
+           <span></span>
+           <span></span>
+           <span></span>
+           </button>
+          -->
+        </div>
+        <div id="topbar-nav" class="navbar-menu">
+          <div class="navbar-end"> </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="body">
+      <div class="nav-container" data-component="server" data-version="next">
+        <aside class="nav">
+          <div class="panels">
+            <div class="nav-panel-menu is-active" data-panel="menu">
+              <nav class="nav-menu">
+                <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+                <h3 class="title"><a href="../../../../../index.html">ownCloud Server</a></h3>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="0">
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="1">
+                      <a class="nav-link" href="../../../../../index.html">Introduction</a>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Admin Manual</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../../index.html">Introduction</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../../useful_pages.html">Useful Pages</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../../faq/index.html">FAQ</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../../gdpr.html">GDPR</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Installation</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../installation/deployment_considerations.html">Deployment Considerations</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../../installation/deployment_recommendations.html">Deployment Recommendations</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../installation/deployment_recommendations/nfs.html">NFS</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../installation/system_requirements.html">System Requirements</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../installation/configuration_notes_and_tips.html">Configuration Notes and Tips</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../../installation/index.html">Installation Options</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../installation/docker/index.html">Installing With Docker</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Manual Installation on Linux</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="5">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Detailed Installation Guide</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="6">
+                      <a class="nav-link" href="../../../../installation/manual_installation/manual_installation.html">Detailed Installation on Ubuntu (various versions)</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Quick Installation Guide</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="6">
+                      <a class="nav-link" href="../../../../installation/quick_guides/ubuntu_20_04.html">On Ubuntu 20.04</a>
+                  </li>
+                    <li class="nav-item" data-depth="6">
+                      <a class="nav-link" href="../../../../installation/quick_guides/ubuntu_22_04.html">On Ubuntu 22.04</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <span class="nav-text">Linux Package Manager</span>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../installation/installation_wizard.html">The Installation Wizard</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../installation/troubleshooting.html">Troubleshooting</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../installation/changing_the_web_route.html">Changing Your ownCloud URL</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../installation/apps_management_installation.html">Installing and Managing Apps</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../../installation/apps_supported.html">Supported Apps</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../installation/apps/mediaviewer/index.html">Media Viewer</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../installation/selinux_configuration.html">SELinux Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../../installation/letsencrypt/index.html">Using Let&#8217;s Encrypt SSL Certificates</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../installation/letsencrypt/using_letsencrypt.html">Using Letsencrypt</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../installation/letsencrypt/apache.html">Apache</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Configuration</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../database/index.html">Database</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../database/db_conversion.html">Database Conversion</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../database/linux_database_configuration.html">Database Configuration</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../files/encryption/index.html">Encryption</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../files/encryption/encryption_configuration.html">Encryption Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../files/encryption/encryption_configuration_quick_guide.html">Encryption Configuration Quick Guide</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../files/external_storage/index.html">External Storage</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../files/external_storage/configuration.html">External Storage Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../files/external_storage/auth_mechanisms.html">External Storage Authentication Mechanisms</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../files/external_storage/amazons3.html">AmazonS3</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../files/external_storage/dropbox.html">Dropbox</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../files/external_storage/ftp.html">FTP</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../files/external_storage/google.html">Google</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../files/external_storage/local.html">Local</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../files/external_storage/owncloud.html">ownCloud</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../files/external_storage/s3_compatible_object_storage_as_primary.html">S3 as Primary</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../files/external_storage/sftp.html">SFTP</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../files/external_storage/smb.html">SMB</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../files/external_storage/webdav.html">WebDAV</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../files/index.html">Files and Sharing</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../files/big_file_upload_configuration.html">Big File Upload Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../files/manual_file_locking.html">Manual File Locking</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../files/default_files_configuration.html">Default Files Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../files/federated_cloud_sharing_configuration.html">Federated Cloud Sharing Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../files/file_sharing_configuration.html">File Sharing Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../files/file_versioning.html">File Versioning</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../files/files_locking_transactional.html">Transactional File Locking</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../files/previews_configuration.html">Preview Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../files/mimetypes.html">Mimetypes</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../files/trashbin_options.html">Managing the Trashbin</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../integration/index.html">Integration</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../integration/ms-teams.html">Microsoft Teams</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../integration/splunk.html">ownCloud App for Splunk</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../general_topics/index.html">General Topics</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../general_topics/code_signing.html">Code Signing</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../general_topics/impersonate_users.html">Impersonate Users</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../general_topics/search.html">Full Text Search</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../index.html">Server</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../activity_configuration.html">Activity Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../background_jobs_configuration.html">Background Jobs Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../caching_configuration.html">Caching Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../config_sample_php_parameters.html">Config Sample PHP Parameters</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../config_apps_sample_php_parameters.html">Config Apps Sample PHP Parameters</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../custom_client_repos.html">Custom Client Repos</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../email_configuration.html">Email Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../excluded_blacklisted_files.html">Excluded Blacklisted Files</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../external_sites.html">External Sites</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../harden_server.html">Harden Server</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../import_ssl_cert.html">Import SSL Cert</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../index_php_less_urls.html">Index PHP Less URLs</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../occ_command.html">OCC Command</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../language_configuration.html">Language Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../legal_settings_configuration.html">Legal Settings Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Logging</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../logging/logging_configuration.html">Logging Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../logging/request_tracing.html">Request Tracing</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../reverse_proxy_configuration.html">Reverse Proxy Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../index.html">Security</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../brute_force_protection.html">Brute-Force Protection</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../oauth2.html">OAuth2</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../password_policy.html">Password policy</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../security_setup_warnings.html">Security Setup Warnings</a>
+                  </li>
+                    <li class="nav-item is-current-page" data-depth="5">
+                      <a class="nav-link" href="index.html">The HSM (Hardware Security Module) Daemon</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../dependency_notes.html">Dependency Notes</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../oc_server_tuning.html">Server Tuning</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../thirdparty_php_configuration.html">Third Party PHP Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../virus-scanner-support.html">Virus Scanner Support</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../ui-configuration.html">UI Configuration</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">User</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../user/user_management.html">User Management</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../user/user_roles.html">User Roles</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../user/reset_admin_password.html">Reset Admin Password</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../user/reset_user_password.html">Reset User Password</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../user/user_auth_ftp_smb_imap.html">User Auth FTP SMB IMAP</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../user/user_auth_ldap.html">User Auth LDAP</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../user/user_auth_twofactor.html">User Auth Two-Factor</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../user/user_oauth2.html">User Auth OAuth2</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../user/user_provisioning_api.html">User Provisioning API</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../user/custom_groups_app.html">Custom Groups App</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../user/guests_app.html">Guests App</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../user/oidc/oidc.html">OpenID Connect (OIDC)</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../user/login_policies.html">Login Policies</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Maintenance</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../../maintenance/upgrading/upgrade.html">Upgrading</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../maintenance/upgrading/manual_upgrade.html">Manual Upgrade</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../maintenance/upgrading/database_upgrade.html">Database Upgrade</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../maintenance/upgrading/upgrade_php.html">Upgrading PHP</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../maintenance/upgrading/marketplace_apps.html">Marketplace Apps</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Backup and Restore</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../maintenance/backup_and_restore/backup.html">Backup</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../maintenance/backup_and_restore/restore.html">Restore</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../maintenance/enable_maintenance.html">Maintenance Mode</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../maintenance/export_import_instance_data.html">Export and Import Instance Data</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../maintenance/manually-moving-data-folders.html">Manually Moving Data Folders</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Encryption</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../maintenance/encryption/migrating-from-user-key-to-master-key.html">Migrating from User Key to Master Key Encryption</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../maintenance/migrating.html">Migrating to a Different Server</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../maintenance/migrating_to_kiteworks.html">Migrating to Kiteworks PDN</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Enterprise</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Authentication</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../enterprise/authentication/enterprise_only_auth.html">Enterprise Only Authentication</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../enterprise/authentication/kerberos.html">Kerberos Authentication</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Clients</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../enterprise/clients/custom_client_repos.html">Custom Client Repos</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Collaboration</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../enterprise/collaboration/collabora_secure_view.html">Collabora Online / Secure View</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../enterprise/collaboration/msoffice-wopi-integration.html">Microsoft Office Online / WOPI Integration</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Document Classification</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../enterprise/document_classification/classification_and_policy_enforcement.html">Classify Documents and Enforce Policies</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">External Storage</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../enterprise/external_storage/ldap_home_connector_configuration.html">LDAP Home Connector Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../enterprise/external_storage/sharepoint-integration_configuration.html">Sharepoint integration Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../enterprise/external_storage/windows-network-drive_configuration.html">Windows Network Drive Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../enterprise/external_storage/wnd_quick_guide.html">WND Configuration Quick Guide</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">File Management</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../enterprise/file_management/files_tagging.html">File Tagging</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../enterprise/file_management/files_lifecycle.html">File Lifecycle Management</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Firewall</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../enterprise/firewall/file_firewall.html">File Firewall</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Installation</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../enterprise/installation/install.html">Installing &amp; Upgrading ownCloud Enterprise Edition</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../enterprise/installation/oracle_db_configuration.html">Oracle DB Setup &amp; Configuration</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Logging</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../enterprise/logging/admin_audit.html">Auditing</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Reporting</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../enterprise/reporting/metrics.html">Metrics</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../enterprise/reporting/config_report.html">Generate a Config Report</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Security</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../enterprise/security/ransomware-protection.html">Ransomware Protection</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">User Management</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../enterprise/user_management/user_auth_shibboleth.html">Shibboleth Integration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../enterprise/user_management/saml_2.0_sso.html">SAML 2.0 Based SSO</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Troubleshooting</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../troubleshooting/general_troubleshooting.html">General Troubleshooting</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../troubleshooting/path_filename_length.html">Path and Filename Length Limitations</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../troubleshooting/providing_logs_and_config_files.html">Retrieve Log Files and Configuration Settings</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../troubleshooting/remove_non_existent_bg_jobs.html">Remove Non-Existent Background Jobs</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../../found_a_mistake.html">Found a Mistake?</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Developer Manual</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../../../developer_manual/index.html">Introduction</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../../../developer_manual/general/index.html">General Contributor Guidelines</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../../developer_manual/general/code-of-conduct.html">Community Code of Conduct</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../../developer_manual/general/codingguidelines.html">Coding Style &amp; General Guidelines</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../../developer_manual/general/debugging.html">Debugging</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../../developer_manual/general/performance.html">Performance Considerations</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../../developer_manual/general/security.html">Security Guidelines</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../../developer_manual/general/backporting.html">Backporting</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../../../developer_manual/commun/help_and_communication.html">Help and Communication</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../../../developer_manual/core/index.html">Developing ownCloud Core</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../../developer_manual/core/introduction.html">Introduction</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../../developer_manual/general/devenv.html">Setup Your Development Environment</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../../developer_manual/core/configfile.html">Application Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../../developer_manual/core/theming.html">Theming</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../../developer_manual/core/translation.html">Translation</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../../developer_manual/core/code-standard.html">Code Standards Compliance</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../../../developer_manual/testing/index.html">Testing</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/testing/test-pilots.html">ownCloud Test Pilots</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/testing/drone.html">Drone Testing</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/testing/unit-testing.html">Unit Testing</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/testing/acceptance-tests.html">Acceptance Tests</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/testing/ui-testing.html">User Interface Testing</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../../../developer_manual/core/apis/index.html">Available APIs</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/core/apis/externalapi.html">The External API</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/core/apis/provisioning-api.html">The Provisioning API</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">OCS</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../../../developer_manual/core/apis/ocs-notification-endpoint-v1.html">The OCS Notifications API (v1)</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../../../developer_manual/core/apis/ocs-capabilities.html">The OCS REST API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../../../developer_manual/core/apis/ocs-recipient-api.html">The OCS Recipient API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../../../developer_manual/core/apis/ocs-share-api.html">The OCS Share API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../../../developer_manual/core/apis/ocs-totp-validation-api.html">The OCS TOTP Validation API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../../../developer_manual/core/apis/ocs-user-sync-api.html">The OCS User Sync API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../../../developer_manual/core/apis/ocs-notify-public-link-by-email.html">Notify Public Link By Email</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../../../developer_manual/core/apis/roles-api.html">The Roles API</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../../../developer_manual/webdav_api/index.html">WebDAV APIs</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../../../developer_manual/webdav_api/comments.html">The Comments API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../../../developer_manual/webdav_api/groups.html">The Custom Groups Management API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../../../developer_manual/webdav_api/files_versions.html">The Files Versions API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../../../developer_manual/webdav_api/meta.html">The Meta API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../../../developer_manual/webdav_api/search.html">The Search API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../../../developer_manual/webdav_api/tags.html">The Tags API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../../../developer_manual/webdav_api/trashbin.html">The Trash Bin API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../../../developer_manual/webdav_api/public_files.html">The Public Files API</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../../../developer_manual/app/introduction.html">Application Development</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../../../developer_manual/app/fundamentals/index.html">Fundamental Concepts</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/app/fundamentals/info.html">Application Metadata</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/app/fundamentals/classloader.html">The Classloader</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/app/fundamentals/configuration.html">Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/app/fundamentals/routes.html">Routing</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/app/fundamentals/controllers.html">Controllers</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/app/fundamentals/templates.html">Templates</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/app/fundamentals/js.html">JavaScript</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/app/fundamentals/css.html">CSS</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/app/fundamentals/middleware.html">Middleware</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/app/fundamentals/database.html">Database Connectivity</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/app/fundamentals/backgroundjobs.html">Background Jobs</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/app/fundamentals/logging.html">Logging</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/app/fundamentals/testing.html">Testing</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/app/fundamentals/container.html">The DI Container</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/app/fundamentals/filesystem.html">Filesystem</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/app/fundamentals/api.html">RESTful API</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/app/fundamentals/hooks.html">Hooks</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/app/fundamentals/publishing.html">Publishing in the ownCloud Marketplace</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/app/fundamentals/changelog.html">Changelog</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/app/fundamentals/market_app.html">Market App</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../../../developer_manual/app/advanced/index.html">Advanced Concepts</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/app/advanced/custom-cache-backend.html">Custom Filesystem Caches</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/app/advanced/custom-storage-backend.html">Custom Storage Backends</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/app/advanced/notifications.html">Notifications</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/app/advanced/storage-backend.html">Storage Backends</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/app/advanced/extstorage.html">External Storage Backends</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/app/advanced/l10n.html">Translation</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/app/advanced/two-factor-provider.html">Two-Factor Providers</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/app/advanced/users.html">User Management</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/app/advanced/code_signing.html">Code Signing</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../../../developer_manual/app/tutorial/index.html">Tutorial</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/app/tutorial/requirements.html">Minimum Requirements</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/app/tutorial/request.html">The Request Life Cycle</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/app/tutorial/development_environment.html">The Core Application Files</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/app/tutorial/routes_and_controllers.html">Routes and Controllers</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/app/tutorial/database_connectivity.html">Database Connectivity</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/app/tutorial/template_content.html">Create Template Content</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/app/tutorial/navigation.html">Create a Navigation Menu</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/app/tutorial/javascript_and_css.html">Add JavaScript and CSS</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/app/tutorial/wiring_it_up.html">Wiring it Up</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/app/tutorial/finishing_touches.html">Apply the Finishing Touches</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/app/tutorial/restful_api.html">Add a RESTful API</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/app/tutorial/testing.html">Writing Tests</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../../../developer_manual/mobile_development/index.html">Mobile Development</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../../../developer_manual/mobile_development/android_library/index.html">Android</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/mobile_development/android_library/library_installation.html">Library Installation</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/mobile_development/android_library/examples.html">Examples</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../../../developer_manual/mobile_development/ios_library/index.html">iOS</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/mobile_development/ios_library/library_installation.html">Library Installation</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../developer_manual/mobile_development/ios_library/examples.html">Examples</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../../../developer_manual/bugtracker/index.html">Bugtracker</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../../developer_manual/bugtracker/codereviews.html">Code Reviews</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../../developer_manual/bugtracker/triaging.html">Bug Triaging</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../../../developer_manual/found_a_mistake.html">Found a Mistake?</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">ownCloud Server UI</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../../../classic_ui/index.html">Introduction</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../../../classic_ui/files/webgui/overview.html">The WebUI</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../../classic_ui/webinterface.html">Web Interface</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../../classic_ui/files/webgui/navigating.html">Navigating the WebUI</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../../../classic_ui/personal_settings/index.html">Personal Settings</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../classic_ui/personal_settings/general.html">General</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../classic_ui/personal_settings/storage.html">Storage</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../classic_ui/personal_settings/sharing.html">Sharing</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../classic_ui/personal_settings/security.html">Security</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../classic_ui/personal_settings/custom_groups.html">Custom Groups</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../../../classic_ui/files/index.html">Files</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../classic_ui/files/access_webdav.html">Access WebDAV</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../classic_ui/files/webgui/sharing.html">Sharing Files</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../classic_ui/files/webgui/search.html">Search &amp; Full Text Search</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../classic_ui/files/webgui/tagging.html">Tagging Files</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../classic_ui/files/webgui/comments.html">Comments</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../classic_ui/files/version_control.html">Version Control</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../classic_ui/files/encrypting_files.html">Encrypting Files</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../classic_ui/files/deleted_file_management.html">Managing Deleted Files</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../classic_ui/files/large_file_upload.html">Large File Uploads</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../classic_ui/files/manual_file_locking.html">Manual File Locking</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../../../classic_ui/files/files_lifecycle.html">File Lifecycle Management</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../../classic_ui/files/public_link_shares.html">Public Link Shares</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../../classic_ui/files/federated_cloud_sharing.html">Federated Cloud Sharing</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../../classic_ui/session_management.html">Managing Connected Browsers and Devices</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../../classic_ui/online_collaboration.html">Online Collaboration</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../../classic_ui/files/webgui/quota.html">Storage Quotas</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../../classic_ui/external_storage/external_storage.html">External Storage</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../../classic_ui/external_storage/sharepoint_connecting.html">Connecting to SharePoint</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../../classic_ui/files/desktop_mobile_sync.html">Desktop Mobile Sync</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../../../classic_ui/apps/index.html">Apps</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../../classic_ui/apps/activity.html">Activity</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../../classic_ui/apps/calendar.html">Calendar</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../../classic_ui/apps/contacts.html">Contacts</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../../classic_ui/apps/market.html">Market</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../../classic_ui/apps/media_viewer_app.html">Media Viewer App</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../../../classic_ui/integration/index.html">Integration</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../../classic_ui/integration/ms-teams.html">Microsoft Teams</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../../../classic_ui/pim/index.html">Synchronization Clients</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../../classic_ui/pim/sync_ios.html">Sync iOS</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../../classic_ui/pim/sync_kde.html">Sync KDE</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../../classic_ui/pim/sync_osx.html">Sync OSX</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../../../classic_ui/pim/sync_thunderbird.html">Sync Thunderbird</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../../../classic_ui/troubleshooting.html">Troubleshooting</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../../../classic_ui/found_a_mistake.html">Found a Mistake?</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+            <div class="nav-panel-explore" data-panel="explore">
+              <div class="context">
+                <span class="title">ownCloud Server</span>
+                <span class="version">next</span>
+              </div>
+              <ul class="components">
+                <li class="component">
+                  <div class="title"><a href="../../../../../../../desktop/next/index.html">Desktop App</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../../../../../desktop/next/index.html">next</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../../../desktop/6.0/index.html">6.0</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../../../desktop/5.3/index.html">5.3</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../../../../ocis/next/index.html">Infinite Scale Documentation</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../../../../../ocis/next/index.html">next</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../../../ocis/8.0/index.html">8.0</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../../../ocis/7.3/index.html">7.3</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../../../../android/next/index.html">Mobile App for Android</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../../../../../android/next/index.html">next</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../../../android/4.7/index.html">4.7</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../../../android/4.6/index.html">4.6</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../../../../ios-app/next/index.html">Mobile App for iOS</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../../../../../ios-app/next/index.html">next</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../../../ios-app/12.6/index.html">12.6</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../../../ios-app/12.5/index.html">12.5</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../../../../index.html">ownCloud Main Page</a></div>
+                </li>
+                <li class="component is-current">
+                  <div class="title"><a href="../../../../../index.html">ownCloud Server</a></div>
+                  <ul class="versions">
+                    <li class="version is-current is-latest">
+                      <a href="../../../../../index.html">next</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../../10.16/index.html">10.16</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../../10.15/index.html">10.15</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../../../../webui/next/index.html">ownCloud Web User Interfaces</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../../../../../webui/next/index.html">next</a>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <main class="article">
+        <div class="toolbar" role="navigation">
+          <button class="nav-toggle"></button>
+          <a href="../../../../../../../index.html" class="home-link"></a>
+          <nav class="breadcrumbs" aria-label="breadcrumbs">
+            <ul>
+              <li><a href="../../../../../index.html">ownCloud Server</a></li>
+              <li>Admin Manual</li>
+              <li>Configuration</li>
+              <li><a href="../../index.html">Server</a></li>
+              <li><a href="../index.html">Security</a></li>
+              <li><a href="index.html">The HSM (Hardware Security Module) Daemon</a></li>
+            </ul>
+          </nav>
+      <div class="page-versions">
+        <button class="version-menu-toggle" title="Show other versions of page">next</button>
+        <div class="version-menu">
+          <a class="version is-current" href="index.html">next</a>
+          <a class="version" href="../../../../../../10.16/admin_manual/configuration/server/security/hsmdaemon/index.html">10.16</a>
+          <a class="version" href="../../../../../../10.15/admin_manual/configuration/server/security/hsmdaemon/index.html">10.15</a>
+        </div>
+      </div>
+          <div class="edit-this-page"><a href="https://github.com/owncloud/docs-server/edit/master/modules/admin_manual/pages/configuration/server/security/hsmdaemon/index.adoc">Edit this Page</a></div>
+        </div>
+        <div class="content">
+          <aside class="toc sidebar" data-title="Contents" data-levels="2">
+            <div class="toc-menu"></div>
+          </aside>
+          <article class="doc">
+            <h1 class="page">The HSM (Hardware Security Module) Daemon (hsmdaemon)</h1>
+
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#how-the-hsm-daemon-interacts-with-owncloud">How The HSM Daemon Interacts with ownCloud</a></li>
+<li><a href="#quick-overview">Quick Overview</a></li>
+<li><a href="#deployment-recommendation">Deployment Recommendation</a></li>
+<li><a href="#installation">Installation</a>
+<ul class="sectlevel2">
+<li><a href="#install-a-pkcs11-module">Install a PKCS11 Module</a></li>
+<li><a href="#install-and-configure-the-hsmdaemon">Install and Configure the hsmdaemon</a></li>
+</ul>
+</li>
+<li><a href="#test-the-hsmdaemon">Test the hsmdaemon</a>
+<ul class="sectlevel2">
+<li><a href="#test-key-generation">Test Key Generation</a></li>
+<li><a href="#test-showing-keys">Test Showing Keys</a></li>
+<li><a href="#test-data-encryption">Test Data Encryption</a></li>
+<li><a href="#test-data-decryption">Test Data Decryption</a></li>
+</ul>
+</li>
+<li><a href="#configure-other-options-optional">Configure Other Options (optional)</a></li>
+<li><a href="#configure-owncloud">Configure ownCloud</a>
+<ul class="sectlevel2">
+<li><a href="#generate-a-secret-for-the-hsmdaemon-rest-api">Generate a Secret for the hsmdaemon REST API</a></li>
+<li><a href="#configure-hsm-based-encryption">Configure HSM-based Encryption</a></li>
+<li><a href="#initialize-and-check-generated-keys">Initialize and Check Generated Keys</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="sect1">
+<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>hsmdaemon</code> is a daemon provided by ownCloud to delegate encryption to an <a href="https://en.wikipedia.org/wiki/Hardware_security_module">HSM (Hardware Security Module)</a>. This can be necessary as PHP cannot directly interface with <a href="https://en.wikipedia.org/wiki/PKCS_11">a PKCS11 stack</a>, neither with an API wrapper because none exists, nor via the OpenSSL bindings. Therefore a separate process is needed to decrypt anything with the private key stored in an HSM.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+When using <code>hsmdaemon</code> with an HSM, the keys <em>may</em> still be stored on the same physical machine as ownCloud.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+For <code>hsmdaemon</code> support, you need ownCloud Enterprise Edition &gt;= 10.2. We recommend consulting with us when deploying storage encryption with an HSM.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Starting with the Encryption App version 1.5.1, HSM can now work with both <code>binary</code> and <code>base64</code> encoding/decoding. If not otherwise configured, <code>binary</code> is the default.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Running <a href="https://www.php.net/manual/en/function.exec.php">exec()</a> to decrypt the key with a command line command to do the encryption might leak the HSM credentials if the admin lists the currently running processes. To prevent that, an HSM daemon will be used that can open a session to the HSM upon startup.</p>
+</div>
+<div class="paragraph">
+<p>This daemon will be used by ownCloud to decrypt the current master key upon request. The communication happens via <a href="http://beej.us/guide/bgipc/html/multi/unixsock.html">UNIX sockets</a> or <a href="https://en.wikipedia.org/wiki/Network_socket">TCP sockets</a> and is authorized by a shared token that the daemon stores in the ownCloud database via a REST/JSON route.</p>
+</div>
+<div class="paragraph">
+<p>ownCloud internally uses OpenSSL to encrypt and decrypt keys and that is extended to support en-/decrypt operations via the new daemon. The current solution encrypts the ownCloud master key with a key from the HSM.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+From the technical point of view the <code>Crypt</code> class is extended to handle the key generation in the HSM device and also to get the key from HSM. For the read/write operation on a file, the request goes to the HSM and then, based on the keys fetched from HSM, the files are encrypted or decrypted. The keys are not replaced.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="how-the-hsm-daemon-interacts-with-owncloud"><a class="anchor" href="#how-the-hsm-daemon-interacts-with-owncloud"></a>How The HSM Daemon Interacts with ownCloud</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Upon startup, the daemon will generate a token and send it to ownCloud via a new REST/JSON route. After connecting with the HSM daemon, an unsophisticated, line-based, protocol is used (every line ends with CRLF):</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>ownCloud sends the token read from database.</p>
+</li>
+<li>
+<p>The daemon compares the received token with its token and returns an <code>OK</code> line.</p>
+</li>
+<li>
+<p>ownCloud then sends the data it wants to decrypt as a <a href="https://en.wikipedia.org/wiki/Base64">Base64-encoded</a>, one-line string.</p>
+</li>
+<li>
+<p>The daemon returns the decrypted data as a Base64-encoded one-line string.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Doing so ensures that an evil admin will need to wiretap the communication between either the database or the HSM daemon and ownCloud.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="quick-overview"><a class="anchor" href="#quick-overview"></a>Quick Overview</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>HSM support consists of two core parts:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>An actual HSM PKCS11 module.</p>
+</li>
+<li>
+<p>A <code>hsmdaemon</code> that provides a <a href="https://jwt.io/">JWT</a> - protected web API for the PKCS11 stack to generate key pairs and decrypt data.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="deployment-recommendation"><a class="anchor" href="#deployment-recommendation"></a>Deployment Recommendation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>We recommend running <code>hsmdaemon</code> on every web server to reduce latency.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="installation"><a class="anchor" href="#installation"></a>Installation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Integrating the <code>hsmdaemon</code> with ownCloud requires 3 steps; these are:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><a href="#install-a-pkcs11-module">Install a PKCS11 Module</a></p>
+</li>
+<li>
+<p><a href="#install-and-configure-the-hsmdaemon">Install and Configure the hsmdaemon</a></p>
+</li>
+<li>
+<p><a href="#configure-owncloud">Configure ownCloud</a></p>
+</li>
+</ol>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The installation instructions in this guide have been designed to work with <a href="../../../../installation/system_requirements.html#server" class="xref page">ownCloud&#8217;s supported operating systems</a>.
+If you are using a different operating system or distribution, please adjust the instructions to suit your environment.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="install-a-pkcs11-module"><a class="anchor" href="#install-a-pkcs11-module"></a>Install a PKCS11 Module</h3>
+<div class="sect3">
+<h4 id="install-using-a-preconfigured-pkcs11-module"><a class="anchor" href="#install-using-a-preconfigured-pkcs11-module"></a>Install Using a Preconfigured PKCS11 Module</h4>
+<div class="paragraph">
+<p>At least one PKCS11 library is necessary. This is typically provided by an HSM vendor. If a PKCS11 library is not available, you can <a href="softhsm2.html" class="xref page">use the software HSM - <em>SoftHSM2</em></a>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="initialise-the-token"><a class="anchor" href="#initialise-the-token"></a>Initialise the Token</h4>
+<div class="paragraph">
+<p>Now we can initialize the token:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo softhsm2-util --init-token --slot 0 --label "My token 1"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>It will ask for two PINs, an SO and a User pin. See <a href="https://www.opendnssec.org/softhsm/">opendnssec</a> for more information. The SO PIN can e.g. be used to re-initialize the token and the user PIN is handed out to the application so it can interact with the token.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="install-pkcs11-cli-tools-optional"><a class="anchor" href="#install-pkcs11-cli-tools-optional"></a>Install PKCS11 CLI tools (optional)</h4>
+<div class="paragraph">
+<p>To use the PKCS11 API on the CLI, we need to install <a href="https://github.com/OpenSC/OpenSC/wiki">OpenSC</a>.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#initialise-on-debian-and-ubuntu">Debian and Ubuntu</a></p>
+</li>
+<li>
+<p><a href="#initialise-on-opensuse-and-suse-linux-enterprise-server">openSUSE and SUSE Linux Enterprise Server</a></p>
+</li>
+<li>
+<p><a href="#initialise-on-fedora-and-red-hat-enterprise-linux-and-centos">Fedora and Red Hat Enterprise Linux and Centos</a></p>
+</li>
+</ul>
+</div>
+<div class="sect4">
+<h5 id="initialise-on-debian-and-ubuntu"><a class="anchor" href="#initialise-on-debian-and-ubuntu"></a>Initialise on Debian and Ubuntu</h5>
+<div class="paragraph">
+<p>To install OpenSC on Debian and Ubuntu, run the following command:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo apt install -y opensc</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="initialise-on-opensuse-and-suse-linux-enterprise-server"><a class="anchor" href="#initialise-on-opensuse-and-suse-linux-enterprise-server"></a>Initialise on openSUSE and SUSE Linux Enterprise Server</h5>
+<div class="paragraph">
+<p>To install OpenSC on openSUSE and SUSE Linux Enterprise Server, run the following command:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo zypper install -y --auto-agree-with-licenses opensc</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="initialise-on-fedora-and-red-hat-enterprise-linux-and-centos"><a class="anchor" href="#initialise-on-fedora-and-red-hat-enterprise-linux-and-centos"></a>Initialise on Fedora and Red Hat Enterprise Linux and Centos</h5>
+<div class="paragraph">
+<p>To install OpenSC on Fedora and Red Hat Enterprise Linux and Centos, run the following command:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo yum install --assumeyes opensc</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="list-tokens"><a class="anchor" href="#list-tokens"></a>List Tokens</h4>
+<div class="paragraph">
+<p>You can list available tokens using the <a href="https://linux.die.net/man/1/pkcs11-tool">pkcs11-tool</a> by running the following command:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo pkcs11-tool --module &lt;/path/to/libsofthsm2.so&gt; -l --pin &lt;user-pin&gt; -O</code></pre>
+</div>
+</div>
+<div class="sect4">
+<h5 id="the-module-parameter"><a class="anchor" href="#the-module-parameter"></a>The Module Parameter</h5>
+<div class="paragraph">
+<p>The module parameter is either the library provided by the HSM vendor or <code>libsofthsm2</code> which was installed with SoftHSM 2. If you are using <code>libsofthsm2</code>, the path to <code>libsofthsm2.so</code> for each of the supported distributions is available below.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Distribution</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Path</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Debian and Ubuntu</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/usr/lib/softhsm/libsofthsm2.so</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">openSUSE and SUSE Linux Enterprise Server</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/usr/lib64/pkcs11/libsofthsm2.so</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Fedora and Red Hat Enterprise Linux and Centos</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/usr/lib64/pkcs11/libsofthsm2.so</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+See the <a href="https://github.com/OpenSC/OpenSC/wiki">OpenSC Wiki</a> for more information.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="install-and-configure-the-hsmdaemon"><a class="anchor" href="#install-and-configure-the-hsmdaemon"></a>Install and Configure the hsmdaemon</h3>
+<div class="paragraph">
+<p>Installing hsmdaemon requires several steps. These are:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><a href="#install-the-hsmdaemon-binary">Install the hsmdaemon Binary</a></p>
+</li>
+<li>
+<p><a href="#copy-the-config-file">Copy the Config File</a></p>
+</li>
+<li>
+<p><a href="#install-the-system-service">Install the System Service</a></p>
+</li>
+<li>
+<p><a href="#configure-the-pkcs11-module-path">Configure the PKCS 11 Module Path</a></p>
+</li>
+<li>
+<p><a href="#configure-the-slot-and-pin">Configure Slot and Pin</a></p>
+</li>
+<li>
+<p><a href="#test-the-hsmdaemon">Test the hsmdaemon</a></p>
+</li>
+<li>
+<p><a href="#configure-other-options-optional">Configure Other Options</a></p>
+</li>
+</ol>
+</div>
+<div class="sect3">
+<h4 id="install-the-hsmdaemon-binary"><a class="anchor" href="#install-the-hsmdaemon-binary"></a>Install the hsmdaemon Binary</h4>
+<div class="paragraph">
+<p>After you have obtained the <code>hsmdaemon</code> from ownCloud, you need to move the <code>hsmdaemon</code> binary to a directory located in your system path and make the binary executable:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo install -m 755 ./hsmdaemon /usr/local/bin/hsmdaemon</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="copy-the-config-file"><a class="anchor" href="#copy-the-config-file"></a>Copy the Config File</h4>
+<div class="paragraph">
+<p>The default location where <code>hsmdaemon</code> looks for its config file is <code>/etc/hsmdaemon/hsmdaemon.toml</code>. To create it from the example config file available in the provided package, run the following commands:</p>
+</div>
+<div class="paragraph">
+<p>Create the hsmdaemon configuration directory:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo mkdir /etc/hsmdaemon</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Copy the example config file, allow only root and users in the root group to read &amp; write the configuration file:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo install -m 640 ./hsmdaemon.toml /etc/hsmdaemon/hsmdaemon.toml</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="install-the-system-service"><a class="anchor" href="#install-the-system-service"></a>Install the System Service</h4>
+<div class="paragraph">
+<p>Now that the binary is available and the configuration file is in place, <code>hsmdaemon</code> must be installed as a system service. To do so, run it with the <code>install</code> option as in the example below.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo /usr/local/bin/hsmdaemon install
+sudo service hsmdaemon start</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If it installs successfully, you should see the following console output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-plaintext hljs" data-lang="plaintext">Install HSM Daemon:           [  OK  ]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>It should now be running and set to start automatically at boot time.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The daemon is managed using the following three commands:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>sudo service hsmdaemon start</code></p>
+</li>
+<li>
+<p><code>sudo service hsmdaemon stop</code> and</p>
+</li>
+<li>
+<p><code>sudo service hsmdaemon status</code></p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="configure-the-pkcs11-module-path"><a class="anchor" href="#configure-the-pkcs11-module-path"></a>Configure the PKCS11 Module Path</h4>
+<div class="paragraph">
+<p>To set the path to the PKCS11 module, update the line below in <code>/etc/hsmdaemon/hsmdaemon.toml</code>, with the appropriate path on your system.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[pkcs11]
+# softhsm v2
+module = "/usr/lib/x86_64-linux-gnu/softhsm/libsofthsm2.so"</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="list-available-slots"><a class="anchor" href="#list-available-slots"></a>List Available Slots</h4>
+<div class="paragraph">
+<p>This command lists the available slots.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo hsmdaemon listslots</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-plaintext hljs" data-lang="plaintext">{"level":"debug","ts":"2019-02-14T09:27:02.068+0100","caller":"hsmdaemon/keymanager.go:27","msg":"initialize pkcs11 module","module":"/usr/lib/softhsm/libsofthsm2.so"}
+{"level":"info","ts":"2019-02-14T09:27:02.087+0100","caller":"hsmdaemon/keymanager.go:65","msg":"Slots found","slotIds":[550099622,1989683358,2]}
+Available slots:
+Slot: 550099622,
+    Slot info:
+        Description:      SoftHSM slot ID 0x20c9daa6
+        Manufacturer ID:  SoftHSM project
+        Hardware version: 2.2
+        Firmware version: 2.2
+        Token present:    yes
+        Flags:
+    Token info:
+        Manufacturer ID:    SoftHSM project
+        Model:              SoftHSM v2
+        Hardware version:   2.2
+        Firmware version:   2.2
+        Serial number:      e8ba06bca0c9daa6
+        Initialized:        yes
+        User PIN init.:     yes
+        Label:              oc token without pin
+        MaxSessionCount:    0
+        SessionCount:       18446744073709551615
+        MaxRwSessionCount:  0
+        RwSessionCount:     18446744073709551615
+        MaxPinLen:          255
+        MinPinLen:          4
+        TotalPublicMemory:  18446744073709551615
+        FreePublicMemory:   18446744073709551615
+        TotalPrivateMemory: 18446744073709551615
+        FreePrivateMemory:  18446744073709551615
+        UTCTime:            2019021408270200
+        Flags: CKF_RNG CKF_LOGIN_REQUIRED CKF_RESTORE_KEY_NOT_NEEDED CKF_USER_PIN_COUNT_LOW
+Slot: 1989683358,
+    Slot info:
+        Description:      SoftHSM slot ID 0x7698289e
+        Manufacturer ID:  SoftHSM project
+        Hardware version: 2.2
+        Firmware version: 2.2</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+See the <a href="https://github.com/OpenSC/OpenSC/wiki">OpenSC Wiki</a> for more information.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="configure-the-slot-and-pin"><a class="anchor" href="#configure-the-slot-and-pin"></a>Configure the Slot and Pin</h4>
+<div class="paragraph">
+<p>Define which slot to use and if a PIN is needed. Update <code>/etc/hsmdaemon/hsmdaemon.toml</code> with the information gathered in the <code>pkcs11</code> section as in the example below.</p>
+</div>
+<div class="listingblock toml">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">[pkcs11]
+# softhsm v2
+module = "/usr/lib/x86_64-linux-gnu/softhsm/libsofthsm2.so"
+# The user pin supplied when running softhsm2-util --init-token, comment it out
+# or leave empty if no pin is necessary
+pin = "1234"
+# Find your slot id with `sudo hsmdaemon listslots`
+slot = 550099622</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="test-the-hsmdaemon"><a class="anchor" href="#test-the-hsmdaemon"></a>Test the hsmdaemon</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="test-key-generation"><a class="anchor" href="#test-key-generation"></a>Test Key Generation</h3>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If no PIN is supplied, generating a new key might be protected by an operator card that has to be inserted in the HSM. In this case, coordinate testing and final master key generation with your HSM team.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>For testing the key generation, run the following example command:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo hsmdaemon genkey test
+
+Id: 9bac3719-2b8d-11e9-aeab-0242b5ece4c3, label: test
+
+-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAl1BO4vsI+xDk+x0nccl7
+HQhMR/hwfa0+N8fyYNI8yzTTmYDqz9aaF20qG48+mjC0AUEt2kfKo94xM3UeEw4c
+st4j1dpRJtmAJThcuN8OH3sa+3MeXWgGuWxjB1lxEEOqax2A6XzllDlbDsogwkOL
+hSkUU9AaMRBtF8fASJGtJDP+iXwdb7OsFg78PS1wBAISYSUwk06xY7LwWIxge+hY
+4oU+5x4itusdO6rz6kbcJtmUyDUb8DhKnN6OdkhnifUZLBG9HQyTa5OM+BAabbFZ
+mTM2gZlUnGKXN7c4kaBPFt1IfjjVYu7pvj3B2uxUf4GywuSuWGWnAy89FqeXteRV
+jwIDAQAB
+-----END PUBLIC KEY-----</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="test-showing-keys"><a class="anchor" href="#test-showing-keys"></a>Test Showing Keys</h3>
+<div class="paragraph">
+<p>To show an existing key, use the <code>hsmdaemon showkey</code> command with the key&#8217;s id as in the following example.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo hsmdaemon showkey 9bac3719-2b8d-11e9-aeab-0242b5ece4c3</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="test-data-encryption"><a class="anchor" href="#test-data-encryption"></a>Test Data Encryption</h3>
+<div class="paragraph">
+<p>For testing data encryption, run the following example commands:</p>
+</div>
+<div class="paragraph">
+<p>The first argument is the <code>Id:</code> value from running the genkey command above. The second is the <code>base64-encoded data</code> to be encrypted.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo hsmdaemon encrypt 9bac3719-2b8d-11e9-aeab-0242b5ece4c3 Zm9vYmFy</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If successful, you should see output similar to the example below:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-plaintext hljs" data-lang="plaintext">{"level":"debug","ts":"2019-03-20T12:43:40.540+0100","caller":"hsmdaemon/keymanager.go:27","msg":"initialize pkcs11 module","module":"/usr/lib/softhsm/libsofthsm2.so"}
+{"level":"debug","ts":"2019-03-20T12:43:40.545+0100","caller":"hsmdaemon/keymanager.go:205","msg":"openHSMSession","slotID":858597139}
+{"level":"info","ts":"2019-03-20T12:43:40.549+0100","caller":"hsmdaemon/keymanager.go:621","msg":"Fetching private key","keyID":"9bac3719-2b8d-11e9-aeab-0242b5ece4c3"}
+{"level":"debug","ts":"2019-03-20T12:43:40.549+0100","caller":"hsmdaemon/keymanager.go:641","msg":"Got uuid","string":"13d34146-4b02-11e9-adbd-0023ae27c404"}
+WcezVb2N6bF8wlDooKZcmFn3tZgoIpoFGx6wQetx9sp1nK7JW2Y4OKt7P+0VKKlFO7yXaffVDD2Q6jZZCQukQVRV1zJrwbI9xU3YlOAwJFPP+WM/dZ1vdUwi7L05wq8UpL13LJWlMkvd1eIqKJS7apMnFk2hbnxXP6UKZmI++1tXvqbAc6fwhcB5J+JG6lmS4RwnD+eJC3dq5t00zzdI6vuIM/y3UT7ESklmHl5bKl+N+d6yk6qLxnFnIJweL+M3Tf13+XPNAh5JxZpheJPvN3oL28uX76aizy4BCLnRgQ/ryUQeDF+a4zNF22sMwBh4Pt46KrYGNDZAnQpVzmkrZQ==</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="test-data-decryption"><a class="anchor" href="#test-data-decryption"></a>Test Data Decryption</h3>
+<div class="paragraph">
+<p>For testing data decryption, run the following example commands:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo grep "generated keypair" /var/log/hsm.log</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You should see output similar to the example below:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-plaintext hljs" data-lang="plaintext">{"level":"debug","ts":"2021-06-19T03:10:01.562+0200","msg":"generated keypair","tokenID":"1262668f-d09b-11eb-b283-960000c05f34"}
+{"level":"debug","ts":"2021-06-19T03:10:03.043+0200","msg":"generated keypair","tokenID":"1374447f-d09b-11eb-83c8-960000c05f34"}
+{"level":"debug","ts":"2021-06-19T03:10:03.710+0200","msg":"generated keypair","tokenID":"13cd3f95-d09b-11eb-83c8-960000c05f34"}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">key_id=$(sudo grep "generated keypair" /var/log/hsm.log | head -1 | jq .tokenID -r)</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-plaintext hljs" data-lang="plaintext">hello="Hello, world!"</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">echo "$hello" | base64
+
+SGVsbG8sIHdvcmxkIQo=</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">test_enc=$(sudo ./hsmdaemon encrypt $key_id $(echo "$hello" | base64) | tee /dev/stderr)</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-plaintext hljs" data-lang="plaintext">ep6Y1aAVAYpAesZ1+sQzzUepjO82o34kjmm63Drmz+6KED4oIBARQkXeW/OoxgUg6kQhQK1thA/3Ww33aaRxIESzVQF598qjXhhEXQ/OGL6BC+3tPclC7ujUZaA7CG1NDkMneLFDd2+Tbax4OM+/w0zhfTMPgT0I1NrH/03owVglbWHjgLZmN/vxpPZKm/lyAV9tI2HW36UjVLEMD2qtPFXqjLU4YjZOVnMdETxQNSCWIVauFw0+VQQ/RiAqiXzRXEgO6YKxOBk0n9IMT6XEH4MkMQTgb9pB12jrNSa9aMHbCvCneEmhd0CHBxPX499EkxxwtoEnXe6PATXsOg3VRA==</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo -u www-data ./occ  encryption:hsmdaemon:decrypt --keyId $key_id "$test_enc"
+
+decrypted string (base64 encoded): 'SGVsbG8sIHdvcmxkIQo='</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo tail -5 /var/log/hsm.log</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-plaintext hljs" data-lang="plaintext">{"level":"debug","ts":"2021-06-20T23:46:11.958+0200","msg":"openHSMSession","slotID":757826573}
+{"level":"debug","ts":"2021-06-20T23:46:11.960+0200","msg":"created new session"}
+{"level":"debug","ts":"2021-06-20T23:46:11.960+0200","msg":"Got uuid","string":"1262668f-d09b-11eb-b283-960000c05f34"}
+{"level":"debug","ts":"2021-06-20T23:46:11.962+0200","msg":"found object","id":"\u0012bf\ufffdЛ\u0011벃\ufffd\u0000\u0000\ufffd_4"}
+{"level":"debug","ts":"2021-06-20T23:46:11.963+0200","msg":"Decrypted"}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Results</strong></p>
+</div>
+<div class="ulist checklist">
+<ul class="checklist">
+<li>
+<p><i class="fa fa-check-square-o"></i> The base64 encoded string matches before encryption and after decryption.</p>
+</li>
+<li>
+<p><i class="fa fa-check-square-o"></i> The key-id seen in the log with "generated keypair" causes no errors during encryption.</p>
+</li>
+<li>
+<p><i class="fa fa-check-square-o"></i> The key-id re-appears in the log during decryption ("Got uuid")</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="configure-other-options-optional"><a class="anchor" href="#configure-other-options-optional"></a>Configure Other Options (optional)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For more options see the self-documented default config file <code>hsmdaemon.toml</code>.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>During ownCloud config, you might want to run the hsmdaemon service in the foreground to see what is going on. You can do so using the following command (which also shows example console output, formatted for readability):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo hsmdaemon</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-plaintext hljs" data-lang="plaintext">{
+    "level": "info",
+    "ts": "2019-02-14T09:32:59.081+0100",
+    "caller": "hsmdaemon/hsmdaemon.go:146",
+    "msg": "Server listening",
+    "host": "localhost",
+    "port": 8513,
+    "version": "0.0.7",
+    "build": "2019-02-08T10:47:55+00:00"
+}</code></pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="configure-owncloud"><a class="anchor" href="#configure-owncloud"></a>Configure ownCloud</h2>
+<div class="sectionbody">
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If anyone accesses ownCloud while encryption is enabled, it will automatically generate the keys. To prevent this shut down the web server until encryption is appropriately configured.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Configuring ownCloud to work with the <code>hsmdaemon</code> requires the following steps:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#generate-a-secret-for-the-hsmdaemon-rest-api">Generate a Secret for the hsmdaemon REST API</a></p>
+</li>
+<li>
+<p><a href="#configure-hsm-based-encryption">Configure HSM-based Encryption</a></p>
+</li>
+<li>
+<p><a href="#initialize-and-check-generated-keys">Initialize and Check Generated Keys</a></p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="generate-a-secret-for-the-hsmdaemon-rest-api"><a class="anchor" href="#generate-a-secret-for-the-hsmdaemon-rest-api"></a>Generate a Secret for the hsmdaemon REST API</h3>
+<div class="paragraph">
+<p>Generate a shared secret to use for the <code>hsmdaemon</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cat /proc/sys/kernel/random/uuid</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-plaintext hljs" data-lang="plaintext">7a7d1826-b514-4d9f-afc7-a7485084e8de</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Use this generated secret for hsmdaemon in <code>/etc/hsmdaemon/hsmdaemon.toml</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[jwt]
+secret = "7a7d1826-b514-4d9f-afc7-a7485084e8de"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Set the generated secret for ownCloud:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo -u www-data ./occ config:app:set encryption hsm.jwt.secret --value '7a7d1826-b514-4d9f-afc7-a7485084e8de'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If the command succeeds, you should see the following console output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-plaintext hljs" data-lang="plaintext">Config value hsm.jwt.secret for app encryption set to 7a7d1826-b514-4d9f-afc7-a7485084e8de</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="configure-hsm-based-encryption"><a class="anchor" href="#configure-hsm-based-encryption"></a>Configure HSM-based Encryption</h3>
+<div class="paragraph">
+<p>Enable the HSM mode and enable encryption by running the commands in the following example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo -u www-data ./occ app:enable encryption
+sudo -u www-data ./occ config:app:set encryption hsm.url --value 'http://localhost:8513'
+sudo -u www-data ./occ encryption:enable</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If the commands are successful, you should see the following console output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-plaintext hljs" data-lang="plaintext">encryption enabled
+
+Config value hsm.url for app encryption set to http://localhost:8513
+
+Master key successfully enabled.
+
+Encryption enabled
+Default module: OC_DEFAULT_MODULE</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="initialize-and-check-generated-keys"><a class="anchor" href="#initialize-and-check-generated-keys"></a>Initialize and Check Generated Keys</h3>
+<div class="paragraph">
+<p>Now start your web server and log in with any user to initialize the keys, have a look at the output of the <code>hsmdaemon</code> to see key generation and decryption requests. Check that the private key <code>/path/to/data/files_encryption/OC_DEFAULT_MODULE/</code> is less than <strong>1000 bytes</strong>. If it is not, then something is not configured correctly. You have to wipe all keys and reset the database flags for encryption to get a clean start for the ownCloud setup.</p>
+</div>
+</div>
+</div>
+</div>
+
+        <nav class="pagination">
+              <span class="prev"><a href="../../security_setup_warnings.html">Security Setup Warnings</a></span>
+              <span class="next"><a href="../dependency_notes.html">Dependency Notes</a></span>
+        </nav>
+          </article>
+        </div>
+      </main>
+    </div>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="row-full">
+          <div class="col-third">
+            <div class="footer-nav">
+              <h4>About ownCloud</h4>
+              <ul id="menu-about" class="menu">
+                <li class="menu-landing"><a href="https://owncloud.com/">The Secure Collaboration Platform</a></li>
+                <li class="menu-news"><a href="https://owncloud.com/news/">News</a></li>
+                <li class="menu-privacy"><a href="https://owncloud.com/privacy-statement/">Privacy statement</a></li>
+                <li class="menu-imprint"><a href="https://owncloud.com/imprint/">Imprint</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-third">
+            <div class="footer-nav">
+              <h4>Resources</h4>
+              <ul id="menu-support-and-documentation" class="menu">
+                <li class="menu-faq"><a href="https://owncloud.com/faq/">FAQ</a></li>
+                <li class="menu-help"><a href="https://owncloud.com/docs-guides/">Help</a></li>
+                <li class="menu-security"><a href="https://owncloud.com/security/">Security</a></li>
+                <li class="menu-changelog"><a href="https://owncloud.com/changelog/">Changelog</a></li>
+                <li class="menu-get-started"><a href="https://owncloud.com/get-started/">Get started</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-third">
+            <div class="footer-nav">
+              <h4>Interact</h4>
+              <ul id="menu-interact" class="menu">
+                <li class="menu-forum"><a href="https://central.owncloud.org" class="oc-footer-nav-link">Forum</a></li>
+                <li class="menu-contribute"><a href="https://owncloud.com/contribute" class="oc-footer-nav-link">Contribute</a></li>
+                <li class="menu-customer-support"><a href="https://owncloud.com/support" class="oc-footer-nav-link">Customer support</a></li>
+
+              </ul>
+            </div>
+          </div>
+        </div>
+        <p>&copy; Copyright 2011-2026, The ownCloud developers.</p>
+      </div>
+    </footer>
+
+    <script id="site-script" src="../../../../../../../assets/js/site.js" data-ui-root-path="../../../../../../../assets"></script>
+    <script async src="../../../../../../../assets/js/vendor/highlight.js"></script>
+    <script async src="../../../../../../../assets/js/vendor/medium-zoom.js"></script>
+    <script async src="../../../../../../../assets/js/vendor/tabs-ui.js"></script>
+  </body>
+</html>

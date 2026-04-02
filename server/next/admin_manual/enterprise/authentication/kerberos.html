@@ -1,0 +1,2312 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Kerberos :: Documentation for ownCloud (A Kiteworks Company)</title>
+
+    <link rel="canonical" href="https://doc.owncloud.com/server/next/admin_manual/enterprise/authentication/kerberos.html">
+    <link rel="prev" href="enterprise_only_auth.html">
+    <link rel="next" href="../clients/custom_client_repos.html">
+    <meta name="description" content="Kerberos is an authentication protocol and authenticates two hosts using the shared secret authentication technique. The main goal of Kerberos is to enable application authentication without the need to transmit user passwords.">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../../../assets/css/site.css">
+
+    <meta property="og:locale" content="en_us" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Kerberos" />
+    <meta property="og:description" content="Kerberos" />
+    <meta property="og:url" content="https://doc.owncloud.com/server/next/admin_manual/enterprise/authentication/kerberos.html" />
+    <meta property="og:site_name" content="Documentation for ownCloud (A Kiteworks Company)" />
+    <meta property="og:image" content="https://doc.owncloud.com/opengraph-server.png" />
+    <meta property="og:image:alt" content="The ownCloud Server documentation" />
+    <meta name="twitter:site" content="@owncloud" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Kerberos" />
+    <meta name="twitter:description" content="Kerberos is an authentication protocol and authenticates two hosts using the shared secret authentication technique. The main goal of Kerberos is to enable application authentication without the need to transmit user passwords." />
+
+    <script>var uiRootPath = '../../../../../assets'</script>
+
+
+    <title>Kerberos :: Documentation for ownCloud (A Kiteworks Company)</title>
+    <link rel="canonical" href="https://doc.owncloud.com/server/next/admin_manual/enterprise/authentication/kerberos.html">
+    <meta name="description" content="Kerberos is an authentication protocol and authenticates two hosts using the shared secret authentication technique. The main goal of Kerberos is to enable application authentication without the need to transmit user passwords.">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" href="/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="black">
+    <meta name="msapplication-TileColor" content="#001840">
+    <meta name="theme-color" content="#ffffff">
+  </head>
+
+  <body class="article">
+    <header class="header" role="banner">
+      <nav class="navbar">
+        <div class="navbar-brand">
+          <a class="navbar-item" href="https://doc.owncloud.com">Documentation for ownCloud (A Kiteworks Company)</a>
+          <!-- we do not have any hamburger stuff to show like links to external sites
+           <button class="navbar-burger" aria-controls="topbar-nav" aria-expanded="false" aria-label="Toggle main menu">
+           <span></span>
+           <span></span>
+           <span></span>
+           </button>
+          -->
+        </div>
+        <div id="topbar-nav" class="navbar-menu">
+          <div class="navbar-end"> </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="body">
+      <div class="nav-container" data-component="server" data-version="next">
+        <aside class="nav">
+          <div class="panels">
+            <div class="nav-panel-menu is-active" data-panel="menu">
+              <nav class="nav-menu">
+                <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+                <h3 class="title"><a href="../../../index.html">ownCloud Server</a></h3>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="0">
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="1">
+                      <a class="nav-link" href="../../../index.html">Introduction</a>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Admin Manual</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../index.html">Introduction</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../useful_pages.html">Useful Pages</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../faq/index.html">FAQ</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../gdpr.html">GDPR</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Installation</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../installation/deployment_considerations.html">Deployment Considerations</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../installation/deployment_recommendations.html">Deployment Recommendations</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../installation/deployment_recommendations/nfs.html">NFS</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../installation/system_requirements.html">System Requirements</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../installation/configuration_notes_and_tips.html">Configuration Notes and Tips</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../installation/index.html">Installation Options</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../installation/docker/index.html">Installing With Docker</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Manual Installation on Linux</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="5">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Detailed Installation Guide</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="6">
+                      <a class="nav-link" href="../../installation/manual_installation/manual_installation.html">Detailed Installation on Ubuntu (various versions)</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Quick Installation Guide</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="6">
+                      <a class="nav-link" href="../../installation/quick_guides/ubuntu_20_04.html">On Ubuntu 20.04</a>
+                  </li>
+                    <li class="nav-item" data-depth="6">
+                      <a class="nav-link" href="../../installation/quick_guides/ubuntu_22_04.html">On Ubuntu 22.04</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <span class="nav-text">Linux Package Manager</span>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../installation/installation_wizard.html">The Installation Wizard</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../installation/troubleshooting.html">Troubleshooting</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../installation/changing_the_web_route.html">Changing Your ownCloud URL</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../installation/apps_management_installation.html">Installing and Managing Apps</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../installation/apps_supported.html">Supported Apps</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../installation/apps/mediaviewer/index.html">Media Viewer</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../installation/selinux_configuration.html">SELinux Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../installation/letsencrypt/index.html">Using Let&#8217;s Encrypt SSL Certificates</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../installation/letsencrypt/using_letsencrypt.html">Using Letsencrypt</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../installation/letsencrypt/apache.html">Apache</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Configuration</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../configuration/database/index.html">Database</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/database/db_conversion.html">Database Conversion</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/database/linux_database_configuration.html">Database Configuration</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../configuration/files/encryption/index.html">Encryption</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/encryption/encryption_configuration.html">Encryption Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/encryption/encryption_configuration_quick_guide.html">Encryption Configuration Quick Guide</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../configuration/files/external_storage/index.html">External Storage</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/external_storage/configuration.html">External Storage Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/external_storage/auth_mechanisms.html">External Storage Authentication Mechanisms</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/external_storage/amazons3.html">AmazonS3</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/external_storage/dropbox.html">Dropbox</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/external_storage/ftp.html">FTP</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/external_storage/google.html">Google</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/external_storage/local.html">Local</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/external_storage/owncloud.html">ownCloud</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/external_storage/s3_compatible_object_storage_as_primary.html">S3 as Primary</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/external_storage/sftp.html">SFTP</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/external_storage/smb.html">SMB</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/external_storage/webdav.html">WebDAV</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../configuration/files/index.html">Files and Sharing</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/big_file_upload_configuration.html">Big File Upload Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/manual_file_locking.html">Manual File Locking</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/default_files_configuration.html">Default Files Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/federated_cloud_sharing_configuration.html">Federated Cloud Sharing Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/file_sharing_configuration.html">File Sharing Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/file_versioning.html">File Versioning</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/files_locking_transactional.html">Transactional File Locking</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/previews_configuration.html">Preview Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/mimetypes.html">Mimetypes</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/files/trashbin_options.html">Managing the Trashbin</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../configuration/integration/index.html">Integration</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/integration/ms-teams.html">Microsoft Teams</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/integration/splunk.html">ownCloud App for Splunk</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../configuration/general_topics/index.html">General Topics</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/general_topics/code_signing.html">Code Signing</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/general_topics/impersonate_users.html">Impersonate Users</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/general_topics/search.html">Full Text Search</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../configuration/server/index.html">Server</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/server/activity_configuration.html">Activity Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/server/background_jobs_configuration.html">Background Jobs Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/server/caching_configuration.html">Caching Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/server/config_sample_php_parameters.html">Config Sample PHP Parameters</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/server/config_apps_sample_php_parameters.html">Config Apps Sample PHP Parameters</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/server/custom_client_repos.html">Custom Client Repos</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/server/email_configuration.html">Email Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/server/excluded_blacklisted_files.html">Excluded Blacklisted Files</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/server/external_sites.html">External Sites</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/server/harden_server.html">Harden Server</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/server/import_ssl_cert.html">Import SSL Cert</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/server/index_php_less_urls.html">Index PHP Less URLs</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/server/occ_command.html">OCC Command</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/server/language_configuration.html">Language Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/server/legal_settings_configuration.html">Legal Settings Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Logging</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../configuration/server/logging/logging_configuration.html">Logging Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../configuration/server/logging/request_tracing.html">Request Tracing</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/server/reverse_proxy_configuration.html">Reverse Proxy Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../configuration/server/security/index.html">Security</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../configuration/server/security/brute_force_protection.html">Brute-Force Protection</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../configuration/server/security/oauth2.html">OAuth2</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../configuration/server/security/password_policy.html">Password policy</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../configuration/server/security_setup_warnings.html">Security Setup Warnings</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../configuration/server/security/hsmdaemon/index.html">The HSM (Hardware Security Module) Daemon</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../configuration/server/security/dependency_notes.html">Dependency Notes</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/server/oc_server_tuning.html">Server Tuning</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/server/thirdparty_php_configuration.html">Third Party PHP Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/server/virus-scanner-support.html">Virus Scanner Support</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/server/ui-configuration.html">UI Configuration</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">User</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/user/user_management.html">User Management</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/user/user_roles.html">User Roles</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/user/reset_admin_password.html">Reset Admin Password</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/user/reset_user_password.html">Reset User Password</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/user/user_auth_ftp_smb_imap.html">User Auth FTP SMB IMAP</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/user/user_auth_ldap.html">User Auth LDAP</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/user/user_auth_twofactor.html">User Auth Two-Factor</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/user/user_oauth2.html">User Auth OAuth2</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/user/user_provisioning_api.html">User Provisioning API</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/user/custom_groups_app.html">Custom Groups App</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/user/guests_app.html">Guests App</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/user/oidc/oidc.html">OpenID Connect (OIDC)</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../configuration/user/login_policies.html">Login Policies</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Maintenance</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../maintenance/upgrading/upgrade.html">Upgrading</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../maintenance/upgrading/manual_upgrade.html">Manual Upgrade</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../maintenance/upgrading/database_upgrade.html">Database Upgrade</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../maintenance/upgrading/upgrade_php.html">Upgrading PHP</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../maintenance/upgrading/marketplace_apps.html">Marketplace Apps</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Backup and Restore</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../maintenance/backup_and_restore/backup.html">Backup</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../maintenance/backup_and_restore/restore.html">Restore</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../maintenance/enable_maintenance.html">Maintenance Mode</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../maintenance/export_import_instance_data.html">Export and Import Instance Data</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../maintenance/manually-moving-data-folders.html">Manually Moving Data Folders</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Encryption</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../maintenance/encryption/migrating-from-user-key-to-master-key.html">Migrating from User Key to Master Key Encryption</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../maintenance/migrating.html">Migrating to a Different Server</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../maintenance/migrating_to_kiteworks.html">Migrating to Kiteworks PDN</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Enterprise</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Authentication</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="enterprise_only_auth.html">Enterprise Only Authentication</a>
+                  </li>
+                    <li class="nav-item is-current-page" data-depth="4">
+                      <a class="nav-link" href="kerberos.html">Kerberos Authentication</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Clients</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../clients/custom_client_repos.html">Custom Client Repos</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Collaboration</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../collaboration/collabora_secure_view.html">Collabora Online / Secure View</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../collaboration/msoffice-wopi-integration.html">Microsoft Office Online / WOPI Integration</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Document Classification</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../document_classification/classification_and_policy_enforcement.html">Classify Documents and Enforce Policies</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">External Storage</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../external_storage/ldap_home_connector_configuration.html">LDAP Home Connector Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../external_storage/sharepoint-integration_configuration.html">Sharepoint integration Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../external_storage/windows-network-drive_configuration.html">Windows Network Drive Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../external_storage/wnd_quick_guide.html">WND Configuration Quick Guide</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">File Management</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../file_management/files_tagging.html">File Tagging</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../file_management/files_lifecycle.html">File Lifecycle Management</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Firewall</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../firewall/file_firewall.html">File Firewall</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Installation</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../installation/install.html">Installing &amp; Upgrading ownCloud Enterprise Edition</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../installation/oracle_db_configuration.html">Oracle DB Setup &amp; Configuration</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Logging</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../logging/admin_audit.html">Auditing</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Reporting</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../reporting/metrics.html">Metrics</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../reporting/config_report.html">Generate a Config Report</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Security</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../security/ransomware-protection.html">Ransomware Protection</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">User Management</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../user_management/user_auth_shibboleth.html">Shibboleth Integration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../user_management/saml_2.0_sso.html">SAML 2.0 Based SSO</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Troubleshooting</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../troubleshooting/general_troubleshooting.html">General Troubleshooting</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../troubleshooting/path_filename_length.html">Path and Filename Length Limitations</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../troubleshooting/providing_logs_and_config_files.html">Retrieve Log Files and Configuration Settings</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../troubleshooting/remove_non_existent_bg_jobs.html">Remove Non-Existent Background Jobs</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../found_a_mistake.html">Found a Mistake?</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Developer Manual</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../developer_manual/index.html">Introduction</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/general/index.html">General Contributor Guidelines</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/general/code-of-conduct.html">Community Code of Conduct</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/general/codingguidelines.html">Coding Style &amp; General Guidelines</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/general/debugging.html">Debugging</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/general/performance.html">Performance Considerations</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/general/security.html">Security Guidelines</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/general/backporting.html">Backporting</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../developer_manual/commun/help_and_communication.html">Help and Communication</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/core/index.html">Developing ownCloud Core</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/core/introduction.html">Introduction</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/general/devenv.html">Setup Your Development Environment</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/core/configfile.html">Application Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/core/theming.html">Theming</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/core/translation.html">Translation</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/core/code-standard.html">Code Standards Compliance</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/testing/index.html">Testing</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/testing/test-pilots.html">ownCloud Test Pilots</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/testing/drone.html">Drone Testing</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/testing/unit-testing.html">Unit Testing</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/testing/acceptance-tests.html">Acceptance Tests</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/testing/ui-testing.html">User Interface Testing</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/core/apis/index.html">Available APIs</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/core/apis/externalapi.html">The External API</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/core/apis/provisioning-api.html">The Provisioning API</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">OCS</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/core/apis/ocs-notification-endpoint-v1.html">The OCS Notifications API (v1)</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/core/apis/ocs-capabilities.html">The OCS REST API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/core/apis/ocs-recipient-api.html">The OCS Recipient API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/core/apis/ocs-share-api.html">The OCS Share API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/core/apis/ocs-totp-validation-api.html">The OCS TOTP Validation API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/core/apis/ocs-user-sync-api.html">The OCS User Sync API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/core/apis/ocs-notify-public-link-by-email.html">Notify Public Link By Email</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/core/apis/roles-api.html">The Roles API</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/webdav_api/index.html">WebDAV APIs</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/webdav_api/comments.html">The Comments API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/webdav_api/groups.html">The Custom Groups Management API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/webdav_api/files_versions.html">The Files Versions API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/webdav_api/meta.html">The Meta API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/webdav_api/search.html">The Search API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/webdav_api/tags.html">The Tags API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/webdav_api/trashbin.html">The Trash Bin API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/webdav_api/public_files.html">The Public Files API</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/app/introduction.html">Application Development</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/index.html">Fundamental Concepts</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/info.html">Application Metadata</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/classloader.html">The Classloader</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/configuration.html">Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/routes.html">Routing</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/controllers.html">Controllers</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/templates.html">Templates</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/js.html">JavaScript</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/css.html">CSS</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/middleware.html">Middleware</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/database.html">Database Connectivity</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/backgroundjobs.html">Background Jobs</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/logging.html">Logging</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/testing.html">Testing</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/container.html">The DI Container</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/filesystem.html">Filesystem</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/api.html">RESTful API</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/hooks.html">Hooks</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/publishing.html">Publishing in the ownCloud Marketplace</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/changelog.html">Changelog</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/market_app.html">Market App</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/app/advanced/index.html">Advanced Concepts</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/advanced/custom-cache-backend.html">Custom Filesystem Caches</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/advanced/custom-storage-backend.html">Custom Storage Backends</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/advanced/notifications.html">Notifications</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/advanced/storage-backend.html">Storage Backends</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/advanced/extstorage.html">External Storage Backends</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/advanced/l10n.html">Translation</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/advanced/two-factor-provider.html">Two-Factor Providers</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/advanced/users.html">User Management</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/advanced/code_signing.html">Code Signing</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/index.html">Tutorial</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/requirements.html">Minimum Requirements</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/request.html">The Request Life Cycle</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/development_environment.html">The Core Application Files</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/routes_and_controllers.html">Routes and Controllers</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/database_connectivity.html">Database Connectivity</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/template_content.html">Create Template Content</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/navigation.html">Create a Navigation Menu</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/javascript_and_css.html">Add JavaScript and CSS</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/wiring_it_up.html">Wiring it Up</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/finishing_touches.html">Apply the Finishing Touches</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/restful_api.html">Add a RESTful API</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/testing.html">Writing Tests</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/mobile_development/index.html">Mobile Development</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/mobile_development/android_library/index.html">Android</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/mobile_development/android_library/library_installation.html">Library Installation</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/mobile_development/android_library/examples.html">Examples</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/mobile_development/ios_library/index.html">iOS</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/mobile_development/ios_library/library_installation.html">Library Installation</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/mobile_development/ios_library/examples.html">Examples</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/bugtracker/index.html">Bugtracker</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/bugtracker/codereviews.html">Code Reviews</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/bugtracker/triaging.html">Bug Triaging</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../developer_manual/found_a_mistake.html">Found a Mistake?</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">ownCloud Server UI</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../classic_ui/index.html">Introduction</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../classic_ui/files/webgui/overview.html">The WebUI</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/webinterface.html">Web Interface</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/files/webgui/navigating.html">Navigating the WebUI</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../classic_ui/personal_settings/index.html">Personal Settings</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/personal_settings/general.html">General</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/personal_settings/storage.html">Storage</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/personal_settings/sharing.html">Sharing</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/personal_settings/security.html">Security</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/personal_settings/custom_groups.html">Custom Groups</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../classic_ui/files/index.html">Files</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/files/access_webdav.html">Access WebDAV</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/files/webgui/sharing.html">Sharing Files</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/files/webgui/search.html">Search &amp; Full Text Search</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/files/webgui/tagging.html">Tagging Files</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/files/webgui/comments.html">Comments</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/files/version_control.html">Version Control</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/files/encrypting_files.html">Encrypting Files</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/files/deleted_file_management.html">Managing Deleted Files</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/files/large_file_upload.html">Large File Uploads</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/files/manual_file_locking.html">Manual File Locking</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/files/files_lifecycle.html">File Lifecycle Management</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/files/public_link_shares.html">Public Link Shares</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/files/federated_cloud_sharing.html">Federated Cloud Sharing</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/session_management.html">Managing Connected Browsers and Devices</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/online_collaboration.html">Online Collaboration</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/files/webgui/quota.html">Storage Quotas</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/external_storage/external_storage.html">External Storage</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/external_storage/sharepoint_connecting.html">Connecting to SharePoint</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/files/desktop_mobile_sync.html">Desktop Mobile Sync</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../classic_ui/apps/index.html">Apps</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/apps/activity.html">Activity</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/apps/calendar.html">Calendar</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/apps/contacts.html">Contacts</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/apps/market.html">Market</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/apps/media_viewer_app.html">Media Viewer App</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../classic_ui/integration/index.html">Integration</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/integration/ms-teams.html">Microsoft Teams</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../classic_ui/pim/index.html">Synchronization Clients</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/pim/sync_ios.html">Sync iOS</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/pim/sync_kde.html">Sync KDE</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/pim/sync_osx.html">Sync OSX</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/pim/sync_thunderbird.html">Sync Thunderbird</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../classic_ui/troubleshooting.html">Troubleshooting</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../classic_ui/found_a_mistake.html">Found a Mistake?</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+            <div class="nav-panel-explore" data-panel="explore">
+              <div class="context">
+                <span class="title">ownCloud Server</span>
+                <span class="version">next</span>
+              </div>
+              <ul class="components">
+                <li class="component">
+                  <div class="title"><a href="../../../../../desktop/next/index.html">Desktop App</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../../../desktop/next/index.html">next</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../desktop/6.0/index.html">6.0</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../desktop/5.3/index.html">5.3</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../../ocis/next/index.html">Infinite Scale Documentation</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../../../ocis/next/index.html">next</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../ocis/8.0/index.html">8.0</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../ocis/7.3/index.html">7.3</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../../android/next/index.html">Mobile App for Android</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../../../android/next/index.html">next</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../android/4.7/index.html">4.7</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../android/4.6/index.html">4.6</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../../ios-app/next/index.html">Mobile App for iOS</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../../../ios-app/next/index.html">next</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../ios-app/12.6/index.html">12.6</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../ios-app/12.5/index.html">12.5</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../../index.html">ownCloud Main Page</a></div>
+                </li>
+                <li class="component is-current">
+                  <div class="title"><a href="../../../index.html">ownCloud Server</a></div>
+                  <ul class="versions">
+                    <li class="version is-current is-latest">
+                      <a href="../../../index.html">next</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../10.16/index.html">10.16</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../10.15/index.html">10.15</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../../webui/next/index.html">ownCloud Web User Interfaces</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../../../webui/next/index.html">next</a>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <main class="article">
+        <div class="toolbar" role="navigation">
+          <button class="nav-toggle"></button>
+          <a href="../../../../../index.html" class="home-link"></a>
+          <nav class="breadcrumbs" aria-label="breadcrumbs">
+            <ul>
+              <li><a href="../../../index.html">ownCloud Server</a></li>
+              <li>Admin Manual</li>
+              <li>Enterprise</li>
+              <li>Authentication</li>
+              <li><a href="kerberos.html">Kerberos Authentication</a></li>
+            </ul>
+          </nav>
+      <div class="page-versions">
+        <button class="version-menu-toggle" title="Show other versions of page">next</button>
+        <div class="version-menu">
+          <a class="version is-current" href="kerberos.html">next</a>
+          <a class="version" href="../../../../10.16/admin_manual/enterprise/authentication/kerberos.html">10.16</a>
+          <a class="version" href="../../../../10.15/admin_manual/enterprise/authentication/kerberos.html">10.15</a>
+        </div>
+      </div>
+          <div class="edit-this-page"><a href="https://github.com/owncloud/docs-server/edit/master/modules/admin_manual/pages/enterprise/authentication/kerberos.adoc">Edit this Page</a></div>
+        </div>
+        <div class="content">
+          <aside class="toc sidebar" data-title="Contents" data-levels="2">
+            <div class="toc-menu"></div>
+          </aside>
+          <article class="doc">
+            <h1 class="page">Kerberos</h1>
+
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#general-information">General Information</a>
+<ul class="sectlevel2">
+<li><a href="#kerberos-benefits">Kerberos Benefits</a></li>
+<li><a href="#kerberos-core-components">Kerberos Core Components</a></li>
+<li><a href="#what-are-kerberos-tickets">What are Kerberos Tickets?</a></li>
+<li><a href="#comparison-domain-authentication-versus-ldap">Comparison Domain Authentication Versus LDAP</a></li>
+<li><a href="#kerberos-terms">Kerberos Terms</a></li>
+<li><a href="#overview-image">Overview Image</a></li>
+</ul>
+</li>
+<li><a href="#server-prerequisites">Server Prerequisites</a>
+<ul class="sectlevel2">
+<li><a href="#owncloud-server-side">ownCloud Server Side</a></li>
+<li><a href="#domain-controller-side">Domain Controller Side</a>
+<ul class="sectlevel3">
+<li><a href="#service-principal-name-spn">Service Principal Name (SPN)</a></li>
+<li><a href="#keytab-files">Keytab Files</a></li>
+<li><a href="#user-account">User Account</a></li>
+<li><a href="#domain-on-windows">Domain on Windows</a></li>
+<li><a href="#domain-on-linux">Domain on Linux</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#configure-owncloud-server">Configure ownCloud Server</a></li>
+<li><a href="#browser-prerequisites">Browser Prerequisites</a>
+<ul class="sectlevel2">
+<li><a href="#configure-google-chrome-and-microsoft-edge">Configure Google Chrome and Microsoft Edge</a></li>
+<li><a href="#configure-mozilla-firefox">Configure Mozilla Firefox</a></li>
+<li><a href="#configure-opera">Configure Opera</a></li>
+</ul>
+</li>
+<li><a href="#windows-domain-login">Windows Domain Login</a></li>
+</ul>
+</div>
+<div class="sect1">
+<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Kerberos is an authentication protocol and authenticates two hosts using the shared secret authentication technique. The main goal of Kerberos is to enable application authentication without the need to transmit user passwords. It will share a secret among the two hosts that only they and the Key Distribution Center (KDC) know. Kerberos builds a secure communication link between two trusted hosts across an untrusted network like the Internet, using tickets.</p>
+</div>
+<div class="paragraph">
+<p>With the Kerberos app, you can reuse the authentication ticket generated from a user&#8217;s Windows domain login for ownCloud and access file server resources via ownCloud without re-authentication.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="general-information"><a class="anchor" href="#general-information"></a>General Information</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When using the Kerberos app, the Windows login session from the user is taken to log in to ownCloud. This is very convenient, as the user does not need to re-authenticate for using ownCloud as he already has authenticated to his Domain. In addition by using the Kerberos ticket, the user can also use file resoures via the <a href="../external_storage/windows-network-drive_configuration.html" class="xref page">Windows Network Drive (WND)</a> app without the need to re-authenticate. This generates a seamless user experience. This is done by the configuration made, which enables the webserver to make the ticket available for PHP for further processing.</p>
+</div>
+<div class="sect2">
+<h3 id="kerberos-benefits"><a class="anchor" href="#kerberos-benefits"></a>Kerberos Benefits</h3>
+<div class="paragraph">
+<p>This is a brief list of Kerberos benefits:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Secure</strong><br>
+Kerberos never transmits passwords over the network.</p>
+</li>
+<li>
+<p><strong>Single-Sign-On</strong><br>
+Kerberos only requires the user to type their password once when first authenticating the client.</p>
+</li>
+<li>
+<p><strong>Trusted Third Party</strong><br>
+Kerberos uses a centralized authentication server known as the Key Distribution Center (KDC) that all other devices in the network trust by default. This outsourcing ensures that sensitive information is not stored on a local machine.</p>
+</li>
+<li>
+<p><strong>Mutual Authentication</strong><br>
+In Kerberos, both ends of communication must be authenticated before communication is permitted.</p>
+</li>
+<li>
+<p><strong>Delegated Authentication</strong><br>
+Kerberos can provide delegated authentication for accessing backend systems. Delegated authentication allows to impersonate a client when accessing resources on the client’s behalf.</p>
+</li>
+<li>
+<p><strong>Interoperability</strong><br>
+The Kerberos V5 protocol implemented in Active Directory Domain Services is based on standards set forth by the IETF. It allows Kerberos implementations in Active Directory to interoperate with other networks in which Kerberos V5 is used for authentication.</p>
+</li>
+<li>
+<p><strong>Microsoft Azure AD Kerberos</strong> is a new authentication capability of Azure AD that allows using the Kerberos authentication protocol to authenticate against Azure AD.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="kerberos-core-components"><a class="anchor" href="#kerberos-core-components"></a>Kerberos Core Components</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Kerberos Realm</strong><br>
+A logical network, similar to a domain, over which a Kerberos authentication server has the authority to authenticate a user, host or service.</p>
+</li>
+<li>
+<p><strong>Key Distribution Centre (KDC)</strong><br>
+Contains the Authentication Server (AS) and the Ticket Granting Service (TGS). Its main function is to be a mediator between these two, relaying messages from the AS, grants a ticket-granting ticket (TGT), then passing that to be encrypted by the TGS. The KDC for a domain is located on a domain controller.</p>
+</li>
+<li>
+<p><strong>Authentication Server (AS)</strong><br>
+A client authenticates themselves to the AS using a username and password login. The AS then forwards the username to the KDC that in turn grants a TGT.</p>
+</li>
+<li>
+<p><strong>Ticket Granting Service (TGS)</strong><br>
+When a client wants to access a service, they must present their TGT to the TGS.</p>
+</li>
+<li>
+<p><strong>Service Principal Name (SPN)</strong><br>
+An identifier given to a service instance to associate a service instance with a domain service account.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="what-are-kerberos-tickets"><a class="anchor" href="#what-are-kerberos-tickets"></a>What are Kerberos Tickets?</h3>
+<div class="paragraph">
+<p>The main structures handled by Kerberos are the tickets. These tickets are delivered to the users in order to be used by them to perform several actions in the Kerberos realm. There are 2 types:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The <strong>TGS (Ticket Granting Service)</strong> is the ticket which the user can use to authenticate against a service. It is encrypted with the service key.</p>
+</li>
+<li>
+<p>The <strong>TGT (Ticket Granting Ticket)</strong> is granted by the KDC after the client is successfully authenticated. It is presented to the KDC to request for TGSs and is encrypted with the KDC key.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="comparison-domain-authentication-versus-ldap"><a class="anchor" href="#comparison-domain-authentication-versus-ldap"></a>Comparison Domain Authentication Versus LDAP</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>When users authenticate themselves to their desktop, the Windows OS sends their credentials to a Domain Controller which is also a Kerberos Distribution Center (KDC). The users get a ticket which can be used to authenticate to other network services.</p>
+</li>
+<li>
+<p>When accessing an LDAP server using Kerberos authentication, the user binds to LDAP using a Kerberos ticket rather than sending a password. The LDAP server then validates the ticket and verifies that it belongs to the user trying to bind.</p>
+</li>
+<li>
+<p>LDAP is not specific to Active Directory. Microsoft implemented LDAP as part of Active Directory capabilities to allow AD DS to work with LDAP-based applications. Kerberos is more secure than LDAP, but they are often used together in Active Directory. When you view objects in Active Directory Users and Computers (ADUC), you are authenticated with Kerberos, and then LDAP is used to query the Active Directory database efficiently and effectively.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="kerberos-terms"><a class="anchor" href="#kerberos-terms"></a>Kerberos Terms</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Kerberos:<br>
+Kerberos is an authentication protocol that supports the concept of Single Sign-On (SSO). In the case of HTTP, support for Kerberos is usually provided using the term "SPNEGO" authentication mechanism.</p>
+</li>
+<li>
+<p>Kerberos Realm:<br>
+An administrative domain for authentication is denoted by the term <em>realm</em>. In Windows, realms are called domains. Its goal is to define the restrictions on when an authentication server can authenticate a user, host, or service. This does not imply that a user and a service must be members of the same realm in order for authentication to occur: if the two objects are connected through a trust connection despite belonging to different realms, authentication can still occur.</p>
+</li>
+<li>
+<p>Principal:<br>
+In a Kerberos system, a Kerberos Principal represents a distinct identity to whom Kerberos can issue tickets for access to Kerberos-aware services. The "/" separator is used to separate the various components that make up principal names. The "@" character can be used to identify a realm as the name&#8217;s final element. If no realm is specified, it is presumed that the Principal belongs to the default realm set in the <code>krb5.conf</code> file.</p>
+</li>
+<li>
+<p>Users:<br>
+A process that accesses a service on the behalf of a user. There can be multiple users within a realm.</p>
+</li>
+<li>
+<p>Service:<br>
+Something the user wants to gain access to.</p>
+</li>
+<li>
+<p>GSSAPI:<br>
+Programs can access security services through the Generic Security Service Application Program Interface(GSSAPI), which is an application programming interface (API). GSSAPI is an IETF standard. It doesn&#8217;t offer any security on its own. Instead, GSSAPI implementations are offered by security-service providers. The exchange of opaque messages (tokens), which conceals the implementation detail from the higher-level application, is the distinguishing characteristic of GSSAPI applications.</p>
+</li>
+<li>
+<p>SPNEGO:<br>
+Client-server software uses the Simple and Protected GSSAPI Negotiation Mechanism, frequently called "spen-go," to negotiate the selection of security technology. When a client application has to log in to a remote server but neither end is certain which authentication protocols the other supports, SPNEGO is employed. The pseudo-mechanism uses a protocol to identify the available common GSSAPI mechanisms, chooses one, and then assigns all subsequent security actions to that chosen mechanism.</p>
+</li>
+<li>
+<p>KDC:<br>
+A Key Distribution Center is a network service that supplies tickets and temporary sessions keys; or an instance of that service or the host on which it runs. The KDC services both initial ticket and ticket-granting requests. The initial ticket portion is sometimes referred to as the Authentication Server (or service). The ticket-granting ticket portion is sometimes referred to as the ticket-granting server (or service).</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="overview-image"><a class="anchor" href="#overview-image"></a>Overview Image</h3>
+<div class="paragraph">
+<p>The following image gives a brief overview about the main components and processes:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../../_images/enterprise/authentication/kerberos/kerberos-principle.drawio.svg" alt="Kerberos Process Overview" width="450">
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="server-prerequisites"><a class="anchor" href="#server-prerequisites"></a>Server Prerequisites</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Make sure the clocktime of the KDC, the client and the server the ownCloud instance is running on is in sync. 5 minutes are the highest difference you may allow for Kerberos to work properly. Without going into the details, you may use NTP for that task.</p>
+</li>
+<li>
+<p>All members in the realm, which includes cients, must support <code>DES3, AES128 or AES256</code> encryption. This applies to Windows 10 and modern Linux based OS desktops. If a client does not support this encryption standard, he can not use Kerberos. Alternatively the legacy crypto <code>RC4-HMAC-EXP</code> can be added during configuration - which is <em>strongly discouraged</em> for security reasons. See the <a href="http://web.mit.edu/kerberos/krb5-1.5/krb5-1.5/doc/krb5-admin/Supported-Encryption-Types.html#Supported%20Encryption%20Types" target="_blank" rel="noopener">Kerberos supported encryption types</a> for more information.</p>
+</li>
+<li>
+<p>Replace in the configuration examples where applicapable the placeholders accordingly:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>&lt;user-name&gt;</code><br>
+The name of the user account like <code>owncloud_spnego_user</code> which is used as principal.</p>
+</li>
+<li>
+<p><code>&lt;complex-password&gt;</code><br>
+A complex password for <code>&lt;user-name&gt;</code>. Remember this password as it helps debugging, but keep protected as you can access domain servcies with it. Also see: <a href="#keytab-files">Keytab Files</a> for additional info when this password needs to be changed.</p>
+</li>
+<li>
+<p><code>&lt;FQDN&gt;</code><br>
+The fully qualified domain name the ownCloud instance is accessed, like <code>owncloud.example.com</code>.</p>
+</li>
+<li>
+<p><code>&lt;realm&gt;</code><br>
+The name of the realm is taken to be the DNS domain name of the server in all <strong>lowercase</strong> letters like <code>example.com</code>.</p>
+</li>
+<li>
+<p><code>&lt;REALM&gt;</code><br>
+The name of the REALM is taken to be the DNS domain name of the server in all <strong>capital</strong> letters like <code>EXAMPLE.COM</code>.</p>
+</li>
+<li>
+<p>&lt;keytab-file-location&gt;<br>
+A path that is accessible by Apache like <code>/etc/apache2/</code>.</p>
+</li>
+<li>
+<p><code>&lt;domaincontroller-x&gt;</code><br>
+The KDC. The Active Directory server is <code>dc1.example.com</code>. In a larger organization, two or more domain controllers for redundancy reasons can be found like <code>dc2.example.com</code> and <code>dc3.example.com</code>.</p>
+</li>
+<li>
+<p><code>&lt;administration-server&gt;</code><br>
+The administration server. This is typically the same as the LDAP/Active Directory server like <code>dc1.example.com</code> or in case of multiple domain controllers, this should be normally set to the master DC.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="owncloud-server-side"><a class="anchor" href="#owncloud-server-side"></a>ownCloud Server Side</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Check that you have the latest <a href="../../installation/manual_installation/server_prep_ubuntu_22.04.html#updating-pear" class="xref page">pear</a> version installed.</p>
+</li>
+<li>
+<p>Install, if not already done the <code>php-dev-&lt;your version&gt;</code> environment:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo apt install php-dev-&lt;your version&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Check the existance of <code>phpize</code> with:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">whereis phpize</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Install and enable the <code>php-krb5</code> library:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo apt install libkrb5-dev
+sudo pecl channel-update pecl.php.net
+sudo pecl install krb5</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If not exists, add a file in <code>/etc/php/&lt;your-php-version&gt;/mods-available/krb5.ini</code> with the following content:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">extension=krb5.so</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Finalize with:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo phpenmod krb5</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Check with:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">php -i | grep Kerb</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-plaintext hljs" data-lang="plaintext">Kerberos 5 support =&gt; enabled
+Library version =&gt; Kerberos 5 release 1.17</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Install handy command-line tools for Kerberos:<br>
+Note that <code>krb5-user</code> is an actual requirement, the Kerberos implementation in the WND app requires the <code>kvno</code> command which is contained in that package.</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo apt install krb5-user</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>DNS records<br>
+Create a DNS record for the public FQDN of the ownCloud instance (<code>&lt;FQDN&gt;</code>).</p>
+<div class="ulist">
+<ul>
+<li>
+<p>If there is only a single web site on the web server, the simplest option is to make sure that the public URL of the site is the same as the FQDN of the server configured in the <code>/etc/hosts</code> configuration file. Create an A DNS record for this FQDN pointing directly to the server’s IP address.</p>
+</li>
+<li>
+<p>However, if there are two or more web sites hosted on the same web server with different host headers, the situation becomes a bit more complicated and the DNS CNAME records and keytab file have to properly be configured. One option in this case is to use the same service account identity for all web sites hosted on the web server, configure the keytab file for the server’s own FQDN configured in the <code>/etc/hosts</code> file and create CNAME DNS aliases for the web site pointing to the server’s FQDN. The browsers will perform DNS name canonization and will request Kerberos service tickets not for the CNAME addresses of the web sites, but for the server’s own FQDN.</p>
+<div class="paragraph">
+<p>This option can also be used if you have only one web site but want to keep the servers hostname and website address distinct.</p>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Download the ownCloud Kerberos app from the <a href="https://marketplace.owncloud.com/apps/kerberos" target="_blank" rel="noopener">Marketplace</a> and enabe it with:</p>
+<div class="listingblock bash">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">sudo -u www-data ./occ app:enable kerberos</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="domain-controller-side"><a class="anchor" href="#domain-controller-side"></a>Domain Controller Side</h3>
+<div class="sect3">
+<h4 id="service-principal-name-spn"><a class="anchor" href="#service-principal-name-spn"></a>Service Principal Name (SPN)</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>A Service Principle Name (SPN) is the unique, in the entire Domain Forest identity for a Service, mapped with a specific service account in a server. It is used for mutual authentication between a user and a service account. SPNs help with Kerberos authentication client applications to request service authentication for an account, even if the client doesn&#8217;t have the account name.</p>
+</li>
+<li>
+<p>Note that Kerberos depends on accurate naming, as server names are used to build the Service Principal Name (SPN) used to request tickets from a KDC. For clients, this becomes crucial when a load balancer is used, because they have, intentionally, no idea which server they are going to connect. For more details see: <a href="https://ssimo.org/blog/id_019.html" target="_blank" rel="noopener">Load Balancers and Kerberos</a>.</p>
+</li>
+<li>
+<p>A SPN consists of: <code>&lt;service_class&gt;/&lt;hostname_or_FQDN&gt;:&lt;port&gt;/&lt;service name&gt;</code>, where <code>&lt;port&gt;</code> and <code>&lt;service name&gt;</code> are optional components.</p>
+<div class="paragraph">
+<p>Using <code>HTTP</code>, which is a built in service class, in the configuration example below, enables that all Web applications on the same host including applications hosted by Apache, if they are configured for the use with Kerberos, will be granted tickets based on the domain user account.</p>
+</div>
+</li>
+<li>
+<p>Note that SPN always include the name of the host computer on which the service instance is running, for more details see: <a href="https://learn.microsoft.com/en-us/windows/win32/ad/service-principal-names" target="_blank" rel="noopener">Microsoft: Service Principal Names</a>.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="keytab-files"><a class="anchor" href="#keytab-files"></a>Keytab Files</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Keytab files contain pairs of Kerberos principals and encrypted keys. Any account with read permission on a keytab file can use all of the keys it contains. Access restrictions and monitoring permissions on any Kerberos keytab files used must be part of the Kerberos configuration.</p>
+</li>
+<li>
+<p>It is recommended that a regular user account for the server in the Active Directory domain is created. It must be a user account, not a computer account. This is because, in a Microsoft Active Directory Domain, a keytab file is only generated for user accounts, not computer or service accounts. Computer and service accounts manage their own passwords.</p>
+</li>
+<li>
+<p>Multiple service instances can not be mapped to the same user account.</p>
+</li>
+<li>
+<p>The Keytab file entry is encrypted with the Active Directory account password. Therefore, the keytab file must be regenerated whenever the Active Directory <code>&lt;user-name&gt;</code> password has changed.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="user-account"><a class="anchor" href="#user-account"></a>User Account</h4>
+<div class="paragraph">
+<p>The user account <code>&lt;user-name&gt;</code> must be associated with the service principal name (SPN) and is used by the Kerberos domain controller to generate and verify service tickets. The SPN is derived from the URL of the service to be accessed.</p>
+</div>
+<div class="paragraph">
+<p>The user account should have the following properties set:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>User cannot change password</p>
+</li>
+<li>
+<p>Password never expires</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="domain-on-windows"><a class="anchor" href="#domain-on-windows"></a>Domain on Windows</h4>
+<div class="paragraph">
+<p>If you are running a Windows native domain, you can use the Windows Server Support Tools, <code>setspn</code> and <code>ktpass</code>. These are command line utilities enable to map the <code>&lt;user-name&gt;</code> to the application server and its service class respectively crating a keytab file. Login as administrator to the domain controller for the next tasks.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Create a principal (user):<br>
+Use the Microsoft Management Console (MMC) to create a new user account with the DNS name of the server that hosts the ownCloud instance.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>First name: <code>&lt;user-name&gt;</code></p>
+</li>
+<li>
+<p>Password: <code>complex-password</code></p>
+</li>
+<li>
+<p>User login name: <code>HTTP/&lt;FQDN&gt;@&lt;REALM&gt;</code></p>
+</li>
+<li>
+<p>Pre-windows logon name: <code>&lt;user-name&gt;</code></p>
+</li>
+<li>
+<p><em>Select</em> option: <code>Password never expires</code></p>
+</li>
+<li>
+<p><em>Do not select</em> this option: <code>User must change password at next logon</code></p>
+</li>
+<li>
+<p>In <b class="menuref">Delegation</b></p>
+<div class="openblock">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p><em>Select</em> <code>Trust this user for delegation to specified services only</code></p>
+</li>
+<li>
+<p><em>Select</em> <code>Use any authentication protocol</code></p>
+</li>
+<li>
+<p><em>Add</em> the service type and server(s) for delegated credentials like:<br>
+<code>cifs/&lt;hostname_or_FQDN&gt;</code><br>
+(choose the server(s) where the smb service is provided and select cifs as service type)</p>
+<div class="paragraph">
+<p><span class="image"><img src="../../_images/enterprise/authentication/kerberos/kerberos-win-principal.png" alt="User Delegation" width="250"></span></p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Associate the new user with the Service Principal Name (SPN).<br>
+To do so, open a command shell and type:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-powershell hljs" data-lang="powershell">setspn -S HTTP/&lt;FQDN&gt;@&lt;REALM&gt; &lt;user-name&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Verify <code>setspn</code> with:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-powershell hljs" data-lang="powershell">setspn -L &lt;user-name&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>See the <a href="https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-R2-and-2012/cc731241(v=ws.11)" target="_blank" rel="noopener">Microsoft setspn</a> documentation for details and more parameters.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Map the account<br>
+Map the account <code>&lt;user-name&gt;</code> to the service principal <code>HTTP/&lt;FQDN&gt;@&lt;REALM&gt;</code> and generate a keytab file. To do so, open a command shell and type:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-powershell hljs" data-lang="powershell">ktpass
+  -princ HTTP/&lt;FQDN&gt;@&lt;REALM&gt;
+  -mapuser &lt;user-name&gt;@&lt;REALM&gt;
+  -crypto AES256-SHA1
+  -ptype KRB5_NT_PRINCIPAL
+  -pass &lt;complex-password&gt;
+  -out C:\temp\&lt;user-name&gt;.keytab</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Note that the parameter <a href="https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/ktpass" target="_blank" rel="noopener">crypto</a> is according the Microsoft documentation recommended to be set.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Move the generated keytab file <code>&lt;user-name&gt;.keytab</code> to the Linux server hosting the ownCloud instance to location <code>&lt;keytab-file-location&gt;</code>. Note that the file must be accessible by the web server.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="domain-on-linux"><a class="anchor" href="#domain-on-linux"></a>Domain on Linux</h4>
+<div class="paragraph">
+<p>The following section is only necessary if the domain runs via Samba. In this case the necessary libraries have been installed which also contain the command line tool <a href="https://www.samba.org/samba/docs/current/man-html/samba-tool.8.html" target="_blank" rel="noopener">samba-tool</a>.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Create a user for use with Kerberos:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">samba-tool user create    &lt;user-name&gt; &lt;complex-password&gt;
+samba-tool user setexpiry &lt;user-name&gt; --noexpiry</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Set the correct cipher version to be used, see <a href="https://wiki.samba.org/index.php/Generating_Keytabs" target="_blank" rel="noopener">Samba Generating Keytabs</a> and <a href="https://www.samba.org/samba/docs/current/man-html/net.8.html" target="_blank" rel="noopener">Samba net tool</a>:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">net ads enctypes list &lt;user-name&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Set <code>AES256-CTS-HMAC-SHA1-96</code> explicit, because if not set, unsecure ciphers are also enabled.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">net ads enctypes set &lt;user-name&gt; 10</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Configure SPN for use with Kerberos and export the keytab file:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">samba-tool spn add HTTP/&lt;FQDN&gt;@&lt;REALM&gt; &lt;user-name&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">samba-tool spn list &lt;user-name&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">samba-tool domain exportkeytab --principal=HTTP/&lt;FQDN&gt; &lt;keytab-file-location&gt;/&lt;user-name&gt;.keytab</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Move the generated keytab file <code>&lt;user-name&gt;.keytab</code> to the Linux server hosting the ownCloud instance to location <code>&lt;keytab-file-location&gt;</code>. Note that the file must be accessible by the web server.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="configure-owncloud-server"><a class="anchor" href="#configure-owncloud-server"></a>Configure ownCloud Server</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Follow these steps on the server running ownCloud:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Configure <code>/etc/krb5.conf</code> for use with Kerberos.<br>
+Note that only required/recommended or non-default settings are used:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-plaintext hljs" data-lang="plaintext">[libdefaults]
+    default_realm        = &lt;REALM&gt;
+    default_tkt_enctypes = aes256-cts-hmac-sha1-96
+    default_tgs_enctypes = aes256-cts-hmac-sha1-96
+    permitted_enctypes   = aes256-cts-hmac-sha1-96
+    forwardable          = true
+
+[realms]
+    &lt;REALM&gt; = {
+        kdc           = &lt;domaincontroller-1&gt;
+        #kdc          = &lt;domaincontroller-2&gt;
+        #kdc          = &lt;domaincontroller-3&gt;
+        #master_kdc   = &lt;domaincontroller-1&gt;
+        admin_server  = &lt;domaincontroller-1&gt;
+    }
+
+[domain_realm]
+    .&lt;realm&gt;          = &lt;REALM&gt;
+    &lt;realm&gt;           = &lt;REALM&gt;
+
+[logging]
+    kdc               = SYSLOG:NOTICE
+    admin_server      = SYSLOG:NOTICE
+    default           = SYSLOG:NOTICE</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A description of each section and the meaning of keys is available at the <a href="http://web.mit.edu/kerberos/krb5-1.5/krb5-1.5/doc/krb5-admin/krb5.conf.html" target="_blank" rel="noopener">MIT krb5.conf</a> documentation.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Protect the <code>keytab</code> file so only the owner (the web server) can read it:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo chown www-data:www-data &lt;keytab-file-location&gt;/&lt;user-name&gt;.keytab</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo chmod 0400 &lt;keytab-file-location&gt;/&lt;user-name&gt;.keytab</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Check the validity of the <code>keytab</code> file:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">klist -e -k -t &lt;keytab-file-location&gt;/&lt;user-name&gt;.keytab</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-plaintext hljs" data-lang="plaintext">Keytab name: FILE:&lt;user-name&gt;.keytab
+KVNO Timestamp        Principal
+---- ---------------- ---------------------------------------------
+   4 10/01/2023 16:23 HTTP/&lt;FQDN&gt;@&lt;REALM&gt; (aes256-cts-hmac-sha1-96)</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Display the current key version number for a principal:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kvno HTTP/&lt;FQDN&gt;@&lt;REALM&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-plaintext hljs" data-lang="plaintext">HTTP/&lt;FQDN&gt;@&lt;REALM&gt;: kvno = 4</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Attempt to use the <code>keytab</code> file to authenticate as the service principal:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kinit -k -t &lt;keytab-file-location&gt;/&lt;user-name&gt;.keytab HTTP/&lt;FQDN&gt;@&lt;REALM&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">klist</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-plaintext hljs" data-lang="plaintext">Ticket cache: FILE:/tmp/krb5cc_0
+Default principal: HTTP/&lt;FQDN&gt;@&lt;REALM&gt;
+
+Valid starting    Expires           Service principal
+31/10/2023 14:11  01/11/2023 00:10  &lt;user-name&gt;/&lt;REALM&gt;@&lt;REALM&gt;
+        renew until 01/11/2024 14:11</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Destroy the Kerberos ticket for security reasons:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kdestroy</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-plaintext hljs" data-lang="plaintext">Tickets destroyed</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Note that if you issue this command during regular operation, all sessions for users using ownCloud with Kerberos will end and need to re-login.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Create a new ownCloud config file <code>/path-to-owncloud/config/kerberos.config.php</code> with the following contents or add only the comment and key to an existing <code>config.php</code> file. More Kerberos config options can be found in the <a href="../../configuration/server/config_apps_sample_php_parameters.html#app-kerberos" class="xref page">Config Apps Sample</a> description:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">&lt;?php $CONFIG = [
+
+    /**
+     * Path to the keytab file to use, defaults to '/etc/krb5.keytab'
+     */
+    'kerberos.keytab' =&gt; '&lt;keytab-file-location&gt;/&lt;user-name&gt;.keytab',
+];</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>A new file will be read <a href="../../configuration/server/config_sample_php_parameters.html#introduction" class="xref page">additionally</a> to existing config files. See the <a href="../../configuration/server/config_apps_sample_php_parameters.html" class="xref page">Apps Config.php Parameters</a> for more Kerberos configuration options.</p>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="browser-prerequisites"><a class="anchor" href="#browser-prerequisites"></a>Browser Prerequisites</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="configure-google-chrome-and-microsoft-edge"><a class="anchor" href="#configure-google-chrome-and-microsoft-edge"></a>Configure Google Chrome and Microsoft Edge</h3>
+<div class="paragraph">
+<div class="title">For Google Chrome and Microsoft Edge on Windows, Kerberos authentication is configured in general settings of the operating system:</div>
+<p></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Open the <em>Control Panel</em> by pressing <span class="keyseq"><kbd>Win</kbd>+<kbd>R</kbd></span> and type <strong>control</strong>, select <span class="menuseq"><b class="menu">Internet Options</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="menuitem">Advanced</b></span>.</p>
+</li>
+<li>
+<p>On the <strong>Advanced</strong> tab and in the <b class="menuref">Security</b> section, select <b class="button">Enable Integrated Windows Authentication</b> (if it was not checked, a restart is required).</p>
+</li>
+<li>
+<p>On the <strong>Security</strong> tab, select <b class="menuref">Local intranet</b>, Click <b class="button">Custom Level</b>.</p>
+</li>
+<li>
+<p>In the <strong>User Authentication/Logon</strong> section, select <b class="button">Automatic logon only in Intranet zone</b>.</p>
+</li>
+<li>
+<p>Click OK.</p>
+</li>
+<li>
+<p>Click <b class="menuref">Sites</b> and select all check boxes.</p>
+</li>
+<li>
+<p>Click <strong>Advanced</strong> and add, if not exists, the ownCloud website to the local zone . For example, <code>https://&lt;FQDN&gt;</code>.</p>
+</li>
+<li>
+<p>Click <b class="button">Add</b>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">For Google Chrome on Linux or macOS, Kerberos authentication is configured ieither via command line parameters or policy files:</div>
+<p></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Command line parameters</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-plaintext hljs" data-lang="plaintext">--auth-server-whitelist="&lt;FQDN&gt;"
+--auth-negotiate-delegate-whitelist="&lt;FQDN&gt;"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can see which policies are enable by typing <code>chrome://policy/</code> into Chrome’s address bar.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Policy files</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>With Linux, Chrome will also read policy files from <code>/etc/opt/chrome/policies/managed</code> directory. Add a file like <code>kerberos-policies.json</code> with the following content:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "AuthServerWhitelist" : "&lt;FQDN&gt;",
+  "AuthNegotiateDelegateWhitelist" : "&lt;FQDN&gt;",
+  "DisableAuthNegotiateCnameLookup" : true,
+  "EnableAuthNegotiatePort" : true
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="configure-mozilla-firefox"><a class="anchor" href="#configure-mozilla-firefox"></a>Configure Mozilla Firefox</h3>
+<div class="paragraph">
+<div class="title">For Mozilla Firefox, Kerberos authentication is configured via preferences:</div>
+<p></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>In the browser window, enter the following URL: <b class="menuref">about:config</b>.</p>
+</li>
+<li>
+<p>Click Accept the Risk and Continue.</p>
+</li>
+<li>
+<p>In the Search preference name field, enter:<br>
+<code>network.negotiate-auth.trusted-uris</code><br>
+and double click it.</p>
+</li>
+<li>
+<p>Specify a FQDN of the ownCloud website with a protocol, for example, <code>https://&lt;FQDN&gt;</code>.</p>
+</li>
+<li>
+<p>Click <b class="button">Save</b>.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="configure-opera"><a class="anchor" href="#configure-opera"></a>Configure Opera</h3>
+<div class="paragraph">
+<div class="title">For Opera, Kerberos authentication is currently not possible.</div>
+<p>Though some research has been made, no options have been identified. This section will be updated on changes known.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="windows-domain-login"><a class="anchor" href="#windows-domain-login"></a>Windows Domain Login</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When users log in to the domain, the client has received the necessary Kerberos ticket, see <a href="#overview-image">image above</a>, which is also available to browsers. Now, when users open a browser and try to log in to ownCloud with the Kerberos app enabled, they will see the following screen:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../../_images/enterprise/authentication/kerberos/kerberos-login-screenshot.png" alt="Alternative Windows Domain Login" width="300">
+</div>
+</div>
+<div class="paragraph">
+<p>Compared to a standard login using a user name and password, the user clicks on the <b class="button">Windows Domain Login</b> button. With this button, ownCloud requests a new ticket on behalf of the Windows user logged in, which is technically a constrained delegation. With this button, the browser takes the Kerberos ticket from the client and uses it for the ownCloud login process. If the WND App is installed as well, the ownCloud service user might request later on an additional Kerberos ticket on behalf of the Windows user logged in, which is technically again a constrained delegation.</p>
+</div>
+<div class="paragraph">
+<p>Note that if you have not accessed a service like ownCloud via Kerberos before, Windows will show a popup to authenticate, which is a standard Windows security procedure. This can also happen if the Kerberos ticket has expired.</p>
+</div>
+<div class="paragraph">
+<p>Note that the text printed on the button <em>Windows Domain Login</em> can be customized, see the <a href="../../configuration/server/config_apps_sample_php_parameters.html" class="xref page">Apps Config.php Parameters</a>.</p>
+</div>
+</div>
+</div>
+
+        <nav class="pagination">
+              <span class="prev"><a href="enterprise_only_auth.html">Enterprise Only Authentication</a></span>
+              <span class="next"><a href="../clients/custom_client_repos.html">Custom Client Repos</a></span>
+        </nav>
+          </article>
+        </div>
+      </main>
+    </div>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="row-full">
+          <div class="col-third">
+            <div class="footer-nav">
+              <h4>About ownCloud</h4>
+              <ul id="menu-about" class="menu">
+                <li class="menu-landing"><a href="https://owncloud.com/">The Secure Collaboration Platform</a></li>
+                <li class="menu-news"><a href="https://owncloud.com/news/">News</a></li>
+                <li class="menu-privacy"><a href="https://owncloud.com/privacy-statement/">Privacy statement</a></li>
+                <li class="menu-imprint"><a href="https://owncloud.com/imprint/">Imprint</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-third">
+            <div class="footer-nav">
+              <h4>Resources</h4>
+              <ul id="menu-support-and-documentation" class="menu">
+                <li class="menu-faq"><a href="https://owncloud.com/faq/">FAQ</a></li>
+                <li class="menu-help"><a href="https://owncloud.com/docs-guides/">Help</a></li>
+                <li class="menu-security"><a href="https://owncloud.com/security/">Security</a></li>
+                <li class="menu-changelog"><a href="https://owncloud.com/changelog/">Changelog</a></li>
+                <li class="menu-get-started"><a href="https://owncloud.com/get-started/">Get started</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-third">
+            <div class="footer-nav">
+              <h4>Interact</h4>
+              <ul id="menu-interact" class="menu">
+                <li class="menu-forum"><a href="https://central.owncloud.org" class="oc-footer-nav-link">Forum</a></li>
+                <li class="menu-contribute"><a href="https://owncloud.com/contribute" class="oc-footer-nav-link">Contribute</a></li>
+                <li class="menu-customer-support"><a href="https://owncloud.com/support" class="oc-footer-nav-link">Customer support</a></li>
+
+              </ul>
+            </div>
+          </div>
+        </div>
+        <p>&copy; Copyright 2011-2026, The ownCloud developers.</p>
+      </div>
+    </footer>
+
+    <script id="site-script" src="../../../../../assets/js/site.js" data-ui-root-path="../../../../../assets"></script>
+    <script async src="../../../../../assets/js/vendor/highlight.js"></script>
+    <script async src="../../../../../assets/js/vendor/medium-zoom.js"></script>
+    <script async src="../../../../../assets/js/vendor/tabs-ui.js"></script>
+  </body>
+</html>

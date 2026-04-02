@@ -1,0 +1,3056 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>LDAP Integration :: Documentation for ownCloud (A Kiteworks Company)</title>
+
+    <link rel="canonical" href="https://doc.owncloud.com/server/next/admin_manual/configuration/user/user_auth_ldap.html">
+    <link rel="prev" href="user_auth_ftp_smb_imap.html">
+    <link rel="next" href="user_auth_twofactor.html">
+    <meta name="description" content="The LDAP Integration app allows you to integrate your existing LDAP users in ownCloud.">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../../../assets/css/site.css">
+
+    <meta property="og:locale" content="en_us" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="LDAP Integration" />
+    <meta property="og:description" content="LDAP Integration" />
+    <meta property="og:url" content="https://doc.owncloud.com/server/next/admin_manual/configuration/user/user_auth_ldap.html" />
+    <meta property="og:site_name" content="Documentation for ownCloud (A Kiteworks Company)" />
+    <meta property="og:image" content="https://doc.owncloud.com/opengraph-server.png" />
+    <meta property="og:image:alt" content="The ownCloud Server documentation" />
+    <meta name="twitter:site" content="@owncloud" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="LDAP Integration" />
+    <meta name="twitter:description" content="The LDAP Integration app allows you to integrate your existing LDAP users in ownCloud." />
+
+    <script>var uiRootPath = '../../../../../assets'</script>
+
+
+    <title>LDAP Integration :: Documentation for ownCloud (A Kiteworks Company)</title>
+    <link rel="canonical" href="https://doc.owncloud.com/server/next/admin_manual/configuration/user/user_auth_ldap.html">
+    <meta name="description" content="The LDAP Integration app allows you to integrate your existing LDAP users in ownCloud.">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" href="/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="black">
+    <meta name="msapplication-TileColor" content="#001840">
+    <meta name="theme-color" content="#ffffff">
+  </head>
+
+  <body class="article">
+    <header class="header" role="banner">
+      <nav class="navbar">
+        <div class="navbar-brand">
+          <a class="navbar-item" href="https://doc.owncloud.com">Documentation for ownCloud (A Kiteworks Company)</a>
+          <!-- we do not have any hamburger stuff to show like links to external sites
+           <button class="navbar-burger" aria-controls="topbar-nav" aria-expanded="false" aria-label="Toggle main menu">
+           <span></span>
+           <span></span>
+           <span></span>
+           </button>
+          -->
+        </div>
+        <div id="topbar-nav" class="navbar-menu">
+          <div class="navbar-end"> </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="body">
+      <div class="nav-container" data-component="server" data-version="next">
+        <aside class="nav">
+          <div class="panels">
+            <div class="nav-panel-menu is-active" data-panel="menu">
+              <nav class="nav-menu">
+                <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+                <h3 class="title"><a href="../../../index.html">ownCloud Server</a></h3>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="0">
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="1">
+                      <a class="nav-link" href="../../../index.html">Introduction</a>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Admin Manual</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../index.html">Introduction</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../useful_pages.html">Useful Pages</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../faq/index.html">FAQ</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../gdpr.html">GDPR</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Installation</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../installation/deployment_considerations.html">Deployment Considerations</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../installation/deployment_recommendations.html">Deployment Recommendations</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../installation/deployment_recommendations/nfs.html">NFS</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../installation/system_requirements.html">System Requirements</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../installation/configuration_notes_and_tips.html">Configuration Notes and Tips</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../installation/index.html">Installation Options</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../installation/docker/index.html">Installing With Docker</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Manual Installation on Linux</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="5">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Detailed Installation Guide</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="6">
+                      <a class="nav-link" href="../../installation/manual_installation/manual_installation.html">Detailed Installation on Ubuntu (various versions)</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Quick Installation Guide</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="6">
+                      <a class="nav-link" href="../../installation/quick_guides/ubuntu_20_04.html">On Ubuntu 20.04</a>
+                  </li>
+                    <li class="nav-item" data-depth="6">
+                      <a class="nav-link" href="../../installation/quick_guides/ubuntu_22_04.html">On Ubuntu 22.04</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <span class="nav-text">Linux Package Manager</span>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../installation/installation_wizard.html">The Installation Wizard</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../installation/troubleshooting.html">Troubleshooting</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../installation/changing_the_web_route.html">Changing Your ownCloud URL</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../installation/apps_management_installation.html">Installing and Managing Apps</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../installation/apps_supported.html">Supported Apps</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../installation/apps/mediaviewer/index.html">Media Viewer</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../installation/selinux_configuration.html">SELinux Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../installation/letsencrypt/index.html">Using Let&#8217;s Encrypt SSL Certificates</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../installation/letsencrypt/using_letsencrypt.html">Using Letsencrypt</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../installation/letsencrypt/apache.html">Apache</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Configuration</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../database/index.html">Database</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../database/db_conversion.html">Database Conversion</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../database/linux_database_configuration.html">Database Configuration</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../files/encryption/index.html">Encryption</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/encryption/encryption_configuration.html">Encryption Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/encryption/encryption_configuration_quick_guide.html">Encryption Configuration Quick Guide</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../files/external_storage/index.html">External Storage</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/external_storage/configuration.html">External Storage Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/external_storage/auth_mechanisms.html">External Storage Authentication Mechanisms</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/external_storage/amazons3.html">AmazonS3</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/external_storage/dropbox.html">Dropbox</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/external_storage/ftp.html">FTP</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/external_storage/google.html">Google</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/external_storage/local.html">Local</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/external_storage/owncloud.html">ownCloud</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/external_storage/s3_compatible_object_storage_as_primary.html">S3 as Primary</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/external_storage/sftp.html">SFTP</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/external_storage/smb.html">SMB</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/external_storage/webdav.html">WebDAV</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../files/index.html">Files and Sharing</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/big_file_upload_configuration.html">Big File Upload Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/manual_file_locking.html">Manual File Locking</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/default_files_configuration.html">Default Files Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/federated_cloud_sharing_configuration.html">Federated Cloud Sharing Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/file_sharing_configuration.html">File Sharing Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/file_versioning.html">File Versioning</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/files_locking_transactional.html">Transactional File Locking</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/previews_configuration.html">Preview Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/mimetypes.html">Mimetypes</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/trashbin_options.html">Managing the Trashbin</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../integration/index.html">Integration</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../integration/ms-teams.html">Microsoft Teams</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../integration/splunk.html">ownCloud App for Splunk</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../general_topics/index.html">General Topics</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../general_topics/code_signing.html">Code Signing</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../general_topics/impersonate_users.html">Impersonate Users</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../general_topics/search.html">Full Text Search</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../server/index.html">Server</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../server/activity_configuration.html">Activity Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../server/background_jobs_configuration.html">Background Jobs Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../server/caching_configuration.html">Caching Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../server/config_sample_php_parameters.html">Config Sample PHP Parameters</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../server/config_apps_sample_php_parameters.html">Config Apps Sample PHP Parameters</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../server/custom_client_repos.html">Custom Client Repos</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../server/email_configuration.html">Email Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../server/excluded_blacklisted_files.html">Excluded Blacklisted Files</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../server/external_sites.html">External Sites</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../server/harden_server.html">Harden Server</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../server/import_ssl_cert.html">Import SSL Cert</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../server/index_php_less_urls.html">Index PHP Less URLs</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../server/occ_command.html">OCC Command</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../server/language_configuration.html">Language Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../server/legal_settings_configuration.html">Legal Settings Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Logging</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../server/logging/logging_configuration.html">Logging Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../server/logging/request_tracing.html">Request Tracing</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../server/reverse_proxy_configuration.html">Reverse Proxy Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../server/security/index.html">Security</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../server/security/brute_force_protection.html">Brute-Force Protection</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../server/security/oauth2.html">OAuth2</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../server/security/password_policy.html">Password policy</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../server/security_setup_warnings.html">Security Setup Warnings</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../server/security/hsmdaemon/index.html">The HSM (Hardware Security Module) Daemon</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../server/security/dependency_notes.html">Dependency Notes</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../server/oc_server_tuning.html">Server Tuning</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../server/thirdparty_php_configuration.html">Third Party PHP Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../server/virus-scanner-support.html">Virus Scanner Support</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../server/ui-configuration.html">UI Configuration</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">User</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="user_management.html">User Management</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="user_roles.html">User Roles</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="reset_admin_password.html">Reset Admin Password</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="reset_user_password.html">Reset User Password</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="user_auth_ftp_smb_imap.html">User Auth FTP SMB IMAP</a>
+                  </li>
+                    <li class="nav-item is-current-page" data-depth="4">
+                      <a class="nav-link" href="user_auth_ldap.html">User Auth LDAP</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="user_auth_twofactor.html">User Auth Two-Factor</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="user_oauth2.html">User Auth OAuth2</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="user_provisioning_api.html">User Provisioning API</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="custom_groups_app.html">Custom Groups App</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="guests_app.html">Guests App</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="oidc/oidc.html">OpenID Connect (OIDC)</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="login_policies.html">Login Policies</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Maintenance</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../maintenance/upgrading/upgrade.html">Upgrading</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../maintenance/upgrading/manual_upgrade.html">Manual Upgrade</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../maintenance/upgrading/database_upgrade.html">Database Upgrade</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../maintenance/upgrading/upgrade_php.html">Upgrading PHP</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../maintenance/upgrading/marketplace_apps.html">Marketplace Apps</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Backup and Restore</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../maintenance/backup_and_restore/backup.html">Backup</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../maintenance/backup_and_restore/restore.html">Restore</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../maintenance/enable_maintenance.html">Maintenance Mode</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../maintenance/export_import_instance_data.html">Export and Import Instance Data</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../maintenance/manually-moving-data-folders.html">Manually Moving Data Folders</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Encryption</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../maintenance/encryption/migrating-from-user-key-to-master-key.html">Migrating from User Key to Master Key Encryption</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../maintenance/migrating.html">Migrating to a Different Server</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../maintenance/migrating_to_kiteworks.html">Migrating to Kiteworks PDN</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Enterprise</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Authentication</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/authentication/enterprise_only_auth.html">Enterprise Only Authentication</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/authentication/kerberos.html">Kerberos Authentication</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Clients</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/clients/custom_client_repos.html">Custom Client Repos</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Collaboration</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/collaboration/collabora_secure_view.html">Collabora Online / Secure View</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/collaboration/msoffice-wopi-integration.html">Microsoft Office Online / WOPI Integration</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Document Classification</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/document_classification/classification_and_policy_enforcement.html">Classify Documents and Enforce Policies</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">External Storage</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/external_storage/ldap_home_connector_configuration.html">LDAP Home Connector Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/external_storage/sharepoint-integration_configuration.html">Sharepoint integration Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/external_storage/windows-network-drive_configuration.html">Windows Network Drive Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/external_storage/wnd_quick_guide.html">WND Configuration Quick Guide</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">File Management</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/file_management/files_tagging.html">File Tagging</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/file_management/files_lifecycle.html">File Lifecycle Management</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Firewall</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/firewall/file_firewall.html">File Firewall</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Installation</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/installation/install.html">Installing &amp; Upgrading ownCloud Enterprise Edition</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/installation/oracle_db_configuration.html">Oracle DB Setup &amp; Configuration</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Logging</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/logging/admin_audit.html">Auditing</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Reporting</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/reporting/metrics.html">Metrics</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/reporting/config_report.html">Generate a Config Report</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Security</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/security/ransomware-protection.html">Ransomware Protection</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">User Management</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/user_management/user_auth_shibboleth.html">Shibboleth Integration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/user_management/saml_2.0_sso.html">SAML 2.0 Based SSO</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Troubleshooting</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../troubleshooting/general_troubleshooting.html">General Troubleshooting</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../troubleshooting/path_filename_length.html">Path and Filename Length Limitations</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../troubleshooting/providing_logs_and_config_files.html">Retrieve Log Files and Configuration Settings</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../troubleshooting/remove_non_existent_bg_jobs.html">Remove Non-Existent Background Jobs</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../found_a_mistake.html">Found a Mistake?</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Developer Manual</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../developer_manual/index.html">Introduction</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/general/index.html">General Contributor Guidelines</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/general/code-of-conduct.html">Community Code of Conduct</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/general/codingguidelines.html">Coding Style &amp; General Guidelines</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/general/debugging.html">Debugging</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/general/performance.html">Performance Considerations</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/general/security.html">Security Guidelines</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/general/backporting.html">Backporting</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../developer_manual/commun/help_and_communication.html">Help and Communication</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/core/index.html">Developing ownCloud Core</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/core/introduction.html">Introduction</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/general/devenv.html">Setup Your Development Environment</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/core/configfile.html">Application Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/core/theming.html">Theming</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/core/translation.html">Translation</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/core/code-standard.html">Code Standards Compliance</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/testing/index.html">Testing</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/testing/test-pilots.html">ownCloud Test Pilots</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/testing/drone.html">Drone Testing</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/testing/unit-testing.html">Unit Testing</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/testing/acceptance-tests.html">Acceptance Tests</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/testing/ui-testing.html">User Interface Testing</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/core/apis/index.html">Available APIs</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/core/apis/externalapi.html">The External API</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/core/apis/provisioning-api.html">The Provisioning API</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">OCS</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/core/apis/ocs-notification-endpoint-v1.html">The OCS Notifications API (v1)</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/core/apis/ocs-capabilities.html">The OCS REST API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/core/apis/ocs-recipient-api.html">The OCS Recipient API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/core/apis/ocs-share-api.html">The OCS Share API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/core/apis/ocs-totp-validation-api.html">The OCS TOTP Validation API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/core/apis/ocs-user-sync-api.html">The OCS User Sync API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/core/apis/ocs-notify-public-link-by-email.html">Notify Public Link By Email</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/core/apis/roles-api.html">The Roles API</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/webdav_api/index.html">WebDAV APIs</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/webdav_api/comments.html">The Comments API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/webdav_api/groups.html">The Custom Groups Management API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/webdav_api/files_versions.html">The Files Versions API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/webdav_api/meta.html">The Meta API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/webdav_api/search.html">The Search API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/webdav_api/tags.html">The Tags API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/webdav_api/trashbin.html">The Trash Bin API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/webdav_api/public_files.html">The Public Files API</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/app/introduction.html">Application Development</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/index.html">Fundamental Concepts</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/info.html">Application Metadata</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/classloader.html">The Classloader</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/configuration.html">Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/routes.html">Routing</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/controllers.html">Controllers</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/templates.html">Templates</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/js.html">JavaScript</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/css.html">CSS</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/middleware.html">Middleware</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/database.html">Database Connectivity</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/backgroundjobs.html">Background Jobs</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/logging.html">Logging</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/testing.html">Testing</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/container.html">The DI Container</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/filesystem.html">Filesystem</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/api.html">RESTful API</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/hooks.html">Hooks</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/publishing.html">Publishing in the ownCloud Marketplace</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/changelog.html">Changelog</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/market_app.html">Market App</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/app/advanced/index.html">Advanced Concepts</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/advanced/custom-cache-backend.html">Custom Filesystem Caches</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/advanced/custom-storage-backend.html">Custom Storage Backends</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/advanced/notifications.html">Notifications</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/advanced/storage-backend.html">Storage Backends</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/advanced/extstorage.html">External Storage Backends</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/advanced/l10n.html">Translation</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/advanced/two-factor-provider.html">Two-Factor Providers</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/advanced/users.html">User Management</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/advanced/code_signing.html">Code Signing</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/index.html">Tutorial</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/requirements.html">Minimum Requirements</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/request.html">The Request Life Cycle</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/development_environment.html">The Core Application Files</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/routes_and_controllers.html">Routes and Controllers</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/database_connectivity.html">Database Connectivity</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/template_content.html">Create Template Content</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/navigation.html">Create a Navigation Menu</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/javascript_and_css.html">Add JavaScript and CSS</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/wiring_it_up.html">Wiring it Up</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/finishing_touches.html">Apply the Finishing Touches</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/restful_api.html">Add a RESTful API</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/testing.html">Writing Tests</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/mobile_development/index.html">Mobile Development</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/mobile_development/android_library/index.html">Android</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/mobile_development/android_library/library_installation.html">Library Installation</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/mobile_development/android_library/examples.html">Examples</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/mobile_development/ios_library/index.html">iOS</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/mobile_development/ios_library/library_installation.html">Library Installation</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/mobile_development/ios_library/examples.html">Examples</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/bugtracker/index.html">Bugtracker</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/bugtracker/codereviews.html">Code Reviews</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/bugtracker/triaging.html">Bug Triaging</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../developer_manual/found_a_mistake.html">Found a Mistake?</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">ownCloud Server UI</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../classic_ui/index.html">Introduction</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../classic_ui/files/webgui/overview.html">The WebUI</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/webinterface.html">Web Interface</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/files/webgui/navigating.html">Navigating the WebUI</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../classic_ui/personal_settings/index.html">Personal Settings</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/personal_settings/general.html">General</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/personal_settings/storage.html">Storage</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/personal_settings/sharing.html">Sharing</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/personal_settings/security.html">Security</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/personal_settings/custom_groups.html">Custom Groups</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../classic_ui/files/index.html">Files</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/files/access_webdav.html">Access WebDAV</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/files/webgui/sharing.html">Sharing Files</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/files/webgui/search.html">Search &amp; Full Text Search</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/files/webgui/tagging.html">Tagging Files</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/files/webgui/comments.html">Comments</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/files/version_control.html">Version Control</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/files/encrypting_files.html">Encrypting Files</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/files/deleted_file_management.html">Managing Deleted Files</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/files/large_file_upload.html">Large File Uploads</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/files/manual_file_locking.html">Manual File Locking</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/files/files_lifecycle.html">File Lifecycle Management</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/files/public_link_shares.html">Public Link Shares</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/files/federated_cloud_sharing.html">Federated Cloud Sharing</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/session_management.html">Managing Connected Browsers and Devices</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/online_collaboration.html">Online Collaboration</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/files/webgui/quota.html">Storage Quotas</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/external_storage/external_storage.html">External Storage</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/external_storage/sharepoint_connecting.html">Connecting to SharePoint</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/files/desktop_mobile_sync.html">Desktop Mobile Sync</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../classic_ui/apps/index.html">Apps</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/apps/activity.html">Activity</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/apps/calendar.html">Calendar</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/apps/contacts.html">Contacts</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/apps/market.html">Market</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/apps/media_viewer_app.html">Media Viewer App</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../classic_ui/integration/index.html">Integration</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/integration/ms-teams.html">Microsoft Teams</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../classic_ui/pim/index.html">Synchronization Clients</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/pim/sync_ios.html">Sync iOS</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/pim/sync_kde.html">Sync KDE</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/pim/sync_osx.html">Sync OSX</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/pim/sync_thunderbird.html">Sync Thunderbird</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../classic_ui/troubleshooting.html">Troubleshooting</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../classic_ui/found_a_mistake.html">Found a Mistake?</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+            <div class="nav-panel-explore" data-panel="explore">
+              <div class="context">
+                <span class="title">ownCloud Server</span>
+                <span class="version">next</span>
+              </div>
+              <ul class="components">
+                <li class="component">
+                  <div class="title"><a href="../../../../../desktop/next/index.html">Desktop App</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../../../desktop/next/index.html">next</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../desktop/6.0/index.html">6.0</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../desktop/5.3/index.html">5.3</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../../ocis/next/index.html">Infinite Scale Documentation</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../../../ocis/next/index.html">next</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../ocis/8.0/index.html">8.0</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../ocis/7.3/index.html">7.3</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../../android/next/index.html">Mobile App for Android</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../../../android/next/index.html">next</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../android/4.7/index.html">4.7</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../android/4.6/index.html">4.6</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../../ios-app/next/index.html">Mobile App for iOS</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../../../ios-app/next/index.html">next</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../ios-app/12.6/index.html">12.6</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../ios-app/12.5/index.html">12.5</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../../index.html">ownCloud Main Page</a></div>
+                </li>
+                <li class="component is-current">
+                  <div class="title"><a href="../../../index.html">ownCloud Server</a></div>
+                  <ul class="versions">
+                    <li class="version is-current is-latest">
+                      <a href="../../../index.html">next</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../10.16/index.html">10.16</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../10.15/index.html">10.15</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../../webui/next/index.html">ownCloud Web User Interfaces</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../../../webui/next/index.html">next</a>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <main class="article">
+        <div class="toolbar" role="navigation">
+          <button class="nav-toggle"></button>
+          <a href="../../../../../index.html" class="home-link"></a>
+          <nav class="breadcrumbs" aria-label="breadcrumbs">
+            <ul>
+              <li><a href="../../../index.html">ownCloud Server</a></li>
+              <li>Admin Manual</li>
+              <li>Configuration</li>
+              <li>User</li>
+              <li><a href="user_auth_ldap.html">User Auth LDAP</a></li>
+            </ul>
+          </nav>
+      <div class="page-versions">
+        <button class="version-menu-toggle" title="Show other versions of page">next</button>
+        <div class="version-menu">
+          <a class="version is-current" href="user_auth_ldap.html">next</a>
+          <a class="version" href="../../../../10.16/admin_manual/configuration/user/user_auth_ldap.html">10.16</a>
+          <a class="version" href="../../../../10.15/admin_manual/configuration/user/user_auth_ldap.html">10.15</a>
+        </div>
+      </div>
+          <div class="edit-this-page"><a href="https://github.com/owncloud/docs-server/edit/master/modules/admin_manual/pages/configuration/user/user_auth_ldap.adoc">Edit this Page</a></div>
+        </div>
+        <div class="content">
+          <aside class="toc sidebar" data-title="Contents" data-levels="2">
+            <div class="toc-menu"></div>
+          </aside>
+          <article class="doc">
+            <h1 class="page">LDAP Integration</h1>
+
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#configuration">Configuration</a>
+<ul class="sectlevel2">
+<li><a href="#server-tab">Server Tab</a>
+<ul class="sectlevel3">
+<li><a href="#ldaps-configuration">LDAPS Configuration</a></li>
+<li><a href="#server-configurations">Server Configurations</a></li>
+</ul>
+</li>
+<li><a href="#user-filter">User Filter</a></li>
+<li><a href="#login-filter">Login Filter</a></li>
+<li><a href="#group-filter">Group Filter</a></li>
+<li><a href="#advanced-settings">Advanced Settings</a>
+<ul class="sectlevel3">
+<li><a href="#connection-settings">Connection Settings</a></li>
+<li><a href="#directory-settings">Directory Settings</a></li>
+<li><a href="#special-attributes">Special Attributes</a></li>
+</ul>
+</li>
+<li><a href="#expert-settings">Expert Settings</a></li>
+<li><a href="#testing-the-configuration">Testing the Configuration</a></li>
+<li><a href="#syncing-users">Syncing Users</a></li>
+<li><a href="#how-often-should-the-job-run">How Often Should the Job Run?</a></li>
+<li><a href="#reuse-existing-user-and-group-ldap-accounts">Reuse Existing User and Group LDAP Accounts</a></li>
+<li><a href="#owncloud-avatar-integration">ownCloud Avatar Integration</a></li>
+</ul>
+</li>
+<li><a href="#troubleshooting-tips-and-tricks">Troubleshooting, Tips and Tricks</a>
+<ul class="sectlevel2">
+<li><a href="#ldaps">LDAPS</a></li>
+<li><a href="#microsoft-active-directory">Microsoft Active Directory</a></li>
+<li><a href="#memberof-read-memberof-permissions">memberOf / Read MemberOf Permissions</a></li>
+<li><a href="#duplicating-server-configurations">Duplicating Server Configurations</a></li>
+<li><a href="#filter-out-deactivated-users">Filter out Deactivated Users</a></li>
+<li><a href="#caching">Caching</a></li>
+<li><a href="#ldap-indexing">LDAP Indexing</a></li>
+<li><a href="#use-precise-base-dns">Use Precise Base DNs</a></li>
+<li><a href="#use-precise-filters">Use Precise Filters</a></li>
+<li><a href="#owncloud-ldap-internals">ownCloud LDAP Internals</a></li>
+<li><a href="#user-and-group-mapping">User and Group Mapping</a></li>
+<li><a href="#handling-with-backup-server">Handling with Backup Server</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="sect1">
+<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The LDAP Integration app allows you to integrate your existing LDAP users in ownCloud.</p>
+</div>
+<div class="paragraph">
+<p>The LDAP application supports:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>LDAP group support</p>
+</li>
+<li>
+<p>File sharing with ownCloud users and groups</p>
+</li>
+<li>
+<p>Access via WebDAV and ownCloud Desktop Client</p>
+</li>
+<li>
+<p>Versioning, external Storage and all other ownCloud features</p>
+</li>
+<li>
+<p>Seamless connectivity to Active Directory, with no extra configuration required</p>
+</li>
+<li>
+<p>Support for primary groups in Active Directory</p>
+</li>
+<li>
+<p>Only read access to your LDAP (edit or delete of users on your LDAP is not supported)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="configuration"><a class="anchor" href="#configuration"></a>Configuration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>First, install the <a href="https://marketplace.owncloud.com/apps/user_ldap">LDAP Integration</a> app. Then, go to your Admin page to configure it. The LDAP configuration panel has four tabs. A correctly completed first tab ("Server") is mandatory to access the other tabs. A green indicator light appears when the configuration is correct. Hover your cursor over the fields to see some pop-up tooltips.</p>
+</div>
+<div class="sect2">
+<h3 id="server-tab"><a class="anchor" href="#server-tab"></a>Server Tab</h3>
+<div class="paragraph">
+<p>Start with the Server tab. You may configure multiple servers if you have them. At a minimum, you must supply the LDAP server&#8217;s hostname. If your server requires authentication, enter your credentials on this tab.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../../_images/apps/user_ldap/ldap-wizard/server-tab.png" alt="LDAP Wizard - Server Tab" width="500">
+</div>
+</div>
+<div class="sect3">
+<h4 id="ldaps-configuration"><a class="anchor" href="#ldaps-configuration"></a>LDAPS Configuration</h4>
+<div class="paragraph">
+<p>LDAPS encrypts the connection between your LDAP server and ownCloud via SSL/TLS.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">For LDAPS you need a LDAP server with certificates</dt>
+<dd>
+<p></p>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>For Windows Server, install the <em>Active Directory Certificate Services (AD CS)</em> role and configure it as a company CA.</p>
+</li>
+<li>
+<p>Export the CA certificate using this method:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Open <code>certutil</code> with admin privileges and execute the following command where <code>ca_name</code> is just a placeholder for the certificate name. Adjust it accordingly.</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-plaintext hljs" data-lang="plaintext">certutil -ca.cert ca_name.cer</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This ensures you have the right certificate for configuring LDAPS.</p>
+</div>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Copy the certificate <code>ca_name.cer</code> to your ownCloud server.</p>
+</li>
+<li>
+<p>Do the following tasks on the ownCloud server.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Convert the certificate with:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-plaintext hljs" data-lang="plaintext">openssl x509 -inform der -in ca_name.cer -out certificate.pem</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Double-check with:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cat certificate.pem</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The output is the same one you had with <code>certutil</code>.</p>
+</div>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</dd>
+<dt class="hdlist1">Move the Certificate</dt>
+<dd>
+<p>Move the certificate to <code>/etc/ldap/certs/</code> (on Ubuntu) or <code>/etc/openldap/certs/ (on centOS)</code>. You have to create the <code>certs</code> folder inside those directories beforehand.</p>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Only for <code>centOS</code>:<br>
+Change permissions with <code>chown</code> so the ldap client can access the certificate:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">chown centos:centos certificate.pem</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Edit the <code>ldap.conf</code> file inside the ldap directory:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Ubuntu</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-plaintext hljs" data-lang="plaintext">   TLS_CACERT      /etc/ldap/certs/certificate.pem</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">centOS</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-plaintext hljs" data-lang="plaintext">   TLS_CACERT      /etc/openldap/certs/certificate.pem</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Restart the web server.</p>
+</li>
+</ol>
+</div>
+</dd>
+<dt class="hdlist1">If you have a openLDAP server, perform the following steps</dt>
+<dd>
+<p></p>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Import the ssl certificate from openLDAP to ownCloud server.</p>
+</li>
+<li>
+<p>Put it in the /etc/ldap/certs/ or /etc/openldap/certs/ folder, depending on whether you have Ubuntu or centOS.</p>
+</li>
+<li>
+<p>Include it in your <code>ldap.conf</code>:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Ubuntu</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-plaintext hljs" data-lang="plaintext">   TLS_CACERT      /etc/ldap/certs/certificate.pem</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">centOS</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-plaintext hljs" data-lang="plaintext">   TLS_CACERT      /etc/openldap/certs/certificate.pem</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Restart the web server.</p>
+</li>
+</ol>
+</div>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p></p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Configure the ownCloud LDAP app</dt>
+<dd>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Finalize LDAPS via section <a href="#server-configurations">Server Configurations</a> below:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>If you were using LDAP with port 389, you have to change the port to 636 and add <code>ldaps://</code> to your LDAP host in the server tab.</p>
+</li>
+<li>
+<p>Click on <b class="menuref">Test BaseDN</b> and you should see a green light and a number of entries that were found in your LDAP.</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</dd>
+<dt class="hdlist1">LDAPS is prepared</dt>
+<dd>
+<p>Finally you have LDAPS configured and your LDAP traffic is encrypted with a SSL certificate.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="server-configurations"><a class="anchor" href="#server-configurations"></a>Server Configurations</h4>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Server Configuration</dt>
+<dd>
+<p>Configure one or more LDAP servers.
+Click <b class="button">Delete Configuration</b> to remove the active configuration.</p>
+</dd>
+<dt class="hdlist1">Host</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>The hostname or IP address of the LDAP server.
+It can also be an <code>ldaps://</code> URI.
+If you enter the port number, it speeds up server detection.</p>
+</div>
+<div class="paragraph">
+<p><strong>Examples:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>directory.my-company.com</code></p>
+</li>
+<li>
+<p><code>ldaps://directory.my-company.com</code></p>
+</li>
+<li>
+<p><code>directory.my-company.com:9876</code></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">Port</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>The port on which to connect to the LDAP server.</p>
+</div>
+<div class="paragraph">
+<p>Example:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>389</code> for unencrypted connection</p>
+</li>
+<li>
+<p><code>636</code> for encrypted connection</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">User DN</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>The name as DN of a user who has permissions to do searches in the LDAP directory. Leave it empty for anonymous access. We recommend that you have a special LDAP system user for this.</p>
+</div>
+<div class="paragraph">
+<p>Example:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 70%;">
+<col style="width: 30%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">User DN</th>
+<th class="tableblock halign-left valign-top">LDAP Directory</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>uid=owncloudsystemuser,cn=sysusers,dc=my-company,dc=com</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OpenLDAP</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Administrator@my-company.com</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">MicroSoft AD-Server</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">Password</dt>
+<dd>
+<p>The password for the user given above.
+Empty for anonymous access.</p>
+</dd>
+<dt class="hdlist1">Base DN</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>The base DN of LDAP, from where all users and groups can be reached. You may enter multiple base DNs, one per line. Base DNs for users and groups can be set in the Advanced tab. You can either enter this value manually, or click <b class="button">Detect Base DN</b> to have ownCloud attempt to determine the value.</p>
+</div>
+<div class="paragraph">
+<p>Example:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>dc=my-company,dc=com</code></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="user-filter"><a class="anchor" href="#user-filter"></a>User Filter</h3>
+<div class="paragraph">
+<p>Use this to control which LDAP users are listed as ownCloud users on your ownCloud server. In order to control which LDAP users can log in to your ownCloud server, use the Login filter. You may bypass the form fields and enter a raw LDAP filter if you prefer.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../../_images/apps/user_ldap/ldap-wizard/users-tab.png" alt="LDAP Wizard - Users Tab" width="500">
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Only those Object Classes</dt>
+<dd>
+<p>ownCloud determines the object classes that are typically available for user objects in your LDAP.
+ownCloud automatically selects the object class that returns the highest number of users.
+You may select multiple object classes.</p>
+</dd>
+<dt class="hdlist1">Only From those Groups</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>If your LDAP server supports the <code>memberof-overlay</code> in LDAP filters, you can define that only users from one or more certain groups are allowed to appear in user listings in ownCloud. By default, no value is selected. You may select multiple groups.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Group membership is configured by adding <code>memberUid</code>, <code>uniqueMember</code> or member attributes to an LDAP group see (<a href="#group-member-association">Group Member association</a>) below.
+To efficiently look up the groups, a user who is a member of the LDAP server must support a <code>memberof-overlay</code>.
+It allows using the virtual <code>memberOf</code> or <code>isMemberOf</code> attributes of an LDAP user in the user filter.
+If your LDAP server does not support the <code>memberof-overlay</code> in LDAP filters, the input field is disabled.
+Please contact your LDAP administrator.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Active Directory uses <a href="https://docs.microsoft.com/en-us/windows/win32/ad/security-properties">memberOf</a> and is enabled by default.</p>
+</li>
+<li>
+<p>OpenLDAP uses <code>memberOf</code>. <a href="https://www.openldap.org/doc/admin24/overlays.html#Reverse%20Group%20Membership%20Maintenance">Reverse Group Membership Maintenance</a> needs to be enabled.</p>
+</li>
+<li>
+<p>Oracle uses <a href="https://docs.oracle.com/cd/E29127_01/doc.111170/e28967/ismemberof-5dsat.htm">isMemberOf</a> and is enabled by default.</p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">Edit Raw Filter Instead</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Clicking on this text toggles the filter mode, and you can enter the raw LDAP filter directly. Example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-plaintext hljs" data-lang="plaintext">(&amp;
+    (objectClass=inetOrgPerson)
+    (memberOf=cn=owncloudusers,ou=groups,dc=example,dc=com)
+)</code></pre>
+</div>
+</div>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">&lt;x&gt; Users Found</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>This is an indicator that tells you approximately how many users will be listed in ownCloud.
+The number updates automatically after any changes.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>No matter what search filter is given, the app always adds the value of the <code>User Display Name Field</code> (default <code>(displayName=*)</code> ) to the filter to ensure that your users have this field, otherwise the count will be 0.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Active Directory offers "<em>Recursive retrieval of all AD group memberships of a user</em>". This means that you would be able to search the group you enter and all the other child groups from this group for users. Enter this filter to access this feature for a single group:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-plaintext hljs" data-lang="plaintext">(&amp;
+    (objectClass=user)
+    (memberof:1.2.840.113556.1.4.1941:=CN=&lt;groupname&gt;,DC=example,DC=com)
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Enter your group name instead of the <code>&lt;groupname&gt;</code> placeholder. If you want to search multiple groups with this feature, adjust your filter like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-plaintext hljs" data-lang="plaintext">(&amp;
+    (objectClass=user)
+    (|
+        (memberOf:1.2.840.113556.1.4.1941:=CN=&lt;groupname1&gt;,CN=Users,DC=example,DC=com)
+        (memberOf:1.2.840.113556.1.4.1941:=CN=&lt;groupname2&gt;,CN=Users,DC=example,DC=com)
+    )
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can add as many groups to recurse by using the format: <code>(|(m1)(m2)(m3)&#8230;&#8203;..)</code>. <a href="https://social.technet.microsoft.com/wiki/contents/articles/5392.active-directory-ldap-syntax-filters.aspx">Here is the description from Microsoft (point #10)</a>:</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>The string <code>1.2.840.113556.1.4.1941</code> specifies <code>LDAP_MATCHING_RULE_IN_CHAIN</code>.
+This applies only to DN attributes.
+This is an extended match operator that walks the chain of ancestry in objects all the way to the root until it finds a match.
+<strong>This reveals group nesting.</strong>
+It is available only on domain controllers with Windows Server 2003 SP2 or Windows Server 2008 (or above).</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>For more information, see the following from Technet:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="http://social.technet.microsoft.com/wiki/contents/articles/5392.active-directory-ldap-syntax-filters.aspx" target="_blank" rel="noopener">Active Directory: LDAP Syntax Filters</a></p>
+</li>
+<li>
+<p><a href="http://blogs.technet.com/b/heyscriptingguy/archive/2014/11/25/active-directory-week-explore-group-membership-with-powershell.aspx" target="_blank" rel="noopener">Active Directory Week: Explore Group Membership with PowerShell</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="login-filter"><a class="anchor" href="#login-filter"></a>Login Filter</h3>
+<div class="paragraph">
+<p>The settings in the Login Filter tab determine which LDAP users can log in to your ownCloud system and which attribute or attributes the provided login name is matched against (e.g., LDAP/AD username, email address). You may select multiple user details. You may bypass the form fields and enter a raw LDAP filter if you prefer.</p>
+</div>
+<div class="paragraph">
+<p>You may override your User Filter settings on the User Filter tab by using a raw LDAP filter.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../../_images/apps/user_ldap/ldap-wizard/login-attributes-tab.png" alt="LDAP Wizard - Login Attributes Tab" width="500">
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">LDAP Username</dt>
+<dd>
+<p>If this value is checked, the login value will be compared to the username in the LDAP directory.
+The corresponding attribute, usually <code>uid</code> or <code>samaccountname</code> will be detected automatically by ownCloud.</p>
+</dd>
+<dt class="hdlist1">LDAP Email Address</dt>
+<dd>
+<p>If this value is checked, the login value will be compared to an email address in the LDAP directory; specifically, the <code>mailPrimaryAddress</code> and <code>mail</code> attributes.</p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Disallowing login with LDAP Email Address requires enabling strict login checking to be effective:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo -u www-data ./occ config:system:set --type boolean --value true strict_login_enforced</code></pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Other Attributes</dt>
+<dd>
+<p>This multi-select box allows you to select other attributes for the comparison.
+The list is generated automatically from the user object attributes in your LDAP server.</p>
+</dd>
+<dt class="hdlist1">Edit Raw Filter Instead</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Clicking on this text toggles the filter mode, and you can enter the raw LDAP filter directly. Example:</p>
+</div>
+<div class="paragraph">
+<p>The <code>%uid</code> placeholder is replaced with the login name entered by the user upon login.</p>
+</div>
+<div class="paragraph">
+<p><strong>Examples:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Only Username:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-ldap hljs" data-lang="ldap">(&amp;
+    (objectClass=inetOrgPerson)
+    (memberOf=cn=owncloudusers,ou=groups,dc=example,dc=com)
+    (uid=%uid)
+)</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Username or Email Address:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-plaintext hljs" data-lang="plaintext">(
+    (&amp;
+        (objectClass=inetOrgPerson)
+        (memberOf=cn=owncloudusers,ou=groups,dc=example,dc=com)
+        (|(uid=%uid)(mail=%uid))
+    )
+)</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="group-filter"><a class="anchor" href="#group-filter"></a>Group Filter</h3>
+<div class="paragraph">
+<p>By default, no LDAP groups will be available in ownCloud. The settings in the group filter tab determine which groups will be available in ownCloud. You may also elect to enter a raw LDAP filter instead.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../../_images/apps/user_ldap/ldap-wizard/groups-tab.png" alt="LDAP Wizard - Groups Tab" width="500">
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Only those object classes</dt>
+<dd>
+<p>ownCloud will determine the object classes that are typically available for group objects in your LDAP server.
+ownCloud will only list object classes that return at least one group object.
+You can select multiple object classes.
+A typical object class is <code>group</code>, or <code>posixGroup</code>.</p>
+</dd>
+<dt class="hdlist1">Only From those Groups</dt>
+<dd>
+<p>ownCloud will generate a list of available groups found in your LDAP server.
+From these groups, you can select the group or groups that get access to your ownCloud server.</p>
+</dd>
+<dt class="hdlist1">Edit Raw Filter Instead</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre>Clicking on this text toggles the filter mode, and you can enter the raw LDAP filter directly.</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Example:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>objectClass=group</code></p>
+</li>
+<li>
+<p><code>objectClass=posixGroup</code></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">&lt;x&gt; Groups Found</dt>
+<dd>
+<p>This tells you approximately how many groups will be available in ownCloud.
+The number updates automatically after any change.</p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Renaming of LDAP-Groups on the LDAP Server is not supported. Changes like renaming groups in LDAP will not be propagated to ownCloud.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="advanced-settings"><a class="anchor" href="#advanced-settings"></a>Advanced Settings</h3>
+<div class="paragraph">
+<p>The LDAP Advanced Setting section contains options that are not needed for a working connection. This provides controls to disable the current configuration, configure replica hosts, and various performance-enhancing options.</p>
+</div>
+<div class="paragraph">
+<p>The Advanced Settings are structured into three parts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Connection Settings</p>
+</li>
+<li>
+<p>Directory Settings</p>
+</li>
+<li>
+<p>Special Attributes</p>
+</li>
+</ul>
+</div>
+<div class="sect3">
+<h4 id="connection-settings"><a class="anchor" href="#connection-settings"></a>Connection Settings</h4>
+<div class="imageblock">
+<div class="content">
+<img src="../../_images/apps/user_ldap/ldap-wizard/advanced-tab-connection-settings.png" alt="LDAP Wizard - Advanced Tab - Connection Settings" width="500">
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Configuration Active</dt>
+<dd>
+<p>Enables or Disables the current configuration.
+By default, it is turned off.
+When ownCloud makes a successful test connection, it is automatically turned on.</p>
+</dd>
+<dt class="hdlist1">Backup (Replica) Host</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>If you have a backup LDAP server, enter the connection settings here. ownCloud will then automatically connect to the backup when the main server cannot be reached. The backup server must be a replica of the main server so that the object UUIDs match.</p>
+</div>
+<div class="paragraph">
+<p>Example:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>directory2.my-company.com</code></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">Backup (Replica) Port</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre>The connection port of the backup LDAP server.
+If no port is supplied, but only a host, then the main port (as specified above) will be used.</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Example:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>389</code></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">Disable Main Server</dt>
+<dd>
+<p>You can manually override the main server and make ownCloud only connect to the <strong>backup server</strong>.
+This is useful for planned downtimes for example <strong>Upgrades or Updates of the Main Server</strong>.
+<strong>Backup Server Handling</strong>
+When ownCloud is not able to contact the main LDAP server, ownCloud assumes it is offline and will not try to connect again for the time specified in" <strong>Cache Time-To-Live</strong>".</p>
+</dd>
+<dt class="hdlist1">Turn off SSL certificate validation</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Turns off SSL certificate checking.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Use it for testing only!
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">Cache Time-To-Live</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>A cache is introduced to avoid unnecessary LDAP traffic, for example caching usernames so they don&#8217;t have to be looked up for every page, and speeding up loading of the Users page. Saving the configuration empties the cache.
+The time is given in seconds. Note that almost every PHP request requires a new connection to the LDAP server. If you require fresh PHP requests, we recommend defining a minimum lifetime of about 15 seconds or higher, rather than completely eliminating the cache.</p>
+</div>
+<div class="paragraph">
+<p><strong>Examples:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Ten minutes: <code>600</code></p>
+</li>
+<li>
+<p>One hour: <code>3600</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>See <a href="#caching">the Caching section below</a> for detailed information on how the cache operates.</p>
+</div>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="directory-settings"><a class="anchor" href="#directory-settings"></a>Directory Settings</h4>
+<div class="imageblock">
+<div class="content">
+<img src="../../_images/apps/user_ldap/ldap-wizard/advanced-tab-directory-settings.png" alt="LDAP Wizard - Advanced Tab - Directory Settings" width="500">
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">User Display Name Field</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>The attribute that should be used as display name in ownCloud.</p>
+</div>
+<div class="paragraph">
+<p><strong>Examples:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>displayName</code></p>
+</li>
+<li>
+<p><code>givenName</code></p>
+</li>
+<li>
+<p><code>sn</code></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">2nd User Display Name Field</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>An optional second attribute displayed in brackets after the display name, for example using the <code>mail</code> attribute displays as <code>Molly Foo (<a href="mailto:molly@example.com">molly@example.com</a>)</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Examples:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>mail</code></p>
+</li>
+<li>
+<p><code>userPrincipalName</code></p>
+</li>
+<li>
+<p><code>sAMAccountName</code></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">Base User Tree</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>The base DN of LDAP, from where all users can be reached. This must be a complete DN, regardless of what you have entered for your Base DN in the Basic setting. You can specify multiple base trees, one on each line.</p>
+</div>
+<div class="paragraph">
+<p><strong>Examples:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>cn=programmers,dc=my-company,dc=com</code></p>
+</li>
+<li>
+<p><code>cn=designers,dc=my-company,dc=com</code></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">User Search Attributes</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>These attributes are used when searches for users are performed, for example in the share dialogue. The user display name attribute is the default. You may list multiple attributes, one per line.</p>
+</div>
+<div class="paragraph">
+<p>If an attribute is not available on a user object, the user will not be listed, and will be unable to login. This also affects the display name attribute. If you override the default you must specify the display name attribute here.</p>
+</div>
+<div class="paragraph">
+<p><strong>Examples:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>displayName</code></p>
+</li>
+<li>
+<p><code>mail</code></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">Group Display Name Field</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>The attribute that should be used as ownCloud group name.
+ownCloud allows a limited set of characters (<code>a-zA-Z0-9.-_@</code>).
+Once a group name is assigned it cannot be changed.</p>
+</div>
+<div class="paragraph">
+<p><strong>Examples:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>cn</code></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">Base Group Tree</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>The base DN of LDAP, from where all groups can be reached.
+This must be a complete DN, regardless of what you have entered for your Base DN in the Basic setting.
+You can specify multiple base trees, one in each line.</p>
+</div>
+<div class="paragraph">
+<p><strong>Examples:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>cn=barcelona,dc=my-company,dc=com</code></p>
+</li>
+<li>
+<p><code>cn=madrid,dc=my-company,dc=com</code></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">Group Search Attributes</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>These attributes are used when a search for groups is done, for example in the share dialogue.
+By default the group display name attribute as specified above is used.
+Multiple attributes can be given, one in each line.</p>
+</div>
+<div class="paragraph">
+<p>If you override the default, the group display name attribute will not be taken into account, unless you specify it as well.</p>
+</div>
+<div class="paragraph">
+<p><strong>Examples:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>cn</code></p>
+</li>
+<li>
+<p><code>description</code></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+<div id="group-member-association" class="dlist">
+<dl>
+<dt class="hdlist1">Group Member Association</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>The attribute that is used to indicate group memberships, i.e., the attribute used by LDAP groups to refer to their users. ownCloud detects the value automatically. You should only change it if you have a very valid reason and know what you are doing.</p>
+</div>
+<div class="paragraph">
+<p><strong>Examples:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>member</code> with FDN for Active Directory or for objectclass <code>groupOfNames</code> groups</p>
+</li>
+<li>
+<p><code>memberUid</code> with RDN for objectclass <code>posixGroup</code> groups</p>
+</li>
+<li>
+<p><code>uniqueMember</code> with FDN for objectclass <code>groupOfUniqueNames</code> groups</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The Group Member association is used to efficiently query users of a certain group, e.g., on the userManagement page or when resolving all members of a group share.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">Dynamic Group Member URL</dt>
+<dd>
+<p>The LDAP attribute that on group objects contains an LDAP search URL that determines what objects belong to the group.
+An empty setting disables dynamic group membership functionality.
+See <a href="http://www.zytrax.com/books/ldap/ch11/dynamic.html">Configuring Dynamic Groups</a> for more details.</p>
+</dd>
+<dt class="hdlist1">Nested Groups</dt>
+<dd>
+<p>This makes the LDAP connector aware that groups could be stored inside existing group records.
+By default a group will only contain users, so enabling this option isn&#8217;t necessary. However, if groups are contained inside groups, and this option is not enabled, any groups contained within other groups will be ignored and not returned in search results.</p>
+</dd>
+<dt class="hdlist1">Paging Chunk Size</dt>
+<dd>
+<p>This sets the maximum number of records able to be returned in a
+response when ownCloud requests data from LDAP. If this value is
+greater than the limit of the underlying LDAP server (such as 3000 for
+Microsoft Active Directory) the LDAP server will reject the request
+and the search request will fail. Given that, it is important to set
+the requested chunk size to a value no larger than that which the
+underlying LDAP server supports.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="special-attributes"><a class="anchor" href="#special-attributes"></a>Special Attributes</h4>
+<div class="imageblock">
+<div class="content">
+<img src="../../_images/apps/user_ldap/ldap-wizard/advanced-tab-special-attributes.png" alt="LDAP Wizard - Advanced Tab - Special Attributes" width="500">
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Quota Field</dt>
+<dd>
+<p>The name of the LDAP attribute to retrieve the user quota limit from. You have to decide which LDAP attribute you want to use and set a value to it in the Attribute Editor.</p>
+</dd>
+<dt class="hdlist1">Quota Default</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Override ownCloud&#8217;s default quota <strong>for LDAP users</strong> who do not have a quota set in the Quota Field.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>After installation ownCloud uses an unlimited quota by default.</p>
+</li>
+<li>
+<p>Administrators can modify this value, at any time, in the user management page.</p>
+</li>
+<li>
+<p>However, when an LDAP quota is set it will override any values set in ownCloud.</p>
+</li>
+<li>
+<p>If an LDAP per/attribute quota is set in the active directory, it will override the LDAP Quota Default value.</p>
+</li>
+</ol>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Administrators are not allowed to modify the user quota limit in the user management page when steps 3 or 4 are in effect. At this point, updates are only possible via LDAP. See the <a href="https://github.com/valerytschopp/owncloud-ldap-schema">LDAP Schema for ownCloud Quota</a>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">Quota Priority</dt>
+<dd>
+<p>If set, this is the current Quota Priority:</p>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Quota Field</strong> overrides <strong>LDAP Quota Default</strong></p>
+</li>
+<li>
+<p><strong>LDAP Quota Default</strong> overrides <strong>ownCloud Default Quota</strong></p>
+</li>
+<li>
+<p><strong>ownCloud Default Quota</strong> overrides <strong>Unlimited Quota</strong></p>
+</li>
+</ol>
+</div>
+</dd>
+<dt class="hdlist1">Email Field</dt>
+<dd>
+<p>Set the user&#8217;s email from an LDAP attribute, e.g., <code>mail</code>.
+Leave it empty for default behavior.</p>
+</dd>
+<dt class="hdlist1">User Home Folder Naming Rule</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>By default, the ownCloud server creates the user directory in your ownCloud data directory and gives it the ownCloud username, e.g., <code>/var/www/owncloud/data/5a9df029-322d-4676-9c80-9fc8892c4e4b</code>, if your data directory is set to <code>/var/www/owncloud/data</code>.</p>
+</div>
+<div class="paragraph">
+<p>It is possible to override this setting and name it after an LDAP attribute value, e.g., <code>attr:cn</code>.  The attribute can return either an absolute path, e.g., <code>/mnt/storage43/alice</code>, or a relative path which must not begin with a <code>/</code>, e.g., <code>CloudUsers/CookieMonster</code>.  This relative path is then created inside the data directory (e.g., <code>/var/www/owncloud/data/CloudUsers/CookieMonster</code>).</p>
+</div>
+<div class="paragraph">
+<p>Since ownCloud 8.0.10 and up the home folder rule is enforced. This means that once you set a home folder naming rule (get a home folder from an LDAP attribute), it must be available for all users. If it isn&#8217;t available for a user, then that user will not be able to login. Also, the filesystem will not be set up for that user, so their file shares will not be available to other users. For older versions you may enforce the home folder rule with the <code>occ</code> command, like this example on Ubuntu:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo -u www-data ./occ config:app:set user_ldap enforce_home_folder_naming_rule --value=1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Starting with ownCloud 10.0, the home folder naming rule is only applied when first provisioning the user. This prevents data loss due to re-provisioning the users home folder in case of unintentional changes in LDAP.</p>
+</div>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="expert-settings"><a class="anchor" href="#expert-settings"></a>Expert Settings</h3>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Please check both the advanced and expert configurations carefully before using in production.
+</td>
+</tr>
+</table>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../../_images/apps/user_ldap/ldap-wizard/expert-tab.png" alt="LDAP Wizard - Expert Tab" width="500">
+</div>
+</div>
+<div class="paragraph">
+<p>In "<strong>Expert Settings</strong>", fundamental behavior can be adjusted to your needs. The configuration should be well-tested before starting production use.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Internal Username</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>The internal username is the identifier in ownCloud for LDAP users.
+By default it will be created from the UUID attribute.
+The UUID attribute ensures that the username is unique, and that characters do not need to be converted.
+Only these characters are allowed: <code>[\a-\zA-\Z0-\9_.@-]</code>.
+Other characters are replaced with their ASCII equivalents, or are simply omitted.</p>
+</div>
+<div class="paragraph">
+<p>The LDAP backend ensures that there are no duplicate internal usernames in ownCloud, i.e., that it is checking all other activated user backends (including local ownCloud users).
+On collisions, a random number (between 1000 and 9999) will be attached to the retrieved value.
+For example, if "alice" exists, the next username may be <code>alice_1337</code>.</p>
+</div>
+<div class="paragraph">
+<p>The internal username is the default name for the user home folder in ownCloud.
+It is also a part of remote URLs, for instance for all *DAV services.</p>
+</div>
+<div class="paragraph">
+<p>You can override all of this with the "<strong>Internal Username</strong>" setting.
+Leave it empty for default behavior.
+Changes will affect only newly mapped LDAP users.</p>
+</div>
+<div class="paragraph">
+<p><strong>Examples:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>uid</code></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">Override UUID Detection</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>By default, ownCloud auto-detects the UUID attribute.
+The UUID attribute is used to uniquely identify LDAP users and groups.
+The internal username will be created based on the UUID, if not specified otherwise.</p>
+</div>
+<div class="paragraph">
+<p>You can override the setting and pass an attribute of your choice.
+You must make sure that the attribute of your choice can be fetched for both users and groups and that it is unique.
+Leave it empty for default behavior.
+Changes will have effect only on newly mapped LDAP users and groups.</p>
+</div>
+<div class="paragraph">
+<p>It also will take effect when a user or group&#8217;s DN changes and an old UUID was cached, which will result in a new user.
+Because of this, the setting should be applied before putting ownCloud in production use and clearing the bindings the (see <a href="#user-and-group-mapping">User and Group Mapping`</a> section below).</p>
+</div>
+<div class="paragraph">
+<p><strong>Examples:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>cn</code></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">Username-LDAP User Mapping</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>ownCloud uses usernames as keys to store and assign data.
+In order to precisely identify and recognize users, each LDAP user will have an internal username in ownCloud.
+This requires a mapping from an ownCloud username to an LDAP user.</p>
+</div>
+<div class="paragraph">
+<p>The created username is mapped to the UUID of the LDAP user.
+Additionally, the DN is cached to reduce LDAP interaction, but it is not used for identification.
+If the DN changes, the change will be detected by ownCloud by checking the UUID value.</p>
+</div>
+<div class="paragraph">
+<p>The same is valid for groups.
+The internal ownCloud name is used all over in ownCloud.
+Clearing the mappings will have leftovers everywhere.
+Never clear the mappings in a production environment, but only in a testing or experimental server.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Clearing the mappings is not configuration sensitive, it affects all LDAP configurations!
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="testing-the-configuration"><a class="anchor" href="#testing-the-configuration"></a>Testing the Configuration</h3>
+<div class="paragraph">
+<p>The "<strong>Test Configuration</strong>" button checks the values as currently given in the input fields. You do not need to save before testing. By clicking on the button, ownCloud will try to bind to the ownCloud server using the settings currently given in the input fields. If the binding fails you&#8217;ll see a yellow banner with the error message:</p>
+</div>
+<div class="paragraph">
+<p><code>The configuration is invalid. Please have a look at the logs for further details.</code></p>
+</div>
+<div class="paragraph">
+<p>When the configuration test reports success, save your settings and check if the users and groups are fetched correctly on the Users page.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../../_images/configuration/user/user-page.png" alt="Users Page" width="500">
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="syncing-users"><a class="anchor" href="#syncing-users"></a>Syncing Users</h3>
+<div class="paragraph">
+<p>While users who match the login and user filters can log in, only synced users will be found in the sharing dialog. Whenever users log in, their display name, email, quota, avatar and search attributes will be synced to ownCloud. If you want to keep the metadata up to date you can set up a cron job, using the <a href="../server/occ_command.html#syncing-user-accounts" class="xref page">occ user:sync command</a>. Versions of ownCloud before 10.0 imported all users when the users page was loaded, but this is no longer the case.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+During initial sync, make sure to check the ownCloud log for errors that could indicate a possible misconfiguration.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+We recommend <a href="../server/background_jobs_configuration.html#cron-jobs" class="xref page">creating a Cron job</a>, to automate regularly syncing LDAP users with your ownCloud database. If you have many users, you do not have to sync all of them to update a small number of users. You can use the <a href="../../../developer_manual/core/apis/ocs-user-sync-api.html" class="xref page">OCS User Sync API</a> to sync individual users. It provides a way to trigger user sync from outside of ownCloud.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="how-often-should-the-job-run"><a class="anchor" href="#how-often-should-the-job-run"></a>How Often Should the Job Run?</h3>
+<div class="paragraph">
+<p>This depends on the amount of users and speed of the update, but we recommend <em>at least</em> once per day. You can run it more frequently, but doing so may generate too much load on the server.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="reuse-existing-user-and-group-ldap-accounts"><a class="anchor" href="#reuse-existing-user-and-group-ldap-accounts"></a>Reuse Existing User and Group LDAP Accounts</h3>
+<div class="paragraph">
+<p>New LDAP logins can attempt to reuse <em>existing</em> user and group accounts if:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>They match the resolved username attribute.</p>
+</li>
+<li>
+<p>They have <code>User_Proxy</code> set as their backend.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>To enable this functionality, the <code>reuse_accounts</code> config setting must be set to <code>yes</code>. To enable it, run the following command.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo -u www-data ./occ config:app:set user_ldap reuse_accounts --value=yes</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="owncloud-avatar-integration"><a class="anchor" href="#owncloud-avatar-integration"></a>ownCloud Avatar Integration</h3>
+<div class="paragraph">
+<p>ownCloud supports user profile pictures, which are also called avatars. If a user has a photo stored in the <code>jpegPhoto</code> or <code>thumbnailPhoto</code> attribute on your LDAP server, it will be used as their avatar. In this case the user cannot alter their avatar (on their Personal page) as it must be changed in LDAP. <code>jpegPhoto</code> is preferred over <code>thumbnailPhoto</code>.</p>
+</div>
+<div class="paragraph">
+<p>If the <code>jpegPhoto</code> or <code>thumbnailPhoto</code> attribute is not set or empty, then users can upload and manage their avatars on their ownCloud Personal pages. Avatars managed in ownCloud are not stored in LDAP.</p>
+</div>
+<div class="paragraph">
+<p>The <code>jpegPhoto</code> or <code>thumbnailPhoto</code> attribute is fetched once a day to make sure the current photo from LDAP is used in ownCloud. LDAP avatars override ownCloud avatars, and when an LDAP avatar is deleted then the most recent ownCloud avatar replaces it.</p>
+</div>
+<div class="paragraph">
+<p>Photos served from LDAP are automatically cropped and resized in ownCloud. This affects only the presentation, and the original image is not changed.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="troubleshooting-tips-and-tricks"><a class="anchor" href="#troubleshooting-tips-and-tricks"></a>Troubleshooting, Tips and Tricks</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="ldaps"><a class="anchor" href="#ldaps"></a>LDAPS</h3>
+<div class="paragraph">
+<p>Use these commands to troubleshoot:</p>
+</div>
+<div class="paragraph">
+<p>Test encrypted connection:</p>
+</div>
+<div class="paragraph">
+<p><code>openssl s_client -connect 10.211.55.15:636</code></p>
+</div>
+<div class="paragraph">
+<p>look for <strong>verify return:1</strong></p>
+</div>
+<div class="paragraph">
+<p>Try an ldapsearch query</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">ldapsearch \
+-H ldaps://ad16.oc.local:636 \
+-D "cn=Administrator,cn=users,dc=oc,dc=local" \
+-b "dc=oc,dc=local" \
+-w MyPassword</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Check:</p>
+</div>
+<div class="paragraph">
+<p><code>/etc/ldap/ldap.conf</code>
+<code>/etc/openldap/ldap.conf</code></p>
+</div>
+<div class="paragraph">
+<p>look for</p>
+</div>
+<div class="paragraph">
+<p><code>TLS_CACERT      /etc/ssl/certs/ca-certificates.crt</code></p>
+</div>
+<div class="paragraph">
+<p>Turn off certificate validation for testing:</p>
+</div>
+<div class="paragraph">
+<p><code>TLS_REQCERT    ALLOW</code></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="microsoft-active-directory"><a class="anchor" href="#microsoft-active-directory"></a>Microsoft Active Directory</h3>
+<div class="paragraph">
+<p>Compared to earlier ownCloud versions, no further tweaks need to be done to make ownCloud work with Active Directory. ownCloud will automatically find the correct configuration in the set-up process.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="memberof-read-memberof-permissions"><a class="anchor" href="#memberof-read-memberof-permissions"></a>memberOf / Read MemberOf Permissions</h3>
+<div class="paragraph">
+<p>If you want to use <code>memberOf</code> within your filter you might need to give your querying user the permissions to use it. For Microsoft Active Directory this is described <a href="https://serverfault.com/questions/167371/what-permissions-are-required-for-enumerating-users-groups-in-active-directory/167401#167401">here</a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="duplicating-server-configurations"><a class="anchor" href="#duplicating-server-configurations"></a>Duplicating Server Configurations</h3>
+<div class="paragraph">
+<p>In case you have a working configuration and want to create a similar one or "snapshot" configurations before modifying them you can do the following:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Go to the "<strong>Server</strong>" tab</p>
+</li>
+<li>
+<p>On "<strong>Server Configuration</strong>" choose "<strong>Add Server Configuration</strong>"</p>
+</li>
+<li>
+<p>Answer the question "<strong>Take over settings from recent server configuration?</strong>" with "<strong>yes</strong>".</p>
+</li>
+<li>
+<p>(optional) Switch to "<strong>Advanced</strong>" tab and uncheck "<strong>Configuration Active</strong>" in the "<strong>Connection Settings</strong>", so the new configuration is not used on Save</p>
+</li>
+<li>
+<p>Click <b class="button">Save</b></p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Now you can modify and enable the configuration.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="filter-out-deactivated-users"><a class="anchor" href="#filter-out-deactivated-users"></a>Filter out Deactivated Users</h3>
+<div class="paragraph">
+<p>With this filter you can filter out the deactivated users
+and show only active users.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-plaintext hljs" data-lang="plaintext">!(userAccountControl:1.2.840.113556.1.4.803:=2)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Here is what the full filter can look like.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-plaintext hljs" data-lang="plaintext">(&amp;(|(objectclass=organizationalPerson))
+  (!(userAccountControl:1.2.840.113556.1.4.803:=2))
+  (|(|(memberof=CN=Domain Users,CN=Users,DC=dp,DC=mosreg,DC=ru)(primaryGroupID=513)))
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="caching"><a class="anchor" href="#caching"></a>Caching</h3>
+<div class="paragraph">
+<p>Using <a href="../server/caching_configuration.html" class="xref page">caching</a> to speed up lookups. The ownCloud cache is populated on demand, and remains populated until the <code><strong>Cache Time-To-Live</strong></code> for each unique request expires. User logins are not cached, so if you need to improve login times set up a replica LDAP server to share the load.</p>
+</div>
+<div class="paragraph">
+<p>You can adjust the "<strong>Cache Time-To-Live</strong>" value to balance performance and freshness of LDAP data. All LDAP requests will be cached for 10 minutes by default, and you can alter this with the "<strong>Cache Time-To-Live</strong>" setting. The cache answers each request that is identical to a previous request, within the time-to-live of the original request, rather than hitting the LDAP server.</p>
+</div>
+<div class="paragraph">
+<p>The "<strong>Cache Time-To-Live</strong>" is related to each single request. After a cache entry expires there is no automatic trigger for re-populating the information, as the cache is populated only by new requests, for example by opening the User administration page, or searching in a sharing dialog.</p>
+</div>
+<div class="paragraph">
+<p>There is one trigger which is automatically triggered by a certain background job which keeps the <code>user-group-mappings</code> up-to-date, and always in cache.</p>
+</div>
+<div class="paragraph">
+<p>Under normal circumstances, all of the users are never loaded at the same time. Typically, the loading of users happens while page results are generated in steps of 30, until the limit is reached or no results are left.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Please ensure that you&#8217;re using the minimum supported PHP version (7.4.0).
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>ownCloud remembers which user belongs to which LDAP-configuration. That means each request will always be directed to the right server unless a user is defunct, for example due to a server migration or unreachable server. In this case the other servers will also receive the request.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="ldap-indexing"><a class="anchor" href="#ldap-indexing"></a>LDAP Indexing</h3>
+<div class="paragraph">
+<p>Turn on indexing. Deciding which attributes to index depends on your configuration and which LDAP server you are using. See <a href="https://www.openldap.org/doc/admin24/tuning.html#Indexes">the openLDAP tuning guide</a> for openLDAP, and <a href="https://docs.microsoft.com/en-us/previous-versions/tn-archive/aa995762(v=exchg.65)">How to Index an Attribute in Active Directory</a> for Active Directory.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="use-precise-base-dns"><a class="anchor" href="#use-precise-base-dns"></a>Use Precise Base DNs</h3>
+<div class="paragraph">
+<p>The more precise your base DN, the faster LDAP can search because it has fewer branches to search.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="use-precise-filters"><a class="anchor" href="#use-precise-filters"></a>Use Precise Filters</h3>
+<div class="paragraph">
+<p>Use good filters to further define the scope of LDAP searches, and to intelligently direct your server where to search, rather than forcing it to perform needlessly-general searches.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="owncloud-ldap-internals"><a class="anchor" href="#owncloud-ldap-internals"></a>ownCloud LDAP Internals</h3>
+<div class="paragraph">
+<p>Some parts of how the LDAP backend works are described here.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="user-and-group-mapping"><a class="anchor" href="#user-and-group-mapping"></a>User and Group Mapping</h3>
+<div class="paragraph">
+<p>In ownCloud, the user or group name is used to have all relevant information in the database assigned. To work reliably, a permanent internal user name and group name are created and mapped to the LDAP DN and UUID. If the DN changes in LDAP, it will be detected, and there will be no conflicts.</p>
+</div>
+<div class="paragraph">
+<p>Those mappings are done in the database table <code>ldap_user_mapping</code> and <code>ldap_group_mapping</code>. The user name is also used for the user&#8217;s folder (except if something else is specified in <em>User Home Folder Naming Rule</em>), which contains files and meta data.</p>
+</div>
+<div class="paragraph">
+<p>The internal user name and a visible display name are separated. This is not the case for group names yet, as a group name cannot be altered.</p>
+</div>
+<div class="paragraph">
+<p>That means that your LDAP configuration should be good and ready before putting it into production. The mapping tables are filled early, but as long as you are testing, you can empty the tables any time.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Do not do this in production.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="handling-with-backup-server"><a class="anchor" href="#handling-with-backup-server"></a>Handling with Backup Server</h3>
+<div class="paragraph">
+<p>When ownCloud is not able to contact the main LDAP server, ownCloud assumes it is offline and will not try to connect again for the time specified in "Cache Time-To-Live". If you have a backup server configured ownCloud will connect to it instead. When you have scheduled downtime, check <b class="button">Disable Main Server</b> to avoid unnecessary connection attempts.</p>
+</div>
+</div>
+</div>
+</div>
+
+        <nav class="pagination">
+              <span class="prev"><a href="user_auth_ftp_smb_imap.html">User Auth FTP SMB IMAP</a></span>
+              <span class="next"><a href="user_auth_twofactor.html">User Auth Two-Factor</a></span>
+        </nav>
+          </article>
+        </div>
+      </main>
+    </div>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="row-full">
+          <div class="col-third">
+            <div class="footer-nav">
+              <h4>About ownCloud</h4>
+              <ul id="menu-about" class="menu">
+                <li class="menu-landing"><a href="https://owncloud.com/">The Secure Collaboration Platform</a></li>
+                <li class="menu-news"><a href="https://owncloud.com/news/">News</a></li>
+                <li class="menu-privacy"><a href="https://owncloud.com/privacy-statement/">Privacy statement</a></li>
+                <li class="menu-imprint"><a href="https://owncloud.com/imprint/">Imprint</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-third">
+            <div class="footer-nav">
+              <h4>Resources</h4>
+              <ul id="menu-support-and-documentation" class="menu">
+                <li class="menu-faq"><a href="https://owncloud.com/faq/">FAQ</a></li>
+                <li class="menu-help"><a href="https://owncloud.com/docs-guides/">Help</a></li>
+                <li class="menu-security"><a href="https://owncloud.com/security/">Security</a></li>
+                <li class="menu-changelog"><a href="https://owncloud.com/changelog/">Changelog</a></li>
+                <li class="menu-get-started"><a href="https://owncloud.com/get-started/">Get started</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-third">
+            <div class="footer-nav">
+              <h4>Interact</h4>
+              <ul id="menu-interact" class="menu">
+                <li class="menu-forum"><a href="https://central.owncloud.org" class="oc-footer-nav-link">Forum</a></li>
+                <li class="menu-contribute"><a href="https://owncloud.com/contribute" class="oc-footer-nav-link">Contribute</a></li>
+                <li class="menu-customer-support"><a href="https://owncloud.com/support" class="oc-footer-nav-link">Customer support</a></li>
+
+              </ul>
+            </div>
+          </div>
+        </div>
+        <p>&copy; Copyright 2011-2026, The ownCloud developers.</p>
+      </div>
+    </footer>
+
+    <script id="site-script" src="../../../../../assets/js/site.js" data-ui-root-path="../../../../../assets"></script>
+    <script async src="../../../../../assets/js/vendor/highlight.js"></script>
+    <script async src="../../../../../assets/js/vendor/medium-zoom.js"></script>
+    <script async src="../../../../../assets/js/vendor/tabs-ui.js"></script>
+  </body>
+</html>

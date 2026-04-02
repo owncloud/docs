@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Architecture and Concepts of Infinite Scale :: Documentation for ownCloud (A Kiteworks Company)</title>
+
+    <link rel="canonical" href="https://doc.owncloud.com/ocis/next/architecture/architecture.html">
+    <link rel="prev" href="../index.html">
+    <link rel="next" href="../availability_scaling/availability_scaling.html">
+    <meta name="description" content="This page gives you an overview of the architecture and the concepts behind Infinite Scale. Infinite Scale was designed from the beginning as a data platform providing tools to integrate, organize, share and govern data and metadata.">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../assets/css/site.css">
+
+    <meta property="og:locale" content="en_us" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Architecture and Concepts of Infinite Scale" />
+    <meta property="og:description" content="Architecture and Concepts of Infinite Scale" />
+    <meta property="og:url" content="https://doc.owncloud.com/ocis/next/architecture/architecture.html" />
+    <meta property="og:site_name" content="Documentation for ownCloud (A Kiteworks Company)" />
+    <meta property="og:image" content="https://doc.owncloud.com/opengraph-ocis.png" />
+    <meta property="og:image:alt" content="The Infinite Scale Documentation documentation" />
+    <meta name="twitter:site" content="@owncloud" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Architecture and Concepts of Infinite Scale" />
+    <meta name="twitter:description" content="This page gives you an overview of the architecture and the concepts behind Infinite Scale. Infinite Scale was designed from the beginning as a data platform providing tools to integrate, organize, share and govern data and metadata." />
+
+    <script>var uiRootPath = '../../../assets'</script>
+
+
+    <title>Architecture and Concepts of Infinite Scale :: Documentation for ownCloud (A Kiteworks Company)</title>
+    <link rel="canonical" href="https://doc.owncloud.com/ocis/next/architecture/architecture.html">
+    <meta name="description" content="This page gives you an overview of the architecture and the concepts behind Infinite Scale. Infinite Scale was designed from the beginning as a data platform providing tools to integrate, organize, share and govern data and metadata.">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" href="/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="black">
+    <meta name="msapplication-TileColor" content="#001840">
+    <meta name="theme-color" content="#ffffff">
+  </head>
+
+  <body class="article">
+    <header class="header" role="banner">
+      <nav class="navbar">
+        <div class="navbar-brand">
+          <a class="navbar-item" href="https://doc.owncloud.com">Documentation for ownCloud (A Kiteworks Company)</a>
+          <!-- we do not have any hamburger stuff to show like links to external sites
+           <button class="navbar-burger" aria-controls="topbar-nav" aria-expanded="false" aria-label="Toggle main menu">
+           <span></span>
+           <span></span>
+           <span></span>
+           </button>
+          -->
+        </div>
+        <div id="topbar-nav" class="navbar-menu">
+          <div class="navbar-end"> </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="body">
+      <div class="nav-container" data-component="ocis" data-version="next">
+        <aside class="nav">
+          <div class="panels">
+            <div class="nav-panel-menu is-active" data-panel="menu">
+              <nav class="nav-menu">
+                <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+                <h3 class="title"><a href="../index.html">Infinite Scale Documentation</a></h3>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="0">
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="1">
+                      <a class="nav-link" href="../index.html">Introduction</a>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Infinite Scale Overview</span>
+                  <ul class="nav-list">
+                    <li class="nav-item is-current-page" data-depth="2">
+                      <a class="nav-link" href="architecture.html">Architecture and Concepts</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../availability_scaling/availability_scaling.html">Availability and Scalability</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../security/security.html">Security Aspects</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../deployment/index.html">Deployment</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../prerequisites/prerequisites.html">Prerequisites</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Storage</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../deployment/storage/general-considerations.html">General Storage Considerations</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../deployment/storage/nfs.html">Network File System</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../deployment/storage/s3.html">S3</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../deployment/storage/posixfs.html">PosixFS</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../deployment/general/general-info.html">General Information</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../deployment/general/ocis-init.html">The ocis init Command</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../deployment/wopi/wopi.html">Office Applications using WOPI</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../deployment/security/security.html">Securing oCIS</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../deployment/gdpr/gdpr.html">User Triggered GDPR Report</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../deployment/services/services.html">Services</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">General Information</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/deployment-considerations.html">Deployment Considerations</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/env-var-note.html">Environment Variable Notes</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/env-vars-special-scope.html">Environment Variables with Special Scope</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/env-var-changes.html">Environment Variable Changes</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/registry.html">Registry</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/caching.html">Caching and Persistence</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/gateways.html">Gateways</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/logging.html">Logging</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/ports-used.html">Ports Used</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/tls.html">Transport Layer Security</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">List of Services</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/s-list/activitylog.html">Activitylog</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/s-list/antivirus.html">Antivirus</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/s-list/app-provider.html">App Provider</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/s-list/app-registry.html">App Registry</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/s-list/audit.html">Audit</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/s-list/auth-app.html">Auth App</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/s-list/auth-basic.html">Auth Basic</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/s-list/auth-bearer.html">Auth Bearer</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/s-list/auth-machine.html">Auth Machine</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/s-list/auth-service.html">Auth Service</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/s-list/clientlog.html">Clientlog</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/s-list/collaboration.html">Collaboration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/s-list/eventhistory.html">Eventhistory</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/s-list/frontend.html">Frontend</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/s-list/gateway.html">Gateway</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/s-list/graph.html">Graph</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/s-list/groups.html">Groups</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/s-list/idm.html">IDM</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/s-list/invitations.html">Invitations</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/s-list/idp.html">IDP</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/s-list/nats.html">NATS</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/s-list/notifications.html">Notifications</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/s-list/ocdav.html">OCDAV</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/s-list/ocm.html">OCM</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/s-list/ocs.html">OCS</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/s-list/policies.html">Policies</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/s-list/postprocessing.html">Postprocessing</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/s-list/proxy.html">Proxy</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/s-list/search.html">Search</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/s-list/settings.html">Settings</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/s-list/sharing.html">Sharing</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/s-list/sse.html">SSE</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/s-list/store.html">Store</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/s-list/storage-publiclink.html">Storage-Publiclink</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/s-list/storage-shares.html">Storage-Shares</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/s-list/storage-system.html">Storage-System</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/s-list/storage-users.html">Storage-Users</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/s-list/thumbnails.html">Thumbnails</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/s-list/userlog.html">Userlog</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/s-list/users.html">Users</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/s-list/web.html">Web</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/s-list/webdav.html">WebDAV</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment/services/s-list/webfinger.html">Webfinger</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Web UI</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../deployment/webui/webui-customisation.html">Custom Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../deployment/webui/webui-theming.html">Custom Theming</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Maintenance</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Backup and Restore</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../maintenance/b-r/backup_considerations.html">Backup Considerations</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../maintenance/b-r/backup.html">Backup</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../maintenance/b-r/restore.html">Restore</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../maintenance/commands/commands.html">Maintenance Commands</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../maintenance/m-mode/maintenance-mode.html">Maintenance Mode</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../maintenance/space-ids/space-ids.html">Listing Space IDs</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../maintenance/user-ids/user-ids.html">Listing User IDs</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Migration and Upgrades</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../migration/upgrading-ocis.html">Upgrading Infinite Scale</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Monitoring</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../monitoring/prometheus.html">Prometheus</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Configuration Examples</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../conf-examples/office/office-integration.html">Office Integration</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../conf-examples/search/configure-search.html">Search</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Deployment Examples</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Ubuntu with Docker Compose</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../depl-examples/ubuntu-compose/ubuntu-compose-prod.html">Local Production Setup</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../depl-examples/ubuntu-compose/ubuntu-compose-hetzner.html">Deployment on Hetzner</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Setup Federations</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../depl-examples/federation/sciencemesh.html">ScienceMesh Setup</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Additional Information</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../additional-information/knowledge-base.html">Knowledge Base</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+            <div class="nav-panel-explore" data-panel="explore">
+              <div class="context">
+                <span class="title">Infinite Scale Documentation</span>
+                <span class="version">next</span>
+              </div>
+              <ul class="components">
+                <li class="component">
+                  <div class="title"><a href="../../../desktop/next/index.html">Desktop App</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../desktop/next/index.html">next</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../desktop/6.0/index.html">6.0</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../desktop/5.3/index.html">5.3</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component is-current">
+                  <div class="title"><a href="../index.html">Infinite Scale Documentation</a></div>
+                  <ul class="versions">
+                    <li class="version is-current is-latest">
+                      <a href="../index.html">next</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../8.0/index.html">8.0</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../7.3/index.html">7.3</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../android/next/index.html">Mobile App for Android</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../android/next/index.html">next</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../android/4.7/index.html">4.7</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../android/4.6/index.html">4.6</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../ios-app/next/index.html">Mobile App for iOS</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../ios-app/next/index.html">next</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../ios-app/12.6/index.html">12.6</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../ios-app/12.5/index.html">12.5</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../index.html">ownCloud Main Page</a></div>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../server/next/index.html">ownCloud Server</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../server/next/index.html">next</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../server/10.16/index.html">10.16</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../server/10.15/index.html">10.15</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../webui/next/index.html">ownCloud Web User Interfaces</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../webui/next/index.html">next</a>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <main class="article">
+        <div class="toolbar" role="navigation">
+          <button class="nav-toggle"></button>
+          <a href="../../../index.html" class="home-link"></a>
+          <nav class="breadcrumbs" aria-label="breadcrumbs">
+            <ul>
+              <li><a href="../index.html">Infinite Scale Documentation</a></li>
+              <li>Infinite Scale Overview</li>
+              <li><a href="architecture.html">Architecture and Concepts</a></li>
+            </ul>
+          </nav>
+      <div class="page-versions">
+        <button class="version-menu-toggle" title="Show other versions of page">next</button>
+        <div class="version-menu">
+          <a class="version is-current" href="architecture.html">next</a>
+          <a class="version" href="../../8.0/architecture/architecture.html">8.0</a>
+          <a class="version" href="../../7.3/architecture/architecture.html">7.3</a>
+        </div>
+      </div>
+          <div class="edit-this-page"><a href="https://github.com/owncloud/docs-ocis/edit/master/modules/ROOT/pages/architecture/architecture.adoc">Edit this Page</a></div>
+        </div>
+        <div class="content">
+          <aside class="toc sidebar" data-title="Contents" data-levels="2">
+            <div class="toc-menu"></div>
+          </aside>
+          <article class="doc">
+            <h1 class="page">Architecture and Concepts of Infinite Scale</h1>
+
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#architecture-overview">Architecture Overview</a>
+<ul class="sectlevel2">
+<li><a href="#c4-model">C4 Model</a></li>
+</ul>
+</li>
+<li><a href="#concepts">Concepts</a>
+<ul class="sectlevel2">
+<li><a href="#functional-concepts">Functional Concepts</a>
+<ul class="sectlevel3">
+<li><a href="#spaces">Spaces</a></li>
+<li><a href="#federated-storage">Federated Storage</a></li>
+</ul>
+</li>
+<li><a href="#runtime-concepts">Runtime Concepts</a>
+<ul class="sectlevel3">
+<li><a href="#infinite-scale-microservice-runtime">Infinite Scale Microservice Runtime</a></li>
+<li><a href="#infinite-scale-services">Infinite Scale Services</a></li>
+<li><a href="#go-micro">Go-Micro</a></li>
+<li><a href="#reva-and-cs3">REVA and CS3</a></li>
+<li><a href="#protocol-driven-development">Protocol-Driven Development</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="sect1">
+<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This page gives you an overview of the architecture and the concepts behind Infinite Scale. Infinite Scale was designed from the beginning as a data platform providing tools to integrate, organize, share and govern data and metadata.</p>
+</div>
+<div class="paragraph">
+<p>These topics have always been kept in mind during the development of Infinite Scale:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>data platform</p>
+</li>
+<li>
+<p>unified data access</p>
+</li>
+<li>
+<p>cloud data ecosystems</p>
+</li>
+<li>
+<p>support of the customers data strategy</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="architecture-overview"><a class="anchor" href="#architecture-overview"></a>Architecture Overview</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Looking at the image below, you see that the state of classic file sharing is not sufficient for today&#8217;s requirements and the trend clearly heads toward services around data and metadata. Iron-cast structures do not allow for additional value that could be created out of data and metadata. Services available to clients like end users or management have to be able to follow different and dynamic requirements. This is the basis of the Infinite Scale architecture.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/architecture/infinite_scale_data_platform.svg" alt="Infinite Scale Data Platform" width="500">
+</div>
+</div>
+<div class="sect2">
+<h3 id="c4-model"><a class="anchor" href="#c4-model"></a>C4 Model</h3>
+<div class="paragraph">
+<p>We use the C4 model to visualise the software architecture of Infinite Scale.</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>The C4 model is a lean graphical notation technique for modelling the architecture of software systems. It is based on a structural decomposition of a system into containers and components and relies on existing modelling techniques such as the Unified Modelling Language (UML) or Entity Relation Diagrams (ERD) for the more detailed decomposition of the architectural building blocks.</p>
+</div>
+</blockquote>
+<div class="attribution">
+&#8212; &#169; Wikipedia <a href="https://en.wikipedia.org/wiki/C4_model">C4 Model</a>
+</div>
+</div>
+<div class="paragraph">
+<p>Use this link to download the <a href="../_attachments/architecture/infinite-scale-c4-model.dsl" class="xref attachment">Infinite Scale C4 Model</a> raw description file.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/architecture/c4-ocis-system-context.svg" alt="Infinite Scale System Context" width="400">
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/architecture/c4-ocis-system-container.svg" alt="Infinite Scale Container View" width="400">
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="concepts"><a class="anchor" href="#concepts"></a>Concepts</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="functional-concepts"><a class="anchor" href="#functional-concepts"></a>Functional Concepts</h3>
+<div class="sect3">
+<h4 id="spaces"><a class="anchor" href="#spaces"></a>Spaces</h4>
+<div class="paragraph">
+<p>Spaces are a logical concept. They organize a set of resources in a hierarchical tree. Here are some key features:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Internally, a space is identified by a unique <code>storage space ID</code> and displayed to users by a given name.</p>
+</li>
+<li>
+<p>A space has no owner, though one or more users can be assigned to manage a space.</p>
+</li>
+<li>
+<p>Access to a space is granted via roles assigned to users, groups and guests like member, manager etc.</p>
+</li>
+<li>
+<p>Each space can have an individual:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Description</p>
+</li>
+<li>
+<p>Image</p>
+</li>
+<li>
+<p>Quota</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>A storage spaces registry then allows listing the capabilities of storage spaces, e.g. free space, quota, managers, syncable, root <a href="https://en.wikipedia.org/wiki/HTTP_ETag">ETag</a> etc.</p>
+</li>
+<li>
+<p>Spaces may serve different purposes like every user’s personal storage space, project, group or school class storage spaces including shares and reshares.</p>
+</li>
+<li>
+<p>A space makes it much easier to separate data that can be shared and data that should not be shared. As an example, although you can share content in your personal space, it is much more secure to have a dedicated space for sharing and keep your personal space for your eyes only.</p>
+</li>
+<li>
+<p>Spaces have a small memory footprint and are therefore very effective. For details see the <a href="../prerequisites/prerequisites.html#ram-considerations" class="xref page">RAM Considerations</a>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>For detailed information on the implementation of spaces, check out the <a href="https://owncloud.dev/ocis/storage/spaces/">Developer Guide</a>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="federated-storage"><a class="anchor" href="#federated-storage"></a>Federated Storage</h4>
+<div class="paragraph">
+<p>To create a truly federated storage architecture, Infinite Scale breaks down the ownCloud 10 user-specific namespace, which is assembled on the server side, and makes the individual parts accessible to clients as storage spaces and storage space registries.</p>
+</div>
+<div class="paragraph">
+<p>The diagram below shows the core concepts of the new architecture:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>End-user devices can fetch the list of storage spaces a user has access to by querying one or multiple storage space registries. The list contains a unique endpoint for every storage space.</p>
+</li>
+<li>
+<p>Storage space registries manage the list of storage spaces a user has access to. They may subscribe to storage spaces in order to receive notifications about changes on behalf of an end-user&#8217;s mobile or desktop client.</p>
+</li>
+<li>
+<p>Storage spaces represent a collection of files and folders. A user&#8217;s personal files are contained in a storage space. A group or project drive is a storage space. Even incoming shares are treated and implemented as storage spaces, each with properties like owners, permissions, quota and type.</p>
+</li>
+<li>
+<p>Storage providers can hold multiple storage spaces. On an Infinite Scale instance, there might be a dedicated storage provider responsible for users' personal storage spaces. There might be multiple storage providers, either to shard the load, provide different levels of redundancy or support custom workflows. Or there might be just one, hosting all types of storage spaces.</p>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/architecture/idea.drawio.svg" alt="Storage Spaces" width="500">
+</div>
+</div>
+<div class="paragraph">
+<p>For example, <strong>Einstein</strong> wants to share something with <strong>Marie</strong>, who has an account at a <em>different</em> identity provider and uses a different storage space registry. OpenID Connect (OIDC) is used for authentication.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Einstein</strong> opens <code>https://cloud.zurich.test</code>. His browser loads Infinite Scale Web and presents a login form that uses OpenID Connect Discovery to look up the OIDC issuer. For <code>einstein@zurich.test</code>, he will end up at <code>https://idp.zurich.test</code>, authenticate and get redirected back to <code>https://cloud.zurich.test</code>.</p>
+</li>
+<li>
+<p>Now, Infinite Scale Web will use a similar discovery to look up the storage space registry for the account based on the email address (or username). He will discover that <code>https://cloud.zurich.test</code> is also his storage registry which the Web UI will use to load the list of storage spaces available to him.</p>
+</li>
+<li>
+<p>After locating a folder that <strong>Einstein</strong> wants to share with <strong>Marie</strong>, he enters her email address <code>marie@paris.test</code> in the sharing dialog to grant her the editor role. This, in effect, creates a new storage space that is registered with the storage space registry at <code>https://cloud.zurich.test</code>.</p>
+</li>
+<li>
+<p><strong>Einstein</strong> copies the URL in the browser (or an email with the same URL is sent automatically, or the storage registries use a back-channel mechanism). It contains the most specific storage space ID and a path relative to it: <code>https://cloud.zurich.test/#/spaces/716199a6-00c0-4fec-93d2-7e00150b1c84/a/rel/path</code>.</p>
+</li>
+<li>
+<p>When <strong>Marie</strong> enters that URL, she will be presented with a login form on the <code>https://cloud.zurich.test</code> instance, because the share was created on that domain.</p>
+</li>
+<li>
+<p>If <code>https://cloud.zurich.test</code> trusts her OpenID Connect identity provider <code>https://idp.paris.test</code>, she can log in.</p>
+</li>
+<li>
+<p>This time, the storage space registry discovery will come up with <code>https://cloud.paris.test</code> though. Since that registry is different than the registry tied to <code>https://cloud.zurich.test</code>, Infinite Scale Web can look up the storage space <code>716199a6-00c0-4fec-93d2-7e00150b1c84</code> and register the WebDAV URL <code>\https:/cloud.zurich.test/dav/spaces/716199a6-00c0-4fec-93d2-7e00150b1c84/a/rel/path</code> in Marie`s storage space registry at <code>https://cloud.paris.test</code>.</p>
+</li>
+<li>
+<p>When <strong>Marie</strong> accepts that share, her clients will be able to sync the new storage space at <code>https://cloud.zurich.test</code>.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="runtime-concepts"><a class="anchor" href="#runtime-concepts"></a>Runtime Concepts</h3>
+<div class="sect3">
+<h4 id="infinite-scale-microservice-runtime"><a class="anchor" href="#infinite-scale-microservice-runtime"></a>Infinite Scale Microservice Runtime</h4>
+<div class="paragraph">
+<p>Infinite Scale runtime allows us to dynamically manage services running in a single process. We use <a href="https://github.com/thejerf/suture">suture</a> to create a supervisor tree that starts each service in a dedicated Go routine. By default, Infinite Scale will start all built-in Infinite Scale services in a single process. Individual services can be moved to other nodes to scale out and meet specific performance requirements. A <a href="https://github.com/asim/go-micro/blob/master/registry/registry.go">go-micro-based</a> registry allows services in multiple nodes to form a distributed microservice architecture.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="infinite-scale-services"><a class="anchor" href="#infinite-scale-services"></a>Infinite Scale Services</h4>
+<div class="paragraph">
+<p>Every Infinite Scale service uses <a href="https://github.com/owncloud/ocis/tree/master/ocis-pkg">ocis-pkg</a>, which implements the go-micro interfaces for servers to register and clients to look up nodes with a service registry. We are following the 12-factor methodology with Infinite Scale. The uniformity of services also allows us to use the same mechanism for commands, logging and configuration. Configurations are forwarded from the Infinite Scale runtime to the individual services.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="go-micro"><a class="anchor" href="#go-micro"></a>Go-Micro</h4>
+<div class="paragraph">
+<p>While the <a href="https://github.com/asim/go-micro">go-micro</a> framework provides abstractions as well as implementations for the different components in a microservice architecture, it uses a more developer-focused runtime philosophy: It is used to download services from a repo, compile them on the fly and start them as individual processes. For Infinite Scale we decided to use a more admin-friendly runtime: You can download a container that internally uses a single binary, which starts the contained Infinite Scale services with a single command: <code>ocis server</code>. This also makes packaging easier.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="reva-and-cs3"><a class="anchor" href="#reva-and-cs3"></a>REVA and CS3</h4>
+<div class="paragraph">
+<p>A lot of embedded services in Infinite Scale are built on the <a href="https://reva.link/">REVA</a> runtime. Reva is the <a href="https://www.cs3community.org">CS3 API</a> reference implementation. We decided to bundle some of the CS3 services to logically group them. A home storage provider, which is dealing with metadata, and the corresponding data provider, which is dealing with uploads and downloads, are one example. The frontend with the oc-flavoured WebDAV, OCS handlers and a data gateway are another.</p>
+</div>
+<div class="paragraph">
+<p>CS3 (Cloud Storage Services for Synchronization and Sharing) is based on <a href="https://grpc.io/about/">GRPC</a> (open source high performance Remote Procedure Call (RPC) framework) which uses a binary-coded versionable payload protocol with much higher efficiency when it comes to parsing compared to a classical XML payload.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="protocol-driven-development"><a class="anchor" href="#protocol-driven-development"></a>Protocol-Driven Development</h4>
+<div class="paragraph">
+<p>Interacting with Infinite Scale involves a multitude af APIs. The server and all clients rely on <a href="https://openid.net/connect/">OpenID Connect</a> for authentication. The embedded LibreGraph Connect can be replaced with any other OpenID Connect Identity Provider. Clients use the <a href="http://webdav.org/">WebDAV</a>-based <a href="https://github.com/cernbox/smashbox/blob/master/protocol/protocol.md">ownCloud sync protocol</a> to manage files and folders, Open Collaboration Services (OCS) to manage shares and <a href="https://tus.io/protocols/resumable-upload.html">TUS</a> to upload files in a resumable way. On the server side, REVA is the reference implementation of the <a href="https://github.com/cs3org/cs3apis">CS3APIS</a>, which are defined using protocol buffers. By embedding Go-lang LDAP Authentication (GLAuth), Infinite Scale provides a read-only LDAP interface to make accounts, including guests, available to firewalls and other systems.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+        <nav class="pagination">
+              <span class="prev"><a href="../index.html">Introduction</a></span>
+              <span class="next"><a href="../availability_scaling/availability_scaling.html">Availability and Scalability</a></span>
+        </nav>
+          </article>
+        </div>
+      </main>
+    </div>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="row-full">
+          <div class="col-third">
+            <div class="footer-nav">
+              <h4>About ownCloud</h4>
+              <ul id="menu-about" class="menu">
+                <li class="menu-landing"><a href="https://owncloud.com/">The Secure Collaboration Platform</a></li>
+                <li class="menu-news"><a href="https://owncloud.com/news/">News</a></li>
+                <li class="menu-privacy"><a href="https://owncloud.com/privacy-statement/">Privacy statement</a></li>
+                <li class="menu-imprint"><a href="https://owncloud.com/imprint/">Imprint</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-third">
+            <div class="footer-nav">
+              <h4>Resources</h4>
+              <ul id="menu-support-and-documentation" class="menu">
+                <li class="menu-faq"><a href="https://owncloud.com/faq/">FAQ</a></li>
+                <li class="menu-help"><a href="https://owncloud.com/docs-guides/">Help</a></li>
+                <li class="menu-security"><a href="https://owncloud.com/security/">Security</a></li>
+                <li class="menu-changelog"><a href="https://owncloud.com/changelog/">Changelog</a></li>
+                <li class="menu-get-started"><a href="https://owncloud.com/get-started/">Get started</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-third">
+            <div class="footer-nav">
+              <h4>Interact</h4>
+              <ul id="menu-interact" class="menu">
+                <li class="menu-forum"><a href="https://central.owncloud.org" class="oc-footer-nav-link">Forum</a></li>
+                <li class="menu-contribute"><a href="https://owncloud.com/contribute" class="oc-footer-nav-link">Contribute</a></li>
+                <li class="menu-customer-support"><a href="https://owncloud.com/support" class="oc-footer-nav-link">Customer support</a></li>
+
+              </ul>
+            </div>
+          </div>
+        </div>
+        <p>&copy; Copyright 2011-2026, The ownCloud developers.</p>
+      </div>
+    </footer>
+
+    <script id="site-script" src="../../../assets/js/site.js" data-ui-root-path="../../../assets"></script>
+    <script async src="../../../assets/js/vendor/highlight.js"></script>
+    <script async src="../../../assets/js/vendor/medium-zoom.js"></script>
+    <script async src="../../../assets/js/vendor/tabs-ui.js"></script>
+  </body>
+</html>
