@@ -1,6 +1,10 @@
 # ownCloud Documentation
 
-[![Build Status](http://drone.owncloud.com/api/badges/owncloud/docs/status.svg?branch=master)](http://drone.owncloud.com/owncloud/docs)
+**IMPORTANT**
+
+Scince April 2026, this repository requires [Commit Signing](https://docs.github.com/articles/about-gpg) and uses [Conventional Commits](https://www.conventionalcommits.org) for commits and the Pull Request title.
+
+**Overview**
 
 1. The platform and tools used to build the documentation is [Antora](./docs/what-is-antora.md).
 2. The file format that the documentation is written in is [AsciiDoc](./docs/what-is-asciidoc.md).
