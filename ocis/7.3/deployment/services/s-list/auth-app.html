@@ -687,14 +687,17 @@ PROXY_ENABLE_APP_AUTH=true      # mandatory, allow app authentication. In case o
 <div class="sect1">
 <h2 id="app-tokens"><a class="anchor" href="#app-tokens"></a>App Tokens</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>In any example, replace <code>&lt;your host[:port]&gt;</code> with the URL:port of your Infinite Scale instance, and <code>${xxx}</code> accordingly. Note that variables in curly braces are command variables prepared for use with shell environment variables. The complete notation can be fully replaced by their value.</p>
+</div>
 <div class="sect2">
 <h3 id="via-cli"><a class="anchor" href="#via-cli"></a>Via CLI</h3>
 <div class="paragraph">
-<p>App Tokens are used to authenticate 3rd party access via https like when using curl (apps) to access an API endpoint. These apps need to authenticate themselves, as no logged in user authenticates the request. To be able to use an app token, one must first create a token via the cli. Replace the <code>user-name</code> with an existing Infinite Scale user. For the <code>token-expiration</code>, you can use any time abbreviation from the following list: <code>h, m, s</code>. Examples: <code>72h</code> or <code>1h</code> or <code>1m</code> or <code>1s.</code> Default is <code>72h</code>.</p>
+<p>App Tokens are used to authenticate 3rd party access via https like when using curl (apps) to access an API endpoint. These apps need to authenticate themselves, as no logged in user authenticates the request. To be able to use an app token, one must first create a token via the cli. Replace the <code>user-name</code> with an existing Infinite Scale user. For the <code>token_expiration</code>, you can use any time abbreviation from the following list: <code>h, m, s</code>. Examples: <code>72h</code> or <code>1h</code> or <code>1m</code> or <code>1s.</code> Default is <code>72h</code>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">ocis auth-app create --user-name={user-name} --expiration={token-expiration}</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">ocis auth-app create --user-name=${user} --expiration=${token_expiration}</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -710,7 +713,7 @@ PROXY_ENABLE_APP_AUTH=true      # mandatory, allow app authentication. In case o
 <p>The <code>auth-app</code> service provides an API to create (POST), list (GET) and delete (DELETE) tokens at the <code>/auth-app/tokens</code> endpoint.</p>
 </div>
 <div class="paragraph">
-<p>When using curl for the respective command, you need to authenticate with a header. To do so, get from the browsers developer console the currently active bearer token. Consider that this token has a short lifetime. In any example, replace <code>&lt;your host[:port]&gt;</code> with the URL:port of your Infinite Scale instance, and <code>{token}</code>  <code>{value}</code> accordingly.</p>
+<p>When using curl for the respective command, you need to authenticate with a header. To do so, get from the browsers developer console the currently active bearer token. Consider that this token has a short lifetime.</p>
 </div>
 <div class="admonitionblock important">
 <table>
@@ -747,9 +750,9 @@ To get an active bearer token, see the <a href="../../../maintenance/space-ids/s
 <div class="listingblock">
 <div class="title">Command</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl --request POST 'https://&lt;your host:9200&gt;/auth-app/tokens?expiry={value}' \
-     --header 'accept: application/json' \
-     --header 'authorization: Bearer {token}'</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl --request POST "https://&lt;your host:9200&gt;/auth-app/tokens?expiry=${token_expiration}" \
+     --header "accept: application/json" \
+     --header "authorization: Bearer ${token}"</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -780,9 +783,9 @@ The GET request only requires an active bearer token for authentication.</p>
 <div class="listingblock">
 <div class="title">Command</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl --request GET 'https://&lt;your host:9200&gt;/auth-app/tokens' \
-     --header 'accept: application/json' \
-     --header 'authorization: Bearer {token}'</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl --request GET "https://&lt;your host:9200&gt;/auth-app/tokens" \
+     --header "accept: application/json" \
+     --header "authorization: Bearer ${token}"</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -827,9 +830,9 @@ To get an active bearer token, see the <a href="../../../maintenance/space-ids/s
 <div class="listingblock">
 <div class="title">Command</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl --request DELETE 'https://&lt;your host:9200&gt;/auth-app/tokens?token={value}' \
-     --header 'accept: application/json' \
-     --header 'authorization: Bearer {token}'</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl --request DELETE "https://&lt;your host:9200&gt;/auth-app/tokens?token=${token_issued}" \
+     --header "accept: application/json" \
+     --header "authorization: Bearer ${token}"</code></pre>
 </div>
 </div>
 </div>
@@ -849,7 +852,7 @@ To get an active bearer token, see the <a href="../../../maintenance/space-ids/s
 <div class="ulist">
 <ul>
 <li>
-<p>The <code>userID</code> in the form of: <code>userID={value}</code></p>
+<p>The <code>userID</code> in the form of: <code>userID=${user}</code></p>
 <div class="ulist">
 <ul>
 <li>
@@ -860,7 +863,7 @@ To get an active bearer token, see the <a href="../../../maintenance/space-ids/s
 </div>
 </li>
 <li>
-<p>The <code>userName</code> in the form of: <code>userName={value}</code></p>
+<p>The <code>userName</code> in the form of: <code>userName=${user}</code></p>
 <div class="ulist">
 <ul>
 <li>
@@ -878,9 +881,9 @@ To get an active bearer token, see the <a href="../../../maintenance/space-ids/s
 <div class="listingblock">
 <div class="title">Command</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl --request POST 'https://&lt;your host:9200&gt;/auth-app/tokens?expiry={value}&amp;userName={value}' \
-     --header 'accept: application/json' \
-     --header 'authorization: Bearer {token}'</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl --request POST "https://&lt;your host:9200&gt;/auth-app/tokens?expiry=\{value}&amp;userName=${user}" \
+     --header "accept: application/json" \
+     --header "authorization: Bearer ${token}"</code></pre>
 </div>
 </div>
 </div>
