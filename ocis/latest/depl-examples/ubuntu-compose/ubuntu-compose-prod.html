@@ -1,0 +1,1904 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Install Infinite Scale on a Server :: Documentation for ownCloud (A Kiteworks Company)</title>
+
+    <link rel="canonical" href="https://doc.owncloud.com/ocis/latest/depl-examples/ubuntu-compose/ubuntu-compose-prod.html">
+    <link rel="prev" href="../../conf-examples/search/configure-search.html">
+    <link rel="next" href="ubuntu-compose-hetzner.html">
+    <meta name="description" content="Install Infinite Scale using Docker Compose on a server for production use.">
+    <meta name="keywords" content="docker compose, raspberry pi, install, ocis, infinite scale, letsencrypt">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../../assets/css/site.css">
+
+    <meta property="og:locale" content="en_us" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Install Infinite Scale on a Server" />
+    <meta property="og:description" content="Install Infinite Scale on a Server" />
+    <meta property="og:url" content="https://doc.owncloud.com/ocis/latest/depl-examples/ubuntu-compose/ubuntu-compose-prod.html" />
+    <meta property="og:site_name" content="Documentation for ownCloud (A Kiteworks Company)" />
+    <meta property="og:image" content="https://doc.owncloud.com/opengraph-ocis.png" />
+    <meta property="og:image:alt" content="The Infinite Scale Documentation documentation" />
+    <meta name="twitter:site" content="@owncloud" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Install Infinite Scale on a Server" />
+    <meta name="twitter:description" content="Install Infinite Scale using Docker Compose on a server for production use." />
+
+    <script>var uiRootPath = '../../../../assets'</script>
+
+
+    <title>Install Infinite Scale on a Server :: Documentation for ownCloud (A Kiteworks Company)</title>
+    <link rel="canonical" href="https://doc.owncloud.com/ocis/latest/depl-examples/ubuntu-compose/ubuntu-compose-prod.html">
+    <meta name="description" content="Install Infinite Scale using Docker Compose on a server for production use.">
+    <meta name="keywords" content="docker compose, raspberry pi, install, ocis, infinite scale, letsencrypt">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" href="/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="black">
+    <meta name="msapplication-TileColor" content="#001840">
+    <meta name="theme-color" content="#ffffff">
+  </head>
+
+  <body class="article">
+    <header class="header" role="banner">
+      <nav class="navbar">
+        <div class="navbar-brand">
+          <a class="navbar-item" href="https://doc.owncloud.com">Documentation for ownCloud (A Kiteworks Company)</a>
+          <!-- we do not have any hamburger stuff to show like links to external sites
+           <button class="navbar-burger" aria-controls="topbar-nav" aria-expanded="false" aria-label="Toggle main menu">
+           <span></span>
+           <span></span>
+           <span></span>
+           </button>
+          -->
+        </div>
+        <div id="topbar-nav" class="navbar-menu">
+          <div class="navbar-end"> </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="body">
+      <div class="nav-container" data-component="ocis" data-version="8.0">
+        <aside class="nav">
+          <div class="panels">
+            <div class="nav-panel-menu is-active" data-panel="menu">
+              <nav class="nav-menu">
+                <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+                <h3 class="title"><a href="../../index.html">Infinite Scale Documentation</a></h3>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="0">
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="1">
+                      <a class="nav-link" href="../../index.html">Introduction</a>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Infinite Scale Overview</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../architecture/architecture.html">Architecture and Concepts</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../availability_scaling/availability_scaling.html">Availability and Scalability</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../security/security.html">Security Aspects</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../deployment/index.html">Deployment</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../prerequisites/prerequisites.html">Prerequisites</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Storage</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../deployment/storage/general-considerations.html">General Storage Considerations</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../deployment/storage/nfs.html">Network File System</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../deployment/storage/s3.html">S3</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../deployment/storage/posixfs.html">PosixFS</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../deployment/general/general-info.html">General Information</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../deployment/general/ocis-init.html">The ocis init Command</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../deployment/wopi/wopi.html">Office Applications using WOPI</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../deployment/security/security.html">Securing oCIS</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../deployment/gdpr/gdpr.html">User Triggered GDPR Report</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../deployment/services/services.html">Services</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">General Information</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/deployment-considerations.html">Deployment Considerations</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/env-var-note.html">Environment Variable Notes</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/env-vars-special-scope.html">Environment Variables with Special Scope</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/env-var-changes.html">Environment Variable Changes</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/registry.html">Registry</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/caching.html">Caching and Persistence</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/gateways.html">Gateways</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/logging.html">Logging</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/ports-used.html">Ports Used</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/tls.html">Transport Layer Security</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">List of Services</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/activitylog.html">Activitylog</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/antivirus.html">Antivirus</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/app-provider.html">App Provider</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/app-registry.html">App Registry</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/audit.html">Audit</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/auth-app.html">Auth App</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/auth-basic.html">Auth Basic</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/auth-bearer.html">Auth Bearer</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/auth-machine.html">Auth Machine</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/auth-service.html">Auth Service</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/clientlog.html">Clientlog</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/collaboration.html">Collaboration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/eventhistory.html">Eventhistory</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/frontend.html">Frontend</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/gateway.html">Gateway</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/graph.html">Graph</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/groups.html">Groups</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/idm.html">IDM</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/invitations.html">Invitations</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/idp.html">IDP</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/nats.html">NATS</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/notifications.html">Notifications</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/ocdav.html">OCDAV</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/ocm.html">OCM</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/ocs.html">OCS</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/policies.html">Policies</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/postprocessing.html">Postprocessing</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/proxy.html">Proxy</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/search.html">Search</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/settings.html">Settings</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/sharing.html">Sharing</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/sse.html">SSE</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/store.html">Store</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/storage-publiclink.html">Storage-Publiclink</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/storage-shares.html">Storage-Shares</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/storage-system.html">Storage-System</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/storage-users.html">Storage-Users</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/thumbnails.html">Thumbnails</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/userlog.html">Userlog</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/users.html">Users</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/web.html">Web</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/webdav.html">WebDAV</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../deployment/services/s-list/webfinger.html">Webfinger</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Web UI</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../deployment/webui/webui-customisation.html">Custom Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../deployment/webui/webui-theming.html">Custom Theming</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Maintenance</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Backup and Restore</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../maintenance/b-r/backup_considerations.html">Backup Considerations</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../maintenance/b-r/backup.html">Backup</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../maintenance/b-r/restore.html">Restore</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../maintenance/commands/commands.html">Maintenance Commands</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../maintenance/m-mode/maintenance-mode.html">Maintenance Mode</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../maintenance/space-ids/space-ids.html">Listing Space IDs</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../maintenance/user-ids/user-ids.html">Listing User IDs</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Migration and Upgrades</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../migration/upgrading-ocis.html">Upgrading Infinite Scale</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Monitoring</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../monitoring/prometheus.html">Prometheus</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Configuration Examples</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../conf-examples/office/office-integration.html">Office Integration</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../conf-examples/search/configure-search.html">Search</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Deployment Examples</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Ubuntu with Docker Compose</span>
+                  <ul class="nav-list">
+                    <li class="nav-item is-current-page" data-depth="3">
+                      <a class="nav-link" href="ubuntu-compose-prod.html">Local Production Setup</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="ubuntu-compose-hetzner.html">Deployment on Hetzner</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Setup Federations</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../federation/sciencemesh.html">ScienceMesh Setup</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Additional Information</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../additional-information/knowledge-base.html">Knowledge Base</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+            <div class="nav-panel-explore" data-panel="explore">
+              <div class="context">
+                <span class="title">Infinite Scale Documentation</span>
+                <span class="version">8.0</span>
+              </div>
+              <ul class="components">
+                <li class="component">
+                  <div class="title"><a href="../../../../desktop/latest/index.html">Desktop App</a></div>
+                  <ul class="versions">
+                    <li class="version">
+                      <a href="../../../../desktop/next/index.html">next</a>
+                    </li>
+                    <li class="version is-latest">
+                      <a href="../../../../desktop/latest/index.html">6.0</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../desktop/5.3/index.html">5.3</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component is-current">
+                  <div class="title"><a href="../../index.html">Infinite Scale Documentation</a></div>
+                  <ul class="versions">
+                    <li class="version">
+                      <a href="../../../next/index.html">next</a>
+                    </li>
+                    <li class="version is-current is-latest">
+                      <a href="../../index.html">8.0</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../7.3/index.html">7.3</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../android/latest/index.html">Mobile App for Android</a></div>
+                  <ul class="versions">
+                    <li class="version">
+                      <a href="../../../../android/next/index.html">next</a>
+                    </li>
+                    <li class="version is-latest">
+                      <a href="../../../../android/latest/index.html">4.7</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../android/4.6/index.html">4.6</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../ios-app/latest/index.html">Mobile App for iOS</a></div>
+                  <ul class="versions">
+                    <li class="version">
+                      <a href="../../../../ios-app/next/index.html">next</a>
+                    </li>
+                    <li class="version is-latest">
+                      <a href="../../../../ios-app/latest/index.html">12.6</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../ios-app/12.5/index.html">12.5</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../index.html">ownCloud Main Page</a></div>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../server/latest/index.html">ownCloud Server</a></div>
+                  <ul class="versions">
+                    <li class="version">
+                      <a href="../../../../server/next/index.html">next</a>
+                    </li>
+                    <li class="version is-latest">
+                      <a href="../../../../server/latest/index.html">10.16</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../server/10.15/index.html">10.15</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../webui/latest/index.html">ownCloud Web User Interfaces</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../../webui/latest/index.html">next</a>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <main class="article">
+        <div class="toolbar" role="navigation">
+          <button class="nav-toggle"></button>
+          <a href="../../../../index.html" class="home-link"></a>
+          <nav class="breadcrumbs" aria-label="breadcrumbs">
+            <ul>
+              <li><a href="../../index.html">Infinite Scale Documentation</a></li>
+              <li>Deployment Examples</li>
+              <li>Ubuntu with Docker Compose</li>
+              <li><a href="ubuntu-compose-prod.html">Local Production Setup</a></li>
+            </ul>
+          </nav>
+      <div class="page-versions">
+        <button class="version-menu-toggle" title="Show other versions of page">8.0</button>
+        <div class="version-menu">
+          <a class="version" href="../../../next/depl-examples/ubuntu-compose/ubuntu-compose-prod.html">next</a>
+          <a class="version is-current" href="ubuntu-compose-prod.html">8.0</a>
+          <a class="version" href="../../../7.3/depl-examples/ubuntu-compose/ubuntu-compose-prod.html">7.3</a>
+        </div>
+      </div>
+          <div class="edit-this-page"><a href="https://github.com/owncloud/docs-ocis/edit/8.0/modules/ROOT/pages/depl-examples/ubuntu-compose/ubuntu-compose-prod.adoc">Edit this Page</a></div>
+        </div>
+        <div class="content">
+          <aside class="toc sidebar" data-title="Contents" data-levels="2">
+            <div class="toc-menu"></div>
+          </aside>
+          <article class="doc">
+            <h1 class="page">Install Infinite Scale on a Server</h1>
+
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><span class="image"><img src="../../_images/depl-examples/ubuntu-compose/ubuntu-basic-teaser-image.png" alt="Teaser Image" width="650"></span></p>
+</div>
+<div class="paragraph">
+<p><br></p>
+</div>
+<div id="toc" class="toc">
+<div id="toctitle" class="title">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#requirements">Requirements</a>
+<ul class="sectlevel2">
+<li><a href="#hardware">Hardware</a></li>
+<li><a href="#knowledge-stack">Knowledge Stack</a></li>
+<li><a href="#software-stack">Software Stack</a></li>
+<li><a href="#volumes">Volumes</a></li>
+<li><a href="#other-requirements">Other Requirements</a>
+<ul class="sectlevel3">
+<li><a href="#domain-names">Domain Names</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#accessing-infinite-scale">Accessing Infinite Scale</a></li>
+<li><a href="#limitations">Limitations</a></li>
+<li><a href="#add-the-ip-address-to-the-domains">Add the IP Address to the Domains</a></li>
+<li><a href="#prepare-the-server">Prepare the Server</a>
+<ul class="sectlevel2">
+<li><a href="#install-required-software-packages">Install Required Software Packages</a></li>
+</ul>
+</li>
+<li><a href="#download-and-transfer-the-example">Download and Transfer the Example</a></li>
+<li><a href="#extract-the-example">Extract the Example</a></li>
+<li><a href="#edit-the-configuration-file">Edit the Configuration File</a></li>
+<li><a href="#certificate-generation-process">Certificate Generation Process</a></li>
+<li><a href="#start-the-deployment">Start the Deployment</a>
+<ul class="sectlevel2">
+<li><a href="#solving-first-startup-issues">Solving First Startup Issues</a></li>
+</ul>
+</li>
+<li><a href="#stop-the-deployment">Stop the Deployment</a></li>
+<li><a href="#change-settings">Change Settings</a></li>
+<li><a href="#first-time-login">First Time Login</a></li>
+<li><a href="#monitor-the-instance">Monitor the Instance</a>
+<ul class="sectlevel2">
+<li><a href="#container">Container</a></li>
+<li><a href="#logs">Logs</a></li>
+</ul>
+</li>
+<li><a href="#infinite-scale-command-line">Infinite Scale Command Line</a></li>
+<li><a href="#admin-password">Admin Password</a>
+<ul class="sectlevel2">
+<li><a href="#initial-admin-password-from-docker-log">Initial Admin Password from Docker Log</a></li>
+<li><a href="#command-line-password-reset">Command Line Password Reset</a></li>
+</ul>
+</li>
+<li><a href="#volume-migration">Volume Migration</a></li>
+<li><a href="#updating-and-upgrading">Updating and Upgrading</a>
+<ul class="sectlevel2">
+<li><a href="#updating">Updating</a></li>
+<li><a href="#upgrading">Upgrading</a></li>
+</ul>
+</li>
+<li><a href="#certificate-renewal">Certificate Renewal</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Install Infinite Scale using Docker Compose on a server for production use. The aim of this guide is to be up and running as fast as possible using a deployment setup that includes <strong>Infinite Scale and web office applications for document collaboration</strong> for home usage or small businesses. It also uses valid certificates from Letsencrypt.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<strong>There are several decisions and steps that need to be taken when setting up and configuring the server. We strongly recommend that you read the manual and not just try to copy and paste commands.</strong>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This guide references the latest production version of Infinite Scale.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+With this setup, each deployment only contains one instance of Infinite Scale.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="requirements"><a class="anchor" href="#requirements"></a>Requirements</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="hardware"><a class="anchor" href="#hardware"></a>Hardware</h3>
+<div class="paragraph">
+<p>This guide describes an installation of Infinite Scale based on Ubuntu LTS and docker compose. The underlying hardware of the server can be anything as listed below as long it meets the OS requirements defined in the <a href="#software-stack">Software Stack</a>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Raspberry Pi (4 and higher)</p>
+</li>
+<li>
+<p>Bare Metal Server</p>
+</li>
+<li>
+<p>Virtual Machine</p>
+</li>
+<li>
+<p>&#8230;&#8203;</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>Disk space<br>
+Approximately 2.4GB of disk space is required for the default enabled services, as you will receive not only Infinite Scale, but also Office packages for online collaboration and other required software to run this setup. Unless otherwise specified, this guide uses Docker-managed volumes. See the <a href="#volumes">Volumes</a> description for an explanation of the term volume.</p>
+</li>
+<li>
+<p>Memory</p>
+<div class="ulist">
+<ul>
+<li>
+<p>We recommend at minimum 4-6GB of memory.</p>
+</li>
+<li>
+<p>If you plan to enable antivirus scanning, see the memory consideration section in the <a href="../../deployment/services/s-list/antivirus.html" class="xref page">antivirus</a> service for additional memory requirements.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="knowledge-stack"><a class="anchor" href="#knowledge-stack"></a>Knowledge Stack</h3>
+<div class="paragraph">
+<p>You, as administrator, must have the following minimum knowledge stack.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Being capable to order and configure external accessible domains.</p>
+</li>
+<li>
+<p>Being capable to configure:<br>
+Router, Firewall, NAT, DHCP, networks etc.</p>
+</li>
+<li>
+<p>Command line (bash) tools like:<br>
+ssh, actions on files, edit files etc.</p>
+</li>
+<li>
+<p>Maintaining a server:<br>
+Setting or changing hostnames, IP configuration, installing software packages etc.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="software-stack"><a class="anchor" href="#software-stack"></a>Software Stack</h3>
+<div class="paragraph">
+<p>Ubuntu <strong>LTS 24.04</strong> has been selected as the operating system, but it will also work with Ubuntu LTS 22.04. If you already have a server running Ubuntu LTS 24.04, you can use it as long as it meets the requirements listed below</p>
+</div>
+<div class="paragraph">
+<p>Note that this guide expects:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A server with the operating system installed and all required software other than Infinite Scale, such as docker and docker compose, installed and preconfigured, and all software updated to the latest version.</p>
+</li>
+<li>
+<p>You have at least shell access and can ssh to your host from another machine on your network. You may need <code>sudo</code> permissions for some steps later in the setup.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="volumes"><a class="anchor" href="#volumes"></a>Volumes</h3>
+<div class="paragraph">
+<p>Volumes are where Docker stores data. In short, Docker can handle two types of volumes:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Volumes managed by docker:</strong><br>
+These volumes are managed by Docker and, unless otherwise specified, are located in the same partition where the operating system is installed. While this is easy to use and requires no additional configuration, there are dependencies that should be considered, such as space sharing, snapshots, resetting, backup/restore, migration, etc.</p>
+</li>
+<li>
+<p><strong>External volumes:</strong><br>
+These volumes are not managed by Docker. You must provide Docker with a mount point for the volume, which can be a folder, partition, external storage, etc.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Note that the term volume can be used in different contexts. For example, <a href="https://www.hetzner.com">Hetzner</a>, as a provider of computing resources, uses the term volume to refer to a definable disk space that is independently provisioned and billed. Such a volume can then be attached to a Docker volume to store data.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="other-requirements"><a class="anchor" href="#other-requirements"></a>Other Requirements</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Firewall</dt>
+<dd>
+<p>Because the server configured  is exposed to the internet, we highly recommend configuring a firewall for security reasons. Configuring a firewall is not part of this document.</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The minimum configuration for the firewall is to allow TCP port 22, 80 and 443. We also recommend to allow <code>ICMP</code> to be able to ping the server. 
+</td>
+</tr>
+</table>
+</div>
+</dd>
+<dt class="hdlist1">Domain Name and Routing</dt>
+<dd>
+<p>To access Infinite Scale from the internet, you <strong>must</strong>:</p>
+<div class="openblock">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>Own a domain name which will get multiple subdomains configured.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>You can also use a wildcard operator for the subdomains in the DNS configuration. In cases where you already use subdomains for other purposes, we recommend using a subdomain as an entry point and adding the wildcard operator there to allow for different IP configurations.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>The IP address of your WAN needs to be used for the (sub)domains configured.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Note that you can use any domain provider of choice.</p>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">eMail</dt>
+</dl>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>The following data is required to configure the Infinite Scale eMail setup, see the <a href="../../deployment/services/s-list/notifications.html" class="xref page">notifications service</a> for more details.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>You must configure at least the <code>SMTP_SENDER</code>, even if it is a dummy email like <code>noreply@example.com</code>, otherwise the deployment will not start.</p>
+</li>
+<li>
+<p>If all other email data is not available, Infinite Scale will start but no notifications can be sent.</p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>SMTP_HOST</code><br>
+SMTP host to connect to.</p>
+</li>
+<li>
+<p><code>SMTP_PORT</code><br>
+Port of the SMTP host to connect to.</p>
+</li>
+<li>
+<p><code>SMTP_SENDER</code><br>
+An eMail address that is used for sending Infinite Scale notification eMails like<br>
+<code><span class="blue">ocis &lt;noreply@yourdomain.com&gt;</span></code>.</p>
+</li>
+<li>
+<p><code>SMTP_USERNAME</code><br>
+Username for the SMTP host to connect to.</p>
+</li>
+<li>
+<p><code>SMTP_PASSWORD</code><br>
+Password for the SMTP host to connect to.</p>
+</li>
+<li>
+<p><code>SMTP_AUTHENTICATION</code><br>
+Authentication method for the SMTP communication.</p>
+</li>
+<li>
+<p><code>SMTP_SECURITY</code><br>
+Define using secure or insecure connections to the SMTP server.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="domain-names"><a class="anchor" href="#domain-names"></a>Domain Names</h4>
+<div class="paragraph">
+<p>This environment requires multiple (sub)domain names to be available. You will need to modify the examples to suit your environment. The (sub)domains must be configured to point to the server you are configuring. The same applies if you are using a wildcard configuration. For a wildcard setup on the DNS, these (sub)domains must be provided to configure the <code>.env</code> file described in one of the next sections.</p>
+</div>
+<div class="paragraph">
+<p>The following (sub)domains are required as a minimum, an example is printed for each, replace them according to your environment:</p>
+</div>
+<div class="ulist">
+<div class="title">Mandatory</div>
+<ul>
+<li>
+<p><code>OCIS_DOMAIN</code><br>
+<code><span class="blue">ocis.yourdomain.com</span></code></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">If Collabora and/or Onlyoffice is configured via .env</div>
+<ul>
+<li>
+<p><code>COLLABORA_DOMAIN</code><br>
+<code><span class="blue">collabora.yourdomain.com</span></code></p>
+</li>
+<li>
+<p><code>ONLYOFFICE_DOMAIN</code><br>
+<code><span class="blue">onlyoffice.yourdomain.com</span></code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Note that depending on your setup, more (sub)domains may be required. See the <code>.env</code> file for more details..</p>
+</div>
+<div class="paragraph">
+<p>Note that any communication between ocis and any web office application is handled via the docker network and is not exposed to the outside.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="accessing-infinite-scale"><a class="anchor" href="#accessing-infinite-scale"></a>Accessing Infinite Scale</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Infinite Scale can be accessed from the Internet and from your local network via a browser using the URL defined in <code>OCIS_DOMAIN</code>:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../../_images/depl-examples/ubuntu-compose/ubuntu-server-access.drawio.svg" alt="Network Overview" width="400">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="limitations"><a class="anchor" href="#limitations"></a>Limitations</h2>
+<div class="sectionbody">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Data Location</dt>
+<dd>
+<p>Unless otherwise set up and configured, all data is stored in volumes managed by Docker on the same partition of the server. If you want to define your own volume paths, provide the paths and configure them in the <code>.env</code> file. This is highly recommended for production environments and is described in the <a href="#hardware">Hardware</a> and <a href="#volumes">Volumes</a> sections above.</p>
+</dd>
+<dt class="hdlist1">User and User Access Management</dt>
+<dd>
+<p>The following embedded services are well suited for home and small business use, although Infinite Scale can be configured to use external products that are relevant to larger installations and are not covered here.</p>
+<div class="openblock">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>Infinite Scale has an embedded identity management (IDM <sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup>) that takes care of creating, storing, and managing user identity information.</p>
+</li>
+<li>
+<p>In addition, it also has an embedded Identity Provider (IDP <sup class="footnote">[<a id="_footnoteref_2" class="footnote" href="#_footnotedef_2" title="View footnote.">2</a>]</sup>) to track and manage user identities, as well as the permissions and access levels associated with those identities.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="add-the-ip-address-to-the-domains"><a class="anchor" href="#add-the-ip-address-to-the-domains"></a>Add the IP Address to the Domains</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Once the server is finally set up, you will need to use the IP address assigned to your WAN to configure DNS mapping at your DNS provider. If you have allowed ICMP requests in your firewall settings, you can then ping your server using one of the defined domain names.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="prepare-the-server"><a class="anchor" href="#prepare-the-server"></a>Prepare the Server</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>As a standard periodic task, you will need to update packages, especially after the first server login. Open a shell on the server and issue the following command:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">apt-get update &amp;&amp; apt-get upgrade</code></pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="install-required-software-packages"><a class="anchor" href="#install-required-software-packages"></a>Install Required Software Packages</h3>
+<div class="paragraph">
+<p>Note that we do not recommend using the Ubuntu embedded Docker installations as they may be outdated, but rather installing and upgrading them manually to get the latest versions.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Docker Engine</dt>
+<dd>
+<p>Follow this guide to install <code>docker</code>: <a href="https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository" target="_blank" rel="noopener">Install using the apt repository</a>.</p>
+</dd>
+<dt class="hdlist1">Docker Compose</dt>
+<dd>
+<p>Follow this guide to install <code>docker compose</code>: <a href="https://docs.docker.com/compose/install/linux/#install-the-plugin-manually" target="_blank" rel="noopener">Install the Compose plugin</a>.</p>
+</dd>
+<dt class="hdlist1">unzip</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>The <code>unzip</code> package may not be available. In this case, install with:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">apt install unzip</code></pre>
+</div>
+</div>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="download-and-transfer-the-example"><a class="anchor" href="#download-and-transfer-the-example"></a>Download and Transfer the Example</h2>
+<div class="sectionbody">
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The client that downloads the example is not the server that you upload to. The server does not have a graphical user interface (GUI) and therefore does not have a browser. The sample commands below are based on a Linux client. If you are using MacOS or Windows, you will need to modify the commands accordingly. This mainly affects the location where the browser downloads to (<code>~/Downloads</code>).
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The client from which you download the example via a browser and upload it using <code>scp</code> must have access to the server and have the <code>scp</code> application installed.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>To download and extract the necessary deployment example <sup class="footnote">[<a id="_footnoteref_3" class="footnote" href="#_footnotedef_3" title="View footnote.">3</a>]</sup>, <strong>open a browser</strong> and enter the following URL. Note that this link also contains patches for release: <code>8.0.0</code>.</p>
+</div>
+<div class="sidebarblock gray-light-background">
+<div class="content">
+<div class="paragraph">
+<p><a href="https://download-directory.github.io?url=https://github.com/owncloud/ocis/tree/stable-8.0/deployments/examples/ocis_full" class="bare" target="_blank" rel="noopener">https://download-directory.github.io?url=https://github.com/owncloud/ocis/tree/stable-8.0/deployments/examples/ocis_full</a></p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>.zip</code> file will be downloaded to your local <code>Download</code> directory.</p>
+</div>
+<div class="paragraph">
+<p>Upload the resulting <code>.zip</code> file to the server by issuing the following command, <strong>replace</strong> <code>root@182.83.2.94</code> with the username and address of the server according to your setup:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">scp ~/Downloads/'owncloud ocis stable-8.0 deployments-examples_ocis_full.zip' root@182.83.2.94:/opt</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Note that the command is slightly different on Windows due to the way the home directory and path separator are defined.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+With the next step, if you have already unpacked this file before, or if you intend to update an existing extract with a new compose version downloaded, the <code>.env</code> file will be <strong>overwritten</strong> without notice, and you will need to <a href="#edit-the-configuration-file">reconfigure</a> this deployment!
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="extract-the-example"><a class="anchor" href="#extract-the-example"></a>Extract the Example</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Login into the server and:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Create a subdirectory to store all Compose files and folders.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mkdir -p /opt/compose/ocis/ocis_full</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Extract the zip file to the directory by issuing the following command:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">unzip -d /opt/compose/ocis/ocis_full \
+  /opt/'owncloud ocis stable-8.0 deployments-examples_ocis_full.zip'</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>If files have been extracted, list the directory with:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">ls -la /opt/compose/ocis/ocis_full/</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The list should contain files and folders such as the following:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">clamav.yml
+cloudimporter.yml
+collabora.yml
+<span class="aqua">config</span>
+...</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="edit-the-configuration-file"><a class="anchor" href="#edit-the-configuration-file"></a>Edit the Configuration File</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Change into the <code>/opt/compose/ocis/ocis_full</code> directory and open the <code>.env</code> file with an editor.</p>
+</div>
+<div class="paragraph">
+<p>Only a few settings need to be configured:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>INSECURE</code><br>
+Comment this line because we are on an internet facing server.</p>
+</li>
+<li>
+<p><code>TRAEFIK_ACME_MAIL</code><br>
+Add a valid response eMail address for Letsencrypt, see the note below.</p>
+</li>
+<li>
+<p><code>TRAEFIK_ACME_CASERVER</code><br>
+Set the CAServer to staging, see the note below.</p>
+</li>
+<li>
+<p><code>OCIS_DOCKER_IMAGE</code><br>
+Check that the correct image type is selected (production).</p>
+</li>
+<li>
+<p><code>OCIS_DOMAIN</code>, <code>COLLABORA_DOMAIN</code> and/or <code>ONLYOFFICE_DOMAIN</code><br>
+Set the domain names as defined in <a href="#domain-names">Domain Names</a>.</p>
+</li>
+<li>
+<p><code>OCIS_CONFIG_DIR</code> and <code>OCIS_DATA_DIR</code><br>
+If you expect a higher amount of data in the instance, consider using own paths instead of using docker internal volumes.</p>
+</li>
+<li>
+<p><code>SMTP_xxx</code><br>
+Define these settings according to your email configuration. If the settings are defined, Infinite Scale will be able to send notifications to users. If the settings are not defined, Infinite Scale will start but won&#8217;t be able to send notifications.</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+If you do not define your own domain names, only domain names with self-signed certificates are automatically used for internal evaluation.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Additional options can be configured like web applications. These should be configured <em>after</em> the deployment has successfully started without problems. This makes it easier to find any initial startup issues that need to be resolved first.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>When the configuration is complete, you can optionally print the final assembled Docker compose yml setup before running it by using the following command. This output will help you troubleshoot configuration issues.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker compose config</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="certificate-generation-process"><a class="anchor" href="#certificate-generation-process"></a>Certificate Generation Process</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The recommended process for generating live certificates is as follows:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>First, have LetsEncrypt generate "fake" certificates. These certificates show that the process works, but they cannot be used in production. To do this, set the <code>TRAEFIK_ACME_CASERVER</code> environment variable to LetsEncrypt&#8217;s <a href="https://letsencrypt.org/docs/staging-environment/" target="_blank" rel="noopener">Staging Environment</a>, see the <code>.env</code> file for the value to set. This will ensure that any restarts after fixing problems will not count against LetsEncrypt&#8217;s rate limit.</p>
+</li>
+<li>
+<p>The <code>TRAEFIK_ACME_MAIL</code> must be set to a valid email address that you own. When certificate issuance is triggered, LetsEncrypt checks in the request to create valid certificates if the response email address is valid and proceeds if it is. If not, it logs an error and uses self-signed certificates, see <a href="#solving-first-startup-issues">Solving First Startup Issues</a>.</p>
+</li>
+<li>
+<p><a href="#start-the-deployment">Start the Deployment</a>.</p>
+</li>
+<li>
+<p>If any problems occur, you must <a href="#stop-the-deployment">Stop the Deployment</a> and fix them before proceeding to the next step. See <a href="#solving-first-startup-issues">Solving First Startup Issues</a> for a list of common issues.</p>
+</li>
+<li>
+<p>Finally, if there are no (more) problems that you can identify because <code>Fake LE Intermediate X1</code> certificates have been generated (check the certificate issuer in the browser, Google for how to do this), you need to <a href="#delete-cert-volume">delete the <code>cert-volume</code></a> and set the <code>TRAEFIK_ACME_CASERVER</code> environment variable back to empty and start the instance as described below.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="start-the-deployment"><a class="anchor" href="#start-the-deployment"></a>Start the Deployment</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Once you have completed the configuration, you can start the deployment by issuing the following command:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker compose up -d</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This command will download all necessary containers and start the instance in the background according to your settings (flag <code>-d</code>).</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Check the logs</dt>
+</dl>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>See <a href="#monitor-the-instance">Monitor the Instance</a> for more details on logging.</p>
+</li>
+<li>
+<p>Check the traefik logs for certificate problems first, then other logs. See <a href="#solving-first-startup-issues">Solving First Startup Issues</a> for more details.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>If no problems are logged, traefik and LetsEncrypt were able to handle the connectivity and domains.</p>
+</div>
+<div class="paragraph">
+<p>If you used staging certificates as suggested above,</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#stop-the-deployment">stop the deployment</a>,</p>
+</li>
+<li>
+<p><a href="#delete-cert-volume">delete the <code>cert-volume</code></a></p>
+</li>
+<li>
+<p>and start the deployment as described above.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>When this is done, check the <a href="#monitor-the-instance">traefik logs</a> again, and if all is well, you can access your instance, see <a href="#first-time-login">First Time Login</a>.</p>
+</div>
+<div class="sect2">
+<h3 id="solving-first-startup-issues"><a class="anchor" href="#solving-first-startup-issues"></a>Solving First Startup Issues</h3>
+<div class="paragraph">
+<p>Note, see <a href="#monitor-the-instance">Monitor the Instance</a> for more details on logging.</p>
+</div>
+<div class="paragraph">
+<p>If any problems are logged by traefik on first start with respect to LetsEncrypt like:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Common issues</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p><code>&#8230;&#8203;Contact emails @example.org are forbidden</code>:<br>
+The environment variable <code>TRAEFIK_ACME_MAIL</code> must be set to a valid e-mail address that you own.</p>
+</li>
+<li>
+<p><code>&#8230;&#8203;unable to generate a certificate for the domains&#8230;&#8203;</code>, <code>acme: error: 400</code> and <code>acme-challenge</code>:<br>
+Check that the TCP ports 80/443 are open in the configured firewall. You can run a test <em>while running compose</em> to see if traefik can be reached on these ports. To do this, visit <a href="https://letsdebug.net">Let&#8217;s Debug</a>.</p>
+</li>
+<li>
+<p><code>&#8230;&#8203;DNS problem: NXDOMAIN looking up A for&#8230;&#8203;</code><br>
+This indicates a DNS resolution problem. Check that the domains in the DNS and the <code>.env</code> file match. Note that when using wildcard domains in the DNS, the fixed part must match on both sides.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>For each problem that is fixed, there are a few steps that must be taken before you can start the instance again. This is because the certificate volume now contains invalid data:</p>
+</div>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+<div id="delete-cert-volume" class="dlist">
+<dl>
+<dt class="hdlist1">Post fixing the issue</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>The following actions must be taken before restarting the deployment:</p>
+</div>
+<div class="listingblock">
+<div class="title">Shut down the deployment</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker compose down</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Note, do not use the <code>-v</code> option as this will delete ALL volumes.</p>
+</div>
+<div class="listingblock">
+<div class="title">List the docker volumes</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker volume ls</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Delete the docker certs volume</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker volume rm ocis_full_certs</code></pre>
+</div>
+</div>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="stop-the-deployment"><a class="anchor" href="#stop-the-deployment"></a>Stop the Deployment</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Stopping the deployment is easy, just issue:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker compose down --remove-orphans</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For safety&#8217;s sake, <strong>do not</strong> add the <code>-v</code> (volumes) flag to the command, as this will delete all volumes, including their data. If deleting volumes is necessary, selective deletion is the preferred method, see the above section for an example. See the <code>docker compose down</code> <a href="https://docs.docker.com/reference/cli/docker/compose/down/#options">options</a> for more details.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="change-settings"><a class="anchor" href="#change-settings"></a>Change Settings</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To change settings via the <code>.env</code> file, the deployment <em>must be</em> in the <code>down</code> state. See the section above for how to do this.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="first-time-login"><a class="anchor" href="#first-time-login"></a>First Time Login</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Now that the preparations are complete, you can access your instance <strong>from any client</strong>. To do this, open your browser and enter the instance URL as you defined it:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-URL hljs" data-lang="URL">ocis.yourdomain.com</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Which will show the following screen:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../../_images/depl-examples/ubuntu-compose/infinite-scale-login.png" alt="Infinite Scale Login" width="300">
+</div>
+</div>
+<div class="paragraph">
+<p>For the credentials, use:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>admin</code> as user and</p>
+</li>
+<li>
+<p><code>admin</code> for the password,<br>
+or the one you have defined manually during setup.</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+If you have manually set an initial password via the <code>.env</code> file, but have forgotten it, you must follow one of the procedures described in the <a href="#admin-password">Admin Password</a> section.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>If you have logged in successfully, you should see the following screen:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../../_images/depl-examples/ubuntu-compose/infinite-scale-logged-in.png" alt="Infinite Scale Logged In" width="300">
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Congratulations</strong>, you have successfully set up Infinite Scale with Web Office.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Check out the <a href="https://doc.owncloud.com/">Desktop App</a> or <a href="https://doc.owncloud.com/">Mobile Apps</a> to sync files to/from clients.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The Infinite Scale deployment will automatically restart on a server reboot if the compose environment is not shut down by command.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Among other topics described below, some basic <a href="#monitor-the-instance">monitoring</a> commands and a brief description of <a href="#updating">update</a> Infinite Scale are provided.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="monitor-the-instance"><a class="anchor" href="#monitor-the-instance"></a>Monitor the Instance</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="container"><a class="anchor" href="#container"></a>Container</h3>
+<div class="paragraph">
+<p>To get the state and the Container ID, issue one of the following commands:</p>
+</div>
+<div class="listingblock">
+<div class="title">Long form, this command will print the required Container ID, among other data</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker ps -a</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Short form with only the Service name, State and Container ID, needs to be issued in '/opt/compose/ocis/ocis_full':</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker compose ps -a --format "table {{.Service}}\t{{.State}}\t{{.ID}}"</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="logs"><a class="anchor" href="#logs"></a>Logs</h3>
+<div class="paragraph">
+<p>Issue the following command to monitor a log:</p>
+</div>
+<div class="listingblock">
+<div class="title">Replace the &lt;container_id&gt; according to the container for which you want to monitor the log.</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker logs -f &lt;container_id&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="infinite-scale-command-line"><a class="anchor" href="#infinite-scale-command-line"></a>Infinite Scale Command Line</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Once the container environment has been started, you can access the container&#8217;s shell to use the OCI command line interface. Follow these steps to do so:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>First, locate the name of the service that you wish to access. It is called <code>ocis</code> by default, but you may have named it differently in the deployment configuration:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker compose ps -a --format "table {{.Service}}\t{{.State}}\t{{.ID}}"</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Enter the following command to access the container&#8217;s shell. If the name is different replace &lt;ocis&gt; with the relevant service name:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker compose exec ocis /bin/sh</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Finally use the ocis CLI. See the example below:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">ocis --help</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="admin-password"><a class="anchor" href="#admin-password"></a>Admin Password</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="initial-admin-password-from-docker-log"><a class="anchor" href="#initial-admin-password-from-docker-log"></a>Initial Admin Password from Docker Log</h3>
+<div class="paragraph">
+<p>If the manually set <strong>initial</strong> admin password was forgotten <strong>before</strong> it was changed, you can get it from the docker log. See <a href="https://docs.docker.com/config/containers/logging/">View container logs</a> for more details on docker logs.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>First you need to get the Infinite Scale <code>CONTAINER ID</code>:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker compose ps -a --format "table {{.Service}}\t{{.State}}\t{{.ID}}"</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>From the output, see an example below, note the container ID that matches <code>ocis</code>:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">SERVICE         STATE     CONTAINER ID
+collabora       running   a7f74dfbbec3
+collaboration   running   ed4d086ddd06
+<span class="aqua">ocis</span>            running   <span class="aqua">b395d936c23a</span>
+tika            running   08ae7b0c9c0e
+traefik         running   5f0e1d03bcbf</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Use the container ID identified in the following command to read the Infinite Scale logs to get the initial admin password created, replace &lt;CONTAINER ID&gt; accordingly:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker logs &lt;CONTAINER ID&gt; 2&gt;&amp;1 | less</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>The output prints the log from the beginning. The first entry is the initial admin password set at the first startup. You can scroll through the log using the keyboard, see <a href="https://wiki.ubuntuusers.de/less/">less description</a> for more details.</p>
+</div>
+<div class="paragraph">
+<p>If the password cannot be determined, you must reset the admin password from the command line, as described below.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="command-line-password-reset"><a class="anchor" href="#command-line-password-reset"></a>Command Line Password Reset</h3>
+<div class="paragraph">
+<p>To change the admin password from the command line, which you can do at any time, follow the instructions in <a href="../../deployment/general/general-info.html#password-reset-for-idm-users" class="xref page">Password Reset for IDM Users</a>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="volume-migration"><a class="anchor" href="#volume-migration"></a>Volume Migration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This section provides some guidance if you want to migrate the Infinite Scale Docker internal volumes to Docker volumes using a local path. For example, this may be necessary to separate the container from its data, or if a large amount of data is expected. See additional documentation in the <a href="../../deployment/tips/useful_mount_tip.html" class="xref page">Start a Service After a Resource is Mounted</a> if you want to use network mounts such as NFS or iSCSI for the data directory.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Prepare two directories that will provide the mount point for Infinite Scale <code>data</code> and <code>config</code>.<br>
+The example will use the local path <code>/mnt/data</code> and <code>mnt/config</code>, adapt to your environment.</p>
+</li>
+<li>
+<p>For the following steps, the deployment must be in the <code>up</code> state, and the containers must provide a container ID for copying.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Stop the running instance. This will stop the instance, but will not remove any containers, unlike shutting down the instance:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker compose stop</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Get the <code>ocis</code> container ID using one of the <a href="#container">maintenance - Container</a> commands.</p>
+</li>
+<li>
+<p>Copy the contents of both the Docker internal <code>ocis-config</code> and <code>ocis-data</code> volumes to their new local locations by issuing the following commands, replacing <code>&lt;CONTAINER ID&gt;</code> accordingly:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker cp &lt;CONTAINER ID&gt;:/etc/ocis/. /mnt/config
+docker cp &lt;CONTAINER ID&gt;:/var/lib/ocis/. /mnt/data</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Change the ownership of the new source folders recursively. This step is <em>very important</em> because the user inside the container is <code>1000</code> and will most likely not be the user who copied the folders:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">chown -R 1000:1000 /mnt/config /mnt/data</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Down the compose instance by issuing:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker compose down</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>In the <code>.env</code> file, set the paths:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-.env hljs" data-lang=".env">OCIS_DATA_DIR=/mnt/data
+OCIS_CONFIG_DIR=/mnt/config</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Bring the compose environment <code>up</code> with:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker compose up -d</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If the containers start up without any problems, you have successfully moved your Infinite Scale docker internal volumes to local paths.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Finally, you can remove the docker internal volumes for <code>config</code> and <code>data</code>:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker volume ls
+docker volume rm ocis_full_ocis-config ocis_full_ocis-data</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="updating-and-upgrading"><a class="anchor" href="#updating-and-upgrading"></a>Updating and Upgrading</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="updating"><a class="anchor" href="#updating"></a>Updating</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Infinite Scale</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Follow these steps to update between production releases:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">For Infinite Scale patch releases only!</dt>
+<dd>
+<p>These commands will stop the deployment, update all images, and restart the deployment. This works because the relevant <code>xxx_TAG</code> variables in the <code>.env</code> file are set to <code>latest</code> by default, while others have hardcoded versions.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo docker compose down \
+sudo docker compose pull \
+sudo docker compose up -d --remove-orphans</code></pre>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">Update non-Infinite Scale Images</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Some images used do not have a specific release defined, but use <code>latest</code>. These images can be updated when new releases are available, for example for security or bug fixes. To do this, use the following commands:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo docker compose pull \
+sudo docker compose up -d --remove-orphans</code></pre>
+</div>
+</div>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="upgrading"><a class="anchor" href="#upgrading"></a>Upgrading</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">For all Infinite Scale major and minor releases, including previous rolling to production</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>Stop the deployment with:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo docker compose stop</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>When upgrading from rolling to production, change the <code>OCIS_DOCKER_IMAGE</code> environment variable from <code>owncloud/ocis-rolling</code> to <code>owncloud/ocis</code> in the <code>.env</code> file.</p>
+</li>
+<li>
+<p>Follow the appropriate <a href="../../migration/upgrading-ocis.html" class="xref page">Upgrading Infinite Scale</a> guide.</p>
+</li>
+<li>
+<p>Backup your existing deployment source/configuration and update the <a href="#download-and-transfer-the-example">deployment sources</a> - if they have been changed, reapply your configuration settings.</p>
+</li>
+<li>
+<p>Re-pull the deployment. This will update all images with any versions that may have changed.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo docker compose pull</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Start the deployment.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo docker compose up -d --remove-orphans</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="certificate-renewal"><a class="anchor" href="#certificate-renewal"></a>Certificate Renewal</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>There is nothing special to do to renew issued certificates. Traefik takes care of the renewal process automatically. In case of a renewal problem, just restart the compose environment as Traefik checks for certificate expiration on startup.</p>
+</div>
+<div class="paragraph">
+<p><br></p>
+</div>
+</div>
+</div>
+<div id="footnotes">
+<hr>
+<div class="footnote" id="_footnotedef_1">
+<a href="#_footnoteref_1">1</a>. See the <a href="../../deployment/services/s-list/idm.html" class="xref page" target="_blank" rel="noopener">IDM</a> service for more details
+</div>
+<div class="footnote" id="_footnotedef_2">
+<a href="#_footnoteref_2">2</a>. See the <a href="../../deployment/services/s-list/idp.html" class="xref page" target="_blank" rel="noopener">IDP</a> service for more details
+</div>
+<div class="footnote" id="_footnotedef_3">
+<a href="#_footnoteref_3">3</a>. Derived from the <a href="https://github.com/owncloud/ocis/tree/stable-8.0/deployments/examples/ocis_full/" target="_blank" rel="noopener">ocis_full</a> developer example
+</div>
+</div>
+
+        <nav class="pagination">
+              <span class="prev"><a href="../../conf-examples/search/configure-search.html">Search</a></span>
+              <span class="next"><a href="ubuntu-compose-hetzner.html">Deployment on Hetzner</a></span>
+        </nav>
+          </article>
+        </div>
+      </main>
+    </div>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="row-full">
+          <div class="col-third">
+            <div class="footer-nav">
+              <h4>About ownCloud</h4>
+              <ul id="menu-about" class="menu">
+                <li class="menu-landing"><a href="https://owncloud.com/">The Secure Collaboration Platform</a></li>
+                <li class="menu-news"><a href="https://owncloud.com/news/">News</a></li>
+                <li class="menu-privacy"><a href="https://owncloud.com/privacy-statement/">Privacy statement</a></li>
+                <li class="menu-imprint"><a href="https://owncloud.com/imprint/">Imprint</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-third">
+            <div class="footer-nav">
+              <h4>Resources</h4>
+              <ul id="menu-support-and-documentation" class="menu">
+                <li class="menu-faq"><a href="https://owncloud.com/faq/">FAQ</a></li>
+                <li class="menu-help"><a href="https://owncloud.com/docs-guides/">Help</a></li>
+                <li class="menu-security"><a href="https://owncloud.com/security/">Security</a></li>
+                <li class="menu-changelog"><a href="https://owncloud.com/changelog/">Changelog</a></li>
+                <li class="menu-get-started"><a href="https://owncloud.com/get-started/">Get started</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-third">
+            <div class="footer-nav">
+              <h4>Interact</h4>
+              <ul id="menu-interact" class="menu">
+                <li class="menu-forum"><a href="https://central.owncloud.org" class="oc-footer-nav-link">Forum</a></li>
+                <li class="menu-contribute"><a href="https://owncloud.com/contribute" class="oc-footer-nav-link">Contribute</a></li>
+                <li class="menu-customer-support"><a href="https://owncloud.com/support" class="oc-footer-nav-link">Customer support</a></li>
+
+              </ul>
+            </div>
+          </div>
+        </div>
+        <p>&copy; Copyright 2011-2026, The ownCloud developers.</p>
+      </div>
+    </footer>
+
+    <script id="site-script" src="../../../../assets/js/site.js" data-ui-root-path="../../../../assets"></script>
+    <script async src="../../../../assets/js/vendor/highlight.js"></script>
+    <script async src="../../../../assets/js/vendor/medium-zoom.js"></script>
+    <script async src="../../../../assets/js/vendor/tabs-ui.js"></script>
+  </body>
+</html>

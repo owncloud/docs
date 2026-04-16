@@ -1,0 +1,1857 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>IDP Service Configuration :: Documentation for ownCloud (A Kiteworks Company)</title>
+
+    <link rel="canonical" href="https://doc.owncloud.com/ocis/latest/deployment/services/s-list/idp.html">
+    <link rel="prev" href="invitations.html">
+    <link rel="next" href="nats.html">
+    <meta name="description" content="The Infinite Scale IDP service provides a built-in minimal OpenID Connect provider.">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../../../assets/css/site.css">
+
+    <meta property="og:locale" content="en_us" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="IDP Service Configuration" />
+    <meta property="og:description" content="IDP Service Configuration" />
+    <meta property="og:url" content="https://doc.owncloud.com/ocis/latest/deployment/services/s-list/idp.html" />
+    <meta property="og:site_name" content="Documentation for ownCloud (A Kiteworks Company)" />
+    <meta property="og:image" content="https://doc.owncloud.com/opengraph-ocis.png" />
+    <meta property="og:image:alt" content="The Infinite Scale Documentation documentation" />
+    <meta name="twitter:site" content="@owncloud" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="IDP Service Configuration" />
+    <meta name="twitter:description" content="The Infinite Scale IDP service provides a built-in minimal OpenID Connect provider." />
+
+    <script>var uiRootPath = '../../../../../assets'</script>
+
+
+    <title>IDP Service Configuration :: Documentation for ownCloud (A Kiteworks Company)</title>
+    <link rel="canonical" href="https://doc.owncloud.com/ocis/latest/deployment/services/s-list/idp.html">
+    <meta name="description" content="The Infinite Scale IDP service provides a built-in minimal OpenID Connect provider.">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" href="/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="black">
+    <meta name="msapplication-TileColor" content="#001840">
+    <meta name="theme-color" content="#ffffff">
+  </head>
+
+  <body class="article">
+    <header class="header" role="banner">
+      <nav class="navbar">
+        <div class="navbar-brand">
+          <a class="navbar-item" href="https://doc.owncloud.com">Documentation for ownCloud (A Kiteworks Company)</a>
+          <!-- we do not have any hamburger stuff to show like links to external sites
+           <button class="navbar-burger" aria-controls="topbar-nav" aria-expanded="false" aria-label="Toggle main menu">
+           <span></span>
+           <span></span>
+           <span></span>
+           </button>
+          -->
+        </div>
+        <div id="topbar-nav" class="navbar-menu">
+          <div class="navbar-end"> </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="body">
+      <div class="nav-container" data-component="ocis" data-version="8.0">
+        <aside class="nav">
+          <div class="panels">
+            <div class="nav-panel-menu is-active" data-panel="menu">
+              <nav class="nav-menu">
+                <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+                <h3 class="title"><a href="../../../index.html">Infinite Scale Documentation</a></h3>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="0">
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="1">
+                      <a class="nav-link" href="../../../index.html">Introduction</a>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Infinite Scale Overview</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../architecture/architecture.html">Architecture and Concepts</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../availability_scaling/availability_scaling.html">Availability and Scalability</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../security/security.html">Security Aspects</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../index.html">Deployment</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../prerequisites/prerequisites.html">Prerequisites</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Storage</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../storage/general-considerations.html">General Storage Considerations</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../storage/nfs.html">Network File System</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../storage/s3.html">S3</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../storage/posixfs.html">PosixFS</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../general/general-info.html">General Information</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../general/ocis-init.html">The ocis init Command</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../wopi/wopi.html">Office Applications using WOPI</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../security/security.html">Securing oCIS</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../gdpr/gdpr.html">User Triggered GDPR Report</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../services.html">Services</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">General Information</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../deployment-considerations.html">Deployment Considerations</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../env-var-note.html">Environment Variable Notes</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../env-vars-special-scope.html">Environment Variables with Special Scope</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../env-var-changes.html">Environment Variable Changes</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../registry.html">Registry</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../caching.html">Caching and Persistence</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../gateways.html">Gateways</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../logging.html">Logging</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../ports-used.html">Ports Used</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../tls.html">Transport Layer Security</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">List of Services</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="activitylog.html">Activitylog</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="antivirus.html">Antivirus</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="app-provider.html">App Provider</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="app-registry.html">App Registry</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="audit.html">Audit</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="auth-app.html">Auth App</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="auth-basic.html">Auth Basic</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="auth-bearer.html">Auth Bearer</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="auth-machine.html">Auth Machine</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="auth-service.html">Auth Service</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="clientlog.html">Clientlog</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="collaboration.html">Collaboration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="eventhistory.html">Eventhistory</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="frontend.html">Frontend</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="gateway.html">Gateway</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="graph.html">Graph</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="groups.html">Groups</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="idm.html">IDM</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="invitations.html">Invitations</a>
+                  </li>
+                    <li class="nav-item is-current-page" data-depth="4">
+                      <a class="nav-link" href="idp.html">IDP</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="nats.html">NATS</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="notifications.html">Notifications</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="ocdav.html">OCDAV</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="ocm.html">OCM</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="ocs.html">OCS</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="policies.html">Policies</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="postprocessing.html">Postprocessing</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="proxy.html">Proxy</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="search.html">Search</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="settings.html">Settings</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="sharing.html">Sharing</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="sse.html">SSE</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="store.html">Store</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="storage-publiclink.html">Storage-Publiclink</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="storage-shares.html">Storage-Shares</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="storage-system.html">Storage-System</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="storage-users.html">Storage-Users</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="thumbnails.html">Thumbnails</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="userlog.html">Userlog</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="users.html">Users</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="web.html">Web</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="webdav.html">WebDAV</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="webfinger.html">Webfinger</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Web UI</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../webui/webui-customisation.html">Custom Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../webui/webui-theming.html">Custom Theming</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Maintenance</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Backup and Restore</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../maintenance/b-r/backup_considerations.html">Backup Considerations</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../maintenance/b-r/backup.html">Backup</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../maintenance/b-r/restore.html">Restore</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../maintenance/commands/commands.html">Maintenance Commands</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../maintenance/m-mode/maintenance-mode.html">Maintenance Mode</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../maintenance/space-ids/space-ids.html">Listing Space IDs</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../maintenance/user-ids/user-ids.html">Listing User IDs</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Migration and Upgrades</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../migration/upgrading-ocis.html">Upgrading Infinite Scale</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Monitoring</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../monitoring/prometheus.html">Prometheus</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Configuration Examples</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../conf-examples/office/office-integration.html">Office Integration</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../conf-examples/search/configure-search.html">Search</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Deployment Examples</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Ubuntu with Docker Compose</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../depl-examples/ubuntu-compose/ubuntu-compose-prod.html">Local Production Setup</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../depl-examples/ubuntu-compose/ubuntu-compose-hetzner.html">Deployment on Hetzner</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Setup Federations</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../depl-examples/federation/sciencemesh.html">ScienceMesh Setup</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Additional Information</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../additional-information/knowledge-base.html">Knowledge Base</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+            <div class="nav-panel-explore" data-panel="explore">
+              <div class="context">
+                <span class="title">Infinite Scale Documentation</span>
+                <span class="version">8.0</span>
+              </div>
+              <ul class="components">
+                <li class="component">
+                  <div class="title"><a href="../../../../../desktop/latest/index.html">Desktop App</a></div>
+                  <ul class="versions">
+                    <li class="version">
+                      <a href="../../../../../desktop/next/index.html">next</a>
+                    </li>
+                    <li class="version is-latest">
+                      <a href="../../../../../desktop/latest/index.html">6.0</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../desktop/5.3/index.html">5.3</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component is-current">
+                  <div class="title"><a href="../../../index.html">Infinite Scale Documentation</a></div>
+                  <ul class="versions">
+                    <li class="version">
+                      <a href="../../../../next/index.html">next</a>
+                    </li>
+                    <li class="version is-current is-latest">
+                      <a href="../../../index.html">8.0</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../7.3/index.html">7.3</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../../android/latest/index.html">Mobile App for Android</a></div>
+                  <ul class="versions">
+                    <li class="version">
+                      <a href="../../../../../android/next/index.html">next</a>
+                    </li>
+                    <li class="version is-latest">
+                      <a href="../../../../../android/latest/index.html">4.7</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../android/4.6/index.html">4.6</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../../ios-app/latest/index.html">Mobile App for iOS</a></div>
+                  <ul class="versions">
+                    <li class="version">
+                      <a href="../../../../../ios-app/next/index.html">next</a>
+                    </li>
+                    <li class="version is-latest">
+                      <a href="../../../../../ios-app/latest/index.html">12.6</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../ios-app/12.5/index.html">12.5</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../../index.html">ownCloud Main Page</a></div>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../../server/latest/index.html">ownCloud Server</a></div>
+                  <ul class="versions">
+                    <li class="version">
+                      <a href="../../../../../server/next/index.html">next</a>
+                    </li>
+                    <li class="version is-latest">
+                      <a href="../../../../../server/latest/index.html">10.16</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../server/10.15/index.html">10.15</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../../webui/latest/index.html">ownCloud Web User Interfaces</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../../../webui/latest/index.html">next</a>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <main class="article">
+        <div class="toolbar" role="navigation">
+          <button class="nav-toggle"></button>
+          <a href="../../../../../index.html" class="home-link"></a>
+          <nav class="breadcrumbs" aria-label="breadcrumbs">
+            <ul>
+              <li><a href="../../../index.html">Infinite Scale Documentation</a></li>
+              <li><a href="../../index.html">Deployment</a></li>
+              <li><a href="../services.html">Services</a></li>
+              <li>List of Services</li>
+              <li><a href="idp.html">IDP</a></li>
+            </ul>
+          </nav>
+      <div class="page-versions">
+        <button class="version-menu-toggle" title="Show other versions of page">8.0</button>
+        <div class="version-menu">
+          <a class="version" href="../../../../next/deployment/services/s-list/idp.html">next</a>
+          <a class="version is-current" href="idp.html">8.0</a>
+          <a class="version" href="../../../../7.3/deployment/services/s-list/idp.html">7.3</a>
+        </div>
+      </div>
+          <div class="edit-this-page"><a href="https://github.com/owncloud/docs-ocis/edit/8.0/modules/ROOT/pages/deployment/services/s-list/idp.adoc">Edit this Page</a></div>
+        </div>
+        <div class="content">
+          <aside class="toc sidebar" data-title="Contents" data-levels="2">
+            <div class="toc-menu"></div>
+          </aside>
+          <article class="doc">
+            <h1 class="page">IDP Service Configuration</h1>
+
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#default-values">Default Values</a></li>
+<li><a href="#configuration">Configuration</a>
+<ul class="sectlevel2">
+<li><a href="#environment-variables">Environment Variables</a></li>
+<li><a href="#yaml-example">YAML Example</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="sect1">
+<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The Infinite Scale IDP service provides a built-in minimal OpenID Connect provider.</p>
+</div>
+<div class="paragraph">
+<p>The IDP service is mainly suitable for smaller installations. The recommendation for larger setups is to replace IDP with and external OpenID Connect Provider. See the <a href="https://download-directory.github.io?url=https://github.com/owncloud/ocis/tree/stable-8.0/deployments/examples/ocis_keycloak" target="_blank" rel="noopener">ocis_keycloak</a> deployment example on github for more details.</p>
+</div>
+<div class="paragraph">
+<p>By default, the IDP service is configured to use the Infinite Scale <a href="idm.html" class="xref page">IDM service</a> as its LDAP backend for looking up and authenticating users. Other backends like an external LDAP server can be configured via a set of environment variables. For details see below.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The IDP service is by design limited in its functionality:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>IDP does NOT support branding or theming.<br>
+This also means that there is no possibility to customize the login screen.</p>
+</li>
+<li>
+<p>IDP has no brute force protection like external IDP&#8217;s have.<br>
+This means that there is no "invalid credential" logged on consecutive failed login attempts.</p>
+</li>
+<li>
+<p>The IDP has no backchannel logout capability.<br>
+Consider that you have configured Infinite Scale to work with Keycloak. When logging out via the webUI, Keycloak will issue a callback to the Infinite Scale backend about the fact that the session has ended. The Infinite Scale backend is then able to invalidate it&#8217;s internal session cache. The IDP service does not support backchannel logout and Infinite Scale will consider the access token valid until it reaches it&#8217;s expiry.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Therefore the IDP service is <strong>not</strong> meant to replace an external OpenID Connect Provider.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+To use the embedded IDP service, it must be accessed with https. Accessing it with http is not possible and generates an error that is logged.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="default-values"><a class="anchor" href="#default-values"></a>Default Values</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>IDP listens on port 9130 by default.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="configuration"><a class="anchor" href="#configuration"></a>Configuration</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="environment-variables"><a class="anchor" href="#environment-variables"></a>Environment Variables</h3>
+<div class="paragraph">
+<p>The <code>idp</code> service is configured via the following environment variables. Read the <a href="../envvar-types-description.html" class="xref page">Environment Variable Types</a> documentation for important details. Column <code>IV</code> shows with which release the environment variable has been introduced.</p>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset1_8-0-0"></a>8.0.0</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset1_8-0-0">
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Environment variables for the idp service</caption>
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">IV</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Default Value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IDP_PASSWORD_RESET_URI</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The URI where a user can reset their password.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_TRACING_ENABLED</code><br>
+<code>IDP_TRACING_ENABLED</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>bool </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>false </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Activates tracing.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_TRACING_TYPE</code><br>
+<code>IDP_TRACING_TYPE</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The type of tracing. Defaults to '', which is the same as 'jaeger'. Allowed tracing types are 'jaeger', 'otlp' and '' as of now.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_TRACING_ENDPOINT</code><br>
+<code>IDP_TRACING_ENDPOINT</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The endpoint of the tracing agent.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_TRACING_COLLECTOR</code><br>
+<code>IDP_TRACING_COLLECTOR</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The HTTP endpoint for sending spans directly to a collector, i.e. http://jaeger-collector:14268/api/traces. Only used if the tracing endpoint is unset.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_LOG_LEVEL</code><br>
+<code>IDP_LOG_LEVEL</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The log level. Valid values are: 'panic', 'fatal', 'error', 'warn', 'info', 'debug', 'trace'.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_LOG_PRETTY</code><br>
+<code>IDP_LOG_PRETTY</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>bool </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>false </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Activates pretty log output.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_LOG_COLOR</code><br>
+<code>IDP_LOG_COLOR</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>bool </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>false </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Activates colorized log output.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_LOG_FILE</code><br>
+<code>IDP_LOG_FILE</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The path to the log file. Activates logging to this file if set.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IDP_DEBUG_ADDR</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>127.0.0.1:9134 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Bind address of the debug server, where metrics, health, config and debug endpoints will be exposed.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IDP_DEBUG_TOKEN</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Token to secure the metrics endpoint.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IDP_DEBUG_PPROF</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>bool </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>false </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Enables pprof, which can be used for profiling.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IDP_DEBUG_ZPAGES</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>bool </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>false </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Enables zpages, which can be used for collecting and viewing in-memory traces.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IDP_HTTP_ADDR</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>127.0.0.1:9130 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The bind address of the HTTP service.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IDP_HTTP_ROOT</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>/ </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Subdirectory that serves as the root for this HTTP service.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IDP_TRANSPORT_TLS_CERT</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>/var/lib/ocis/idp/server.crt </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Path/File name of the TLS server certificate (in PEM format) for the IDP service. If not defined, the root directory derives from $OCIS_BASE_DATA_PATH/idp.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IDP_TRANSPORT_TLS_KEY</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>/var/lib/ocis/idp/server.key </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Path/File name for the TLS certificate key (in PEM format) for the server certificate to use for the IDP service. If not defined, the root directory derives from $OCIS_BASE_DATA_PATH/idp.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IDP_TLS</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>bool </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>false </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Disable or Enable HTTPS for the communication between the Proxy service and the IDP service. If set to 'true', the key and cert files need to be configured and present.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_REVA_GATEWAY</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>com.owncloud.api.gateway </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The CS3 gateway endpoint.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_GRPC_CLIENT_TLS_MODE</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>TLS mode for grpc connection to the go-micro based grpc services. Possible values are 'off', 'insecure' and 'on'. 'off': disables transport security for the clients. 'insecure' allows using transport security, but disables certificate verification (to be used with the autogenerated self-signed certificates). 'on' enables transport security, including server certificate verification.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_GRPC_CLIENT_TLS_CACERT</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Path/File name for the root CA certificate (in PEM format) used to validate TLS server certificates of the go-micro based grpc services.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_MACHINE_AUTH_API_KEY</code><br>
+<code>IDP_MACHINE_AUTH_API_KEY</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Machine auth API key used to validate internal requests necessary for the access to resources from other services.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IDP_ASSET_PATH</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Serve IDP assets from a path on the filesystem instead of the builtin assets.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IDP_LOGIN_BACKGROUND_URL</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Configure an alternative URL to the background image for the login page.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_URL</code><br>
+<code>OCIS_OIDC_ISSUER</code><br>
+<code>IDP_ISS</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>https://localhost:9200 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The OIDC issuer URL to use.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IDP_IDENTITY_MANAGER</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ldap </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The identity manager implementation to use. Supported identity managers are 'ldap', 'cs3', 'libregraph' and 'guest'.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IDP_URI_BASE_PATH</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>IDP uri base path (defaults to '').</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IDP_SIGN_IN_URI</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>IDP sign-in url.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IDP_SIGN_OUT_URI</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>IDP sign-out url.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IDP_ENDPOINT_URI</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>URL of the IDP endpoint.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_LDAP_INSECURE</code><br>
+<code>IDP_INSECURE</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>bool </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>false </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Disable TLS certificate validation for the LDAP connections. Do not set this in production environments.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IDP_ALLOW_CLIENT_GUESTS</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>bool </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>false </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Allow guest clients to access oCIS.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IDP_ALLOW_DYNAMIC_CLIENT_REGISTRATION</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>bool </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>false </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Allow dynamic client registration.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IDP_ENCRYPTION_SECRET_FILE</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>/var/lib/ocis/idp/encryption.key </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Path to the encryption secret file, if unset, a new certificate will be autogenerated upon each restart, thus invalidating all existing sessions. If not defined, the root directory derives from $OCIS_BASE_DATA_PATH/idp.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IDP_SIGNING_KID</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>private-key </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Value of the KID (Key ID) field which is used in created tokens to uniquely identify the signing-private-key.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IDP_SIGNING_METHOD</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>PS256 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Signing method of IDP requests like 'PS256'</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IDP_SIGNING_PRIVATE_KEY_FILES</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>[]string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>[/var/lib/ocis/idp/private-key.pem] </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>A list of private key files for signing IDP requests. If not defined, the root directory derives from $OCIS_BASE_DATA_PATH/idp. See the Environment Variable Types description for more details.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IDP_VALIDATION_KEYS_PATH</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Path to validation keys for IDP requests.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IDP_ACCESS_TOKEN_EXPIRATION</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>uint64 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>300 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>'Access token lifespan in seconds (time before an access token is expired).'</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IDP_ID_TOKEN_EXPIRATION</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>uint64 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>300 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ID token lifespan in seconds (time before an ID token is expired).</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IDP_REFRESH_TOKEN_EXPIRATION</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>uint64 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>2592000 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Refresh token lifespan in seconds (time before an refresh token is expired). This also limits the duration of an idle offline session.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IDP_DYNAMIC_CLIENT_SECRET_DURATION</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>uint64 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Lifespan in seconds of a dynamically registered OIDC client.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_LDAP_URI</code><br>
+<code>IDP_LDAP_URI</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ldaps://localhost:9235 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Url of the LDAP service to use as IDP.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_LDAP_CACERT</code><br>
+<code>IDP_LDAP_TLS_CACERT</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>/var/lib/ocis/idm/ldap.crt </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Path/File name for the root CA certificate (in PEM format) used to validate TLS server certificates of the LDAP service. If not defined, the root directory derives from $OCIS_BASE_DATA_PATH/idp.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_LDAP_BIND_DN</code><br>
+<code>IDP_LDAP_BIND_DN</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>uid=idp,ou=sysusers,o=libregraph-idm </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>LDAP DN to use for simple bind authentication with the target LDAP server.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_LDAP_BIND_PASSWORD</code><br>
+<code>IDP_LDAP_BIND_PASSWORD</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Password to use for authenticating the 'bind_dn'.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_LDAP_USER_BASE_DN</code><br>
+<code>IDP_LDAP_BASE_DN</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ou=users,o=libregraph-idm </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Search base DN for looking up LDAP users.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_LDAP_USER_SCOPE</code><br>
+<code>IDP_LDAP_SCOPE</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>sub </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>LDAP search scope to use when looking up users. Supported scopes are 'base', 'one' and 'sub'.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IDP_LDAP_LOGIN_ATTRIBUTE</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>uid </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>LDAP User attribute to use for login like 'uid'.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_LDAP_USER_SCHEMA_MAIL</code><br>
+<code>IDP_LDAP_EMAIL_ATTRIBUTE</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>mail </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>LDAP User email attribute like 'mail'.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_LDAP_USER_SCHEMA_USERNAME</code><br>
+<code>IDP_LDAP_NAME_ATTRIBUTE</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>displayName </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>LDAP User name attribute like 'displayName'.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_LDAP_USER_SCHEMA_ID</code><br>
+<code>IDP_LDAP_UUID_ATTRIBUTE</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ownCloudUUID </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>LDAP User UUID attribute like 'uid'.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IDP_LDAP_UUID_ATTRIBUTE_TYPE</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>text </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>LDAP User uuid attribute type like 'text'.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_LDAP_USER_ENABLED_ATTRIBUTE</code><br>
+<code>IDP_USER_ENABLED_ATTRIBUTE</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ownCloudUserEnabled </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>LDAP Attribute to use as a flag telling if the user is enabled or disabled.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_LDAP_USER_FILTER</code><br>
+<code>IDP_LDAP_FILTER</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p> </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>LDAP filter to add to the default filters for user search like '(objectclass=ownCloud)'.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>OCIS_LDAP_USER_OBJECTCLASS</code><br>
+<code>IDP_LDAP_OBJECTCLASS</code><br></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>pre5.0 </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>inetOrgPerson </p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>LDAP User ObjectClass like 'inetOrgPerson'.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="yaml-example"><a class="anchor" href="#yaml-example"></a>YAML Example</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Note the file shown below must be renamed and placed in the correct folder according to the <a href="../../general/general-info.html#configuration-file-naming" class="xref page">Configuration File Naming</a> conventions to be effective.</p>
+</li>
+<li>
+<p>See the <a href="../env-var-note.html" class="xref page">Notes for Environment Variables</a> if you want to use environment variables in the yaml file.</p>
+</li>
+</ul>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset2_8-0-0"></a>8.0.0</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset2_8-0-0">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml"># Autogenerated
+# Filename: idp-config-example.yaml
+
+tracing:
+  enabled: false
+  type: ""
+  endpoint: ""
+  collector: ""
+log:
+  level: ""
+  pretty: false
+  color: false
+  file: ""
+debug:
+  addr: 127.0.0.1:9134
+  token: ""
+  pprof: false
+  zpages: false
+http:
+  addr: 127.0.0.1:9130
+  root: /
+  tls_cert: /var/lib/ocis/idp/server.crt
+  tls_key: /var/lib/ocis/idp/server.key
+  tls: false
+reva:
+  address: com.owncloud.api.gateway
+  tls:
+    mode: ""
+    cacert: ""
+machine_auth_api_key: ""
+asset:
+  asset: ""
+  login-background-url: ""
+idp:
+  iss: https://localhost:9200
+  identity_manager: ldap
+  uri_base_path: ""
+  sign_in_uri: ""
+  signed_out_uri: ""
+  authorization_endpoint_uri: ""
+  ldap_insecure: false
+  trusted_proxy: []
+  allow_scope: []
+  allow_client_guests: false
+  allow_dynamic_client_registration: false
+  encrypt_secret_file: /var/lib/ocis/idp/encryption.key
+  listen: ""
+  identifierdefaultbannerlogo: ""
+  identifierdefaultsigninpagetext: ""
+  identifierdefaultusernamehinttext: ""
+  identifieruilocales: []
+  signing_kid: private-key
+  signing_method: PS256
+  signing_private_key_files:
+  - /var/lib/ocis/idp/private-key.pem
+  validation_keys_path: ""
+  cookiebackenduri: ""
+  cookienames: []
+  cookiesamesite: 3
+  access_token_duration_seconds: 300
+  id_token_duration_seconds: 300
+  refresh_token_duration_seconds: 2592000
+  dynamic_client_secret_duration_seconds: 0
+clients:
+- id: web
+  name: ownCloud Web app
+  trusted: true
+  secret: ""
+  redirect_uris:
+  - '{{OCIS_URL}}/'
+  - '{{OCIS_URL}}/oidc-callback.html'
+  - '{{OCIS_URL}}/oidc-silent-redirect.html'
+  origins:
+  - '{{OCIS_URL}}'
+  application_type: ""
+- id: xdXOt13JKxym1B1QcEncf2XDkLAexMBFwiT9j6EfhhHFJhs2KM9jbjTmf8JBXE69
+  name: ownCloud desktop app
+  trusted: false
+  secret: UBntmLjC2yYCeHwsyj73Uwo9TAaecAetRwMw0xYcvNL9yRdLSUi0hUAHfvCHFeFh
+  redirect_uris:
+  - http://127.0.0.1
+  - http://localhost
+  origins: []
+  application_type: native
+- id: e4rAsNUSIUs0lF4nbv9FmCeUkTlV9GdgTLDH1b5uie7syb90SzEVrbN7HIpmWJeD
+  name: ownCloud Android app
+  trusted: false
+  secret: dInFYGV33xKzhbRmpqQltYNdfLdJIfJ9L5ISoKhNoT9qZftpdWSP71VrpGR9pmoD
+  redirect_uris:
+  - oc://android.owncloud.com
+  origins: []
+  application_type: native
+- id: mxd5OQDk6es5LzOzRvidJNfXLUZS2oN3oUFeXPP8LpPrhx3UroJFduGEYIBOxkY1
+  name: ownCloud iOS app
+  trusted: false
+  secret: KFeFWWEZO9TkisIQzR3fo7hfiMXlOpaqP8CFuTbSHzV1TUuGECglPxpiVKJfOXIx
+  redirect_uris:
+  - oc://ios.owncloud.com
+  origins: []
+  application_type: native
+ldap:
+  uri: ldaps://localhost:9235
+  cacert: /var/lib/ocis/idm/ldap.crt
+  bind_dn: uid=idp,ou=sysusers,o=libregraph-idm
+  bind_password: ""
+  base_dn: ou=users,o=libregraph-idm
+  scope: sub
+  login_attribute: uid
+  email_attribute: mail
+  name_attribute: displayName
+  uuid_attribute: ownCloudUUID
+  uuid_attribute_type: text
+  user_enabled_attribute: ownCloudUserEnabled
+  filter: ""
+  objectclass: inetOrgPerson</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+        <nav class="pagination">
+              <span class="prev"><a href="invitations.html">Invitations</a></span>
+              <span class="next"><a href="nats.html">NATS</a></span>
+        </nav>
+          </article>
+        </div>
+      </main>
+    </div>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="row-full">
+          <div class="col-third">
+            <div class="footer-nav">
+              <h4>About ownCloud</h4>
+              <ul id="menu-about" class="menu">
+                <li class="menu-landing"><a href="https://owncloud.com/">The Secure Collaboration Platform</a></li>
+                <li class="menu-news"><a href="https://owncloud.com/news/">News</a></li>
+                <li class="menu-privacy"><a href="https://owncloud.com/privacy-statement/">Privacy statement</a></li>
+                <li class="menu-imprint"><a href="https://owncloud.com/imprint/">Imprint</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-third">
+            <div class="footer-nav">
+              <h4>Resources</h4>
+              <ul id="menu-support-and-documentation" class="menu">
+                <li class="menu-faq"><a href="https://owncloud.com/faq/">FAQ</a></li>
+                <li class="menu-help"><a href="https://owncloud.com/docs-guides/">Help</a></li>
+                <li class="menu-security"><a href="https://owncloud.com/security/">Security</a></li>
+                <li class="menu-changelog"><a href="https://owncloud.com/changelog/">Changelog</a></li>
+                <li class="menu-get-started"><a href="https://owncloud.com/get-started/">Get started</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-third">
+            <div class="footer-nav">
+              <h4>Interact</h4>
+              <ul id="menu-interact" class="menu">
+                <li class="menu-forum"><a href="https://central.owncloud.org" class="oc-footer-nav-link">Forum</a></li>
+                <li class="menu-contribute"><a href="https://owncloud.com/contribute" class="oc-footer-nav-link">Contribute</a></li>
+                <li class="menu-customer-support"><a href="https://owncloud.com/support" class="oc-footer-nav-link">Customer support</a></li>
+
+              </ul>
+            </div>
+          </div>
+        </div>
+        <p>&copy; Copyright 2011-2026, The ownCloud developers.</p>
+      </div>
+    </footer>
+
+    <script id="site-script" src="../../../../../assets/js/site.js" data-ui-root-path="../../../../../assets"></script>
+    <script async src="../../../../../assets/js/vendor/highlight.js"></script>
+    <script async src="../../../../../assets/js/vendor/medium-zoom.js"></script>
+    <script async src="../../../../../assets/js/vendor/tabs-ui.js"></script>
+  </body>
+</html>

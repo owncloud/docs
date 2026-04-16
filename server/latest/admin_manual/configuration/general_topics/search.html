@@ -1,0 +1,2071 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Full Text Search :: Documentation for ownCloud (A Kiteworks Company)</title>
+
+    <link rel="canonical" href="https://doc.owncloud.com/server/latest/admin_manual/configuration/general_topics/search.html">
+    <link rel="prev" href="impersonate_users.html">
+    <link rel="next" href="../server/index.html">
+    <meta name="description" content="ownCloud offers the ability to use full text search via the Full Text Search app connecting to an Elasticsearch Server. This allows users to search not only for file names but also for content within files stored in ownCloud.">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../../../assets/css/site.css">
+
+    <meta property="og:locale" content="en_us" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Full Text Search" />
+    <meta property="og:description" content="Full Text Search" />
+    <meta property="og:url" content="https://doc.owncloud.com/server/latest/admin_manual/configuration/general_topics/search.html" />
+    <meta property="og:site_name" content="Documentation for ownCloud (A Kiteworks Company)" />
+    <meta property="og:image" content="https://doc.owncloud.com/opengraph-server.png" />
+    <meta property="og:image:alt" content="The ownCloud Server documentation" />
+    <meta name="twitter:site" content="@owncloud" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Full Text Search" />
+    <meta name="twitter:description" content="ownCloud offers the ability to use full text search via the Full Text Search app connecting to an Elasticsearch Server. This allows users to search not only for file names but also for content within files stored in ownCloud." />
+
+    <script>var uiRootPath = '../../../../../assets'</script>
+
+
+    <title>Full Text Search :: Documentation for ownCloud (A Kiteworks Company)</title>
+    <link rel="canonical" href="https://doc.owncloud.com/server/latest/admin_manual/configuration/general_topics/search.html">
+    <meta name="description" content="ownCloud offers the ability to use full text search via the Full Text Search app connecting to an Elasticsearch Server. This allows users to search not only for file names but also for content within files stored in ownCloud.">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" href="/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="black">
+    <meta name="msapplication-TileColor" content="#001840">
+    <meta name="theme-color" content="#ffffff">
+  </head>
+
+  <body class="article">
+    <header class="header" role="banner">
+      <nav class="navbar">
+        <div class="navbar-brand">
+          <a class="navbar-item" href="https://doc.owncloud.com">Documentation for ownCloud (A Kiteworks Company)</a>
+          <!-- we do not have any hamburger stuff to show like links to external sites
+           <button class="navbar-burger" aria-controls="topbar-nav" aria-expanded="false" aria-label="Toggle main menu">
+           <span></span>
+           <span></span>
+           <span></span>
+           </button>
+          -->
+        </div>
+        <div id="topbar-nav" class="navbar-menu">
+          <div class="navbar-end"> </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="body">
+      <div class="nav-container" data-component="server" data-version="10.16">
+        <aside class="nav">
+          <div class="panels">
+            <div class="nav-panel-menu is-active" data-panel="menu">
+              <nav class="nav-menu">
+                <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+                <h3 class="title"><a href="../../../index.html">ownCloud Server</a></h3>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="0">
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="1">
+                      <a class="nav-link" href="../../../index.html">Introduction</a>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Admin Manual</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../index.html">Introduction</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../useful_pages.html">Useful Pages</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../faq/index.html">FAQ</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../gdpr.html">GDPR</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Installation</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../installation/deployment_considerations.html">Deployment Considerations</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../installation/deployment_recommendations.html">Deployment Recommendations</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../installation/deployment_recommendations/nfs.html">NFS</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../installation/system_requirements.html">System Requirements</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../installation/configuration_notes_and_tips.html">Configuration Notes and Tips</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../installation/index.html">Installation Options</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../installation/docker/index.html">Installing With Docker</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Manual Installation on Linux</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="5">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Detailed Installation Guide</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="6">
+                      <a class="nav-link" href="../../installation/manual_installation/manual_installation.html">Detailed Installation on Ubuntu (various versions)</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Quick Installation Guide</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="6">
+                      <a class="nav-link" href="../../installation/quick_guides/ubuntu_20_04.html">On Ubuntu 20.04</a>
+                  </li>
+                    <li class="nav-item" data-depth="6">
+                      <a class="nav-link" href="../../installation/quick_guides/ubuntu_22_04.html">On Ubuntu 22.04</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <span class="nav-text">Linux Package Manager</span>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../installation/installation_wizard.html">The Installation Wizard</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../installation/troubleshooting.html">Troubleshooting</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../installation/changing_the_web_route.html">Changing Your ownCloud URL</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../installation/apps_management_installation.html">Installing and Managing Apps</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../installation/apps_supported.html">Supported Apps</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../installation/apps/mediaviewer/index.html">Media Viewer</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../installation/selinux_configuration.html">SELinux Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../installation/letsencrypt/index.html">Using Let&#8217;s Encrypt SSL Certificates</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../installation/letsencrypt/using_letsencrypt.html">Using Letsencrypt</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../installation/letsencrypt/apache.html">Apache</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Configuration</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../database/index.html">Database</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../database/db_conversion.html">Database Conversion</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../database/linux_database_configuration.html">Database Configuration</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../files/encryption/index.html">Encryption</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/encryption/encryption_configuration.html">Encryption Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/encryption/encryption_configuration_quick_guide.html">Encryption Configuration Quick Guide</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../files/external_storage/index.html">External Storage</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/external_storage/configuration.html">External Storage Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/external_storage/auth_mechanisms.html">External Storage Authentication Mechanisms</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/external_storage/amazons3.html">AmazonS3</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/external_storage/dropbox.html">Dropbox</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/external_storage/ftp.html">FTP</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/external_storage/google.html">Google</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/external_storage/local.html">Local</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/external_storage/owncloud.html">ownCloud</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/external_storage/s3_compatible_object_storage_as_primary.html">S3 as Primary</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/external_storage/sftp.html">SFTP</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/external_storage/smb.html">SMB</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/external_storage/webdav.html">WebDAV</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../files/index.html">Files and Sharing</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/big_file_upload_configuration.html">Big File Upload Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/manual_file_locking.html">Manual File Locking</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/default_files_configuration.html">Default Files Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/federated_cloud_sharing_configuration.html">Federated Cloud Sharing Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/file_sharing_configuration.html">File Sharing Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/file_versioning.html">File Versioning</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/files_locking_transactional.html">Transactional File Locking</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/previews_configuration.html">Preview Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/mimetypes.html">Mimetypes</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../files/trashbin_options.html">Managing the Trashbin</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../integration/index.html">Integration</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../integration/ms-teams.html">Microsoft Teams</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../integration/splunk.html">ownCloud App for Splunk</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="index.html">General Topics</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="code_signing.html">Code Signing</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="impersonate_users.html">Impersonate Users</a>
+                  </li>
+                    <li class="nav-item is-current-page" data-depth="4">
+                      <a class="nav-link" href="search.html">Full Text Search</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../server/index.html">Server</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../server/activity_configuration.html">Activity Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../server/background_jobs_configuration.html">Background Jobs Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../server/caching_configuration.html">Caching Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../server/config_sample_php_parameters.html">Config Sample PHP Parameters</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../server/config_apps_sample_php_parameters.html">Config Apps Sample PHP Parameters</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../server/custom_client_repos.html">Custom Client Repos</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../server/email_configuration.html">Email Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../server/excluded_blacklisted_files.html">Excluded Blacklisted Files</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../server/external_sites.html">External Sites</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../server/harden_server.html">Harden Server</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../server/import_ssl_cert.html">Import SSL Cert</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../server/index_php_less_urls.html">Index PHP Less URLs</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../server/occ_command.html">OCC Command</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../server/language_configuration.html">Language Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../server/legal_settings_configuration.html">Legal Settings Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Logging</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../server/logging/logging_configuration.html">Logging Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../server/logging/request_tracing.html">Request Tracing</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../server/reverse_proxy_configuration.html">Reverse Proxy Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../server/security/index.html">Security</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../server/security/brute_force_protection.html">Brute-Force Protection</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../server/security/oauth2.html">OAuth2</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../server/security/password_policy.html">Password policy</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../server/security_setup_warnings.html">Security Setup Warnings</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../server/security/hsmdaemon/index.html">The HSM (Hardware Security Module) Daemon</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../server/security/dependency_notes.html">Dependency Notes</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../server/oc_server_tuning.html">Server Tuning</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../server/thirdparty_php_configuration.html">Third Party PHP Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../server/virus-scanner-support.html">Virus Scanner Support</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../server/ui-configuration.html">UI Configuration</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">User</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../user/user_management.html">User Management</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../user/user_roles.html">User Roles</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../user/reset_admin_password.html">Reset Admin Password</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../user/reset_user_password.html">Reset User Password</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../user/user_auth_ftp_smb_imap.html">User Auth FTP SMB IMAP</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../user/user_auth_ldap.html">User Auth LDAP</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../user/user_auth_twofactor.html">User Auth Two-Factor</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../user/user_oauth2.html">User Auth OAuth2</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../user/user_provisioning_api.html">User Provisioning API</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../user/custom_groups_app.html">Custom Groups App</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../user/guests_app.html">Guests App</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../user/oidc/oidc.html">OpenID Connect (OIDC)</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../user/login_policies.html">Login Policies</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Maintenance</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../maintenance/upgrading/upgrade.html">Upgrading</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../maintenance/upgrading/manual_upgrade.html">Manual Upgrade</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../maintenance/upgrading/database_upgrade.html">Database Upgrade</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../maintenance/upgrading/upgrade_php.html">Upgrading PHP</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../maintenance/upgrading/marketplace_apps.html">Marketplace Apps</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Backup and Restore</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../maintenance/backup_and_restore/backup.html">Backup</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../maintenance/backup_and_restore/restore.html">Restore</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../maintenance/enable_maintenance.html">Maintenance Mode</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../maintenance/export_import_instance_data.html">Export and Import Instance Data</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../maintenance/manually-moving-data-folders.html">Manually Moving Data Folders</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Encryption</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../maintenance/encryption/migrating-from-user-key-to-master-key.html">Migrating from User Key to Master Key Encryption</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../maintenance/migrating.html">Migrating to a Different Server</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../maintenance/migrating_to_kiteworks.html">Migrating to Kiteworks PDN</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../maintenance/migrating_to_ocis.html">Migrating to ownCloud Infinite Scale</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Enterprise</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Authentication</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/authentication/enterprise_only_auth.html">Enterprise Only Authentication</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/authentication/kerberos.html">Kerberos Authentication</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Clients</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/clients/custom_client_repos.html">Custom Client Repos</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Collaboration</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/collaboration/collabora_secure_view.html">Collabora Online / Secure View</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/collaboration/msoffice-wopi-integration.html">Microsoft Office Online / WOPI Integration</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Document Classification</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/document_classification/classification_and_policy_enforcement.html">Classify Documents and Enforce Policies</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">External Storage</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/external_storage/ldap_home_connector_configuration.html">LDAP Home Connector Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/external_storage/sharepoint-integration_configuration.html">Sharepoint integration Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/external_storage/windows-network-drive_configuration.html">Windows Network Drive Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/external_storage/wnd_quick_guide.html">WND Configuration Quick Guide</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">File Management</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/file_management/files_tagging.html">File Tagging</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/file_management/files_lifecycle.html">File Lifecycle Management</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Firewall</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/firewall/file_firewall.html">File Firewall</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Installation</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/installation/install.html">Installing &amp; Upgrading ownCloud Enterprise Edition</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/installation/oracle_db_configuration.html">Oracle DB Setup &amp; Configuration</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Logging</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/logging/admin_audit.html">Auditing</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Reporting</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/reporting/metrics.html">Metrics</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/reporting/config_report.html">Generate a Config Report</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Security</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/security/ransomware-protection.html">Ransomware Protection</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">User Management</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/user_management/user_auth_shibboleth.html">Shibboleth Integration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../enterprise/user_management/saml_2.0_sso.html">SAML 2.0 Based SSO</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Troubleshooting</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../troubleshooting/general_troubleshooting.html">General Troubleshooting</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../troubleshooting/path_filename_length.html">Path and Filename Length Limitations</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../troubleshooting/providing_logs_and_config_files.html">Retrieve Log Files and Configuration Settings</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../troubleshooting/remove_non_existent_bg_jobs.html">Remove Non-Existent Background Jobs</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../found_a_mistake.html">Found a Mistake?</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">Developer Manual</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../developer_manual/index.html">Introduction</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/general/index.html">General Contributor Guidelines</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/general/code-of-conduct.html">Community Code of Conduct</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/general/codingguidelines.html">Coding Style &amp; General Guidelines</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/general/debugging.html">Debugging</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/general/performance.html">Performance Considerations</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/general/security.html">Security Guidelines</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/general/backporting.html">Backporting</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../developer_manual/commun/help_and_communication.html">Help and Communication</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/core/index.html">Developing ownCloud Core</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/core/introduction.html">Introduction</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/general/devenv.html">Setup Your Development Environment</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/core/configfile.html">Application Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/core/theming.html">Theming</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/core/translation.html">Translation</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/core/code-standard.html">Code Standards Compliance</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/testing/index.html">Testing</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/testing/test-pilots.html">ownCloud Test Pilots</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/testing/drone.html">Drone Testing</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/testing/unit-testing.html">Unit Testing</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/testing/acceptance-tests.html">Acceptance Tests</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/testing/ui-testing.html">User Interface Testing</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/core/apis/index.html">Available APIs</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/core/apis/externalapi.html">The External API</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/core/apis/provisioning-api.html">The Provisioning API</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">OCS</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/core/apis/ocs-notification-endpoint-v1.html">The OCS Notifications API (v1)</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/core/apis/ocs-capabilities.html">The OCS REST API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/core/apis/ocs-recipient-api.html">The OCS Recipient API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/core/apis/ocs-share-api.html">The OCS Share API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/core/apis/ocs-totp-validation-api.html">The OCS TOTP Validation API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/core/apis/ocs-user-sync-api.html">The OCS User Sync API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/core/apis/ocs-notify-public-link-by-email.html">Notify Public Link By Email</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/core/apis/roles-api.html">The Roles API</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/webdav_api/index.html">WebDAV APIs</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/webdav_api/comments.html">The Comments API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/webdav_api/groups.html">The Custom Groups Management API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/webdav_api/files_versions.html">The Files Versions API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/webdav_api/meta.html">The Meta API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/webdav_api/search.html">The Search API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/webdav_api/tags.html">The Tags API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/webdav_api/trashbin.html">The Trash Bin API</a>
+                  </li>
+                    <li class="nav-item" data-depth="5">
+                      <a class="nav-link" href="../../../developer_manual/webdav_api/public_files.html">The Public Files API</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/app/introduction.html">Application Development</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/index.html">Fundamental Concepts</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/info.html">Application Metadata</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/classloader.html">The Classloader</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/configuration.html">Configuration</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/routes.html">Routing</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/controllers.html">Controllers</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/templates.html">Templates</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/js.html">JavaScript</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/css.html">CSS</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/middleware.html">Middleware</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/database.html">Database Connectivity</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/backgroundjobs.html">Background Jobs</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/logging.html">Logging</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/testing.html">Testing</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/container.html">The DI Container</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/filesystem.html">Filesystem</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/api.html">RESTful API</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/hooks.html">Hooks</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/publishing.html">Publishing in the ownCloud Marketplace</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/changelog.html">Changelog</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/fundamentals/market_app.html">Market App</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/app/advanced/index.html">Advanced Concepts</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/advanced/custom-cache-backend.html">Custom Filesystem Caches</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/advanced/custom-storage-backend.html">Custom Storage Backends</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/advanced/notifications.html">Notifications</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/advanced/storage-backend.html">Storage Backends</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/advanced/extstorage.html">External Storage Backends</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/advanced/l10n.html">Translation</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/advanced/two-factor-provider.html">Two-Factor Providers</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/advanced/users.html">User Management</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/advanced/code_signing.html">Code Signing</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/index.html">Tutorial</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/requirements.html">Minimum Requirements</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/request.html">The Request Life Cycle</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/development_environment.html">The Core Application Files</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/routes_and_controllers.html">Routes and Controllers</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/database_connectivity.html">Database Connectivity</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/template_content.html">Create Template Content</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/navigation.html">Create a Navigation Menu</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/javascript_and_css.html">Add JavaScript and CSS</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/wiring_it_up.html">Wiring it Up</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/finishing_touches.html">Apply the Finishing Touches</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/restful_api.html">Add a RESTful API</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/app/tutorial/testing.html">Writing Tests</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/mobile_development/index.html">Mobile Development</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/mobile_development/android_library/index.html">Android</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/mobile_development/android_library/library_installation.html">Library Installation</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/mobile_development/android_library/examples.html">Examples</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/mobile_development/ios_library/index.html">iOS</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/mobile_development/ios_library/library_installation.html">Library Installation</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../developer_manual/mobile_development/ios_library/examples.html">Examples</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../developer_manual/bugtracker/index.html">Bugtracker</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/bugtracker/codereviews.html">Code Reviews</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../developer_manual/bugtracker/triaging.html">Bug Triaging</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../developer_manual/found_a_mistake.html">Found a Mistake?</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="1">
+                      <button class="nav-item-toggle"></button>
+                      <span class="nav-text">ownCloud Server UI</span>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../classic_ui/index.html">Introduction</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../classic_ui/files/webgui/overview.html">The WebUI</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/webinterface.html">Web Interface</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/files/webgui/navigating.html">Navigating the WebUI</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../classic_ui/personal_settings/index.html">Personal Settings</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/personal_settings/general.html">General</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/personal_settings/storage.html">Storage</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/personal_settings/sharing.html">Sharing</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/personal_settings/security.html">Security</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/personal_settings/custom_groups.html">Custom Groups</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../classic_ui/files/index.html">Files</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/files/access_webdav.html">Access WebDAV</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/files/webgui/sharing.html">Sharing Files</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/files/webgui/search.html">Search &amp; Full Text Search</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/files/webgui/tagging.html">Tagging Files</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/files/webgui/comments.html">Comments</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/files/version_control.html">Version Control</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/files/encrypting_files.html">Encrypting Files</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/files/deleted_file_management.html">Managing Deleted Files</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/files/large_file_upload.html">Large File Uploads</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/files/manual_file_locking.html">Manual File Locking</a>
+                  </li>
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../../classic_ui/files/files_lifecycle.html">File Lifecycle Management</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/files/public_link_shares.html">Public Link Shares</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/files/federated_cloud_sharing.html">Federated Cloud Sharing</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/session_management.html">Managing Connected Browsers and Devices</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/online_collaboration.html">Online Collaboration</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/files/webgui/quota.html">Storage Quotas</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/external_storage/external_storage.html">External Storage</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/external_storage/sharepoint_connecting.html">Connecting to SharePoint</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/files/desktop_mobile_sync.html">Desktop Mobile Sync</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../classic_ui/apps/index.html">Apps</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/apps/activity.html">Activity</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/apps/calendar.html">Calendar</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/apps/contacts.html">Contacts</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/apps/market.html">Market</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/apps/media_viewer_app.html">Media Viewer App</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../classic_ui/integration/index.html">Integration</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/integration/ms-teams.html">Microsoft Teams</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <button class="nav-item-toggle"></button>
+                      <a class="nav-link" href="../../../classic_ui/pim/index.html">Synchronization Clients</a>
+                  <ul class="nav-list">
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/pim/sync_ios.html">Sync iOS</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/pim/sync_kde.html">Sync KDE</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/pim/sync_osx.html">Sync OSX</a>
+                  </li>
+                    <li class="nav-item" data-depth="3">
+                      <a class="nav-link" href="../../../classic_ui/pim/sync_thunderbird.html">Sync Thunderbird</a>
+                  </li>
+                </ul>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../classic_ui/troubleshooting.html">Troubleshooting</a>
+                  </li>
+                    <li class="nav-item" data-depth="2">
+                      <a class="nav-link" href="../../../classic_ui/found_a_mistake.html">Found a Mistake?</a>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+            <div class="nav-panel-explore" data-panel="explore">
+              <div class="context">
+                <span class="title">ownCloud Server</span>
+                <span class="version">10.16</span>
+              </div>
+              <ul class="components">
+                <li class="component">
+                  <div class="title"><a href="../../../../../desktop/latest/index.html">Desktop App</a></div>
+                  <ul class="versions">
+                    <li class="version">
+                      <a href="../../../../../desktop/next/index.html">next</a>
+                    </li>
+                    <li class="version is-latest">
+                      <a href="../../../../../desktop/latest/index.html">6.0</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../desktop/5.3/index.html">5.3</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../../ocis/latest/index.html">Infinite Scale Documentation</a></div>
+                  <ul class="versions">
+                    <li class="version">
+                      <a href="../../../../../ocis/next/index.html">next</a>
+                    </li>
+                    <li class="version is-latest">
+                      <a href="../../../../../ocis/latest/index.html">8.0</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../ocis/7.3/index.html">7.3</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../../android/latest/index.html">Mobile App for Android</a></div>
+                  <ul class="versions">
+                    <li class="version">
+                      <a href="../../../../../android/next/index.html">next</a>
+                    </li>
+                    <li class="version is-latest">
+                      <a href="../../../../../android/latest/index.html">4.7</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../android/4.6/index.html">4.6</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../../ios-app/latest/index.html">Mobile App for iOS</a></div>
+                  <ul class="versions">
+                    <li class="version">
+                      <a href="../../../../../ios-app/next/index.html">next</a>
+                    </li>
+                    <li class="version is-latest">
+                      <a href="../../../../../ios-app/latest/index.html">12.6</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../ios-app/12.5/index.html">12.5</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../../index.html">ownCloud Main Page</a></div>
+                </li>
+                <li class="component is-current">
+                  <div class="title"><a href="../../../index.html">ownCloud Server</a></div>
+                  <ul class="versions">
+                    <li class="version">
+                      <a href="../../../../next/index.html">next</a>
+                    </li>
+                    <li class="version is-current is-latest">
+                      <a href="../../../index.html">10.16</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../10.15/index.html">10.15</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="component">
+                  <div class="title"><a href="../../../../../webui/latest/index.html">ownCloud Web User Interfaces</a></div>
+                  <ul class="versions">
+                    <li class="version is-latest">
+                      <a href="../../../../../webui/latest/index.html">next</a>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <main class="article">
+        <div class="toolbar" role="navigation">
+          <button class="nav-toggle"></button>
+          <a href="../../../../../index.html" class="home-link"></a>
+          <nav class="breadcrumbs" aria-label="breadcrumbs">
+            <ul>
+              <li><a href="../../../index.html">ownCloud Server</a></li>
+              <li>Admin Manual</li>
+              <li>Configuration</li>
+              <li><a href="index.html">General Topics</a></li>
+              <li><a href="search.html">Full Text Search</a></li>
+            </ul>
+          </nav>
+      <div class="page-versions">
+        <button class="version-menu-toggle" title="Show other versions of page">10.16</button>
+        <div class="version-menu">
+          <a class="version" href="../../../../next/admin_manual/configuration/general_topics/search.html">next</a>
+          <a class="version is-current" href="search.html">10.16</a>
+          <a class="version" href="../../../../10.15/admin_manual/configuration/general_topics/search.html">10.15</a>
+        </div>
+      </div>
+          <div class="edit-this-page"><a href="https://github.com/owncloud/docs-server/edit/10.16/modules/admin_manual/pages/configuration/general_topics/search.adoc">Edit this Page</a></div>
+        </div>
+        <div class="content">
+          <aside class="toc sidebar" data-title="Contents" data-levels="2">
+            <div class="toc-menu"></div>
+          </aside>
+          <article class="doc">
+            <h1 class="page">Full Text Search</h1>
+
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#prerequisites">Prerequisites</a></li>
+<li><a href="#installation">Installation</a></li>
+<li><a href="#configuration">Configuration</a>
+<ul class="sectlevel2">
+<li><a href="#authentication-methods">Authentication Methods</a>
+<ul class="sectlevel3">
+<li><a href="#no-authentication">No Authentication</a></li>
+<li><a href="#user-password-authentication">User / Password Authentication</a></li>
+<li><a href="#api-key-authentication">API Key Authentication</a></li>
+</ul>
+</li>
+<li><a href="#search-external-storage">Search External Storage</a></li>
+<li><a href="#connector-setup">Connector Setup</a>
+<ul class="sectlevel3">
+<li><a href="#migrating-to-the-relevancev2-connector">Migrating to the RelevanceV2 Connector:</a></li>
+<li><a href="#enhanced-search-capabilities-with-relevancev2">Enhanced Search Capabilities with RelevanceV2</a></li>
+</ul>
+</li>
+<li><a href="#save-the-configuration">Save the Configuration</a></li>
+<li><a href="#set-up-the-es-index">Set up the ES Index</a></li>
+<li><a href="#resetting-the-es-index">Resetting the ES Index</a></li>
+</ul>
+</li>
+<li><a href="#using-occ-commands">Using occ Commands</a></li>
+<li><a href="#app-modes">App Modes</a>
+<ul class="sectlevel2">
+<li><a href="#active-mode">Active Mode</a></li>
+<li><a href="#passive-mode">Passive Mode</a></li>
+<li><a href="#changing-the-app-mode">Changing the App Mode</a></li>
+</ul>
+</li>
+<li><a href="#restrict-search-results">Restrict Search Results</a>
+<ul class="sectlevel2">
+<li><a href="#index-metadata-only">Index Metadata Only</a></li>
+<li><a href="#limit-metadata-search-for-groups">Limit Metadata Search for Groups</a></li>
+</ul>
+</li>
+<li><a href="#create-the-index">Create the Index</a></li>
+<li><a href="#issues">Issues</a></li>
+<li><a href="#user-manual">User Manual</a></li>
+<li><a href="#known-limitations">Known Limitations</a></li>
+</ul>
+</div>
+<div class="sect1">
+<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>ownCloud offers the ability to use full text search via the Full Text Search app connecting to an Elasticsearch Server. This allows users to search not only for file names but also for content within files stored in ownCloud.</p>
+</div>
+<div class="paragraph">
+<p>The <a href="https://marketplace.owncloud.com/apps/search_elastic">Full Text Search</a> app integrates full text search into ownCloud, powered by Elasticsearch. This document describes how to setup the ownCloud part of the Full Text Search app.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="prerequisites"><a class="anchor" href="#prerequisites"></a>Prerequisites</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>A fully functioning <a href="https://www.elastic.co/elasticsearch/">Elasticsearch Server 7</a>. Follow the <a href="https://www.elastic.co/guide/en/elastic-stack/7.17/index.html">Installation and Upgrade Guide</a> for your environment.</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>Version 1.0.0 of the Full Text Search app only works with Elasticsearch version 5.6.</p>
+</li>
+<li>
+<p>With version &gt;=2.0.0 of the app, Elasticsearch version &gt; 7 is required and has been tested and is supported up to version 8.6.2 though newer versions may work without any issues.</p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>The <a href="https://www.elastic.co/guide/en/elasticsearch/plugins/current/ingest-attachment.html">Ingest Attachment Processor Plugin</a> lets Elasticsearch extract metadata and text from over a thousand different file types such as PPT, XLS, PDF and more. To install the processor, run the following command from your Elasticsearch installation directory:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo bin/elasticsearch-plugin install ingest-attachment</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Post installing the Plugin, you need to restart the Elasticsearch server:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo service elasticsearch restart</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="installation"><a class="anchor" href="#installation"></a>Installation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To install the app, use the Marketplace app on your ownCloud server or proceed manually:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Download and extract the tarball of the <a href="https://marketplace.owncloud.com/apps/search_elastic">Full Text Search app</a> to the apps directory (or <a href="../../installation/apps_management_installation.html#using-custom-app-directories" class="xref page">custom apps directory, prefered</a>) of your ownCloud instance.</p>
+</li>
+<li>
+<p>Use the <a href="../server/occ_command.html#apps-commands" class="xref page">App Commands</a> to enable the <code>search_elastic</code> application with:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo -u www-data ./occ app:enable search_elastic</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>or enable it via the GUI <span class="menuseq"><b class="menu">Settings</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="submenu">Admin</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="submenu">Apps</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="submenu">Full Text Search</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="menuitem">Enable</b></span>.</p>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="configuration"><a class="anchor" href="#configuration"></a>Configuration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To configure the Full Text Search, go to <span class="menuseq"><b class="menu">Settings</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="submenu">Admin</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="menuitem">Search</b></span>.</p>
+</div>
+<div class="sect2">
+<h3 id="authentication-methods"><a class="anchor" href="#authentication-methods"></a>Authentication Methods</h3>
+<div class="paragraph">
+<p>Independent of the authentication method selected below, you need to provide the URL of the Elasticsearch server. For any of the authentication methods selected, your Elasticsearch server must be prepared upfront.</p>
+</div>
+<div class="paragraph">
+<p>For the URL, both <code>HTTP</code> and <code>HTTPS</code> incuding the address and port can be used.</p>
+</div>
+<div class="paragraph">
+<p>The app provides several authentication methods. Select the one of your choice and check out the details for the respective authentication method below:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../../_images/apps/search_elastic/search_elastic_auth_items.png" alt="Auth Items" width="450">
+</div>
+</div>
+<div class="sect3">
+<h4 id="no-authentication"><a class="anchor" href="#no-authentication"></a>No Authentication</h4>
+<div class="paragraph">
+<p>When using <code>No Authentication</code>, just fill in the URL of the ES server.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../../_images/apps/search_elastic/search_elastic_no_auth.png" alt="No Auth" width="350">
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="user-password-authentication"><a class="anchor" href="#user-password-authentication"></a>User / Password Authentication</h4>
+<div class="paragraph">
+<p>When using <code>User / Password Authentication</code>, enter the credentials set up on the ES server. Note that the password will be stored encrypted in the ownCloud database.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../../_images/apps/search_elastic/search_elastic_u_p_auth.png" alt="User / Password Auth" width="350">
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="api-key-authentication"><a class="anchor" href="#api-key-authentication"></a>API Key Authentication</h4>
+<div class="paragraph">
+<p>When using <code>API Key Authentication</code>, enter the API Key with which the ES server was set up.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../../_images/apps/search_elastic/search_elastic_api_key_auth.png" alt="API Key Auth" width="350">
+</div>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+The API Key needs to be the <em>encoded</em> one, <strong>not</strong> the <em>api_key</em> string. For details see the <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-create-api-key.html#security-api-create-api-key">Create API key API</a> at the ES documentation.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="search-external-storage"><a class="anchor" href="#search-external-storage"></a>Search External Storage</h3>
+<div class="paragraph">
+<p>Define if external storage should be included in ES indexing by setting the checkmark accordingly with <b class="button">Scan external Storages</b>. Setting this checkmark not only enables search in external storages, but also search in federated shares. Note that this setting requires to rebuild the index.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="connector-setup"><a class="anchor" href="#connector-setup"></a>Connector Setup</h3>
+<div class="paragraph">
+<p>There are 2 different indexes. The <code>Legacy</code> is the old / current one while the <code>RelevanceV2</code> is the new one. The difference between the two is how index data is stored because both provide different capabilities and index in different ways. This results in different search capabilities. The Legacy doesn&#8217;t differ from the current search while the RelevanceV2 has new capabilities.</p>
+</div>
+<div class="paragraph">
+<p>To populate the new connector with enhanced capabilities, an occ command needs to be run for each user, creating index data accordingly. See the occ command section <a href="../server/occ_command.html#fill-a-secondary-index" class="xref page">Fill a Secondary Index</a> for more details.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../../_images/apps/search_elastic/connector_setup.png" alt="Connector Setup" width="600">
+</div>
+</div>
+<div class="sect3">
+<h4 id="migrating-to-the-relevancev2-connector"><a class="anchor" href="#migrating-to-the-relevancev2-connector"></a>Migrating to the RelevanceV2 Connector:</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>If you haven&#8217;t indexed anything yet, you are encouraged to set up the connectors you want to use as part of the app configuration. The recommended one is <code>RelevanceV2</code> for <code>write</code> and <code>search</code>.</p>
+</li>
+<li>
+<p>If you have indexed data already, use the following steps to migrate to the new index scheme:</p>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Assuming you have the <code>Legacy</code> connector set up for <code>write</code> and <code>search</code>.</p>
+</li>
+<li>
+<p>Add the <code>RelevanceV2</code> connector to the list of <code>write</code> connectors. The list should have both <code>Legacy</code> and <code>RelevanceV2</code>.</p>
+</li>
+<li>
+<p>Run the <code>occ search:index:fillSecondary RelevanceV2 &lt;user&gt;</code> <a href="../server/occ_command.html#fill-a-secondary-index" class="xref page">command</a>. The command needs to be run for all  users, or at least the ones using the search app. Note that this step is expected to take a lot of time.</p>
+</li>
+<li>
+<p>Once indexed data has been migrated for all users, you can switch the search connector to use the new <code>RelevanceV2</code> search capabilities.</p>
+</li>
+<li>
+<p>After checking everything is good, you can remove the old <code>Legacy</code> connector from the list of write connectors.</p>
+</li>
+<li>
+<p>Finally you can completely remove the old index from Elasticsearch.</p>
+</li>
+</ol>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>With step 2, you will be writing into both indexes at the same time. This is expected to be slower. Note that step 2 just takes care of new files. Files indexed previously won&#8217;t be present in the new index. This is why step 3 is there.</p>
+</div>
+<div class="paragraph">
+<p>Step 4 is important and you should stop at that point for a while. If something goes wrong, you can still revert things, in particular, you can switch back to the <code>Legacy</code> connector. In this case, use the occ command referenced above with the <code>Legacy</code> index.</p>
+</div>
+<div class="paragraph">
+<p>From step 5 the actions are irreversible. If you want to go back, you&#8217;ll have to start a new migration.</p>
+</div>
+<div class="paragraph">
+<p>It&#8217;s important to notice there isn&#8217;t any expected downtime while the migration happens. Until step 4, the <code>Legacy</code> connector will keep updating the index normally. When the switch happens in the search connector, the new <code>RelevanceV2</code> connector will access the new index, which should have been fully updated.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="enhanced-search-capabilities-with-relevancev2"><a class="anchor" href="#enhanced-search-capabilities-with-relevancev2"></a>Enhanced Search Capabilities with RelevanceV2</h4>
+<div class="paragraph">
+<p>The RelevanceV2 can boost scores of recently modified files. New files should appear first though this is not a guarantee because the score of a file could be too low. Even with the boost, files could score less than older but more relevant files.</p>
+</div>
+<div class="paragraph">
+<p>Additional searches you can do with the "RelevanceV2" connector:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Search by extension<br>
+<code>ext:pdf</code>, <code>ext:docx</code>, <code>ext:gif</code>, <code>ext:mp4</code>, <code>ext:tar.gz</code>, <code>ext:gz</code>, etc., any extension is possible</p>
+</li>
+<li>
+<p>Search by size, only in bytes or megabytes</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Search by byte size:<br>
+<code>size.b:&lt;8092</code> , <code>size.b:&gt;102400</code>, <code>size.b:[8092 TO 16184]</code></p>
+</li>
+<li>
+<p>Search by megabyte size:<br>
+<code>size.mb:&lt;3</code>, <code>size.mb:&gt;9</code>, <code>size.mb:[3 TO 9]</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Search by type: only "file" or "folder"<br>
+<code>type:file</code>, <code>type:folder</code></p>
+</li>
+<li>
+<p>Search by date:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Search by timestamp:<br>
+<code>mtime:&lt;1678960862</code>, <code>mtime:&gt;1678960862</code>, <code>mtime:[1608111372 TO 1678960862]</code><br></p>
+</li>
+<li>
+<p>Search by date:<br>
+<code>mtime:&lt;2021-08-25</code>, <code>mtime:&gt;2023-01-18</code>, <code>mtime:[2022-01-01 TO 2022-12-31]</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Search by mimetype:<br>
+<code>mime:image</code>, <code>mime:gif</code>, <code>mime:text</code><br>
+NOTE: To search for the whole mimetype such as "image/gif" use <code>mime.key:image\/gif</code>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Each search term will narrow the search. For example <code>brown ext:pdf</code> will be interpreted as "name or content containing brown AND extension = pdf", so "brown.pdf" and "a brown paper.pdf" will appear, but not "brown.txt" or "blue.pdf"</p>
+</div>
+<div class="paragraph">
+<p>Some examples of complex searches:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Files containing "confidential" updated since 2023 whose size is less than 10MB:<br>
+<code>confidential mtime:&gt;2023-01-01 size.mb:&lt;10</code></p>
+</li>
+<li>
+<p>Folders containing more than 1GB:<br>
+<code>type:folder size.mb:&gt;1024</code></p>
+</li>
+<li>
+<p>Images between March and June 2020:<br>
+<code>mime:image mtime:[2020-03-01 TO 2020-06-30]</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Note that matching by name is pretty lax, so expect a bunch of unexpected results. Anyway, good results are expected to be on top.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="save-the-configuration"><a class="anchor" href="#save-the-configuration"></a>Save the Configuration</h3>
+<div class="paragraph">
+<p>Save the configuration with the <b class="button">Save configuration</b> button.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="set-up-the-es-index"><a class="anchor" href="#set-up-the-es-index"></a>Set up the ES Index</h3>
+<div class="paragraph">
+<p>When everything is set up, you can click the button <b class="button">Setup index</b> which will tell the ES server to create the plain empty index and other related internal settings.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This step is important, because the red dot will turn green showing that everything has been set up correctly.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="resetting-the-es-index"><a class="anchor" href="#resetting-the-es-index"></a>Resetting the ES Index</h3>
+<div class="paragraph">
+<p>You can at any time reset the index if required by clicking on <b class="button">Reset index</b> or with an occ command. The index will be recreated afterwards.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo -u www-data ./occ search:index:reset</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="using-occ-commands"><a class="anchor" href="#using-occ-commands"></a>Using occ Commands</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can use the:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../server/occ_command.html#full-text-search" class="xref page">occ Full Text Search command set</a> to manage the app. These commands let administrators <em>create</em>, <em>rebuild</em>, <em>reset</em>, and <em>update</em> the search index. For example, the following command resets and recreates the index for all users:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo -u www-data ./occ search:index:reset</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p><a href="../server/occ_command.html#config-commands" class="xref page">occ Config Commands command set</a> to configure the app.</p>
+<div class="paragraph">
+<p>Examples:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">List app settings</dt>
+<dd>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo -u www-data ./occ config:list search_elastic</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-plaintext hljs" data-lang="plaintext">{
+    "apps": {
+        "search_elastic": {
+            "enabled": "yes",
+            "group": "content_searchers",
+            "installed_version": "2.1.0",
+            "nocontent": "false",
+            "scanExternalStorages": "1",
+            "servers": "elastic:xxxxxxx@172.17.0.3:9200",
+            "types": "filesystem"
+        }
+    }
+}</code></pre>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">Set app options</dt>
+<dd>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo -u www-data ./occ config:app:set \
+    search_elastic scanExternalStorages --value 0</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>or</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo -u www-data ./occ config:app:set \
+    search_elastic scanExternalStorages --value 1</code></pre>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="app-modes"><a class="anchor" href="#app-modes"></a>App Modes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The Full Text Search app provides two modes, which are <strong>active</strong> and <strong>passive</strong>.</p>
+</div>
+<div class="sect2">
+<h3 id="active-mode"><a class="anchor" href="#active-mode"></a>Active Mode</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">After enabling the app, it will be by default in <em>active mode</em></dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>File changes will be indexed in background jobs.<br>
+System cron is recommended, otherwise a lot of jobs might queue up.</p>
+</li>
+<li>
+<p>Search results will be based on Elasticsearch.</p>
+</li>
+<li>
+<p>Search functionality based on ownCloud core database queries will no longer be used.</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Active mode can cause a downtime for search when indexing starts on an already heavily used instance, because it takes a while until all files have been indexed.
+</td>
+</tr>
+</table>
+</div>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="passive-mode"><a class="anchor" href="#passive-mode"></a>Passive Mode</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">To do an initial full indexing without the app interfering, it can be put in <em>passive</em> mode</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>The administrator can run occ commands changing the search configuration without notice to the users.</p>
+</li>
+<li>
+<p>The app will not index any changes by itself.</p>
+</li>
+<li>
+<p>Search results will still be based on ownCloud core database queries.</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="changing-the-app-mode"><a class="anchor" href="#changing-the-app-mode"></a>Changing the App Mode</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo -u www-data ./occ config:app:set \
+    search_elastic mode --value passive</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>or</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo -u www-data ./occ config:app:set \
+    search_elastic mode --value active</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="restrict-search-results"><a class="anchor" href="#restrict-search-results"></a>Restrict Search Results</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="index-metadata-only"><a class="anchor" href="#index-metadata-only"></a>Index Metadata Only</h3>
+<div class="paragraph">
+<p>If you only want to use the Full Text Search app as a more scalable search on filenames, you can disable content indexing by setting the option <code>nocontent</code> to <code>true</code>, which defaults to <code>false</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo -u www-data ./occ config:app:set \
+    search_elastic nocontent --value true</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>You have to reindex all files if you change this back to <code>false</code>. Setting it to <code>true</code> does not require reindexing.</p>
+</li>
+<li>
+<p>It may be a more flexible way to go with limiting full text search to certain groups by setting the option <code>group.nocontent</code>, see <a href="#limit-metadata-search-for-groups">below</a> for details.</p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="limit-metadata-search-for-groups"><a class="anchor" href="#limit-metadata-search-for-groups"></a>Limit Metadata Search for Groups</h3>
+<div class="paragraph">
+<p>If you only want to use search for shared filenames, you can disable full text search for specific groups by setting the option <code>group.nocontent</code> to the groups whose users should <em>only</em> receive results based on filenames (not the full path), like users in the group <code>nofulltext</code> as in the example below:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo -u www-data ./occ config:app:set \
+    search_elastic group.nocontent \
+    --value nofulltext</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can also configure multiple groups by separating them with comma:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo -u www-data ./occ config:app:set \
+    search_elastic group.nocontent \
+    --value nofulltext,anothergroup,"group with blanks"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This allows a scalable search in shared files without clouding the results with content based hits.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="create-the-index"><a class="anchor" href="#create-the-index"></a>Create the Index</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When everything has been set up and configured, you can initiate creating the index. This must be done with an occ command. Depending on using <em>active</em> or <em>passive</em> mode, you either have to:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>active mode</strong>: wait until the job has finished and search is available to users, or</p>
+</li>
+<li>
+<p><strong>passive mode</strong>: users continue to search with ownCloud embedded search and you switch over to active mode when the occ command has finished indexing.</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo -u www-data ./occ search:index:create</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="issues"><a class="anchor" href="#issues"></a>Issues</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When the Elasticsearch server is down or the index has not been set up, you may get the following message. Check if the ES server is reachable or if the index was set up properly as one solution to fix the issue.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../../_images/apps/search_elastic/warning_could_not_setup_indexes_connection_failure.png" alt="Warning no Index" width="350">
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../../_images/apps/search_elastic/warning_could_not_setup_indexes_unknown_key.png" alt="Warning unknown Key" width="350">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="user-manual"><a class="anchor" href="#user-manual"></a>User Manual</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To find out more about the usage, check out the section in the User Manual: <a href="../../../classic_ui/files/webgui/search.html" class="xref page">Search &amp; Full Text Search</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="known-limitations"><a class="anchor" href="#known-limitations"></a>Known Limitations</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Currently, the app has the following known limitations:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If a shared file is renamed by the sharee (share receiver), the sharee cannot find the file using the new filename.</p>
+</li>
+<li>
+<p>Search results are not updated when a text file is rolled back to an earlier version.</p>
+</li>
+<li>
+<p>The app does not return results for recieved federated share files.</p>
+</li>
+<li>
+<p>Search does currently not work when encrypting files via the encryption app.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+        <nav class="pagination">
+              <span class="prev"><a href="impersonate_users.html">Impersonate Users</a></span>
+              <span class="next"><a href="../server/index.html">Server</a></span>
+        </nav>
+          </article>
+        </div>
+      </main>
+    </div>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="row-full">
+          <div class="col-third">
+            <div class="footer-nav">
+              <h4>About ownCloud</h4>
+              <ul id="menu-about" class="menu">
+                <li class="menu-landing"><a href="https://owncloud.com/">The Secure Collaboration Platform</a></li>
+                <li class="menu-news"><a href="https://owncloud.com/news/">News</a></li>
+                <li class="menu-privacy"><a href="https://owncloud.com/privacy-statement/">Privacy statement</a></li>
+                <li class="menu-imprint"><a href="https://owncloud.com/imprint/">Imprint</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-third">
+            <div class="footer-nav">
+              <h4>Resources</h4>
+              <ul id="menu-support-and-documentation" class="menu">
+                <li class="menu-faq"><a href="https://owncloud.com/faq/">FAQ</a></li>
+                <li class="menu-help"><a href="https://owncloud.com/docs-guides/">Help</a></li>
+                <li class="menu-security"><a href="https://owncloud.com/security/">Security</a></li>
+                <li class="menu-changelog"><a href="https://owncloud.com/changelog/">Changelog</a></li>
+                <li class="menu-get-started"><a href="https://owncloud.com/get-started/">Get started</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-third">
+            <div class="footer-nav">
+              <h4>Interact</h4>
+              <ul id="menu-interact" class="menu">
+                <li class="menu-forum"><a href="https://central.owncloud.org" class="oc-footer-nav-link">Forum</a></li>
+                <li class="menu-contribute"><a href="https://owncloud.com/contribute" class="oc-footer-nav-link">Contribute</a></li>
+                <li class="menu-customer-support"><a href="https://owncloud.com/support" class="oc-footer-nav-link">Customer support</a></li>
+
+              </ul>
+            </div>
+          </div>
+        </div>
+        <p>&copy; Copyright 2011-2026, The ownCloud developers.</p>
+      </div>
+    </footer>
+
+    <script id="site-script" src="../../../../../assets/js/site.js" data-ui-root-path="../../../../../assets"></script>
+    <script async src="../../../../../assets/js/vendor/highlight.js"></script>
+    <script async src="../../../../../assets/js/vendor/medium-zoom.js"></script>
+    <script async src="../../../../../assets/js/vendor/tabs-ui.js"></script>
+  </body>
+</html>
