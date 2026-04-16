@@ -2,15 +2,11 @@ site:
   title: Documentation for ownCloud (A Kiteworks Company)
   url: https://doc.owncloud.com
   # the site's landing page resides in the docs_main repository/component
-  # but it MUST be named ROOT to get a component/version less than the  landing page
+  # but it MUST be named ROOT to get a component/version less than the landing page
   # this now makes the landing page reside in the url given above WITHOUT getting redirected
   # see: https://docs.antora.org/antora/latest/page/start-page/
   # see: https://docs.antora.org/antora/latest/component-name-key/#root-component
   start_page: ROOT::index.adoc
-
-urls:
-  latest_version_segment: latest
-  latest_version_segment_strategy: replace
 
 # define all content sources
 # note that branches must already exist if changed here
@@ -48,16 +44,29 @@ content:
     - '4.7'
     - '4.6'
 
+urls:
+  # https://docs.antora.org/antora/latest/playbook/urls-redirect-facility/
+  redirect_facility: static
+  # see https://docs.antora.org/antora/latest/playbook/urls-latest-prerelease-version-segment/
+  # for multi version components, the prerelease key defines if the latest segment is shown in the URL or only redirected when entered
+  latest_version_segment: latest
+  # latest_prerelease_version_segment: next  # do not enable, we are not using this. the upcoming release version is unknown
+  latest_version_segment_strategy: replace   # default, do not change. GH Pages currently do not support 302 as gitlab does
+
+runtime:
+  fetch: true
+  cache_dir: ./.cache
+
+output:
+  clean: true
+  dir: public
+
 ui:
   # supplemental_files: supplemental
   output_dir: assets
   bundle:
     snapshot: true
     url: https://github.com/owncloud/docs-ui/releases/download/latest/ui-bundle.zip
-
-output:
-  clean: true
-  dir: public
 
 asciidoc:
   attributes:
