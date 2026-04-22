@@ -2,7 +2,7 @@
 
 /**
  * Cleanup sitemap files - remove any links that should not be kept - SEO and search relevant 
- * Version 1.0.0
+ * Version 1.0.1
  * 
  * @param {Object} playbook configuration object      - The configuration object for Antora
  * @param {Object} config   configuration object      - Configuration provided by the playbook
@@ -106,7 +106,7 @@ module.exports.register = function ({ config }) {
         return
         }
       } else {
-        // nothing found at all, something must went wrong with the sitemap created by Antora
+        // nothing found at all, something must have went wrong with the sitemap created by Antora
         console.log('\n')
         logger.warn('No parseable content found in '+ smf + ' Continuing with Antora')
         console.log('\n')
@@ -117,11 +117,11 @@ module.exports.register = function ({ config }) {
       // remove any entries that are NOT defined via config variables
 
       console.log()
-      parsable_sitemaps.forEach(element => parse_sitemap_file(parsable_sitemaps.length, outputDir, content, 
-         siteUrl, validSegments, preferredSegments, printSitemapFound, printContent, logger, element))
-
+      for (const element of parsable_sitemaps) {
+        await parse_sitemap_file(parsable_sitemaps.length, outputDir, content,
+                siteUrl, validSegments, preferredSegments, printSitemapFound, printContent, logger, element)
+      }
     })
-
 }
 
 /**
