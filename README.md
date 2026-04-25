@@ -2,7 +2,7 @@
 
 **IMPORTANT**
 
-Scince April 2026, this repository requires [Commit Signing](https://docs.github.com/articles/about-gpg) and uses [Conventional Commits](https://www.conventionalcommits.org) for commits and the Pull Request title.
+Since April 2026, this repository requires [Commit Signing](https://docs.github.com/articles/about-gpg) and uses [Conventional Commits](https://www.conventionalcommits.org) for commits and the Pull Request title.
 
 **Overview**
 
@@ -52,42 +52,4 @@ We use `node 22 LTS`. In case you used a lower node version for your local doc r
 **IMPORTANT**  
 We use `Antora 3.1.14` and npm instead of yarn. In case you used a lower Antora version for your local doc repos, you must upgrade them **all** by syncing them and running `npm install` in each doc repo.
 
-To generate and view the documentation locally or planning major changes, refer to the [Building the Documentation guide](./docs/build-the-docs.md).
-
-## Common Content and Styling the Documentation
-
-If you want to suggest an improvement to the ownCloud documentation theme, such as the layout, the header or the footer text, or if you find a bug, all the information that you need is in the `docs-ui` repository. Changes made in `docs-ui` are valid for the whole documentation.
-
-Please read how to test un-merged [docs-ui](./docs/test-ui-bundle.md) changes with content from the ownCloud documentation.
-
-## Best Practices and Tips
-
-Refer to [Best Practices and Tips for writing in AsciiDoc](./docs/best-practices.md) for more information.
-
-To check for broken links manually, see [install and use a broken-link-checker](./docs/checking-broken-links.md).
-
-## Target Branch and Backporting
-
-Please always do your changes in `master` and backport them to the relevant branches.
-The **ONLY** reason for doing a PR in a branch directly is, to fix an issue which is
-_only_ present in that particular branch! When creating a PR and it is necessary to backport,
-document in the PR to which branches a backport is needed.
-
-When backporting, consider using the [backport script](./docs/getting-started.md#backporting)
-which eases life a lot and speeds up the process. It is also very beneficial when using the
-extended code provided, because a clear naming structure of the backport PR is generated automatically.
-
-## When Does a Change Get Published to the Docs Web Site?
-
-Changes made will get published to the web under the following conditions:
-
-1. A merge in a component to one of the defined version branches triggers as a last step a master branch build.
-2. A merge to master triggers a site build which then pushes all versions defined in site.yml.
-
-## Create a New Version Branch for Docs
-
-Please refer to [Create a New Version Branch for Docs](./docs/new-version-branch.md) for more information.
-
-## HTML to PDF
-
-At the moment, creating a pdf is dropped from the build process but can be re-implemented if required.
+To generate and view the documentation locally or planning major changes, refer to the [Building the Documentation](./docs/building-the-documentation.md)
