@@ -40,7 +40,7 @@
   </head>
 
   <body class="article">
-    <header class="header" role="banner">
+<script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs'; mermaid.initialize({"startOnLoad":true}); </script>    <header class="header" role="banner">
       <nav class="navbar">
         <div class="navbar-brand">
           <a class="navbar-item" href="https://doc.owncloud.com">Documentation for ownCloud (A Kiteworks Company)</a>
@@ -1362,9 +1362,35 @@ The OAuth 2.0 authorization framework enables a third-party application to obtai
 <div class="paragraph">
 <p>Here is an overview of how the process works:</p>
 </div>
-<div class="imageblock kroki">
+<div class="listingblock kroki-error">
 <div class="content">
-<img src="../../../_images/OAuth2%20workflow%20diagram-000ec7c7752d7398db96b8ff935f4c9177a856ae.svg" alt="OAuth2 workflow diagram">
+<pre>     +----------+
+     | Resource |
+     |   Owner  |
+     |          |
+     +----------+
+          ^
+          |
+         (B)
+          |
+     +----|-----+          Client Identifier      +---------------+
+     |          |----(A)-- &amp; Redirection URI ----&gt;|               |
+     |  User-   |                                 | Authorization |
+     |  Agent   |----(B)-- User authenticates ---&gt;|     Server    |
+     |          |                                 |               |
+     |          |&lt;---(C)-- Authorization Code ----|               |
+     +----------+                                 +---------------+
+       ^    |                                         ^      |
+       |    |                                         |      |
+      (A)  (C)                                        |      |
+       |    |                                         |      |
+       |    v                                         |      |
+     +---------+                                      |      |
+     |         |----(D)-- Authorization Code ---------+      |
+     |  Client |          &amp; Redirection URI                  |
+     |         |                                             |
+     |         |&lt;---(E)----- Access Token -------------------+
+     +---------+       (w/ Optional Refresh Token)</pre>
 </div>
 </div>
 </div>

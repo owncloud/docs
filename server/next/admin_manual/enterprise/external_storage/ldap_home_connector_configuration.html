@@ -40,7 +40,7 @@
   </head>
 
   <body class="article">
-    <header class="header" role="banner">
+<script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs'; mermaid.initialize({"startOnLoad":true}); </script>    <header class="header" role="banner">
       <nav class="navbar">
         <div class="navbar-brand">
           <a class="navbar-item" href="https://doc.owncloud.com">Documentation for ownCloud (A Kiteworks Company)</a>
@@ -1366,9 +1366,47 @@
 <div class="paragraph">
 <p>To integrate a user&#8217;s home folder from Windows into ownCloud, the Home share is locally mounted. An LDAP attribute is added to the user&#8217;s profile containing the path of the local mount and then used by the LDAP Home Connector to show the user&#8217;s home in ownCloud.</p>
 </div>
-<div class="imageblock kroki">
+<div class="listingblock kroki-error">
 <div class="content">
-<img src="../../_images/LDAP%20User%20Home%20diagram-12f3d9bfb69e0843b14b7857bdb0aba59d8c4c43.svg" alt="LDAP User Home diagram">
+<pre>   +---------------+                          +------------------+
+   | Windows Share |&lt;---(local cifs mount)----|        OS        |
+   |     Home      |                          | /mnt/share/users |
+   +---------------+                          |                  |
+           ^              +------------------&gt;|                  |
+           |              |                   +------------------+
+           |              |   (same value)              ^
+           |              |                             |
+           |              |                             |
+           |              |                             |
+           v              |                             v
+ +------------------+     |                   +---------------------+
+ |  User Profile    |&lt;----+                   | LDAP Home Connector |
+ |                  |                         |                     |
+ |      LDAP        |                         |        LDAP         |
+ |    Attribute     |--------(Attribute)-----&gt;|      Attribute      |
+ |                  |                         |                     |
+ | /mnt/share/users |                         |  /mnt/share/users   |
+ +------------------+                         +---------------------+
+           ^                                            ^
+           |                                            |
+           v                                            v
+   +----------------+                         +---------------------+
+   |       AD       |                         |   LDAP Integration  |
+   |                |                         |                     |
+   |      LDAP      |&lt;-----------------------&gt;|        LDAP         |
+   +----------------+                         +---------------------+
+                                                        ^
+                                                        |
+                                +-----------------------+
+                                |
+                                v
+                        +----------------+
+                        |    ownCloud    |
+                        |                |
+                        |   Files View   |
+                        |                |
+                        |    user home   |
+                        +----------------+</pre>
 </div>
 </div>
 </div>

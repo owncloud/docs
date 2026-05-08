@@ -42,7 +42,7 @@
   </head>
 
   <body class="article">
-    <header class="header" role="banner">
+<script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs'; mermaid.initialize({"startOnLoad":true}); </script>    <header class="header" role="banner">
       <nav class="navbar">
         <div class="navbar-brand">
           <a class="navbar-item" href="https://doc.owncloud.com">Documentation for ownCloud (A Kiteworks Company)</a>
@@ -1134,23 +1134,47 @@ OCIS_CLAIM_MANAGED_SPACES_MAPPING="member:editor,spectator:viewer"</code></pre>
 <div class="paragraph">
 <p>Infinite Scale cannot always determine whether the entire communication chain between itself and the client is secure. Consider the following scenarios:</p>
 </div>
-<div class="imageblock kroki">
+<div class="listingblock kroki-error">
+<div class="title">Client - Webserver - Infinite Scale (incomplete)</div>
 <div class="content">
-<img src="../../../_images/diag-0cd12457f7f0008d72315b767cd0de1aa11079c6.svg" alt="Client - Webserver - Infinite Scale (incomplete)">
+<pre>+----------+         +------------+          +-----------+
+|          |  https  |            |   http   |   ocis    |
+|  Client  | &lt;-----&gt; |  Webserver |  &lt;-----&gt; |   proxy   |
+|          |         |            |          |  service  |
++----------+         +------------+          +-----------+
+                     ^                       ^
+                     |                       |
+                     |                       |
+                 Termination              Unsecured</pre>
 </div>
-<div class="title">Figure 1. Client - Webserver - Infinite Scale (incomplete)</div>
 </div>
-<div class="imageblock kroki">
+<div class="listingblock kroki-error">
+<div class="title">Client - Webserver - Infinite Scale (complete)</div>
 <div class="content">
-<img src="../../../_images/diag-e6babdf90fe773a6491a4fb59d6f2a6d097e7313.svg" alt="Client - Webserver - Infinite Scale (complete)">
+<pre>+----------+         +------------+          +-----------+
+|          |  https  |            |   https  |   ocis    |
+|  Client  | &lt;-----&gt; |  Webserver |  &lt;-----&gt; |   proxy   |
+|          |         |            |          |  service  |
++----------+         +------------+          +-----------+
+                     ^                       ^
+                     |                       |
+                     |                       |
+                 Termination               Secured</pre>
 </div>
-<div class="title">Figure 2. Client - Webserver - Infinite Scale (complete)</div>
 </div>
-<div class="imageblock kroki">
+<div class="listingblock kroki-error">
+<div class="title">Client - Loadbalancer - Webserver - Infinite Scale (incomplete)</div>
 <div class="content">
-<img src="../../../_images/diag-2b9a01b8bd4d6a3f50c72dfaa45a24af5b2c2d6e.svg" alt="Client - Loadbalancer - Webserver - Infinite Scale (incomplete)">
+<pre>+----------+         +--------------+          +------------+          +-----------+
+|          |  https  | Loadbalancer |   http   |            |   http   |   ocis    |
+|  Client  | &lt;-----&gt; +--------------+  &lt;-----&gt; |  Webserver |  &lt;-----&gt; |   proxy   |
+|          |         | Loadbalancer |          |            |          |  service  |
++----------+         +--------------+          +------------+          +-----------+
+                     ^                         ^                       ^
+                     |                         |                       |
+                     |                         |                       |
+                 Termination                Unsecured               Unsecured</pre>
 </div>
-<div class="title">Figure 3. Client - Loadbalancer - Webserver - Infinite Scale (incomplete)</div>
 </div>
 <div class="paragraph">
 <p>As you can see in Figure 2, the entire chain is secured by HTTPS, and the headers will be sent accordingly. The other figures illustrate that, although the client has a secure connection, the subsequent connection is insecure. Because the Infinite Scale proxy service can only detect his connection, it sends back headers for an insecure connection.</p>
