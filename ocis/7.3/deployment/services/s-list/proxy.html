@@ -577,6 +577,7 @@
 <li><a href="#recommendations-for-production-deployments">Recommendations for Production Deployments</a>
 <ul class="sectlevel2">
 <li><a href="#content-security-policy">Content Security Policy</a></li>
+<li><a href="#strict-transport-security-header">Strict Transport Security Header</a></li>
 </ul>
 </li>
 <li><a href="#presigned-urls">Presigned Urls</a></li>
@@ -1107,6 +1108,30 @@ OCIS_CLAIM_MANAGED_SPACES_MAPPING="member:editor,spectator:viewer"</code></pre>
 </div>
 <div class="paragraph">
 <p>See the <a href="https://content-security-policy.com" target="_blank" rel="noopener">Content Security Policy (CSP) Quick Reference Guide</a> for a description of directives.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="strict-transport-security-header"><a class="anchor" href="#strict-transport-security-header"></a>Strict Transport Security Header</h3>
+<div class="paragraph">
+<p>Infinite Scale cannot always determine whether the entire communication chain between itself and the client is secure. Consider the following scenarios:</p>
+</div>
+<div class="paragraph">
+<div class="title">Client - Webserver - Infinite Scale (incomplete)</div>
+<p><span class="image unresolved"><img src="deployment/services/proxy/proxy-client-webserver-ocis-incomplete.png" alt="proxy client webserver ocis incomplete"></span></p>
+</div>
+<div class="paragraph">
+<div class="title">Client - Webserver - Infinite Scale (complete)</div>
+<p><span class="image unresolved"><img src="deployment/services/proxy/proxy-client-webserver-ocis-complete.png" alt="proxy client webserver ocis complete"></span></p>
+</div>
+<div class="paragraph">
+<div class="title">Client - Loadbalancer - Webserver - Infinite Scale (incomplete)</div>
+<p><span class="image unresolved"><img src="deployment/services/proxy/proxy-client-loadbalancer-ocis-incomplete.png" alt="proxy client loadbalancer ocis incomplete"></span></p>
+</div>
+<div class="paragraph">
+<p>As you can see in Figure 2, the entire chain is secured by HTTPS, and the headers will be sent accordingly. The other figures illustrate that, although the client has a secure connection, the subsequent connection is insecure. Because the Infinite Scale proxy service can only detect his connection, it sends back headers for an insecure connection.</p>
+</div>
+<div class="paragraph">
+<p>To mitigate this issue, set the environment variable <code>PROXY_FORCE_STRICT_TRANSPORT_SECURITY</code> to true. This forces the sending of Strict-Transport-Security headers on all responses.</p>
 </div>
 </div>
 </div>

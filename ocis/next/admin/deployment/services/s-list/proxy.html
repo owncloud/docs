@@ -1134,47 +1134,17 @@ OCIS_CLAIM_MANAGED_SPACES_MAPPING="member:editor,spectator:viewer"</code></pre>
 <div class="paragraph">
 <p>Infinite Scale cannot always determine whether the entire communication chain between itself and the client is secure. Consider the following scenarios:</p>
 </div>
-<div class="listingblock kroki-error">
+<div class="paragraph">
 <div class="title">Client - Webserver - Infinite Scale (incomplete)</div>
-<div class="content">
-<pre>+----------+         +------------+          +-----------+
-|          |  https  |            |   http   |   ocis    |
-|  Client  | &lt;-----&gt; |  Webserver |  &lt;-----&gt; |   proxy   |
-|          |         |            |          |  service  |
-+----------+         +------------+          +-----------+
-                     ^                       ^
-                     |                       |
-                     |                       |
-                 Termination              Unsecured</pre>
+<p><span class="image"><img src="../../../_images/deployment/services/proxy/proxy-client-webserver-ocis-incomplete.png" alt="proxy client webserver ocis incomplete"></span></p>
 </div>
-</div>
-<div class="listingblock kroki-error">
+<div class="paragraph">
 <div class="title">Client - Webserver - Infinite Scale (complete)</div>
-<div class="content">
-<pre>+----------+         +------------+          +-----------+
-|          |  https  |            |   https  |   ocis    |
-|  Client  | &lt;-----&gt; |  Webserver |  &lt;-----&gt; |   proxy   |
-|          |         |            |          |  service  |
-+----------+         +------------+          +-----------+
-                     ^                       ^
-                     |                       |
-                     |                       |
-                 Termination               Secured</pre>
+<p><span class="image"><img src="../../../_images/deployment/services/proxy/proxy-client-webserver-ocis-complete.png" alt="proxy client webserver ocis complete"></span></p>
 </div>
-</div>
-<div class="listingblock kroki-error">
+<div class="paragraph">
 <div class="title">Client - Loadbalancer - Webserver - Infinite Scale (incomplete)</div>
-<div class="content">
-<pre>+----------+         +--------------+          +------------+          +-----------+
-|          |  https  | Loadbalancer |   http   |            |   http   |   ocis    |
-|  Client  | &lt;-----&gt; +--------------+  &lt;-----&gt; |  Webserver |  &lt;-----&gt; |   proxy   |
-|          |         | Loadbalancer |          |            |          |  service  |
-+----------+         +--------------+          +------------+          +-----------+
-                     ^                         ^                       ^
-                     |                         |                       |
-                     |                         |                       |
-                 Termination                Unsecured               Unsecured</pre>
-</div>
+<p><span class="image"><img src="../../../_images/deployment/services/proxy/proxy-client-loadbalancer-ocis-incomplete.png" alt="proxy client loadbalancer ocis incomplete"></span></p>
 </div>
 <div class="paragraph">
 <p>As you can see in Figure 2, the entire chain is secured by HTTPS, and the headers will be sent accordingly. The other figures illustrate that, although the client has a secure connection, the subsequent connection is insecure. Because the Infinite Scale proxy service can only detect his connection, it sends back headers for an insecure connection.</p>
