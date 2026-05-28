@@ -1,93 +1,102 @@
 # ownCloud Documentation
 
-**IMPORTANT**
+<!-- OSPO-managed README | Generated: 2026-04-16 | v2 -->
 
-Since April 2026, this repository requires [Commit Signing](https://docs.github.com/articles/about-gpg) and uses [Conventional Commits](https://www.conventionalcommits.org) for commits and the Pull Request title.
+[![License](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](LICENSE) [![ownCloud OSPO](https://img.shields.io/badge/OSPO-ownCloud-blue)](https://kiteworks.com/opensource)
 
-**Overview**
+The central Antora-based documentation site for all ownCloud products. This repository contains the site playbook (`site.yml`), Antora and AsciiDoc extensions, shared resources, fonts, and build scripts that aggregate content from all `docs-*` component repositories into a single published documentation site at [doc.owncloud.com](https://doc.owncloud.com).
 
-1. The platform and tools used to build the documentation is [Antora](./docs/what-is-antora.md).
-2. The file format that the documentation is written in is [AsciiDoc](./docs/what-is-asciidoc.md).
-3. The <abbr title="User Interface">UI</abbr> & <abbr title="User Experience">UX</abbr> of the documentation can be found at [docs-ui](https://github.com/owncloud/docs-ui)
+## Getting Started
 
-**Table of Contents**
+Install dependencies and build the documentation locally:
 
-* [Antora Site Structure for Docs](#antora-site-structure-for-docs)
-* [Extensions](#extensions)
-* [Documentation Guidelines](#documentation-guidelines)
-* [Contributing to the Documentation](#contributing-to-the-documentation)
-* [Generating the Documentation](#generating-the-documentation)
-* [Common Content and Styling the Documentation](#common-content-and-styling-the-documentation)
-* [Best Practices and Tips](#best-practices-and-tips)
-* [Target Branch and Backporting](#target-branch-and-backporting)
-* [When Does a Change Get Published to the Docs Web Site?](#when-does-a-change-get-published-to-the-docs-web-site)
-* [Create a New Version Branch for Docs](#create-a-new-version-branch-for-docs)
-* [HTML to PDF](#html-to-pdf)
+```bash
+npm install
+npm run antora-local
+npm run serve
+```
 
-## Antora Site Structure for Docs
+This builds the site to `public/` and serves it at `http://localhost:8080`.
 
-Refer to the [Antora Site Structure for Docs](./docs/antora-site-structure.md) for more information. 
+## Documentation
 
-## Extensions
+- [What is Antora](./docs/what-is-antora.md)
+- [What is AsciiDoc](./docs/what-is-asciidoc.md)
+- [Documentation Guidelines](./docs/doc-guidelines.md)
+- [Antora Site Structure](./docs/antora-site-structure.md)
+- [Extensions](./docs/extensions.md)
 
-The documentation intensively uses Antora/Asciidoc extensions. These extensions enrich the base functionality with additional and required capabilities. Read the [extensions](./docs/extensions.md) documentation for more information.
+## Part of ownCloud Documentation
 
-## Documentation Guidelines
+This is the top-level documentation build repository. It pulls content from component repositories such as [docs-server](https://github.com/owncloud/docs-server), [docs-ocis](https://github.com/owncloud/docs-ocis), [docs-client-desktop](https://github.com/owncloud/docs-client-desktop), and others. The published site is available at [doc.owncloud.com](https://doc.owncloud.com).
 
-Refer to the [Documentation Guidelines](./docs/doc-guidelines.md) for more information about backgrounds and processes.
+## Community & Support
 
-## Contributing to the Documentation
+**[Star](https://github.com/owncloud/docs)** this repo and **Watch** for release notifications!
 
-To get started contributing to the documentation, please refer to the [Getting Started Guide](./docs/getting-started.md).
+- [ownCloud Website](https://owncloud.com)
+- [Community Discussions](https://github.com/orgs/owncloud/discussions)
+- [Matrix Chat](https://app.element.io/#/room/#owncloud:matrix.org)
+- [Documentation](https://doc.owncloud.com)
+- [Enterprise Support](https://owncloud.com/contact-us/)
+- [OSPO Home](https://kiteworks.com/opensource)
 
-With regard to language and style issues, consult the [Style Guide](./docs/style-guide.md).
+## Contributing
 
-Note that the documentation provides a setting for the [IntelliJ AsciiDoc-Antora Plugin](https://intellij-asciidoc-plugin.ahus1.de) to preview a page using the css sourced from `doc.owncloud.com`. The file required containing the necessary configuration is `.asciidoctorconfig`.
+We welcome contributions! Please read the [Contributing Guidelines](CONTRIBUTING.md)
+and our [Code of Conduct](CODE_OF_CONDUCT.md) before getting started.
 
-## Generating the Documentation
+### Workflow
 
-**IMPORTANT**  
-We use `node 22 LTS`. In case you used a lower node version for your local doc repos, you must upgrade them **all**. See the link below for details.
+- **Rebase Early, Rebase Often!** We use a rebase workflow. Always rebase on the target branch before submitting a PR.
+- **Dependabot**: Automated dependency updates are managed via Dependabot. Review and merge dependency PRs promptly.
+- **Signed Commits**: All commits **must** be PGP/GPG signed. See [GitHub's signing guide](https://docs.github.com/en/authentication/managing-commit-signature-verification).
+- **DCO Sign-off**: Every commit must carry a `Signed-off-by` line:
+  ```
+  git commit -s -S -m "your commit message"
+  ```
+- **GitHub Actions Policy**: Workflows may only use actions that are (a) owned by `owncloud`, (b) created by GitHub (`actions/*`), or (c) verified in the GitHub Marketplace.
 
-**IMPORTANT**  
-We use `Antora 3.1.14` and npm instead of yarn. In case you used a lower Antora version for your local doc repos, you must upgrade them **all** by syncing them and running `npm install` in each doc repo.
+## Security
 
-To generate and view the documentation locally or planning major changes, refer to the [Building the Documentation guide](./docs/build-the-docs.md).
+**Do not open a public GitHub issue for security vulnerabilities.**
 
-## Common Content and Styling the Documentation
+Report vulnerabilities at **<https://security.owncloud.com>** -- see [SECURITY.md](SECURITY.md).
 
-If you want to suggest an improvement to the ownCloud documentation theme, such as the layout, the header or the footer text, or if you find a bug, all the information that you need is in the `docs-ui` repository. Changes made in `docs-ui` are valid for the whole documentation.
+Bug bounty: [YesWeHack ownCloud Program](https://yeswehack.com/programs/owncloud-bug-bounty-program)
 
-Please read how to test un-merged [docs-ui](./docs/test-ui-bundle.md) changes with content from the ownCloud documentation.
+## License
 
-## Best Practices and Tips
+This project is licensed under the [AGPL-3.0](LICENSE).
 
-Refer to [Best Practices and Tips for writing in AsciiDoc](./docs/best-practices.md) for more information.
+## About the ownCloud OSPO
 
-To check for broken links manually, see [install and use a broken-link-checker](./docs/checking-broken-links.md).
+The [Kiteworks Open Source Program Office](https://kiteworks.com/opensource), operating under
+the [ownCloud](https://owncloud.com) brand, launched on May 5, 2026, to steward the open source
+ecosystem around ownCloud's products. The OSPO ensures transparent governance, license compliance,
+community health, and sustainable collaboration between the open source community and
+[Kiteworks](https://www.kiteworks.com), which acquired ownCloud in 2023.
 
-## Target Branch and Backporting
+- **OSPO Home**: <https://kiteworks.com/opensource>
+- **GitHub**: <https://github.com/owncloud>
+- **ownCloud**: <https://owncloud.com>
 
-Please always do your changes in `master` and backport them to the relevant branches.
-The **ONLY** reason for doing a PR in a branch directly is, to fix an issue which is
-_only_ present in that particular branch! When creating a PR and it is necessary to backport,
-document in the PR to which branches a backport is needed.
+For questions about the OSPO or licensing, contact ospo@kiteworks.com.
 
-When backporting, consider using the [backport script](./docs/getting-started.md#backporting)
-which eases life a lot and speeds up the process. It is also very beneficial when using the
-extended code provided, because a clear naming structure of the backport PR is generated automatically.
+### License Migration to Apache 2.0
 
-## When Does a Change Get Published to the Docs Web Site?
+The OSPO is driving a strategic relicensing of ownCloud repositories toward the
+[Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0), following
+the [Apache Software Foundation's third-party license policy](https://www.apache.org/legal/resolved.html).
 
-Changes made will get published to the web under the following conditions:
+Individual repositories will migrate as their audit is completed. The LICENSE file
+in each repo reflects its **current** license status (not the target).
 
-1. A merge in a component to one of the defined version branches triggers as a last step a master branch build.
-2. A merge to master triggers a site build which then pushes all versions defined in site.yml.
+**Current license: AGPL-3.0** (Category X per Apache policy -- cannot be included in Apache-2.0 works).
 
-## Create a New Version Branch for Docs
+Migration prerequisites for this repository:
 
-Please refer to [Create a New Version Branch for Docs](./docs/new-version-branch.md) for more information.
-
-## HTML to PDF
-
-At the moment, creating a pdf is dropped from the build process but can be re-implemented if required.
+- **CLA/DCO coverage**: All past contributors must have signed agreements permitting relicensing
+- **Copyleft dependency audit**: All AGPL/GPL dependencies must be replaced or isolated
+- **KDE heritage review**: Any code with KDE-era copyrights requires legal analysis
+- **Complete relicensing**: AGPL-3.0 is a strong copyleft license; migration requires full relicensing of all files, not just a header change
