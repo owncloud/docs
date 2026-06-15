@@ -32,14 +32,9 @@ jobs:
         run: npm install
 
       - name: Build docs
-        env:
-          UPDATE_SEARCH_INDEX: ${{ github.ref == 'refs/heads/master' }}
-          ELASTICSEARCH_NODE: ${{ secrets.ELASTICSEARCH_NODE }}
-          ELASTICSEARCH_INDEX: ${{ secrets.ELASTICSEARCH_INDEX }}
-          ELASTICSEARCH_READ_AUTH: ${{ secrets.ELASTICSEARCH_READ_AUTH }}
-          ELASTICSEARCH_WRITE_AUTH: ${{ secrets.ELASTICSEARCH_WRITE_AUTH }}
         run: |
           npm run antora
+          npm run pagefind
           echo 'doc.owncloud.com' > public/CNAME
 
       - name: Save cache

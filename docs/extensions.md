@@ -12,7 +12,6 @@ The documentation uses extensions that are added via the `site.yml` file. Some e
 
 **Antora**
 
-* Create an Elastic Search Index: `./ext-antora/generate-index.js`
 * Load Global Site Attributes: `./ext-antora/load-global-site-attributes.js`
 
 ## Optional Extensions
