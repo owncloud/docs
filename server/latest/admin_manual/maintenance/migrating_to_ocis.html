@@ -45,7 +45,10 @@
 <script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs'; mermaid.initialize({"startOnLoad":true}); </script>    <header class="header" role="banner">
       <nav class="navbar">
         <div class="navbar-brand">
-          <a class="navbar-item" href="https://doc.owncloud.com">Documentation for ownCloud (A Kiteworks Company)</a>
+          <a class="navbar-item navbar-logo" href="https://doc.owncloud.com">
+            <img src="../../../../assets/img/oc-logo.svg" alt="ownCloud">
+            <span class="navbar-title">Documentation for ownCloud (A Kiteworks Company)</span>
+          </a>
           <!-- we do not have any hamburger stuff to show like links to external sites
            <button class="navbar-burger" aria-controls="topbar-nav" aria-expanded="false" aria-label="Toggle main menu">
            <span></span>
@@ -1421,8 +1424,8 @@
 Either automatically or manually depending on the LDAP server used</p>
 </li>
 <li>
-<p>Files of enabled users from in each user&#8217;s home directory (using rclone, which is bundled with the app)<br>
-The data transferred is added to the users personal Space</p>
+<p>Files in each enabled user&#8217;s home directory (using rclone, which is bundled with the app)<br>
+The data transferred is added to the user&#8217;s personal Space</p>
 </li>
 <li>
 <p>User shares, group shares, and link shares</p>
@@ -1569,7 +1572,7 @@ The <code>occ migrate:to-ocis:verify</code> step will report any users with miss
 <div class="sect2">
 <h3 id="ocis"><a class="anchor" href="#ocis"></a>oCIS</h3>
 <div class="paragraph">
-<p>See the <a href="https://doc.owncloud.com/">ownCloud Documentation</a> for how to setup an oCIS instance and more configuration details.</p>
+<p>See the <a href="https://doc.owncloud.com/">ownCloud Documentation</a> for how to set up an oCIS instance and more configuration details.</p>
 </div>
 <div class="admonitionblock important">
 <table>
@@ -1591,7 +1594,7 @@ AUTH_APP_ENABLE_IMPERSONATION: true</code></pre>
 </div>
 </li>
 <li>
-<p>An <strong>app token must be created for the oCIS admin user</strong> using the auth-app. This token, together with the admin username, is used as the username and password for all oCIS operations during the migration.</p>
+<p>An <strong>app token must be created for the oCIS admin user</strong> using the <a href="../../../../ocis/latest/admin/deployment/services/s-list/auth-app.html" class="xref page">auth-app</a>. This token, together with the admin username, is used as the username and password for all oCIS operations during the migration.</p>
 </li>
 <li>
 <p>The oCIS instance should be <strong>fresh and clean</strong> before starting the migration. If the target instance already contains data, it may cause conflicts.</p>
@@ -1609,21 +1612,21 @@ AUTH_APP_ENABLE_IMPERSONATION: true</code></pre>
 <h2 id="user-and-group-migration"><a class="anchor" href="#user-and-group-migration"></a>User and Group Migration</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>No data migration can be initiated until users and groups are available on the oCis side. To avoid a failing data migration step, no user or group changes, such as adding, deleting or changing, must be applied after this migration step.</p>
+<p>No data migration can be initiated until users and groups are available on the oCIS side. To avoid a failing data migration step, no user or group changes, such as adding, deleting or changing, must be applied after this migration step.</p>
 </div>
 <div class="paragraph">
 <p>Different steps are required for the migration of users and groups, depending on their location in OC10, to make them accessible to oCIS.</p>
 </div>
 <div class="paragraph">
-<p>Consider that the <a href="https://doc.owncloud.com/ocis/next/deployment/services/s-list/idm.html">internal IDM</a> provided by oCIS, which is a mini LDAP, has a very limited scope and is mainly targeted at small Infinite Scale installations or testing. It should therefore not be used in production environments. For larger setups or production environments, it is highly recommended to use a “real” LDAP server or to switch to an external Identity Management Solution instead.</p>
+<p>Consider that the <a href="../../../../ocis/latest/admin/deployment/services/s-list/idm.html" class="xref page">internal IDM</a> provided by oCIS, which is a mini LDAP, has a very limited scope and is mainly targeted at small Infinite Scale installations or testing. It should therefore not be used in production environments. For larger setups or production environments, it is highly recommended to use a “real” LDAP server or to switch to an external Identity Management Solution instead.</p>
 </div>
 <div class="paragraph">
-<p>To address these different requirements, migrating users and groups are divided into separate sections. A combination of local and LDAP-based users is not supported.</p>
+<p>To address these different requirements, the migration of users and groups is divided into separate sections. A combination of local and LDAP-based users is not supported.</p>
 </div>
 <div class="sect2">
 <h3 id="migrate-with-local-users"><a class="anchor" href="#migrate-with-local-users"></a>Migrate With Local Users</h3>
 <div class="paragraph">
-<p>These steps describe the migration of local OC10 users and groups to an external LDAP or to the embedded oCIS IDM - where no external LDAP is used.</p>
+<p>These steps describe the migration of local OC10 users and groups to an external LDAP or to the embedded oCIS IDM — where no external LDAP is used.</p>
 </div>
 <div class="sect3">
 <h4 id="migrate-local-users-to-ldap"><a class="anchor" href="#migrate-local-users-to-ldap"></a>Migrate Local Users to LDAP</h4>
@@ -1637,7 +1640,7 @@ AUTH_APP_ENABLE_IMPERSONATION: true</code></pre>
 <div class="sect3">
 <h4 id="migrate-local-users-to-idm"><a class="anchor" href="#migrate-local-users-to-idm"></a>Migrate Local Users to IDM</h4>
 <div class="paragraph">
-<p>Migrate OC10 users and groups to oCIS internal IDM, no extrernal LDAP server used. As a prerequisite, run the steps in <a href="#preparing-data-migration">Preparing Data Migration</a> first.</p>
+<p>Migrate OC10 users and groups to oCIS internal IDM, no external LDAP server used. As a prerequisite, run the steps in <a href="#preparing-data-migration">Preparing Data Migration</a> first.</p>
 </div>
 <div class="dlist">
 <dl>
@@ -1727,7 +1730,7 @@ OC10 subadmin privileges have no equivalent role in oCIS and are not migrated.
 <div class="sect2">
 <h3 id="migration-with-ldap-users"><a class="anchor" href="#migration-with-ldap-users"></a>Migration With LDAP Users</h3>
 <div class="paragraph">
-<p>In general, users and groups must be accessible to oCIS. This can be achieved either connecting oCIS to the same LDAP server, or by migrating users and groups from the LDAP server that OC10 is connected to to a different backend for oCIS.</p>
+<p>In general, users and groups must be accessible to oCIS. This can be achieved either by connecting oCIS to the same LDAP server, or by migrating users and groups from the LDAP server that OC10 uses into a different backend for oCIS.</p>
 </div>
 <div class="paragraph">
 <p>The following procedures are necessary for the data migration to be possible.</p>
@@ -1773,7 +1776,7 @@ Run the following to change the attribute to <code>uid</code> and re-sync users 
 <ul>
 <li>
 <p><code>OCIS_LDAP_USER_ENABLED_ATTRIBUTE</code><br>
-The environment variable must exist and not be false. The default value uses the ownCloud schema which is unlikely to be present in your LDAP.</p>
+The environment variable must exist and not be false. The default value uses the ownCloud schema, which is unlikely to be present in your LDAP.</p>
 </li>
 <li>
 <p><code>OCIS_LDAP_USER_SCHEMA_ID</code> and <code>OCIS_LDAP_GROUP_SCHEMA_ID</code><br>
@@ -1978,6 +1981,9 @@ GRAPH_ASSIGN_DEFAULT_USER_ROLE: "true"</code></pre>
 
     <footer class="footer">
       <div class="container">
+        <div class="footer-logo">
+          <a href="https://owncloud.com/"><img src="../../../../assets/img/oc-logo.svg" alt="ownCloud"></a>
+        </div>
         <div class="row-full">
           <div class="col-third">
             <div class="footer-nav">
