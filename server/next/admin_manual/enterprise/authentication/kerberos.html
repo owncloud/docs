@@ -11,6 +11,7 @@
     <meta name="description" content="Kerberos is an authentication protocol and authenticates two hosts using the shared secret authentication technique. The main goal of Kerberos is to enable application authentication without the need to transmit user passwords.">
     <meta name="generator" content="Antora 3.1.15">
     <link rel="stylesheet" href="../../../../../assets/css/site.css">
+    <link rel="stylesheet" href="../../../../../pagefind/pagefind-component-ui.css">
 
     <meta property="og:locale" content="en_us" />
     <meta property="og:type" content="article" />
@@ -49,6 +50,11 @@
             <img src="../../../../../assets/img/oc-logo.svg" alt="ownCloud">
             <span class="navbar-title">Documentation for ownCloud (A Kiteworks Company)</span>
           </a>
+          <div class="navbar-item search">
+            <pagefind-config bundle-path="../../../../../pagefind/"></pagefind-config>
+            <pagefind-modal-trigger></pagefind-modal-trigger>
+            <pagefind-modal reset-on-close></pagefind-modal>
+          </div>
           <!-- we do not have any hamburger stuff to show like links to external sites
            <button class="navbar-burger" aria-controls="topbar-nav" aria-expanded="false" aria-label="Toggle main menu">
            <span></span>
@@ -104,6 +110,9 @@
                       <button class="nav-item-toggle"></button>
                       <a class="nav-link" href="../../installation/deployment_recommendations.html">Deployment Recommendations</a>
                   <ul class="nav-list">
+                    <li class="nav-item" data-depth="4">
+                      <a class="nav-link" href="../../installation/deployment_recommendations/clustered_shared_storage.html">Clustered Deployments with Shared Storage</a>
+                  </li>
                     <li class="nav-item" data-depth="4">
                       <a class="nav-link" href="../../installation/deployment_recommendations/nfs.html">NFS</a>
                   </li>
@@ -1297,7 +1306,7 @@
 <h2 id="general-information"><a class="anchor" href="#general-information"></a>General Information</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>When using the Kerberos app, the Windows login session from the user is taken to log in to ownCloud. This is very convenient, as the user does not need to re-authenticate for using ownCloud as he already has authenticated to his Domain. In addition by using the Kerberos ticket, the user can also use file resoures via the <a href="../external_storage/windows-network-drive_configuration.html" class="xref page">Windows Network Drive (WND)</a> app without the need to re-authenticate. This generates a seamless user experience. This is done by the configuration made, which enables the webserver to make the ticket available for PHP for further processing.</p>
+<p>When using the Kerberos app, the Windows login session from the user is taken to log in to ownCloud. This is very convenient, as the user does not need to re-authenticate for using ownCloud as he already has authenticated to his Domain. In addition by using the Kerberos ticket, the user can also use file resources via the <a href="../external_storage/windows-network-drive_configuration.html" class="xref page">Windows Network Drive (WND)</a> app without the need to re-authenticate. This generates a seamless user experience. This is done by the configuration made, which enables the webserver to make the ticket available for PHP for further processing.</p>
 </div>
 <div class="sect2">
 <h3 id="kerberos-benefits"><a class="anchor" href="#kerberos-benefits"></a>Kerberos Benefits</h3>
@@ -1456,10 +1465,10 @@ A Key Distribution Center is a network service that supplies tickets and tempora
 <p>Make sure the clocktime of the KDC, the client and the server the ownCloud instance is running on is in sync. 5 minutes are the highest difference you may allow for Kerberos to work properly. Without going into the details, you may use NTP for that task.</p>
 </li>
 <li>
-<p>All members in the realm, which includes cients, must support <code>DES3, AES128 or AES256</code> encryption. This applies to Windows 10+ and modern Linux based OS desktops. If a client does not support this encryption standard, he can not use Kerberos. Alternatively the legacy crypto <code>RC4-HMAC-EXP</code> can be added during configuration - which is <em>strongly discouraged</em> for security reasons. See the <a href="http://web.mit.edu/kerberos/krb5-1.5/krb5-1.5/doc/krb5-admin/Supported-Encryption-Types.html#Supported%20Encryption%20Types" target="_blank" rel="noopener">Kerberos supported encryption types</a> for more information.</p>
+<p>All members in the realm, which includes clients, must support <code>DES3, AES128 or AES256</code> encryption. This applies to Windows 10+ and modern Linux based OS desktops. If a client does not support this encryption standard, he can not use Kerberos. Alternatively the legacy crypto <code>RC4-HMAC-EXP</code> can be added during configuration - which is <em>strongly discouraged</em> for security reasons. See the <a href="http://web.mit.edu/kerberos/krb5-1.5/krb5-1.5/doc/krb5-admin/Supported-Encryption-Types.html#Supported%20Encryption%20Types" target="_blank" rel="noopener">Kerberos supported encryption types</a> for more information.</p>
 </li>
 <li>
-<p>Replace in the configuration examples where applicapable the placeholders accordingly:</p>
+<p>Replace in the configuration examples where applicable the placeholders accordingly:</p>
 <div class="ulist">
 <ul>
 <li>
@@ -1468,7 +1477,7 @@ The name of the user account like <code>owncloud_spnego_user</code> which is use
 </li>
 <li>
 <p><code>&lt;complex-password&gt;</code><br>
-A complex password for <code>&lt;user-name&gt;</code>. Remember this password as it helps debugging, but keep protected as you can access domain servcies with it. Also see: <a href="#keytab-files">Keytab Files</a> for additional info when this password needs to be changed.</p>
+A complex password for <code>&lt;user-name&gt;</code>. Remember this password as it helps debugging, but keep protected as you can access domain services with it. Also see: <a href="#keytab-files">Keytab Files</a> for additional info when this password needs to be changed.</p>
 </li>
 <li>
 <p><code>&lt;FQDN&gt;</code><br>
@@ -2012,7 +2021,7 @@ Valid starting    Expires           Service principal
 </ol>
 </div>
 <div class="paragraph">
-<div class="title">For Google Chrome on Linux or macOS, Kerberos authentication is configured ieither via command line parameters or policy files:</div>
+<div class="title">For Google Chrome on Linux or macOS, Kerberos authentication is configured either via command line parameters or policy files:</div>
 <p></p>
 </div>
 <div class="olist arabic">
@@ -2171,6 +2180,7 @@ and double click it.</p>
     </footer>
 
     <script id="site-script" src="../../../../../assets/js/site.js" data-ui-root-path="../../../../../assets"></script>
+    <script src="../../../../../pagefind/pagefind-component-ui.js" type="module"></script>
     <script async src="../../../../../assets/js/vendor/highlight.js"></script>
     <script async src="../../../../../assets/js/vendor/medium-zoom.js"></script>
     <script async src="../../../../../assets/js/vendor/tabs-ui.js"></script>
