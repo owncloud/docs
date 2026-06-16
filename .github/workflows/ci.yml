@@ -14,7 +14,7 @@ jobs:
     name: Documentation
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
 
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
@@ -32,14 +32,18 @@ jobs:
         run: npm install
 
       - name: Build docs
-        env:
-          UPDATE_SEARCH_INDEX: ${{ github.ref == 'refs/heads/master' }}
-          ELASTICSEARCH_NODE: ${{ secrets.ELASTICSEARCH_NODE }}
-          ELASTICSEARCH_INDEX: ${{ secrets.ELASTICSEARCH_INDEX }}
-          ELASTICSEARCH_READ_AUTH: ${{ secrets.ELASTICSEARCH_READ_AUTH }}
-          ELASTICSEARCH_WRITE_AUTH: ${{ secrets.ELASTICSEARCH_WRITE_AUTH }}
         run: |
           npm run antora
+          # Build the Pagefind search index and fail the build if it is empty.
+          # pagefind exits 0 even when it indexes nothing (e.g. the output dir
+          # moved or no indexable pages were emitted), which would deploy a site
+          # with silently broken search. Require a non-trivial page count.
+          npm run pagefind | tee pagefind.log
+          grep -qE 'Indexed [1-9][0-9]+ pages' pagefind.log || {
+            echo '::error::Pagefind indexed fewer than 10 pages - search index looks broken'
+            exit 1
+          }
+          rm -f pagefind.log
           echo 'doc.owncloud.com' > public/CNAME
 
       - name: Save cache
@@ -51,7 +55,7 @@ jobs:
 
       - name: Deploy to GitHub Pages
         if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/master'
-        uses: peaceiris/actions-gh-pages@4f9cc6602d3f66b9c108549d475ec49e8ef4d45e # v4.0.0
+        uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453 # v4.1.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public
