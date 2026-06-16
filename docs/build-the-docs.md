@@ -392,88 +392,30 @@ Though components get sourced locally when running `npm run antora-dev-xxx`, som
 
 The search bar is the component on the top right of the documentation where one can enter a term and get matches. If something is found, the matches are displayed as suggestions that can be clicked.
 
-For "normal" changes, search is not necessary and may only complicate building commands and delay building times. To use the search functionality during production or development, see [Prepared npm Commands](#prepared-npm-commands) for details, some prerequisites apply. This is not only true for changes in the documentation, but also for UI changes.
+Search is powered by [Pagefind](https://pagefind.app), a static search library. There is no server, container, or secret to set up: Pagefind crawls the already-built HTML in `public/` and writes a static, chunked index into `public/pagefind/`. Because it runs over the build output, the index automatically covers every component and version included in that build.
 
-Note that ownCloud currently uses Elasticsearch version 7.x. All internal scripts and builds are therefore aligned to it and *must not* be changed, though you can use any latest minor/patch release.
+Follow this procedure to build and use search locally:
 
-Follow this procedure to show and use search and populate an index:
-
-1. Create an `es-docker-compose.yml` file with the following content. Note that no security or passwords is needed to be set up as it is only used locally:
-
+1. Build the site as usual with any `npm run antora-xxx` command, for example:
     ```
-    services:
-      elasticsearch:
-        image: elasticsearch:7.17.15
-        ports:
-          - 9200:9200
-          - 9300:9300
-        environment:
-          - discovery.type=single-node
-          - xpack.security.enabled=false
-    ```
-
-2. Start the container with the `up -d` command, use `down` to stop it.
-
-    ```
-    docker compose -f es-docker-compose.yml up -d
-    ```
-
-3. To avoid a CORS Policy error, the browser must be prepared to allow access to the local Elasticsearch container. If this is not prepared, no search is possible and the browser console will return the following error:
-    ```
-    Access to XMLHttpRequest at 'http://localhost:9200/' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
-    ```
-    There are several ways to fix this, only one is shown when using Chrome browsers. Install the plugin named [Allow CORS: Access-Control-Allow-Origin](https://chrome.google.com/webstore/detail/lhobafahddgcelffkeicbaginigeejlf).
-
-4. When building docs, the following environment variables must be added to the build process. Note that you can use any `npm run antora-xxx` command:
-    ```
-    UPDATE_SEARCH_INDEX=true \
-    ELASTICSEARCH_NODE=http://localhost:9200 \
-    ELASTICSEARCH_INDEX=docs \
-    ELASTICSEARCH_WRITE_AUTH=x:y \
     npm run antora-local
     ```
-    Note that `ELASTICSEARCH_WRITE_AUTH` is necessary for building though it does not do any authentication. A value for that envvar must not be omitted but can be any dummy value you like in the format of at minimum two characters separated by a colon.
 
-    Running the build now also returns on the console:
+2. Index the built site. This reads `public/` and writes `public/pagefind/`:
     ```
-    elastic: generate search index
-    elastic: rebuild search index
-    elastic: remove old search index
-    elastic: create empty search index
-    elastic: upload search index
+    npm run pagefind
     ```
 
-5. Optionally, the status of Elasticsearch can be monitored:  
-   `http://localhost:9200/_cat/indices?v=`
-   ```
-   green  open .geoip_databases Ygj4WI-STGmJrSeCfep7Tg 1 0  41 0 38.3mb 38.3mb
-   yellow open docs             oag2dCMnS4CiSXX0Ul8plA 1 1 163 0  1.4mb  1.4mb
-   ```
-   To make a dummy query after the index has been created, type the following as URL in the browser and replace `term` with what you want to search for:
-   `http://localhost:9200/_search?q=term`
-   ```
-   {"took":45,"timed_out":false,"_shards":{"total":1,"successful":1,"skipped":0,"failed":0}, ...
-   ```
+    The command prints a short summary of how many pages and words were indexed.
 
-6. To view the build result either with `npm run serve` (Antora build) or `npm run preview` (UI build) run:
+3. Serve the build and open it in the browser:
     ```
-    ELASTICSEARCH_NODE=http://localhost:9200 \
-    ELASTICSEARCH_INDEX=docs \
-    ELASTICSEARCH_READ_AUTH=x:y \
     npm run serve
     ```
 
-    Note that for `ELASTICSEARCH_READ_AUTH`, the same applies as for `ELASTICSEARCH_WRITE_AUTH`.
+4. Enter any search term into the search field to see matches returned.
 
-7. Open the build via the browser and enter any search term as required into the search field to see matches returned.
-
-8. Note that building against ownCloud's hosted Elasticsearch is not possible locally though you can use it for previewing the build. To do so, type the following:
-    ```
-    ELASTICSEARCH_NODE=https://search.owncloud.com \
-    ELASTICSEARCH_INDEX=docs \
-    ELASTICSEARCH_READ_AUTH=docs:cADL6DDAKEBrkFMrvfxXEtYm \
-    npm run serve
-    ```
+In CI, the production build runs `npm run antora` followed by `npm run pagefind` before deploying `public/`, so the deployed site always ships a fresh index. Re-run `npm run pagefind` whenever the HTML changes; serving a build without indexing it first yields an empty search.
 
 ## Resolving Edit-this-page in Development
 

@@ -32,14 +32,18 @@ jobs:
         run: npm install
 
       - name: Build docs
-        env:
-          UPDATE_SEARCH_INDEX: ${{ github.ref == 'refs/heads/master' }}
-          ELASTICSEARCH_NODE: ${{ secrets.ELASTICSEARCH_NODE }}
-          ELASTICSEARCH_INDEX: ${{ secrets.ELASTICSEARCH_INDEX }}
-          ELASTICSEARCH_READ_AUTH: ${{ secrets.ELASTICSEARCH_READ_AUTH }}
-          ELASTICSEARCH_WRITE_AUTH: ${{ secrets.ELASTICSEARCH_WRITE_AUTH }}
         run: |
           npm run antora
+          # Build the Pagefind search index and fail the build if it is empty.
+          # pagefind exits 0 even when it indexes nothing (e.g. the output dir
+          # moved or no indexable pages were emitted), which would deploy a site
+          # with silently broken search. Require a non-trivial page count.
+          npm run pagefind | tee pagefind.log
+          grep -qE 'Indexed [1-9][0-9]+ pages' pagefind.log || {
+            echo '::error::Pagefind indexed fewer than 10 pages - search index looks broken'
+            exit 1
+          }
+          rm -f pagefind.log
           echo 'doc.owncloud.com' > public/CNAME
 
       - name: Save cache
