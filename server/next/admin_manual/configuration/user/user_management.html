@@ -1140,7 +1140,10 @@
                       <a href="../../../../../desktop/next/index.html">next</a>
                     </li>
                     <li class="version is-latest">
-                      <a href="../../../../../desktop/latest/index.html">6.0</a>
+                      <a href="../../../../../desktop/latest/index.html">7.1</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../desktop/6.0/index.html">6.0</a>
                     </li>
                     <li class="version">
                       <a href="../../../../../desktop/5.3/index.html">5.3</a>
@@ -1285,16 +1288,15 @@
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="../../_images/configuration/user/users-page.png" alt="image">
+<img src="../../_images/configuration/user/users-page.png" alt="image" width="350">
 </div>
 </div>
 <div class="paragraph">
-<p>The <strong>Group filter</strong> on the left sidebar lets you quickly filter users by
-their group memberships, and create new groups.</p>
+<p>The <strong>Group filter</strong> on the left sidebar lets you quickly filter users by their group memberships, and create new groups.</p>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="../../_images/configuration/user/users-page-group-tab.png" alt="image">
+<img src="../../_images/configuration/user/users-page-group-tab.png" alt="image" width="250">
 </div>
 </div>
 <div class="paragraph">
@@ -1361,8 +1363,10 @@ their group memberships, and create new groups.</p>
 </li>
 </ul>
 </div>
-<div class="paragraph">
-<p><span class="image"><img src="../../_images/configuration/user/users-page-new-user.png" alt="image"></span></p>
+<div class="imageblock">
+<div class="content">
+<img src="../../_images/configuration/user/users-page-new-user.png" alt="image" width="350">
+</div>
 </div>
 <div class="paragraph">
 <p>Login names may contain letters (a-z, A-Z), numbers (0-9), dashes (-), underscores (_), periods (.) and at signs (@). After creating the user, you may fill in their <strong>Full Name</strong> if it is different from the login name, or leave it for the user to complete.</p>
@@ -1391,7 +1395,7 @@ provide the user with their password</p>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="../../_images/configuration/user/users-page-new-password.png" alt="image">
+<img src="../../_images/configuration/user/users-page-new-password.png" alt="image" width="350">
 </div>
 </div>
 <div class="paragraph">
@@ -1438,7 +1442,7 @@ See <a href="../files/encryption/encryption_configuration.html" class="xref page
 <div class="sectionbody">
 <div class="imageblock">
 <div class="content">
-<img src="../../_images/configuration/user/delete-user-confirmation.png" alt="The ownCloud delete user confirmation dialog">
+<img src="../../_images/configuration/user/delete-user-confirmation.png" alt="The ownCloud delete user confirmation dialog" width="350">
 </div>
 </div>
 <div class="paragraph">
@@ -1537,11 +1541,11 @@ See <a href="../files/file_sharing_configuration.html" class="xref page">File Sh
 <div class="sect2">
 <h3 id="external-storage-quota"><a class="anchor" href="#external-storage-quota"></a>External Storage Quota</h3>
 <div class="paragraph">
-<p>You now have a configurable option in <code>config.php</code> that controls whether external storage is counted against user’s quotas. This is still experimental and may not work as expected. The default is to not counting external storage as part of user storage quotas. If you prefer to include it, then change the default <code>false</code> to <code>true</code>.:</p>
+<p>You have a configurable environment variable that controls whether external storage is counted against user’s quotas. This is still experimental and may not work as expected. The default is to not count external storage as part of user storage quotas. If you prefer to include it, set the value to <code>true</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">'quota_include_external_storage' =&gt; false,</code></pre>
+<pre class="highlightjs highlight"><code class="language-.env hljs" data-lang=".env">OWNCLOUD_QUOTA_INCLUDE_EXTERNAL_STORAGE=false</code></pre>
 </div>
 </div>
 </div>
@@ -1596,10 +1600,10 @@ See <a href="../files/file_sharing_configuration.html" class="xref page">File Sh
 <h2 id="moving-the-user-home"><a class="anchor" href="#moving-the-user-home"></a>Moving the User Home</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Usually, a user&#8217;s home folder is located in the <code>data/</code> directory, the location of which is defined in <code>config.php</code> and defaults to <code>/var/www/owncloud/data</code>. In smaller installations, the data directory is often mounted on a physical drive of the server. On larger installations, the data directory is usually mounted via NFS. This can be less than ideal for very big installations with thousands of users and/or users with very big space consumption. This can result in a high load on a single mount point.</p>
+<p>Usually, a user&#8217;s home folder is located in the directory defined by the environment variable <code>OWNCLOUD_VOLUME_FILES</code> and defaults to the containers internal path <code>/mnt/data/files</code>. The directory <code>/mnt/data</code> is used as a Docker volume and mounted locally. In smaller installations, the bind mount is often a physically mounted drive of the server. On larger installations, this directory is usually mounted via NFS. This can be less than ideal for very big installations with thousands of users and/or users with very big space consumption. This can result in a high load on a single mount point.</p>
 </div>
 <div class="paragraph">
-<p>ownCloud offers moving the home folder location of single users from the default location to another path outside the data directory to distribute the load to different mount points. You can also move back a user&#8217;s home to the location defined in config.php.</p>
+<p>ownCloud offers moving the home folder location of single users from the default location to another path outside the data directory to distribute the load to different mount points. You can also move back a user&#8217;s home to the default location.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -1639,11 +1643,11 @@ Consider that these new home mount points also need to be part of a <a href="../
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker compose exec owncloud occ user:list lisa -a home
-  - lisa: /var/www/owncloud/data/lisa</code></pre>
+  - lisa: /mnt/data/files/lisa</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Here you can see, that the home of user <code>lisa</code> is located in <code>/var/www/owncloud/data/lisa</code></p>
+<p>Here you can see, that the home of user <code>lisa</code> is located in <code>/mnt/data/files/lisa</code></p>
 </div>
 </div>
 </div>
@@ -1744,7 +1748,7 @@ If you are using LDAP and the <a href="../../enterprise/external_storage/ldap_ho
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker compose exec owncloud occ user:home:list-dirs
-  - /var/www/owncloud/data
+  - /mnt/data/files
   - /mnt/newhome_1/lisa</code></pre>
 </div>
 </div>
@@ -1760,7 +1764,7 @@ If you are using LDAP and the <a href="../../enterprise/external_storage/ldap_ho
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker compose exec owncloud occ user:home:list-users /var/www/owncloud/data
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker compose exec owncloud occ user:home:list-users /mnt/data/files
   - admin
   - user01</code></pre>
 </div>

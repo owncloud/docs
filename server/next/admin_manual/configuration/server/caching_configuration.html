@@ -1140,7 +1140,10 @@
                       <a href="../../../../../desktop/next/index.html">next</a>
                     </li>
                     <li class="version is-latest">
-                      <a href="../../../../../desktop/latest/index.html">6.0</a>
+                      <a href="../../../../../desktop/latest/index.html">7.1</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../desktop/6.0/index.html">6.0</a>
                     </li>
                     <li class="version">
                       <a href="../../../../../desktop/5.3/index.html">5.3</a>
@@ -1264,6 +1267,7 @@
 <li><a href="#opcache">Opcache</a></li>
 <li><a href="#apcu">APCu</a></li>
 <li><a href="#redis">Redis</a></li>
+<li><a href="#memcached">Memcached</a></li>
 </ul>
 </li>
 <li><a href="#configuring-memory-caching">Configuring Memory Caching</a>
@@ -1271,6 +1275,7 @@
 <li><a href="#opcache-configuration">Opcache Configuration</a></li>
 <li><a href="#apcu-configuration">APCu Configuration</a></li>
 <li><a href="#redis-configuration">Redis Configuration</a></li>
+<li><a href="#memcached-configuration">Memcached Configuration</a></li>
 </ul>
 </li>
 <li><a href="#deployment-type-configuration-examples">Deployment Type Configuration Examples</a>
@@ -1325,7 +1330,14 @@ This is a data cache only and does <strong>not</strong> cache any opcode. APCu i
 </li>
 <li>
 <p><a href="#redis">Redis</a><br>
-This is an in-memory data structure store (cache) for single and multi-server ownCloud installations, which provides file locking and can be set up in local or distributed environments. The required <code>php-redis</code> extension is already part of the Docker image. Redis is used of the Docker Compose deployment example. For details see the <a href="../../installation/installing_with_docker.html#docker-compose" class="xref page">Installing With Docker</a> documentation.</p>
+This is an in-memory data structure store (cache) for single and multi-server ownCloud installations, which provides file locking and can be set up in local or distributed environments. The required <code>php-redis</code> extension is already part of the Docker image. Redis is used in the Docker Compose deployment example. For details see the <a href="../../installation/installing_with_docker.html#docker-compose" class="xref page">Installing With Docker</a> documentation.</p>
+</li>
+<li>
+<p><a href="#memcached">Memcached</a><br>
+This is a distributed cache for multi-server ownCloud installations and has <strong>very limited</strong> file locking capabilities.<br>
+Using Memcached for distributed locking is generally not recommended. Because its nodes do not communicate with each other and data isn&#8217;t persistent, locks can be released unexpectedly or lost entirely if a server restarts. For reliable locking, Redis is the industry standard.
++
+See the following page to learn more about the <a href="https://scalegrid.io/blog/redis-vs-memcached-2021-comparison/">Redis vs. Memcached – 2021 Comparison</a>.</p>
 </li>
 </ul>
 </div>
@@ -1337,7 +1349,7 @@ This is an in-memory data structure store (cache) for single and multi-server ow
 </td>
 <td class="content">
 <div class="paragraph">
-<p>You may use <em>both</em> a local and a distributed cache. The recommended ownCloud caches are APCu and Redis. If you do not install and enable a local memory cache you will see a warning on your ownCloud admin page. If you enable only a distributed cache in your <code>config.php</code> (<code>memcache.distributed</code>) and not a local cache (<code>memcache.local</code>) you will still see the cache warning.</p>
+<p>You may use <em>both</em> a local and a distributed cache. The recommended ownCloud caches are APCu and Redis. If you do not install and enable a local memory cache you will see a warning on your ownCloud admin page. If you either enable Redis or Memcached, the distributed cache will be set automatically to the respective backend.</p>
 </div>
 </td>
 </tr>
@@ -1461,6 +1473,24 @@ Out of the box, every Redis instance supports 16 databases so <code>&lt;dbIndex&
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="memcached"><a class="anchor" href="#memcached"></a>Memcached</h3>
+<div class="paragraph">
+<p>Memcached is a reliable old-timer for shared caching on distributed servers. It performs well with ownCloud with one exception: it is not suitable to use with Transactional File Locking. This is because it does not store locks, and data can disappear from the cache at any time. Given that, Redis is the best memory cache to use.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The <code>memcached</code> PHP extension is already embedded in the Docker image and enabled.
+</td>
+</tr>
+</table>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -1472,12 +1502,15 @@ Out of the box, every Redis instance supports 16 databases so <code>&lt;dbIndex&
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>When using Redis, it must be provided by either as described in the <a href="../../installation/installing_with_docker.html#docker-compose" class="xref page">Docker Compose</a> example of the installation documentation or by other means.</p>
+<p>When using Redis or Memcached, it must be provided by either as described in the <a href="../../installation/installing_with_docker.html#docker-compose" class="xref page">Docker Compose</a> example of the installation documentation or by other means.</p>
 </li>
 <li>
 <p>Configuring the caches used.</p>
 </li>
 </ol>
+</div>
+<div class="paragraph">
+<p>Note that the <code>OWNCLOUD_MEMCACHE_LOCKING</code> environment variable corresponds to the configuration setting <code>memcache.locking</code>. However, there is no counterpart for the setting <code>memcache.distributed</code>, as it is set automatically based on the caching type enabled.</p>
 </div>
 <div class="paragraph">
 <p>See the
@@ -1509,7 +1542,8 @@ for an overview of all possible config parameters, as the examples below only sh
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-.env hljs" data-lang=".env">OWNCLOUD_REDIS_ENABLED=true
-OWNCLOUD_REDIS_HOST=redis</code></pre>
+OWNCLOUD_REDIS_HOST=redis
+OWNCLOUD_REDIS_PORT=6379</code></pre>
 </div>
 </div>
 <div class="ulist">
@@ -1518,12 +1552,12 @@ OWNCLOUD_REDIS_HOST=redis</code></pre>
 <p>If Redis is not enabled, none of the other Redis configurations will be taken into account.</p>
 </li>
 <li>
-<p>If Redis is enabled, two additional configurations are set automatically. Note that these configs are not configurable via environment variables:</p>
+<p>If Redis is enabled, two additional configurations are set automatically:</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-.php hljs" data-lang=".php">'memcache.locking' =&gt; '\OC\Memcache\Redis'
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">'memcache.locking' =&gt; '\OC\Memcache\Redis'
 'memcache.distributed' =&gt; '\OC\Memcache\Redis'</code></pre>
 </div>
 </div>
@@ -1553,6 +1587,55 @@ ownCloud provides many configuration options for Redis, including enhanced secur
 </td>
 </tr>
 </table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="memcached-configuration"><a class="anchor" href="#memcached-configuration"></a>Memcached Configuration</h3>
+<div class="paragraph">
+<p>If you select Memcached, you must enable it via environment variables. The example value for the host setting assumes that you have used the ownCloud Docker Compose deployment example. Adapt this value for your setup.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-.env hljs" data-lang=".env">OWNCLOUD_MEMCACHED_ENABLED=true
+OWNCLOUD_MEMCACHED_HOST=memcached
+OWNCLOUD_MEMCACHED_PORT=11211</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Additional memcached options can be set with the environment variable <code>OWNCLOUD_MEMCACHED_OPTIONS</code>.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If Memcached is not enabled, none of the other Memcached configurations will be taken into account.</p>
+</li>
+<li>
+<p>If Memcached is enabled, two additional configurations are set automatically:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">'memcache.locking' =&gt; '\OC\Memcache\Memcached'
+'memcache.distributed' =&gt; '\OC\Memcache\Memcached'</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="sect3">
+<h4 id="clearing-the-memcached-cache"><a class="anchor" href="#clearing-the-memcached-cache"></a>Clearing the Memcached Cache</h4>
+<div class="paragraph">
+<p>The Memcached cache can be flushed from the command line, using a range of common Linux/Unix tools including netcat and telnet. The following example uses telnet to log in, run the flush_all command, and log out:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">telnet &lt;memcached-hostname&gt; 11211
+flush_all
+quit</code></pre>
+</div>
+</div>
 </div>
 </div>
 </div>

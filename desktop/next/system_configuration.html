@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>System Configuration :: Documentation for ownCloud (A Kiteworks Company)</title>
 
+    <link rel="canonical" href="https://doc.owncloud.com/desktop/latest/system_configuration.html">
     <link rel="prev" href="installing.html">
     <meta name="description" content="System-wide configuration options for administrators">
     <meta name="keywords" content="system configuration, policies, registry, ini, openid, updater">
@@ -16,7 +17,7 @@
     <meta property="og:type" content="article" />
     <meta property="og:title" content="System Configuration" />
     <meta property="og:description" content="System Configuration" />
-    <meta property="og:url" content="" />
+    <meta property="og:url" content="https://doc.owncloud.com/desktop/latest/system_configuration.html" />
     <meta property="og:site_name" content="Documentation for ownCloud (A Kiteworks Company)" />
     <meta property="og:image" content="https://doc.owncloud.com/opengraph-desktop.png" />
     <meta property="og:image:alt" content="The Desktop App documentation" />
@@ -29,6 +30,7 @@
 
 
     <title>System Configuration :: Documentation for ownCloud (A Kiteworks Company)</title>
+    <link rel="canonical" href="https://doc.owncloud.com/desktop/latest/system_configuration.html">
     <meta name="description" content="System-wide configuration options for administrators">
     <meta name="keywords" content="system configuration, policies, registry, ini, openid, updater">
     <link rel="manifest" href="/manifest.json">
@@ -157,7 +159,10 @@
                       <a href="index.html">next</a>
                     </li>
                     <li class="version is-latest">
-                      <a href="../latest/index.html">6.0</a>
+                      <a href="../latest/index.html">7.1</a>
+                    </li>
+                    <li class="version">
+                      <a href="../6.0/index.html">6.0</a>
                     </li>
                     <li class="version">
                       <a href="../5.3/index.html">5.3</a>
@@ -252,7 +257,8 @@
         <button class="version-menu-toggle" title="Show other versions of page">next</button>
         <div class="version-menu">
           <a class="version is-current" href="system_configuration.html">next</a>
-          <a class="version is-missing" href="../latest/index.html">6.0</a>
+          <a class="version" href="../latest/system_configuration.html">7.1</a>
+          <a class="version is-missing" href="../6.0/index.html">6.0</a>
           <a class="version is-missing" href="../5.3/index.html">5.3</a>
         </div>
       </div>
@@ -296,7 +302,7 @@
 <p>This page documents the <strong>system-wide configuration options</strong> available to administrators. These settings are enforced globally and are not intended to be modified by end users.</p>
 </div>
 <div class="paragraph">
-<p>System configuration is evaluated at application start-up. Whether and how system configuration overrides user-level settings depends on the specific setting and the application&#8217;s implementation.</p>
+<p>System configuration is evaluated at application start-up and always takes precedence over the application&#8217;s built-in defaults. The OpenID Connect settings are the one exception: they are applied only when, taken together, they form a valid configuration (see <a href="#openid-connect">OpenID Connect</a>). When they do, they replace the built-in OpenID Connect configuration entirely.</p>
 </div>
 </div>
 </div>
@@ -324,11 +330,11 @@
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-plaintext hljs" data-lang="plaintext">/Library/Preferences/com.owncloud.desktopclient/ownCloud.ini</code></pre>
+<pre class="highlightjs highlight"><code class="language-plaintext hljs" data-lang="plaintext">/Library/Preferences/com.owncloud.desktopclient/owncloud.ini</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>This directory and file must be accessible to the application for reading purposes.</p>
+<p>The directory <code>com.owncloud.desktopclient</code> is the application&#8217;s reverse-domain identifier. This directory and file must be accessible to the application for reading purposes.</p>
 </div>
 </div>
 <div class="sect2">
@@ -338,7 +344,7 @@
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-plaintext hljs" data-lang="plaintext">/etc/ownCloud/ownCloud.ini</code></pre>
+<pre class="highlightjs highlight"><code class="language-plaintext hljs" data-lang="plaintext">/etc/owncloud/owncloud.ini</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -351,13 +357,26 @@
 <h2 id="configuration-file-format"><a class="anchor" href="#configuration-file-format"></a>Configuration File Format</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The configuration file uses the <code>INI</code> format on macOS, Linux and Unix-like systems.</p>
+<p>The configuration file uses the <code>INI</code> format on macOS, Linux and Unix-like systems. The file name is derived from the platform-specific locations described above. The resolved paths are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>macOS: <code>/Library/Preferences/com.owncloud.desktopclient/owncloud.ini</code></p>
+</li>
+<li>
+<p>Linux and Unix-like systems: <code>/etc/owncloud/owncloud.ini</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The following example shows the file contents in either location:</p>
 </div>
 <div class="listingblock">
-<div class="title">Example: <code>/etc/owncloud/owncloud.ini</code></div>
+<div class="title">Example INI configuration</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">[Setup]
-ServerUrl=&lt;https://cloud.example.com&gt;
+ServerUrl=https://cloud.example.com
 AllowServerUrlChange=false
 
 [Updater]
@@ -387,7 +406,7 @@ Prompt=select_account consent</code></pre>
 [HKEY_LOCAL_MACHINE\Software\Policies\ownCloud\ownCloud]
 
 [HKEY_LOCAL_MACHINE\Software\Policies\ownCloud\ownCloud\Setup]
-"ServerUrl"="&lt;https://cloud.example.com&gt;"
+"ServerUrl"="https://cloud.example.com"
 "AllowServerUrlChange"=dword:00000000
 
 [HKEY_LOCAL_MACHINE\Software\Policies\ownCloud\ownCloud\Updater]
@@ -488,11 +507,13 @@ Prompt=select_account consent</code></pre>
 <div class="sect2">
 <h3 id="openid-connect"><a class="anchor" href="#openid-connect"></a>OpenID Connect</h3>
 <div class="paragraph">
-<p>These keys define the OpenID Connect (OIDC) authentication parameters.
-If this section is present, the application will use these values for authentication purposes.</p>
+<p>These keys define the OpenID Connect (OIDC) authentication parameters.</p>
 </div>
 <div class="paragraph">
-<p>For the OpenID Connect configuration to be valid, all keys must be defined.</p>
+<p>Keys may be left empty or omitted; in that case the default value is used. What matters is that the keys, taken together, form a valid configuration. At a minimum, <code>ClientId</code> must be set to a non-empty string. <code>Ports</code> may be omitted or empty (the application then selects any available port) or set to a comma-separated list of port numbers.</p>
+</div>
+<div class="paragraph">
+<p>When a valid configuration is found, the application uses these values for authentication and ignores its entire built-in OpenID Connect configuration (see the note below).</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -512,7 +533,7 @@ If this section is present, the application will use these values for authentica
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>ClientId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">OpenID Connect client identifier. If not set, no other OpenID Connectsettings will be considered.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OpenID Connect client identifier. If not set, no other OpenID Connect settings will be considered.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">empty</p></td>
 </tr>
@@ -542,6 +563,23 @@ If this section is present, the application will use these values for authentica
 </tr>
 </tbody>
 </table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>When a valid OpenID Connect configuration is found, it replaces the application&#8217;s built-in configuration <strong>in its entirety</strong>. The values are not merged. Any key that is not specified is used with its empty or default value, not the built-in value.</p>
+</div>
+<div class="paragraph">
+<p>For example, if only <code>ClientId</code> and <code>Ports</code> are set, the <code>Prompt</code> is empty and no prompt is sent to the server, even if the built-in configuration defines one.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
 </div>
 </div>
 </div>
@@ -566,7 +604,7 @@ If this section is present, the application will use these values for authentica
 <div class="ulist">
 <ul>
 <li>
-<p>Verify file permissions on Unix systems (<code>/etc/ownCloud</code> must be readable).</p>
+<p>Verify file permissions on Unix systems (<code>/etc/owncloud/owncloud.ini</code> must be readable).</p>
 </li>
 <li>
 <p>On Windows, ensure that keys are defined under <code>HKLM\Software\Policies</code>.</p>

@@ -1140,7 +1140,10 @@
                       <a href="../../../../../../desktop/next/index.html">next</a>
                     </li>
                     <li class="version is-latest">
-                      <a href="../../../../../../desktop/latest/index.html">6.0</a>
+                      <a href="../../../../../../desktop/latest/index.html">7.1</a>
+                    </li>
+                    <li class="version">
+                      <a href="../../../../../../desktop/6.0/index.html">6.0</a>
                     </li>
                     <li class="version">
                       <a href="../../../../../../desktop/5.3/index.html">5.3</a>
@@ -1265,9 +1268,8 @@
 <li><a href="#example-setup-using-kopano-konnect">Example Setup Using Kopano Konnect</a></li>
 <li><a href="#example-setup-using-microsoft-azure-ad">Example Setup Using Microsoft Azure AD</a></li>
 <li><a href="#example-setup-using-onelogin">Example Setup Using OneLogin</a></li>
-<li><a href="#owncloud-desktop-and-mobile-clients">ownCloud Desktop and Mobile Clients</a>
+<li><a href="#owncloud-desktop-and-mobile-apps">ownCloud Desktop and Mobile Apps</a>
 <ul class="sectlevel2">
-<li><a href="#client-support-for-oidc">Client Support for OIDC</a></li>
 <li><a href="#client-ids-secrets-and-redirect-uris">Client IDs, Secrets and Redirect URIs</a></li>
 <li><a href="#default-scope-and-prompt-parameters">Default Scope and Prompt Parameters</a></li>
 <li><a href="#migrate-clients-from-basic-authentication-to-oidc">Migrate Clients from Basic Authentication to OIDC</a></li>
@@ -1315,9 +1317,7 @@ ownCloud only supports one configured identity provider which is then valid for 
 </table>
 </div>
 <div class="paragraph">
-<p>Click on the
-<a href="../../../_attachments/configuration/user/oidc/OAuth-code-flow-sequence-diagram.png" class="xref attachment">OAuth code flow sequence diagram</a>
-link to get more details on the flow sequence.</p>
+<p>Click on the <a href="../../../_attachments/configuration/user/oidc/OAuth-code-flow-sequence-diagram.png" class="xref attachment">OAuth code flow sequence diagram</a> link to get more details on the flow sequence.</p>
 </div>
 </div>
 </div>
@@ -1375,16 +1375,19 @@ link to get more details on the flow sequence.</p>
 <p>A distributed memcache setup - such as Redis or Memcached - is required to operate this app. Follow the <a href="../../server/caching_configuration.html" class="xref page">caching documentation</a> on how to set it up.</p>
 </li>
 <li>
-<p>The <a href="https://marketplace.owncloud.com/apps/openidconnect">OpenID Connect App</a> installed on ownCloud Server</p>
+<p>The <code>OpenID Connect</code> app enabled on ownCloud Server.</p>
 </li>
 <li>
-<p>Configuration settings in <code>config.php</code> on ownCloud Server</p>
-<div class="ulist">
-<ul>
-<li>
-<p><code>'http.cookie.samesite' =&gt; 'None',</code></p>
+<p>Set the environment variable:</p>
+<div class="openblock">
+<div class="content">
 <div class="paragraph">
-<p>See <a href="../../server/config_sample_php_parameters.html#define-how-to-relax-same-site-cookie-settings" class="xref page">config.sample.php</a> and <a href="https://web.dev/schemeful-samesite/">Schemeful Same-Site</a> for examples and details.</p>
+<p><code>OWNCLOUD_HTTP_COOKIE_SAMESITE=None</code></p>
+</div>
+<div class="paragraph">
+<p>See <a href="../../server/config_sample_php_parameters.html#define-how-to-relax-the-same-site-cookie-settings" class="xref page">config.sample.php</a> and <a href="https://web.dev/schemeful-samesite/">Schemeful Same-Site</a> for examples and details.</p>
+</div>
+</div>
 </div>
 </li>
 <li>
@@ -1393,11 +1396,8 @@ link to get more details on the flow sequence.</p>
 <p>See <a href="../../server/config_apps_sample_php_parameters.html#app-openid-connect-oidc" class="xref page">config.apps.sample.php</a> for examples and details or see section <a href="#save-settings-in-the-database">Save Settings in the Database</a> below when running clustered setups.</p>
 </div>
 </li>
-</ul>
-</div>
-</li>
 <li>
-<p>Service discovery for the <a href="#owncloud-desktop-and-mobile-clients">ownCloud Clients</a></p>
+<p>Service discovery for the <a href="#owncloud-desktop-and-mobile-clients">ownCloud Desktop and Mobile Apps</a></p>
 </li>
 </ul>
 </div>
@@ -1487,15 +1487,21 @@ Only set either the database or the config.php keys but not both for the OpenID 
 </li>
 <li>
 <p>Webserver Rewrite Rule</p>
+<div class="openblock">
+<div class="content">
 <div class="paragraph">
-<p>To make the endpoint available under the static service discovery path, it is recommended to put a <code>RewriteRule</code> in place using in the <code>VirtualHost</code> section. The Apache module <code>rewrite</code> must be enabled, and if SSL is used, also the modules <code>proxy</code>, <code>proxy_http</code> and <code>proxy_connect</code>:</p>
+<p>To make the endpoint available under the static service discovery path, it is recommended to set the following environment variable:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-apache hljs" data-lang="apache">RewriteEngine on
-RewriteRule "^/.well-known/openid-configuration" "/index.php/apps/openidconnect/config" [P]
-SSLProxyEngine On #This can be omitted if no SSL is used</code></pre>
+<pre class="highlightjs highlight"><code class="language-.env hljs" data-lang=".env">OWNCLOUD_ENABLE_OIDC_REWRITE_URL=true</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>This variable sets the following rule in the embedded <code>.htaccess</code> file:</p>
+</div>
+<div class="paragraph">
+<p><code>RewriteRule ^/.well-known/openid-configuration /index.php/apps/openidconnect/config</code></p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -1520,6 +1526,8 @@ If you use the <code>.htaccess</code> file in the ownCloud web root, you have to
 </td>
 </tr>
 </table>
+</div>
+</div>
 </div>
 </li>
 <li>
@@ -1565,10 +1573,10 @@ If you use the <code>.htaccess</code> file in the ownCloud web root, you have to
 </div>
 </div>
 <div class="sect1">
-<h2 id="owncloud-desktop-and-mobile-clients"><a class="anchor" href="#owncloud-desktop-and-mobile-clients"></a>ownCloud Desktop and Mobile Clients</h2>
+<h2 id="owncloud-desktop-and-mobile-apps"><a class="anchor" href="#owncloud-desktop-and-mobile-apps"></a>ownCloud Desktop and Mobile Apps</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>ownCloud desktop and mobile clients detect whether OIDC is available (service discovery) and use this login method when a new account is created.</p>
+<p>ownCloud Desktop and Mobile Apps detect whether OIDC is available (service discovery) and use this login method when a new account is created.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -1577,39 +1585,9 @@ If you use the <code>.htaccess</code> file in the ownCloud web root, you have to
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-The desktop and mobile apps (clients) have a default client ID and secret hard-coded, which are used for ownCloud&#8217;s oauth2 app. When using Kopano as IdP, it does not pre-define a client ID and secret. You can use the default ones of the client to configure Kopano properly. With some IdPs like MS-Azure, these and other required parameters come from the IdP and must be coded into the client. Note that each IdP has different requirements. Get in touch with ownCloud for a branding subscription to customize the clients according to your needs.
+The Desktop and Mobile apps have a default client ID and secret hard-coded, which are used for ownCloud&#8217;s oauth2 app. When using Kopano as IdP, it does not pre-define a client ID and secret. You can use the default ones of the client to configure Kopano properly. With some IdPs like MS-Azure, these and other required parameters come from the IdP and must be coded into the client. Note that each IdP has different requirements. Get in touch with ownCloud for a branding subscription to customize the clients according to your needs.
 </td>
 </tr>
-</table>
-</div>
-<div class="sect2">
-<h3 id="client-support-for-oidc"><a class="anchor" href="#client-support-for-oidc"></a>Client Support for OIDC</h3>
-<table class="tableblock frame-all grid-all" style="width: 60%;">
-<caption class="title">Following owncloud clients support OIDC</caption>
-<colgroup>
-<col style="width: 40%;">
-<col style="width: 60%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">ownCloud Client</th>
-<th class="tableblock halign-left valign-top">Release with OIDC support</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Desktop</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&gt;= 2.7.0</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Android</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&gt;= 2.15</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">iOS</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&gt;= 1.2</p></td>
-</tr>
-</tbody>
 </table>
 </div>
 <div class="sect2">
@@ -1633,7 +1611,7 @@ The desktop and mobile apps (clients) have a default client ID and secret hard-c
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Server/Web</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">as specified in <code>config.php</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">as specified via environment variables</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Desktop</p></td>
@@ -1666,7 +1644,7 @@ The desktop and mobile apps (clients) have a default client ID and secret hard-c
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Server/Web</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">as specified in <code>config.php</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">as specified via environment variables</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Desktop</p></td>
