@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-This is the ownCloud Server documentation repository. It uses **Antora** (static site generator) with **AsciiDoc** (`.adoc`) format. The current component is `server` version `10.4`.
+This is the ownCloud Classic documentation repository. It uses **Antora** (static site generator) with **AsciiDoc** (`.adoc`) format. The current component is `server` version `10.4`.
 
 ## Build Commands
 
