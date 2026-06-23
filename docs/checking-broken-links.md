@@ -17,7 +17,7 @@ To check broken links, you need to prepare with the following steps:
 1. Make the compiled documentation available for browsing by using a webserver like
    [our npm target](./build-the-docs.md#viewing-the-html-documentation), [PHP's built-in webserver](https://secure.php.net/manual/en/features.commandline.webserver.php), Apache or NGINX
 2. Build the local docs with ``npm antora --url http://localhost:8080``
-3. Use an already provided or install a Broken Link Checker
+3. Install a Broken Link Checker of your choice (see the examples below)
 
 Use the broken link checker of your choice, the following are usable examples. The command examples assume that the documentation built is accessible via `http://localhost:8080`.
 
@@ -58,28 +58,6 @@ worktree: /var/www/owncloud/docs | component: server | version: master
   path: modules/admin_manual/pages/configuration/files/external_storage/configuration.adoc | xref: server/import_ssl_cert.adoc
   path: modules/admin_manual/pages/configuration/files/file_sharing_configuration.adoc | xref: server/configuration/server/security/password_policy.adoc
 ```
-
-### npm Linkcheck
-
-If you installed the Antora dependencies via `npm install`, then a broken link checker is available. To run it, you must have one terminal open and run `npm serve` to start a http server and in another terminal using the following command:
-
-```console
-npm linkcheck http://localhost:8080/server/next | grep "BROKEN"
-```
-
-#### Example Output
-
-```console
-...
-├─BROKEN─ http://mechanics.flite.com/blog/2014/07/29/using-innodb-large-prefix-to-avoid-error-1071/ (BLC_UNKNOWN)
-├─BROKEN─ http://bucket.hostname.domain/ (ERRNO_ENOTFOUND)
-├─BROKEN─ http://hostname.domain/bucket (ERRNO_ENOTFOUND)
-├─BROKEN─ https://example.com/owncloud (HTTP_404)
-├─BROKEN─ https://example.com/owncloud (HTTP_404)
-...
-```
-Note: in the example output above, only the first entry is a genuine broken link.
-All the others in the list are example links, and therefore not broken.
 
 ## Publicly Available Linkcheckers
 

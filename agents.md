@@ -6,7 +6,7 @@ This file provides context for AI coding agents (Claude Code, GitHub Copilot, Cu
 - **Product family:** Documentation
 - **Primary language(s):** JavaScript
 - **Build system:** npm (Antora)
-- **Test framework:** broken-link-checker
+- **Test framework:** Antora build (`npm run antora`); link checking is documented in `docs/checking-broken-links.md`
 - **CI system:** GitHub Actions
 
 ## Architecture & Key Paths
@@ -33,7 +33,8 @@ This file provides context for AI coding agents (Claude Code, GitHub Copilot, Cu
 npm run antora
 
 # Test
-npm run linkcheck
+# No automated test suite; verify by building (npm run antora).
+# Link checking is documented in docs/checking-broken-links.md.
 
 # Lint
 Not detected (Prettier config present for formatting)

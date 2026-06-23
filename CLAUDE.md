@@ -21,9 +21,6 @@ yarn validate
 # Lint prose in AsciiDoc files
 yarn prose
 
-# Check for broken links (requires built site)
-yarn linkcheck
-
 # Serve the built docs locally at http://localhost:8080
 yarn serve
 ```
