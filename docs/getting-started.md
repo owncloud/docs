@@ -145,7 +145,7 @@ Next, you need to learn how to [build the docs](./build-the-docs.md) from the co
 
 ####  Broken Link Checker
 
-To check for broken links manually, see [install and use a broken-link-checker](./checking-broken-links.md).
+To check for broken links manually, see [install and use a broken link checker](./checking-broken-links.md).
 
 ### Contributing to the Documentation
 
