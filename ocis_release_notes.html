@@ -284,6 +284,14 @@
 <div id="toc" class="toc">
 <div id="toctitle" class="title">Releases</div>
 <ul class="sectlevel1">
+<li><a href="#infinite-scale-8-1-0-production-daledda">Infinite Scale 8.1.0 (Production) - Daledda</a>
+<ul class="sectlevel2">
+<li><a href="#known-issues">Known Issues</a></li>
+<li><a href="#deprecations">Deprecations</a></li>
+<li><a href="#migrations">Migrations</a></li>
+<li><a href="#breaking-changes">Breaking Changes</a></li>
+</ul>
+</li>
 <li><a href="#infinite-scale-8-0-5-production">Infinite Scale 8.0.5 (Production)</a></li>
 <li><a href="#infinite-scale-8-0-4-production">Infinite Scale 8.0.4 (Production)</a></li>
 <li><a href="#infinite-scale-8-0-3-production">Infinite Scale 8.0.3 (Production)</a></li>
@@ -291,10 +299,10 @@
 <li><a href="#infinite-scale-8-0-1-production">Infinite Scale 8.0.1 (Production)</a></li>
 <li><a href="#infinite-scale-8-0-0-production-curie">Infinite Scale 8.0.0 (Production) - Curie</a>
 <ul class="sectlevel2">
-<li><a href="#known-issues">Known Issues</a></li>
-<li><a href="#deprecations">Deprecations</a></li>
-<li><a href="#migrations">Migrations</a></li>
-<li><a href="#breaking-changes">Breaking Changes</a></li>
+<li><a href="#known-issues-2">Known Issues</a></li>
+<li><a href="#deprecations-2">Deprecations</a></li>
+<li><a href="#migrations-2">Migrations</a></li>
+<li><a href="#breaking-changes-2">Breaking Changes</a></li>
 </ul>
 </li>
 <li><a href="#infinite-scale-7-3-2-production">Infinite Scale 7.3.2 (Production)</a></li>
@@ -309,14 +317,199 @@
 <li><a href="#infinite-scale-7-0-1-production">Infinite Scale 7.0.1 (Production)</a></li>
 <li><a href="#infinite-scale-7-0-0-production">Infinite Scale 7.0.0 (Production)</a>
 <ul class="sectlevel2">
-<li><a href="#known-issues-5">Known Issues</a></li>
-<li><a href="#deprecations-5">Deprecations</a></li>
-<li><a href="#migrations-5">Migrations</a></li>
-<li><a href="#breaking-changes-5">Breaking Changes</a></li>
+<li><a href="#known-issues-6">Known Issues</a></li>
+<li><a href="#deprecations-6">Deprecations</a></li>
+<li><a href="#migrations-6">Migrations</a></li>
+<li><a href="#breaking-changes-6">Breaking Changes</a></li>
 </ul>
 </li>
 <li><a href="#release-notes-before-7-0">Release Notes Before 7.0</a></li>
 </ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="infinite-scale-8-1-0-production-daledda"><a class="anchor" href="#infinite-scale-8-1-0-production-daledda"></a>Infinite Scale 8.1.0 (Production) - Daledda</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Please find the most important changes described here or refer to the changelog for a complete list of changes:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Infinite Scale: <a href="https://github.com/owncloud/ocis/releases/tag/v8.1.0" target="_blank" rel="noopener">Changes in 8.1.0</a></p>
+</li>
+<li>
+<p>Web: <a href="https://github.com/owncloud/web/releases/tag/v12.4.0" target="_blank" rel="noopener">Changelog for ownCloud Web 12.4.0</a></p>
+</li>
+</ul>
+</div>
+<h3 id="summary-of-notable-changes" class="discrete">Summary of Notable Changes</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>A new dedicated Vault storage has been added that can be protected with Multi Factor Authentication (MFA).</p>
+<div class="ulist">
+<ul>
+<li>
+<p>This is achieved through a separate <code>storage-users</code> service instance that is configured in Vault mode.</p>
+</li>
+<li>
+<p>New themes have been added to clearly distinguish between regular drives and vaults.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>When searching for a user in the webUI, the result is now ordered as configured via the webUI.</p>
+</li>
+<li>
+<p>Added a new space membership role: <code>Can edit</code>.</p>
+</li>
+<li>
+<p>The new environment variables have been added. For details see the &#8230;&#8203;</p>
+</li>
+<li>
+<p>CLI Commands</p>
+<div class="ulist">
+<ul>
+<li>
+<p>New CLI commands have been added, in particular the <code>Verify and Inspect the Blobstore</code>, the <code>Search Index Optimize</code> and the <code>Reset Password for System Users</code> command. For details see the <a href="ocis/next/admin/migration/upgrading-ocis.html" class="xref page" target="_blank" rel="noopener">Migration and Upgrade</a> section of the Infinite Scale admin documentation.</p>
+</li>
+<li>
+<p>The <code>restart</code> flag for the Postprocessing CLI has been fixed.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>The Search and indexing backend has been improved with respect to:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Optimize search index size, see CLI commands,</p>
+</li>
+<li>
+<p>Logging when indexing,</p>
+</li>
+<li>
+<p>Re-index incomplete extractions,</p>
+</li>
+<li>
+<p>Index large multimedia files which exceed the extraction size limit. Only the relevant data is read there, which enables indexing of videos, for example.</p>
+</li>
+<li>
+<p>EXIF related extraction and parsing,</p>
+</li>
+<li>
+<p>KQL parsing,</p>
+</li>
+<li>
+<p>Skip indexing of files still in postprocessing,</p>
+</li>
+<li>
+<p>Improve overall performance and memory footprint.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>For ONLYOFFICE, WOPI now immediately returns a HTTP 200 response without locking the file for users with read-only or view access.</p>
+</li>
+<li>
+<p>The Rego policies used by the Policies service are now cached, greatly improving memory usage and performance.</p>
+</li>
+<li>
+<p>Translations have been fixed/updated.</p>
+</li>
+<li>
+<p>Several updates were made to the deployment examples:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Added Keycloak to <code>ocis_full</code>.</p>
+</li>
+<li>
+<p>The <code>ocis_full</code> deployment example has been basically reworked for how to provide monitoring.</p>
+</li>
+<li>
+<p>Image versions are now defined in the <code>.env</code> file for all images, except the web-extensions.</p>
+</li>
+<li>
+<p>Updated image versions including web-extensions.<br>
+Please note that the provided image versions are tested to work with the deployment example that is shipped.</p>
+</li>
+<li>
+<p>The web-extensions <code>Advanced Search</code> and <code>Photo Addon</code> have greatly been improved.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Security:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>The underlaying Alpine image used for Infinite Scale has been updated to version 3.23.4</p>
+</li>
+<li>
+<p><code>go</code> has been updated to version 1.25.10</p>
+</li>
+<li>
+<p>The <code>libvips</code> library has been bumped to 8.18.2 for the use in all Docker images.</p>
+</li>
+<li>
+<p>The X-XSS-Protection header has been set to "0" to explicitly disable the deprecated browser XSS filter, which can introduce side-channel vulnerabilities. Modern XSS protection is provided through the Content-Security-Policy header.</p>
+</li>
+<li>
+<p>The endpoint <code>public-token</code> is no longer allowed by the public-share resource scope.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<h3 id="upgrading-infinite-scale" class="discrete">Upgrading Infinite Scale</h3>
+<div class="paragraph">
+<p>See the <a href="ocis/next/admin/migration/upgrading-ocis.html" class="xref page" target="_blank" rel="noopener">Migration and Upgrade</a> section of the Infinite Scale admin documentation for more details.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Since the deployment examples have been updated, you <strong>must</strong> update the configuration files, reconfigure them and pull new image versions. No data migration is necessary.</p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="known-issues"><a class="anchor" href="#known-issues"></a>Known Issues</h3>
+<div class="paragraph">
+<p>This section will be updated if issues are discovered.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="deprecations"><a class="anchor" href="#deprecations"></a>Deprecations</h3>
+<div class="paragraph">
+<p>See the <a href="ocis/next/admin/migration/upgrading-ocis.html" class="xref page" target="_blank" rel="noopener">Migration and Upgrade</a> section of the Infinite Scale admin documentation for more details.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The value <code>owncloudsql</code> for the <code>STORAGE_USERS_DRIVER</code> environment variable has been deprecated.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="migrations"><a class="anchor" href="#migrations"></a>Migrations</h3>
+<div class="paragraph">
+<p>See the <a href="ocis/next/admin/migration/upgrading-ocis.html" class="xref page" target="_blank" rel="noopener">Migration and Upgrade</a> section of the Infinite Scale admin documentation for more details.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="breaking-changes"><a class="anchor" href="#breaking-changes"></a>Breaking Changes</h3>
+<div class="paragraph">
+<p>There are no breaking changes in Infinite Scale 8.1</p>
+</div>
 </div>
 </div>
 </div>
@@ -514,7 +707,7 @@
 </li>
 </ul>
 </div>
-<h3 id="summary-of-notable-changes" class="discrete">Summary of Notable Changes</h3>
+<h3 id="summary-of-notable-changes-2" class="discrete">Summary of Notable Changes</h3>
 <div class="ulist">
 <ul>
 <li>
@@ -560,7 +753,7 @@ Please note that the provided image versions are tested to work with the deploym
 </li>
 </ul>
 </div>
-<h3 id="upgrading-infinite-scale" class="discrete">Upgrading Infinite Scale</h3>
+<h3 id="upgrading-infinite-scale-2" class="discrete">Upgrading Infinite Scale</h3>
 <div class="paragraph">
 <p>See the <a href="ocis/next/admin/migration/upgrading-ocis.html" class="xref page" target="_blank" rel="noopener">Migration and Upgrade</a> section of the Infinite Scale admin documentation for more details.</p>
 </div>
@@ -572,7 +765,7 @@ Please note that the provided image versions are tested to work with the deploym
 </ul>
 </div>
 <div class="sect2">
-<h3 id="known-issues"><a class="anchor" href="#known-issues"></a>Known Issues</h3>
+<h3 id="known-issues-2"><a class="anchor" href="#known-issues-2"></a>Known Issues</h3>
 <div class="ulist">
 <ul>
 <li>
@@ -582,7 +775,7 @@ Please note that the provided image versions are tested to work with the deploym
 </div>
 </div>
 <div class="sect2">
-<h3 id="deprecations"><a class="anchor" href="#deprecations"></a>Deprecations</h3>
+<h3 id="deprecations-2"><a class="anchor" href="#deprecations-2"></a>Deprecations</h3>
 <div class="paragraph">
 <p>See the <a href="ocis/next/admin/migration/upgrading-ocis.html" class="xref page" target="_blank" rel="noopener">Migration and Upgrade</a> section of the Infinite Scale admin documentation for more details.</p>
 </div>
@@ -598,7 +791,7 @@ Please note that the provided image versions are tested to work with the deploym
 </div>
 </div>
 <div class="sect2">
-<h3 id="migrations"><a class="anchor" href="#migrations"></a>Migrations</h3>
+<h3 id="migrations-2"><a class="anchor" href="#migrations-2"></a>Migrations</h3>
 <div class="paragraph">
 <p>See the <a href="ocis/next/admin/migration/upgrading-ocis.html" class="xref page" target="_blank" rel="noopener">Migration and Upgrade</a> section of the Infinite Scale admin documentation for more details.</p>
 </div>
@@ -611,7 +804,7 @@ Please note that the provided image versions are tested to work with the deploym
 </div>
 </div>
 <div class="sect2">
-<h3 id="breaking-changes"><a class="anchor" href="#breaking-changes"></a>Breaking Changes</h3>
+<h3 id="breaking-changes-2"><a class="anchor" href="#breaking-changes-2"></a>Breaking Changes</h3>
 <h4 id="ocm" class="discrete">OCM</h4>
 <div class="paragraph">
 <p>See the <a href="ocis/next/admin/migration/upgrading-ocis.html" class="xref page" target="_blank" rel="noopener">Migration and Upgrade</a> section of the Infinite Scale admin documentation for more details.</p>
@@ -779,7 +972,7 @@ Please note that the provided image versions are tested to work with the deploym
 </li>
 </ul>
 </div>
-<h3 id="deprecations-2" class="discrete">Deprecations</h3>
+<h3 id="deprecations-3" class="discrete">Deprecations</h3>
 <div class="ulist">
 <ul>
 <li>
@@ -790,7 +983,7 @@ Please note that the provided image versions are tested to work with the deploym
 </li>
 </ul>
 </div>
-<h3 id="migrations-2" class="discrete">Migrations</h3>
+<h3 id="migrations-3" class="discrete">Migrations</h3>
 <div class="ulist">
 <ul>
 <li>
@@ -801,15 +994,15 @@ Please note that the provided image versions are tested to work with the deploym
 </li>
 </ul>
 </div>
-<h3 id="breaking-changes-2" class="discrete">Breaking Changes</h3>
+<h3 id="breaking-changes-3" class="discrete">Breaking Changes</h3>
 <div class="paragraph">
 <p>There are no breaking changes in Infinite Scale 7.3</p>
 </div>
-<h3 id="upgrading-infinite-scale-2" class="discrete">Upgrading Infinite Scale</h3>
+<h3 id="upgrading-infinite-scale-3" class="discrete">Upgrading Infinite Scale</h3>
 <div class="paragraph">
 <p>See the <a href="ocis/next/admin/migration/upgrading-ocis.html" class="xref page">Migration and Upgrade</a> section of the Infinite Scale admin documentation for more details.</p>
 </div>
-<h3 id="known-issues-2" class="discrete">Known Issues</h3>
+<h3 id="known-issues-3" class="discrete">Known Issues</h3>
 <div class="paragraph">
 <p>This section will be updated if issues are discovered.</p>
 </div>
@@ -889,7 +1082,7 @@ Please note that the provided image versions are tested to work with the deploym
 </li>
 </ul>
 </div>
-<h3 id="deprecations-3" class="discrete">Deprecations</h3>
+<h3 id="deprecations-4" class="discrete">Deprecations</h3>
 <div class="ulist">
 <ul>
 <li>
@@ -900,7 +1093,7 @@ Please note that the provided image versions are tested to work with the deploym
 </li>
 </ul>
 </div>
-<h3 id="migrations-3" class="discrete">Migrations</h3>
+<h3 id="migrations-4" class="discrete">Migrations</h3>
 <div class="ulist">
 <ul>
 <li>
@@ -911,15 +1104,15 @@ Please note that the provided image versions are tested to work with the deploym
 </li>
 </ul>
 </div>
-<h3 id="breaking-changes-3" class="discrete">Breaking Changes</h3>
+<h3 id="breaking-changes-4" class="discrete">Breaking Changes</h3>
 <div class="paragraph">
 <p>There are no breaking changes in Infinite Scale 7.2</p>
 </div>
-<h3 id="upgrading-infinite-scale-3" class="discrete">Upgrading Infinite Scale</h3>
+<h3 id="upgrading-infinite-scale-4" class="discrete">Upgrading Infinite Scale</h3>
 <div class="paragraph">
 <p>See the <a href="ocis/next/admin/migration/upgrading-ocis.html" class="xref page">Migration and Upgrade</a> section of the Infinite Scale admin documentation for more details.</p>
 </div>
-<h3 id="known-issues-3" class="discrete">Known Issues</h3>
+<h3 id="known-issues-4" class="discrete">Known Issues</h3>
 <div class="paragraph">
 <p>This section will be updated if issues are discovered.</p>
 </div>
@@ -1115,19 +1308,19 @@ To send all the emails of a group, the admin needs to trigger a configurable com
 </li>
 </ul>
 </div>
-<h3 id="deprecations-4" class="discrete">Deprecations</h3>
+<h3 id="deprecations-5" class="discrete">Deprecations</h3>
 <div class="paragraph">
 <p>No deprecations have been introduced in Infinite Scale 7.1</p>
 </div>
-<h3 id="migrations-4" class="discrete">Migrations</h3>
+<h3 id="migrations-5" class="discrete">Migrations</h3>
 <div class="paragraph">
 <p>There are no migrations necessary to update from Infinite Scale 7.0 to 7.1</p>
 </div>
-<h3 id="breaking-changes-4" class="discrete">Breaking Changes</h3>
+<h3 id="breaking-changes-5" class="discrete">Breaking Changes</h3>
 <div class="paragraph">
 <p>There are no breaking changes in Infinite Scale 7.1</p>
 </div>
-<h3 id="known-issues-4" class="discrete">Known Issues</h3>
+<h3 id="known-issues-5" class="discrete">Known Issues</h3>
 <div class="paragraph">
 <p>This section will be updated if issues are discovered.</p>
 </div>
@@ -1335,7 +1528,7 @@ With PosixFS, you can use, with some restrictions, a posix based filesystem with
 </dl>
 </div>
 <div class="sect2">
-<h3 id="known-issues-5"><a class="anchor" href="#known-issues-5"></a>Known Issues</h3>
+<h3 id="known-issues-6"><a class="anchor" href="#known-issues-6"></a>Known Issues</h3>
 <div class="paragraph">
 <p>The following is a list of known issues identified in Infinite Scale rolling releases 6.x that still exist:</p>
 </div>
@@ -1374,7 +1567,7 @@ OCM is still in experimental phase!
 </div>
 </div>
 <div class="sect2">
-<h3 id="deprecations-5"><a class="anchor" href="#deprecations-5"></a>Deprecations</h3>
+<h3 id="deprecations-6"><a class="anchor" href="#deprecations-6"></a>Deprecations</h3>
 <div class="ulist">
 <ul>
 <li>
@@ -1384,13 +1577,13 @@ OCM is still in experimental phase!
 </div>
 </div>
 <div class="sect2">
-<h3 id="migrations-5"><a class="anchor" href="#migrations-5"></a>Migrations</h3>
+<h3 id="migrations-6"><a class="anchor" href="#migrations-6"></a>Migrations</h3>
 <div class="paragraph">
 <p>See the <a href="ocis/next/admin/migration/upgrading-ocis.html" class="xref page">Upgrading Infinite Scale</a> documentation for migration and upgrade steps.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="breaking-changes-5"><a class="anchor" href="#breaking-changes-5"></a>Breaking Changes</h3>
+<h3 id="breaking-changes-6"><a class="anchor" href="#breaking-changes-6"></a>Breaking Changes</h3>
 <div class="dlist">
 <dl>
 <dt class="hdlist1">Infinite Scale</dt>
