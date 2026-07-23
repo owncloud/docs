@@ -1274,6 +1274,9 @@
 <p>It also ensures that all upgrades have been executed properly, so that no files are left behind, and all old files are properly replaced. In the past, invalid updates were a significant source of errors when updating ownCloud.</p>
 </div>
 <div class="paragraph">
+<p>Verification uses a public-key infrastructure (PKI): ownCloud ships the code-signing root certificate authority, validates the certificate chain of each app&#8217;s signature, and rejects certificates listed on the published certificate revocation list (CRL). Signatures themselves are produced by developers with the standalone <code>ocsign</code> tool — see <a href="../../../developer_manual/app/advanced/code_signing.html" class="xref page">Code Signing</a> in the Developer Manual.</p>
+</div>
+<div class="paragraph">
 <p>All the possible errors and their explanations can be found <a href="#errors">here</a></p>
 </div>
 </div>
@@ -1290,13 +1293,13 @@
 <div class="sect2">
 <h3 id="do-we-lock-down-owncloud"><a class="anchor" href="#do-we-lock-down-owncloud"></a>Do We Lock Down ownCloud?</h3>
 <div class="paragraph">
-<p>The ownCloud project is open source and always will be. We do not want to make it more difficult for our users to run ownCloud. Any code signing errors on upgrades will not prevent ownCloud from running, but will display a warning on the Admin page. For applications that are not tagged "Official" the code signing process is optional.</p>
+<p>The ownCloud project is open source and always will be. We do not want to make it more difficult for our users to run ownCloud. Core code-signing errors on upgrades will not prevent ownCloud from running, but will display a warning on the Admin page. Third-party apps, however, are subject to mandatory signing (see below).</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="not-open-source-anymore"><a class="anchor" href="#not-open-source-anymore"></a>Not Open Source Anymore?</h3>
 <div class="paragraph">
-<p>The ownCloud project is open source and always will be. The code signing process is optional, though highly recommended. The code check for the core parts of ownCloud is enabled when the ownCloud release version branch has been set to stable.</p>
+<p>The ownCloud project is open source and always will be. The code check for the core parts of ownCloud is enabled when the release version branch has been set to stable.</p>
 </div>
 <div class="paragraph">
 <p>For custom distributions of ownCloud it is recommended to change the release version branch in version.php to something else than "stable".</p>
@@ -1305,7 +1308,24 @@
 <div class="sect2">
 <h3 id="is-code-signing-mandatory-for-apps"><a class="anchor" href="#is-code-signing-mandatory-for-apps"></a>Is Code Signing Mandatory For Apps?</h3>
 <div class="paragraph">
-<p>Code signing is optional for all third-party applications.</p>
+<p>Starting with ownCloud 11, third-party app signing is <strong>mandatory</strong>. An unsigned or invalidly-signed app is <strong>blocked</strong> — not merely flagged with a warning — when it is installed, updated, or enabled.</p>
+</div>
+<div class="paragraph">
+<p>An administrator can deliberately disable validation for a specific app, but this is a logged action that forfeits the integrity and revocation protection for that app. Development installations (the <code>git</code> release channel) are exempt from enforcement.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Apps signed under the previous (pre-2026) scheme are accepted <strong>with a warning until 2026-12-31</strong>, after which only signatures produced under the new PKI are trusted. Ask app developers to ship a release re-signed under the new PKI before that date.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -1613,7 +1633,7 @@ See <a href="../server/occ_command.html" class="xref page">the occ command</a> t
 <div class="ulist">
 <ul>
 <li>
-<p>The certificate has not been issued by the official ownCloud Code Signing Root Authority.</p>
+<p>The certificate has not been issued by the official ownCloud code-signing PKI.</p>
 </li>
 </ul>
 </div>

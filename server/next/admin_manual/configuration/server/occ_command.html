@@ -5218,30 +5218,17 @@ The syntax is:</p>
 <div class="sect2">
 <h3 id="integrity-check"><a class="anchor" href="#integrity-check"></a>Integrity Check</h3>
 <div class="paragraph">
-<p>Apps which have an official tag <strong>must</strong> be code signed. Unsigned official apps won&#8217;t be installable anymore. Code signing is optional for all third-party applications.</p>
+<p>Starting with ownCloud 11, third-party app signing is <strong>mandatory</strong>: an unsigned or invalidly-signed app is blocked on install, update, or enable. Official (bundled) apps must also be signed.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-plaintext hljs" data-lang="plaintext">integrity
  integrity:check-app                 Check app integrity using a signature.
- integrity:check-core                Check core integrity using a signature.
- integrity:sign-app                  Signs an app using a private key.
- integrity:sign-core                 Sign core using a private key</code></pre>
+ integrity:check-core                Check core integrity using a signature.</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>After creating your signing key, sign your app like this example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-docker hljs" data-lang="docker">docker compose exec owncloud occ integrity:sign-app \
-   --privateKey=/Users/karlmay/contacts.key \
-   --certificate=/Users/karlmay/CA/contacts.crt \
-   --path=/Users/karlmay/Programming/contacts</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Verify your app:</p>
+<p>Verify an app:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -5249,10 +5236,29 @@ The syntax is:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>When it returns nothing, your app is signed correctly. When it returns a message then there is an error.</p>
+<p>Verify the core:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-docker hljs" data-lang="docker">docker compose exec owncloud occ integrity:check-core</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p><code>integrity:sign-core</code> is for ownCloud core developers only.</p>
+<p>When the command returns nothing, verification succeeded. When it returns a message, there is an error.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Signing is done with the standalone <code>ocsign</code> tool, which does not require a running ownCloud instance. See <a href="../../../developer_manual/app/advanced/code_signing.html" class="xref page">Code Signing</a> in the Developer Manual for the current signing workflow.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 <div class="admonitionblock tip">
 <table>
