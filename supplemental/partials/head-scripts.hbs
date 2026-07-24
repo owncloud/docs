@@ -1,0 +1,30 @@
+{{#if env.MATOMO_SITE}}
+  <script type="text/javascript">
+    var _paq = _paq || [];
+
+    _paq.push(["setDocumentTitle", document.domain + "/" + document.title]);
+    _paq.push(["setCookieDomain", "*.owncloud.com"]);
+    _paq.push(['trackPageView']);
+    _paq.push(['enableLinkTracking']);
+
+    (function() {
+      var u="//piwik.owncloud.com/";
+
+      _paq.push(['setTrackerUrl', u+'piwik.php']);
+      _paq.push(['setSiteId', '{{env.MATOMO_SITE}}']);
+
+      var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+      g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+    })();
+  </script>
+{{/if}}
+
+    <script>var uiRootPath = '{{{uiRootPath}}}'</script>
+    {{!-- Legacy `go.php?to=<key>` redirector. ownCloud core still deep-links into
+          the docs via /server/<version>/go.php?to=<key>, but the static GitHub
+          Pages site has no PHP, so those URLs fall through to the custom 404
+          page. This script runs in <head> on every page and is a no-op unless
+          the path ends in `go.php`, in which case it redirects to the mapped
+          page BEFORE the 404 body renders (no visible flash). See
+          js/go-redirect.js. --}}
+    <script src="{{{uiRootPath}}}/js/go-redirect.js"></script>
