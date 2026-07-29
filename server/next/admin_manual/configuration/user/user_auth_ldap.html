@@ -2426,6 +2426,26 @@ Administrators are not allowed to modify the user quota limit in the user manage
 <div class="paragraph">
 <p>It is possible to override this setting and name it after an LDAP attribute value, e.g., <code>attr:cn</code>.  The attribute can return either an absolute path, e.g., <code>/mnt/storage43/alice</code>, or a relative path which must not begin with a <code>/</code>, e.g., <code>CloudUsers/CookieMonster</code>. This relative path is then created inside the data directory (e.g., <code>/mnt/data/files/CloudUsers/CookieMonster</code>).</p>
 </div>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+The home folder is confined to the data directory. An LDAP directory is not necessarily administered by the same people who administer the ownCloud server, so a home resolving <strong>outside</strong> of the data directory is refused - a home pointing at the ownCloud code directory would otherwise expose the application&#8217;s own files, and allow overwriting them. The affected user cannot log in, and an error naming both the refused path and the configuration option below is written to the ownCloud log. Symbolic links are resolved before the check, so a symlinked data directory keeps working, while a symlink inside the data directory cannot be used to escape it.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>If your user home folders legitimately live outside of the data directory, for example on a separate NFS mount, list the permitted base directories in <code>config/config.php</code>, either in <code>user_ldap.home_base_dirs</code> for the LDAP backend alone, or in <a href="../server/config_sample_php_parameters.html#additional-base-directories-a-user-home-may-be-located-in" class="xref page">user.home_base_dirs</a> for every user backend. Existing installations must add the setting <strong>before</strong> upgrading, otherwise the affected users cannot log in afterwards.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">'user_ldap.home_base_dirs' =&gt; ['/mnt/storage43'],</code></pre>
+</div>
+</div>
 <div class="paragraph">
 <p>Please note that the home folder rule is enforced. This means that once you set a home folder naming rule (get a home folder from an LDAP attribute), it must be available for all users. If it isn&#8217;t available for a user, then that user will not be able to login. Also, the filesystem will not be set up for that user, so their file shares will not be available to other users. For older versions you may enforce the home folder rule with the <code>occ</code> command, like this example on Ubuntu:</p>
 </div>
