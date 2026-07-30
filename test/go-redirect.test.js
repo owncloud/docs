@@ -38,7 +38,7 @@ test('a user key redirects into the classic_ui module', () => {
 })
 
 test('a published version segment is preserved for per-version fidelity', () => {
-  const p = '/server/10.15/'
+  const p = '/server/10.16/'
   assert.equal(
     resolveGoPhp(p + 'go.php', '?to=admin-sharing'),
     p + 'admin_manual/configuration/files/file_sharing_configuration.html'
@@ -46,10 +46,10 @@ test('a published version segment is preserved for per-version fidelity', () => 
 })
 
 test('an unpublished version segment (concrete current stable) is remapped to latest', () => {
-  // Core emits the concrete version (e.g. 10.16), which has no published tree;
+  // Core emits the concrete version (e.g. 11.0), which has no published tree;
   // it must be sent to /server/latest/ where the current stable is published.
   assert.equal(
-    resolveGoPhp('/server/10.16/go.php', '?to=admin-sharing'),
+    resolveGoPhp('/server/11.0/go.php', '?to=admin-sharing'),
     '/server/latest/admin_manual/configuration/files/file_sharing_configuration.html'
   )
   // An old, long-unpublished release likewise falls back to latest.
