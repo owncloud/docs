@@ -225,14 +225,11 @@
                 <li class="component">
                   <div class="title"><a href="server/latest/index.html">ownCloud Classic</a></div>
                   <ul class="versions">
-                    <li class="version">
-                      <a href="server/next/index.html">next</a>
-                    </li>
                     <li class="version is-latest">
-                      <a href="server/latest/index.html">10.16</a>
+                      <a href="server/latest/index.html">11.0</a>
                     </li>
                     <li class="version">
-                      <a href="server/10.15/index.html">10.15</a>
+                      <a href="server/10.16/index.html">10.16</a>
                     </li>
                   </ul>
                 </li>
@@ -285,6 +282,7 @@
 <div id="toc" class="toc">
 <div id="toctitle" class="title">Releases</div>
 <ul class="sectlevel1">
+<li><a href="#changes-in-11-0-0">Changes in 11.0.0</a></li>
 <li><a href="#changes-in-10-16-4">Changes in 10.16.4</a></li>
 <li><a href="#changes-in-10-16-3">Changes in 10.16.3</a></li>
 <li><a href="#changes-in-10-16-2">Changes in 10.16.2</a></li>
@@ -490,6 +488,169 @@
 </div>
 </div>
 <div class="sect1">
+<h2 id="changes-in-11-0-0"><a class="anchor" href="#changes-in-11-0-0"></a>Changes in 11.0.0</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Dear ownCloud administrator, find below the changes and known issues in ownCloud Classic 11.0.0 that need your attention. You can also read the <a href="https://owncloud.com/changelog/server/">full ownCloud Classic changelog</a> for further details on what has changed.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+This is a major release containing 11 security fixes. It raises the minimum PHP version and removes deprecated features. Please read the <strong>Breaking Changes</strong> below before upgrading.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Upgrades are supported from 8.2.11, 9.0.9, and 9.1 onwards.</p>
+</div>
+<h3 id="breaking-changes" class="discrete">Breaking Changes</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>The minimum required PHP version is now 8.3</strong>: <a href="https://github.com/owncloud/core/pull/41449">#41449</a><br>
+Instances running an older PHP version will refuse to start. The version check now runs early in <code>lib/base.php</code>. The mail subsystem moved to <code>symfony/mailer</code> and the unused <code>ext-apc</code> requirement was dropped.</p>
+</li>
+<li>
+<p><strong>The group-admin (subadmin) feature is disabled by default</strong>: <a href="https://github.com/owncloud/core/pull/41634">#41634</a><br>
+The feature&#8217;s code path has known security shortcomings, so it is now gated behind a new <code>allow_subadmins</code> system config. On upgrade, existing group-admin assignments are ignored until an administrator sets <code>'allow_subadmins' &#8658; true</code> in <code>config.php</code>.</p>
+</li>
+<li>
+<p><strong>G1 app signatures stop verifying on 2027-01-01</strong>: <a href="https://github.com/owncloud/core/pull/41680">#41680</a><br>
+App signature verification has been replaced by a new G2 code-signing verifier, which validates the full certificate chain against bundled trust anchors, enforces an algorithm allowlist, and checks a fail-closed CRL for revocation. Existing G1-signed apps continue to verify during the transition, but all G1 signatures stop verifying after the hardcoded sunset at 2026-12-31T23:59:59Z, regardless of individual certificate expiry. After that cutoff, affected apps must be re-signed with a G2 certificate to install or pass integrity verification. If you run third-party apps signed under G1, plan for re-signed releases ahead of that date.</p>
+</li>
+<li>
+<p><strong><code>occ integrity:sign-app</code> and <code>occ integrity:sign-core</code> have been removed</strong>: <a href="https://github.com/owncloud/core/pull/41712">#41712</a><br>
+Code signing is a release and CI concern rather than an operator action performed against a running instance. Verification is unaffected: <code>occ integrity:check-app</code> and <code>occ integrity:check-core</code> continue to work as before.</p>
+</li>
+<li>
+<p><strong>The <code>occ db:convert-type</code> command has been removed</strong>: <a href="https://github.com/owncloud/core/pull/41451">#41451</a><br>
+This experimental command was untested and unsupported.</p>
+</li>
+<li>
+<p><strong>Legacy and deprecated classes have been removed</strong>: <a href="https://github.com/owncloud/core/pull/41455">#41455</a><br>
+Including <code>OC_DB</code>, <code>OC_DB_StatementWrapper</code>, <code>OC_Group_Backend</code>, <code>OC_Group_Database</code>, <code>OC_OCS_Result</code>, <code>\OCP\DB</code>, <code>MDBSchemaWriter</code>, and the <code>OC_Group_Interface</code> and <code>OC_User_Interface</code> interfaces. Third-party apps using these will need updating.</p>
+</li>
+</ul>
+</div>
+<h3 id="security-fixes" class="discrete">Security Fixes</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Prevent params body from overriding validated occ command: <a href="https://github.com/owncloud/core/pull/41577">#41577</a></p>
+</li>
+<li>
+<p>Remove plaintext federation auth token from error log: <a href="https://github.com/owncloud/core/pull/41578">#41578</a></p>
+</li>
+<li>
+<p>Replace strcmp token oracle with hash-based comparison in federation: <a href="https://github.com/owncloud/core/pull/41579">#41579</a></p>
+</li>
+<li>
+<p>Restrict <code>unserialize()</code> allowed classes in CommandJob: <a href="https://github.com/owncloud/core/pull/41582">#41582</a></p>
+</li>
+<li>
+<p>Sanitize storage connection error messages returned to clients: <a href="https://github.com/owncloud/core/pull/41585">#41585</a></p>
+</li>
+<li>
+<p>Prevent user enumeration via differential password reset UI: <a href="https://github.com/owncloud/core/pull/41586">#41586</a></p>
+</li>
+<li>
+<p>Do not trust cached binary paths: <a href="https://github.com/owncloud/core/pull/41732">#41732</a></p>
+</li>
+<li>
+<p>Enforce the read permission in the public share preview endpoint: <a href="https://github.com/owncloud/core/pull/41751">#41751</a></p>
+</li>
+<li>
+<p>Confine backend provided user homes to the data directory: <a href="https://github.com/owncloud/core/pull/41752">#41752</a></p>
+</li>
+<li>
+<p>Encode search highlights before they are returned as a DAV property: <a href="https://github.com/owncloud/core/pull/41760">#41760</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The group-admin change (<a href="https://github.com/owncloud/core/pull/41634">#41634</a>) is also a security fix; see <strong>Breaking Changes</strong> above.</p>
+</div>
+<h3 id="changes" class="discrete">Changes</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Generated URLs are no longer stored in the memory cache: <a href="https://github.com/owncloud/core/pull/41733">#41733</a><br>
+Generating a URL measured faster than a cache round trip, so the cache only added a place where URLs could go stale or be tampered with.</p>
+</li>
+<li>
+<p>Autoloader information is no longer stored in any memory cache: <a href="https://github.com/owncloud/core/pull/41376">#41376</a></p>
+</li>
+<li>
+<p>The internet connectivity check URL is now configurable: <a href="https://github.com/owncloud/core/pull/41506">#41506</a><br>
+The default is now an independent, IPv6-capable resource (<code><a href="https://detectportal.firefox.com/success.txt" class="bare">https://detectportal.firefox.com/success.txt</a></code>).</p>
+</li>
+<li>
+<p>Host-local caches are kept in the local cache tier: <a href="https://github.com/owncloud/core/pull/41734">#41734</a></p>
+</li>
+<li>
+<p>HTML metacharacters are covered in the username validation allow-list: <a href="https://github.com/owncloud/core/pull/41738">#41738</a></p>
+</li>
+<li>
+<p>Group names are escaped in the users administration group list: <a href="https://github.com/owncloud/core/pull/41758">#41758</a></p>
+</li>
+<li>
+<p>The write hook veto is honoured on legacy chunked WebDAV uploads: <a href="https://github.com/owncloud/core/pull/41762">#41762</a></p>
+</li>
+<li>
+<p>MIME types for OpenDocument formats have been added: <a href="https://github.com/owncloud/core/pull/41648">#41648</a></p>
+</li>
+<li>
+<p>Microsoft Office icons have been updated: <a href="https://github.com/owncloud/core/pull/41347">#41347</a></p>
+</li>
+<li>
+<p>The <code>msteamsbridge</code> config sample has been removed: <a href="https://github.com/owncloud/core/pull/41668">#41668</a></p>
+</li>
+</ul>
+</div>
+<h3 id="notable-bugfixes" class="discrete">Notable Bugfixes</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Fix <code>.htaccess</code> RewriteBase rules blocking API requests by file extension: <a href="https://github.com/owncloud/core/issues/41418">#41418</a><br>
+Files whose names end in extensions such as <code>.jpg</code>, <code>.png</code>, <code>.svg</code> or <code>.json</code> could not be favorited or tagged via the files API when <code>htaccess.RewriteBase</code> was configured, returning 405 Method Not Allowed. Re-run <code>occ maintenance:update:htaccess</code> after upgrading to regenerate the rules.</p>
+</li>
+<li>
+<p>Decrypt versions and trashbin so encryption can be disabled: <a href="https://github.com/owncloud/core/issues/41623">#41623</a></p>
+</li>
+<li>
+<p>Support federation between systems in subdirectories: <a href="https://github.com/owncloud/core/pull/41599">#41599</a></p>
+</li>
+<li>
+<p>Normalise trashbin original-location PROPFIND response: <a href="https://github.com/owncloud/core/issues/39337">#39337</a></p>
+</li>
+<li>
+<p>Honor language on anonymous pages: <a href="https://github.com/owncloud/core/issues/41618">#41618</a></p>
+</li>
+<li>
+<p>Fix <code>user:home:list-dirs</code> and <code>user:home:list-users</code> crashing on PHP 8: <a href="https://github.com/owncloud/core/issues/41630">#41630</a></p>
+</li>
+<li>
+<p>Hide navigation icon for apps not enabled for the user: <a href="https://github.com/owncloud/core/issues/41717">#41717</a></p>
+</li>
+<li>
+<p>Do not crash on malformed translations: <a href="https://github.com/owncloud/core/issues/41720">#41720</a></p>
+</li>
+<li>
+<p>Reject non-numeric avatar crop coordinates and fix the avatar cropper: <a href="https://github.com/owncloud/core/issues/41723">#41723</a></p>
+</li>
+<li>
+<p>Add missing space to mail footer signature delimiter: <a href="https://github.com/owncloud/core/issues/41364">#41364</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="changes-in-10-16-4"><a class="anchor" href="#changes-in-10-16-4"></a>Changes in 10.16.4</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -507,7 +668,7 @@ This is a security release. Upgrading is strongly recommended for all installati
 </tr>
 </table>
 </div>
-<h3 id="security-fixes" class="discrete">Security Fixes</h3>
+<h3 id="security-fixes-2" class="discrete">Security Fixes</h3>
 <div class="ulist">
 <ul>
 <li>
@@ -639,7 +800,7 @@ The following dependencies have been updated:</p>
 </li>
 </ul>
 </div>
-<h3 id="changes" class="discrete">Changes</h3>
+<h3 id="changes-2" class="discrete">Changes</h3>
 <div class="ulist">
 <ul>
 <li>
@@ -2272,7 +2433,7 @@ For more information, refer to the <a href="https://doc.owncloud.com/server/late
 <p>When updating an existing instance to ownCloud Classic 10.9, you may experience that the marketplace is not accessible via ownCloud and content is not shown. If you have this issue, see the following link for details and a <a href="https://github.com/owncloud/core/issues/39616#issuecomment-1001490469">procedure how to solve</a> this.</p>
 </li>
 <li>
-<p>If you use encryption, we recommend <em>not to update</em> to ownCloud Classic 10.9.0 but wait until 10.9.1 will be released in early January 2022. The following issue can occur: If you have an encrypted file which is shared, the file gets corrupted if the share recipient overwrites that file. This means that the latest changes will be lost. If  <a href="https://doc.owncloud.com/server/next/admin_manual/configuration/files/file_versioning.html">Files Versions</a> has been enabled, you can restore the previous version. The issue has been resolved already and will be available with the next patch release. See the following link for <a href="https://github.com/owncloud/core/pull/39623">more technical details</a>.</p>
+<p>If you use encryption, we recommend <em>not to update</em> to ownCloud Classic 10.9.0 but wait until 10.9.1 will be released in early January 2022. The following issue can occur: If you have an encrypted file which is shared, the file gets corrupted if the share recipient overwrites that file. This means that the latest changes will be lost. If  <a href="https://doc.owncloud.com/server/latest/admin_manual/configuration/files/file_versioning.html">Files Versions</a> has been enabled, you can restore the previous version. The issue has been resolved already and will be available with the next patch release. See the following link for <a href="https://github.com/owncloud/core/pull/39623">more technical details</a>.</p>
 </li>
 </ul>
 </div>
@@ -3366,14 +3527,14 @@ It will only abort if none of the results matches the search term (e.g., 'alice'
 <div class="ulist">
 <ul>
 <li>
-<p>The <a href="server/next/developer_manual/webdav_api/trashbin.html" class="xref page">WebDAV Trash bin API</a> and the <a href="server/next/developer_manual/webdav_api/public_files.html" class="xref page">WebDAV endpoint for public links</a> (introduced with 10.3.0) have left the tech preview state.
+<p>The <a href="server/latest/developer_manual/webdav_api/trashbin.html" class="xref page">WebDAV Trash bin API</a> and the <a href="server/latest/developer_manual/webdav_api/public_files.html" class="xref page">WebDAV endpoint for public links</a> (introduced with 10.3.0) have left the tech preview state.
 They are considered stable and are enabled by default.</p>
 </li>
 <li>
 <p>The config.php option to enable/disable tech preview APIs (<code>'dav.enable.tech_preview' &#8658; true</code>) has been removed as it&#8217;s obsolete. <a href="https://github.com/owncloud/core/pull/36815">#36815</a></p>
 </li>
 <li>
-<p>A new <a href="server/next/developer_manual/core/apis/ocs-user-sync-api.html" class="xref page">OCS User Sync API</a> to trigger user sync from external user backends has been added.
+<p>A new <a href="server/latest/developer_manual/core/apis/ocs-user-sync-api.html" class="xref page">OCS User Sync API</a> to trigger user sync from external user backends has been added.
 This allows external user provisioning systems to push new users to ownCloud on demand and removes the necessity to do full user sync. <a href="https://github.com/owncloud/core/pull/36428">#36428</a></p>
 </li>
 </ul>
@@ -3593,7 +3754,7 @@ Please do not enable <code>gallery</code>/<code>files_videoplayer</code> and <co
 </table>
 </div>
 <div class="paragraph">
-<p>For more information on the Media Viewer app, visit the <a href="server/latest/admin_manual/installation/apps/mediaviewer/index.html" class="xref page">ownCloud Documentation</a>.</p>
+<p>For more information on the Media Viewer app, visit the <a href="server/latest/admin_manual/installation/apps/apps_supported.html" class="xref page">ownCloud Documentation</a>.</p>
 </div>
 <h3 id="oauth2-and-session-handling-improvements" class="discrete">OAuth2 and session handling improvements</h3>
 <div class="paragraph">
@@ -3706,13 +3867,13 @@ As Phoenix is separated from the backend and communicates only via HTTP APIs, it
 <div class="ulist">
 <ul>
 <li>
-<p><a href="server/next/developer_manual/webdav_api/trashbin.html" class="xref page">WebDAV Trash bin API</a>.</p>
+<p><a href="server/latest/developer_manual/webdav_api/trashbin.html" class="xref page">WebDAV Trash bin API</a>.</p>
 </li>
 <li>
-<p><a href="server/next/developer_manual/core/apis/ocs-notify-public-link-by-email.html" class="xref page">OCS API for public link share email notifications</a></p>
+<p><a href="server/latest/developer_manual/core/apis/ocs-notify-public-link-by-email.html" class="xref page">OCS API for public link share email notifications</a></p>
 </li>
 <li>
-<p><a href="server/next/developer_manual/webdav_api/public_files.html" class="xref page">WebDAV endpoint for public links</a>.</p>
+<p><a href="server/latest/developer_manual/webdav_api/public_files.html" class="xref page">WebDAV endpoint for public links</a>.</p>
 </li>
 </ul>
 </div>
@@ -3836,7 +3997,7 @@ Please check <a href="https://github.com/owncloud/theme-example/pull/7/files">th
 </li>
 <li>
 <p>A new Roles API has been added to allow clients to query the server for available permissions/roles for user/group sharing and public links.
-In future client releases, this endpoint will be used to dynamically display roles/permissions depending on the server&#8217;s capabilities. You can find out more about it in <a href="server/next/developer_manual/core/apis/roles-api.html" class="xref page">the Roles API documentation</a>.</p>
+In future client releases, this endpoint will be used to dynamically display roles/permissions depending on the server&#8217;s capabilities. You can find out more about it in <a href="server/latest/developer_manual/core/apis/roles-api.html" class="xref page">the Roles API documentation</a>.</p>
 </li>
 <li>
 <p>A new, improved version of the "<em>Advanced Sharing Permissions</em>" JavaScript API (v2) has been added to allow ownCloud apps to register additional permissions/restrictions in user/group sharing.
@@ -4126,7 +4287,7 @@ Using the bottom left cog wheel you can now show/hide the columns for <em>Quota<
 <li>
 <p><strong>By default, the "apps-external" directory is included in config.php during installation.</strong>
 For new installations, there will be two apps directories so that the bundled apps are distinguishable from the apps that were installed or updated by the administrator.
-Existing installations will not change but, generally, <a href="server/latest/admin_manual/installation/apps_management_installation.html#using-custom-app-directories" class="xref page">this separation is recommended</a> in all scenarios, as it makes upgrading easier and less error-prone.</p>
+Existing installations will not change but, generally, <a href="server/latest/admin_manual/installation/apps/apps_management_installation.html#using-custom-app-directories" class="xref page">this separation is recommended</a> in all scenarios, as it makes upgrading easier and less error-prone.</p>
 </li>
 <li>
 <p><strong>Update the <code>occ files:scan</code> <code>--group</code> and <code>--groups</code> options.</strong>
@@ -5346,7 +5507,7 @@ in case the app was installed before.</p>
 <div class="paragraph">
 <p>If this is not possible (e.g. no internet connection or clustered setup) you will either need to disable the app
 (<code>occ app:disable templateeditor</code>) or
-<a href="server/latest/admin_manual/installation/apps_management_installation.html#installing-apps-manually" class="xref page">download and install it manually</a>.</p>
+<a href="server/latest/admin_manual/installation/apps/apps_management_installation.html#installing-apps-manually" class="xref page">download and install it manually</a>.</p>
 </div>
 </div>
 <div class="sect2">
@@ -6259,7 +6420,7 @@ development around webdav</p>
 <li>
 <p>PSR-4 autoloading forced for <code>OC\</code> and <code>OCP\</code>, optional for <code>OCA\</code>
 docs at
-xref:next@server:developer_manual:app/fundamentals/classloader.adoc</p>
+xref:server:developer_manual:app/fundamentals/classloader.adoc</p>
 </li>
 <li>
 <p>More cleanup of the sharing code (ongoing)</p>
@@ -6274,7 +6435,7 @@ xref:next@server:developer_manual:app/fundamentals/classloader.adoc</p>
 <div class="paragraph">
 <p>9.0 requires .ico files for favicons. This will change in 9.1, which
 will use .svg files. See
-<a href="server/next/developer_manual/core/theming.html" class="xref page">Changing favicon</a> in the Developer Manual.</p>
+<a href="server/latest/developer_manual/core/theming.html" class="xref page">Changing favicon</a> in the Developer Manual.</p>
 </div>
 <div class="paragraph">
 <p>Home folder rule is enforced in the user_ldap application in new
