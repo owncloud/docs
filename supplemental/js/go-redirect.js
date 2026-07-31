@@ -27,12 +27,12 @@
  * version root (e.g. /server/latest/), matching how the links are versioned.
  *
  * Version remap: core emits the CONCRETE server version in the path (e.g.
- * /server/10.16/go.php), but the site publishes the current stable only under
+ * /server/11.0/go.php), but the site publishes the current stable only under
  * /server/latest/ (site.yml latest_version_segment_strategy: replace, because
  * GitHub Pages cannot 302 a version segment to latest). So a version segment
- * without its own published tree (10.16, older releases) is remapped to
- * `latest`; segments that ARE published (e.g. 10.15, next) are kept for
- * per-version fidelity. PUBLISHED_VERSIONS is checked in CI against the built
+ * without its own published tree (11.0, older releases) is remapped to
+ * `latest`; segments that ARE published (e.g. 10.16) are kept for per-version
+ * fidelity. PUBLISHED_VERSIONS is checked in CI against the built
  * public/server/* directories so it cannot silently go stale.
  */
 ;(function (root) {
@@ -41,9 +41,10 @@
   // Server version path segments that have their own published doc tree.
   // Anything else (concrete current-stable, unpublished older releases) is
   // served under `latest`. Kept in sync with the build by the unit tests.
-  // Here `latest` is the current stable (10.16, published via
-  // latest_version_segment: latest) and `next` is the master prerelease.
-  var PUBLISHED_VERSIONS = ['10.15', 'next', 'latest']
+  // Here `latest` is the current stable (11.0, published via
+  // latest_version_segment: latest). There is no `next` server version: master
+  // carries the released version rather than a prerelease.
+  var PUBLISHED_VERSIONS = ['10.16', 'latest']
 
   // key -> path relative to the version root (…/server/<version>/).
   var MAPPING = {
